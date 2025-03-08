@@ -1,6 +1,8 @@
+import { UserRole } from '../../roles/type/userRole';
+
 export interface JwtPayload {
   id: string;
   email: string;
-  roleId: string;
+  role: UserRole;
   isActive: boolean;
 }

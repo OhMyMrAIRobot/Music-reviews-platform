@@ -7,11 +7,12 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserResponseDto } from '../users/dto/user-response.dto';
-import { JwtPayload } from './entities/JwtPayload';
+import { JwtPayload } from './type/JwtPayload';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { RolesService } from '../roles/roles.service';
 import { plainToClass } from 'class-transformer';
+import { UserRole } from '../roles/type/userRole';
 
 @Injectable()
 export class AuthService {
@@ -31,11 +32,17 @@ export class AuthService {
     return plainToClass(UserResponseDto, user);
   }
 
-  login(user: UserResponseDto) {
+  async login(user: UserResponseDto) {
+    const role = await this.rolesService.getRoleById(user.roleId);
+
+    const validRole = Object.values(UserRole).includes(role.role as UserRole)
+      ? (role.role as UserRole)
+      : UserRole.USER;
+
     const payload: JwtPayload = {
       id: user.id,
       email: user.email,
-      roleId: user.roleId,
+      role: validRole,
       isActive: user.isActive,
     };
     return { access_token: this.jwtService.sign(payload), user: user };
