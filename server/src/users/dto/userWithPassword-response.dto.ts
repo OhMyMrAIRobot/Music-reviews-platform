@@ -1,6 +1,6 @@
-import { Exclude, Expose } from 'class-transformer';
+import { Expose } from 'class-transformer';
 
-export class UserResponseDto {
+export class UserWithPasswordResponseDto {
   @Expose()
   id: string;
 
@@ -16,6 +16,6 @@ export class UserResponseDto {
   @Expose()
   roleId: string;
 
-  @Exclude()
+  @Expose()
   password: string;
 }

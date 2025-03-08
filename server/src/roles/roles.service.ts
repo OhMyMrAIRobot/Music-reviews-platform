@@ -43,6 +43,18 @@ export class RolesService {
     return role;
   }
 
+  async getRoleByName(name: string = 'User'): Promise<Role> {
+    const role = await this.prisma.role.findUnique({
+      where: { role: name },
+    });
+
+    if (!role) {
+      throw new NotFoundException(`Role with name: ${name} not found!`);
+    }
+
+    return role;
+  }
+
   async updateRole(id: string, updateRoleDto: UpdateRoleDto): Promise<Role> {
     const existingRole = await this.prisma.role.findUnique({
       where: { id },

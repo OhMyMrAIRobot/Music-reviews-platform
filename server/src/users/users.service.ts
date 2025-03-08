@@ -10,6 +10,7 @@ import { PrismaService } from '../prisma.service';
 import { UserResponseDto } from './dto/user-response.dto';
 import { plainToClass, plainToInstance } from 'class-transformer';
 import { RolesService } from '../roles/roles.service';
+import { UserWithPasswordResponseDto } from './dto/userWithPassword-response.dto';
 
 @Injectable()
 export class UsersService {
@@ -66,6 +67,25 @@ export class UsersService {
     }
 
     return plainToClass(UserResponseDto, user);
+  }
+
+  async findByEmail(email: string): Promise<UserResponseDto> {
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+      select: { id: true, email: true, password: true, roleId: true },
+    });
+
+    return plainToClass(UserResponseDto, user);
+  }
+
+  async findByEmailWithPassword(
+    email: string,
+  ): Promise<UserWithPasswordResponseDto> {
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    return plainToInstance(UserWithPasswordResponseDto, user);
   }
 
   async update(
