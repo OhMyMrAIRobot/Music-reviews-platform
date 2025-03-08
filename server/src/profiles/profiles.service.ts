@@ -40,18 +40,4 @@ export class ProfilesService {
       data: updateProfileDto,
     });
   }
-
-  async removeByUserId(userId: string): Promise<UserProfile> {
-    const existingProfile = await this.prisma.userProfile.findUnique({
-      where: { userId },
-    });
-
-    if (!existingProfile) {
-      throw new NotFoundException(`Profile with user id: ${userId} not found!`);
-    }
-
-    return this.prisma.userProfile.delete({
-      where: { userId },
-    });
-  }
 }

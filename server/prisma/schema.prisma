@@ -22,7 +22,7 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
 
   roleId String @map("role_id")
-  role Role @relation(fields: [roleId], references: [id])
+  role Role @relation(fields: [roleId], references: [id], onDelete: Restrict)
 
   profile UserProfile?
 
@@ -37,7 +37,7 @@ model UserProfile {
   points Int @default(0)
 
   userId String @unique @map("user_id")
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("User_profiles")
 }

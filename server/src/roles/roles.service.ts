@@ -79,6 +79,14 @@ export class RolesService {
       throw new NotFoundException(`Role with id: ${id} not found!`);
     }
 
+    const usersWithRole = await this.prisma.user.count({
+      where: { roleId: id },
+    });
+
+    if (usersWithRole != 0) {
+      throw new ConflictException(`Role with id: ${id} is in use!`);
+    }
+
     return this.prisma.role.delete({
       where: { id },
     });

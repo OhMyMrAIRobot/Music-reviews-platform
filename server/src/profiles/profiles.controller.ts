@@ -1,4 +1,11 @@
-import { Controller, Get, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Body,
+  Patch,
+  Param,
+  BadRequestException,
+} from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { UserProfile } from '@prisma/client';
@@ -19,14 +26,13 @@ export class ProfilesController {
 
   @Patch(':userId')
   update(
-    @Param('id') userId: string,
+    @Param('userId') userId: string,
     @Body() updateProfileDto: UpdateProfileDto,
   ): Promise<UserProfile> {
-    return this.profilesService.updateByUserId(userId, updateProfileDto);
-  }
+    if (!updateProfileDto || Object.keys(updateProfileDto).length === 0) {
+      throw new BadRequestException('No data provided for update');
+    }
 
-  @Delete(':userId')
-  remove(@Param('userId') userId: string): Promise<UserProfile> {
-    return this.profilesService.removeByUserId(userId);
+    return this.profilesService.updateByUserId(userId, updateProfileDto);
   }
 }

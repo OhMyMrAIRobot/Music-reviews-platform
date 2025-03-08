@@ -56,15 +56,6 @@ export class UsersService {
     return plainToClass(UserResponseDto, user);
   }
 
-  async findByEmail(email: string): Promise<UserResponseDto> {
-    const user = await this.prisma.user.findUnique({
-      where: { email },
-      select: { id: true, email: true, password: true, roleId: true },
-    });
-
-    return plainToClass(UserResponseDto, user);
-  }
-
   async findByEmailWithPassword(
     email: string,
   ): Promise<UserWithPasswordResponseDto> {
