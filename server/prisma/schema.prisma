@@ -24,7 +24,22 @@ model User {
   roleId String @map("role_id")
   role Role @relation(fields: [roleId], references: [id])
 
+  profile UserProfile?
+
   @@map("Users")
+}
+
+model UserProfile {
+  id String @id @default(cuid())
+  avatar String? @db.VarChar(255)
+  coverImage String? @db.VarChar(255) @map("cover_image")
+  bio String? @db.VarChar(255)
+  points Int @default(0)
+
+  userId String @unique @map("user_id")
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("User_profiles")
 }
 
 model Role {
@@ -35,3 +50,4 @@ model Role {
 
   @@map("User_roles")
 }
+

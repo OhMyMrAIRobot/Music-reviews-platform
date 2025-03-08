@@ -16,6 +16,9 @@ export class UserResponseDto {
   @Expose()
   roleId: string;
 
+  @Expose()
+  createdAt: Date;
+
   @Exclude()
   password: string;
 }

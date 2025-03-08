@@ -1,6 +1,6 @@
 import {
-  ConflictException,
   Injectable,
+  InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
@@ -13,6 +13,7 @@ import { RegisterDto } from './dto/register.dto';
 import { RolesService } from '../roles/roles.service';
 import { plainToClass } from 'class-transformer';
 import { UserRole } from '../roles/type/userRole';
+import { PrismaService } from '../prisma.service';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +21,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly rolesService: RolesService,
+    private readonly prisma: PrismaService,
   ) {}
 
   async validateUser(loginDto: LoginDto): Promise<UserResponseDto> {
@@ -49,21 +51,38 @@ export class AuthService {
   }
 
   async register(registerDto: RegisterDto) {
-    const existingUser = await this.usersService.findByEmail(registerDto.email);
-    if (existingUser) {
-      throw new ConflictException(
-        `User with email: ${registerDto.email} already exists`,
-      );
-    }
+    await this.usersService.isUserExists(
+      registerDto.email,
+      registerDto.nickname,
+    );
 
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
     const userRole = await this.rolesService.getRoleByName();
-    const user = await this.usersService.create({
-      ...registerDto,
-      roleId: userRole.id,
-      password: hashedPassword,
-    });
 
-    return this.login(user);
+    try {
+      const result = await this.prisma.$transaction(async (prisma) => {
+        const user = await prisma.user.create({
+          data: {
+            email: registerDto.email,
+            nickname: registerDto.nickname,
+            password: hashedPassword,
+            roleId: userRole.id,
+          },
+        });
+
+        await prisma.userProfile.create({
+          data: { userId: user.id },
+        });
+
+        return { user };
+      });
+
+      return this.login(plainToClass(UserResponseDto, result.user));
+    } catch (e) {
+      console.log(e);
+      throw new InternalServerErrorException(
+        'Error occurred during user registration',
+      );
+    }
   }
 }

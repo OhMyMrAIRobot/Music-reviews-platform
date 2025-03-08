@@ -4,7 +4,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma.service';
 import { UserResponseDto } from './dto/user-response.dto';
@@ -19,36 +18,24 @@ export class UsersService {
     private roleService: RolesService,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
+  async isUserExists(email: string, nickname: string) {
     const existingUser = await this.prisma.user.findFirst({
       where: {
-        OR: [
-          { email: createUserDto.email },
-          { nickname: createUserDto.nickname },
-        ],
+        OR: [{ email }, { nickname }],
       },
     });
 
     if (existingUser) {
-      if (existingUser.email === createUserDto.email) {
-        throw new ConflictException(
-          `User with email: ${createUserDto.email} already exists`,
-        );
+      if (existingUser.email === email) {
+        throw new ConflictException(`User with email: ${email} already exists`);
       }
-      if (existingUser.nickname === createUserDto.nickname) {
+      if (existingUser.nickname === nickname) {
         throw new ConflictException(
-          `User with nickname: ${createUserDto.nickname} already exists`,
+          `User with nickname: ${nickname} already exists`,
         );
       }
     }
-
-    await this.roleService.getRoleById(createUserDto.roleId);
-
-    const user = await this.prisma.user.create({
-      data: { ...createUserDto },
-    });
-
-    return plainToClass(UserResponseDto, user);
+    return;
   }
 
   async findAll(): Promise<UserResponseDto[]> {
