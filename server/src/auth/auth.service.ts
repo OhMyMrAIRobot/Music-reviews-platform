@@ -4,16 +4,19 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
-import { JwtService } from '@nestjs/jwt';
+import { JsonWebTokenError, JwtService, TokenExpiredError } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserResponseDto } from '../users/dto/user-response.dto';
-import { JwtPayload } from './type/JwtPayload';
+import { IJwtAuthPayload } from './types/jwt-auth-payload.interface';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { RolesService } from '../roles/roles.service';
 import { plainToClass } from 'class-transformer';
-import { UserRole } from '../roles/type/userRole';
+import { UserRoleEnum } from '../roles/types/user-role.enum';
 import { PrismaService } from '../prisma.service';
+import { InvalidTokenException } from '../exceptions/invalid-token.exception';
+import { IJwtActionPayload } from './types/jwt-action-payload.interface';
+import { JwtActionEnum } from './types/jwt-action.enum';
 
 @Injectable()
 export class AuthService {
@@ -37,16 +40,19 @@ export class AuthService {
   async login(user: UserResponseDto) {
     const role = await this.rolesService.getRoleById(user.roleId);
 
-    const validRole = Object.values(UserRole).includes(role.role as UserRole)
-      ? (role.role as UserRole)
-      : UserRole.USER;
+    const validRole = Object.values(UserRoleEnum).includes(
+      role.role as UserRoleEnum,
+    )
+      ? (role.role as UserRoleEnum)
+      : UserRoleEnum.USER;
 
-    const payload: JwtPayload = {
+    const payload: IJwtAuthPayload = {
       id: user.id,
       email: user.email,
       role: validRole,
       isActive: user.isActive,
     };
+
     return { access_token: this.jwtService.sign(payload), user: user };
   }
 
@@ -77,6 +83,13 @@ export class AuthService {
         return { user };
       });
 
+      const token = this.generateActivationToken(
+        result.user.id,
+        result.user.email,
+      );
+
+      // send email
+
       return this.login(plainToClass(UserResponseDto, result.user));
     } catch (e) {
       console.log(e);
@@ -84,5 +97,50 @@ export class AuthService {
         'Error occurred during user registration',
       );
     }
+  }
+
+  async activateAccount(token: string) {
+    try {
+      const { id, type } = this.jwtService.verify<IJwtActionPayload>(token);
+
+      if (type !== JwtActionEnum.ACTIVATION) {
+        throw new InvalidTokenException();
+      }
+
+      const user = await this.usersService.activateUser(id);
+
+      return this.login(user);
+    } catch (e) {
+      if (e instanceof TokenExpiredError || e instanceof JsonWebTokenError) {
+        throw new InvalidTokenException();
+      }
+      throw e;
+    }
+  }
+
+  async resendActivationCode(user: IJwtAuthPayload) {
+    const token = this.generateActivationToken(user.id, user.email);
+
+    // send email
+
+    return token;
+  }
+
+  generateActivationToken(id: string, email: string): string {
+    const payload: IJwtActionPayload = {
+      id,
+      email,
+      type: JwtActionEnum.ACTIVATION,
+    };
+    return this.jwtService.sign(payload, { expiresIn: '1h' });
+  }
+
+  generateResetToken(id: string, email: string): string {
+    const payload: IJwtActionPayload = {
+      id,
+      email,
+      type: JwtActionEnum.RESET_PASSWORD,
+    };
+    return this.jwtService.sign(payload, { expiresIn: '15m' });
   }
 }

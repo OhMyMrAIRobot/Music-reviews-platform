@@ -12,10 +12,10 @@ import { RolesService } from './roles.service';
 import { Role } from '@prisma/client';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { Roles } from '../auth/decorator/roles.decorator';
-import { UserRole } from './type/userRole';
-import { RolesGuard } from '../auth/guard/roles.guard';
-import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRoleEnum } from './types/user-role.enum';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('roles')
 export class RolesController {
@@ -31,14 +31,14 @@ export class RolesController {
     return this.roleService.getRoleById(id);
   }
 
-  @Roles(UserRole.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ROOT_ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   async createRole(@Body() createRoleDto: CreateRoleDto): Promise<Role> {
     return this.roleService.createRole(createRoleDto);
   }
 
-  @Roles(UserRole.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ROOT_ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Put(':id')
   async updateRole(
@@ -48,7 +48,7 @@ export class RolesController {
     return this.roleService.updateRole(id, updateRoleDto);
   }
 
-  @Roles(UserRole.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ROOT_ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(':id')
   async deleteRole(@Param('id') id: string): Promise<Role> {

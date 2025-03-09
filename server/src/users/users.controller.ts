@@ -11,11 +11,11 @@ import {
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
-import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
-import { Roles } from '../auth/decorator/roles.decorator';
-import { UserRole } from '../roles/type/userRole';
-import { RolesGuard } from '../auth/guard/roles.guard';
-import { IAuthenticatedRequest } from '../auth/type/IAuthenticatedRequest';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRoleEnum } from '../roles/types/user-role.enum';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { IAuthenticatedRequest } from '../auth/types/authenticated-request.interface';
 
 @Controller('users')
 export class UsersController {
@@ -41,14 +41,14 @@ export class UsersController {
     return this.usersService.remove(req.user.id);
   }
 
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
   async findAll(): Promise<UserResponseDto[]> {
     return this.usersService.findAll();
   }
 
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch(':id')
   async updateById(
@@ -58,7 +58,7 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto);
   }
 
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(':id')
   async removeById(@Param('id') id: string): Promise<UserResponseDto> {

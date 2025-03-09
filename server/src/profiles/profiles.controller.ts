@@ -10,11 +10,11 @@ import {
 import { ProfilesService } from './profiles.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { UserProfile } from '@prisma/client';
-import { Roles } from '../auth/decorator/roles.decorator';
-import { UserRole } from '../roles/type/userRole';
-import { RolesGuard } from '../auth/guard/roles.guard';
-import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
-import { IAuthenticatedRequest } from '../auth/type/IAuthenticatedRequest';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRoleEnum } from '../roles/types/user-role.enum';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { IAuthenticatedRequest } from '../auth/types/authenticated-request.interface';
 
 @Controller('profiles')
 export class ProfilesController {
@@ -34,14 +34,14 @@ export class ProfilesController {
     return this.profilesService.updateByUserId(req.user.id, updateProfileDto);
   }
 
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
   findAll(): Promise<UserProfile[]> {
     return this.profilesService.findAll();
   }
 
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch(':userId')
   updateByUserId(

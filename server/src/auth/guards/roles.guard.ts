@@ -7,8 +7,8 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UserRole } from '../../roles/type/userRole';
-import { IAuthenticatedRequest } from '../type/IAuthenticatedRequest';
+import { UserRoleEnum } from '../../roles/types/user-role.enum';
+import { IAuthenticatedRequest } from '../types/authenticated-request.interface';
 
 @Injectable()
 export class RolesGuard extends JwtAuthGuard implements CanActivate {
@@ -17,7 +17,7 @@ export class RolesGuard extends JwtAuthGuard implements CanActivate {
   }
 
   canActivate(context: ExecutionContext): boolean {
-    const requiredRoles = this.reflector.get<UserRole[]>(
+    const requiredRoles = this.reflector.get<UserRoleEnum[]>(
       'roles',
       context.getHandler(),
     );
@@ -30,7 +30,7 @@ export class RolesGuard extends JwtAuthGuard implements CanActivate {
       .switchToHttp()
       .getRequest<IAuthenticatedRequest>().user;
     if (!user) {
-      throw new UnauthorizedException('User not authenticated');
+      throw new UnauthorizedException();
     }
 
     if (!requiredRoles.includes(user.role)) {

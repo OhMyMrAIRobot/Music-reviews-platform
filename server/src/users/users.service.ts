@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma.service';
 import { UserResponseDto } from './dto/user-response.dto';
 import { plainToClass, plainToInstance } from 'class-transformer';
 import { RolesService } from '../roles/roles.service';
-import { UserWithPasswordResponseDto } from './dto/userWithPassword-response.dto';
+import { UserWithPasswordResponseDto } from './dto/user-with-password-response.dto';
 import { DuplicateFieldException } from '../exceptions/duplicate-field.exception';
 import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
 import { NoDataProvidedException } from '../exceptions/no-data.exception';
@@ -94,13 +94,19 @@ export class UsersService {
   }
 
   async activateUser(id: string): Promise<UserResponseDto> {
-    await this.findOne(id);
+    const user = await this.findOne(id);
 
-    const user = await this.prisma.user.update({
+    if (user.isActive) {
+      throw new ConflictException(
+        `User with id: ${id} doesn't need activation!`,
+      );
+    }
+
+    const updatedUser = await this.prisma.user.update({
       where: { id },
       data: { isActive: true },
     });
 
-    return plainToClass(UserResponseDto, user);
+    return plainToClass(UserResponseDto, updatedUser);
   }
 }
