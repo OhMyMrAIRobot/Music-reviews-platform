@@ -1,12 +1,10 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Role } from '@prisma/client';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
+import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
+import { DuplicateFieldException } from '../exceptions/duplicate-field.exception';
 
 @Injectable()
 export class RolesService {
@@ -18,8 +16,10 @@ export class RolesService {
     });
 
     if (existingRole) {
-      throw new ConflictException(
-        `Role with name: ${createRoleDto.role} already exists!`,
+      throw new DuplicateFieldException(
+        'Role',
+        'name',
+        `${createRoleDto.role}`,
       );
     }
 
@@ -38,7 +38,7 @@ export class RolesService {
     });
 
     if (!role) {
-      throw new NotFoundException(`Role with id: ${id} not found!`);
+      throw new EntityNotFoundException('Role', 'id', `${id}`);
     }
     return role;
   }
@@ -49,20 +49,14 @@ export class RolesService {
     });
 
     if (!role) {
-      throw new NotFoundException(`Role with name: ${name} not found!`);
+      throw new EntityNotFoundException('Role', 'name', `${name}`);
     }
 
     return role;
   }
 
   async updateRole(id: string, updateRoleDto: UpdateRoleDto): Promise<Role> {
-    const existingRole = await this.prisma.role.findUnique({
-      where: { id },
-    });
-
-    if (!existingRole) {
-      throw new NotFoundException(`Role with id: ${id} not found!`);
-    }
+    await this.getRoleById(id);
 
     return this.prisma.role.update({
       where: { id },
@@ -71,13 +65,7 @@ export class RolesService {
   }
 
   async deleteRole(id: string): Promise<Role> {
-    const existingRole = await this.prisma.role.findUnique({
-      where: { id },
-    });
-
-    if (!existingRole) {
-      throw new NotFoundException(`Role with id: ${id} not found!`);
-    }
+    await this.getRoleById(id);
 
     const usersWithRole = await this.prisma.user.count({
       where: { roleId: id },

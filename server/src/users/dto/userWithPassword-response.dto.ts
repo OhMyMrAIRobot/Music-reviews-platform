@@ -17,5 +17,8 @@ export class UserWithPasswordResponseDto {
   roleId: string;
 
   @Expose()
+  createdAt: Date;
+
+  @Expose()
   password: string;
 }

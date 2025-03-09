@@ -1,15 +1,13 @@
-import {
-  BadRequestException,
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma.service';
 import { UserResponseDto } from './dto/user-response.dto';
 import { plainToClass, plainToInstance } from 'class-transformer';
 import { RolesService } from '../roles/roles.service';
 import { UserWithPasswordResponseDto } from './dto/userWithPassword-response.dto';
+import { DuplicateFieldException } from '../exceptions/duplicate-field.exception';
+import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
+import { NoDataProvidedException } from '../exceptions/no-data.exception';
 
 @Injectable()
 export class UsersService {
@@ -27,12 +25,10 @@ export class UsersService {
 
     if (existingUser) {
       if (existingUser.email === email) {
-        throw new ConflictException(`User with email: ${email} already exists`);
+        throw new DuplicateFieldException('User', 'email', `${email}`);
       }
       if (existingUser.nickname === nickname) {
-        throw new ConflictException(
-          `User with nickname: ${nickname} already exists`,
-        );
+        throw new DuplicateFieldException('User', 'nickname', `${nickname}`);
       }
     }
     return;
@@ -40,7 +36,6 @@ export class UsersService {
 
   async findAll(): Promise<UserResponseDto[]> {
     const users = await this.prisma.user.findMany();
-
     return plainToInstance(UserResponseDto, users);
   }
 
@@ -50,7 +45,7 @@ export class UsersService {
     });
 
     if (!user) {
-      throw new NotFoundException(`User with id: ${id} not found!`);
+      throw new EntityNotFoundException('User', 'id', `${id}`);
     }
 
     return plainToClass(UserResponseDto, user);
@@ -63,6 +58,10 @@ export class UsersService {
       where: { email },
     });
 
+    if (!user) {
+      throw new EntityNotFoundException('User', 'email', `${email}`);
+    }
+
     return plainToInstance(UserWithPasswordResponseDto, user);
   }
 
@@ -70,21 +69,11 @@ export class UsersService {
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<UserResponseDto> {
-    const existingUser = await this.prisma.user.findUnique({
-      where: { id },
-    });
-
-    if (!existingUser) {
-      throw new NotFoundException(`User with id: ${id} not found!`);
-    }
-
     if (!updateUserDto || Object.keys(updateUserDto).length === 0) {
-      throw new BadRequestException('No data provided for update');
+      throw new NoDataProvidedException();
     }
 
-    if (updateUserDto.roleId) {
-      await this.roleService.getRoleById(updateUserDto.roleId);
-    }
+    await this.findOne(id);
 
     const updatedUser = await this.prisma.user.update({
       where: { id },
@@ -95,18 +84,23 @@ export class UsersService {
   }
 
   async remove(id: string): Promise<UserResponseDto> {
-    const existingUser = await this.prisma.user.findUnique({
-      where: { id },
-    });
-
-    if (!existingUser) {
-      throw new NotFoundException(`User with id: ${id} not found!`);
-    }
+    await this.findOne(id);
 
     const deletedUser = await this.prisma.user.delete({
       where: { id },
     });
 
     return plainToClass(UserResponseDto, deletedUser);
+  }
+
+  async activateUser(id: string): Promise<UserResponseDto> {
+    await this.findOne(id);
+
+    const user = await this.prisma.user.update({
+      where: { id },
+      data: { isActive: true },
+    });
+
+    return plainToClass(UserResponseDto, user);
   }
 }

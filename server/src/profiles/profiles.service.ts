@@ -1,7 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { PrismaService } from '../prisma.service';
 import { UserProfile } from '@prisma/client';
+import { NoDataProvidedException } from '../exceptions/no-data.exception';
+import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
 
 @Injectable()
 export class ProfilesService {
@@ -17,7 +19,7 @@ export class ProfilesService {
     });
 
     if (!profile) {
-      throw new NotFoundException(`Profile with user id: ${userId} not found!`);
+      throw new EntityNotFoundException('Profile', 'userId', `${userId}`);
     }
 
     return profile;
@@ -27,13 +29,11 @@ export class ProfilesService {
     userId: string,
     updateProfileDto: UpdateProfileDto,
   ): Promise<UserProfile> {
-    const existingProfile = await this.prisma.userProfile.findUnique({
-      where: { userId },
-    });
-
-    if (!existingProfile) {
-      throw new NotFoundException(`Profile with user id: ${userId} not found!`);
+    if (!updateProfileDto || Object.keys(updateProfileDto).length === 0) {
+      throw new NoDataProvidedException();
     }
+
+    await this.findByUserId(userId);
 
     return this.prisma.userProfile.update({
       where: { userId },
