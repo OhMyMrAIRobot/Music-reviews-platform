@@ -1,11 +1,6 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JsonWebTokenError, JwtService, TokenExpiredError } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
 import { UserResponseDto } from '../users/dto/user-response.dto';
 import { IJwtAuthPayload } from './types/jwt-auth-payload.interface';
 import { LoginDto } from './dto/login.dto';
@@ -13,10 +8,14 @@ import { RegisterDto } from './dto/register.dto';
 import { RolesService } from '../roles/roles.service';
 import { plainToClass } from 'class-transformer';
 import { UserRoleEnum } from '../roles/types/user-role.enum';
-import { PrismaService } from '../prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { InvalidTokenException } from '../exceptions/invalid-token.exception';
 import { IJwtActionPayload } from './types/jwt-action-payload.interface';
 import { JwtActionEnum } from './types/jwt-action.enum';
+import { CodeRequestDto } from './dto/code-request.dto';
+import { UserWithPasswordResponseDto } from '../users/dto/user-with-password-response.dto';
+import { InvalidCredentialsException } from '../exceptions/invalid-credentials.exception';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -28,12 +27,19 @@ export class AuthService {
   ) {}
 
   async validateUser(loginDto: LoginDto): Promise<UserResponseDto> {
-    const user = await this.usersService.findByEmailWithPassword(
-      loginDto.email,
-    );
-    if (!user || !(await bcrypt.compare(loginDto.password, user.password))) {
-      throw new UnauthorizedException('Invalid credentials');
+    const user: UserWithPasswordResponseDto =
+      await this.usersService.findByEmail(loginDto.email, true);
+
+    if (
+      !user ||
+      !(await this.usersService.verifyPassword(
+        loginDto.password,
+        user.password,
+      ))
+    ) {
+      throw new InvalidCredentialsException();
     }
+
     return plainToClass(UserResponseDto, user);
   }
 
@@ -62,7 +68,9 @@ export class AuthService {
       registerDto.nickname,
     );
 
-    const hashedPassword = await bcrypt.hash(registerDto.password, 10);
+    const hashedPassword = await this.usersService.createPasswordHash(
+      registerDto.password,
+    );
     const userRole = await this.rolesService.getRoleByName();
 
     try {
@@ -102,7 +110,6 @@ export class AuthService {
   async activateAccount(token: string) {
     try {
       const { id, type } = this.jwtService.verify<IJwtActionPayload>(token);
-
       if (type !== JwtActionEnum.ACTIVATION) {
         throw new InvalidTokenException();
       }
@@ -126,7 +133,46 @@ export class AuthService {
     return token;
   }
 
-  generateActivationToken(id: string, email: string): string {
+  async sendResetPassword(senSendPasswordCodeDto: CodeRequestDto) {
+    const user: UserResponseDto = await this.usersService.findByEmail(
+      senSendPasswordCodeDto.email,
+    );
+
+    const token = this.generateResetToken(user.id, user.email);
+
+    // send email
+
+    return token;
+  }
+
+  async resetPassword(token: string, resetPasswordDto: ResetPasswordDto) {
+    try {
+      const { id, type } = this.jwtService.verify<IJwtActionPayload>(token);
+      if (type !== JwtActionEnum.RESET_PASSWORD) {
+        throw new InvalidTokenException();
+      }
+
+      await this.usersService.findOne(id);
+
+      resetPasswordDto.password = await this.usersService.createPasswordHash(
+        resetPasswordDto.password,
+      );
+
+      const updatedUser = await this.prisma.user.update({
+        where: { id },
+        data: resetPasswordDto,
+      });
+
+      return this.login(updatedUser);
+    } catch (e) {
+      if (e instanceof TokenExpiredError || e instanceof JsonWebTokenError) {
+        throw new InvalidTokenException();
+      }
+      throw e;
+    }
+  }
+
+  private generateActivationToken(id: string, email: string): string {
     const payload: IJwtActionPayload = {
       id,
       email,
@@ -135,7 +181,7 @@ export class AuthService {
     return this.jwtService.sign(payload, { expiresIn: '1h' });
   }
 
-  generateResetToken(id: string, email: string): string {
+  private generateResetToken(id: string, email: string): string {
     const payload: IJwtActionPayload = {
       id,
       email,

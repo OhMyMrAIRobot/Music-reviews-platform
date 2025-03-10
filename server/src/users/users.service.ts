@@ -1,19 +1,18 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { PrismaService } from '../prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { UserResponseDto } from './dto/user-response.dto';
 import { plainToClass, plainToInstance } from 'class-transformer';
-import { RolesService } from '../roles/roles.service';
 import { UserWithPasswordResponseDto } from './dto/user-with-password-response.dto';
 import { DuplicateFieldException } from '../exceptions/duplicate-field.exception';
 import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
-import { NoDataProvidedException } from '../exceptions/no-data.exception';
+import * as bcrypt from 'bcrypt';
+import { InvalidCredentialsException } from '../exceptions/invalid-credentials.exception';
 
 @Injectable()
 export class UsersService {
   constructor(
-    private prisma: PrismaService,
-    private roleService: RolesService,
+    private prisma: PrismaService
   ) {}
 
   async isUserExists(email: string, nickname: string) {
@@ -39,7 +38,10 @@ export class UsersService {
     return plainToInstance(UserResponseDto, users);
   }
 
-  async findOne(id: string): Promise<UserResponseDto> {
+  async findOne(
+    id: string,
+    includePassword: boolean = false,
+  ): Promise<UserResponseDto | UserWithPasswordResponseDto> {
     const user = await this.prisma.user.findUnique({
       where: { id },
     });
@@ -48,12 +50,15 @@ export class UsersService {
       throw new EntityNotFoundException('User', 'id', `${id}`);
     }
 
-    return plainToClass(UserResponseDto, user);
+    return includePassword
+      ? plainToInstance(UserWithPasswordResponseDto, user)
+      : plainToInstance(UserResponseDto, user);
   }
 
-  async findByEmailWithPassword(
+  async findByEmail(
     email: string,
-  ): Promise<UserWithPasswordResponseDto> {
+    includePassword: boolean = false,
+  ): Promise<UserResponseDto | UserWithPasswordResponseDto> {
     const user = await this.prisma.user.findUnique({
       where: { email },
     });
@@ -62,18 +67,34 @@ export class UsersService {
       throw new EntityNotFoundException('User', 'email', `${email}`);
     }
 
-    return plainToInstance(UserWithPasswordResponseDto, user);
+    return includePassword
+      ? plainToInstance(UserWithPasswordResponseDto, user)
+      : plainToInstance(UserResponseDto, user);
   }
 
   async update(
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<UserResponseDto> {
-    if (!updateUserDto || Object.keys(updateUserDto).length === 0) {
-      throw new NoDataProvidedException();
+    const user: UserWithPasswordResponseDto = await this.findOne(id, true);
+    if (!(await this.verifyPassword(updateUserDto.password, user.password))) {
+      throw new InvalidCredentialsException();
     }
 
-    await this.findOne(id);
+    if (updateUserDto.newPassword) {
+      updateUserDto.password = await this.createPasswordHash(
+        updateUserDto.newPassword,
+      );
+      updateUserDto.newPassword = undefined;
+    } else {
+      updateUserDto.password = user.password;
+    }
+
+    if (updateUserDto.email) {
+      updateUserDto.isActive = false;
+    } else {
+      updateUserDto.isActive = user.isActive;
+    }
 
     const updatedUser = await this.prisma.user.update({
       where: { id },
@@ -108,5 +129,16 @@ export class UsersService {
     });
 
     return plainToClass(UserResponseDto, updatedUser);
+  }
+
+  async verifyPassword(
+    currentPassword: string,
+    storedPassword: string,
+  ): Promise<boolean> {
+    return bcrypt.compare(currentPassword, storedPassword);
+  }
+
+  async createPasswordHash(password: string): Promise<string> {
+    return await bcrypt.hash(password, 10);
   }
 }

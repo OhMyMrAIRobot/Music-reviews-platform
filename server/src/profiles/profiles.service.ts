@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UpdateProfileDto } from './dto/update-profile.dto';
-import { PrismaService } from '../prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { UserProfile } from '@prisma/client';
 import { NoDataProvidedException } from '../exceptions/no-data.exception';
 import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
