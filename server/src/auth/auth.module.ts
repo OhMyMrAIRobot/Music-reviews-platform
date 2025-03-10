@@ -8,6 +8,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { JwtNoActiveStrategy } from './strategies/jwt-no-active.strategy';
 import { UsersModule } from '../users/users.module';
 import { RolesModule } from '../roles/roles.module';
+import { MailsModule } from '../mails/mails.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { RolesModule } from '../roles/roles.module';
       signOptions: { expiresIn: '3600s' },
     }),
     RolesModule,
+    MailsModule,
   ],
   providers: [AuthService, JwtStrategy, JwtNoActiveStrategy, PrismaService],
   controllers: [AuthController],

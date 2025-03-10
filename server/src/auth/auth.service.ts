@@ -55,6 +55,7 @@ export class AuthService {
     const payload: IJwtAuthPayload = {
       id: user.id,
       email: user.email,
+      nickname: user.nickname,
       role: validRole,
       isActive: user.isActive,
     };
@@ -74,7 +75,7 @@ export class AuthService {
     const userRole = await this.rolesService.getRoleByName();
 
     try {
-      const result = await this.prisma.$transaction(async (prisma) => {
+      const user = await this.prisma.$transaction(async (prisma) => {
         const user = await prisma.user.create({
           data: {
             email: registerDto.email,
@@ -88,17 +89,10 @@ export class AuthService {
           data: { userId: user.id },
         });
 
-        return { user };
+        return user;
       });
 
-      const token = this.generateActivationToken(
-        result.user.id,
-        result.user.email,
-      );
-
-      // send email
-
-      return this.login(plainToClass(UserResponseDto, result.user));
+      return this.login(plainToClass(UserResponseDto, user));
     } catch (e) {
       console.log(e);
       throw new InternalServerErrorException(
@@ -125,24 +119,12 @@ export class AuthService {
     }
   }
 
-  async resendActivationCode(user: IJwtAuthPayload) {
-    const token = this.generateActivationToken(user.id, user.email);
-
-    // send email
-
-    return token;
-  }
-
-  async sendResetPassword(senSendPasswordCodeDto: CodeRequestDto) {
+  async checkUserAndGetResetToken(codeRequestDto: CodeRequestDto) {
     const user: UserResponseDto = await this.usersService.findByEmail(
-      senSendPasswordCodeDto.email,
+      codeRequestDto.email,
     );
-
     const token = this.generateResetToken(user.id, user.email);
-
-    // send email
-
-    return token;
+    return { user, token };
   }
 
   async resetPassword(token: string, resetPasswordDto: ResetPasswordDto) {
@@ -172,7 +154,7 @@ export class AuthService {
     }
   }
 
-  private generateActivationToken(id: string, email: string): string {
+  generateActivationToken(id: string, email: string): string {
     const payload: IJwtActionPayload = {
       id,
       email,

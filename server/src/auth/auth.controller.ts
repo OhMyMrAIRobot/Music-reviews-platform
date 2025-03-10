@@ -13,14 +13,36 @@ import { IAuthenticatedRequest } from './types/authenticated-request.interface';
 import { JwtAuthNoActiveGuard } from './guards/jwt-auth-no-active.guard';
 import { CodeRequestDto } from './dto/code-request.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { MailsService } from '../mails/mails.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly mailsService: MailsService,
+  ) {}
 
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
-    return this.authService.register(registerDto);
+    const result = await this.authService.register(registerDto);
+    const activationToken = this.authService.generateActivationToken(
+      result.user.id,
+      result.user.email,
+    );
+
+    let emailSent = true;
+    try {
+      await this.mailsService.sendRegistrationEmail(
+        result.user.email,
+        result.user.nickname,
+        activationToken,
+      );
+    } catch (e) {
+      emailSent = false;
+      console.log(e);
+    }
+
+    return { ...result, emailSent: emailSent };
   }
 
   @Post('login')
@@ -37,12 +59,43 @@ export class AuthController {
   @UseGuards(JwtAuthNoActiveGuard)
   @Post('resend-activation')
   async resendActivationCode(@Request() req: IAuthenticatedRequest) {
-    return this.authService.resendActivationCode(req.user);
+    const { user } = req;
+    const activationToken = this.authService.generateActivationToken(
+      user.id,
+      user.email,
+    );
+    let emailSent = true;
+    try {
+      await this.mailsService.sendActivationEmail(
+        user.email,
+        user.nickname,
+        activationToken,
+      );
+    } catch (e) {
+      emailSent = false;
+      console.log(e);
+    }
+    return { emailSent };
   }
 
   @Post('send-reset-password')
-  async sendResetPasswordCode(@Body() senSendPasswordCodeDto: CodeRequestDto) {
-    return this.authService.sendResetPassword(senSendPasswordCodeDto);
+  async sendResetPasswordCode(@Body() codeRequestDto: CodeRequestDto) {
+    const userWithResetToken =
+      await this.authService.checkUserAndGetResetToken(codeRequestDto);
+
+    let emailSent = true;
+    try {
+      await this.mailsService.sendResetPasswordEmail(
+        userWithResetToken.user.email,
+        userWithResetToken.user.nickname,
+        userWithResetToken.token,
+      );
+    } catch (e) {
+      emailSent = false;
+      console.log(e);
+    }
+
+    return { emailSent };
   }
 
   @Post('reset-password')
