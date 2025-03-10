@@ -44,7 +44,7 @@ export class AuthService {
   }
 
   async login(user: UserResponseDto) {
-    const role = await this.rolesService.getRoleById(user.roleId);
+    const role = await this.rolesService.findById(user.roleId);
 
     const validRole = Object.values(UserRoleEnum).includes(
       role.role as UserRoleEnum,
@@ -72,7 +72,7 @@ export class AuthService {
     const hashedPassword = await this.usersService.createPasswordHash(
       registerDto.password,
     );
-    const userRole = await this.rolesService.getRoleByName();
+    const userRole = await this.rolesService.findByName();
 
     try {
       const user = await this.prisma.$transaction(async (prisma) => {

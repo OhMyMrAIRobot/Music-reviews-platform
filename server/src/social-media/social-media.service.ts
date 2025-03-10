@@ -50,7 +50,10 @@ export class SocialMediaService {
     id: string,
     updateSocialMediaDto: UpdateSocialMediaDto,
   ): Promise<SocialMedia> {
-    if (!updateSocialMediaDto || Object.keys(updateSocialMediaDto).length === 0) {
+    if (
+      !updateSocialMediaDto ||
+      Object.keys(updateSocialMediaDto).length === 0
+    ) {
       throw new NoDataProvidedException();
     }
 

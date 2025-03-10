@@ -4,8 +4,8 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
-  Put,
   UseGuards,
 } from '@nestjs/common';
 import { RolesService } from './roles.service';
@@ -23,35 +23,35 @@ export class RolesController {
 
   @Get()
   async getRoles(): Promise<Role[]> {
-    return this.roleService.getRoles();
+    return this.roleService.findAll();
   }
 
   @Get(':id')
   async getRoleById(@Param('id') id: string): Promise<Role> {
-    return this.roleService.getRoleById(id);
+    return this.roleService.findById(id);
   }
 
   @Roles(UserRoleEnum.ROOT_ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   async createRole(@Body() createRoleDto: CreateRoleDto): Promise<Role> {
-    return this.roleService.createRole(createRoleDto);
+    return this.roleService.create(createRoleDto);
   }
 
   @Roles(UserRoleEnum.ROOT_ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Put(':id')
+  @Patch(':id')
   async updateRole(
     @Param('id') id: string,
     @Body() updateRoleDto: UpdateRoleDto,
   ): Promise<Role> {
-    return this.roleService.updateRole(id, updateRoleDto);
+    return this.roleService.update(id, updateRoleDto);
   }
 
   @Roles(UserRoleEnum.ROOT_ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(':id')
   async deleteRole(@Param('id') id: string): Promise<Role> {
-    return this.roleService.deleteRole(id);
+    return this.roleService.remove(id);
   }
 }

@@ -1,7 +1,4 @@
-import { IsString, Length } from 'class-validator';
+import { PartialType } from '@nestjs/mapped-types';
+import { CreateRoleDto } from './create-role.dto';
 
-export class UpdateRoleDto {
-  @IsString()
-  @Length(1, 40)
-  newRole: string;
-}
+export class UpdateRoleDto extends PartialType(CreateRoleDto) {}

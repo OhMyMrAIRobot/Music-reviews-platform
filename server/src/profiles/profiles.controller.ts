@@ -34,14 +34,14 @@ export class ProfilesController {
     return this.profilesService.updateByUserId(req.user.id, updateProfileDto);
   }
 
-  @Roles(UserRoleEnum.ADMIN)
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
   findAll(): Promise<UserProfile[]> {
     return this.profilesService.findAll();
   }
 
-  @Roles(UserRoleEnum.ADMIN)
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch(':userId')
   updateByUserId(
