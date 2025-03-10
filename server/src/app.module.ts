@@ -5,9 +5,10 @@ import { AuthModule } from './auth/auth.module';
 import { RolesModule } from './roles/roles.module';
 import { ProfilesModule } from './profiles/profiles.module';
 import { MailsModule } from './mails/mails.module';
+import { SocialMediaModule } from './social-media/social-media.module';
 
 @Module({
-  imports: [UsersModule, AuthModule, RolesModule, ProfilesModule, MailsModule],
+  imports: [UsersModule, AuthModule, RolesModule, ProfilesModule, MailsModule, SocialMediaModule],
   controllers: [],
   providers: [PrismaService],
 })
