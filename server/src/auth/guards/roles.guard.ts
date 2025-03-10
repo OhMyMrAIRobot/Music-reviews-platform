@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { UserRoleEnum } from '../../roles/types/user-role.enum';
 import { IAuthenticatedRequest } from '../types/authenticated-request.interface';
+import { InsufficientPermissionsException } from '../../exceptions/insufficient-permissions.exception';
 
 @Injectable()
 export class RolesGuard extends JwtAuthGuard implements CanActivate {
@@ -34,9 +35,7 @@ export class RolesGuard extends JwtAuthGuard implements CanActivate {
     }
 
     if (!requiredRoles.includes(user.role)) {
-      throw new ForbiddenException(
-        'You do not have permission to access this resource',
-      );
+      throw new InsufficientPermissionsException();
     }
 
     return true;

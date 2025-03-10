@@ -48,30 +48,30 @@ model UserProfile {
   userId String @unique @map("user_id")
   user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  socialMedia UserSocialMedia[]
+  socialMedia ProfileSocialMedia[]
 
   @@map("User_profiles")
 }
 
 model SocialMedia {
-  id   String @id @default(cuid())
+  id String @id @default(cuid())
   name String @unique @db.VarChar(40)
 
-  users UserSocialMedia[]
+  profiles ProfileSocialMedia[]
 
   @@map("Social_media")
 }
 
-model UserSocialMedia {
-  id         String @id @default(cuid())
-  userId     String
-  socialId   String
-  url        String @db.VarChar(255)
+model ProfileSocialMedia {
+  id String @id @default(cuid())
+  profileId String @map("profile_id")
+  socialId String @map("social_id")
+  url String @db.VarChar(255)
 
-  user       UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  profile    UserProfile @relation(fields: [profileId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   social     SocialMedia @relation(fields: [socialId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  @@unique([userId, socialId])
-  @@map("User_social_media")
+  @@unique([profileId, socialId])
+  @@map("Profile_social_media")
 }
 
