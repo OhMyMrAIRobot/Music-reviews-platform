@@ -1,21 +1,21 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
 import { JsonWebTokenError, JwtService, TokenExpiredError } from '@nestjs/jwt';
-import { UserResponseDto } from '../users/dto/user-response.dto';
-import { IJwtAuthPayload } from './types/jwt-auth-payload.interface';
-import { LoginDto } from './dto/login.dto';
-import { RegisterDto } from './dto/register.dto';
-import { RolesService } from '../roles/roles.service';
 import { plainToClass } from 'class-transformer';
-import { UserRoleEnum } from '../roles/types/user-role.enum';
-import { PrismaService } from '../../prisma/prisma.service';
-import { InvalidTokenException } from '../exceptions/invalid-token.exception';
-import { IJwtActionPayload } from './types/jwt-action-payload.interface';
-import { JwtActionEnum } from './types/jwt-action.enum';
-import { CodeRequestDto } from './dto/code-request.dto';
-import { UserWithPasswordResponseDto } from '../users/dto/user-with-password-response.dto';
-import { InvalidCredentialsException } from '../exceptions/invalid-credentials.exception';
-import { ResetPasswordDto } from './dto/reset-password.dto';
+import { PrismaService } from '../../../prisma/prisma.service';
+import { InvalidCredentialsException } from '../../exceptions/invalid-credentials.exception';
+import { InvalidTokenException } from '../../exceptions/invalid-token.exception';
+import { RolesService } from '../../roles/roles.service';
+import { UserRoleEnum } from '../../roles/types/user-role.enum';
+import { UserResponseDto } from '../../users/dto/user-response.dto';
+import { UserWithPasswordResponseDto } from '../../users/dto/user-with-password-response.dto';
+import { UsersService } from '../../users/users.service';
+import { LoginDto } from '../dto/login.dto';
+import { RegisterDto } from '../dto/register.dto';
+import { ResetPasswordDto } from '../dto/reset-password.dto';
+import { IJwtActionPayload } from '../types/jwt-action-payload.interface';
+import { JwtActionEnum } from '../types/jwt-action.enum';
+import { IJwtAuthPayload } from '../types/jwt-auth-payload.interface';
+import { TokensService } from './tokens.service';
 
 @Injectable()
 export class AuthService {
@@ -23,6 +23,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly rolesService: RolesService,
+    private readonly tokensService: TokensService,
     private readonly prisma: PrismaService,
   ) {}
 
@@ -60,7 +61,9 @@ export class AuthService {
       isActive: user.isActive,
     };
 
-    return { access_token: this.jwtService.sign(payload), user: user };
+    const tokens = this.tokensService.generateAuthTokens(payload);
+
+    return { user: user, accessToken: tokens.accessToken };
   }
 
   async register(registerDto: RegisterDto) {
@@ -119,14 +122,6 @@ export class AuthService {
     }
   }
 
-  async checkUserAndGetResetToken(codeRequestDto: CodeRequestDto) {
-    const user: UserResponseDto = await this.usersService.findByEmail(
-      codeRequestDto.email,
-    );
-    const token = this.generateResetToken(user.id, user.email);
-    return { user, token };
-  }
-
   async resetPassword(token: string, resetPasswordDto: ResetPasswordDto) {
     try {
       const { id, type } = this.jwtService.verify<IJwtActionPayload>(token);
@@ -152,23 +147,5 @@ export class AuthService {
       }
       throw e;
     }
-  }
-
-  generateActivationToken(id: string, email: string): string {
-    const payload: IJwtActionPayload = {
-      id,
-      email,
-      type: JwtActionEnum.ACTIVATION,
-    };
-    return this.jwtService.sign(payload, { expiresIn: '1h' });
-  }
-
-  private generateResetToken(id: string, email: string): string {
-    const payload: IJwtActionPayload = {
-      id,
-      email,
-      type: JwtActionEnum.RESET_PASSWORD,
-    };
-    return this.jwtService.sign(payload, { expiresIn: '15m' });
   }
 }
