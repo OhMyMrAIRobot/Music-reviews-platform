@@ -79,6 +79,18 @@ export class AuthController {
     return res.status(200).send(result);
   }
 
+  @Post('logout')
+  async logout(@Req() req: IRequestWithCookies, @Res() res: Response) {
+    const refreshToken = req.cookies['refreshToken'];
+
+    if (!refreshToken) {
+      return res.status(401).send('Refresh token not found');
+    }
+
+    await this.authService.logout(res, refreshToken);
+    return res.status(200).send();
+  }
+
   @UseGuards(JwtAuthNoActiveGuard)
   @Post('resend-activation')
   async resendActivationCode(@Request() req: IAuthenticatedRequest) {

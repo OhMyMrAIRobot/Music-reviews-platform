@@ -69,12 +69,20 @@ export class AuthService {
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: true,
+      secure: false,
       sameSite: 'strict',
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
     return { user, accessToken: tokens.accessToken, refreshToken };
+  }
+
+  async logout(res: Response, refreshToken: string) {
+    const decodedToken = this.tokensService.decodeRefreshToken(refreshToken);
+
+    await this.tokensService.deleteRefreshToken(decodedToken.id);
+
+    res.clearCookie('refreshToken', { httpOnly: true, secure: false });
   }
 
   async refresh(res: Response, refreshToken: string) {
