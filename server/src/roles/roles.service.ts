@@ -1,11 +1,12 @@
 import { ConflictException, Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
 import { Role } from '@prisma/client';
+import { PrismaService } from '../../prisma/prisma.service';
+import { DuplicateFieldException } from '../exceptions/duplicate-field.exception';
+import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
+import { NoDataProvidedException } from '../exceptions/no-data.exception';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
-import { DuplicateFieldException } from '../exceptions/duplicate-field.exception';
-import { NoDataProvidedException } from '../exceptions/no-data.exception';
+import { UserRoleEnum } from './types/user-role.enum';
 
 @Injectable()
 export class RolesService {
@@ -83,5 +84,11 @@ export class RolesService {
     return this.prisma.role.delete({
       where: { id },
     });
+  }
+
+  getValidRole(role: string) {
+    return Object.values(UserRoleEnum).includes(role as UserRoleEnum)
+      ? (role as UserRoleEnum)
+      : UserRoleEnum.USER;
   }
 }

@@ -4,6 +4,7 @@ import { RefreshToken } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'prisma/prisma.service';
 import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
+import { InvalidTokenException } from 'src/exceptions/invalid-token.exception';
 import { IJwtActionPayload } from '../types/jwt-action-payload.interface';
 import { JwtActionEnum } from '../types/jwt-action.enum';
 import { IJwtAuthPayload } from '../types/jwt-auth-payload.interface';
@@ -35,7 +36,10 @@ export class TokensService {
       email,
       type: JwtActionEnum.ACTIVATION,
     };
-    return this.jwtService.sign(payload, { expiresIn: '1h' });
+    return this.jwtService.sign(payload, {
+      secret: process.env.JWT_ACTION_SECRET,
+      expiresIn: '1h',
+    });
   }
 
   generateResetToken(id: string, email: string): string {
@@ -44,7 +48,38 @@ export class TokensService {
       email,
       type: JwtActionEnum.RESET_PASSWORD,
     };
-    return this.jwtService.sign(payload, { expiresIn: '15m' });
+    return this.jwtService.sign(payload, {
+      secret: process.env.JWT_ACTION_SECRET,
+      expiresIn: '15min',
+    });
+  }
+
+  decodeActionToken(token: string, type: JwtActionEnum): IJwtActionPayload {
+    try {
+      const decodedToken = this.jwtService.verify<IJwtActionPayload>(token, {
+        secret: process.env.JWT_ACTION_SECRET,
+      });
+
+      if (decodedToken.type !== type) {
+        throw new InvalidTokenException();
+      }
+
+      return decodedToken;
+    } catch (e) {
+      throw new InvalidTokenException();
+      console.log(e);
+    }
+  }
+
+  decodeRefreshToken(token: string): IJwtAuthPayload {
+    try {
+      return this.jwtService.verify<IJwtAuthPayload>(token, {
+        secret: process.env.JWT_REFRESH_SECRET,
+      });
+    } catch (e) {
+      throw new InvalidTokenException();
+      console.log(e);
+    }
   }
 
   async saveRefreshToken(
@@ -65,6 +100,18 @@ export class TokensService {
     });
 
     return refreshToken;
+  }
+
+  async getStoredRefreshToken(userId: string): Promise<RefreshToken> {
+    const token = await this.prisma.refreshToken.findUnique({
+      where: { userId },
+    });
+
+    if (!token) {
+      throw new EntityNotFoundException('Refresh token', 'userId', `${userId}`);
+    }
+
+    return token;
   }
 
   async deleteRefreshToken(userId: string): Promise<RefreshToken> {

@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
 import { ProfileSocialMedia } from '@prisma/client';
-import { CreateProfileSocialMediaDto } from './dto/create-profile-social-media.dto';
+import { PrismaService } from '../../../prisma/prisma.service';
+import { DuplicateFieldException } from '../../exceptions/duplicate-field.exception';
+import { EntityNotFoundException } from '../../exceptions/entity-not-found.exception';
+import { InsufficientPermissionsException } from '../../exceptions/insufficient-permissions.exception';
+import { NoDataProvidedException } from '../../exceptions/no-data.exception';
+import { SocialMediaService } from '../../social-media/social-media.service';
+import { CreateProfileSocialMediaDto } from '../dto/create-profile-social-media.dto';
+import { UpdateProfileSocialMediaDto } from '../dto/update-profile-social-media.dto';
 import { ProfilesService } from './profiles.service';
-import { SocialMediaService } from '../social-media/social-media.service';
-import { DuplicateFieldException } from '../exceptions/duplicate-field.exception';
-import { UpdateProfileSocialMediaDto } from './dto/update-profile-social-media.dto';
-import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
-import { NoDataProvidedException } from '../exceptions/no-data.exception';
-import { InsufficientPermissionsException } from '../exceptions/insufficient-permissions.exception';
 
 @Injectable()
 export class ProfileSocialMediaService {

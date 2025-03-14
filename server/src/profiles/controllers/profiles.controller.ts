@@ -7,14 +7,14 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { ProfilesService } from './profiles.service';
-import { UpdateProfileDto } from './dto/update-profile.dto';
 import { UserProfile } from '@prisma/client';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { UserRoleEnum } from '../roles/types/user-role.enum';
-import { RolesGuard } from '../auth/guards/roles.guard';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { IAuthenticatedRequest } from '../auth/types/authenticated-request.interface';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { IAuthenticatedRequest } from '../../auth/types/authenticated-request.interface';
+import { UserRoleEnum } from '../../roles/types/user-role.enum';
+import { UpdateProfileDto } from '../dto/update-profile.dto';
+import { ProfilesService } from '../services/profiles.service';
 
 @Controller('profiles')
 export class ProfilesController {

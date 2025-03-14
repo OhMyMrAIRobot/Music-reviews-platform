@@ -1,6 +1,6 @@
-import { IJwtAuthPayload } from '../types/jwt-auth-payload.interface';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import { IJwtAuthPayload } from '../types/jwt-auth-payload.interface';
 
 export class JwtNoActiveStrategy extends PassportStrategy(
   Strategy,
@@ -10,7 +10,7 @@ export class JwtNoActiveStrategy extends PassportStrategy(
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: process.env.JWT_SECRET || 'secret',
+      secretOrKey: process.env.JWT_ACCESS_SECRET || 'secret',
     });
   }
 

@@ -3,9 +3,12 @@ import {
   Controller,
   Post,
   Query,
+  Req,
   Request,
+  Res,
   UseGuards,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { UsersService } from 'src/users/users.service';
 import { MailsService } from '../mails/mails.service';
 import { CodeRequestDto } from './dto/code-request.dto';
@@ -13,9 +16,10 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { JwtAuthNoActiveGuard } from './guards/jwt-auth-no-active.guard';
-import { AuthService } from './service/auth.service';
-import { TokensService } from './service/tokens.service';
+import { AuthService } from './services/auth.service';
+import { TokensService } from './services/tokens.service';
 import { IAuthenticatedRequest } from './types/authenticated-request.interface';
+import { IRequestWithCookies } from './types/request-cookies.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -27,8 +31,8 @@ export class AuthController {
   ) {}
 
   @Post('register')
-  async register(@Body() registerDto: RegisterDto) {
-    const result = await this.authService.register(registerDto);
+  async register(@Res() res: Response, @Body() registerDto: RegisterDto) {
+    const result = await this.authService.register(res, registerDto);
     const activationToken = this.tokensService.generateActivationToken(
       result.user.id,
       result.user.email,
@@ -46,18 +50,33 @@ export class AuthController {
       console.log(e);
     }
 
-    return { ...result, emailSent: emailSent };
+    return res.status(200).send({ ...result, emailSent: emailSent });
   }
 
   @Post('login')
-  async login(@Body() loginDto: LoginDto) {
+  async login(@Res() res: Response, @Body() loginDto: LoginDto) {
     const user = await this.authService.validateUser(loginDto);
-    return this.authService.login(user);
+    const result = await this.authService.login(res, user);
+    return res.status(200).send(result);
   }
 
   @Post('activate')
-  async activate(@Query('token') token: string) {
-    return this.authService.activateAccount(token);
+  async activate(@Res() res: Response, @Query('token') token: string) {
+    const result = await this.authService.activateAccount(res, token);
+    res.status(200).send(result);
+  }
+
+  @Post('refresh')
+  async refresh(@Req() req: IRequestWithCookies, @Res() res: Response) {
+    const refreshToken = req.cookies['refreshToken'];
+
+    if (!refreshToken) {
+      return res.status(401).send('Refresh token not found');
+    }
+
+    const result = await this.authService.refresh(res, refreshToken);
+
+    return res.status(200).send(result);
   }
 
   @UseGuards(JwtAuthNoActiveGuard)
@@ -108,9 +127,15 @@ export class AuthController {
 
   @Post('reset-password')
   async resetPassword(
+    @Res() res: Response,
     @Query('token') token: string,
     @Body() resetPasswordDto: ResetPasswordDto,
   ) {
-    return this.authService.resetPassword(token, resetPasswordDto);
+    const result = await this.authService.resetPassword(
+      res,
+      token,
+      resetPasswordDto,
+    );
+    res.status(200).send(result);
   }
 }

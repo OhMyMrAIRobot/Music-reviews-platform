@@ -6,8 +6,8 @@ import { MailsModule } from '../mails/mails.module';
 import { RolesModule } from '../roles/roles.module';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
-import { AuthService } from './service/auth.service';
-import { TokensService } from './service/tokens.service';
+import { AuthService } from './services/auth.service';
+import { TokensService } from './services/tokens.service';
 import { JwtNoActiveStrategy } from './strategies/jwt-no-active.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 

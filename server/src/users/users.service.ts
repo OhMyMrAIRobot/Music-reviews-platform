@@ -1,19 +1,17 @@
 import { ConflictException, Injectable } from '@nestjs/common';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { PrismaService } from '../../prisma/prisma.service';
-import { UserResponseDto } from './dto/user-response.dto';
+import * as bcrypt from 'bcrypt';
 import { plainToClass, plainToInstance } from 'class-transformer';
-import { UserWithPasswordResponseDto } from './dto/user-with-password-response.dto';
+import { PrismaService } from '../../prisma/prisma.service';
 import { DuplicateFieldException } from '../exceptions/duplicate-field.exception';
 import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
-import * as bcrypt from 'bcrypt';
 import { InvalidCredentialsException } from '../exceptions/invalid-credentials.exception';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserResponseDto } from './dto/user-response.dto';
+import { UserWithPasswordResponseDto } from './dto/user-with-password-response.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    private prisma: PrismaService
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async isUserExists(email: string, nickname: string) {
     const existingUser = await this.prisma.user.findFirst({

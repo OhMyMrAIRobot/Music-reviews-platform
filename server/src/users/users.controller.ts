@@ -6,23 +6,29 @@ import {
   Param,
   Patch,
   Request,
+  Res,
   UseGuards,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { Response } from 'express';
+import { TokensService } from 'src/auth/services/tokens.service';
+import { MailsService } from 'src/mails/mails.service';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { AuthService } from '../auth/services/auth.service';
+import { IAuthenticatedRequest } from '../auth/types/authenticated-request.interface';
+import { UserRoleEnum } from '../roles/types/user-role.enum';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { UserRoleEnum } from '../roles/types/user-role.enum';
-import { RolesGuard } from '../auth/guards/roles.guard';
-import { IAuthenticatedRequest } from '../auth/types/authenticated-request.interface';
-import { AuthService } from '../auth/auth.service';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly authService: AuthService,
+    private readonly tokensService: TokensService,
+    private readonly mailsService: MailsService,
   ) {}
 
   @Get(':id')
@@ -33,11 +39,32 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Patch()
   async update(
+    @Res() res: Response,
     @Request() req: IAuthenticatedRequest,
     @Body() updateUserDto: UpdateUserDto,
   ) {
     const user = await this.usersService.update(req.user.id, updateUserDto);
-    return this.authService.login(user);
+    const result = await this.authService.login(res, user);
+
+    let emailSent = true;
+    if (!user.isActive) {
+      const activationToken = this.tokensService.generateActivationToken(
+        user.id,
+        user.email,
+      );
+      try {
+        await this.mailsService.sendActivationEmail(
+          user.email,
+          user.nickname,
+          activationToken,
+        );
+      } catch (e) {
+        emailSent = false;
+        console.log(e);
+      }
+    }
+
+    return res.status(200).send({ ...result, emailSent });
   }
 
   @UseGuards(JwtAuthGuard)

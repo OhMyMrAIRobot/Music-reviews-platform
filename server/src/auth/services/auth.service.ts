@@ -1,18 +1,21 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { JsonWebTokenError, JwtService, TokenExpiredError } from '@nestjs/jwt';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 import { plainToClass } from 'class-transformer';
+import { Response } from 'express';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { InvalidCredentialsException } from '../../exceptions/invalid-credentials.exception';
-import { InvalidTokenException } from '../../exceptions/invalid-token.exception';
 import { RolesService } from '../../roles/roles.service';
-import { UserRoleEnum } from '../../roles/types/user-role.enum';
 import { UserResponseDto } from '../../users/dto/user-response.dto';
 import { UserWithPasswordResponseDto } from '../../users/dto/user-with-password-response.dto';
 import { UsersService } from '../../users/users.service';
 import { LoginDto } from '../dto/login.dto';
 import { RegisterDto } from '../dto/register.dto';
 import { ResetPasswordDto } from '../dto/reset-password.dto';
-import { IJwtActionPayload } from '../types/jwt-action-payload.interface';
 import { JwtActionEnum } from '../types/jwt-action.enum';
 import { IJwtAuthPayload } from '../types/jwt-auth-payload.interface';
 import { TokensService } from './tokens.service';
@@ -44,14 +47,10 @@ export class AuthService {
     return plainToClass(UserResponseDto, user);
   }
 
-  async login(user: UserResponseDto) {
+  async login(res: Response, user: UserResponseDto) {
     const role = await this.rolesService.findById(user.roleId);
 
-    const validRole = Object.values(UserRoleEnum).includes(
-      role.role as UserRoleEnum,
-    )
-      ? (role.role as UserRoleEnum)
-      : UserRoleEnum.USER;
+    const validRole = this.rolesService.getValidRole(role.role);
 
     const payload: IJwtAuthPayload = {
       id: user.id,
@@ -63,10 +62,37 @@ export class AuthService {
 
     const tokens = this.tokensService.generateAuthTokens(payload);
 
-    return { user: user, accessToken: tokens.accessToken };
+    const refreshToken = await this.tokensService.saveRefreshToken(
+      user.id,
+      tokens.refreshToken,
+    );
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
+
+    return { user, accessToken: tokens.accessToken, refreshToken };
   }
 
-  async register(registerDto: RegisterDto) {
+  async refresh(res: Response, refreshToken: string) {
+    const decodedToken = this.tokensService.decodeRefreshToken(refreshToken);
+
+    const savedToken = await this.tokensService.getStoredRefreshToken(
+      decodedToken.id,
+    );
+
+    if (!(await bcrypt.compare(refreshToken, savedToken.tokenHash))) {
+      throw new UnauthorizedException();
+    }
+
+    const user = await this.usersService.findOne(decodedToken.id);
+    return this.login(res, plainToClass(UserResponseDto, user));
+  }
+
+  async register(res: Response, registerDto: RegisterDto) {
     await this.usersService.isUserExists(
       registerDto.email,
       registerDto.nickname,
@@ -95,7 +121,7 @@ export class AuthService {
         return user;
       });
 
-      return this.login(plainToClass(UserResponseDto, user));
+      return this.login(res, plainToClass(UserResponseDto, user));
     } catch (e) {
       console.log(e);
       throw new InternalServerErrorException(
@@ -104,48 +130,38 @@ export class AuthService {
     }
   }
 
-  async activateAccount(token: string) {
-    try {
-      const { id, type } = this.jwtService.verify<IJwtActionPayload>(token);
-      if (type !== JwtActionEnum.ACTIVATION) {
-        throw new InvalidTokenException();
-      }
+  async activateAccount(res: Response, token: string) {
+    const { id } = this.tokensService.decodeActionToken(
+      token,
+      JwtActionEnum.ACTIVATION,
+    );
 
-      const user = await this.usersService.activateUser(id);
+    const user = await this.usersService.activateUser(id);
 
-      return this.login(user);
-    } catch (e) {
-      if (e instanceof TokenExpiredError || e instanceof JsonWebTokenError) {
-        throw new InvalidTokenException();
-      }
-      throw e;
-    }
+    return this.login(res, user);
   }
 
-  async resetPassword(token: string, resetPasswordDto: ResetPasswordDto) {
-    try {
-      const { id, type } = this.jwtService.verify<IJwtActionPayload>(token);
-      if (type !== JwtActionEnum.RESET_PASSWORD) {
-        throw new InvalidTokenException();
-      }
+  async resetPassword(
+    res: Response,
+    token: string,
+    resetPasswordDto: ResetPasswordDto,
+  ) {
+    const { id } = this.tokensService.decodeActionToken(
+      token,
+      JwtActionEnum.RESET_PASSWORD,
+    );
 
-      await this.usersService.findOne(id);
+    await this.usersService.findOne(id);
 
-      resetPasswordDto.password = await this.usersService.createPasswordHash(
-        resetPasswordDto.password,
-      );
+    resetPasswordDto.password = await this.usersService.createPasswordHash(
+      resetPasswordDto.password,
+    );
 
-      const updatedUser = await this.prisma.user.update({
-        where: { id },
-        data: resetPasswordDto,
-      });
+    const updatedUser = await this.prisma.user.update({
+      where: { id },
+      data: resetPasswordDto,
+    });
 
-      return this.login(updatedUser);
-    } catch (e) {
-      if (e instanceof TokenExpiredError || e instanceof JsonWebTokenError) {
-        throw new InvalidTokenException();
-      }
-      throw e;
-    }
+    return this.login(res, updatedUser);
   }
 }
