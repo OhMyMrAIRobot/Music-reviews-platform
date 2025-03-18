@@ -1,7 +1,9 @@
+import Header from './components/header/Header'
+
 export function App() {
 	return (
-		<>
-			<p className='text2xl text-amber-500'>123</p>
-		</>
+		<div className='lg:pl-[55px]'>
+			<Header />
+		</div>
 	)
 }
