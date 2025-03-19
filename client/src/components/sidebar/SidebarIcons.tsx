@@ -1,6 +1,6 @@
 import { FC } from 'react'
 
-interface ISvgProps {
+export interface ISvgProps {
 	className: string
 }
 

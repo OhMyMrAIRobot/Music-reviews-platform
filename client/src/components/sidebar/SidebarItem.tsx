@@ -1,9 +1,9 @@
-import React, { FC } from 'react'
+import { FC, ReactNode } from 'react'
 
 export interface ISidebarItemProps {
 	id: string
 	href: string
-	icon: React.ReactNode
+	icon: ReactNode
 	label: string
 }
 

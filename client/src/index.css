@@ -9,9 +9,9 @@
 	font-style: normal;
 
 	color-scheme: light dark;
-	color: rgba(255, 255, 255, 0.87);
-	background-color: #242424;
-	--background-dark: #09090b;
+	color: rgba(255, 255, 255);
+	--background-dark-primary: #09090b;
+	--background-dark-secondary: #242527;
 
 	font-synthesis: none;
 	text-rendering: optimizeLegibility;
@@ -19,8 +19,12 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
-.bg-dark {
-	@apply bg-[var(--background-dark)];
+.bg-primary {
+	@apply bg-[var(--background-dark-primary)];
+}
+
+.bg-secondary {
+	@apply bg-[var(--background-dark-secondary)]/75;
 }
 
 body {

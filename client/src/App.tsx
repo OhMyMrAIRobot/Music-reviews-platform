@@ -1,13 +1,5 @@
-import Header from './components/header/Header'
-import Sidebar from './components/sidebar/Sidebar'
+import MainPage from './pages/MainPage'
 
 export function App() {
-	return (
-		<>
-			<Sidebar />
-			<div className='lg:pl-14'>
-				<Header />
-			</div>
-		</>
-	)
+	return <MainPage />
 }

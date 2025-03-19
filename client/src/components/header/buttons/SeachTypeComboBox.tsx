@@ -68,7 +68,7 @@ const SeachTypeComboBox = () => {
 			</button>
 
 			{isOpen && (
-				<ul className='absolute left-0 mt-2 py-1 px-2 w-full bg-white border border-zinc-700 text-sm font-medium rounded-md shadow-lg bg-dark'>
+				<ul className='absolute left-0 mt-2 py-1 px-2 w-full bg-white border border-zinc-700 text-sm font-medium rounded-md shadow-lg bg-primary'>
 					{searchOptions.map(option => (
 						<li
 							key={option}
