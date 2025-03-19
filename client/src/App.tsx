@@ -1,9 +1,13 @@
 import Header from './components/header/Header'
+import Sidebar from './components/sidebar/Sidebar'
 
 export function App() {
 	return (
-		<div className='lg:pl-[55px]'>
-			<Header />
-		</div>
+		<>
+			<Sidebar />
+			<div className='lg:pl-14'>
+				<Header />
+			</div>
+		</>
 	)
 }

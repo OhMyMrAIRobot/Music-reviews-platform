@@ -8,7 +8,7 @@ import SearchBar from './SearchBar'
 const Header = () => {
 	return (
 		<header className='sticky top-0 z-100 w-full bg-dark border-b border-[#27272A]/40'>
-			<div className='flex mx-auto px-3 lg:px-5 h-16 rounded-xl items-center'>
+			<div className='2xl:container flex mx-auto px-3 lg:px-5 h-16 rounded-xl items-center'>
 				<h1 className='mr-10 shrink-0'>Some application title</h1>
 
 				<SearchBar />

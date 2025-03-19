@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import SeachTypeComboBox from './buttons/SeachTypeCombobox'
+import SeachTypeComboBox from './buttons/SeachTypeComboBox'
 
 const SearchBar = () => {
 	const [searchText, setSearchText] = useState<string>('')

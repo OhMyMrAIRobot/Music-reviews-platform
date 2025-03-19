@@ -61,18 +61,18 @@ const SeachTypeComboBox = () => {
 			<button
 				onClick={() => setIsOpen(!isOpen)}
 				role='combobox'
-				className='flex w-full gap-x-1 h-full items-center pl-3 text-sm font-medium rounded-md border-l border-zinc-700'
+				className='flex w-full gap-x-1 h-full items-center pl-3 text-sm font-medium text-white rounded-md border-l border-zinc-700 cursor-pointer'
 			>
 				<span>{selected}</span>
 				<ArrowBottomSvgIcon />
 			</button>
 
 			{isOpen && (
-				<ul className='absolute left-0 mt-2 px-2 w-full bg-white border border-zinc-700 text-sm font-medium rounded-md shadow-lg bg-dark'>
+				<ul className='absolute left-0 mt-2 py-1 px-2 w-full bg-white border border-zinc-700 text-sm font-medium rounded-md shadow-lg bg-dark'>
 					{searchOptions.map(option => (
 						<li
 							key={option}
-							className='flex items-center gap-x-1 py-2 cursor-pointer text-sm font-medium'
+							className='flex items-center py-2 cursor-pointer text-sm font-medium'
 							onClick={() => {
 								setSelected(option)
 								setIsOpen(false)

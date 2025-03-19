@@ -1,9 +1,12 @@
 @import 'tailwindcss';
 
 :root {
-	font-family: sans-serif;
+	/* font-family: ui-sans-serif, system-ui, sans-serif, Apple Color Emoji,
+		Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji; */
+	font-family: Inter, sans-serif;
+	font-feature-settings: 'liga' 1, 'calt' 1; /* fix for Chrome */
 	line-height: 1.5;
-	font-weight: 400;
+	font-style: normal;
 
 	color-scheme: light dark;
 	color: rgba(255, 255, 255, 0.87);
@@ -17,11 +20,17 @@
 }
 
 .bg-dark {
-	@apply bg-[var(--background-dark)]/60;
+	@apply bg-[var(--background-dark)];
 }
 
 body {
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
+}
+
+@supports (font-variation-settings: normal) {
+	:root {
+		font-family: InterVariable, sans-serif;
+	}
 }
