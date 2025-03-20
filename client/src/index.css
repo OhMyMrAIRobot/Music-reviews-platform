@@ -8,8 +8,8 @@
 	line-height: 1.5;
 	font-style: normal;
 
-	color-scheme: light dark;
 	color: rgba(255, 255, 255);
+	background-color: var(--background-dark-primary);
 	--background-dark-primary: #09090b;
 	--background-dark-secondary: #242527;
 

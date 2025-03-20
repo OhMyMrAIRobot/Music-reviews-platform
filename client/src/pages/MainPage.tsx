@@ -1,3 +1,5 @@
+import AuthContainer from '../components/auth/AuthContainer'
+import LoginForm from '../components/auth/LoginForm'
 import Footer from '../components/footer/Footer'
 import Header from '../components/header/Header'
 import Sidebar from '../components/sidebar/Sidebar'
@@ -6,8 +8,13 @@ const MainPage = () => {
 	return (
 		<>
 			<Sidebar />
-			<div className='lg:pl-14 flex flex-col h-full min-h-screen'>
+			<div className='lg:pl-14 flex flex-col h-full min-h-screen items-center'>
 				<Header />
+				<div className='2xl:container pb-8 mt-5 lg:mt-8 px-4 w-full'>
+					<AuthContainer>
+						<LoginForm />
+					</AuthContainer>
+				</div>
 				<Footer />
 			</div>
 		</>

@@ -28,8 +28,8 @@ const Footer = () => {
 	]
 
 	return (
-		<footer className='p-5 lg:py-10 mt-auto bg-primary'>
-			<div className='2xl:container grid lg:grid-cols-2 items-center gap-4 mx-auto'>
+		<footer className='2xl:container p-5 lg:py-10 mt-auto bg-primary lg:w-full lg:mr-0 mr-auto'>
+			<div className='grid lg:grid-cols-2 items-center gap-4'>
 				<FooterSocialContainer items={footerSocials} />
 				<div className='text-xs lg:text-right lg:text-sm'>
 					<h6 className='opacity-50'>«Some application title» © 2025</h6>
