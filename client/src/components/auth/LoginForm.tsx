@@ -21,7 +21,6 @@ const LoginForm = () => {
 					<AuthInput
 						id={'AuthEmail'}
 						placeholder={'Ваш email'}
-						name={'email'}
 						type={'email'}
 						value={email}
 						setValue={setEmail}
@@ -37,7 +36,6 @@ const LoginForm = () => {
 					<AuthInput
 						id={'AuthPassword'}
 						placeholder={'Ваш пароль'}
-						name={'password'}
 						type={'password'}
 						value={password}
 						setValue={setPassword}
