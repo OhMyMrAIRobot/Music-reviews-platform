@@ -2,6 +2,8 @@ import { useState } from 'react'
 import AuthButton from './AuthButton'
 import AuthInput from './AuthInput'
 import AuthLabel from './AuthLabel'
+import AuthSubTitle from './AuthSubTitle'
+import AuthTitle from './AuthTitle'
 
 const LoginForm = () => {
 	const [email, setEmail] = useState<string>('')
@@ -10,10 +12,8 @@ const LoginForm = () => {
 	return (
 		<div className='grid w-[350px] gap-6'>
 			<div className='grid gap-2 text-center'>
-				<h2 className='text-3xl font-bold select-none'>Вход</h2>
-				<p className='text-balance text-white/50 select-none'>
-					Введите свои данные для входа в аккаунт
-				</p>
+				<AuthTitle title={'Вход'} />
+				<AuthSubTitle title={'Введите свои данные для входа в аккаунт'} />
 			</div>
 			<div className='grid gap-3'>
 				<div className='grid gap-2'>

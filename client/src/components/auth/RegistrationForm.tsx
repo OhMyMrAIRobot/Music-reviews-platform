@@ -3,6 +3,7 @@ import AuthButton from './AuthButton'
 import AuthCheckbox from './AuthCheckbox'
 import AuthInput from './AuthInput'
 import AuthLabel from './AuthLabel'
+import AuthTitle from './AuthTitle'
 
 const RegistrationForm = () => {
 	const [formData, setFormData] = useState({
@@ -50,7 +51,7 @@ const RegistrationForm = () => {
 		linkText: string,
 		linkHref: string
 	) => (
-		<div className='flex items-center space-x-2'>
+		<div className='flex items-center space-x-2 select-none'>
 			<AuthCheckbox
 				checked={formData[id] as boolean}
 				setChecked={value => handleChange(id, value)}
@@ -68,9 +69,7 @@ const RegistrationForm = () => {
 
 	return (
 		<div className='grid w-[350px] gap-2'>
-			<h2 className='text-3xl font-bold text-center mb-4 select-none'>
-				Создать аккаунт
-			</h2>
+			<AuthTitle title={'Создать аккаунт'} className='text-center mb-4' />
 			<div className='grid gap-3'>
 				{renderInput(
 					'email',
@@ -102,7 +101,7 @@ const RegistrationForm = () => {
 					onClick={() => {}}
 				/>
 
-				<div className='flex justify-center items-center font-medium text-sm gap-1 mt-2'>
+				<div className='flex justify-center items-center font-medium text-sm gap-1 mt-2 select-none'>
 					<h6 className=''>Уже есть аккаунт?</h6>
 					<a href='/' className='underline'>
 						Войти
