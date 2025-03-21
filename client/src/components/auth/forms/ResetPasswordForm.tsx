@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import AuthButton from './AuthButton'
-import AuthInput from './AuthInput'
-import AuthLabel from './AuthLabel'
-import AuthSubTitle from './AuthSubTitle'
-import AuthTitle from './AuthTitle'
+import AuthButton from '../components/AuthButton'
+import AuthInput from '../components/AuthInput'
+import AuthLabel from '../components/AuthLabel'
+import AuthSubTitle from '../components/AuthSubTitle'
+import AuthTitle from '../components/AuthTitle'
 
 const ResetPasswordForm = () => {
 	const [formData, setFormData] = useState({

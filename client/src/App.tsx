@@ -1,5 +1,5 @@
-import MainPage from './pages/MainPage'
+import GlobalRoutes from './routes/GlobalRoutes'
 
 export function App() {
-	return <MainPage />
+	return <GlobalRoutes />
 }

@@ -1,3 +1,4 @@
+import UseCustomNavigate from '../../hooks/UseCustomNavigate'
 import BurgerMenuButton from './buttons/BurgerMenuButton'
 import FeedbackButton from './buttons/FeedbackButton'
 import LoginButton from './buttons/LoginButton'
@@ -6,6 +7,8 @@ import RegisterButton from './buttons/RegisterButton'
 import SearchBar from './SearchBar'
 
 const Header = () => {
+	const { navigateToLogin, navigateToRegistration } = UseCustomNavigate()
+
 	return (
 		<header className='sticky top-0 z-100 w-full bg-primary border-b border-[#27272A]/40'>
 			<div className='2xl:container flex mx-auto h-16 rounded-xl items-center p-5'>
@@ -16,13 +19,13 @@ const Header = () => {
 				<div className='ml-auto flex items-center gap-8 max-lg:hidden'>
 					<FeedbackButton />
 					<div className='flex gap-3'>
-						<LoginButton />
-						<RegisterButton />
+						<LoginButton onClick={navigateToLogin} />
+						<RegisterButton onClick={navigateToRegistration} />
 					</div>
 				</div>
 
 				<div className='lg:hidden w-full flex justify-end items-center space-x-1.5'>
-					<LoginIconButton />
+					<LoginIconButton onClick={navigateToLogin} />
 					<BurgerMenuButton />
 				</div>
 			</div>

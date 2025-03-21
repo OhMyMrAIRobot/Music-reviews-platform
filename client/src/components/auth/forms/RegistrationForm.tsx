@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import UseCustomNavigate from '../../../hooks/UseCustomNavigate'
 import AuthButton from '../components/AuthButton'
 import AuthCheckbox from '../components/AuthCheckbox'
 import AuthInput from '../components/AuthInput'
@@ -14,6 +15,8 @@ const RegistrationForm = () => {
 		agreementChecked: false,
 		policyChecked: false,
 	})
+
+	const { navigateToLogin } = UseCustomNavigate()
 
 	const handleChange = (
 		field: keyof typeof formData,
@@ -103,9 +106,12 @@ const RegistrationForm = () => {
 
 				<div className='flex justify-center items-center font-medium text-sm gap-1 mt-2 select-none'>
 					<h6 className=''>Уже есть аккаунт?</h6>
-					<a href='/' className='underline'>
+					<button
+						onClick={navigateToLogin}
+						className='underline cursor-pointer'
+					>
 						Войти
-					</a>
+					</button>
 				</div>
 			</div>
 		</div>

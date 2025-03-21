@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import UseCustomNavigate from '../../../hooks/UseCustomNavigate'
 import AuthButton from '../components/AuthButton'
 import AuthInput from '../components/AuthInput'
 import AuthLabel from '../components/AuthLabel'
@@ -8,6 +9,8 @@ import AuthTitle from '../components/AuthTitle'
 const LoginForm = () => {
 	const [email, setEmail] = useState<string>('')
 	const [password, setPassword] = useState<string>('')
+
+	const { navigateToRegistration, navigateToRequestReset } = UseCustomNavigate()
 
 	return (
 		<div className='grid w-[350px] gap-6'>
@@ -29,9 +32,12 @@ const LoginForm = () => {
 				<div className='grid gap-2'>
 					<div className='flex justify-between items-center select-none'>
 						<AuthLabel name={'Пароль'} htmlFor={'AuthPassword'} />
-						<a className='text-sm font-bold underline' href='/'>
+						<button
+							onClick={navigateToRequestReset}
+							className='text-sm cursor-pointer font-bold underline'
+						>
 							Забыли пароль?
-						</a>
+						</button>
 					</div>
 					<AuthInput
 						id={'AuthPassword'}
@@ -45,7 +51,7 @@ const LoginForm = () => {
 					<AuthButton title={'Войти'} onClick={() => {}} isInvert={true} />
 					<AuthButton
 						title={'Зарегистрироваться'}
-						onClick={() => {}}
+						onClick={navigateToRegistration}
 						isInvert={false}
 					/>
 				</div>
