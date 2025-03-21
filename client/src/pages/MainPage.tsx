@@ -1,5 +1,5 @@
 import AuthContainer from '../components/auth/AuthContainer'
-import RegistrationForm from '../components/auth/RegistrationForm'
+import ReqResetPasswordForm from '../components/auth/ReqResetPasswordForm'
 import Footer from '../components/footer/Footer'
 import Header from '../components/header/Header'
 import Sidebar from '../components/sidebar/Sidebar'
@@ -12,7 +12,7 @@ const MainPage = () => {
 				<Header />
 				<div className='2xl:container pb-8 mt-5 lg:mt-8 px-4 w-full'>
 					<AuthContainer>
-						<RegistrationForm />
+						<ReqResetPasswordForm />
 					</AuthContainer>
 				</div>
 				<Footer />
