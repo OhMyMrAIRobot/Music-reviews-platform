@@ -1,5 +1,5 @@
-import AuthContainer from '../components/auth/AuthContainer'
-import LoginForm from '../components/auth/LoginForm'
+import AuthContainer from '../components/auth/components/AuthContainer'
+import LoginForm from '../components/auth/forms/LoginForm'
 import Footer from '../components/footer/Footer'
 import Header from '../components/header/Header'
 import Sidebar from '../components/sidebar/Sidebar'

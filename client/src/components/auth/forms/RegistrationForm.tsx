@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import AuthButton from './AuthButton'
-import AuthCheckbox from './AuthCheckbox'
-import AuthInput from './AuthInput'
-import AuthLabel from './AuthLabel'
-import AuthTitle from './AuthTitle'
+import AuthButton from '../components/AuthButton'
+import AuthCheckbox from '../components/AuthCheckbox'
+import AuthInput from '../components/AuthInput'
+import AuthLabel from '../components/AuthLabel'
+import AuthTitle from '../components/AuthTitle'
 
 const RegistrationForm = () => {
 	const [formData, setFormData] = useState({
