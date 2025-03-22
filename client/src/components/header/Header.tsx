@@ -1,3 +1,4 @@
+import { observer } from 'mobx-react-lite'
 import UseCustomNavigate from '../../hooks/UseCustomNavigate'
 import BurgerMenuButton from './buttons/BurgerMenuButton'
 import FeedbackButton from './buttons/FeedbackButton'
@@ -6,7 +7,7 @@ import LoginIconButton from './buttons/LoginIconButton'
 import RegisterButton from './buttons/RegisterButton'
 import SearchBar from './SearchBar'
 
-const Header = () => {
+const Header = observer(() => {
 	const { navigateToLogin, navigateToRegistration } = UseCustomNavigate()
 
 	return (
@@ -31,6 +32,6 @@ const Header = () => {
 			</div>
 		</header>
 	)
-}
+})
 
 export default Header
