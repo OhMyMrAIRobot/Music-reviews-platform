@@ -1,16 +1,26 @@
-import { useState } from 'react'
+import { observer } from 'mobx-react-lite'
+import { useEffect, useState } from 'react'
 import UseCustomNavigate from '../../../hooks/UseCustomNavigate'
+import { UseStore } from '../../../hooks/UseStore'
 import AuthButton from '../components/AuthButton'
+import AuthError from '../components/AuthError'
 import AuthInput from '../components/AuthInput'
 import AuthLabel from '../components/AuthLabel'
 import AuthSubTitle from '../components/AuthSubTitle'
 import AuthTitle from '../components/AuthTitle'
 
-const LoginForm = () => {
+const LoginForm = observer(() => {
 	const [email, setEmail] = useState<string>('')
 	const [password, setPassword] = useState<string>('')
 
-	const { navigateToRegistration, navigateToRequestReset } = UseCustomNavigate()
+	const { navigateToMain, navigateToRegistration, navigateToRequestReset } =
+		UseCustomNavigate()
+
+	const { authStore } = UseStore()
+
+	useEffect(() => {
+		authStore.clearErrors()
+	}, [])
 
 	return (
 		<div className='grid w-[350px] gap-6'>
@@ -48,16 +58,33 @@ const LoginForm = () => {
 					/>
 				</div>
 				<div className='grid gap-2'>
-					<AuthButton title={'Войти'} onClick={() => {}} isInvert={true} />
+					<AuthButton
+						title={authStore.isLoading ? 'Загрузка...' : 'Войти'}
+						onClick={() => {
+							authStore.login(email, password).then(() => {
+								if (authStore.isAuth) {
+									navigateToMain()
+								}
+							})
+						}}
+						isInvert={true}
+					/>
 					<AuthButton
 						title={'Зарегистрироваться'}
 						onClick={navigateToRegistration}
 						isInvert={false}
 					/>
 				</div>
+				{authStore.errors && (
+					<div className='grid gap-2'>
+						{authStore.errors.map((error, idx) => (
+							<AuthError key={idx} text={error} />
+						))}
+					</div>
+				)}
 			</div>
 		</div>
 	)
-}
+})
 
 export default LoginForm
