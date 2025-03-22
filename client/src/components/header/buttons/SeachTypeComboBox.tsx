@@ -57,7 +57,10 @@ const SeachTypeComboBox = () => {
 	)
 
 	return (
-		<div ref={comboRef} className='relative inline-block w-[160px]'>
+		<div
+			ref={comboRef}
+			className='relative inline-block w-[160px] bg-primary rounded-md'
+		>
 			<button
 				onClick={() => setIsOpen(!isOpen)}
 				role='combobox'

@@ -10,7 +10,7 @@ const Header = () => {
 	const { navigateToLogin, navigateToRegistration } = UseCustomNavigate()
 
 	return (
-		<header className='sticky top-0 z-100 w-full bg-primary border-b border-[#27272A]/40'>
+		<header className='sticky top-0 z-100 w-full bg-[#09090B]/60 border-b border-[#27272A]/40 backdrop-blur-3xl'>
 			<div className='2xl:container flex mx-auto h-16 rounded-xl items-center p-5'>
 				<h1 className='mr-10 shrink-0'>Some application title</h1>
 

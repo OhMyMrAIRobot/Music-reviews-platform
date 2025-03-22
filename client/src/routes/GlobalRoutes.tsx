@@ -1,14 +1,12 @@
-import { Route, Routes } from 'react-router'
+import { Route } from 'react-router'
 import AuthPage from '../pages/AuthPage'
 import MainPage from '../pages/MainPage'
 
 const GlobalRoutes = () => {
-	return (
-		<Routes>
-			<Route path='/' element={<MainPage />} />
-			<Route path='/auth/*' element={<AuthPage />} />
-		</Routes>
-	)
+	return [
+		<Route path='/' element={<MainPage />} key='main' />,
+		<Route path='/auth/*' element={<AuthPage />} key='auth' />,
+	]
 }
 
 export default GlobalRoutes

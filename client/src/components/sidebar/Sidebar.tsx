@@ -1,3 +1,4 @@
+import UseCustomNavigate from '../../hooks/UseCustomNavigate'
 import {
 	AboutSvgIcon,
 	AuthorsCommentsSvgIcon,
@@ -17,22 +18,24 @@ import { ISidebarItemProps } from './SidebarItem'
 import SidebarSection from './SidebarSection'
 
 const Sidebar = () => {
+	const { navigateToMain } = UseCustomNavigate()
+
 	const sidebarFirstGroup: ISidebarItemProps[] = [
 		{
 			id: 'side-home',
-			href: '/',
+			onClick: navigateToMain,
 			icon: <HomeSvgIcon className='size-5' />,
 			label: 'Главная',
 		},
 		{
 			id: 'side-questions',
-			href: '/',
+			onClick: navigateToMain,
 			icon: <QuestionSvgIcon className='size-5 fill-white' />,
 			label: 'Часто задаваемые вопросы',
 		},
 		{
 			id: 'side-about',
-			href: '/',
+			onClick: navigateToMain,
 			icon: <AboutSvgIcon className='size-6 fill-white' />,
 			label: 'Главная',
 		},
@@ -41,19 +44,19 @@ const Sidebar = () => {
 	const sidebarSecondGroup: ISidebarItemProps[] = [
 		{
 			id: 'side-top-90',
-			href: '/',
+			onClick: navigateToMain,
 			icon: <NinetySvgIcon className='size-5 fill-white' />,
 			label: 'ТОП-90 пользователей',
 		},
 		{
 			id: 'side-rating',
-			href: '/',
+			onClick: navigateToMain,
 			icon: <RatingSvgIcon className='size-5' />,
 			label: 'Рейтинг',
 		},
 		{
 			id: 'side-awards',
-			href: '/',
+			onClick: navigateToMain,
 			icon: <AwardSvgIcon className='size-5' />,
 			label: 'Премия',
 		},
@@ -62,37 +65,37 @@ const Sidebar = () => {
 	const sidebarThirdGroup: ISidebarItemProps[] = [
 		{
 			id: 'side-authors-likes',
-			href: '/',
+			onClick: navigateToMain,
 			icon: <AuthorsLikeSvgIcon className='size-5 fill-white' />,
 			label: 'Авторские лайки',
 		},
 		{
 			id: 'side-authors-comments',
-			href: '/',
+			onClick: navigateToMain,
 			icon: <AuthorsCommentsSvgIcon className='size-5 fill-white' />,
 			label: 'Авторские комментарии',
 		},
 		{
 			id: 'side-registered-authors',
-			href: '/',
+			onClick: navigateToMain,
 			icon: <RegisteredAuthorsSvgIcon className='size-5 fill-white' />,
 			label: 'Зарегистрированные авторы',
 		},
 		{
 			id: 'side-authors',
-			href: '/',
+			onClick: navigateToMain,
 			icon: <AuthorsSvgIcon className='size-5 fill-white' />,
 			label: 'Авторы',
 		},
 		{
 			id: 'side-reviews',
-			href: '/',
+			onClick: navigateToMain,
 			icon: <ReviewsSvgIcon className='size-5 fill-white' />,
 			label: 'Рецензии',
 		},
 		{
 			id: 'side-relises',
-			href: '/',
+			onClick: navigateToMain,
 			icon: <RelisesSvgIcon className='size-5' />,
 			label: 'Релизы',
 		},
@@ -101,7 +104,7 @@ const Sidebar = () => {
 	const sidebarFourthGroup: ISidebarItemProps[] = [
 		{
 			id: 'side-feedback',
-			href: '/',
+			onClick: navigateToMain,
 			icon: <FeedbackSvgIcon className='size-3' />,
 			label: 'Обратная связь',
 		},
