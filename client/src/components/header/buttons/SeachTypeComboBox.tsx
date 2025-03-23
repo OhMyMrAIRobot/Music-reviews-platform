@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { ArrowBottomSvgIcon, TickSvgIcon } from '../HeaderSvgIcons'
 
 const SearchTypeEnum = Object.freeze({
 	FIRST: 'Авторы и релизы',
@@ -20,41 +21,10 @@ const SeachTypeComboBox = () => {
 
 	useEffect(() => {
 		document.addEventListener('click', handleClickOutside)
-		return document.removeEventListener('click', handleClickOutside)
-	})
-
-	const ArrowBottomSvgIcon = () => (
-		<svg
-			xmlns='http://www.w3.org/2000/svg'
-			width='24'
-			height='24'
-			viewBox='0 0 24 24'
-			fill='none'
-			stroke='currentColor'
-			strokeWidth='2'
-			strokeLinecap='round'
-			strokeLinejoin='round'
-			className='lucide lucide-chevron-down h-5 w-4 opacity-50'
-			aria-hidden='true'
-		>
-			<path d='m6 9 6 6 6-6'></path>
-		</svg>
-	)
-
-	const TickSvgIcon = () => (
-		<svg
-			xmlns='http://www.w3.org/2000/svg'
-			viewBox='0 0 16 16'
-			fill='currentColor'
-			className='w-4 h-4 text-white flex items-center justify-center'
-		>
-			<path
-				fillRule='evenodd'
-				d='M16.293 5.293a1 1 0 011.414 1.414L9 13.414 5.293 9.707a1 1 0 111.414-1.414L9 10.586l7.293-7.293z'
-				clipRule='evenodd'
-			/>
-		</svg>
-	)
+		return () => {
+			document.removeEventListener('click', handleClickOutside)
+		}
+	}, [])
 
 	return (
 		<div

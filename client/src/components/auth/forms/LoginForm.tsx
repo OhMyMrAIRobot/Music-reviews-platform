@@ -20,7 +20,7 @@ const LoginForm = observer(() => {
 
 	useEffect(() => {
 		authStore.clearErrors()
-	}, [])
+	}, [authStore])
 
 	return (
 		<div className='grid w-[350px] gap-6'>
@@ -77,8 +77,8 @@ const LoginForm = observer(() => {
 				</div>
 				{authStore.errors && (
 					<div className='grid gap-2'>
-						{authStore.errors.map((error, idx) => (
-							<AuthError key={idx} text={error} />
+						{authStore.errors.map(error => (
+							<AuthError key={error} text={error} />
 						))}
 					</div>
 				)}
