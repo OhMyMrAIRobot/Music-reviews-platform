@@ -16,7 +16,6 @@ const ProfileButton = observer(() => {
 	const popUpProfRef = useRef<HTMLDivElement | null>(null)
 
 	const handleClickOutside = (event: MouseEvent) => {
-		console.log(3)
 		if (
 			popUpProfRef.current &&
 			!popUpProfRef.current.contains(event.target as Node)
@@ -63,7 +62,7 @@ const ProfileButton = observer(() => {
 					<PopupProfileButton
 						text='Выйти из профиля'
 						icon={<LogoutSvgIcon />}
-						onClick={() => {}}
+						onClick={authStore.logOut}
 					/>
 				</div>
 			)}

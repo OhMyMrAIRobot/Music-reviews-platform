@@ -32,8 +32,7 @@ class AuthStore {
 		try {
 			const { user, accessToken } = await AuthAPI.checkAuth()
 			this.setAuthorization(user, accessToken)
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		} catch (e: any) {
+		} catch (e) {
 			this.setAuth(false)
 			console.log(e)
 		}
@@ -53,9 +52,17 @@ class AuthStore {
 		}
 	}
 
-	logOut = () => {
-		this.isAuth = false
-		this.user = null
+	logOut = async () => {
+		try {
+			await AuthAPI.logout()
+			runInAction(() => {
+				this.isAuth = false
+				this.user = null
+				localStorage.removeItem('token')
+			})
+		} catch (e) {
+			console.log(e)
+		}
 	}
 }
 

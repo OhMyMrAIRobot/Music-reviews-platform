@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import { IAuthResponse } from '../models/AuthResponse'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
@@ -25,5 +25,13 @@ export const AuthAPI = {
 			{ withCredentials: true }
 		)
 		return data
+	},
+
+	async logout(): Promise<AxiosResponse> {
+		return axios.post(
+			`${SERVER_URL}/auth/logout`,
+			{},
+			{ withCredentials: true }
+		)
 	},
 }
