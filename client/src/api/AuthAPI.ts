@@ -3,35 +3,42 @@ import { IAuthResponse } from '../models/AuthResponse'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
 
+const api = axios.create({
+	baseURL: `${SERVER_URL}/auth/`,
+	withCredentials: true,
+	headers: {
+		'Content-type': 'application/json',
+	},
+})
+
 export const AuthAPI = {
 	async login(email: string, password: string): Promise<IAuthResponse> {
-		const { data } = await axios.post<IAuthResponse>(
-			`${SERVER_URL}/auth/login`,
-			{
-				email,
-				password,
-			},
-			{
-				withCredentials: true,
-			}
-		)
+		const { data } = await api.post<IAuthResponse>('login', {
+			email,
+			password,
+		})
 		return data
 	},
 
 	async checkAuth(): Promise<IAuthResponse> {
-		const { data } = await axios.post<IAuthResponse>(
-			`${SERVER_URL}/auth/refresh`,
-			{},
-			{ withCredentials: true }
-		)
+		const { data } = await api.post<IAuthResponse>('refresh')
 		return data
 	},
 
 	async logout(): Promise<AxiosResponse> {
-		return axios.post(
-			`${SERVER_URL}/auth/logout`,
-			{},
-			{ withCredentials: true }
-		)
+		return api.post('logout')
+	},
+
+	async register(
+		email: string,
+		nickname: string,
+		password: string
+	): Promise<IAuthResponse> {
+		const { data } = await api.post<IAuthResponse>('register', {
+			email,
+			nickname,
+			password,
+		})
+		return data
 	},
 }

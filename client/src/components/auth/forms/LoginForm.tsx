@@ -4,7 +4,7 @@ import UseCustomNavigate from '../../../hooks/UseCustomNavigate'
 import { useLoading } from '../../../hooks/UseLoading'
 import { UseStore } from '../../../hooks/UseStore'
 import AuthButton from '../components/AuthButton'
-import AuthError from '../components/AuthError'
+import AuthErrorsContainer from '../components/AuthErrorsContainer'
 import AuthInput from '../components/AuthInput'
 import AuthLabel from '../components/AuthLabel'
 import AuthSubTitle from '../components/AuthSubTitle'
@@ -22,8 +22,12 @@ const LoginForm = observer(() => {
 	const { execute: login, isLoading } = useLoading(authStore.login)
 
 	useEffect(() => {
-		authStore.setErrors([])
-	}, [authStore])
+		if (authStore.isAuth) {
+			navigateToMain()
+		} else {
+			authStore.setErrors([])
+		}
+	}, [authStore.isAuth])
 
 	return (
 		<div className='grid w-[350px] gap-6'>
@@ -63,13 +67,7 @@ const LoginForm = observer(() => {
 				<div className='grid gap-2'>
 					<AuthButton
 						title={isLoading ? 'Загрузка...' : 'Войти'}
-						onClick={() => {
-							login(email, password).then(() => {
-								if (authStore.isAuth) {
-									navigateToMain()
-								}
-							})
-						}}
+						onClick={() => login(email, password)}
 						isInvert={true}
 					/>
 					<AuthButton
@@ -78,13 +76,7 @@ const LoginForm = observer(() => {
 						isInvert={false}
 					/>
 				</div>
-				{authStore.errors && (
-					<div className='grid gap-2'>
-						{authStore.errors.map(error => (
-							<AuthError key={error} text={error} />
-						))}
-					</div>
-				)}
+				{authStore.errors && <AuthErrorsContainer errors={authStore.errors} />}
 			</div>
 		</div>
 	)

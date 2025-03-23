@@ -1,5 +1,6 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { AuthAPI } from '../api/AuthAPI'
+import { IRegistrationData } from '../components/auth/forms/RegistrationForm'
 import { IUser } from '../models/User'
 import { translateError } from '../models/errors'
 
@@ -62,6 +63,41 @@ class AuthStore {
 			})
 		} catch (e) {
 			console.log(e)
+		}
+	}
+
+	register = async (formData: IRegistrationData) => {
+		const errors: string[] = []
+
+		if (formData.password !== formData.passwordConfirm) {
+			errors.push('Пароли не совпадают!')
+		}
+		if (!formData.agreementChecked) {
+			errors.push('Вы должны принять условия пользовательского соглашения!')
+		}
+		if (!formData.policyChecked) {
+			errors.push(
+				'Вы должны принять условия политики обработки персональных данных!'
+			)
+		}
+
+		if (errors.length > 0) {
+			this.setErrors(errors)
+			return
+		}
+		try {
+			const { user, accessToken } = await AuthAPI.register(
+				formData.email,
+				formData.nickname,
+				formData.password
+			)
+			this.setAuthorization(user, accessToken)
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		} catch (e: any) {
+			const apiErrors = Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
+			this.setErrors(apiErrors.map(translateError))
 		}
 	}
 }

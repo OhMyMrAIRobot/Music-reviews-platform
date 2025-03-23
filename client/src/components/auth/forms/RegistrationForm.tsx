@@ -1,22 +1,46 @@
-import { useState } from 'react'
+import { observer } from 'mobx-react-lite'
+import { useEffect, useState } from 'react'
 import UseCustomNavigate from '../../../hooks/UseCustomNavigate'
+import { useLoading } from '../../../hooks/UseLoading'
+import { UseStore } from '../../../hooks/UseStore'
 import AuthButton from '../components/AuthButton'
 import AuthCheckbox from '../components/AuthCheckbox'
+import AuthErrorsContainer from '../components/AuthErrorsContainer'
 import AuthInput from '../components/AuthInput'
 import AuthLabel from '../components/AuthLabel'
 import AuthTitle from '../components/AuthTitle'
 
-const RegistrationForm = () => {
-	const [formData, setFormData] = useState({
+export interface IRegistrationData {
+	email: string
+	nickname: string
+	password: string
+	passwordConfirm: string
+	agreementChecked: boolean
+	policyChecked: boolean
+}
+
+const RegistrationForm = observer(() => {
+	const [formData, setFormData] = useState<IRegistrationData>({
 		email: '',
-		username: '',
+		nickname: '',
 		password: '',
 		passwordConfirm: '',
 		agreementChecked: false,
 		policyChecked: false,
 	})
 
-	const { navigateToLogin } = UseCustomNavigate()
+	const { navigateToMain, navigateToLogin } = UseCustomNavigate()
+
+	const { authStore } = UseStore()
+	const { execute: register, isLoading } = useLoading(authStore.register)
+
+	useEffect(() => {
+		if (authStore.isAuth) {
+			navigateToMain()
+		} else {
+			authStore.setErrors([])
+		}
+	}, [authStore.isAuth])
 
 	const handleChange = (
 		field: keyof typeof formData,
@@ -71,7 +95,7 @@ const RegistrationForm = () => {
 	)
 
 	return (
-		<div className='grid w-[350px] gap-2'>
+		<div className='grid w-[350px] gap-2 py-10'>
 			<AuthTitle title={'Создать аккаунт'} className='text-center mb-4' />
 			<div className='grid gap-3'>
 				{renderInput(
@@ -81,7 +105,7 @@ const RegistrationForm = () => {
 					'Ваш email',
 					'Будет также логином для авторизации'
 				)}
-				{renderInput('username', 'Отображаемое имя', 'text', '', 'Ваш никнейм')}
+				{renderInput('nickname', 'Отображаемое имя', 'text', '', 'Ваш никнейм')}
 				{renderInput('password', 'Пароль', 'password')}
 				{renderInput('passwordConfirm', 'Подтвердите пароль', 'password')}
 
@@ -99,9 +123,9 @@ const RegistrationForm = () => {
 				</div>
 
 				<AuthButton
-					title={'Создать аккаунт'}
+					title={isLoading ? 'Загрузка...' : 'Создать аккаунт'}
 					isInvert={true}
-					onClick={() => {}}
+					onClick={() => register(formData)}
 				/>
 
 				<div className='flex justify-center items-center font-medium text-sm gap-1 mt-2 select-none'>
@@ -113,9 +137,10 @@ const RegistrationForm = () => {
 						Войти
 					</button>
 				</div>
+				{authStore.errors && <AuthErrorsContainer errors={authStore.errors} />}
 			</div>
 		</div>
 	)
-}
+})
 
 export default RegistrationForm

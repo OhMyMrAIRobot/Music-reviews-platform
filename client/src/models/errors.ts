@@ -11,8 +11,14 @@ const errorTranslations: Record<string, string> = {
 		'Email не должен быть пустым!',
 
 	'email must be an email': 'Некорректный формат email!',
+
+	'nickname must be shorter than or equal to 40 characters':
+		'Никнейм должен содержать не более 40 символов!',
+
+	'nickname must be longer than or equal to 3 characters':
+		'Никнейм должен содержать не менее 3 символов!',
 }
 
 export const translateError = (message: string): string => {
-	return errorTranslations[message] || 'Неизвестная ошибка'
+	return errorTranslations[message] || message
 }
