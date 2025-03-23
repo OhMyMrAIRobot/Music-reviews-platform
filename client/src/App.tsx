@@ -12,7 +12,6 @@ export function App() {
 
 	useEffect(() => {
 		if (localStorage.getItem('token')) {
-			console.log(3)
 			checkAuth()
 		}
 	}, [])
