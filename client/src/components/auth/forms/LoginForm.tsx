@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
 import UseCustomNavigate from '../../../hooks/UseCustomNavigate'
+import { useLoading } from '../../../hooks/UseLoading'
 import { UseStore } from '../../../hooks/UseStore'
 import AuthButton from '../components/AuthButton'
 import AuthError from '../components/AuthError'
@@ -18,8 +19,10 @@ const LoginForm = observer(() => {
 
 	const { authStore } = UseStore()
 
+	const { execute: login, isLoading } = useLoading(authStore.login)
+
 	useEffect(() => {
-		authStore.clearErrors()
+		authStore.setErrors([])
 	}, [authStore])
 
 	return (
@@ -59,9 +62,9 @@ const LoginForm = observer(() => {
 				</div>
 				<div className='grid gap-2'>
 					<AuthButton
-						title={authStore.isLoading ? 'Загрузка...' : 'Войти'}
+						title={isLoading ? 'Загрузка...' : 'Войти'}
 						onClick={() => {
-							authStore.login(email, password).then(() => {
+							login(email, password).then(() => {
 								if (authStore.isAuth) {
 									navigateToMain()
 								}

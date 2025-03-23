@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { UseStore } from '../../../hooks/UseStore'
 import {
 	HeartSvgIcon,
+	LogoutSvgIcon,
 	ProfileSvgIcon,
 	SettingsSvgIcon,
 } from '../HeaderSvgIcons'
@@ -59,7 +60,11 @@ const ProfileButton = observer(() => {
 
 					<div className='border-t border-white/15 pb-1'></div>
 
-					<PopupProfileButton text='Выйти из профиля' onClick={() => {}} />
+					<PopupProfileButton
+						text='Выйти из профиля'
+						icon={<LogoutSvgIcon />}
+						onClick={() => {}}
+					/>
 				</div>
 			)}
 		</div>

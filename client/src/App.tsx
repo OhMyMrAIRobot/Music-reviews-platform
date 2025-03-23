@@ -1,9 +1,24 @@
+import { useEffect } from 'react'
 import { Routes } from 'react-router'
+import { useLoading } from './hooks/UseLoading'
+import { UseStore } from './hooks/UseStore'
 import Layout from './Layout'
 import GlobalRoutes from './routes/GlobalRoutes'
 
 export function App() {
-	return (
+	const { authStore } = UseStore()
+
+	const { execute: checkAuth, isLoading } = useLoading(authStore.chechAuth)
+
+	useEffect(() => {
+		if (localStorage.getItem('token')) {
+			checkAuth()
+		}
+	}, [])
+
+	return isLoading ? (
+		<div>Loading</div>
+	) : (
 		<Layout>
 			<Routes>{GlobalRoutes()}</Routes>
 		</Layout>

@@ -6,41 +6,51 @@ import { translateError } from '../models/errors'
 class AuthStore {
 	isAuth: boolean = false
 	user: IUser | null = null
-	isLoading: boolean = false
 	errors: string[] = []
 
 	constructor() {
 		makeAutoObservable(this)
 	}
 
-	login = async (email: string, password: string) => {
+	setAuth(value: boolean) {
+		this.isAuth = value
+	}
+
+	setErrors(errors: string[]) {
+		this.errors = errors
+	}
+
+	setAuthorization(user: IUser, token: string) {
+		runInAction(() => {
+			this.isAuth = true
+			this.user = user
+			localStorage.setItem('token', token)
+		})
+	}
+
+	chechAuth = async () => {
 		try {
-			this.isLoading = true
-			const { user, accessToken } = await AuthAPI.login(email, password)
-			runInAction(() => {
-				this.isAuth = true
-				this.user = user
-			})
-			localStorage.setItem('token', accessToken)
+			const { user, accessToken } = await AuthAPI.checkAuth()
+			this.setAuthorization(user, accessToken)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (e: any) {
-			runInAction(() => {
-				const errors = Array.isArray(e.response?.data?.message)
-					? e.response?.data?.message
-					: [e.response?.data?.message]
-
-				this.errors = errors.map(translateError)
-			})
+			this.setAuth(false)
 			console.log(e)
-		} finally {
-			runInAction(() => {
-				this.isLoading = false
-			})
 		}
 	}
 
-	clearErrors = () => {
-		this.errors = []
+	login = async (email: string, password: string) => {
+		try {
+			const { user, accessToken } = await AuthAPI.login(email, password)
+			this.setAuthorization(user, accessToken)
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		} catch (e: any) {
+			const errors = Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
+
+			this.setErrors(errors.map(translateError))
+		}
 	}
 
 	logOut = () => {
