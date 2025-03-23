@@ -40,25 +40,29 @@ const SeachTypeComboBox = () => {
 				<ArrowBottomSvgIcon />
 			</button>
 
-			{isOpen && (
-				<ul className='absolute left-0 mt-2 py-1 px-2 w-full bg-white border border-zinc-700 text-sm font-medium rounded-md shadow-lg bg-primary'>
-					{searchOptions.map(option => (
-						<li
-							key={option}
-							className='flex items-center py-2 cursor-pointer text-sm font-medium'
-							onClick={() => {
-								setSelected(option)
-								setIsOpen(false)
-							}}
-						>
-							<span className='w-5'>
-								{selected === option ? <TickSvgIcon /> : null}
-							</span>
-							{option}
-						</li>
-					))}
-				</ul>
-			)}
+			<ul
+				className={`absolute left-0 mt-2 py-1 px-2 w-full bg-white border border-zinc-700 text-sm font-medium rounded-md shadow-lg bg-primary transition-all duration-125 ${
+					isOpen
+						? 'opacity-100 translate-y-0 pointer-events-auto'
+						: 'opacity-0 -translate-y-3 pointer-events-none'
+				}`}
+			>
+				{searchOptions.map(option => (
+					<li
+						key={option}
+						className='flex items-center py-2 cursor-pointer text-sm font-medium'
+						onClick={() => {
+							setSelected(option)
+							setIsOpen(false)
+						}}
+					>
+						<span className='w-5'>
+							{selected === option ? <TickSvgIcon /> : null}
+						</span>
+						{option}
+					</li>
+				))}
+			</ul>
 		</div>
 	)
 }

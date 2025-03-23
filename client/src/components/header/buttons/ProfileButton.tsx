@@ -37,35 +37,41 @@ const ProfileButton = observer(() => {
 				onClick={() => setIsOpen(!isOpen)}
 				className='rounded-full h-10 w-10 overflow-hidden bg-amber-400 cursor-pointer'
 			></button>
-			{isOpen && (
-				<div className='absolute right-0 w-[300px] mt-2 rounded-xl bg-primary border-2 border-white/15 grid gap-2 font-medium py-3'>
-					<h3 className='px-5 pb-1 truncate'>{authStore.user?.nickname}</h3>
+			{/* {isOpen && ( */}
+			<div
+				className={`absolute right-0 w-[300px] mt-2 rounded-xl bg-primary border-2 border-white/15 grid gap-2 font-medium py-3 transition-all duration-125 ${
+					isOpen
+						? 'opacity-100 translate-y-0 pointer-events-auto'
+						: 'opacity-0 -translate-y-3 pointer-events-none'
+				}`}
+			>
+				<h3 className='px-5 pb-1 truncate'>{authStore.user?.nickname}</h3>
 
-					<PopupProfileButton
-						text='Моя страница'
-						icon={<ProfileSvgIcon />}
-						onClick={() => {}}
-					/>
-					<PopupProfileButton
-						text='Мне понравилось'
-						icon={<HeartSvgIcon />}
-						onClick={() => {}}
-					/>
-					<PopupProfileButton
-						text='Настройки профиля'
-						icon={<SettingsSvgIcon />}
-						onClick={() => {}}
-					/>
+				<PopupProfileButton
+					text='Моя страница'
+					icon={<ProfileSvgIcon />}
+					onClick={() => {}}
+				/>
+				<PopupProfileButton
+					text='Мне понравилось'
+					icon={<HeartSvgIcon />}
+					onClick={() => {}}
+				/>
+				<PopupProfileButton
+					text='Настройки профиля'
+					icon={<SettingsSvgIcon />}
+					onClick={() => {}}
+				/>
 
-					<div className='border-t border-white/15 pb-1'></div>
+				<div className='border-t border-white/15 pb-1'></div>
 
-					<PopupProfileButton
-						text='Выйти из профиля'
-						icon={<LogoutSvgIcon />}
-						onClick={authStore.logOut}
-					/>
-				</div>
-			)}
+				<PopupProfileButton
+					text='Выйти из профиля'
+					icon={<LogoutSvgIcon />}
+					onClick={authStore.logOut}
+				/>
+			</div>
+			{/* )} */}
 		</div>
 	)
 })
