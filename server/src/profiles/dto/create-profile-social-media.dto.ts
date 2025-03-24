@@ -1,12 +1,12 @@
-import { IsString, IsNotEmpty, IsUrl } from 'class-validator';
+import { IsNotEmpty, IsString, IsUrl } from 'class-validator';
 
 export class CreateProfileSocialMediaDto {
-  @IsString()
-  @IsNotEmpty()
+  @IsString({ message: 'Поле socialId должно быть строкой' })
+  @IsNotEmpty({ message: 'Поле socialId не может быть пустым' })
   socialId: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @IsUrl()
+  @IsString({ message: 'Поле url должно быть строкой' })
+  @IsNotEmpty({ message: 'Поле url не может быть пустым' })
+  @IsUrl({}, { message: 'Поле url должно быть корректным URL-адресом' })
   url: string;
 }

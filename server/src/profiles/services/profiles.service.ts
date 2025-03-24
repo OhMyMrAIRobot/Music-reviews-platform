@@ -19,7 +19,7 @@ export class ProfilesService {
     });
 
     if (!profile) {
-      throw new EntityNotFoundException('Profile', 'userId', `${userId}`);
+      throw new EntityNotFoundException('Профиль', 'userId', `${userId}`);
     }
 
     return profile;

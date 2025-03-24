@@ -74,7 +74,7 @@ export class AuthService {
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
-    return { user, accessToken: tokens.accessToken, refreshToken };
+    return { user, accessToken: tokens.accessToken };
   }
 
   async logout(res: Response, refreshToken: string) {
@@ -82,7 +82,7 @@ export class AuthService {
 
     await this.tokensService.deleteRefreshToken(decodedToken.id);
 
-    res.clearCookie('refreshToken', { httpOnly: true, secure: false });
+    res.clearCookie('refreshToken');
   }
 
   async refresh(res: Response, refreshToken: string) {
@@ -133,7 +133,7 @@ export class AuthService {
     } catch (e) {
       console.log(e);
       throw new InternalServerErrorException(
-        'Error occurred during user registration',
+        'Ошибка при выполении регистрации',
       );
     }
   }

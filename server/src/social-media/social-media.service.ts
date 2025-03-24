@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { SocialMedia } from '@prisma/client';
+import { PrismaService } from '../../prisma/prisma.service';
+import { DuplicateFieldException } from '../exceptions/duplicate-field.exception';
+import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
+import { NoDataProvidedException } from '../exceptions/no-data.exception';
 import { CreateSocialMediaDto } from './dto/create-social-media.dto';
 import { UpdateSocialMediaDto } from './dto/update-social-media.dto';
-import { PrismaService } from '../../prisma/prisma.service';
-import { SocialMedia } from '@prisma/client';
-import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
-import { DuplicateFieldException } from '../exceptions/duplicate-field.exception';
-import { NoDataProvidedException } from '../exceptions/no-data.exception';
 
 @Injectable()
 export class SocialMediaService {
@@ -14,17 +14,7 @@ export class SocialMediaService {
   async create(
     createSocialMediaDto: CreateSocialMediaDto,
   ): Promise<SocialMedia> {
-    const existingSocialMedia = await this.prisma.socialMedia.findUnique({
-      where: createSocialMediaDto,
-    });
-
-    if (existingSocialMedia) {
-      throw new DuplicateFieldException(
-        'Social media',
-        'name',
-        `${createSocialMediaDto.name}`,
-      );
-    }
+    await this.checkDuplicateSocialMedia(createSocialMediaDto.name);
 
     return this.prisma.socialMedia.create({
       data: createSocialMediaDto,
@@ -41,7 +31,7 @@ export class SocialMediaService {
     });
 
     if (!socialMedia) {
-      throw new EntityNotFoundException('Social media', 'id', `${id}`);
+      throw new EntityNotFoundException('Социльная сеть', 'id', `${id}`);
     }
     return socialMedia;
   }
@@ -58,11 +48,29 @@ export class SocialMediaService {
     }
 
     await this.findById(id);
+    await this.checkDuplicateSocialMedia(updateSocialMediaDto.name ?? '');
 
     return this.prisma.socialMedia.update({
       where: { id },
       data: updateSocialMediaDto,
     });
+  }
+
+  async checkDuplicateSocialMedia(name: string) {
+    console.log(name);
+    const existingSocialMedia = await this.prisma.socialMedia.findFirst({
+      where: {
+        name: { equals: name, mode: 'insensitive' },
+      },
+    });
+
+    if (existingSocialMedia) {
+      throw new DuplicateFieldException(
+        'Социальная сеть',
+        'названием',
+        `${existingSocialMedia.name}`,
+      );
+    }
   }
 
   async remove(id: string): Promise<SocialMedia> {

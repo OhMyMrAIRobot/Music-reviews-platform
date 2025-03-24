@@ -20,6 +20,7 @@ import { ProfilesService } from '../services/profiles.service';
 export class ProfilesController {
   constructor(private readonly profilesService: ProfilesService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get(':userId')
   async findByUserId(@Param('userId') userId: string): Promise<UserProfile> {
     return this.profilesService.findByUserId(userId);

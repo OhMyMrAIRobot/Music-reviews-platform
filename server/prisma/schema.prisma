@@ -16,7 +16,7 @@ datasource db {
 model User {
   id        String   @id @default(cuid())
   email     String   @unique @db.VarChar(60)
-  nickname  String   @unique @db.VarChar(40)
+  nickname  String   @unique @db.VarChar(20)
   password  String   @map("password_hash")
   isActive  Boolean  @default(false)
   createdAt DateTime @default(now()) @map("created_at")

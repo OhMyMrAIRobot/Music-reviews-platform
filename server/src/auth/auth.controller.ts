@@ -84,7 +84,7 @@ export class AuthController {
     const refreshToken = req.cookies['refreshToken'];
 
     if (!refreshToken) {
-      return res.status(401).send('Refresh token not found');
+      return res.status(200).send();
     }
 
     await this.authService.logout(res, refreshToken);

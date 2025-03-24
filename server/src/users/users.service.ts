@@ -16,16 +16,23 @@ export class UsersService {
   async isUserExists(email: string, nickname: string) {
     const existingUser = await this.prisma.user.findFirst({
       where: {
-        OR: [{ email }, { nickname }],
+        OR: [
+          { email: { equals: email, mode: 'insensitive' } },
+          { nickname: { equals: nickname, mode: 'insensitive' } },
+        ],
       },
     });
 
     if (existingUser) {
-      if (existingUser.email === email) {
-        throw new DuplicateFieldException('User', 'email', `${email}`);
+      if (existingUser.email.toLowerCase() === email.toLowerCase()) {
+        throw new DuplicateFieldException('Пользователь', 'email', `${email}`);
       }
-      if (existingUser.nickname === nickname) {
-        throw new DuplicateFieldException('User', 'nickname', `${nickname}`);
+      if (existingUser.nickname.toLowerCase() === nickname.toLowerCase()) {
+        throw new DuplicateFieldException(
+          'Пользователь',
+          'никнеймом',
+          `${nickname}`,
+        );
       }
     }
     return;
@@ -45,7 +52,7 @@ export class UsersService {
     });
 
     if (!user) {
-      throw new EntityNotFoundException('User', 'id', `${id}`);
+      throw new EntityNotFoundException('Пользователь', 'id', `${id}`);
     }
 
     return includePassword
@@ -57,12 +64,12 @@ export class UsersService {
     email: string,
     includePassword: boolean = false,
   ): Promise<UserResponseDto | UserWithPasswordResponseDto> {
-    const user = await this.prisma.user.findUnique({
-      where: { email },
+    const user = await this.prisma.user.findFirst({
+      where: { email: { equals: email, mode: 'insensitive' } },
     });
 
     if (!user) {
-      throw new EntityNotFoundException('User', 'email', `${email}`);
+      throw new EntityNotFoundException('Пользователь', 'email', `${email}`);
     }
 
     return includePassword
@@ -78,6 +85,11 @@ export class UsersService {
     if (!(await this.verifyPassword(updateUserDto.password, user.password))) {
       throw new InvalidCredentialsException();
     }
+
+    await this.isUserExists(
+      updateUserDto.email ?? '',
+      updateUserDto.nickname ?? '',
+    );
 
     if (updateUserDto.newPassword) {
       updateUserDto.password = await this.createPasswordHash(
@@ -116,9 +128,7 @@ export class UsersService {
     const user = await this.findOne(id);
 
     if (user.isActive) {
-      throw new ConflictException(
-        `User with id: ${id} doesn't need activation!`,
-      );
+      throw new ConflictException(`Активация не требуется!`);
     }
 
     const updatedUser = await this.prisma.user.update({
