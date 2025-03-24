@@ -1,12 +1,26 @@
-import { useState } from 'react'
+import { observer } from 'mobx-react-lite'
+import { useEffect, useState } from 'react'
+import { useLoading } from '../../../hooks/UseLoading'
+import { UseStore } from '../../../hooks/UseStore'
 import AuthButton from '../components/AuthButton'
+import AuthInfoContainer from '../components/AuthInfoContainer'
+import AuthInfoField from '../components/AuthInfoField'
 import AuthInput from '../components/AuthInput'
 import AuthLabel from '../components/AuthLabel'
 import AuthSubTitle from '../components/AuthSubTitle'
 import AuthTitle from '../components/AuthTitle'
 
-const ReqResetPasswordForm = () => {
+const ReqResetPasswordForm = observer(() => {
 	const [email, setEmail] = useState<string>('')
+	const { authStore } = UseStore()
+	const { execute: sendRequest, isLoading } = useLoading(
+		authStore.sendReqResetPassword
+	)
+
+	useEffect(() => {
+		authStore.setErrors([])
+		authStore.setEmailSent(null)
+	}, [])
 
 	return (
 		<div className='grid w-[330px] gap-4'>
@@ -29,12 +43,32 @@ const ReqResetPasswordForm = () => {
 				/>
 			</div>
 			<AuthButton
-				title={'Отправить письмо для сброса'}
-				onClick={() => {}}
+				title={isLoading ? 'Отправка...' : 'Отправить письмо для сброса'}
+				onClick={() => {
+					sendRequest(email)
+				}}
 				isInvert={true}
 			/>
+			{(authStore.errors || authStore.emailSent) && (
+				<AuthInfoContainer>
+					{authStore.errors &&
+						authStore.errors.map(error => (
+							<AuthInfoField key={error} text={error} isError={true} />
+						))}
+					{authStore.emailSent && (
+						<AuthInfoField
+							text={
+								authStore.emailSent
+									? 'Письмо с дальнейшими указаниями отправлено на вашу почту!'
+									: 'Не удалось отправить письмо, повторите попытку позже!'
+							}
+							isError={!authStore.emailSent}
+						/>
+					)}
+				</AuthInfoContainer>
+			)}
 		</div>
 	)
-}
+})
 
 export default ReqResetPasswordForm

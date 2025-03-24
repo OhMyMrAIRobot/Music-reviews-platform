@@ -2,12 +2,12 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { AuthAPI } from '../api/AuthAPI'
 import { IRegistrationData } from '../components/auth/forms/RegistrationForm'
 import { IUser } from '../models/User'
-import { translateError } from '../models/errors'
 
 class AuthStore {
 	isAuth: boolean = false
 	user: IUser | null = null
 	errors: string[] = []
+	emailSent: boolean | null = null
 
 	constructor() {
 		makeAutoObservable(this)
@@ -19,6 +19,10 @@ class AuthStore {
 
 	setErrors(errors: string[]) {
 		this.errors = errors
+	}
+
+	setEmailSent(value: boolean | null) {
+		this.emailSent = value
 	}
 
 	setAuthorization(user: IUser, token: string) {
@@ -45,11 +49,11 @@ class AuthStore {
 			this.setAuthorization(user, accessToken)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (e: any) {
-			const errors = Array.isArray(e.response?.data?.message)
+			const apiErrors = Array.isArray(e.response?.data?.message)
 				? e.response?.data?.message
 				: [e.response?.data?.message]
 
-			this.setErrors(errors.map(translateError))
+			this.setErrors(apiErrors)
 		}
 	}
 
@@ -94,10 +98,30 @@ class AuthStore {
 			this.setAuthorization(user, accessToken)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (e: any) {
+			if (e.response?.data?.message) {
+				const apiErrors = Array.isArray(e.response?.data?.message)
+					? e.response?.data?.message
+					: [e.response?.data?.message]
+				this.setErrors(apiErrors)
+			} else {
+				this.setErrors(['Ошибка при выполнении регистрации!'])
+			}
+		}
+	}
+
+	sendReqResetPassword = async (email: string) => {
+		this.setErrors([])
+		this.setEmailSent(null)
+
+		try {
+			const { emailSent } = await AuthAPI.reqResetPassword(email)
+			this.setEmailSent(emailSent)
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		} catch (e: any) {
 			const apiErrors = Array.isArray(e.response?.data?.message)
 				? e.response?.data?.message
 				: [e.response?.data?.message]
-			this.setErrors(apiErrors.map(translateError))
+			this.setErrors(apiErrors)
 		}
 	}
 }

@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from 'axios'
 import { IAuthResponse } from '../models/AuthResponse'
+import { IEmailResponse } from '../models/EmailResponse'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
 
@@ -38,6 +39,13 @@ export const AuthAPI = {
 			email,
 			nickname,
 			password,
+		})
+		return data
+	},
+
+	async reqResetPassword(email: string): Promise<IEmailResponse> {
+		const { data } = await api.post<IEmailResponse>('send-reset-password', {
+			email,
 		})
 		return data
 	},

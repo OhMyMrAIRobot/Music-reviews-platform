@@ -5,7 +5,8 @@ import { useLoading } from '../../../hooks/UseLoading'
 import { UseStore } from '../../../hooks/UseStore'
 import AuthButton from '../components/AuthButton'
 import AuthCheckbox from '../components/AuthCheckbox'
-import AuthErrorsContainer from '../components/AuthErrorsContainer'
+import AuthInfoContainer from '../components/AuthInfoContainer'
+import AuthInfoField from '../components/AuthInfoField'
 import AuthInput from '../components/AuthInput'
 import AuthLabel from '../components/AuthLabel'
 import AuthTitle from '../components/AuthTitle'
@@ -137,7 +138,13 @@ const RegistrationForm = observer(() => {
 						Войти
 					</button>
 				</div>
-				{authStore.errors && <AuthErrorsContainer errors={authStore.errors} />}
+				{authStore.errors && (
+					<AuthInfoContainer>
+						{authStore.errors.map(error => (
+							<AuthInfoField key={error} text={error} isError={true} />
+						))}
+					</AuthInfoContainer>
+				)}
 			</div>
 		</div>
 	)
