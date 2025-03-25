@@ -2,12 +2,12 @@ import { useEffect } from 'react'
 import { Routes } from 'react-router'
 import NotificationContainer from './components/notifications/NotificationContainer'
 import { useLoading } from './hooks/UseLoading'
-import { UseStore } from './hooks/UseStore'
+import { useStore } from './hooks/UseStore'
 import Layout from './Layout'
 import GlobalRoutes from './routes/GlobalRoutes'
 
 export function App() {
-	const { authStore } = UseStore()
+	const { authStore } = useStore()
 
 	const { execute: checkAuth, isLoading } = useLoading(authStore.chechAuth)
 

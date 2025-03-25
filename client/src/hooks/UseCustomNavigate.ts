@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router'
 
-const UseCustomNavigate = () => {
+const useCustomNavigate = () => {
 	const navigate = useNavigate()
 
 	const navigateToLogin = () => {
@@ -27,4 +27,4 @@ const UseCustomNavigate = () => {
 	}
 }
 
-export default UseCustomNavigate
+export default useCustomNavigate

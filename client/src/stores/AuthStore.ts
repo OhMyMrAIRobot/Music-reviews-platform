@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
 import { AuthAPI } from '../api/AuthAPI'
 import { IRegistrationData } from '../components/auth/forms/RegistrationForm'
@@ -7,7 +8,6 @@ class AuthStore {
 	isAuth: boolean = false
 	user: IUser | null = null
 	errors: string[] = []
-	emailSent: boolean | null = true
 
 	constructor() {
 		makeAutoObservable(this)
@@ -19,10 +19,6 @@ class AuthStore {
 
 	setErrors(errors: string[]) {
 		this.errors = errors
-	}
-
-	setEmailSent(value: boolean | null) {
-		this.emailSent = value
 	}
 
 	setAuthorization(user: IUser, token: string) {
@@ -47,7 +43,6 @@ class AuthStore {
 		try {
 			const { user, accessToken } = await AuthAPI.login(email, password)
 			this.setAuthorization(user, accessToken)
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (e: any) {
 			const apiErrors = Array.isArray(e.response?.data?.message)
 				? e.response?.data?.message
@@ -70,7 +65,7 @@ class AuthStore {
 		}
 	}
 
-	register = async (formData: IRegistrationData) => {
+	register = async (formData: IRegistrationData): Promise<boolean | null> => {
 		const errors: string[] = []
 
 		if (formData.password !== formData.passwordConfirm) {
@@ -87,7 +82,7 @@ class AuthStore {
 
 		if (errors.length > 0) {
 			this.setErrors(errors)
-			return
+			return null
 		}
 		try {
 			const { user, accessToken, emailSent } = await AuthAPI.register(
@@ -96,8 +91,7 @@ class AuthStore {
 				formData.password
 			)
 			this.setAuthorization(user, accessToken)
-			this.setEmailSent(emailSent)
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			return emailSent
 		} catch (e: any) {
 			if (e.response?.data?.message) {
 				const apiErrors = Array.isArray(e.response?.data?.message)
@@ -107,22 +101,21 @@ class AuthStore {
 			} else {
 				this.setErrors(['Ошибка при выполнении регистрации!'])
 			}
+			return null
 		}
 	}
 
-	sendReqResetPassword = async (email: string) => {
+	sendReqResetPassword = async (email: string): Promise<boolean | null> => {
 		this.setErrors([])
-		this.setEmailSent(null)
-
 		try {
 			const { emailSent } = await AuthAPI.reqResetPassword(email)
-			this.setEmailSent(emailSent)
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			return emailSent
 		} catch (e: any) {
 			const apiErrors = Array.isArray(e.response?.data?.message)
 				? e.response?.data?.message
 				: [e.response?.data?.message]
 			this.setErrors(apiErrors)
+			return null
 		}
 	}
 
@@ -131,12 +124,25 @@ class AuthStore {
 		try {
 			const { user, accessToken } = await AuthAPI.activate(token)
 			this.setAuthorization(user, accessToken)
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (e: any) {
 			const apiErrors = Array.isArray(e.response?.data?.message)
 				? e.response?.data?.message
 				: [e.response?.data?.message]
 			this.setErrors(apiErrors)
+		}
+	}
+
+	resendActivation = async (): Promise<boolean | null> => {
+		this.setErrors([])
+		try {
+			const { emailSent } = await AuthAPI.resendActivation()
+			return emailSent
+		} catch (e: any) {
+			const apiErrors = Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
+			this.setErrors(apiErrors)
+			return null
 		}
 	}
 }

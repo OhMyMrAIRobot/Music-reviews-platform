@@ -2,10 +2,11 @@ import axios, { AxiosResponse } from 'axios'
 import { IAuthResponse } from '../models/AuthResponse'
 import { IEmailResponse } from '../models/EmailResponse'
 import { IRegisterResponse } from '../models/RegisterResponse'
+import { api } from './Instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
 
-const api = axios.create({
+const _api = axios.create({
 	baseURL: `${SERVER_URL}/auth/`,
 	withCredentials: true,
 	headers: {
@@ -15,7 +16,7 @@ const api = axios.create({
 
 export const AuthAPI = {
 	async login(email: string, password: string): Promise<IAuthResponse> {
-		const { data } = await api.post<IAuthResponse>('login', {
+		const { data } = await _api.post<IAuthResponse>('login', {
 			email,
 			password,
 		})
@@ -23,12 +24,12 @@ export const AuthAPI = {
 	},
 
 	async checkAuth(): Promise<IAuthResponse> {
-		const { data } = await api.post<IAuthResponse>('refresh')
+		const { data } = await _api.post<IAuthResponse>('refresh')
 		return data
 	},
 
 	async logout(): Promise<AxiosResponse> {
-		return api.post('logout')
+		return _api.post('logout')
 	},
 
 	async register(
@@ -36,7 +37,7 @@ export const AuthAPI = {
 		nickname: string,
 		password: string
 	): Promise<IRegisterResponse> {
-		const { data } = await api.post<IRegisterResponse>('register', {
+		const { data } = await _api.post<IRegisterResponse>('register', {
 			email,
 			nickname,
 			password,
@@ -45,14 +46,19 @@ export const AuthAPI = {
 	},
 
 	async reqResetPassword(email: string): Promise<IEmailResponse> {
-		const { data } = await api.post<IEmailResponse>('send-reset-password', {
+		const { data } = await _api.post<IEmailResponse>('send-reset-password', {
 			email,
 		})
 		return data
 	},
 
 	async activate(token: string): Promise<IAuthResponse> {
-		const { data } = await api.post<IAuthResponse>(`activate?token=${token}`)
+		const { data } = await _api.post<IAuthResponse>(`activate?token=${token}`)
+		return data
+	},
+
+	async resendActivation(): Promise<IEmailResponse> {
+		const { data } = await api.post('auth/resend-activation')
 		return data
 	},
 }

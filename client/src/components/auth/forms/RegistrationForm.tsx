@@ -1,8 +1,8 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
-import UseCustomNavigate from '../../../hooks/UseCustomNavigate'
+import useCustomNavigate from '../../../hooks/UseCustomNavigate'
 import { useLoading } from '../../../hooks/UseLoading'
-import { UseStore } from '../../../hooks/UseStore'
+import { useStore } from '../../../hooks/UseStore'
 import AuthButton from '../components/AuthButton'
 import AuthCheckbox from '../components/AuthCheckbox'
 import AuthInfoContainer from '../components/AuthInfoContainer'
@@ -30,9 +30,9 @@ const RegistrationForm = observer(() => {
 		policyChecked: false,
 	})
 
-	const { navigateToMain, navigateToLogin } = UseCustomNavigate()
+	const { navigateToMain, navigateToLogin } = useCustomNavigate()
 
-	const { authStore, notificationsStore } = UseStore()
+	const { authStore, notificationsStore } = useStore()
 	const { execute: register, isLoading } = useLoading(authStore.register)
 
 	useEffect(() => {
@@ -42,13 +42,6 @@ const RegistrationForm = observer(() => {
 				id: self.crypto.randomUUID(),
 				text: 'Вы успешно зарегистрировались!',
 				isError: false,
-			})
-			notificationsStore.addNotification({
-				id: self.crypto.randomUUID(),
-				text: authStore.emailSent
-					? 'Письмо с активацией отправлено на вашу почту!'
-					: 'Ошибка при отправке письма с активацией. Повторите попытку позже!',
-				isError: !authStore.emailSent,
 			})
 		} else {
 			authStore.setErrors([])
@@ -138,7 +131,19 @@ const RegistrationForm = observer(() => {
 				<AuthButton
 					title={isLoading ? 'Загрузка...' : 'Создать аккаунт'}
 					isInvert={true}
-					onClick={() => register(formData)}
+					onClick={() =>
+						register(formData).then(result => {
+							if (result !== null) {
+								notificationsStore.addNotification({
+									id: self.crypto.randomUUID(),
+									text: result
+										? 'Письмо с активацией отправлено на вашу почту!'
+										: 'Ошибка при отправке письма с активацией. Повторите попытку позже!',
+									isError: !result,
+								})
+							}
+						})
+					}
 				/>
 
 				<div className='flex justify-center items-center font-medium text-sm gap-1 mt-2 select-none'>

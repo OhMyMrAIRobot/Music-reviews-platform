@@ -1,8 +1,8 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
-import UseCustomNavigate from '../../../hooks/UseCustomNavigate'
+import useCustomNavigate from '../../../hooks/UseCustomNavigate'
 import { useLoading } from '../../../hooks/UseLoading'
-import { UseStore } from '../../../hooks/UseStore'
+import { useStore } from '../../../hooks/UseStore'
 import AuthButton from '../components/AuthButton'
 import AuthInfoContainer from '../components/AuthInfoContainer'
 import AuthInfoField from '../components/AuthInfoField'
@@ -16,9 +16,9 @@ const LoginForm = observer(() => {
 	const [password, setPassword] = useState<string>('')
 
 	const { navigateToMain, navigateToRegistration, navigateToRequestReset } =
-		UseCustomNavigate()
+		useCustomNavigate()
 
-	const { authStore, notificationsStore } = UseStore()
+	const { authStore, notificationsStore } = useStore()
 
 	const { execute: login, isLoading } = useLoading(authStore.login)
 

@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useRef, useState } from 'react'
-import UseCustomNavigate from '../../../hooks/UseCustomNavigate'
-import { UseStore } from '../../../hooks/UseStore'
+import useCustomNavigate from '../../../hooks/UseCustomNavigate'
+import { useStore } from '../../../hooks/UseStore'
 import {
 	HeartSvgIcon,
 	LogoutSvgIcon,
@@ -11,8 +11,8 @@ import {
 import PopupProfileButton from './PopupProfileButton'
 
 const ProfileButton = observer(() => {
-	const { authStore, notificationsStore } = UseStore()
-	const { navigateToMain } = UseCustomNavigate()
+	const { authStore, notificationsStore } = useStore()
+	const { navigateToMain } = useCustomNavigate()
 
 	const [isOpen, setIsOpen] = useState<boolean>(false)
 	const popUpProfRef = useRef<HTMLDivElement | null>(null)

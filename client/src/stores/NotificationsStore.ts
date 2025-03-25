@@ -17,6 +17,16 @@ class NotificationsStore {
 			notification => notification.id !== id
 		)
 	}
+
+	addEmailSentNotification(isSent: boolean) {
+		this.addNotification({
+			id: self.crypto.randomUUID(),
+			text: isSent
+				? 'Письмо с активацией отправлено на вашу почту!'
+				: 'Ошибка при отправке письма с активацией. Повторите попытку позже!',
+			isError: !isSent,
+		})
+	}
 }
 
 export default new NotificationsStore()

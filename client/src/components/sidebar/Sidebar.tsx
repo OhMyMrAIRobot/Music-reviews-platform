@@ -1,4 +1,4 @@
-import UseCustomNavigate from '../../hooks/UseCustomNavigate'
+import useCustomNavigate from '../../hooks/UseCustomNavigate'
 import {
 	AboutSvgIcon,
 	AuthorsCommentsSvgIcon,
@@ -18,7 +18,7 @@ import { ISidebarItemProps } from './SidebarItem'
 import SidebarSection from './SidebarSection'
 
 const Sidebar = () => {
-	const { navigateToMain } = UseCustomNavigate()
+	const { navigateToMain } = useCustomNavigate()
 
 	const sidebarFirstGroup: ISidebarItemProps[] = [
 		{

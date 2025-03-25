@@ -1,9 +1,9 @@
 import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
-import { UseStore } from '../hooks/UseStore'
+import { useStore } from '../hooks/UseStore'
 
 const MainPage = observer(() => {
-	const { notificationsStore } = UseStore()
+	const { notificationsStore } = useStore()
 	const [count, setCount] = useState(0)
 
 	return (

@@ -3,7 +3,7 @@ import Store from '../stores/Store'
 
 export const StoreContext = createContext<Store | null>(null)
 
-export const UseStore = () => {
+export const useStore = () => {
 	const context = useContext(StoreContext)
 
 	if (!context) {

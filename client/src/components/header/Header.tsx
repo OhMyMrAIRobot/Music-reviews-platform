@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
-import UseCustomNavigate from '../../hooks/UseCustomNavigate'
-import { UseStore } from '../../hooks/UseStore'
+import useCustomNavigate from '../../hooks/UseCustomNavigate'
+import { useStore } from '../../hooks/UseStore'
 import BurgerMenuButton from './buttons/BurgerMenuButton'
 import FeedbackButton from './buttons/FeedbackButton'
 import LoginButton from './buttons/LoginButton'
@@ -10,8 +10,8 @@ import RegisterButton from './buttons/RegisterButton'
 import SearchBar from './SearchBar'
 
 const Header = observer(() => {
-	const { navigateToLogin, navigateToRegistration } = UseCustomNavigate()
-	const { authStore } = UseStore()
+	const { navigateToLogin, navigateToRegistration } = useCustomNavigate()
+	const { authStore } = useStore()
 
 	return (
 		<header className='sticky top-0 z-100 w-full bg-[#09090B]/60 border-b border-[#27272A]/40 backdrop-blur-3xl'>
