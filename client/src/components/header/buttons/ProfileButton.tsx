@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useRef, useState } from 'react'
+import UseCustomNavigate from '../../../hooks/UseCustomNavigate'
 import { UseStore } from '../../../hooks/UseStore'
 import {
 	HeartSvgIcon,
@@ -10,7 +11,8 @@ import {
 import PopupProfileButton from './PopupProfileButton'
 
 const ProfileButton = observer(() => {
-	const { authStore } = UseStore()
+	const { authStore, notificationsStore } = UseStore()
+	const { navigateToMain } = UseCustomNavigate()
 
 	const [isOpen, setIsOpen] = useState<boolean>(false)
 	const popUpProfRef = useRef<HTMLDivElement | null>(null)
@@ -37,7 +39,6 @@ const ProfileButton = observer(() => {
 				onClick={() => setIsOpen(!isOpen)}
 				className='rounded-full h-10 w-10 overflow-hidden bg-amber-400 cursor-pointer'
 			></button>
-			{/* {isOpen && ( */}
 			<div
 				className={`absolute right-0 w-[300px] mt-2 rounded-xl bg-primary border-2 border-white/15 grid gap-2 font-medium py-3 transition-all duration-125 ${
 					isOpen
@@ -68,10 +69,22 @@ const ProfileButton = observer(() => {
 				<PopupProfileButton
 					text='Выйти из профиля'
 					icon={<LogoutSvgIcon />}
-					onClick={authStore.logOut}
+					onClick={() => {
+						authStore.logOut().then(() => {
+							if (!authStore.isAuth) {
+								navigateToMain()
+							}
+							notificationsStore.addNotification({
+								id: self.crypto.randomUUID(),
+								text: !authStore.isAuth
+									? 'Вы успешно вышли из аккаунта!'
+									: 'Произошла ошибка при выходе!',
+								isError: authStore.isAuth,
+							})
+						})
+					}}
 				/>
 			</div>
-			{/* )} */}
 		</div>
 	)
 })

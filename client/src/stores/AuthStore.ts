@@ -7,7 +7,7 @@ class AuthStore {
 	isAuth: boolean = false
 	user: IUser | null = null
 	errors: string[] = []
-	emailSent: boolean | null = null
+	emailSent: boolean | null = true
 
 	constructor() {
 		makeAutoObservable(this)
@@ -90,12 +90,13 @@ class AuthStore {
 			return
 		}
 		try {
-			const { user, accessToken } = await AuthAPI.register(
+			const { user, accessToken, emailSent } = await AuthAPI.register(
 				formData.email,
 				formData.nickname,
 				formData.password
 			)
 			this.setAuthorization(user, accessToken)
+			this.setEmailSent(emailSent)
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (e: any) {
 			if (e.response?.data?.message) {

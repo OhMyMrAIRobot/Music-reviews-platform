@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from 'axios'
 import { IAuthResponse } from '../models/AuthResponse'
 import { IEmailResponse } from '../models/EmailResponse'
+import { IRegisterResponse } from '../models/RegisterResponse'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
 
@@ -34,8 +35,8 @@ export const AuthAPI = {
 		email: string,
 		nickname: string,
 		password: string
-	): Promise<IAuthResponse> {
-		const { data } = await api.post<IAuthResponse>('register', {
+	): Promise<IRegisterResponse> {
+		const { data } = await api.post<IRegisterResponse>('register', {
 			email,
 			nickname,
 			password,

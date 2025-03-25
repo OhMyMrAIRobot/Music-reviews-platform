@@ -18,13 +18,18 @@ const LoginForm = observer(() => {
 	const { navigateToMain, navigateToRegistration, navigateToRequestReset } =
 		UseCustomNavigate()
 
-	const { authStore } = UseStore()
+	const { authStore, notificationsStore } = UseStore()
 
 	const { execute: login, isLoading } = useLoading(authStore.login)
 
 	useEffect(() => {
 		if (authStore.isAuth) {
 			navigateToMain()
+			notificationsStore.addNotification({
+				id: self.crypto.randomUUID(),
+				text: 'Вы успешно вошли!',
+				isError: false,
+			})
 		} else {
 			authStore.setErrors([])
 		}
