@@ -32,12 +32,24 @@ const RegistrationForm = observer(() => {
 
 	const { navigateToMain, navigateToLogin } = UseCustomNavigate()
 
-	const { authStore } = UseStore()
+	const { authStore, notificationsStore } = UseStore()
 	const { execute: register, isLoading } = useLoading(authStore.register)
 
 	useEffect(() => {
 		if (authStore.isAuth) {
 			navigateToMain()
+			notificationsStore.addNotification({
+				id: self.crypto.randomUUID(),
+				text: 'Вы успешно зарегистрировались!',
+				isError: false,
+			})
+			notificationsStore.addNotification({
+				id: self.crypto.randomUUID(),
+				text: authStore.emailSent
+					? 'Письмо с активацией отправлено на вашу почту!'
+					: 'Ошибка при отправке письма с активацией. Повторите попытку позже!',
+				isError: !authStore.emailSent,
+			})
 		} else {
 			authStore.setErrors([])
 		}

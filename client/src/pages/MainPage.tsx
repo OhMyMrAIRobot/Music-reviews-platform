@@ -1,6 +1,5 @@
 import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
-import NotificationContainer from '../components/notifications/NotificationContainer'
 import { UseStore } from '../hooks/UseStore'
 
 const MainPage = observer(() => {
@@ -22,7 +21,6 @@ const MainPage = observer(() => {
 				>
 					main MainPage
 				</button>
-				<NotificationContainer />
 			</div>
 		</>
 	)
