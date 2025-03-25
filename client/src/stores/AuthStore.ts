@@ -125,6 +125,20 @@ class AuthStore {
 			this.setErrors(apiErrors)
 		}
 	}
+
+	activate = async (token: string) => {
+		this.setErrors([])
+		try {
+			const { user, accessToken } = await AuthAPI.activate(token)
+			this.setAuthorization(user, accessToken)
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		} catch (e: any) {
+			const apiErrors = Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
+			this.setErrors(apiErrors)
+		}
+	}
 }
 
 export default new AuthStore()

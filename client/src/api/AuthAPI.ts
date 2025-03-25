@@ -50,4 +50,9 @@ export const AuthAPI = {
 		})
 		return data
 	},
+
+	async activate(token: string): Promise<IAuthResponse> {
+		const { data } = await api.post<IAuthResponse>(`activate?token=${token}`)
+		return data
+	},
 }

@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router'
+import ActivationForm from '../components/auth/forms/ActivationForm'
 import LoginForm from '../components/auth/forms/LoginForm'
 import RegistrationForm from '../components/auth/forms/RegistrationForm'
 import ReqResetPasswordForm from '../components/auth/forms/ReqResetPasswordForm'
@@ -11,7 +12,7 @@ const AuthRoutes = () => {
 			<Route path='/register' element={<RegistrationForm />} />
 			<Route path='/request-reset' element={<ReqResetPasswordForm />} />
 			<Route path='/reset-password' element={<ResetPasswordForm />} />
-			<Route path='*' element={<LoginForm />} />
+			<Route path='/activate/:token' element={<ActivationForm />} />
 		</Routes>
 	)
 }
