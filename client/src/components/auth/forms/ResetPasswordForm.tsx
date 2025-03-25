@@ -1,15 +1,27 @@
 import { useState } from 'react'
+import { useParams } from 'react-router'
+import useCustomNavigate from '../../../hooks/UseCustomNavigate'
+import { useLoading } from '../../../hooks/UseLoading'
+import { useStore } from '../../../hooks/UseStore'
+import { IResetPasswordData } from '../../../models/Auth/ResetPasswordData'
 import AuthButton from '../components/AuthButton'
+import AuthInfoContainer from '../components/AuthInfoContainer'
+import AuthInfoField from '../components/AuthInfoField'
 import AuthInput from '../components/AuthInput'
 import AuthLabel from '../components/AuthLabel'
 import AuthSubTitle from '../components/AuthSubTitle'
 import AuthTitle from '../components/AuthTitle'
 
 const ResetPasswordForm = () => {
-	const [formData, setFormData] = useState({
+	const [formData, setFormData] = useState<IResetPasswordData>({
 		password: '',
 		passwordConfirm: '',
 	})
+	const [errors, setErrors] = useState<string[]>([])
+	const { authStore, notificationsStore } = useStore()
+	const { token } = useParams()
+	const { execute: reset, isLoading } = useLoading(authStore.resetPassword)
+	const { navigateToMain } = useCustomNavigate()
 
 	const handleChange = (
 		field: keyof typeof formData,
@@ -51,10 +63,30 @@ const ResetPasswordForm = () => {
 			{renderInput('password', 'Пароль', 'password')}
 			{renderInput('passwordConfirm', 'Подтвердите пароль', 'password')}
 			<AuthButton
-				title={'Сбросить пароль'}
-				onClick={() => {}}
+				title={isLoading ? 'Сброс...' : 'Сбросить пароль'}
+				onClick={() =>
+					reset(formData, token).then(errors => {
+						setErrors(errors)
+						if (errors.length === 0) {
+							notificationsStore.addNotification({
+								id: self.crypto.randomUUID(),
+								text: 'Ваш пароль был успешно сброшен!',
+								isError: false,
+							})
+							navigateToMain()
+						}
+					})
+				}
 				isInvert={true}
 			/>
+
+			{errors && (
+				<AuthInfoContainer>
+					{errors.map(error => (
+						<AuthInfoField key={error} text={error} isError={true} />
+					))}
+				</AuthInfoContainer>
+			)}
 		</div>
 	)
 }

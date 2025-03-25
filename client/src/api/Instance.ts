@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { IAuthResponse } from '../models/AuthResponse'
+import { IAuthResponse } from '../models/Auth/AuthResponse'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
 

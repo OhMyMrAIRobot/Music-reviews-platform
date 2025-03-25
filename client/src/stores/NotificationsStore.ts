@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx'
-import { INotification } from '../models/Notification'
+import { INotification } from '../models/Auth/Notification'
 
 class NotificationsStore {
 	notifications: INotification[] = []

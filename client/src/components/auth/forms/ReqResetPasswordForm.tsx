@@ -46,7 +46,13 @@ const ReqResetPasswordForm = observer(() => {
 				onClick={() => {
 					sendRequest(email).then(result => {
 						if (result !== null) {
-							notificationsStore.addEmailSentNotification(result)
+							notificationsStore.addNotification({
+								id: self.crypto.randomUUID(),
+								text: result
+									? 'Письмо с инструкциями по восстановлению пароля отправлено на вашу почту!'
+									: 'Ошибка при отправке письма. Повторите попытку позже!',
+								isError: !result,
+							})
 						}
 					})
 				}}

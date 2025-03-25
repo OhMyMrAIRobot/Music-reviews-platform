@@ -2,7 +2,8 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { AuthAPI } from '../api/AuthAPI'
 import { IRegistrationData } from '../components/auth/forms/RegistrationForm'
-import { IUser } from '../models/User'
+import { IResetPasswordData } from '../models/Auth/ResetPasswordData'
+import { IUser } from '../models/Auth/User'
 
 class AuthStore {
 	isAuth: boolean = false
@@ -143,6 +144,28 @@ class AuthStore {
 				: [e.response?.data?.message]
 			this.setErrors(apiErrors)
 			return null
+		}
+	}
+
+	resetPassword = async (
+		formData: IResetPasswordData,
+		token: string
+	): Promise<string[]> => {
+		if (formData.password !== formData.passwordConfirm) {
+			return ['Пароли не совпадают!']
+		}
+
+		try {
+			const { user, accessToken } = await AuthAPI.resetPassword(
+				formData.password,
+				token
+			)
+			this.setAuthorization(user, accessToken)
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
 		}
 	}
 }

@@ -11,7 +11,7 @@ const AuthRoutes = () => {
 			<Route path='/login' element={<LoginForm />} />
 			<Route path='/register' element={<RegistrationForm />} />
 			<Route path='/request-reset' element={<ReqResetPasswordForm />} />
-			<Route path='/reset-password' element={<ResetPasswordForm />} />
+			<Route path='/reset-password/:token' element={<ResetPasswordForm />} />
 			<Route path='/activate' element={<ActivationForm />} />
 			<Route path='/activate/:token' element={<ActivationForm />} />
 		</Routes>

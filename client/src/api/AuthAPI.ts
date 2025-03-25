@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios'
-import { IAuthResponse } from '../models/AuthResponse'
-import { IEmailResponse } from '../models/EmailResponse'
-import { IRegisterResponse } from '../models/RegisterResponse'
+import { IAuthResponse } from '../models/Auth/AuthResponse'
+import { IEmailResponse } from '../models/Auth/EmailResponse'
+import { IRegisterResponse } from '../models/Auth/RegisterResponse'
 import { api } from './Instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
@@ -54,6 +54,16 @@ export const AuthAPI = {
 
 	async activate(token: string): Promise<IAuthResponse> {
 		const { data } = await _api.post<IAuthResponse>(`activate?token=${token}`)
+		return data
+	},
+
+	async resetPassword(password: string, token: string) {
+		const { data } = await _api.post<IAuthResponse>(
+			`reset-password?token=${token}`,
+			{
+				password,
+			}
+		)
 		return data
 	},
 
