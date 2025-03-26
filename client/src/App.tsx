@@ -1,7 +1,28 @@
+import { useEffect } from 'react'
+import { Routes } from 'react-router'
+import NotificationContainer from './components/notifications/NotificationContainer'
+import { useLoading } from './hooks/UseLoading'
+import { useStore } from './hooks/UseStore'
+import Layout from './Layout'
+import GlobalRoutes from './routes/GlobalRoutes'
+
 export function App() {
-	return (
-		<>
-			<p className='text2xl text-amber-500'>123</p>
-		</>
+	const { authStore } = useStore()
+
+	const { execute: checkAuth, isLoading } = useLoading(authStore.chechAuth)
+
+	useEffect(() => {
+		if (localStorage.getItem('token')) {
+			checkAuth()
+		}
+	}, [])
+
+	return isLoading ? (
+		<div>Loading</div>
+	) : (
+		<Layout>
+			<Routes>{GlobalRoutes()}</Routes>
+			<NotificationContainer />
+		</Layout>
 	)
 }
