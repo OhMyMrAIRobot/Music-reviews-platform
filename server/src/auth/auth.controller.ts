@@ -3,29 +3,37 @@ import {
   Controller,
   Post,
   Query,
+  Req,
   Request,
+  Res,
   UseGuards,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { Response } from 'express';
+import { UsersService } from 'src/users/users.service';
+import { MailsService } from '../mails/mails.service';
+import { CodeRequestDto } from './dto/code-request.dto';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-import { IAuthenticatedRequest } from './types/authenticated-request.interface';
-import { JwtAuthNoActiveGuard } from './guards/jwt-auth-no-active.guard';
-import { CodeRequestDto } from './dto/code-request.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
-import { MailsService } from '../mails/mails.service';
+import { JwtAuthNoActiveGuard } from './guards/jwt-auth-no-active.guard';
+import { AuthService } from './services/auth.service';
+import { TokensService } from './services/tokens.service';
+import { IAuthenticatedRequest } from './types/authenticated-request.interface';
+import { IRequestWithCookies } from './types/request-cookies.interface';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly mailsService: MailsService,
+    private readonly tokensService: TokensService,
+    private readonly usersService: UsersService,
   ) {}
 
   @Post('register')
-  async register(@Body() registerDto: RegisterDto) {
-    const result = await this.authService.register(registerDto);
-    const activationToken = this.authService.generateActivationToken(
+  async register(@Res() res: Response, @Body() registerDto: RegisterDto) {
+    const result = await this.authService.register(res, registerDto);
+    const activationToken = this.tokensService.generateActivationToken(
       result.user.id,
       result.user.email,
     );
@@ -42,28 +50,56 @@ export class AuthController {
       console.log(e);
     }
 
-    return { ...result, emailSent: emailSent };
+    return res.status(200).send({ ...result, emailSent: emailSent });
   }
 
   @Post('login')
-  async login(@Body() loginDto: LoginDto) {
+  async login(@Res() res: Response, @Body() loginDto: LoginDto) {
     const user = await this.authService.validateUser(loginDto);
-    return this.authService.login(user);
+    const result = await this.authService.login(res, user);
+    return res.status(200).send(result);
   }
 
   @Post('activate')
-  async activate(@Query('token') token: string) {
-    return this.authService.activateAccount(token);
+  async activate(@Res() res: Response, @Query('token') token: string) {
+    const result = await this.authService.activateAccount(res, token);
+    res.status(200).send(result);
+  }
+
+  @Post('refresh')
+  async refresh(@Req() req: IRequestWithCookies, @Res() res: Response) {
+    const refreshToken = req.cookies['refreshToken'];
+
+    if (!refreshToken) {
+      return res.status(401).send('Refresh token not found');
+    }
+
+    const result = await this.authService.refresh(res, refreshToken);
+
+    return res.status(200).send(result);
+  }
+
+  @Post('logout')
+  async logout(@Req() req: IRequestWithCookies, @Res() res: Response) {
+    const refreshToken = req.cookies['refreshToken'];
+
+    if (!refreshToken) {
+      return res.status(200).send();
+    }
+
+    await this.authService.logout(res, refreshToken);
+    return res.status(200).send();
   }
 
   @UseGuards(JwtAuthNoActiveGuard)
   @Post('resend-activation')
   async resendActivationCode(@Request() req: IAuthenticatedRequest) {
     const { user } = req;
-    const activationToken = this.authService.generateActivationToken(
+    const activationToken = this.tokensService.generateActivationToken(
       user.id,
       user.email,
     );
+
     let emailSent = true;
     try {
       await this.mailsService.sendActivationEmail(
@@ -80,15 +116,18 @@ export class AuthController {
 
   @Post('send-reset-password')
   async sendResetPasswordCode(@Body() codeRequestDto: CodeRequestDto) {
-    const userWithResetToken =
-      await this.authService.checkUserAndGetResetToken(codeRequestDto);
+    const user = await this.usersService.findByEmail(codeRequestDto.email);
+    const resetToken = this.tokensService.generateResetToken(
+      user.id,
+      user.email,
+    );
 
     let emailSent = true;
     try {
       await this.mailsService.sendResetPasswordEmail(
-        userWithResetToken.user.email,
-        userWithResetToken.user.nickname,
-        userWithResetToken.token,
+        user.email,
+        user.nickname,
+        resetToken,
       );
     } catch (e) {
       emailSent = false;
@@ -100,9 +139,15 @@ export class AuthController {
 
   @Post('reset-password')
   async resetPassword(
+    @Res() res: Response,
     @Query('token') token: string,
     @Body() resetPasswordDto: ResetPasswordDto,
   ) {
-    return this.authService.resetPassword(token, resetPasswordDto);
+    const result = await this.authService.resetPassword(
+      res,
+      token,
+      resetPasswordDto,
+    );
+    res.status(200).send(result);
   }
 }

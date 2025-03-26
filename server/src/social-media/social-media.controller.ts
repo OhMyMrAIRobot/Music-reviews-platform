@@ -8,13 +8,13 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { SocialMediaService } from './social-media.service';
-import { CreateSocialMediaDto } from './dto/create-social-media.dto';
-import { UpdateSocialMediaDto } from './dto/update-social-media.dto';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { UserRoleEnum } from '../roles/types/user-role.enum';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import { UserRoleEnum } from '../roles/types/user-role.enum';
+import { CreateSocialMediaDto } from './dto/create-social-media.dto';
+import { UpdateSocialMediaDto } from './dto/update-social-media.dto';
+import { SocialMediaService } from './social-media.service';
 
 @Controller('social-media')
 export class SocialMediaController {

@@ -1,11 +1,16 @@
 import { IsEmail, IsString, Length } from 'class-validator';
 
 export class LoginDto {
-  @IsEmail()
-  @Length(1, 60)
+  @IsEmail({}, { message: 'Некорректный формат email' })
+  @Length(1, 60, {
+    message: 'Email не должен быть пустым и содержать более 60 символов',
+  })
   email: string;
 
-  @IsString()
-  @Length(6, 64)
+  @IsString({ message: 'Пароль должен быть строкой' })
+  @Length(6, 64, {
+    message:
+      'Длина пароля должна составлять от 6 до 64 символов (включительно)',
+  })
   password: string;
 }

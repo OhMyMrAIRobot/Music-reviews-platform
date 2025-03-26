@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { UpdateProfileDto } from './dto/update-profile.dto';
-import { PrismaService } from '../../prisma/prisma.service';
 import { UserProfile } from '@prisma/client';
-import { NoDataProvidedException } from '../exceptions/no-data.exception';
-import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
+import { PrismaService } from '../../../prisma/prisma.service';
+import { EntityNotFoundException } from '../../exceptions/entity-not-found.exception';
+import { NoDataProvidedException } from '../../exceptions/no-data.exception';
+import { UpdateProfileDto } from '../dto/update-profile.dto';
 
 @Injectable()
 export class ProfilesService {
@@ -19,7 +19,7 @@ export class ProfilesService {
     });
 
     if (!profile) {
-      throw new EntityNotFoundException('Profile', 'userId', `${userId}`);
+      throw new EntityNotFoundException('Профиль', 'userId', `${userId}`);
     }
 
     return profile;

@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { IJwtAuthPayload } from '../types/jwt-auth-payload.interface';
@@ -9,13 +9,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: process.env.JWT_SECRET || 'secret',
+      secretOrKey: process.env.JWT_ACCESS_SECRET || 'secret',
     });
   }
 
   validate(payload: IJwtAuthPayload) {
     if (!payload.isActive) {
-      throw new UnauthorizedException('Your account is not activated!');
+      throw new ForbiddenException('Аккаунт не активирован!');
     }
     return payload;
   }

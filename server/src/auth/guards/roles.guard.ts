@@ -1,15 +1,14 @@
-import { Reflector } from '@nestjs/core';
-import { JwtAuthGuard } from './jwt-auth.guard';
 import {
   CanActivate,
   ExecutionContext,
-  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { InsufficientPermissionsException } from '../../exceptions/insufficient-permissions.exception';
 import { UserRoleEnum } from '../../roles/types/user-role.enum';
 import { IAuthenticatedRequest } from '../types/authenticated-request.interface';
-import { InsufficientPermissionsException } from '../../exceptions/insufficient-permissions.exception';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Injectable()
 export class RolesGuard extends JwtAuthGuard implements CanActivate {

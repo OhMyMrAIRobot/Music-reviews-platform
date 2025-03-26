@@ -1,9 +1,19 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
-import { CreateProfileSocialMediaDto } from './dto/create-profile-social-media.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { IAuthenticatedRequest } from '../auth/types/authenticated-request.interface';
-import { ProfileSocialMediaService } from './profile-social-media.service';
-import { UpdateProfileSocialMediaDto } from './dto/update-profile-social-media.dto';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { IAuthenticatedRequest } from '../../auth/types/authenticated-request.interface';
+import { CreateProfileSocialMediaDto } from '../dto/create-profile-social-media.dto';
+import { UpdateProfileSocialMediaDto } from '../dto/update-profile-social-media.dto';
+import { ProfileSocialMediaService } from '../services/profile-social-media.service';
 
 @Controller('profile-social-media')
 export class ProfileSocialMediaController {
@@ -37,10 +47,7 @@ export class ProfileSocialMediaController {
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  delete(
-    @Request() req: IAuthenticatedRequest,
-    @Param('id') id: string
-  ) {
+  delete(@Request() req: IAuthenticatedRequest, @Param('id') id: string) {
     return this.profileSocialMediaService.delete(id, req.user.id);
   }
 }
