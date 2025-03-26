@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
 import { AuthAPI } from '../api/AuthAPI'
-import { IRegistrationData } from '../components/auth/forms/RegistrationForm'
-import { IResetPasswordData } from '../models/Auth/ResetPasswordData'
+import { IRegistrationData } from '../models/auth/RegistrationData'
+import { IResetPasswordData } from '../models/auth/ResetPasswordData'
 import { IUser } from '../models/Auth/User'
 
 class AuthStore {
 	isAuth: boolean = false
 	user: IUser | null = null
-	errors: string[] = []
 
 	constructor() {
 		makeAutoObservable(this)
@@ -16,10 +15,6 @@ class AuthStore {
 
 	setAuth(value: boolean) {
 		this.isAuth = value
-	}
-
-	setErrors(errors: string[]) {
-		this.errors = errors
 	}
 
 	setAuthorization(user: IUser, token: string) {
@@ -40,16 +35,15 @@ class AuthStore {
 		}
 	}
 
-	login = async (email: string, password: string) => {
+	login = async (email: string, password: string): Promise<string[]> => {
 		try {
 			const { user, accessToken } = await AuthAPI.login(email, password)
 			this.setAuthorization(user, accessToken)
+			return []
 		} catch (e: any) {
-			const apiErrors = Array.isArray(e.response?.data?.message)
+			return Array.isArray(e.response?.data?.message)
 				? e.response?.data?.message
 				: [e.response?.data?.message]
-
-			this.setErrors(apiErrors)
 		}
 	}
 
@@ -66,7 +60,9 @@ class AuthStore {
 		}
 	}
 
-	register = async (formData: IRegistrationData): Promise<boolean | null> => {
+	register = async (
+		formData: IRegistrationData
+	): Promise<string[] | boolean> => {
 		const errors: string[] = []
 
 		if (formData.password !== formData.passwordConfirm) {
@@ -81,9 +77,8 @@ class AuthStore {
 			)
 		}
 
-		if (errors.length > 0) {
-			this.setErrors(errors)
-			return null
+		if (errors.length !== 0) {
+			return errors
 		}
 		try {
 			const { user, accessToken, emailSent } = await AuthAPI.register(
@@ -94,56 +89,43 @@ class AuthStore {
 			this.setAuthorization(user, accessToken)
 			return emailSent
 		} catch (e: any) {
-			if (e.response?.data?.message) {
-				const apiErrors = Array.isArray(e.response?.data?.message)
-					? e.response?.data?.message
-					: [e.response?.data?.message]
-				this.setErrors(apiErrors)
-			} else {
-				this.setErrors(['Ошибка при выполнении регистрации!'])
-			}
-			return null
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
 		}
 	}
 
-	sendReqResetPassword = async (email: string): Promise<boolean | null> => {
-		this.setErrors([])
+	sendReqResetPassword = async (email: string): Promise<string[] | boolean> => {
 		try {
 			const { emailSent } = await AuthAPI.reqResetPassword(email)
 			return emailSent
 		} catch (e: any) {
-			const apiErrors = Array.isArray(e.response?.data?.message)
+			return Array.isArray(e.response?.data?.message)
 				? e.response?.data?.message
 				: [e.response?.data?.message]
-			this.setErrors(apiErrors)
-			return null
 		}
 	}
 
-	activate = async (token: string) => {
-		this.setErrors([])
+	activate = async (token: string): Promise<string[]> => {
 		try {
 			const { user, accessToken } = await AuthAPI.activate(token)
 			this.setAuthorization(user, accessToken)
+			return []
 		} catch (e: any) {
-			const apiErrors = Array.isArray(e.response?.data?.message)
+			return Array.isArray(e.response?.data?.message)
 				? e.response?.data?.message
 				: [e.response?.data?.message]
-			this.setErrors(apiErrors)
 		}
 	}
 
-	resendActivation = async (): Promise<boolean | null> => {
-		this.setErrors([])
+	resendActivation = async (): Promise<boolean | string[]> => {
 		try {
 			const { emailSent } = await AuthAPI.resendActivation()
 			return emailSent
 		} catch (e: any) {
-			const apiErrors = Array.isArray(e.response?.data?.message)
+			return Array.isArray(e.response?.data?.message)
 				? e.response?.data?.message
 				: [e.response?.data?.message]
-			this.setErrors(apiErrors)
-			return null
 		}
 	}
 

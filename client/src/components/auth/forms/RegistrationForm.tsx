@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import useCustomNavigate from '../../../hooks/UseCustomNavigate'
 import { useLoading } from '../../../hooks/UseLoading'
 import { useStore } from '../../../hooks/UseStore'
+import { IRegistrationData } from '../../../models/auth/RegistrationData'
 import AuthButton from '../components/AuthButton'
 import AuthCheckbox from '../components/AuthCheckbox'
 import AuthInfoContainer from '../components/AuthInfoContainer'
@@ -10,15 +11,6 @@ import AuthInfoField from '../components/AuthInfoField'
 import AuthInput from '../components/AuthInput'
 import AuthLabel from '../components/AuthLabel'
 import AuthTitle from '../components/AuthTitle'
-
-export interface IRegistrationData {
-	email: string
-	nickname: string
-	password: string
-	passwordConfirm: string
-	agreementChecked: boolean
-	policyChecked: boolean
-}
 
 const RegistrationForm = observer(() => {
 	const [formData, setFormData] = useState<IRegistrationData>({
@@ -29,7 +21,7 @@ const RegistrationForm = observer(() => {
 		agreementChecked: false,
 		policyChecked: false,
 	})
-
+	const [errors, setErrors] = useState<string[]>([])
 	const { navigateToMain, navigateToLogin } = useCustomNavigate()
 
 	const { authStore, notificationsStore } = useStore()
@@ -38,13 +30,6 @@ const RegistrationForm = observer(() => {
 	useEffect(() => {
 		if (authStore.isAuth) {
 			navigateToMain()
-			notificationsStore.addNotification({
-				id: self.crypto.randomUUID(),
-				text: 'Вы успешно зарегистрировались!',
-				isError: false,
-			})
-		} else {
-			authStore.setErrors([])
 		}
 	}, [authStore.isAuth])
 
@@ -133,14 +118,15 @@ const RegistrationForm = observer(() => {
 					isInvert={true}
 					onClick={() =>
 						register(formData).then(result => {
-							if (result !== null) {
+							if (Array.isArray(result)) {
+								setErrors(result)
+							} else {
 								notificationsStore.addNotification({
 									id: self.crypto.randomUUID(),
-									text: result
-										? 'Письмо с активацией отправлено на вашу почту!'
-										: 'Ошибка при отправке письма с активацией. Повторите попытку позже!',
-									isError: !result,
+									text: 'Вы успешно зарегистрировались!',
+									isError: false,
 								})
+								notificationsStore.addEmailSentNotification(result)
 							}
 						})
 					}
@@ -155,9 +141,10 @@ const RegistrationForm = observer(() => {
 						Войти
 					</button>
 				</div>
-				{authStore.errors && (
+
+				{errors && (
 					<AuthInfoContainer>
-						{authStore.errors.map(error => (
+						{errors.map(error => (
 							<AuthInfoField key={error} text={error} isError={true} />
 						))}
 					</AuthInfoContainer>

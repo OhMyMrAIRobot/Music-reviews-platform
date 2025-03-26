@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import useCustomNavigate from '../../../hooks/UseCustomNavigate'
 import { useLoading } from '../../../hooks/UseLoading'
@@ -10,6 +10,7 @@ import AuthSubTitle from '../components/AuthSubTitle'
 import AuthTitle from '../components/AuthTitle'
 
 const ActivationForm = () => {
+	const [errors, setErrors] = useState<string[]>([])
 	const { token } = useParams()
 	const { notificationsStore, authStore } = useStore()
 	const { navigateToMain } = useCustomNavigate()
@@ -17,14 +18,16 @@ const ActivationForm = () => {
 
 	useEffect(() => {
 		if (token) {
-			authStore.activate(token).then(() => {
-				if (authStore.errors.length === 0) {
+			authStore.activate(token).then(errors => {
+				if (errors.length === 0) {
 					notificationsStore.addNotification({
 						id: self.crypto.randomUUID(),
 						text: 'Аккаунт успешно активирован!',
 						isError: false,
 					})
 					navigateToMain()
+				} else {
+					setErrors(errors)
 				}
 			})
 		}
@@ -41,7 +44,7 @@ const ActivationForm = () => {
 				)}
 			</div>
 
-			{authStore.user?.isActive && (
+			{authStore.user?.isActive && !token && (
 				<AuthInfoField text={'Ваш аккаунт уже активирован!'} isError={true} />
 			)}
 
@@ -51,16 +54,18 @@ const ActivationForm = () => {
 					isInvert={true}
 					onClick={() => {
 						resend().then(result => {
-							if (result !== null) {
+							if (Array.isArray(result)) {
+								setErrors(result)
+							} else {
 								notificationsStore.addEmailSentNotification(result)
 							}
 						})
 					}}
 				/>
 			)}
-			{authStore.errors && (
+			{errors && (
 				<AuthInfoContainer>
-					{authStore.errors.map(error => (
+					{errors.map(error => (
 						<AuthInfoField key={error} text={error} isError={true} />
 					))}
 				</AuthInfoContainer>

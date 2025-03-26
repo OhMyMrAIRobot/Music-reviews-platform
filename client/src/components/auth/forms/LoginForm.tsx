@@ -12,6 +12,7 @@ import AuthSubTitle from '../components/AuthSubTitle'
 import AuthTitle from '../components/AuthTitle'
 
 const LoginForm = observer(() => {
+	const [errors, setErrors] = useState<string[]>([])
 	const [email, setEmail] = useState<string>('')
 	const [password, setPassword] = useState<string>('')
 
@@ -25,13 +26,6 @@ const LoginForm = observer(() => {
 	useEffect(() => {
 		if (authStore.isAuth) {
 			navigateToMain()
-			notificationsStore.addNotification({
-				id: self.crypto.randomUUID(),
-				text: 'Вы успешно вошли!',
-				isError: false,
-			})
-		} else {
-			authStore.setErrors([])
 		}
 	}, [authStore.isAuth])
 
@@ -73,7 +67,17 @@ const LoginForm = observer(() => {
 				<div className='grid gap-2'>
 					<AuthButton
 						title={isLoading ? 'Загрузка...' : 'Войти'}
-						onClick={() => login(email, password)}
+						onClick={() =>
+							login(email, password).then(errors => {
+								setErrors(errors)
+								if (authStore.isAuth)
+									notificationsStore.addNotification({
+										id: self.crypto.randomUUID(),
+										text: 'Вы успешно вошли!',
+										isError: false,
+									})
+							})
+						}
 						isInvert={true}
 					/>
 					<AuthButton
@@ -82,9 +86,10 @@ const LoginForm = observer(() => {
 						isInvert={false}
 					/>
 				</div>
-				{authStore.errors && (
+
+				{errors && (
 					<AuthInfoContainer>
-						{authStore.errors.map(error => (
+						{errors.map(error => (
 							<AuthInfoField key={error} text={error} isError={true} />
 						))}
 					</AuthInfoContainer>

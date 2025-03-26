@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
+import useCustomNavigate from '../../../hooks/UseCustomNavigate'
 import { useLoading } from '../../../hooks/UseLoading'
 import { useStore } from '../../../hooks/UseStore'
 import AuthButton from '../components/AuthButton'
@@ -12,13 +13,17 @@ import AuthTitle from '../components/AuthTitle'
 
 const ReqResetPasswordForm = observer(() => {
 	const [email, setEmail] = useState<string>('')
+	const [errors, setErrors] = useState<string[]>([])
+	const { navigateToMain } = useCustomNavigate()
 	const { authStore, notificationsStore } = useStore()
 	const { execute: sendRequest, isLoading } = useLoading(
 		authStore.sendReqResetPassword
 	)
 
 	useEffect(() => {
-		authStore.setErrors([])
+		if (authStore.isAuth) {
+			navigateToMain()
+		}
 	}, [])
 
 	return (
@@ -45,7 +50,9 @@ const ReqResetPasswordForm = observer(() => {
 				title={isLoading ? 'Отправка...' : 'Отправить письмо для сброса'}
 				onClick={() => {
 					sendRequest(email).then(result => {
-						if (result !== null) {
+						if (Array.isArray(result)) {
+							setErrors(result)
+						} else {
 							notificationsStore.addNotification({
 								id: self.crypto.randomUUID(),
 								text: result
@@ -58,9 +65,10 @@ const ReqResetPasswordForm = observer(() => {
 				}}
 				isInvert={true}
 			/>
-			{authStore.errors && (
+
+			{errors && (
 				<AuthInfoContainer>
-					{authStore.errors.map(error => (
+					{errors.map(error => (
 						<AuthInfoField key={error} text={error} isError={true} />
 					))}
 				</AuthInfoContainer>
