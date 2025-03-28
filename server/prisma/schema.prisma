@@ -85,3 +85,12 @@ model ProfileSocialMedia {
   @@unique([profileId, socialId])
   @@map("Profile_social_media")
 }
+
+model Author {
+  id        String  @id @default(cuid())
+  name      String  @unique @db.VarChar(50)
+  avatarImg String? @map("avatar_img") @db.VarChar(255)
+  coverImg  String? @map("cover_img") @db.VarChar(255)
+
+  @@map("Authors")
+}

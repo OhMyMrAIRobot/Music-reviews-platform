@@ -6,6 +6,7 @@ import { RolesModule } from './roles/roles.module';
 import { ProfilesModule } from './profiles/profiles.module';
 import { MailsModule } from './mails/mails.module';
 import { SocialMediaModule } from './social-media/social-media.module';
+import { AuthorsModule } from './authors/authors.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { SocialMediaModule } from './social-media/social-media.module';
     ProfilesModule,
     MailsModule,
     SocialMediaModule,
+    AuthorsModule,
   ],
   controllers: [],
   providers: [PrismaService],
