@@ -94,3 +94,10 @@ model Author {
 
   @@map("Authors")
 }
+
+model AuthorType {
+  id   String @id @default(cuid())
+  type String @unique @db.VarChar(30)
+
+  @@map("Author_types")
+}

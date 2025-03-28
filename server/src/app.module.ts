@@ -7,6 +7,7 @@ import { ProfilesModule } from './profiles/profiles.module';
 import { MailsModule } from './mails/mails.module';
 import { SocialMediaModule } from './social-media/social-media.module';
 import { AuthorsModule } from './authors/authors.module';
+import { AuthorTypesModule } from './author-types/author-types.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { AuthorsModule } from './authors/authors.module';
     MailsModule,
     SocialMediaModule,
     AuthorsModule,
+    AuthorTypesModule,
   ],
   controllers: [],
   providers: [PrismaService],
