@@ -87,17 +87,30 @@ model ProfileSocialMedia {
 }
 
 model Author {
-  id        String  @id @default(cuid())
-  name      String  @unique @db.VarChar(50)
-  avatarImg String? @map("avatar_img") @db.VarChar(255)
-  coverImg  String? @map("cover_img") @db.VarChar(255)
+  id        String         @id @default(cuid())
+  name      String         @unique @db.VarChar(50)
+  avatarImg String?        @map("avatar_img") @db.VarChar(255)
+  coverImg  String?        @map("cover_img") @db.VarChar(255)
+  types     AuthorOnType[]
 
   @@map("Authors")
 }
 
 model AuthorType {
-  id   String @id @default(cuid())
-  type String @unique @db.VarChar(30)
+  id      String         @id @default(cuid())
+  type    String         @unique @db.VarChar(30)
+  authors AuthorOnType[]
 
   @@map("Author_types")
+}
+
+model AuthorOnType {
+  authorId     String @map("author_id")
+  authorTypeId String @map("author_type_id")
+
+  author     Author     @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  authorType AuthorType @relation(fields: [authorTypeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([authorId, authorTypeId])
+  @@map("Authors_On_Types")
 }

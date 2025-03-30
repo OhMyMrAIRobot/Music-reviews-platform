@@ -6,5 +6,6 @@ import { AuthorTypesService } from './author-types.service';
 @Module({
   controllers: [AuthorTypesController],
   providers: [AuthorTypesService, PrismaService],
+  exports: [AuthorTypesService],
 })
 export class AuthorTypesModule {}
