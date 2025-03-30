@@ -24,9 +24,14 @@ export class AuthorsOnTypesController {
     return this.authorsOnTypesService.findAll();
   }
 
-  @Get(':authorId')
-  findByAuthorId(@Param('authorId') authorId: string) {
-    return this.authorsOnTypesService.findByAuthorId(authorId);
+  @Get('author/:id')
+  findByAuthorId(@Param('id') id: string) {
+    return this.authorsOnTypesService.findByAuthorId(id);
+  }
+
+  @Get('type/:id')
+  findByTypeId(@Param('id') id: string) {
+    return this.authorsOnTypesService.findByTypeId(id);
   }
 
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)

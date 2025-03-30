@@ -24,7 +24,7 @@ export class AuthorsOnTypesService {
     await this.authorsService.findOne(authorId);
     await this.authorTypesService.findOne(authorTypeId);
 
-    const existing = await this.findById(authorId, authorTypeId);
+    const existing = await this.findOne(authorId, authorTypeId);
     if (existing) {
       throw new DuplicateFieldException('Автор', 'id типа', `${authorTypeId}`);
     }
@@ -54,12 +54,24 @@ export class AuthorsOnTypesService {
     return result;
   }
 
+  async findByTypeId(authorTypeId: string): Promise<AuthorOnType[]> {
+    const result = await this.prisma.authorOnType.findMany({
+      where: { authorTypeId },
+    });
+
+    if (result.length === 0) {
+      throw new EntityNotFoundException('Авторы', 'id типа', `${authorTypeId}`);
+    }
+
+    return result;
+  }
+
   async remove(
     deleteAuthorsOnTypeDto: DeleteAuthorsOnTypeDto,
   ): Promise<AuthorOnType> {
     const { authorId, authorTypeId } = deleteAuthorsOnTypeDto;
 
-    const existing = await this.findById(authorId, authorTypeId);
+    const existing = await this.findOne(authorId, authorTypeId);
     if (!existing) {
       throw new EntityNotFoundException('Автор', 'id типа', `${authorTypeId}`);
     }
@@ -69,7 +81,7 @@ export class AuthorsOnTypesService {
     });
   }
 
-  private async findById(
+  private async findOne(
     authorId: string,
     authorTypeId: string,
   ): Promise<AuthorOnType | null> {

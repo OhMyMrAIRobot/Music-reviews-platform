@@ -9,5 +9,6 @@ import { AuthorsOnTypesService } from './authors-on-types.service';
   imports: [AuthorsModule, AuthorTypesModule],
   controllers: [AuthorsOnTypesController],
   providers: [AuthorsOnTypesService, PrismaService],
+  exports: [AuthorsOnTypesService],
 })
 export class AuthorsOnTypesModule {}
