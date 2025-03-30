@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ReleaseType } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
 import { DuplicateFieldException } from 'src/exceptions/duplicate-field.exception';
+import { EntityInUseException } from 'src/exceptions/entity-in-use.exception';
 import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
 import { NoDataProvidedException } from 'src/exceptions/no-data.exception';
 import { CreateReleaseTypeDto } from './dto/create-release-type.dto';
@@ -75,6 +76,15 @@ export class ReleaseTypesService {
 
   async remove(id: string): Promise<ReleaseType> {
     await this.findOne(id);
+
+    const releasesWithType = await this.prisma.release.count({
+      where: { releaseTypeId: id },
+    });
+
+    if (releasesWithType != 0) {
+      throw new EntityInUseException('Тип релиза', 'id', `${id}`);
+    }
+
     return this.prisma.releaseType.delete({
       where: { id },
     });
