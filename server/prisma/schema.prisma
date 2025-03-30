@@ -114,3 +114,10 @@ model AuthorOnType {
   @@id([authorId, authorTypeId])
   @@map("Authors_On_Types")
 }
+
+model ReleaseType {
+  id   String @id @default(cuid())
+  type String @unique @db.VarChar(30)
+
+  @@map("Release_types")
+}

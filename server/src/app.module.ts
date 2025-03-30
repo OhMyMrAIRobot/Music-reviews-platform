@@ -9,6 +9,7 @@ import { SocialMediaModule } from './social-media/social-media.module';
 import { AuthorsModule } from './authors/authors.module';
 import { AuthorTypesModule } from './author-types/author-types.module';
 import { AuthorsOnTypesModule } from './authors-on-types/authors-on-types.module';
+import { ReleaseTypesModule } from './release-types/release-types.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { AuthorsOnTypesModule } from './authors-on-types/authors-on-types.module
     AuthorsModule,
     AuthorTypesModule,
     AuthorsOnTypesModule,
+    ReleaseTypesModule,
   ],
   controllers: [],
   providers: [PrismaService],
