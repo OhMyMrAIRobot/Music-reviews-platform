@@ -47,7 +47,7 @@ export class ReleaseArtistsService {
     });
 
     if (result.length === 0) {
-      throw new EntityNotFoundException('Релиз', 'id артиста', `${releaseId}`);
+      throw new EntityNotFoundException('Артист', 'id релиза', `${releaseId}`);
     }
 
     return result;
@@ -59,7 +59,7 @@ export class ReleaseArtistsService {
     });
 
     if (result.length === 0) {
-      throw new EntityNotFoundException('Артист', 'id релиза', `${authorId}`);
+      throw new EntityNotFoundException('Релиз', 'id артиса', `${authorId}`);
     }
 
     return result;
