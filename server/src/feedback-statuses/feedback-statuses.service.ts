@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { FeedbackStatus } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
 import { DuplicateFieldException } from 'src/exceptions/duplicate-field.exception';
+import { EntityInUseException } from 'src/exceptions/entity-in-use.exception';
 import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
 import { NoDataProvidedException } from 'src/exceptions/no-data.exception';
 import { CreateFeedbackStatusDto } from './dto/create-feedback-status.dto';
@@ -77,12 +78,20 @@ export class FeedbackStatusesService {
   async remove(id: string) {
     await this.findOne(id);
 
+    const feedbacksWithStatus = await this.prisma.feedback.count({
+      where: { feedbackStatusId: id },
+    });
+
+    if (feedbacksWithStatus != 0) {
+      throw new EntityInUseException('Статус отзыва', 'id', `${id}`);
+    }
+
     return this.prisma.feedbackStatus.delete({
       where: { id },
     });
   }
 
-  private async findByStatus(status: string): Promise<FeedbackStatus | null> {
+  async findByStatus(status: string): Promise<FeedbackStatus | null> {
     return this.prisma.feedbackStatus.findFirst({
       where: { status: { equals: status, mode: 'insensitive' } },
     });
