@@ -14,6 +14,7 @@ import { ReleasesModule } from './releases/releases.module';
 import { ReleaseProducersModule } from './release-producers/release-producers.module';
 import { ReleaseArtistsModule } from './release-artists/release-artists.module';
 import { ReleaseDesignersModule } from './release-designers/release-designers.module';
+import { FeedbackStatusesModule } from './feedback-statuses/feedback-statuses.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { ReleaseDesignersModule } from './release-designers/release-designers.mo
     ReleaseProducersModule,
     ReleaseArtistsModule,
     ReleaseDesignersModule,
+    FeedbackStatusesModule,
   ],
   controllers: [],
   providers: [PrismaService],

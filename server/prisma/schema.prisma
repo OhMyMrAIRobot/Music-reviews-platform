@@ -64,6 +64,13 @@ model UserProfile {
   @@map("User_profiles")
 }
 
+model FeedbackStatus {
+  id     String @id @default(cuid())
+  status String @unique @db.VarChar(30)
+
+  @@map("Feedback_statuses")
+}
+
 model SocialMedia {
   id   String @id @default(cuid())
   name String @unique @db.VarChar(40)
