@@ -12,6 +12,7 @@ import { AuthorsOnTypesModule } from './authors-on-types/authors-on-types.module
 import { ReleaseTypesModule } from './release-types/release-types.module';
 import { ReleasesModule } from './releases/releases.module';
 import { ReleaseProducersModule } from './release-producers/release-producers.module';
+import { ReleaseArtistsModule } from './release-artists/release-artists.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ReleaseProducersModule } from './release-producers/release-producers.mo
     ReleaseTypesModule,
     ReleasesModule,
     ReleaseProducersModule,
+    ReleaseArtistsModule,
   ],
   controllers: [],
   providers: [PrismaService],

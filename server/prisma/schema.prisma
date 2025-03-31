@@ -94,6 +94,7 @@ model Author {
   types     AuthorOnType[]
 
   ReleaseProducer ReleaseProducer[]
+  ReleaseArtist   ReleaseArtist[]
 
   @@map("Authors")
 }
@@ -114,7 +115,7 @@ model AuthorOnType {
   authorType AuthorType @relation(fields: [authorTypeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([authorId, authorTypeId])
-  @@map("Authors_On_Types")
+  @@map("Authors_on_types")
 }
 
 model ReleaseType {
@@ -135,6 +136,7 @@ model Release {
   ReleaseType ReleaseType @relation(fields: [releaseTypeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
   ReleaseProducer ReleaseProducer[]
+  ReleaseArtist   ReleaseArtist[]
 
   @@map("Releases")
 }
@@ -149,4 +151,16 @@ model ReleaseProducer {
 
   @@unique([releaseId, authorId])
   @@map("Release_producers")
+}
+
+model ReleaseArtist {
+  releaseId String
+  authorId  String
+
+  release Release @relation(fields: [releaseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  author Author @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([releaseId, authorId])
+  @@map("Release_artists")
 }

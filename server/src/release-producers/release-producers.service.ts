@@ -49,7 +49,7 @@ export class ReleaseProducersService {
 
     if (result.length === 0) {
       throw new EntityNotFoundException(
-        'Продюсеры',
+        'Продюсер',
         'id релиза',
         `${releaseId}`,
       );
@@ -65,7 +65,7 @@ export class ReleaseProducersService {
 
     if (result.length === 0) {
       throw new EntityNotFoundException(
-        'Релизы',
+        'Релиз',
         'id продюссера',
         `${authorId}`,
       );
