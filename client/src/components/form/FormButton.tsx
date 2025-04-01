@@ -1,12 +1,12 @@
 import { FC } from 'react'
 
-interface IAuthButtonProps {
+interface IFormButtonProps {
 	title: string
 	isInvert: boolean
 	onClick: () => void
 }
 
-const AuthButton: FC<IAuthButtonProps> = ({ title, isInvert, onClick }) => {
+const FormButton: FC<IFormButtonProps> = ({ title, isInvert, onClick }) => {
 	return (
 		<button
 			onClick={onClick}
@@ -21,4 +21,4 @@ const AuthButton: FC<IAuthButtonProps> = ({ title, isInvert, onClick }) => {
 	)
 }
 
-export default AuthButton
+export default FormButton

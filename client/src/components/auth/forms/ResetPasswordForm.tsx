@@ -4,13 +4,13 @@ import useCustomNavigate from '../../../hooks/UseCustomNavigate'
 import { useLoading } from '../../../hooks/UseLoading'
 import { useStore } from '../../../hooks/UseStore'
 import { IResetPasswordData } from '../../../models/auth/ResetPasswordData'
-import AuthButton from '../components/AuthButton'
-import AuthInfoContainer from '../components/AuthInfoContainer'
-import AuthInfoField from '../components/AuthInfoField'
-import AuthInput from '../components/AuthInput'
-import AuthLabel from '../components/AuthLabel'
-import AuthSubTitle from '../components/AuthSubTitle'
-import AuthTitle from '../components/AuthTitle'
+import FormButton from '../../form/FormButton'
+import FormInfoContainer from '../../form/FormInfoContainer'
+import FormInfoField from '../../form/FormInfoField'
+import FormInput from '../../form/FormInput'
+import FormLabel from '../../form/FormLabel'
+import FormSubTitle from '../../form/FormSubTitle'
+import FormTitle from '../../form/FormTitle'
 
 const ResetPasswordForm = () => {
 	const [formData, setFormData] = useState<IResetPasswordData>({
@@ -38,13 +38,13 @@ const ResetPasswordForm = () => {
 		description?: string
 	) => (
 		<div className='grid gap-1'>
-			<AuthLabel name={label} htmlFor={id} />
+			<FormLabel name={label} htmlFor={id} />
 			{description && (
 				<h3 className='text-sm font-medium text-white/50 select-none'>
 					{description}
 				</h3>
 			)}
-			<AuthInput
+			<FormInput
 				id={id}
 				placeholder={placeholder || ''}
 				type={type}
@@ -57,12 +57,12 @@ const ResetPasswordForm = () => {
 	return (
 		<div className='grid gap-4 w-[330px]'>
 			<div className='grid gap-1'>
-				<AuthTitle title={'Сброс пароля'} />
-				<AuthSubTitle title={'Введите новый пароль для аккаунта'} />
+				<FormTitle title={'Сброс пароля'} />
+				<FormSubTitle title={'Введите новый пароль для аккаунта'} />
 			</div>
 			{renderInput('password', 'Пароль', 'password')}
 			{renderInput('passwordConfirm', 'Подтвердите пароль', 'password')}
-			<AuthButton
+			<FormButton
 				title={isLoading ? 'Сброс...' : 'Сбросить пароль'}
 				onClick={() =>
 					reset(formData, token).then(errors => {
@@ -81,11 +81,11 @@ const ResetPasswordForm = () => {
 			/>
 
 			{errors && (
-				<AuthInfoContainer>
+				<FormInfoContainer>
 					{errors.map(error => (
-						<AuthInfoField key={error} text={error} isError={true} />
+						<FormInfoField key={error} text={error} isError={true} />
 					))}
-				</AuthInfoContainer>
+				</FormInfoContainer>
 			)}
 		</div>
 	)

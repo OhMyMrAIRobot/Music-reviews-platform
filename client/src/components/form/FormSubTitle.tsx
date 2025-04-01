@@ -1,11 +1,11 @@
 import { FC } from 'react'
 
-interface IAuthSubTitle {
+interface IFormSubTitleProps {
 	title: string
 	className?: string
 }
 
-const AuthSubTitle: FC<IAuthSubTitle> = ({ title, className }) => {
+const FormSubTitle: FC<IFormSubTitleProps> = ({ title, className }) => {
 	return (
 		<h6 className={`text-sm text-white/50 select-none ${className}`}>
 			{title}
@@ -13,4 +13,4 @@ const AuthSubTitle: FC<IAuthSubTitle> = ({ title, className }) => {
 	)
 }
 
-export default AuthSubTitle
+export default FormSubTitle

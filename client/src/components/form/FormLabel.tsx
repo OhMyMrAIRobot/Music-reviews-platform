@@ -1,11 +1,11 @@
 import { FC } from 'react'
 
-interface IAuthLabelProps {
+interface IFormLabelProps {
 	name: string
 	htmlFor: string
 }
 
-const AuthLabel: FC<IAuthLabelProps> = ({ name, htmlFor }) => {
+const FormLabel: FC<IFormLabelProps> = ({ name, htmlFor }) => {
 	return (
 		<label
 			htmlFor={htmlFor}
@@ -17,4 +17,4 @@ const AuthLabel: FC<IAuthLabelProps> = ({ name, htmlFor }) => {
 	)
 }
 
-export default AuthLabel
+export default FormLabel

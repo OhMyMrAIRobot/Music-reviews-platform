@@ -4,13 +4,13 @@ import useCustomNavigate from '../../../hooks/UseCustomNavigate'
 import { useLoading } from '../../../hooks/UseLoading'
 import { useStore } from '../../../hooks/UseStore'
 import { IRegistrationData } from '../../../models/auth/RegistrationData'
-import AuthButton from '../components/AuthButton'
+import FormButton from '../../form/FormButton'
+import FormInfoContainer from '../../form/FormInfoContainer'
+import FormInfoField from '../../form/FormInfoField'
+import FormInput from '../../form/FormInput'
+import FormLabel from '../../form/FormLabel'
+import FormTitle from '../../form/FormTitle'
 import AuthCheckbox from '../components/AuthCheckbox'
-import AuthInfoContainer from '../components/AuthInfoContainer'
-import AuthInfoField from '../components/AuthInfoField'
-import AuthInput from '../components/AuthInput'
-import AuthLabel from '../components/AuthLabel'
-import AuthTitle from '../components/AuthTitle'
 
 const RegistrationForm = observer(() => {
 	const [formData, setFormData] = useState<IRegistrationData>({
@@ -48,13 +48,13 @@ const RegistrationForm = observer(() => {
 		description?: string
 	) => (
 		<div className='grid gap-1'>
-			<AuthLabel name={label} htmlFor={id} />
+			<FormLabel name={label} htmlFor={id} />
 			{description && (
 				<h3 className='text-sm font-medium text-white/50 select-none'>
 					{description}
 				</h3>
 			)}
-			<AuthInput
+			<FormInput
 				id={id}
 				placeholder={placeholder || ''}
 				type={type}
@@ -87,7 +87,7 @@ const RegistrationForm = observer(() => {
 
 	return (
 		<div className='grid w-[350px] gap-2 py-10'>
-			<AuthTitle title={'Создать аккаунт'} className='text-center mb-4' />
+			<FormTitle title={'Создать аккаунт'} className='text-center mb-4' />
 			<div className='grid gap-3'>
 				{renderInput(
 					'email',
@@ -113,7 +113,7 @@ const RegistrationForm = observer(() => {
 					)}
 				</div>
 
-				<AuthButton
+				<FormButton
 					title={isLoading ? 'Загрузка...' : 'Создать аккаунт'}
 					isInvert={true}
 					onClick={() =>
@@ -143,11 +143,11 @@ const RegistrationForm = observer(() => {
 				</div>
 
 				{errors && (
-					<AuthInfoContainer>
+					<FormInfoContainer>
 						{errors.map(error => (
-							<AuthInfoField key={error} text={error} isError={true} />
+							<FormInfoField key={error} text={error} isError={true} />
 						))}
-					</AuthInfoContainer>
+					</FormInfoContainer>
 				)}
 			</div>
 		</div>

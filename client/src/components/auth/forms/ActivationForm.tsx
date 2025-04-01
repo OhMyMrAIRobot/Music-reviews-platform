@@ -3,11 +3,11 @@ import { useParams } from 'react-router'
 import useCustomNavigate from '../../../hooks/UseCustomNavigate'
 import { useLoading } from '../../../hooks/UseLoading'
 import { useStore } from '../../../hooks/UseStore'
-import AuthButton from '../components/AuthButton'
-import AuthInfoContainer from '../components/AuthInfoContainer'
-import AuthInfoField from '../components/AuthInfoField'
-import AuthSubTitle from '../components/AuthSubTitle'
-import AuthTitle from '../components/AuthTitle'
+import FormButton from '../../form/FormButton'
+import FormInfoContainer from '../../form/FormInfoContainer'
+import FormInfoField from '../../form/FormInfoField'
+import FormSubTitle from '../../form/FormSubTitle'
+import FormTitle from '../../form/FormTitle'
 
 const ActivationForm = () => {
 	const [errors, setErrors] = useState<string[]>([])
@@ -36,20 +36,20 @@ const ActivationForm = () => {
 	return (
 		<div className='grid w-[350px] gap-6 text-center'>
 			<div className='grid gap-2'>
-				<AuthTitle title={'Активация аккаунта'} />
+				<FormTitle title={'Активация аккаунта'} />
 				{!authStore.isAuth && (
-					<AuthSubTitle
+					<FormSubTitle
 						title={'Войдите в Ваш аккаунт для повторного запроса активации!'}
 					/>
 				)}
 			</div>
 
 			{authStore.user?.isActive && !token && (
-				<AuthInfoField text={'Ваш аккаунт уже активирован!'} isError={true} />
+				<FormInfoField text={'Ваш аккаунт уже активирован!'} isError={true} />
 			)}
 
 			{authStore.isAuth && !authStore.user?.isActive && (
-				<AuthButton
+				<FormButton
 					title={isLoading ? 'Отправка...' : 'Отправить письмо активации'}
 					isInvert={true}
 					onClick={() => {
@@ -64,11 +64,11 @@ const ActivationForm = () => {
 				/>
 			)}
 			{errors && (
-				<AuthInfoContainer>
+				<FormInfoContainer>
 					{errors.map(error => (
-						<AuthInfoField key={error} text={error} isError={true} />
+						<FormInfoField key={error} text={error} isError={true} />
 					))}
-				</AuthInfoContainer>
+				</FormInfoContainer>
 			)}
 		</div>
 	)

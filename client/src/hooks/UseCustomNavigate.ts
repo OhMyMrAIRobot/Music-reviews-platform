@@ -19,11 +19,16 @@ const useCustomNavigate = () => {
 		navigate('/')
 	}
 
+	const navigateToFeedback = () => {
+		navigate('/feedback')
+	}
+
 	return {
 		navigateToLogin,
 		navigateToRegistration,
 		navigateToRequestReset,
 		navigateToMain,
+		navigateToFeedback,
 	}
 }
 

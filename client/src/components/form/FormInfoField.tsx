@@ -1,11 +1,11 @@
 import { FC } from 'react'
 
-interface IAuthInfoFieldProps {
+interface IFormInfoFieldProps {
 	text: string
 	isError: boolean
 }
 
-const AuthInfoField: FC<IAuthInfoFieldProps> = ({ text, isError }) => {
+const FormInfoField: FC<IFormInfoFieldProps> = ({ text, isError }) => {
 	return (
 		<div
 			className={`text-sm bg-gradient-to-br border rounded-md px-2 py-1 ${
@@ -19,4 +19,4 @@ const AuthInfoField: FC<IAuthInfoFieldProps> = ({ text, isError }) => {
 	)
 }
 
-export default AuthInfoField
+export default FormInfoField

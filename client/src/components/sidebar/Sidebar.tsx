@@ -18,7 +18,7 @@ import { ISidebarItemProps } from './SidebarItem'
 import SidebarSection from './SidebarSection'
 
 const Sidebar = () => {
-	const { navigateToMain } = useCustomNavigate()
+	const { navigateToMain, navigateToFeedback } = useCustomNavigate()
 
 	const sidebarFirstGroup: ISidebarItemProps[] = [
 		{
@@ -104,7 +104,7 @@ const Sidebar = () => {
 	const sidebarFourthGroup: ISidebarItemProps[] = [
 		{
 			id: 'side-feedback',
-			onClick: navigateToMain,
+			onClick: navigateToFeedback,
 			icon: <FeedbackSvgIcon className='size-3' />,
 			label: 'Обратная связь',
 		},
