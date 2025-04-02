@@ -228,7 +228,7 @@ model Review {
 
 model ReleaseRating {
   id                  String @id @default(cuid())
-  total               Float
+  total               Int    @db.SmallInt
   releaseId           String @map("release_id")
   releaseRatingTypeId String @map("release_rating_type_id")
 
@@ -243,20 +243,15 @@ model ReleaseRating {
 }
 
 model ReleaseRatingDetails {
-  id            String @id @default(cuid())
-  rhymes        Float
-  structure     Float
-  realization   Float
-  individuality Float
-  atmosphere    Float
+  rhymes          Float
+  structure       Float
+  realization     Float
+  individuality   Float
+  atmosphere      Float
+  releaseRatingId String @id @map("release_rating_id")
 
-  releaseRatingTypeId String @map("release_rating_type_id")
-  releaseRatingId     String @map("release_rating_id")
+  releaseRating ReleaseRating @relation(fields: [releaseRatingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  releaseRating     ReleaseRating     @relation(fields: [releaseRatingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  releaseRatingType ReleaseRatingType @relation(fields: [releaseRatingTypeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  @@unique([releaseRatingId, releaseRatingTypeId])
   @@map("Release_rating_details")
 }
 
@@ -264,8 +259,7 @@ model ReleaseRatingType {
   id   String @id @default(cuid())
   type String @unique @db.VarChar(40)
 
-  ReleaseRatingDetails ReleaseRatingDetails[]
-  ReleaseRating        ReleaseRating[]
+  ReleaseRating ReleaseRating[]
 
   @@map("Release_rating_types")
 }
