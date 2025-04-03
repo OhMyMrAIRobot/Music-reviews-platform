@@ -1,0 +1,36 @@
+model UserProfile {
+  id         String  @id @default(cuid())
+  avatar     String? @db.VarChar(255)
+  coverImage String? @map("cover_image") @db.VarChar(255)
+  bio        String? @db.VarChar(255)
+  points     Int     @default(0)
+
+  userId String @unique @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  socialMedia ProfileSocialMedia[]
+
+  @@map("User_profiles")
+}
+
+model SocialMedia {
+  id   String @id @default(cuid())
+  name String @unique @db.VarChar(40)
+
+  profiles ProfileSocialMedia[]
+
+  @@map("Social_media")
+}
+
+model ProfileSocialMedia {
+  id        String @id @default(cuid())
+  profileId String @map("profile_id")
+  socialId  String @map("social_id")
+  url       String @db.VarChar(255)
+
+  profile UserProfile @relation(fields: [profileId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  social  SocialMedia @relation(fields: [socialId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([profileId, socialId])
+  @@map("Profile_social_media")
+}
