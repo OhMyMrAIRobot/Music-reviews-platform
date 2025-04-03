@@ -50,7 +50,7 @@ export class UserFavReleasesService {
 
     if (result.length === 0) {
       throw new EntityNotFoundException(
-        'Релизы',
+        'Понравившиеся релизы',
         'id пользователя',
         `${userId}`,
       );
@@ -65,8 +65,8 @@ export class UserFavReleasesService {
 
     if (result.length === 0) {
       throw new EntityNotFoundException(
-        'Пользователи',
-        'id релиза',
+        'Пользователи, которорым понравилась релиз',
+        'id',
         `${releaseId}`,
       );
     }

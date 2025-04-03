@@ -19,6 +19,7 @@ import { FeedbacksModule } from './feedbacks/feedbacks.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { ReleaseRatingTypesModule } from './release-rating-types/release-rating-types.module';
 import { UserFavReleasesModule } from './user-fav-releases/user-fav-releases.module';
+import { UserFavReviewsModule } from './user-fav-reviews/user-fav-reviews.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { UserFavReleasesModule } from './user-fav-releases/user-fav-releases.mod
     ReviewsModule,
     ReleaseRatingTypesModule,
     UserFavReleasesModule,
+    UserFavReviewsModule,
   ],
   controllers: [],
   providers: [PrismaService],

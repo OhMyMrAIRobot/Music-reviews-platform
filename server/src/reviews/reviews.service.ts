@@ -26,7 +26,7 @@ export class ReviewsService {
     await this.usersService.findOne(userId);
     await this.releasesService.findOne(releaseId);
 
-    const existing = await this.findOne(userId, releaseId);
+    const existing = await this.findByUserIdReleaseId(userId, releaseId);
     if (existing) {
       throw new DuplicateFieldException(
         `Рецензия с id пользователя '${userId}' и`,
@@ -49,6 +49,18 @@ export class ReviewsService {
 
   async findAll(): Promise<Review[]> {
     return this.prisma.review.findMany();
+  }
+
+  async findOne(id: string): Promise<Review> {
+    const existing = await this.prisma.review.findUnique({
+      where: { id },
+    });
+
+    if (!existing) {
+      throw new EntityNotFoundException('Рецензия', 'id', `${id}`);
+    }
+
+    return existing;
   }
 
   async findByUserId(userId: string): Promise<Review[]> {
@@ -86,7 +98,7 @@ export class ReviewsService {
     await this.usersService.findOne(userId);
     await this.releasesService.findOne(releaseId);
 
-    const existing = await this.findOne(userId, releaseId);
+    const existing = await this.findByUserIdReleaseId(userId, releaseId);
     if (!existing) {
       throw new EntityNotFoundException(
         `Рецензия с id пользователя '${userId}' и`,
@@ -113,7 +125,7 @@ export class ReviewsService {
     userId: string,
   ): Promise<Review> {
     const { releaseId } = deleteReviewDto;
-    const existing = await this.findOne(userId, releaseId);
+    const existing = await this.findByUserIdReleaseId(userId, releaseId);
     if (!existing) {
       throw new EntityNotFoundException(
         `Рецензия с id пользователя '${userId}' и`,
@@ -143,7 +155,7 @@ export class ReviewsService {
     return Math.round(multipliedBaseScore * atmosphereMultiplier);
   }
 
-  private async findOne(
+  private async findByUserIdReleaseId(
     userId: string,
     releaseId: string,
   ): Promise<Review | null> {
