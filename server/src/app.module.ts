@@ -18,6 +18,7 @@ import { FeedbackStatusesModule } from './feedback-statuses/feedback-statuses.mo
 import { FeedbacksModule } from './feedbacks/feedbacks.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { ReleaseRatingTypesModule } from './release-rating-types/release-rating-types.module';
+import { UserFavReleasesModule } from './user-fav-releases/user-fav-releases.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { ReleaseRatingTypesModule } from './release-rating-types/release-rating-
     FeedbacksModule,
     ReviewsModule,
     ReleaseRatingTypesModule,
+    UserFavReleasesModule,
   ],
   controllers: [],
   providers: [PrismaService],
