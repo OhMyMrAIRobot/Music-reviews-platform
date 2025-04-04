@@ -14,6 +14,7 @@ model User {
   Review         Review[]
   UserFavRelease UserFavRelease[]
   UserFavReviews UserFavReview[]
+  UserFavAuthor  UserFavAuthor[]
 
   @@map("Users")
 }
@@ -58,4 +59,15 @@ model UserFavReview {
 
   @@unique([userId, reviewId])
   @@map("User_fav_reviews")
+}
+
+model UserFavAuthor {
+  userId   String @map("user_id")
+  authorId String @map("author_id")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  author Author @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([userId, authorId])
+  @@map("User_fav_authors")
 }

@@ -1,13 +1,14 @@
 model Author {
-  id        String         @id @default(cuid())
-  name      String         @unique @db.VarChar(50)
-  avatarImg String?        @map("avatar_img") @db.VarChar(255)
-  coverImg  String?        @map("cover_img") @db.VarChar(255)
-  types     AuthorOnType[]
+  id        String  @id @default(cuid())
+  name      String  @unique @db.VarChar(50)
+  avatarImg String? @map("avatar_img") @db.VarChar(255)
+  coverImg  String? @map("cover_img") @db.VarChar(255)
 
+  types           AuthorOnType[]
   ReleaseProducer ReleaseProducer[]
   ReleaseArtist   ReleaseArtist[]
   ReleaseDesigner ReleaseDesigner[]
+  UserFavAuthor   UserFavAuthor[]
 
   @@map("Authors")
 }

@@ -65,7 +65,7 @@ export class UserFavReleasesService {
 
     if (result.length === 0) {
       throw new EntityNotFoundException(
-        'Пользователи, которорым понравилась релиз',
+        'Пользователи, которорым понравился релиз',
         'id',
         `${releaseId}`,
       );
