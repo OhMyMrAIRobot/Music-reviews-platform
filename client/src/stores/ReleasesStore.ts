@@ -13,7 +13,7 @@ class ReleasesStore {
 		this.topReleases = data
 	}
 
-	async fetchTopReleases() {
+	fetchTopReleases = async () => {
 		try {
 			const data = await ReleaseAPI.fetchTopReleases()
 			this.setTopReleases(data)

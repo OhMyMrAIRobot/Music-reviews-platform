@@ -72,3 +72,14 @@ body {
 .animate-slideOut {
 	animation: slideOut 0.3s ease-in forwards;
 }
+
+.embla {
+	overflow: hidden;
+}
+.embla__container {
+	display: flex;
+}
+.embla__slide {
+	flex: 0 0 64;
+	min-width: 0;
+}
