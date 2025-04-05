@@ -8,6 +8,7 @@ const _api = axios.create({
 		'Content-type': 'application/json',
 	},
 })
+
 export const FeedbackAPI = {
 	async sendFeedback(feedbackData: IFeedbackData) {
 		return _api.post('/', {
