@@ -17,7 +17,7 @@ BEGIN
         FROM "Reviews" r
         WHERE r.release_id = _release_id
           AND (
-              (rating_type = 'superuser' AND EXISTS (
+              (rating_type = 'super_user' AND EXISTS (
                   SELECT 1 FROM "Users" u
                   WHERE u.id = r.user_id
                     AND u.role_id = (SELECT id FROM "Roles" WHERE role = 'superuser')
@@ -62,7 +62,7 @@ BEGIN
                 FROM "Reviews" r
                 WHERE r.release_id = NEW.release_id
                   AND (
-                      (rating_type_row.type = 'superuser' AND EXISTS (
+                      (rating_type_row.type = 'super_user' AND EXISTS (
                           SELECT 1 FROM "Users" u WHERE u.id = r.user_id
                             AND u.role_id = (SELECT id FROM "Roles" WHERE role = 'superuser')
                       )) OR

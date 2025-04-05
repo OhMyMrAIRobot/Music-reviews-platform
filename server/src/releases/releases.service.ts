@@ -5,6 +5,7 @@ import { EntityNotFoundException } from 'src/exceptions/entity-not-found.excepti
 import { NoDataProvidedException } from 'src/exceptions/no-data.exception';
 import { ReleaseTypesService } from 'src/release-types/release-types.service';
 import { CreateReleaseDto } from './dto/create-release.dto';
+import { TopReleasesResponseDto } from './dto/top-releases.response.dto';
 import { UpdateReleaseDto } from './dto/update-release.dto';
 
 @Injectable()
@@ -60,5 +61,30 @@ export class ReleasesService {
     return this.prisma.release.delete({
       where: { id },
     });
+  }
+
+  async findMostCommentedReleasesLastDay(): Promise<TopReleasesResponseDto> {
+    const topReleases = await this.prisma.$queryRaw<TopReleasesResponseDto>`
+      SELECT r.id, r.title, r.img,
+        rt.type as release_type,
+        count(DISTINCT rev.id)::int AS review_count,
+        json_agg(DISTINCT jsonb_build_object('name', a.name)) AS author,
+        json_agg(DISTINCT jsonb_build_object(
+          'total', rr.total,
+          'type', rrt.type
+        )) as ratings
+      FROM "Releases" r
+      LEFT JOIN "Release_artists" ra ON r.id = ra.release_id
+      LEFT JOIN "Authors" a ON ra.author_id = a.id
+      LEFT JOIN "Reviews" rev on rev.release_id = r.id
+        AND rev.created_at >= NOW() - INTERVAL '24 hours'
+      LEFT JOIN "Release_types" rt on r.release_type_id = rt.id
+      LEFT JOIN "Release_ratings" rr on r.id = rr.release_id
+      LEFT JOIN "Release_rating_types" rrt on rr.release_rating_type_id = rrt.id
+      GROUP BY r.id, rt.type
+      ORDER BY COUNT(rev.id) DESC
+      LIMIT 15`;
+
+    return topReleases;
   }
 }

@@ -25,6 +25,11 @@ export class ReleasesController {
     return this.releasesService.findAll();
   }
 
+  @Get('most-commented')
+  find() {
+    return this.releasesService.findMostCommentedReleasesLastDay();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.releasesService.findOne(id);
