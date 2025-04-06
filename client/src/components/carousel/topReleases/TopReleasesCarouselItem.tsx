@@ -1,12 +1,12 @@
 import { FC } from 'react'
 
-interface ITopReleaseCarouselItemProps {
+interface ITopReleasesCarouselItemProps {
 	id: string
 	img: string
 	title: string
 }
 
-const TopReleaseCarouselItem: FC<ITopReleaseCarouselItemProps> = ({
+const TopReleasesCarouselItem: FC<ITopReleasesCarouselItemProps> = ({
 	img,
 	title,
 }) => {
@@ -30,4 +30,4 @@ const TopReleaseCarouselItem: FC<ITopReleaseCarouselItemProps> = ({
 	)
 }
 
-export default TopReleaseCarouselItem
+export default TopReleasesCarouselItem

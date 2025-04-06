@@ -2,11 +2,11 @@ import { EmblaOptionsType } from 'embla-carousel'
 import useEmblaCarousel from 'embla-carousel-react'
 import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
-import { useLoading } from '../../hooks/UseLoading'
-import { useStore } from '../../hooks/UseStore'
-import TopReleaseCarouselItem from './TopReleaseCarouselItem'
+import { useLoading } from '../../../hooks/UseLoading'
+import { useStore } from '../../../hooks/UseStore'
+import TopReleasesCarouselItem from './TopReleasesCarouselItem'
 
-const TopReleaseCarousel = observer(() => {
+const TopReleasesCarousel = observer(() => {
 	const options: EmblaOptionsType = { dragFree: true }
 	const [emblaRef] = useEmblaCarousel(options)
 
@@ -25,17 +25,19 @@ const TopReleaseCarousel = observer(() => {
 			{isLoading ? (
 				<div>Loading...</div>
 			) : (
-				<div className='embla'>
+				<div className='embla w-full'>
 					<div className='embla__viewport pt-2 px-1.5' ref={emblaRef}>
 						<div className='embla__container '>
-							{releasesStore.topReleases.map(release => (
-								<TopReleaseCarouselItem
-									key={release.id}
-									id={release.id}
-									img={release.img}
-									title={release.title}
-								/>
-							))}
+							{releasesStore.topReleases.map(release =>
+								Array.from({ length: 15 }).map((_, idx) => (
+									<TopReleasesCarouselItem
+										key={release.id + idx}
+										id={release.id}
+										img={release.img}
+										title={release.title}
+									/>
+								))
+							)}
 						</div>
 					</div>
 				</div>
@@ -44,4 +46,4 @@ const TopReleaseCarousel = observer(() => {
 	)
 })
 
-export default TopReleaseCarousel
+export default TopReleasesCarousel

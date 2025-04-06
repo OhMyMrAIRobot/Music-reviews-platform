@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import TopReleaseCarousel from '../carousel/topReleaseCarousel'
+import TopReleasesCarousel from '../carousel/topReleases/TopReleasesCarousel'
 
 const TopReleasesContainer = observer(() => {
 	return (
@@ -9,7 +9,7 @@ const TopReleasesContainer = observer(() => {
 					ТОП-15 по количеству оценок и рецензий за сутки
 				</h3>
 			</div>
-			<TopReleaseCarousel />
+			<TopReleasesCarousel />
 		</section>
 	)
 })
