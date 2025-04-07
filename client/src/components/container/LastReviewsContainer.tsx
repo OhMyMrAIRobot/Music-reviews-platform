@@ -1,12 +1,10 @@
 import { useRef } from 'react'
-import LastReleasesCarousel, {
-	CarouselRef,
-} from '../carousel/lastReleases/LastReleasesCarousel'
+import { CarouselRef } from '../carousel/lastReleases/LastReleasesCarousel'
+import LastReviewsCarousel from '../carousel/lastReviews/LastReviewsCarousel'
 import MainCarouselSection from './MainCarouselSection'
 
-const LastReleasesContainer = () => {
+const LastReviewsContainer = () => {
 	const carouselRef = useRef<CarouselRef>(null)
-
 	const handlePrev = () => {
 		carouselRef.current?.scrollPrev()
 	}
@@ -17,14 +15,14 @@ const LastReleasesContainer = () => {
 
 	return (
 		<MainCarouselSection
-			title={'Добавленные релизы'}
-			buttonTitle={'Все релизы'}
+			title={'Новые рецензии'}
+			buttonTitle={'Все рецензии'}
 			onButtonClick={() => {}}
 			handlePrev={handlePrev}
 			handleNext={handleNext}
-			Carousel={<LastReleasesCarousel ref={carouselRef} />}
+			Carousel={<LastReviewsCarousel ref={carouselRef} />}
 		/>
 	)
 }
 
-export default LastReleasesContainer
+export default LastReviewsContainer
