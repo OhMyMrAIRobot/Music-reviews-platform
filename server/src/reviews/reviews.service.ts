@@ -7,6 +7,7 @@ import { ReleasesService } from 'src/releases/releases.service';
 import { UsersService } from 'src/users/users.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { DeleteReviewDto } from './dto/delete-review.dto';
+import { ReviewResponseDto } from './dto/review.response.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 
 @Injectable()
@@ -137,6 +138,59 @@ export class ReviewsService {
     return this.prisma.review.delete({
       where: { userId_releaseId: { userId, releaseId } },
     });
+  }
+
+  async findReviews(
+    field: 'rev.created_at' | 'rev.total' = 'rev.created_at',
+    order: 'asc' | 'desc' = 'desc',
+    limit: number = 45,
+    offset: number = 0,
+  ): Promise<ReviewResponseDto[]> {
+    const rawQuery = `
+      WITH ranked_profiles AS (
+          SELECT
+              user_id,
+              ROW_NUMBER() OVER (ORDER BY points DESC)::int AS position
+          FROM "User_profiles"
+          ORDER BY points DESC
+          LIMIT 5
+      )
+
+      SELECT
+          rev.id,
+          rev.title,
+          rev.text,
+          rev.total,
+          rev.rhymes,
+          rev.structure,
+          rev.realization,
+          rev.individuality,
+          rev.atmosphere,
+          u.nickname,
+          p.avatar AS profile_img,
+          p.points,
+          rp.position,
+          r.img AS release_img,
+          r.title AS release_title,
+          r.id AS release_id,
+          COUNT(DISTINCT ufr.user_id)::int AS likes_count,
+          json_agg(DISTINCT jsonb_build_object('user_id', ufr.user_id)) AS like_user_ids
+      FROM "Reviews" rev
+              LEFT JOIN "Users" u ON rev.user_id = u.id
+              LEFT JOIN "User_profiles" p ON u.id = p.user_id
+              LEFT JOIN ranked_profiles rp ON p.user_id = rp.user_id
+              LEFT JOIN "Releases" r ON rev.release_id = r.id
+              LEFT JOIN "User_fav_reviews" ufr ON rev.id = ufr.review_id
+      WHERE rev.text IS NOT NULL AND rev.title IS NOT NULL
+      GROUP BY
+          rev.id, rev.title, rev.text, rev.total, rev.rhymes, rev.structure, rev.realization,
+          rev.individuality, rev.atmosphere, u.nickname, p.avatar, p.points, rp.position,
+          r.img, r.title, r.id, rev.created_at
+      ORDER BY ${field} ${order}
+      LIMIT ${limit}
+      OFFSET ${offset}`;
+
+    return this.prisma.$queryRawUnsafe<ReviewResponseDto[]>(rawQuery);
   }
 
   private calculateTotalScore(

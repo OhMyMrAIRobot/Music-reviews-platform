@@ -1,7 +1,7 @@
 model UserProfile {
   id         String  @id @default(cuid())
-  avatar     String? @db.VarChar(255)
-  coverImage String? @map("cover_image") @db.VarChar(255)
+  avatar     String  @default("1.png") @db.VarChar(255)
+  coverImage String  @default("1.png") @map("cover_image") @db.VarChar(255)
   bio        String? @db.VarChar(255)
   points     Int     @default(0)
 

@@ -37,7 +37,7 @@ async function main() {
         password:
           '$2b$10$0bD/1z03VDQP3ko9BJ/2U.FGCyjcyY7sSXaf5.psHwB012H0xBswe',
         isActive: true,
-        roleId: '1',
+        roleId: '2',
       },
       {
         id: '2',
@@ -84,6 +84,15 @@ async function main() {
         isActive: true,
         roleId: '1',
       },
+      {
+        id: '7',
+        email: 'meshok@gmail.com',
+        nickname: 'Meshok',
+        password:
+          '$2b$10$0bD/1z03VDQP3ko9BJ/2U.FGCyjcyY7sSXaf5.psHwB012H0xBswe',
+        isActive: true,
+        roleId: '1',
+      },
     ],
   });
 
@@ -91,45 +100,50 @@ async function main() {
     data: [
       {
         id: '1',
-        avatar: '',
-        coverImage: '',
+        avatar: 'GoneFF.png',
         bio: 'young designer from sp',
         userId: '1',
+        points: 152892,
       },
       {
         id: '2',
-        avatar: '',
-        coverImage: '',
+        avatar: 'ar4iks.png',
         bio: 'young designer from sp',
         userId: '2',
+        points: 89324,
       },
       {
         id: '3',
-        avatar: '',
-        coverImage: '',
+        avatar: 'corobok228.png',
         bio: 'young designer from sp',
         userId: '3',
+        points: 24295,
       },
       {
         id: '4',
-        avatar: '',
-        coverImage: '',
+        avatar: 'gamarjoba.png',
         bio: 'young designer from sp',
         userId: '4',
+        points: 5769,
       },
       {
         id: '5',
-        avatar: '',
-        coverImage: '',
+        avatar: '6g6.png',
         bio: 'young designer from sp',
         userId: '5',
+        points: 7769,
       },
       {
         id: '6',
-        avatar: '',
-        coverImage: '',
+        avatar: '1.png',
         bio: 'young designer from sp',
         userId: '6',
+      },
+      {
+        id: '7',
+        avatar: '1.png',
+        bio: 'young designer from sp',
+        userId: '7',
       },
     ],
   });
@@ -226,7 +240,7 @@ async function main() {
     data: [
       {
         id: '1',
-        year: 2024,
+        publishDate: new Date('2024-09-27').toISOString(),
         title: 'всегда ненавидел быть слабым',
         img: 'https://avatars.yandex.net/get-music-content/14247687/1fc41d7b.a.33447815-1/m1000x1000',
         releaseTypeId: '1',
@@ -353,6 +367,18 @@ async function main() {
         total: 90,
         title: 'Да это же 90!',
         text: 'Для меня это первый настоящий альбом Cold carti! Альбом который послушают к сожалению немногие и это очень грустно, ведь этот альбом заслуживает внимания! Это топовый уровень, Жень!\nНачну с того, что это самая качественная работа Карти, это эталон альбомов! Для меня настоящий альбом должен выглядеть именно так!\nЯ считаю главное, чем может похвастаться данный альбом, это развитие! От начала до конца мы вместе с артистом проживаем историю. В релизе есть завязка, где артист рассказывает как ему сейчас плохо, делится своими чувствами и переживаниями, развитие, сильнейшая кульминация в центральном треке "музыка или счастье" прекрасная развязка где артист отпускает все свое прошлое и меняется в лучшую или худшую сторону и концовка, в которой герой полностью переосознает этот мир, переосознает себя и отношения.\nСдержанное количество треков, это даже не минус в данном релизе, если бы их было больше, думаю во время прослушивания могла б потеряться та нить, которая тянется из трека в трек.',
+        createdAt: new Date(Date.now() - 6 * 3600 * 1000),
+      },
+      {
+        id: '7',
+        releaseId: '1',
+        userId: '7',
+        rhymes: 10,
+        structure: 10,
+        realization: 10,
+        individuality: 10,
+        atmosphere: 10,
+        total: 90,
         createdAt: new Date(Date.now() - 6 * 3600 * 1000),
       },
     ],

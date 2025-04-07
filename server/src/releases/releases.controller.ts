@@ -25,9 +25,14 @@ export class ReleasesController {
     return this.releasesService.findAll();
   }
 
-  @Get('most-commented')
-  find() {
+  @Get('list/most-commented')
+  findMostCommented() {
     return this.releasesService.findMostCommentedReleasesLastDay();
+  }
+
+  @Get('list')
+  findReleases() {
+    return this.releasesService.findReleases();
   }
 
   @Get(':id')

@@ -38,6 +38,11 @@ export class ReviewsController {
     return this.reviewsService.findByUserId(id);
   }
 
+  @Get('list')
+  findReleases() {
+    return this.reviewsService.findReviews();
+  }
+
   @UseGuards(JwtAuthGuard)
   @Post()
   create(

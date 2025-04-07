@@ -20,17 +20,17 @@ BEGIN
               (rating_type = 'super_user' AND EXISTS (
                   SELECT 1 FROM "Users" u
                   WHERE u.id = r.user_id
-                    AND u.role_id = (SELECT id FROM "Roles" WHERE role = 'superuser')
+                    AND u.role_id = (SELECT id FROM "Roles" WHERE role = 'SuperUser')
               )) OR
               (rating_type = 'no_text' AND (r.text IS NULL OR r.text = '')
                   AND NOT EXISTS (
                       SELECT 1 FROM "Users" u WHERE u.id = r.user_id
-                        AND u.role_id = (SELECT id FROM "Roles" WHERE role = 'superuser')
+                        AND u.role_id = (SELECT id FROM "Roles" WHERE role = 'SuperUser')
                   )) OR
               (rating_type = 'with_text' AND r.text IS NOT NULL AND r.text != ''
                   AND NOT EXISTS (
                       SELECT 1 FROM "Users" u WHERE u.id = r.user_id
-                        AND u.role_id = (SELECT id FROM "Roles" WHERE role = 'superuser')
+                        AND u.role_id = (SELECT id FROM "Roles" WHERE role = 'SuperUser')
                   ))
           )
     );
@@ -64,17 +64,17 @@ BEGIN
                   AND (
                       (rating_type_row.type = 'super_user' AND EXISTS (
                           SELECT 1 FROM "Users" u WHERE u.id = r.user_id
-                            AND u.role_id = (SELECT id FROM "Roles" WHERE role = 'superuser')
+                            AND u.role_id = (SELECT id FROM "Roles" WHERE role = 'SuperUser')
                       )) OR
                       (rating_type_row.type = 'no_text' AND (r.text IS NULL OR r.text = '')
                           AND NOT EXISTS (
                               SELECT 1 FROM "Users" u WHERE u.id = r.user_id
-                                AND u.role_id = (SELECT id FROM "Roles" WHERE role = 'superuser')
+                                AND u.role_id = (SELECT id FROM "Roles" WHERE role = 'SuperUser')
                           )) OR
                       (rating_type_row.type = 'with_text' AND r.text IS NOT NULL AND r.text != ''
                           AND NOT EXISTS (
                               SELECT 1 FROM "Users" u WHERE u.id = r.user_id
-                                AND u.role_id = (SELECT id FROM "Roles" WHERE role = 'superuser')
+                                AND u.role_id = (SELECT id FROM "Roles" WHERE role = 'SuperUser')
                           ))
                   )
             ))

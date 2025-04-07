@@ -1,7 +1,7 @@
 model Release {
   id            String   @id @default(cuid())
   title         String   @db.VarChar(50)
-  year          Int      @db.SmallInt
+  publishDate   DateTime @map("publish_date")
   img           String   @db.VarChar(255)
   releaseTypeId String   @map("release_type_id")
   createdAt     DateTime @default(now()) @map("created_at")

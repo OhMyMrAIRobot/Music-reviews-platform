@@ -5,6 +5,7 @@ import { EntityNotFoundException } from 'src/exceptions/entity-not-found.excepti
 import { NoDataProvidedException } from 'src/exceptions/no-data.exception';
 import { ReleaseTypesService } from 'src/release-types/release-types.service';
 import { CreateReleaseDto } from './dto/create-release.dto';
+import { ReleaseResponseDto } from './dto/release.response.dto';
 import { TopReleasesResponseDto } from './dto/top-releases.response.dto';
 import { UpdateReleaseDto } from './dto/update-release.dto';
 
@@ -63,8 +64,8 @@ export class ReleasesService {
     });
   }
 
-  async findMostCommentedReleasesLastDay(): Promise<TopReleasesResponseDto> {
-    const topReleases = await this.prisma.$queryRaw<TopReleasesResponseDto>`
+  async findMostCommentedReleasesLastDay(): Promise<TopReleasesResponseDto[]> {
+    return this.prisma.$queryRaw<TopReleasesResponseDto[]>`
       SELECT r.id, r.title, r.img,
         rt.type as release_type,
         count(DISTINCT rev.id)::int AS review_count,
@@ -84,7 +85,43 @@ export class ReleasesService {
       GROUP BY r.id, rt.type
       ORDER BY COUNT(rev.id) DESC
       LIMIT 15`;
+  }
 
-    return topReleases;
+  async findReleases(
+    field: string = 'r.publish_date',
+    order: 'asc' | 'desc' = 'desc',
+    limit: number = 25,
+    offset: number = 0,
+  ): Promise<ReleaseResponseDto[]> {
+    const allowedFields = ['r.publish_date', 'r.title', 'r.id'];
+    const allowedOrders = ['asc', 'desc'];
+
+    if (!allowedFields.includes(field.toLowerCase())) field = 'r.published_at';
+    if (!allowedOrders.includes(order.toLowerCase())) order = 'desc';
+
+    const rawQuery = `
+      SELECT r.id, r.title, r.img,
+        rt.type AS release_type,
+        (count(DISTINCT rev.id) FILTER (WHERE rev.text IS NOT NULL))::int AS text_count,
+        (count(DISTINCT rev.id) FILTER (WHERE rev.text IS NULL))::int AS no_text_count,
+        json_agg(DISTINCT jsonb_build_object('name', a.name)) as author,
+        json_agg(DISTINCT jsonb_build_object(
+          'total', rr.total,
+          'type', rrt.type
+        )) as ratings
+      FROM "Releases" r
+      LEFT JOIN "Release_types" rt on r.release_type_id = rt.id
+      LEFT JOIN "Release_artists" ra on r.id = ra.release_id
+      LEFT JOIN "Authors" a on ra.author_id = a.id
+      LEFT JOIN "Reviews" rev on rev.release_id = r.id
+      LEFT JOIN "Release_ratings" rr on rr.release_id = r.id
+      LEFT JOIN "Release_rating_types" rrt on rr.release_rating_type_id = rrt.id
+      GROUP BY r.id, rt.type
+      ORDER BY ${field} ${order}
+      LIMIT ${limit}
+      OFFSET ${offset};
+    `;
+
+    return this.prisma.$queryRawUnsafe<ReleaseResponseDto[]>(rawQuery);
   }
 }
