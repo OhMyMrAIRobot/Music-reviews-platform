@@ -6,6 +6,7 @@ import {
   Max,
   MaxLength,
   Min,
+  MinLength,
   registerDecorator,
   ValidationArguments,
   ValidationOptions,
@@ -74,6 +75,7 @@ export class CreateReviewDto {
   @IsOptional()
   @IsString({ message: 'Текст должен быть строкой' })
   @MaxLength(8500, { message: 'Текст не должен превышать 8500 символов' })
+  @MinLength(300, { message: 'Текст должен превышать 300 символов' })
   text?: string;
 
   @TitleAndTextTogether()

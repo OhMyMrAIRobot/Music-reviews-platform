@@ -35,6 +35,11 @@ export class ReleasesController {
     return this.releasesService.findReleases();
   }
 
+  @Get('details/:id')
+  findReleaseDetails(@Param('id') id: string) {
+    return this.releasesService.findReleaseDetails(id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.releasesService.findOne(id);
