@@ -1,7 +1,8 @@
 import { FC } from 'react'
-import { IRelease } from '../../../models/release/release'
-import { ReleaseRatingTypesEnum } from '../../../models/release/releaseRatingTypes'
-import { ReleaseTypesEnum } from '../../../models/release/releaseTypes'
+import useCustomNavigate from '../../../hooks/UseCustomNavigate'
+import { IRelease } from '../../../models/release/Release'
+import { ReleaseRatingTypesEnum } from '../../../models/release/ReleaseRatingTypes'
+import { ReleaseTypesEnum } from '../../../models/release/ReleaseTypes'
 import {
 	AlbumSvgIcon,
 	NoTextReviewSvgIcon,
@@ -25,6 +26,7 @@ const getReleaseIcon = (releaseType: string) => {
 }
 
 const LastReleasesCarouselItem: FC<IProps> = ({ release }) => {
+	const { navigateToRelease } = useCustomNavigate()
 	const ratingOrder = [
 		ReleaseRatingTypesEnum.SUPER_USER,
 		ReleaseRatingTypesEnum.WITH_TEXT,
@@ -36,7 +38,10 @@ const LastReleasesCarouselItem: FC<IProps> = ({ release }) => {
 		.filter(r => r && r.total > 0)
 
 	return (
-		<button className='bg-secondary hover:scale-105 p-1 overflow-hidden flex flex-col justify-start relative w-full h-full rounded-xl border border-zinc-800 duration-300 cursor-pointer'>
+		<button
+			onClick={() => navigateToRelease(release.id)}
+			className='bg-secondary hover:scale-105 p-1 overflow-hidden flex flex-col justify-start relative w-full h-full rounded-xl border border-zinc-800 duration-300 cursor-pointer'
+		>
 			<div className='relative'>
 				<img
 					loading='lazy'

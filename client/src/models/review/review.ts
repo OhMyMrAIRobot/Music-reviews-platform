@@ -14,6 +14,7 @@ export interface IReview {
 	position: number | null
 	release_img: string
 	release_title: string
+	release_id: string
 	likes_count: number
 	like_user_ids: [
 		{

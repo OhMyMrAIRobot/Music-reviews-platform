@@ -10,7 +10,7 @@ import FormTextbox from '../components/form/FormTextbox'
 import FormTitle from '../components/form/FormTitle'
 import { useLoading } from '../hooks/UseLoading'
 import { useStore } from '../hooks/UseStore'
-import { IFeedbackData } from '../models/feedback/feedbackData'
+import { IFeedbackData } from '../models/feedback/FeedbackData'
 
 const FeedbackPage = () => {
 	const [feedbackData, setFeedbackData] = useState<IFeedbackData>({

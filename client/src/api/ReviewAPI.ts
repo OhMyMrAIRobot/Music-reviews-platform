@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { IFavReviewResponse } from '../models/review/favReviewReponse'
-import { IReview } from '../models/review/review'
+import { IFavReview } from '../models/review/FavReview'
+import { IReview } from '../models/review/Review'
 import { api } from './Instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
@@ -17,15 +17,15 @@ export const ReviewAPI = {
 		return data
 	},
 
-	async addReviewToFav(reviewId: string): Promise<IFavReviewResponse> {
-		const { data } = await api.post<IFavReviewResponse>('/user-fav-reviews', {
+	async addReviewToFav(reviewId: string): Promise<IFavReview> {
+		const { data } = await api.post<IFavReview>('/user-fav-reviews', {
 			reviewId,
 		})
 		return data
 	},
 
-	async deleteReviewFromFav(reviewId: string): Promise<IFavReviewResponse> {
-		const { data } = await api.delete<IFavReviewResponse>('/user-fav-reviews', {
+	async deleteReviewFromFav(reviewId: string): Promise<IFavReview> {
+		const { data } = await api.delete<IFavReview>('/user-fav-reviews', {
 			data: { reviewId },
 		})
 		return data

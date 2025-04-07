@@ -1,10 +1,11 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useState } from 'react'
+import useCustomNavigate from '../../../hooks/UseCustomNavigate'
 import { useStore } from '../../../hooks/UseStore'
-import { IReview } from '../../../models/review/review'
-import { getLevelConfig, getUserLevel } from '../../../utils/userLevel'
-import { MoveToReview } from '../../svg/ReviewSvgIcons'
-import TooltipSpan from './TooltipSpan'
+import { IReview } from '../../../models/review/Review'
+import { getLevelConfig, getUserLevel } from '../../../utils/UserLevel'
+import TooltipSpan from '../../release/TooltipSpan'
+import { MoveToReviewSvgIcon } from '../../svg/ReviewSvgIcons'
 
 interface IProps {
 	review: IReview
@@ -13,6 +14,7 @@ interface IProps {
 const LastReviewsCarouselItem: FC<IProps> = observer(({ review }) => {
 	const { authStore, reviewsStore, notificationsStore } = useStore()
 	const [show, setShow] = useState<boolean>(false)
+	const { navigateToRelease } = useCustomNavigate()
 	const isLiked = review.like_user_ids.some(
 		item => item.user_id === authStore.user?.id
 	)
@@ -63,6 +65,7 @@ const LastReviewsCarouselItem: FC<IProps> = observer(({ review }) => {
 				<div className='flex items-center justify-end gap-2 lg:gap-4'>
 					<ReviewMarks />
 					<img
+						onClick={() => navigateToRelease(review.release_id)}
 						alt={review.release_title}
 						src={review.release_img}
 						className='rounded size-10 lg:size-11 cursor-pointer'
@@ -87,6 +90,16 @@ const LastReviewsCarouselItem: FC<IProps> = observer(({ review }) => {
 		)
 	}
 
+	const ReviewToolTip: FC<{ text: string }> = ({ text }) => {
+		return (
+			<div
+				className={`bg-primary border-2 border-gray-600 rounded-full text-white text-xs font-extrabold px-2 py-1 whitespace-nowrap`}
+			>
+				{text}
+			</div>
+		)
+	}
+
 	const ReviewMarks = () => {
 		return (
 			<div className='flex flex-col h-full text-right justify-center'>
@@ -95,31 +108,31 @@ const LastReviewsCarouselItem: FC<IProps> = observer(({ review }) => {
 				</span>
 				<div className='flex gap-x-1.5 font-bold text-sx lg:text-sm'>
 					<TooltipSpan
-						tooltip='Рифмы / Образы'
+						tooltip={<ReviewToolTip text='Рифмы / Образы' />}
 						spanClassName='text-[rgba(35,101,199)]'
 					>
 						{review.rhymes}
 					</TooltipSpan>
 					<TooltipSpan
-						tooltip='Структура / Ритмика'
+						tooltip={<ReviewToolTip text='Структура / Ритмика' />}
 						spanClassName='text-[rgba(35,101,199)]'
 					>
 						{review.structure}
 					</TooltipSpan>
 					<TooltipSpan
-						tooltip='Реализация стиля'
+						tooltip={<ReviewToolTip text='Реализация стиля' />}
 						spanClassName='text-[rgba(35,101,199)]'
 					>
 						{review.realization}
 					</TooltipSpan>
 					<TooltipSpan
-						tooltip='Индивидуальность / Харизма'
+						tooltip={<ReviewToolTip text='Индивидуальность / Харизма' />}
 						spanClassName='text-[rgba(35,101,199)]'
 					>
 						{review.individuality}
 					</TooltipSpan>
 					<TooltipSpan
-						tooltip='Атмосфера / Вайб'
+						tooltip={<ReviewToolTip text='Атмосфера / Вайб' />}
 						spanClassName='text-[rgba(160,80,222)]'
 					>
 						{review.atmosphere}
@@ -161,11 +174,12 @@ const LastReviewsCarouselItem: FC<IProps> = observer(({ review }) => {
 					)}
 				</button>
 				<button
+					onClick={() => navigateToRelease(review.release_id)}
 					className='cursor-pointer hover:bg-white/10 size-8 lg:size-10 rounded-md flex items-center justify-center transition-all duration-200 relative'
 					onMouseEnter={() => setShow(true)}
 					onMouseLeave={() => setShow(false)}
 				>
-					<MoveToReview />
+					<MoveToReviewSvgIcon />
 					{show && (
 						<div
 							className={`absolute -top-10 left-1/1 -translate-x-1/1 bg-primary border-2 border-gray-600 rounded-xl text-white text-xs font-semibold px-3 py-2 shadow z-100 whitespace-nowrap`}

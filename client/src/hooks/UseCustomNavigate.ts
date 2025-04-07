@@ -23,12 +23,17 @@ const useCustomNavigate = () => {
 		navigate('/feedback')
 	}
 
+	const navigateToRelease = (id: string) => {
+		navigate(`/release/${id}`)
+	}
+
 	return {
 		navigateToLogin,
 		navigateToRegistration,
 		navigateToRequestReset,
 		navigateToMain,
 		navigateToFeedback,
+		navigateToRelease,
 	}
 }
 

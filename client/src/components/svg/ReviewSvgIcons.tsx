@@ -1,4 +1,4 @@
-export const MoveToReview = () => (
+export const MoveToReviewSvgIcon = () => (
 	<svg
 		stroke='currentColor'
 		fill='none'

@@ -13,7 +13,7 @@ const Layout: FC<ILayoutProps> = ({ children }) => {
 			<Sidebar />
 			<div className='lg:pl-14 flex flex-col h-full min-h-screen items-center'>
 				<Header />
-				<div className='2xl:container pb-8 mt-5 lg:mt-8 px-4 w-full'>
+				<div className='2xl:container pb-8 h-full mt-5 lg:mt-8 px-4 w-full'>
 					{children}
 				</div>
 				<Footer />

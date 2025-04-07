@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
 import { ReviewAPI } from '../api/ReviewAPI'
-import { IReview } from '../models/review/review'
+import { IReview } from '../models/review/Review'
 
 class ReviewsStore {
 	constructor() {

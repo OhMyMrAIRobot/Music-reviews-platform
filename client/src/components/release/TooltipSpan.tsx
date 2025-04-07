@@ -2,7 +2,7 @@ import { FC, ReactNode, useState } from 'react'
 
 interface ITooltipSpanProps {
 	children: ReactNode
-	tooltip: string
+	tooltip: ReactNode
 	spanClassName: string
 }
 
@@ -20,13 +20,13 @@ const TooltipSpan: FC<ITooltipSpanProps> = ({
 			onMouseLeave={() => setShow(false)}
 		>
 			<span className={spanClassName}>{children}</span>
-			{show && (
-				<div
-					className={`absolute -top-8 left-1/2 -translate-x-1/2 bg-primary border-2 border-gray-600 rounded-full text-white text-xs font-extrabold px-2 py-1 shadow z-10 whitespace-nowrap`}
-				>
-					{tooltip}
-				</div>
-			)}
+			<div
+				className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-0.5 rounded transition-all duration-300 ${
+					show ? 'opacity-100 visible' : 'opacity-0 invisible'
+				}`}
+			>
+				{tooltip}
+			</div>
 		</span>
 	)
 }
