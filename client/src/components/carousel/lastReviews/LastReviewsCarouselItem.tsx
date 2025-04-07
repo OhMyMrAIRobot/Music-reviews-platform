@@ -11,12 +11,26 @@ interface IProps {
 }
 
 const LastReviewsCarouselItem: FC<IProps> = observer(({ review }) => {
-	const { authStore } = useStore()
+	const { authStore, reviewsStore, notificationsStore } = useStore()
 	const [show, setShow] = useState<boolean>(false)
 	const isLiked = review.like_user_ids.some(
 		item => item.user_id === authStore.user?.id
 	)
 	const level = getUserLevel(review.points)
+
+	const toggleFavReview = () => {
+		const promise = isLiked
+			? reviewsStore.deleteReviewFromFav(review.id)
+			: reviewsStore.addReviewToFav(review.id)
+
+		promise.then(result => {
+			notificationsStore.addNotification({
+				id: review.id,
+				text: result.message,
+				isError: !result.status,
+			})
+		})
+	}
 
 	const ReviewHeader = () => {
 		return (
@@ -126,6 +140,7 @@ const LastReviewsCarouselItem: FC<IProps> = observer(({ review }) => {
 			</div>
 			<div className='mt-5 flex justify-between items-center pr-2.5'>
 				<button
+					onClick={toggleFavReview}
 					className={`flex items-center justify-center gap-1 px-4 py-2 border rounded-full cursor-pointer group ${
 						isLiked
 							? 'bg-white/20 border-white/40'
