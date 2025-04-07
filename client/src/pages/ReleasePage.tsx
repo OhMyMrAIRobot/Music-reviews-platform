@@ -2,6 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
 import { useParams } from 'react-router'
 import ReleaseDetailsCard from '../components/release/ReleaseDetailsCard'
+import ReviewForm from '../components/release/ReviewForm'
 import { useLoading } from '../hooks/UseLoading'
 import { useStore } from '../hooks/UseStore'
 
@@ -17,7 +18,10 @@ const ReleasePage = observer(() => {
 	const release = releasesStore.releaseDetails
 
 	return release ? (
-		<ReleaseDetailsCard release={release} />
+		<>
+			<ReleaseDetailsCard release={release} />
+			<ReviewForm />
+		</>
 	) : (
 		<div className='text-center text-2xl font-bold mt-30'>Релиз не найден!</div>
 	)
