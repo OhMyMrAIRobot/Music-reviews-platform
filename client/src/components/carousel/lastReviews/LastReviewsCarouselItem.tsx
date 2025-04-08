@@ -4,7 +4,7 @@ import useCustomNavigate from '../../../hooks/UseCustomNavigate'
 import { useStore } from '../../../hooks/UseStore'
 import { IReview } from '../../../models/review/Review'
 import { getLevelConfig, getUserLevel } from '../../../utils/UserLevel'
-import TooltipSpan from '../../release/TooltipSpan'
+import TooltipSpan from '../../releasePage/tooltip/TooltipSpan'
 import { MoveToReviewSvgIcon } from '../../svg/ReviewSvgIcons'
 
 interface IProps {

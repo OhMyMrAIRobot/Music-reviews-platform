@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { IReleaseDetails } from '../../models/release/ReleaseDetails'
+import { IReleaseDetails } from '../../../models/release/ReleaseDetails'
 import ReleaseAuthorsContainer from './ReleaseAuthorsContainer'
 import ReleaseRatingsContainer from './ReleaseRatingsContainer'
 

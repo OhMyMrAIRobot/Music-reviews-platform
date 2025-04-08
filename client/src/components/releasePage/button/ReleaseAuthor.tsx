@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { AuthorTypesEnum } from '../../models/author/AuthorTypes'
+import { AuthorTypesEnum } from '../../../models/author/AuthorTypes'
 
 interface IReleaseAuthorProps {
 	img: string

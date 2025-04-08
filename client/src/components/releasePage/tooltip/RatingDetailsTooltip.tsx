@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { ReleaseRatingTypesEnum } from '../../models/release/ReleaseRatingTypes'
+import { ReleaseRatingTypesEnum } from '../../../models/release/ReleaseRatingTypes'
 
 const DetailRow: FC<{ title: string; total: string; color: string }> = ({
 	title,
