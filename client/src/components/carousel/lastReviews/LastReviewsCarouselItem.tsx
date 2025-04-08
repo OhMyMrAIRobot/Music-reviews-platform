@@ -27,7 +27,7 @@ const LastReviewsCarouselItem: FC<IProps> = observer(({ review }) => {
 
 		promise.then(result => {
 			notificationsStore.addNotification({
-				id: review.id,
+				id: self.crypto.randomUUID(),
 				text: result.message,
 				isError: !result.status,
 			})

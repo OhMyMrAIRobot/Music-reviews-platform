@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
 import { useParams } from 'react-router'
-import ReleaseDetailsCard from '../components/releasePage/container/ReleaseDetailsCard'
+import ReleaseContainer from '../components/releasePage/container/ReleaseContainer'
 import ReviewForm from '../components/releasePage/reviewForm/ReviewForm'
 import { useLoading } from '../hooks/UseLoading'
 import { useStore } from '../hooks/UseStore'
@@ -19,7 +19,7 @@ const ReleasePage = observer(() => {
 
 	return release ? (
 		<>
-			<ReleaseDetailsCard release={release} />
+			<ReleaseContainer release={release} />
 			<ReviewForm />
 		</>
 	) : (
