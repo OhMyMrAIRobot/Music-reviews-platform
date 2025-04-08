@@ -1,0 +1,83 @@
+import { FC, useEffect, useRef, useState } from 'react'
+import { TickSvgIcon } from '../../releasePage/releasePageSvgIcons'
+import { ArrowBottomSvgIcon } from '../HeaderSvgIcons'
+
+interface ComboBoxProps {
+	options: string[]
+	value?: string
+	onChange: (selected: string) => void
+	className?: string
+}
+
+const ComboBox: FC<ComboBoxProps> = ({
+	options,
+	value,
+	onChange,
+	className = '',
+}) => {
+	if (!options || options.length === 0) {
+		throw new Error('ComboBox: options must be a non-empty array.')
+	}
+
+	const [isOpen, setIsOpen] = useState(false)
+	const comboRef = useRef<HTMLDivElement | null>(null)
+
+	const selected = value ?? options[0]
+
+	const handleClickOutside = (event: MouseEvent) => {
+		if (comboRef.current && !comboRef.current.contains(event.target as Node)) {
+			setIsOpen(false)
+		}
+	}
+
+	useEffect(() => {
+		document.addEventListener('click', handleClickOutside)
+		return () => {
+			document.removeEventListener('click', handleClickOutside)
+		}
+	}, [])
+
+	return (
+		<div
+			ref={comboRef}
+			className={`relative inline-block w-full bg-primary rounded-md ${className}`}
+		>
+			<button
+				onClick={() => setIsOpen(!isOpen)}
+				role='combobox'
+				className='flex w-full gap-x-1 h-full justify-between items-center px-3 text-sm font-medium text-white cursor-pointer py-2'
+			>
+				<span>{selected}</span>
+				<ArrowBottomSvgIcon />
+			</button>
+
+			<ul
+				className={`absolute left-0 mt-2 py-1 px-2 z-100 w-full bg-white border border-zinc-700 text-sm font-medium rounded-md shadow-lg bg-primary transition-all duration-125 ${
+					isOpen
+						? 'opacity-100 translate-y-0 pointer-events-auto'
+						: 'opacity-0 -translate-y-3 pointer-events-none'
+				}`}
+			>
+				{options.map(option => (
+					<li
+						key={option}
+						className='flex items-center py-2 cursor-pointer text-sm font-medium'
+						onClick={() => {
+							onChange(option)
+							setIsOpen(false)
+						}}
+					>
+						<span className='w-5'>
+							{selected === option ? (
+								<TickSvgIcon className='size-3.5' />
+							) : null}
+						</span>
+						{option}
+					</li>
+				))}
+			</ul>
+		</div>
+	)
+}
+
+export default ComboBox

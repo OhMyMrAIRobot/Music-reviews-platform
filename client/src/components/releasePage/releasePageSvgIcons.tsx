@@ -1,3 +1,5 @@
+import { FC } from 'react'
+
 export const WarningSvgIcon = () => (
 	<svg
 		stroke='currentColor'
@@ -29,13 +31,13 @@ export const PaintBrushSvgIcon = () => (
 	</svg>
 )
 
-export const SendReviewSvgIcon = () => (
+export const TickSvgIcon: FC<{ className: string }> = ({ className }) => (
 	<svg
 		stroke='currentColor'
 		fill='currentColor'
 		strokeWidth='0'
 		viewBox='0 0 448 512'
-		className='size-8'
+		className={`${className}`}
 		height='1em'
 		width='1em'
 		xmlns='http://www.w3.org/2000/svg'

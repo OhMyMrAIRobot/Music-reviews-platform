@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
 import { ReviewAPI } from '../api/ReviewAPI'
+import { IReleaseReview } from '../models/review/ReleaseReview'
 import { IReview } from '../models/review/Review'
 
 class ReviewsStore {
@@ -9,15 +10,29 @@ class ReviewsStore {
 	}
 
 	lastReviews: IReview[] = []
+	releaseReviews: IReleaseReview[] = []
 
 	setLastReviews(data: IReview[]) {
 		this.lastReviews = data
+	}
+
+	setReleaseReviews(data: IReleaseReview[]) {
+		this.releaseReviews = data
 	}
 
 	fetchLastReviews = async () => {
 		try {
 			const data = await ReviewAPI.fetchLastReviews()
 			this.setLastReviews(data)
+		} catch (e) {
+			console.log(e)
+		}
+	}
+
+	fetchReleaseReviews = async (releaseId: string) => {
+		try {
+			const data = await ReviewAPI.fetchReleaseReview(releaseId)
+			this.setReleaseReviews(data)
 		} catch (e) {
 			console.log(e)
 		}

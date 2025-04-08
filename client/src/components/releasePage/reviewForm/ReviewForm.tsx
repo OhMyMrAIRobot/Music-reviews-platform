@@ -3,7 +3,7 @@ import useCustomNavigate from '../../../hooks/UseCustomNavigate'
 import { useStore } from '../../../hooks/UseStore'
 import SwitchButton from '../button/SwitchButton'
 import WarningAlert from '../container/WarningAlert'
-import { SendReviewSvgIcon } from '../releasePageSvgIcons'
+import { TickSvgIcon } from '../releasePageSvgIcons'
 import MarksReviewForm from './MarksReviewForm'
 import TextReviewForm from './TextReviewForm'
 
@@ -97,7 +97,7 @@ const ReviewForm = () => {
 								</span>
 							</div>
 							<button className='inline-flex items-center justify-center whitespace-nowrap text-sm font-medium rounded-full size-16 bg-white text-black cursor-pointer hover:bg-white/50 transition-colors duration-300'>
-								<SendReviewSvgIcon />
+								<TickSvgIcon className='size-8' />
 							</button>
 						</div>
 					</div>
