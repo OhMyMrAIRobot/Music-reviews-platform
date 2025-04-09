@@ -10,6 +10,7 @@ const MainPage = observer(() => {
 				<TopReleasesContainer />
 				<LastReleasesContainer />
 				<LastReviewsContainer />
+				<div className='w-20 h-20 border-t-4 border-b-1 border-white rounded-full animate-spin'></div>
 			</div>
 		</>
 	)

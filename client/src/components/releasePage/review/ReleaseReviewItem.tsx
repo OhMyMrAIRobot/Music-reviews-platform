@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { useStore } from '../../../hooks/UseStore'
 import { IReleaseReview } from '../../../models/review/ReleaseReview'
 import ReviewLikes from './ReviewLikes'
@@ -12,10 +12,46 @@ interface IProps {
 }
 
 const ReleaseReviewItem: FC<IProps> = observer(({ review }) => {
-	const { authStore } = useStore()
+	const { authStore, releasePageStore, notificationsStore } = useStore()
 	const isLiked = review.user_like_ids.some(
 		item => item.user_id === authStore.user?.id
 	)
+
+	const [toggling, setToggling] = useState<boolean>(false)
+
+	const toggleFavReview = () => {
+		setToggling(true)
+		if (!authStore.isAuth) {
+			notificationsStore.addNoAuthNotification(
+				'Для добавления рецензии в понравившиеся требуется авторизация!'
+			)
+			setToggling(false)
+			return
+		}
+
+		const promise = isLiked
+			? releasePageStore.deleteReviewFromFav(review.id)
+			: releasePageStore.addReviewToFav(review.id)
+
+		promise
+			.then(result => {
+				notificationsStore.addNotification({
+					id: self.crypto.randomUUID(),
+					text: result.message,
+					isError: !result.status,
+				})
+			})
+			.catch(() => {
+				notificationsStore.addNotification({
+					id: self.crypto.randomUUID(),
+					text: 'Ошибка при добавлении рецензии в понравившиеся!',
+					isError: true,
+				})
+			})
+			.finally(() => {
+				setToggling(false)
+			})
+	}
 
 	return (
 		<div className='w-full bg-zinc-900 p-1.5 lg:p-[5px] flex flex-col border border-zinc-800 rounded-[15px] lg:rounded-[20px]'>
@@ -45,9 +81,10 @@ const ReleaseReviewItem: FC<IProps> = observer(({ review }) => {
 				<div className='text-xs opacity-60 mt-1'>{review.created_at}</div>
 				<div className='mt-3 mb-2'>
 					<ReviewLikes
-						reviewId={review.id}
+						toggling={toggling}
 						isLiked={isLiked}
 						likesCount={review.likes_count}
+						toggleFavReview={toggleFavReview}
 					/>
 				</div>
 			</div>

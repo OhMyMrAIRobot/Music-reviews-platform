@@ -1,67 +1,70 @@
 import { observer } from 'mobx-react-lite'
-import { FC, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { useLoading } from '../../../hooks/UseLoading'
 import { useStore } from '../../../hooks/UseStore'
-import ComboBox from '../../header/buttons/ComboBox'
+import Pagination from '../../pagination/Pagination'
 import ReleaseReviewItem from '../review/ReleaseReviewItem'
+import ReleaseReviewsHeader from './ReleaseReviewsHeader'
 
-interface IProps {
-	count: number
-}
-
-const SortEnum = Object.freeze({
+export const ReleaseReviewsSortEnum = Object.freeze({
 	NEW: 'Новые',
 	OLD: 'Старые',
 	POPULAR: 'Популярные',
 })
 
-const ReleaseReviewsHeader: FC<IProps> = ({ count }) => {
-	const [selectedSort, setSelectedSort] = useState<string>(SortEnum.NEW)
-
-	return (
-		<div className='w-full flex flex-col gap-y-5 lg:gap-y-0 lg:items-center lg:flex-row lg:justify-between lg:mt-10 mt-5'>
-			<div className='font-bold flex items-center gap-x-5'>
-				<p className='text-xl xl:text-2xl '>Рецензий пользователей</p>
-				<div className='inline-flex items-center justify-center rounded-full px-2.5 py-0.5 bg-secondary'>
-					{count}
-				</div>
-			</div>
-
-			<div className='whitespace-nowrap rounded-lg border border-white/5 bg-zinc-900 p-3 lg:p-2 flex gap-4 items-center font-bold w-full sm:w-1/2 lg:w-1/3'>
-				<p className='hidden text-white/70 md:block text-sm md:text-base '>
-					Сортировать по:
-				</p>
-				<ComboBox
-					options={Object.values(SortEnum)}
-					value={selectedSort}
-					onChange={setSelectedSort}
-					className='rounded-md border border-zinc-700 relative inline-block'
-				/>
-			</div>
-		</div>
-	)
-}
-
 const ReleaseReviewsContainer = observer(() => {
 	const { id } = useParams()
-	const { reviewsStore } = useStore()
+	const { releasePageStore } = useStore()
+	const [currentPage, setCurrentPage] = useState<number>(1)
+	const [selectedSort, setSelectedSort] = useState<string>(
+		ReleaseReviewsSortEnum.NEW
+	)
 
-	const { execute: fetch } = useLoading(reviewsStore.fetchReleaseReviews)
+	const { execute: fetch } = useLoading(releasePageStore.fetchReleaseReviews)
+	const [totalItems, setTotalItems] = useState(0)
 
 	useEffect(() => {
-		fetch(id)
-	}, [])
+		let field = 'created'
+		let order: 'asc' | 'desc' = 'desc'
+
+		if (selectedSort === 'Старые') {
+			order = 'asc'
+		} else if (selectedSort === 'Популярные') {
+			field = 'likes'
+		}
+		fetch(id, field, order, 1, (currentPage - 1) * 1).then(() =>
+			setTotalItems(releasePageStore.reviewsCount)
+		)
+	}, [currentPage, selectedSort])
+
+	const reviews = releasePageStore.releaseReviews
 
 	return (
-		<section className='w-full grid grid-cols-1 mt-5 lg:mt-10'>
-			{reviewsStore.releaseReviews.length !== 0 ? (
+		<section
+			id='release-reviews'
+			className='w-full grid grid-cols-1 mt-5 lg:mt-10'
+		>
+			{reviews && reviews.length !== 0 ? (
 				<>
-					<ReleaseReviewsHeader count={reviewsStore.releaseReviews.length} />
+					<ReleaseReviewsHeader
+						count={releasePageStore.reviewsCount}
+						selectedSort={selectedSort}
+						setSelectedSort={setSelectedSort}
+					/>
 					<div className='grid grid-cols-1 max-w-200 w-full mx-auto gap-5 mt-5'>
-						{reviewsStore.releaseReviews.map(review => (
+						{reviews.map(review => (
 							<ReleaseReviewItem key={review.id} review={review} />
 						))}
+					</div>
+					<div className='mt-10'>
+						<Pagination
+							currentPage={currentPage}
+							totalItems={totalItems}
+							itemsPerPage={1}
+							onPageChange={setCurrentPage}
+							idToScroll='release-reviews'
+						/>
 					</div>
 				</>
 			) : (

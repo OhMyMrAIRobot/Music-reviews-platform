@@ -9,14 +9,14 @@ import { useStore } from '../hooks/UseStore'
 
 const ReleasePage = observer(() => {
 	const { id } = useParams()
-	const { releasesStore } = useStore()
-	const { execute: fetch } = useLoading(releasesStore.fetchReleaseDetails)
+	const { releasePageStore } = useStore()
+	const { execute: fetch } = useLoading(releasePageStore.fetchReleaseDetails)
 
 	useEffect(() => {
 		fetch(id)
 	}, [])
 
-	const release = releasesStore.releaseDetails
+	const release = releasePageStore.releaseDetails
 
 	return release ? (
 		<>

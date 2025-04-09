@@ -44,7 +44,7 @@ const LastReviewsCarousel = observer(
 										length: Math.ceil(reviewsStore.lastReviews.length / 3),
 									}).map((_, idx) => (
 										<div
-											className='embla flex-[0_0_100%] md:flex-[0_0_33%] px-1'
+											className='flex-[0_0_100%] md:flex-[0_0_33%] px-1'
 											key={idx}
 										>
 											<div className='grid grid-rows-3 gap-4'>

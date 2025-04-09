@@ -14,12 +14,48 @@ interface IProps {
 }
 
 const LastReviewsCarouselItem: FC<IProps> = observer(({ review }) => {
-	const { authStore } = useStore()
+	const { authStore, notificationsStore, reviewsStore } = useStore()
 	const [show, setShow] = useState<boolean>(false)
 	const { navigateToRelease } = useCustomNavigate()
 	const isLiked = review.like_user_ids.some(
 		item => item.user_id === authStore.user?.id
 	)
+
+	const [toggling, setToggling] = useState<boolean>(false)
+
+	const toggleFavReview = () => {
+		setToggling(true)
+		if (!authStore.isAuth) {
+			notificationsStore.addNoAuthNotification(
+				'Для добавления рецензии в понравившиеся требуется авторизация!'
+			)
+			setToggling(false)
+			return
+		}
+
+		const promise = isLiked
+			? reviewsStore.deleteReviewFromFav(review.id)
+			: reviewsStore.addReviewToFav(review.id)
+
+		promise
+			.then(result => {
+				notificationsStore.addNotification({
+					id: self.crypto.randomUUID(),
+					text: result.message,
+					isError: !result.status,
+				})
+			})
+			.catch(() => {
+				notificationsStore.addNotification({
+					id: self.crypto.randomUUID(),
+					text: 'Ошибка при добавлении рецензии в понравившиеся!',
+					isError: true,
+				})
+			})
+			.finally(() => {
+				setToggling(false)
+			})
+	}
 
 	const ReviewHeader = () => {
 		return (
@@ -53,7 +89,7 @@ const LastReviewsCarouselItem: FC<IProps> = observer(({ review }) => {
 	}
 
 	return (
-		<div className='bg-zinc-900 relative overflow-hidden p-1.5 flex flex-col mx-auto border border-zinc-800 rounded-[15px] lg:rounded-[20px] w-full'>
+		<div className='bg-zinc-900 relative p-1.5 flex flex-col mx-auto border border-zinc-800 rounded-[15px] lg:rounded-[20px] w-full'>
 			<ReviewHeader />
 			<div className='max-h-30 overflow-hidden px-1.5 text-white'>
 				<p className='text-base lg:text-lg mt-3 pb-3 font-semibold'>
@@ -63,9 +99,10 @@ const LastReviewsCarouselItem: FC<IProps> = observer(({ review }) => {
 			</div>
 			<div className='mt-5 flex justify-between items-center pr-2.5'>
 				<ReviewLikes
-					reviewId={review.id}
+					toggling={toggling}
 					isLiked={isLiked}
 					likesCount={review.likes_count}
+					toggleFavReview={toggleFavReview}
 				/>
 				<button
 					onClick={() => navigateToRelease(review.release_id)}
@@ -74,13 +111,13 @@ const LastReviewsCarouselItem: FC<IProps> = observer(({ review }) => {
 					onMouseLeave={() => setShow(false)}
 				>
 					<MoveToReviewSvgIcon />
-					{show && (
-						<div
-							className={`absolute -top-10 left-1/1 -translate-x-1/1 bg-primary border-2 border-gray-600 rounded-xl text-white text-xs font-semibold px-3 py-2 shadow z-100 whitespace-nowrap`}
-						>
-							Перейти к рецензии
-						</div>
-					)}
+					<div
+						className={`absolute -top-10 left-1/2 -translate-x-1/2 bg-primary border-2 border-gray-600 rounded-xl text-white text-xs font-semibold px-3 py-2 shadow z-100 whitespace-nowrap transition-all duration-300 ${
+							show ? 'opacity-100 visible' : 'opacity-0 invisible'
+						}`}
+					>
+						Перейти к рецензии
+					</div>
 				</button>
 			</div>
 		</div>

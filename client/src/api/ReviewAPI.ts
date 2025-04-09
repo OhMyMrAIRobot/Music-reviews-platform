@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { IFavReview } from '../models/review/FavReview'
-import { IReleaseReview } from '../models/review/ReleaseReview'
+import { IReleaseReviewResponse } from '../models/review/ReleaseReview'
 import { IReview } from '../models/review/Review'
 import { api } from './Instance'
 
@@ -32,8 +32,16 @@ export const ReviewAPI = {
 		return data
 	},
 
-	async fetchReleaseReview(releaseId: string) {
-		const { data } = await _api.get<IReleaseReview[]>(`/release/${releaseId}`)
+	async fetchReleaseReviews(
+		releaseId: string,
+		field: string,
+		order: string,
+		limit: number,
+		offset: number
+	): Promise<IReleaseReviewResponse> {
+		const { data } = await _api.get<IReleaseReviewResponse>(
+			`/release/${releaseId}?field=${field}&order=${order}&limit=${limit}&offset=${offset}`
+		)
 		return data
 	},
 }

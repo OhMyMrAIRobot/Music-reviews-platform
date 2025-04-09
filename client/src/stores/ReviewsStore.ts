@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
 import { ReviewAPI } from '../api/ReviewAPI'
-import { IReleaseReview } from '../models/review/ReleaseReview'
 import { IReview } from '../models/review/Review'
 
 class ReviewsStore {
@@ -10,29 +9,15 @@ class ReviewsStore {
 	}
 
 	lastReviews: IReview[] = []
-	releaseReviews: IReleaseReview[] = []
 
 	setLastReviews(data: IReview[]) {
 		this.lastReviews = data
-	}
-
-	setReleaseReviews(data: IReleaseReview[]) {
-		this.releaseReviews = data
 	}
 
 	fetchLastReviews = async () => {
 		try {
 			const data = await ReviewAPI.fetchLastReviews()
 			this.setLastReviews(data)
-		} catch (e) {
-			console.log(e)
-		}
-	}
-
-	fetchReleaseReviews = async (releaseId: string) => {
-		try {
-			const data = await ReviewAPI.fetchReleaseReview(releaseId)
-			this.setReleaseReviews(data)
 		} catch (e) {
 			console.log(e)
 		}
@@ -52,26 +37,10 @@ class ReviewsStore {
 				)
 
 				if (!alreadyLiked) {
-					runInAction(() =>
+					runInAction(() => {
 						lastReview.like_user_ids.push({ user_id: data.userId })
-					)
-					lastReview.likes_count += 1
-				}
-			}
-
-			const releaseReview = this.releaseReviews.find(
-				item => item.id === data.reviewId
-			)
-			if (releaseReview) {
-				const alreadyLiked = releaseReview.user_like_ids.some(
-					entry => entry.user_id === data.userId
-				)
-
-				if (!alreadyLiked) {
-					runInAction(() =>
-						releaseReview.user_like_ids.push({ user_id: data.userId })
-					)
-					releaseReview.likes_count += 1
+						lastReview.likes_count += 1
+					})
 				}
 			}
 
@@ -105,22 +74,6 @@ class ReviewsStore {
 					runInAction(() => {
 						lastReview.like_user_ids.splice(index, 1)
 						lastReview.likes_count -= 1
-					})
-				}
-			}
-
-			const releaseReview = this.releaseReviews.find(
-				item => item.id === data.reviewId
-			)
-			if (releaseReview) {
-				const index = releaseReview.user_like_ids.findIndex(
-					entry => entry.user_id === data.userId
-				)
-
-				if (index !== -1) {
-					runInAction(() => {
-						releaseReview.user_like_ids.splice(index, 1)
-						releaseReview.likes_count -= 1
 					})
 				}
 			}

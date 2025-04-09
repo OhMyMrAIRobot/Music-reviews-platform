@@ -14,7 +14,7 @@ interface IProps {
 }
 
 const ReleaseContainer: FC<IProps> = observer(({ release }) => {
-	const { authStore, releasesStore, notificationsStore } = useStore()
+	const { authStore, releasePageStore, notificationsStore } = useStore()
 
 	const isLiked = release.user_like_ids.some(
 		val => val.user_id === authStore.user?.id
@@ -29,8 +29,8 @@ const ReleaseContainer: FC<IProps> = observer(({ release }) => {
 		}
 
 		const promise = isLiked
-			? releasesStore.deleteReleaseFromFav(release.id)
-			: releasesStore.addReleaseToFav(release.id)
+			? releasePageStore.deleteReleaseFromFav(release.id)
+			: releasePageStore.addReleaseToFav(release.id)
 
 		promise.then(result => {
 			notificationsStore.addNotification({
