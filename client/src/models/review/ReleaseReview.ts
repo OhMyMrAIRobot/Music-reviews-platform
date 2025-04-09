@@ -12,6 +12,7 @@ export interface IReleaseReview {
 	user_id: string
 	nickname: string
 	avatar: string
+	points: number
 	position: number | null
 	likes_count: number
 	user_like_ids: [

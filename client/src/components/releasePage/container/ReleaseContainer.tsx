@@ -21,6 +21,13 @@ const ReleaseContainer: FC<IProps> = observer(({ release }) => {
 	)
 
 	const toggleFavRelease = () => {
+		if (!authStore.isAuth) {
+			notificationsStore.addNoAuthNotification(
+				'Для добавления релиза в понравившиеся требуется авторизация!'
+			)
+			return
+		}
+
 		const promise = isLiked
 			? releasesStore.deleteReleaseFromFav(release.id)
 			: releasesStore.addReleaseToFav(release.id)

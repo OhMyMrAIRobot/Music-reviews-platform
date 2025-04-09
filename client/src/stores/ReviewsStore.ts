@@ -43,17 +43,38 @@ class ReviewsStore {
 	): Promise<{ status: boolean; message: string }> => {
 		try {
 			const data = await ReviewAPI.addReviewToFav(reviewId)
-			const review = this.lastReviews.find(item => item.id === data.reviewId)
-			if (review) {
-				const alreadyLiked = review.like_user_ids.some(
+			const lastReview = this.lastReviews.find(
+				item => item.id === data.reviewId
+			)
+			if (lastReview) {
+				const alreadyLiked = lastReview.like_user_ids.some(
 					entry => entry.user_id === data.userId
 				)
 
 				if (!alreadyLiked) {
-					runInAction(() => review.like_user_ids.push({ user_id: data.userId }))
-					review.likes_count += 1
+					runInAction(() =>
+						lastReview.like_user_ids.push({ user_id: data.userId })
+					)
+					lastReview.likes_count += 1
 				}
 			}
+
+			const releaseReview = this.releaseReviews.find(
+				item => item.id === data.reviewId
+			)
+			if (releaseReview) {
+				const alreadyLiked = releaseReview.user_like_ids.some(
+					entry => entry.user_id === data.userId
+				)
+
+				if (!alreadyLiked) {
+					runInAction(() =>
+						releaseReview.user_like_ids.push({ user_id: data.userId })
+					)
+					releaseReview.likes_count += 1
+				}
+			}
+
 			return {
 				status: true,
 				message: 'Вы отметили рецензию как понравившеюся!',
@@ -72,19 +93,38 @@ class ReviewsStore {
 	): Promise<{ status: boolean; message: string }> => {
 		try {
 			const data = await ReviewAPI.deleteReviewFromFav(reviewId)
-			const review = this.lastReviews.find(item => item.id === data.reviewId)
-			if (review) {
-				const index = review.like_user_ids.findIndex(
+			const lastReview = this.lastReviews.find(
+				item => item.id === data.reviewId
+			)
+			if (lastReview) {
+				const index = lastReview.like_user_ids.findIndex(
 					entry => entry.user_id === data.userId
 				)
 
 				if (index !== -1) {
 					runInAction(() => {
-						review.like_user_ids.splice(index, 1)
-						review.likes_count -= 1
+						lastReview.like_user_ids.splice(index, 1)
+						lastReview.likes_count -= 1
 					})
 				}
 			}
+
+			const releaseReview = this.releaseReviews.find(
+				item => item.id === data.reviewId
+			)
+			if (releaseReview) {
+				const index = releaseReview.user_like_ids.findIndex(
+					entry => entry.user_id === data.userId
+				)
+
+				if (index !== -1) {
+					runInAction(() => {
+						releaseReview.user_like_ids.splice(index, 1)
+						releaseReview.likes_count -= 1
+					})
+				}
+			}
+
 			return {
 				status: true,
 				message: 'Вы убрали рецензию из списка понравившихся!',

@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { useParams } from 'react-router'
 import ReleaseContainer from '../components/releasePage/container/ReleaseContainer'
 import ReleaseReviewsContainer from '../components/releasePage/container/ReleaseReviewsContainer'
-import ReviewForm from '../components/releasePage/reviewForm/ReviewForm'
+import SendReviewForm from '../components/releasePage/sendReviewForm/SendReviewForm'
 import { useLoading } from '../hooks/UseLoading'
 import { useStore } from '../hooks/UseStore'
 
@@ -21,7 +21,7 @@ const ReleasePage = observer(() => {
 	return release ? (
 		<>
 			<ReleaseContainer release={release} />
-			<ReviewForm />
+			<SendReviewForm />
 			<ReleaseReviewsContainer />
 		</>
 	) : (

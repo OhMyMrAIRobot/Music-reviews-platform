@@ -1,8 +1,10 @@
+import { observer } from 'mobx-react-lite'
 import { FC, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { useLoading } from '../../../hooks/UseLoading'
 import { useStore } from '../../../hooks/UseStore'
 import ComboBox from '../../header/buttons/ComboBox'
+import ReleaseReviewItem from '../review/ReleaseReviewItem'
 
 interface IProps {
 	count: number
@@ -41,7 +43,7 @@ const ReleaseReviewsHeader: FC<IProps> = ({ count }) => {
 	)
 }
 
-const ReleaseReviewsContainer = () => {
+const ReleaseReviewsContainer = observer(() => {
 	const { id } = useParams()
 	const { reviewsStore } = useStore()
 
@@ -54,7 +56,14 @@ const ReleaseReviewsContainer = () => {
 	return (
 		<section className='w-full grid grid-cols-1 mt-5 lg:mt-10'>
 			{reviewsStore.releaseReviews.length !== 0 ? (
-				<ReleaseReviewsHeader count={reviewsStore.releaseReviews.length} />
+				<>
+					<ReleaseReviewsHeader count={reviewsStore.releaseReviews.length} />
+					<div className='grid grid-cols-1 max-w-200 w-full mx-auto gap-5 mt-5'>
+						{reviewsStore.releaseReviews.map(review => (
+							<ReleaseReviewItem key={review.id} review={review} />
+						))}
+					</div>
+				</>
 			) : (
 				<div className='text-center border font-medium border-zinc-950 bg-gradient-to-br from-white/10 rounded-xl text-xs lg:sm w-full lg:max-w-[800px] sm:max-w-[600px] py-2 mx-auto'>
 					<span>Нет рецензий!</span>
@@ -62,6 +71,6 @@ const ReleaseReviewsContainer = () => {
 			)}
 		</section>
 	)
-}
+})
 
 export default ReleaseReviewsContainer

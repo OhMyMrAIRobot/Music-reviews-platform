@@ -23,7 +23,7 @@ const calculateTotalScore = (
 	return Math.round(multipliedBaseScore * atmosphereMultiplier)
 }
 
-const ReviewForm = () => {
+const SendReviewForm = () => {
 	const { authStore } = useStore()
 	const { navigateToLogin } = useCustomNavigate()
 	const [isReview, setIsReview] = useState<boolean>(true)
@@ -117,4 +117,4 @@ const ReviewForm = () => {
 	)
 }
 
-export default ReviewForm
+export default SendReviewForm

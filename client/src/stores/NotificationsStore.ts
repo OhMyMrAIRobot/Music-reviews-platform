@@ -27,6 +27,14 @@ class NotificationsStore {
 			isError: !isSent,
 		})
 	}
+
+	addNoAuthNotification(text: string) {
+		this.addNotification({
+			id: self.crypto.randomUUID(),
+			text: text,
+			isError: true,
+		})
+	}
 }
 
 export default new NotificationsStore()

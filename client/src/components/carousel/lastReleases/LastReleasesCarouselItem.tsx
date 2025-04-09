@@ -74,7 +74,7 @@ const LastReleasesCarouselItem: FC<IProps> = ({ release }) => {
 					{release.title}
 				</p>
 			</div>
-			<div className='flex flex-wrap leading-3 mt-1 text-[13px]'>
+			<div className='flex flex-wrap gap-1 font-medium leading-3 mt-2 text-[13px]'>
 				{release.author.map(author => (
 					<div key={author.name} className='opacity-70'>
 						{author.name}
