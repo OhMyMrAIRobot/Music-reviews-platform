@@ -7,7 +7,12 @@ import { ReleasesService } from 'src/releases/releases.service';
 import { UsersService } from 'src/users/users.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { DeleteReviewDto } from './dto/delete-review.dto';
-import { ReviewResponseDto } from './dto/review.response.dto';
+import { LastReviewResponseDto } from './dto/last-review.response.dto';
+import { ReleaseReviewQueryDto } from './dto/release-review-query.dto';
+import {
+  ReleaseReview,
+  ReleaseReviewResponseDto,
+} from './dto/release-review.response.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 
 @Injectable()
@@ -75,19 +80,73 @@ export class ReviewsService {
     return existing;
   }
 
-  async findByReleaseId(releaseId: string): Promise<Review[]> {
-    const existing = await this.prisma.review.findMany({
-      where: { releaseId },
+  async findByReleaseId(
+    releaseId: string,
+    query: ReleaseReviewQueryDto,
+  ): Promise<ReleaseReviewResponseDto> {
+    await this.releasesService.findOne(releaseId);
+    const count = await this.prisma.review.count({
+      where: {
+        releaseId,
+        text: { not: null },
+      },
     });
-    if (existing.length === 0) {
-      throw new EntityNotFoundException(
-        'Рецензии',
-        'releaseId',
-        `${releaseId}`,
-      );
-    }
 
-    return existing;
+    const fieldMap: Record<string, string> = {
+      created: 'r.created_at',
+      likes: 'likes_count',
+    };
+
+    const field = query.field ? fieldMap[query.field] : fieldMap['created'];
+    const order = query.order ? query.order : 'desc';
+    const limit = query.limit ? query.limit : 5;
+    const offset = query.offset ? query.offset : 0;
+
+    const rawQuery = `
+        WITH ranked_profiles AS (
+          SELECT
+              user_id,
+              ROW_NUMBER() OVER (ORDER BY points DESC)::int AS position
+          FROM "User_profiles"
+          ORDER BY points DESC
+          LIMIT 5
+        )
+
+        SELECT
+          r.id,
+          r.rhymes,
+          r.structure,
+          r.realization,
+          r.individuality,
+          r.atmosphere,
+          r.total,
+          r.title,
+          r.text,
+          (
+              SELECT TO_CHAR(r.created_at, 'DD-MM-YYYY') AS created_at
+          ),
+          u.id AS user_id,
+          u.nickname,
+          up.avatar,
+          up.points,
+          rp.position,
+          COUNT(DISTINCT ufr.user_id)::INT as likes_count,
+          JSONB_AGG(DISTINCT JSONB_BUILD_OBJECT('user_id', ufr.user_id)) as user_like_ids
+        FROM "Reviews" r
+        LEFT JOIN "Users" u on r.user_id = u.id
+        LEFT JOIN "User_profiles" up on u.id = up.user_id
+        LEFT JOIN ranked_profiles rp ON r.user_id = rp.user_id
+        LEFT JOIN "User_fav_reviews" ufr on r.id = ufr.review_id
+        WHERE r.release_id = '${releaseId}' AND r.text IS NOT NULL
+        GROUP BY r.id, r.rhymes, r.structure, r.realization, r.individuality, r.atmosphere, r.total, r.title, r.text, u.id, u.nickname, up.avatar,rp.position, r.created_at, up.points
+        ORDER BY ${field} ${order}, r.id ASC
+        LIMIT ${limit}
+        OFFSET ${offset}`;
+
+    const reviews =
+      await this.prisma.$queryRawUnsafe<ReleaseReview[]>(rawQuery);
+
+    return { count, reviews };
   }
 
   async update(
@@ -145,7 +204,7 @@ export class ReviewsService {
     order: 'asc' | 'desc' = 'desc',
     limit: number = 45,
     offset: number = 0,
-  ): Promise<ReviewResponseDto[]> {
+  ): Promise<LastReviewResponseDto[]> {
     const rawQuery = `
       WITH ranked_profiles AS (
           SELECT
@@ -166,6 +225,7 @@ export class ReviewsService {
           rev.realization,
           rev.individuality,
           rev.atmosphere,
+          rev.user_id,
           u.nickname,
           p.avatar AS profile_img,
           p.points,
@@ -185,12 +245,12 @@ export class ReviewsService {
       GROUP BY
           rev.id, rev.title, rev.text, rev.total, rev.rhymes, rev.structure, rev.realization,
           rev.individuality, rev.atmosphere, u.nickname, p.avatar, p.points, rp.position,
-          r.img, r.title, r.id, rev.created_at
+          r.img, r.title, r.id, rev.created_at, rev.user_id
       ORDER BY ${field} ${order}
       LIMIT ${limit}
       OFFSET ${offset}`;
 
-    return this.prisma.$queryRawUnsafe<ReviewResponseDto[]>(rawQuery);
+    return this.prisma.$queryRawUnsafe<LastReviewResponseDto[]>(rawQuery);
   }
 
   private calculateTotalScore(

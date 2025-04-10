@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { UserFavReview } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
 import { DuplicateFieldException } from 'src/exceptions/duplicate-field.exception';
@@ -22,7 +22,13 @@ export class UserFavReviewsService {
   ): Promise<UserFavReview> {
     const { reviewId } = createUserFavReviewDto;
     await this.usersService.findOne(userId);
-    await this.reviewsService.findOne(reviewId);
+    const review = await this.reviewsService.findOne(reviewId);
+
+    if (userId === review.userId) {
+      throw new ConflictException(
+        'Вы не можете отметить свою рецензию как понравившеюся!',
+      );
+    }
 
     const existing = await this.findOne(userId, reviewId);
     if (existing) {

@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -16,6 +17,7 @@ import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.inte
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { DeleteReviewDto } from './dto/delete-review.dto';
+import { ReleaseReviewQueryDto } from './dto/release-review-query.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { ReviewsService } from './reviews.service';
 
@@ -29,8 +31,11 @@ export class ReviewsController {
   }
 
   @Get('release/:id')
-  findByReleaseId(@Param('id') id: string) {
-    return this.reviewsService.findByReleaseId(id);
+  findByReleaseId(
+    @Param('id') id: string,
+    @Query() query: ReleaseReviewQueryDto,
+  ) {
+    return this.reviewsService.findByReleaseId(id, query);
   }
 
   @Get('user/:id')

@@ -5,7 +5,7 @@ CREATE OR REPLACE FUNCTION get_avg_review_score(
 ) RETURNS NUMERIC AS $$
 BEGIN
     RETURN (
-        SELECT COALESCE(AVG(
+        SELECT COALESCE(ROUND(AVG(
             CASE column_name
                 WHEN 'rhymes' THEN rhymes
                 WHEN 'structure' THEN structure
@@ -13,7 +13,7 @@ BEGIN
                 WHEN 'individuality' THEN individuality
                 WHEN 'atmosphere' THEN atmosphere
             END
-        ), 0)
+        ), 1), 0)
         FROM "Reviews" r
         WHERE r.release_id = _release_id
           AND (
@@ -37,30 +37,32 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION update_release_rating()
-    RETURNS TRIGGER AS $$
+create function update_release_rating() returns trigger
+    language plpgsql
+as
+$$
 DECLARE
     rating_row RECORD;
     rating_type_row RECORD;
 BEGIN
     DELETE FROM "Release_rating_details"
     WHERE release_rating_id IN (
-        SELECT id FROM "Release_ratings" WHERE release_id = NEW.release_id
+        SELECT id FROM "Release_ratings" WHERE release_id = COALESCE(OLD.release_id, NEW.release_id)
     );
     
     DELETE FROM "Release_ratings"
-    WHERE release_id = NEW.release_id;
+    WHERE release_id = COALESCE(OLD.release_id, NEW.release_id);
 
     FOR rating_type_row IN SELECT * FROM "Release_rating_types" LOOP
         INSERT INTO "Release_ratings" (id, release_id, release_rating_type_id, total)
         VALUES (
             gen_random_uuid(),
-            NEW.release_id,
+            COALESCE(OLD.release_id, NEW.release_id),
             rating_type_row.id,
             CEIL((
                 SELECT COALESCE(AVG(total), 0)
                 FROM "Reviews" r
-                WHERE r.release_id = NEW.release_id
+                WHERE r.release_id = COALESCE(OLD.release_id, NEW.release_id)
                   AND (
                       (rating_type_row.type = 'super_user' AND EXISTS (
                           SELECT 1 FROM "Users" u WHERE u.id = r.user_id
@@ -90,8 +92,8 @@ BEGIN
             rating_row.id
         );
     END LOOP;
-    
-    RETURN NEW;
+
+    RETURN COALESCE(NEW, OLD);
 END;
 $$ LANGUAGE plpgsql;
 

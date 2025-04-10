@@ -1,9 +1,10 @@
-export class ReviewResponseDto {
+export class LastReviewResponseDto {
   id: string;
   title: string;
   text: string;
   total: number;
   rhymes: number;
+  user_id: string;
   structure: number;
   realization: number;
   individuality: number;

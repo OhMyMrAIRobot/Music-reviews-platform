@@ -93,6 +93,33 @@ async function main() {
         isActive: true,
         roleId: '1',
       },
+      {
+        id: '8',
+        email: 'norizeek@gmail.com',
+        nickname: 'norizeek',
+        password:
+          '$2b$10$0bD/1z03VDQP3ko9BJ/2U.FGCyjcyY7sSXaf5.psHwB012H0xBswe',
+        isActive: true,
+        roleId: '2',
+      },
+      {
+        id: '9',
+        email: 'SPlash@gmail.com',
+        nickname: 'SPlash',
+        password:
+          '$2b$10$0bD/1z03VDQP3ko9BJ/2U.FGCyjcyY7sSXaf5.psHwB012H0xBswe',
+        isActive: true,
+        roleId: '1',
+      },
+      {
+        id: '10',
+        email: 'panikaa_@gmail.com',
+        nickname: 'panikaa_',
+        password:
+          '$2b$10$0bD/1z03VDQP3ko9BJ/2U.FGCyjcyY7sSXaf5.psHwB012H0xBswe',
+        isActive: true,
+        roleId: '1',
+      },
     ],
   });
 
@@ -144,6 +171,25 @@ async function main() {
         avatar: '1.png',
         bio: 'young designer from sp',
         userId: '7',
+      },
+      {
+        id: '8',
+        avatar: 'norizeek.png',
+        bio: 'young designer from sp',
+        userId: '8',
+        points: 93295,
+      },
+      {
+        id: '9',
+        avatar: 'SPlash.png',
+        bio: 'young designer from sp',
+        userId: '9',
+      },
+      {
+        id: '10',
+        avatar: '1.png',
+        bio: 'young designer from sp',
+        userId: '10',
       },
     ],
   });
@@ -381,6 +427,48 @@ async function main() {
         total: 90,
         createdAt: new Date(Date.now() - 6 * 3600 * 1000),
       },
+      {
+        id: '8',
+        releaseId: '1',
+        userId: '8',
+        rhymes: 10,
+        structure: 10,
+        realization: 10,
+        individuality: 10,
+        atmosphere: 10,
+        total: 90,
+        title: 'Красота в Слабости',
+        text: 'От релиза я получил максимальное удовольствие. По ходу прослушивания, я начал больше знать Женю как человека. Сам артист сказал вникать в текст релиза, а не в сам звук. Выливая всю душу, артист сталкивался со многими проблемами. В релизе я выявил что Карти рассказывал о своей истории жизни, о взглядах на жизнь, о несостоявшихся любовных историй, о взрослении. Слабость артиста в пластинке проявляется как прогрессия. Со всеми слабостями артист смог разрешить и по ходу релиза становится всё сильнее-сильнее.',
+        createdAt: new Date(Date.now() - 26 * 3600 * 1000),
+      },
+      {
+        id: '9',
+        releaseId: '1',
+        userId: '9',
+        rhymes: 10,
+        structure: 9,
+        realization: 10,
+        individuality: 8,
+        atmosphere: 10,
+        total: 83,
+        title: 'Открытие года!',
+        text: 'Даже не знаю с чего начать.\nЭмоции и чувства которые я получил от прослушивания данного релиза могут равняться только с альбомом Майота «Оба».\nКачество на высоте, ритмика прекрасна, звук потрясающий правда.\nРешил послушать альбом чисто из-за высокой оценки Фломастера и готов сказать что оценка полностью оправдывает себя.\nДля меня лично этот альбом забрал осень и зиму, вайб 11/10.\nС радостью ознакомлюсь с прошлыми работами этого автора и буду следить за его творчеством.\nУверен что сможет забрать звание «Открытие года» себе.',
+        createdAt: new Date(Date.now() - 12 * 3600 * 1000),
+      },
+      {
+        id: '10',
+        releaseId: '1',
+        userId: '10',
+        rhymes: 9,
+        structure: 9,
+        realization: 9,
+        individuality: 9,
+        atmosphere: 10,
+        total: 81,
+        title: 'Как же он чувствует',
+        text: 'До этого альбома никогда не слышал творчество cold carti, но после прослушивания понял почему многим людям нравится его творчество. Безумная атмосфера и жизненный сторитейлинг прослеживается во всем альбоме, каждый трек перетекает в следующий что делает его безумно целостным и концептуальный. Обязательно к ознакомлению!',
+        createdAt: new Date(Date.now() - 12 * 3600 * 1000),
+      },
     ],
   });
 
@@ -408,20 +496,32 @@ async function main() {
         userId: '1',
       },
       {
-        reviewId: '1',
-        userId: '2',
-      },
-      {
-        reviewId: '1',
-        userId: '4',
+        reviewId: '8',
+        userId: '1',
       },
       {
         reviewId: '2',
         userId: '1',
       },
       {
+        reviewId: '1',
+        userId: '2',
+      },
+      {
         reviewId: '2',
         userId: '2',
+      },
+      {
+        reviewId: '8',
+        userId: '2',
+      },
+      {
+        reviewId: '8',
+        userId: '3',
+      },
+      {
+        reviewId: '1',
+        userId: '4',
       },
     ],
   });
