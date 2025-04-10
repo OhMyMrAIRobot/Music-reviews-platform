@@ -4,6 +4,7 @@ export interface IReview {
 	text: string
 	total: number
 	rhymes: number
+	user_id: string
 	structure: number
 	realization: number
 	individuality: number

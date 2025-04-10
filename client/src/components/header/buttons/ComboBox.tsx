@@ -52,7 +52,7 @@ const ComboBox: FC<ComboBoxProps> = ({
 			</button>
 
 			<ul
-				className={`absolute left-0 mt-2 py-1 px-2 z-100 w-full bg-white border border-zinc-700 text-sm font-medium rounded-md shadow-lg bg-primary transition-all duration-125 ${
+				className={`absolute left-0 mt-3 py-2 px-2 z-100 w-full bg-white border border-zinc-700 text-sm font-medium rounded-md shadow-lg bg-primary transition-all duration-125 flex flex-col gap-y-1.5 ${
 					isOpen
 						? 'opacity-100 translate-y-0 pointer-events-auto'
 						: 'opacity-0 -translate-y-3 pointer-events-none'
@@ -61,7 +61,9 @@ const ComboBox: FC<ComboBoxProps> = ({
 				{options.map(option => (
 					<li
 						key={option}
-						className='flex items-center py-2 cursor-pointer text-sm font-medium'
+						className={`flex items-center py-2 px-2 cursor-pointer text-sm font-medium hover:bg-white/5 transition-colors duration-300 rounded-md ${
+							selected === option ? 'bg-white/5' : ''
+						}`}
 						onClick={() => {
 							onChange(option)
 							setIsOpen(false)

@@ -29,6 +29,24 @@ const ReleaseReviewItem: FC<IProps> = observer(({ review }) => {
 			return
 		}
 
+		if (!authStore.user?.isActive) {
+			notificationsStore.addNoAuthNotification(
+				'Для добавления рецензии в понравившиеся требуется активировать аккаунт!'
+			)
+			setToggling(false)
+			return
+		}
+
+		if (authStore.user?.id === review.user_id) {
+			notificationsStore.addNotification({
+				id: self.crypto.randomUUID(),
+				text: 'Вы не можете отметить свою рецензию как понравившеюся!',
+				isError: true,
+			})
+			setToggling(false)
+			return
+		}
+
 		const promise = isLiked
 			? releasePageStore.deleteReviewFromFav(review.id)
 			: releasePageStore.addReviewToFav(review.id)

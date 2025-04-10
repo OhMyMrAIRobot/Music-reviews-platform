@@ -8,7 +8,7 @@ interface IProps {
 const ReviewTitle: FC<IProps> = ({ nickname, position }) => {
 	return (
 		<div className='flex flex-col gap-1 justify-center'>
-			<button className='text-sm lg:text-lg font-semibold block items-center max-w-35 text-ellipsis overflow-hidden whitespace-nowrap'>
+			<button className='text-sm lg:text-lg font-semibold block items-center max-w-35 text-ellipsis overflow-hidden whitespace-nowrap cursor-pointer'>
 				{nickname}
 			</button>
 			{position && (

@@ -69,7 +69,7 @@ const Pagination: FC<PaginationProps> = ({
 		<div className='flex flex-wrap items-center justify-center gap-1 w-full'>
 			<button
 				onClick={handlePrev}
-				disabled={currentPage === 1}
+				hidden={currentPage === 1}
 				className='inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium h-7 md:h-10  px-4 py-2 gap-1 hover:bg-white/10 transition-colors duration-300 cursor-pointer'
 			>
 				<svg
@@ -115,7 +115,7 @@ const Pagination: FC<PaginationProps> = ({
 
 			<button
 				onClick={handleNext}
-				disabled={currentPage === totalPages}
+				hidden={currentPage === totalPages}
 				className='inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium h-7 md:h-10  px-4 py-2 gap-1 hover:bg-white/10 transition-colors duration-300 cursor-pointer'
 			>
 				Следующая
