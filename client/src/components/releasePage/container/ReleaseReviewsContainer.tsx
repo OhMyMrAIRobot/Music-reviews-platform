@@ -1,8 +1,6 @@
-import { observer } from 'mobx-react-lite'
-import { useEffect, useState } from 'react'
-import { useParams } from 'react-router'
-import { useLoading } from '../../../hooks/UseLoading'
-import { useStore } from '../../../hooks/UseStore'
+import { FC } from 'react'
+import { IReleaseReview } from '../../../models/review/ReleaseReview'
+import Loader from '../../Loader'
 import Pagination from '../../pagination/Pagination'
 import ReleaseReviewItem from '../review/ReleaseReviewItem'
 import ReleaseReviewsHeader from './ReleaseReviewsHeader'
@@ -13,42 +11,36 @@ export const ReleaseReviewsSortEnum = Object.freeze({
 	POPULAR: 'Популярные',
 })
 
-const ReleaseReviewsContainer = observer(() => {
-	const { id } = useParams()
-	const { releasePageStore } = useStore()
-	const [currentPage, setCurrentPage] = useState<number>(1)
-	const [selectedSort, setSelectedSort] = useState<string>(
-		ReleaseReviewsSortEnum.NEW
-	)
+interface IProps {
+	reviews: IReleaseReview[] | null
+	selectedSort: string
+	setSelectedSort: (val: string) => void
+	currentPage: number
+	setCurrentPage: (val: number) => void
+	totalItems: number
+	isLoading: boolean
+}
 
-	const { execute: fetch } = useLoading(releasePageStore.fetchReleaseReviews)
-	const [totalItems, setTotalItems] = useState(0)
-
-	useEffect(() => {
-		let field = 'created'
-		let order: 'asc' | 'desc' = 'desc'
-
-		if (selectedSort === 'Старые') {
-			order = 'asc'
-		} else if (selectedSort === 'Популярные') {
-			field = 'likes'
-		}
-		fetch(id, field, order, 1, (currentPage - 1) * 1).then(() =>
-			setTotalItems(releasePageStore.reviewsCount)
-		)
-	}, [currentPage, selectedSort])
-
-	const reviews = releasePageStore.releaseReviews
-
+const ReleaseReviewsContainer: FC<IProps> = ({
+	reviews,
+	selectedSort,
+	setSelectedSort,
+	currentPage,
+	setCurrentPage,
+	totalItems,
+	isLoading,
+}) => {
 	return (
 		<section
 			id='release-reviews'
 			className='w-full grid grid-cols-1 mt-5 lg:mt-10'
 		>
-			{reviews && reviews.length !== 0 ? (
+			{isLoading ? (
+				<Loader />
+			) : reviews && reviews.length !== 0 ? (
 				<>
 					<ReleaseReviewsHeader
-						count={releasePageStore.reviewsCount}
+						count={totalItems}
 						selectedSort={selectedSort}
 						setSelectedSort={setSelectedSort}
 					/>
@@ -61,7 +53,7 @@ const ReleaseReviewsContainer = observer(() => {
 						<Pagination
 							currentPage={currentPage}
 							totalItems={totalItems}
-							itemsPerPage={1}
+							itemsPerPage={5}
 							onPageChange={setCurrentPage}
 							idToScroll='release-reviews'
 						/>
@@ -74,6 +66,6 @@ const ReleaseReviewsContainer = observer(() => {
 			)}
 		</section>
 	)
-})
+}
 
 export default ReleaseReviewsContainer

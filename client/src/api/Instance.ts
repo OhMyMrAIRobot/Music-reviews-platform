@@ -23,17 +23,15 @@ api.interceptors.response.use(
 	async error => {
 		const originalRequest = error.config
 		if (error.response?.status === 401) {
-			try {
-				const { data } = await axios.post<IAuthResponse>(
-					`${SERVER_URL}/auth/refresh`,
-					{},
-					{ withCredentials: true }
-				)
-				localStorage.setItem('token', data.accessToken)
-				return api.request(originalRequest)
-			} catch (e) {
-				console.log(e)
-			}
+			const { data } = await axios.post<IAuthResponse>(
+				`${SERVER_URL}/auth/refresh`,
+				{},
+				{ withCredentials: true }
+			)
+			localStorage.setItem('token', data.accessToken)
+			return api.request(originalRequest)
 		}
+
+		return Promise.reject(error)
 	}
 )

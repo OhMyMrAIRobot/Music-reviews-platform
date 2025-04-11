@@ -19,7 +19,7 @@ const SliderGroup: FC<ISliderGroupProps> = ({
 	return (
 		<div>
 			<div className='flex w-full justify-between mb-1'>
-				<span className='text-sm lg:text-base font-medium'>{title}</span>
+				<span className='text-sm font-medium'>{title}</span>
 				<span className='lg:text-xl font-bold'>{value}</span>
 			</div>
 			<Slider

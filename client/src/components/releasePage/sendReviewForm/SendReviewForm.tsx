@@ -1,33 +1,39 @@
-import { useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import useCustomNavigate from '../../../hooks/UseCustomNavigate'
 import { useStore } from '../../../hooks/UseStore'
+import { IReviewData } from '../../../models/review/ReviewData'
+import FormInfoContainer from '../../form/FormInfoContainer'
+import FormInfoField from '../../form/FormInfoField'
 import SwitchButton from '../button/SwitchButton'
 import WarningAlert from '../container/WarningAlert'
 import { TickSvgIcon } from '../releasePageSvgIcons'
 import MarksReviewForm from './MarksReviewForm'
 import TextReviewForm from './TextReviewForm'
 
-const calculateTotalScore = (
-	rhymes: number,
-	structure: number,
-	realization: number,
-	individuality: number,
-	atmosphere: number
-): number => {
-	const baseScore = rhymes + structure + realization + individuality
-
+const calculateTotalScore = (reviewData: IReviewData): number => {
+	const baseScore =
+		reviewData.rhymes +
+		reviewData.structure +
+		reviewData.realization +
+		reviewData.individuality
 	const multipliedBaseScore = baseScore * 1.4
-
-	const atmosphereMultiplier = 1 + (atmosphere - 1) * 0.06747
-
+	const atmosphereMultiplier = 1 + (reviewData.atmosphere - 1) * 0.06747
 	return Math.round(multipliedBaseScore * atmosphereMultiplier)
 }
 
-const SendReviewForm = () => {
-	const { authStore } = useStore()
-	const { navigateToLogin } = useCustomNavigate()
-	const [isReview, setIsReview] = useState<boolean>(true)
+interface IProps {
+	id: string
+	fetchReviews: () => void
+}
 
+const SendReviewForm: FC<IProps> = ({ id, fetchReviews }) => {
+	const { authStore, releasePageStore, notificationsStore } = useStore()
+
+	const { navigateToLogin } = useCustomNavigate()
+
+	const [isLoading, setIsLoading] = useState<boolean>(false)
+	const [errors, setErrors] = useState<string[]>()
+	const [isReview, setIsReview] = useState<boolean>(true)
 	const [title, setTitle] = useState<string>('')
 	const [text, setText] = useState<string>('')
 	const [rhymes, setRhymes] = useState<number>(5)
@@ -37,17 +43,74 @@ const SendReviewForm = () => {
 	const [atmosphere, setAtmosphere] = useState<number>(1)
 	const [total, setTotal] = useState<number>(28)
 
+	const userRelease = releasePageStore.releaseReviews?.find(
+		entry => entry.user_id === authStore.user?.id
+	)
+
+	useEffect(() => {
+		if (userRelease) {
+			setTitle(userRelease.title)
+			setText(userRelease.text)
+			setRhymes(userRelease.rhymes)
+			setStructure(userRelease.structure)
+			setRealization(userRelease.realization)
+			setIndividuality(userRelease.individuality)
+			setAtmosphere(userRelease.atmosphere)
+		}
+	}, [userRelease])
+
 	useEffect(() => {
 		setTotal(
-			calculateTotalScore(
+			calculateTotalScore({
 				rhymes,
 				structure,
 				realization,
 				individuality,
-				atmosphere
-			)
+				atmosphere,
+			})
 		)
 	}, [rhymes, structure, realization, individuality, atmosphere])
+
+	const postReview = () => {
+		if (id) {
+			setErrors([])
+			setIsLoading(true)
+			const promise = userRelease
+				? releasePageStore.updateReview(id, {
+						title: isReview ? title : undefined,
+						text: isReview ? text : undefined,
+						rhymes,
+						structure,
+						realization,
+						individuality,
+						atmosphere,
+				  })
+				: releasePageStore.postReview(id, {
+						title: isReview ? title : undefined,
+						text: isReview ? text : undefined,
+						rhymes,
+						structure,
+						realization,
+						individuality,
+						atmosphere,
+				  })
+			promise.then(result => {
+				setErrors(result)
+				setIsLoading(false)
+				if (result.length === 0) {
+					notificationsStore.addNotification({
+						id: self.crypto.randomUUID(),
+						text: `Вы успешно ${
+							userRelease ? 'обновили' : 'добавили'
+						} рецензию!`,
+						isError: false,
+					})
+					releasePageStore.fetchReleaseDetails(id)
+					fetchReviews()
+				}
+			})
+		}
+	}
 
 	return authStore.isAuth ? (
 		<div className='mt-10 mx-auto'>
@@ -69,6 +132,12 @@ const SendReviewForm = () => {
 					<WarningAlert />
 				</div>
 				<div className='lg:col-span-6'>
+					{userRelease && (
+						<div className='bg-gradient-to-br from-white/20 border border-white/5 rounded-lg text-sm lg:text-base text-center px-3 py-3 lg:py-5 mb-4 font-medium'>
+							Вы уже оставляли оценку к данной работе. Вы можете изменить ее,
+							заполнив форму ниже!
+						</div>
+					)}
 					<div className='border bg-zinc-900 rounded-xl p-2 border-white/10'>
 						<MarksReviewForm
 							rhymes={rhymes}
@@ -96,9 +165,26 @@ const SendReviewForm = () => {
 									/ 90
 								</span>
 							</div>
-							<button className='inline-flex items-center justify-center whitespace-nowrap text-sm font-medium rounded-full size-16 bg-white text-black cursor-pointer hover:bg-white/50 transition-colors duration-300'>
+							<button
+								disabled={isLoading}
+								onClick={postReview}
+								className={`inline-flex items-center justify-center whitespace-nowrap text-sm font-medium rounded-full size-16 text-black transition-colors duration-300 ${
+									isLoading
+										? 'bg-white/40 cursor-not-allowed'
+										: 'cursor-pointer hover:bg-white/50 bg-white'
+								}`}
+							>
 								<TickSvgIcon className='size-8' />
 							</button>
+						</div>
+						<div className='w-1/2'>
+							{errors && (
+								<FormInfoContainer>
+									{errors.map(error => (
+										<FormInfoField key={error} text={error} isError={true} />
+									))}
+								</FormInfoContainer>
+							)}
 						</div>
 					</div>
 				</div>

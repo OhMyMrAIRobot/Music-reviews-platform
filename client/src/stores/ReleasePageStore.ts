@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
 import { ReleaseAPI } from '../api/ReleaseAPI'
 import { ReviewAPI } from '../api/ReviewAPI'
 import { IReleaseDetails } from '../models/release/ReleaseDetails'
 import { IReleaseReview } from '../models/review/ReleaseReview'
+import { IReviewData } from '../models/review/ReviewData'
 
 class ReleasePageStore {
 	constructor() {
@@ -54,6 +56,51 @@ class ReleasePageStore {
 			this.setReleaseReviews(data.reviews)
 		} catch (e) {
 			console.log(e)
+		}
+	}
+
+	postReview = async (
+		releaseId: string,
+		reviewData: IReviewData
+	): Promise<string[]> => {
+		try {
+			await ReviewAPI.postReview(releaseId, reviewData)
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
+		}
+	}
+
+	updateReview = async (
+		releaseId: string,
+		reviewData: IReviewData
+	): Promise<string[]> => {
+		try {
+			await ReviewAPI.updateReview(releaseId, reviewData)
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
+		}
+	}
+
+	deleteReview = async (
+		releaseId: string
+	): Promise<{ status: boolean; message: string }> => {
+		try {
+			await ReviewAPI.deleteReview(releaseId)
+			return {
+				status: true,
+				message: 'Вы успешно удалили рецензию!',
+			}
+		} catch (_: any) {
+			return {
+				status: false,
+				message: 'Не удалось удалить рецензию!',
+			}
 		}
 	}
 

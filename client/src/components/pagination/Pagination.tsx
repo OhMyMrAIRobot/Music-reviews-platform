@@ -24,15 +24,20 @@ const Pagination: FC<PaginationProps> = ({
 
 	const handlePrev = () => {
 		if (currentPage > 1) {
+			setTimeout(() => {
+				scrollToUp()
+			}, 100)
+
 			onPageChange(currentPage - 1)
-			scrollToUp()
 		}
 	}
 
 	const handleNext = () => {
 		if (currentPage < totalPages) {
+			setTimeout(() => {
+				scrollToUp()
+			}, 100)
 			onPageChange(currentPage + 1)
-			scrollToUp()
 		}
 	}
 
@@ -101,8 +106,10 @@ const Pagination: FC<PaginationProps> = ({
 					<button
 						key={page}
 						onClick={() => {
+							setTimeout(() => {
+								scrollToUp()
+							}, 100)
 							onPageChange(Number(page))
-							scrollToUp()
 						}}
 						className={`inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium hover:bg-white/10 transition-colors duration-300 cursor-pointer size-7 lg:size-10 text-[12px] lg:text-sm  ${
 							currentPage === page ? 'border border-white/20' : ''

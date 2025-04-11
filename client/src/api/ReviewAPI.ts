@@ -2,6 +2,7 @@ import axios from 'axios'
 import { IFavReview } from '../models/review/FavReview'
 import { IReleaseReviewResponse } from '../models/review/ReleaseReview'
 import { IReview } from '../models/review/Review'
+import { IReviewData } from '../models/review/ReviewData'
 import { api } from './Instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
@@ -13,6 +14,26 @@ const _api = axios.create({
 })
 
 export const ReviewAPI = {
+	async postReview(releaseId: string, reviewData: IReviewData) {
+		return api.post('/reviews', {
+			...reviewData,
+			releaseId,
+		})
+	},
+
+	async updateReview(releaseId: string, reviewData: IReviewData) {
+		return api.patch('/reviews', {
+			...reviewData,
+			releaseId,
+		})
+	},
+
+	async deleteReview(releaseId: string) {
+		return api.delete('/reviews', {
+			data: { releaseId },
+		})
+	},
+
 	async fetchLastReviews(): Promise<IReview[]> {
 		const { data } = await _api.get<IReview[]>('/list')
 		return data
