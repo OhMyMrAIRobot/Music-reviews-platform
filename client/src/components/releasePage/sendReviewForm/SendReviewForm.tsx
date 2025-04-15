@@ -1,12 +1,13 @@
 import { FC, useEffect, useState } from 'react'
 import useCustomNavigate from '../../../hooks/UseCustomNavigate'
 import { useStore } from '../../../hooks/UseStore'
+import { IReleaseReview } from '../../../models/review/ReleaseReview'
 import { IReviewData } from '../../../models/review/ReviewData'
 import FormInfoContainer from '../../form/FormInfoContainer'
 import FormInfoField from '../../form/FormInfoField'
 import SwitchButton from '../button/SwitchButton'
 import WarningAlert from '../container/WarningAlert'
-import { TickSvgIcon } from '../releasePageSvgIcons'
+import { TickSvgIcon, TrashSvgIcon } from '../releasePageSvgIcons'
 import MarksReviewForm from './MarksReviewForm'
 import TextReviewForm from './TextReviewForm'
 
@@ -23,7 +24,7 @@ const calculateTotalScore = (reviewData: IReviewData): number => {
 
 interface IProps {
 	id: string
-	fetchReviews: () => void
+	fetchReviews: () => Promise<void>
 }
 
 const SendReviewForm: FC<IProps> = ({ id, fetchReviews }) => {
@@ -42,22 +43,19 @@ const SendReviewForm: FC<IProps> = ({ id, fetchReviews }) => {
 	const [individuality, setIndividuality] = useState<number>(5)
 	const [atmosphere, setAtmosphere] = useState<number>(1)
 	const [total, setTotal] = useState<number>(28)
-
-	const userRelease = releasePageStore.releaseReviews?.find(
-		entry => entry.user_id === authStore.user?.id
+	const [userRelease, setUserRelease] = useState<IReleaseReview | undefined>(
+		undefined
 	)
 
-	useEffect(() => {
-		if (userRelease) {
-			setTitle(userRelease.title)
-			setText(userRelease.text)
-			setRhymes(userRelease.rhymes)
-			setStructure(userRelease.structure)
-			setRealization(userRelease.realization)
-			setIndividuality(userRelease.individuality)
-			setAtmosphere(userRelease.atmosphere)
-		}
-	}, [userRelease])
+	const setDefaultValues = (review?: IReleaseReview) => {
+		setTitle(review?.title ?? '')
+		setText(review?.text ?? '')
+		setRhymes(review?.rhymes ?? 5)
+		setStructure(review?.structure ?? 5)
+		setRealization(review?.realization ?? 5)
+		setIndividuality(review?.individuality ?? 5)
+		setAtmosphere(review?.atmosphere ?? 1)
+	}
 
 	useEffect(() => {
 		setTotal(
@@ -70,6 +68,15 @@ const SendReviewForm: FC<IProps> = ({ id, fetchReviews }) => {
 			})
 		)
 	}, [rhymes, structure, realization, individuality, atmosphere])
+
+	useEffect(() => {
+		setUserRelease(
+			releasePageStore.releaseReviews?.find(
+				entry => entry.user_id === authStore.user?.id
+			)
+		)
+		setDefaultValues(userRelease)
+	}, [authStore.user?.id, releasePageStore.releaseReviews, userRelease])
 
 	const postReview = () => {
 		if (id) {
@@ -112,6 +119,23 @@ const SendReviewForm: FC<IProps> = ({ id, fetchReviews }) => {
 		}
 	}
 
+	const deleteReview = () => {
+		if (id) {
+			releasePageStore.deleteReview(id).then(result => {
+				notificationsStore.addNotification({
+					id: self.crypto.randomUUID(),
+					text: result.message,
+					isError: false,
+				})
+				if (result.status === true) {
+					setDefaultValues()
+					releasePageStore.fetchReleaseDetails(id)
+					fetchReviews()
+				}
+			})
+		}
+	}
+
 	return authStore.isAuth ? (
 		<div className='mt-10 mx-auto'>
 			<h3 className='text-xl lg:text-2xl font-bold '>Оценить работу</h3>
@@ -134,11 +158,28 @@ const SendReviewForm: FC<IProps> = ({ id, fetchReviews }) => {
 				<div className='lg:col-span-6'>
 					{userRelease && (
 						<div className='bg-gradient-to-br from-white/20 border border-white/5 rounded-lg text-sm lg:text-base text-center px-3 py-3 lg:py-5 mb-4 font-medium'>
-							Вы уже оставляли оценку к данной работе. Вы можете изменить ее,
-							заполнив форму ниже!
+							Вы уже оставляли{' '}
+							{userRelease.title && userRelease.text ? 'рецензию' : 'оценку'} к
+							данной работе. Вы можете изменить ее, заполнив форму ниже!
 						</div>
 					)}
 					<div className='border bg-zinc-900 rounded-xl p-2 border-white/10'>
+						{userRelease && (
+							<div className='flex justify-end mb-4'>
+								<button
+									onClick={deleteReview}
+									className='inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium bg-white/5 hover:bg-red-500 text-white h-10 px-4 py-2 space-x-2 text-xs lg:text-sm w-50 cursor-pointer transition-colors duration-300'
+								>
+									<TrashSvgIcon />
+									<span>
+										Удалить{' '}
+										{userRelease.title && userRelease.text
+											? 'рецензию'
+											: 'оценку'}
+									</span>
+								</button>
+							</div>
+						)}
 						<MarksReviewForm
 							rhymes={rhymes}
 							setRhymes={setRhymes}

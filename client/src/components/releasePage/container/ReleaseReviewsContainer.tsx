@@ -45,9 +45,12 @@ const ReleaseReviewsContainer: FC<IProps> = ({
 						setSelectedSort={setSelectedSort}
 					/>
 					<div className='grid grid-cols-1 max-w-200 w-full mx-auto gap-5 mt-5'>
-						{reviews.map(review => (
-							<ReleaseReviewItem key={review.id} review={review} />
-						))}
+						{reviews.map(
+							review =>
+								review.text && (
+									<ReleaseReviewItem key={review.id} review={review} />
+								)
+						)}
 					</div>
 					<div className='mt-10'>
 						<Pagination

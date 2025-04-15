@@ -42,7 +42,7 @@ const ReleasePage = observer(() => {
 		fetchReviews()
 	}, [currentPage, selectedSort])
 
-	const fetchReviews = () => {
+	const fetchReviews = async (): Promise<void> => {
 		let field = 'created'
 		let order: 'asc' | 'desc' = 'desc'
 
