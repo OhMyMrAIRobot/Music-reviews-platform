@@ -137,7 +137,7 @@ export class ReviewsService {
         LEFT JOIN "User_profiles" up on u.id = up.user_id
         LEFT JOIN ranked_profiles rp ON r.user_id = rp.user_id
         LEFT JOIN "User_fav_reviews" ufr on r.id = ufr.review_id
-        WHERE r.release_id = '${releaseId}' AND r.text IS NOT NULL
+        WHERE r.release_id = '${releaseId}'
         GROUP BY r.id, r.rhymes, r.structure, r.realization, r.individuality, r.atmosphere, r.total, r.title, r.text, u.id, u.nickname, up.avatar,rp.position, r.created_at, up.points
         ORDER BY ${field} ${order}, r.id ASC
         LIMIT ${limit}
@@ -176,7 +176,12 @@ export class ReviewsService {
 
     return this.prisma.review.update({
       where: { userId_releaseId: { userId, releaseId } },
-      data: { ...updateReviewDto, total },
+      data: {
+        ...updateReviewDto,
+        total,
+        text: updateReviewDto.text ?? null,
+        title: updateReviewDto.title ?? null,
+      },
     });
   }
 
