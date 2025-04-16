@@ -13,7 +13,7 @@ interface IProps {
 	review: IReview
 }
 
-const LastReviewsCarouselItem: FC<IProps> = observer(({ review }) => {
+const ReviewItem: FC<IProps> = observer(({ review }) => {
 	const { authStore, notificationsStore, reviewsStore } = useStore()
 	const [show, setShow] = useState<boolean>(false)
 	const { navigateToRelease } = useCustomNavigate()
@@ -84,9 +84,10 @@ const LastReviewsCarouselItem: FC<IProps> = observer(({ review }) => {
 						img={review.profile_img}
 						points={review.points}
 					/>
+
 					<ReviewTitle nickname={review.nickname} position={review.position} />
 				</div>
-				<div className='flex items-center justify-end gap-2 lg:gap-4'>
+				<div className='flex items-center justify-end gap-2 lg:gap-4 select-no'>
 					<ReviewMarks
 						total={review.total}
 						rhymes={review.rhymes}
@@ -144,4 +145,4 @@ const LastReviewsCarouselItem: FC<IProps> = observer(({ review }) => {
 	)
 })
 
-export default LastReviewsCarouselItem
+export default ReviewItem

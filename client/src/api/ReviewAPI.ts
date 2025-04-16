@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { IFavReview } from '../models/review/FavReview'
 import { IReleaseReviewResponse } from '../models/review/ReleaseReview'
-import { IReview } from '../models/review/Review'
+import { IReviewsResponse } from '../models/review/Review'
 import { IReviewData } from '../models/review/ReviewData'
 import { api } from './Instance'
 
@@ -34,8 +34,14 @@ export const ReviewAPI = {
 		})
 	},
 
-	async fetchLastReviews(): Promise<IReview[]> {
-		const { data } = await _api.get<IReview[]>('/list')
+	async fetchReviews(
+		order: string,
+		limit: number,
+		offset: number
+	): Promise<IReviewsResponse> {
+		const { data } = await _api.get<IReviewsResponse>(
+			`/list?order=${order}&limit=${limit}&offset=${offset}`
+		)
 		return data
 	},
 

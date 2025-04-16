@@ -1,3 +1,8 @@
+export interface IReviewsResponse {
+	count: number
+	reviews: IReview[]
+}
+
 export interface IReview {
 	id: string
 	title: string

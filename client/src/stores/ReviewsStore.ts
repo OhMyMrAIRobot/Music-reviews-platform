@@ -9,15 +9,35 @@ class ReviewsStore {
 	}
 
 	lastReviews: IReview[] = []
+	reviews: IReview[] = []
+	reviewsCount: number = 0
 
 	setLastReviews(data: IReview[]) {
 		this.lastReviews = data
 	}
 
+	setReviews(data: IReview[]) {
+		this.reviews = data
+	}
+
+	setCount(data: number) {
+		this.reviewsCount = data
+	}
+
 	fetchLastReviews = async () => {
 		try {
-			const data = await ReviewAPI.fetchLastReviews()
-			this.setLastReviews(data)
+			const data = await ReviewAPI.fetchReviews('asc', 45, 0)
+			this.setLastReviews(data.reviews)
+		} catch (e) {
+			console.log(e)
+		}
+	}
+
+	fetchReviews = async (order: string, limit: number, offset: number) => {
+		try {
+			const data = await ReviewAPI.fetchReviews(order, limit, offset)
+			this.setReviews(data.reviews)
+			this.setCount(data.count)
 		} catch (e) {
 			console.log(e)
 		}
@@ -31,6 +51,8 @@ class ReviewsStore {
 			const lastReview = this.lastReviews.find(
 				item => item.id === data.reviewId
 			)
+			const review = this.reviews.find(item => item.id === data.reviewId)
+
 			if (lastReview) {
 				const alreadyLiked = lastReview.like_user_ids.some(
 					entry => entry.user_id === data.userId
@@ -40,6 +62,19 @@ class ReviewsStore {
 					runInAction(() => {
 						lastReview.like_user_ids.push({ user_id: data.userId })
 						lastReview.likes_count += 1
+					})
+				}
+			}
+
+			if (review) {
+				const alreadyLiked = review.like_user_ids.some(
+					entry => entry.user_id === data.userId
+				)
+
+				if (!alreadyLiked) {
+					runInAction(() => {
+						review.like_user_ids.push({ user_id: data.userId })
+						review.likes_count += 1
 					})
 				}
 			}
@@ -65,6 +100,8 @@ class ReviewsStore {
 			const lastReview = this.lastReviews.find(
 				item => item.id === data.reviewId
 			)
+			const review = this.reviews.find(item => item.id === data.reviewId)
+
 			if (lastReview) {
 				const index = lastReview.like_user_ids.findIndex(
 					entry => entry.user_id === data.userId
@@ -74,6 +111,19 @@ class ReviewsStore {
 					runInAction(() => {
 						lastReview.like_user_ids.splice(index, 1)
 						lastReview.likes_count -= 1
+					})
+				}
+			}
+
+			if (review) {
+				const index = review.like_user_ids.findIndex(
+					entry => entry.user_id === data.userId
+				)
+
+				if (index !== -1) {
+					runInAction(() => {
+						review.like_user_ids.splice(index, 1)
+						review.likes_count -= 1
 					})
 				}
 			}

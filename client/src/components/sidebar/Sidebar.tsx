@@ -17,8 +17,12 @@ import SidebarSection from './SidebarSection'
 
 const Sidebar = () => {
 	const location = useLocation()
-	const { navigateToMain, navigateToFeedback, navigateToAuthors } =
-		useCustomNavigate()
+	const {
+		navigateToMain,
+		navigateToFeedback,
+		navigateToAuthors,
+		navigateToReviews,
+	} = useCustomNavigate()
 
 	const isActive = (path: string) => {
 		return location.pathname === path
@@ -103,10 +107,10 @@ const Sidebar = () => {
 		},
 		{
 			id: 'side-reviews',
-			onClick: navigateToMain,
+			onClick: navigateToReviews,
 			icon: <ReviewsSvgIcon className='size-5 fill-white' />,
 			label: 'Рецензии',
-			active: isActive('/main'),
+			active: isActive(ROUTES.REVIEWS),
 		},
 		{
 			id: 'side-relises',

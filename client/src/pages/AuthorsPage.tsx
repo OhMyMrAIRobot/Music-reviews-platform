@@ -32,7 +32,7 @@ const AuthorsPage = observer(() => {
 
 	return (
 		<>
-			<h1 id='authors' className='text-3xl font-semibold'>
+			<h1 id='authors' className='text-lg md:text-xl lg:text-3xl font-semibold'>
 				Авторы
 			</h1>
 			<div className='rounded-lg border border-white/10 bg-zinc-900 p-3 shadow-sm mt-5'>

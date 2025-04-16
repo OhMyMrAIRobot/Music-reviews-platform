@@ -5,7 +5,7 @@ import { forwardRef, useEffect, useImperativeHandle } from 'react'
 import { useLoading } from '../../../hooks/UseLoading'
 import { useStore } from '../../../hooks/UseStore'
 import { CarouselRef } from '../lastReleases/LastReleasesCarousel'
-import LastReviewsCarouselItem from './LastReviewsCarouselItem'
+import ReviewItem from './ReviewItem'
 
 const LastReviewsCarousel = observer(
 	forwardRef<CarouselRef>((_, ref) => {
@@ -51,10 +51,7 @@ const LastReviewsCarousel = observer(
 												{reviewsStore.lastReviews
 													.slice(idx * 3, idx * 3 + 3)
 													.map(review => (
-														<LastReviewsCarouselItem
-															review={review}
-															key={review.id}
-														/>
+														<ReviewItem review={review} key={review.id} />
 													))}
 											</div>
 										</div>
