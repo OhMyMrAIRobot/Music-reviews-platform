@@ -95,7 +95,7 @@ BEGIN
 
     RETURN COALESCE(NEW, OLD);
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 CREATE OR REPLACE TRIGGER trg_update_release_rating
 AFTER INSERT OR UPDATE OR DELETE ON "Reviews"

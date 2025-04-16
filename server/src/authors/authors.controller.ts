@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { Roles } from 'src/auth/decorators/roles.decorator';
@@ -13,6 +14,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
 import { AuthorsService } from './authors.service';
+import { AuthorsQueryDto } from './dto/authors-query.dto';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
 
@@ -32,9 +34,14 @@ export class AuthorsController {
     return this.authorsService.findAll();
   }
 
-  @Get(':id')
+  @Get('one/:id')
   findOne(@Param('id') id: string) {
     return this.authorsService.findOne(id);
+  }
+
+  @Get('list')
+  findAuthors(@Query() query: AuthorsQueryDto) {
+    return this.authorsService.findAuthors(query);
   }
 
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
