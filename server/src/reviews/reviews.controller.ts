@@ -18,6 +18,7 @@ import { UserRoleEnum } from 'src/roles/types/user-role.enum';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { DeleteReviewDto } from './dto/delete-review.dto';
 import { ReleaseReviewQueryDto } from './dto/release-review-query.dto';
+import { ReviewsQueryDto } from './dto/reviews-query.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { ReviewsService } from './reviews.service';
 
@@ -44,8 +45,8 @@ export class ReviewsController {
   }
 
   @Get('list')
-  findReleases() {
-    return this.reviewsService.findReviews();
+  findReleases(@Query() query: ReviewsQueryDto) {
+    return this.reviewsService.findReviews(query);
   }
 
   @UseGuards(JwtAuthGuard)

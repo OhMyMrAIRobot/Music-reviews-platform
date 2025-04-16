@@ -1,4 +1,9 @@
-export class LastReviewResponseDto {
+export class ReviewsResponseDto {
+  count: number;
+  reviews: ReviewQueryDataDto[];
+}
+
+export class ReviewQueryDataDto {
   id: string;
   title: string;
   text: string;

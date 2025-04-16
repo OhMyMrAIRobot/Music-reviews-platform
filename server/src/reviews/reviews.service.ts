@@ -7,12 +7,16 @@ import { ReleasesService } from 'src/releases/releases.service';
 import { UsersService } from 'src/users/users.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { DeleteReviewDto } from './dto/delete-review.dto';
-import { LastReviewResponseDto } from './dto/last-review.response.dto';
 import { ReleaseReviewQueryDto } from './dto/release-review-query.dto';
 import {
   ReleaseReview,
   ReleaseReviewResponseDto,
 } from './dto/release-review.response.dto';
+import { ReviewsQueryDto } from './dto/reviews-query.dto';
+import {
+  ReviewQueryDataDto,
+  ReviewsResponseDto,
+} from './dto/reviews.response.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 
 @Injectable()
@@ -204,12 +208,17 @@ export class ReviewsService {
     });
   }
 
-  async findReviews(
-    field: 'rev.created_at' | 'rev.total' = 'rev.created_at',
-    order: 'asc' | 'desc' = 'desc',
-    limit: number = 45,
-    offset: number = 0,
-  ): Promise<LastReviewResponseDto[]> {
+  async findReviews(query: ReviewsQueryDto): Promise<ReviewsResponseDto> {
+    const count = await this.prisma.review.count({
+      where: {
+        text: { not: null },
+      },
+    });
+
+    const order = query.order ? query.order : 'desc';
+    const limit = query.limit ? query.limit : 45;
+    const offset = query.offset ? query.offset : 0;
+
     const rawQuery = `
       WITH ranked_profiles AS (
           SELECT
@@ -241,21 +250,24 @@ export class ReviewsService {
           COUNT(DISTINCT ufr.user_id)::int AS likes_count,
           json_agg(DISTINCT jsonb_build_object('user_id', ufr.user_id)) AS like_user_ids
       FROM "Reviews" rev
-              LEFT JOIN "Users" u ON rev.user_id = u.id
-              LEFT JOIN "User_profiles" p ON u.id = p.user_id
-              LEFT JOIN ranked_profiles rp ON p.user_id = rp.user_id
-              LEFT JOIN "Releases" r ON rev.release_id = r.id
-              LEFT JOIN "User_fav_reviews" ufr ON rev.id = ufr.review_id
+            LEFT JOIN "Users" u ON rev.user_id = u.id
+            LEFT JOIN "User_profiles" p ON u.id = p.user_id
+            LEFT JOIN ranked_profiles rp ON p.user_id = rp.user_id
+            LEFT JOIN "Releases" r ON rev.release_id = r.id
+            LEFT JOIN "User_fav_reviews" ufr ON rev.id = ufr.review_id
       WHERE rev.text IS NOT NULL AND rev.title IS NOT NULL
       GROUP BY
           rev.id, rev.title, rev.text, rev.total, rev.rhymes, rev.structure, rev.realization,
           rev.individuality, rev.atmosphere, u.nickname, p.avatar, p.points, rp.position,
           r.img, r.title, r.id, rev.created_at, rev.user_id
-      ORDER BY ${field} ${order}
+      ORDER BY rev.created_at ${order}
       LIMIT ${limit}
       OFFSET ${offset}`;
 
-    return this.prisma.$queryRawUnsafe<LastReviewResponseDto[]>(rawQuery);
+    const reviews =
+      await this.prisma.$queryRawUnsafe<ReviewQueryDataDto[]>(rawQuery);
+
+    return { count, reviews };
   }
 
   private calculateTotalScore(
