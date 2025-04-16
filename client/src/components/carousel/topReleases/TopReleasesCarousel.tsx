@@ -27,17 +27,15 @@ const TopReleasesCarousel = observer(() => {
 			) : (
 				<div className='embla w-full'>
 					<div className='embla__viewport pt-2 px-1.5' ref={emblaRef}>
-						<div className='embla__container '>
-							{releasesStore.topReleases.map(release =>
-								Array.from({ length: 15 }).map((_, idx) => (
-									<TopReleasesCarouselItem
-										key={release.id + idx}
-										id={release.id}
-										img={release.img}
-										title={release.title}
-									/>
-								))
-							)}
+						<div className='embla__container justify-center'>
+							{releasesStore.topReleases.map(release => (
+								<TopReleasesCarouselItem
+									key={release.id}
+									id={release.id}
+									img={release.img}
+									title={release.title}
+								/>
+							))}
 						</div>
 					</div>
 				</div>

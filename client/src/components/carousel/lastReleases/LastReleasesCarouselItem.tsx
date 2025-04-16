@@ -14,14 +14,14 @@ interface IProps {
 	release: IRelease
 }
 
-const getReleaseIcon = (releaseType: string) => {
+export const GetReleaseIcon = (releaseType: string) => {
 	switch (releaseType) {
 		case ReleaseTypesEnum.ALBUM:
-			return <AlbumSvgIcon />
+			return <AlbumSvgIcon classname='relative size-4' />
 		case ReleaseTypesEnum.SINGLE:
-			return <SingleSvgIcon />
+			return <SingleSvgIcon classname='relative size-4' />
 		default:
-			return <SingleSvgIcon />
+			return <SingleSvgIcon classname='relative size-4' />
 	}
 }
 
@@ -42,13 +42,18 @@ const LastReleasesCarouselItem: FC<IProps> = ({ release }) => {
 			onClick={() => navigateToRelease(release.id)}
 			className='bg-secondary hover:scale-105 p-1 overflow-hidden flex flex-col justify-start relative w-full h-full rounded-xl border border-zinc-800 duration-300 cursor-pointer'
 		>
-			<div className='relative'>
-				<img
-					loading='lazy'
-					decoding='async'
-					className='rounded-lg'
-					src={release.img}
-				/>
+			<div className='relative block'>
+				<div className='rounded-lg size-full min-h-35'>
+					<img
+						alt={release.title}
+						loading='lazy'
+						decoding='async'
+						className='rounded-lg'
+						src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
+							release.img
+						}`}
+					/>
+				</div>
 				{(release.text_count > 0 || release.no_text_count > 0) && (
 					<div className='absolute bottom-1.5 left-1.5 bg-zinc-900 rounded-full px-1.5 flex gap-2 items-center font-semibold text-sm'>
 						{release.text_count > 0 && (
@@ -66,7 +71,7 @@ const LastReleasesCarouselItem: FC<IProps> = ({ release }) => {
 					</div>
 				)}
 				<div className='absolute bottom-1.5 right-1.5 bg-zinc-900 size-6 rounded-full flex items-center justify-center'>
-					{getReleaseIcon(release.release_type)}
+					{GetReleaseIcon(release.release_type)}
 				</div>
 			</div>
 			<div className='mt-1.5 relative'>

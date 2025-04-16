@@ -7,6 +7,7 @@ interface ComboBoxProps {
 	value?: string
 	onChange: (selected: string) => void
 	className?: string
+	placeholder?: string
 }
 
 const ComboBox: FC<ComboBoxProps> = ({
@@ -14,6 +15,7 @@ const ComboBox: FC<ComboBoxProps> = ({
 	value,
 	onChange,
 	className = '',
+	placeholder = '',
 }) => {
 	if (!options || options.length === 0) {
 		throw new Error('ComboBox: options must be a non-empty array.')
@@ -22,7 +24,7 @@ const ComboBox: FC<ComboBoxProps> = ({
 	const [isOpen, setIsOpen] = useState(false)
 	const comboRef = useRef<HTMLDivElement | null>(null)
 
-	const selected = value ?? options[0]
+	const selected = value ?? placeholder
 
 	const handleClickOutside = (event: MouseEvent) => {
 		if (comboRef.current && !comboRef.current.contains(event.target as Node)) {

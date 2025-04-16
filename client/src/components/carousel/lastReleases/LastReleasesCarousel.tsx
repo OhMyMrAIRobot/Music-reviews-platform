@@ -43,16 +43,14 @@ const LastReleasesCarousel = observer(
 					<div className='embla w-full'>
 						<div className='embla__viewport pt-2' ref={emblaRef}>
 							<div className='embla__container gap-1 touch-pan-y touch-pinch-zoom'>
-								{releasesStore.lastReleases.map(release =>
-									Array.from({ length: 25 }).map((_, idx) => (
-										<div
-											key={`${release.id}-${idx}`}
-											className='flex-[0_0_160px] px-1 py-1.5 min-w-0'
-										>
-											<LastReleasesCarouselItem release={release} />
-										</div>
-									))
-								)}
+								{releasesStore.lastReleases.map(release => (
+									<div
+										key={`${release.id}`}
+										className='flex-[0_0_160px] px-1 py-1.5 min-w-0'
+									>
+										<LastReleasesCarouselItem release={release} />
+									</div>
+								))}
 							</div>
 						</div>
 					</div>

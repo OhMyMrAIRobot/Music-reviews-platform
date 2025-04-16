@@ -17,7 +17,7 @@ const TopReleasesCarouselItem: FC<ITopReleasesCarouselItemProps> = ({
 					alt='test'
 					loading='lazy'
 					decoding='async'
-					src={img}
+					src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${img}`}
 					className='rounded-full w-12 h-12 lg:w-16 lg:h-16 border-2 border-blue-250 hover:scale-110 transition-all duration-500'
 				/>
 				<div className='w-full'>

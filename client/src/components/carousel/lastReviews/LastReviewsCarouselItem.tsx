@@ -98,7 +98,9 @@ const LastReviewsCarouselItem: FC<IProps> = observer(({ review }) => {
 					<img
 						onClick={() => navigateToRelease(review.release_id)}
 						alt={review.release_title}
-						src={review.release_img}
+						src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
+							review.release_img
+						}`}
 						className='rounded size-10 lg:size-11 cursor-pointer'
 					/>
 				</div>
