@@ -3,3 +3,8 @@ export enum AuthorTypesEnum {
 	ARTIST = 'Артист',
 	DESIGNER = 'Дизайнер',
 }
+
+export interface IAuthorType {
+	id: string
+	type: string
+}

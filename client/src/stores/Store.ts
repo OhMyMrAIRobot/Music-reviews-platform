@@ -1,3 +1,4 @@
+import AuthorsStore from './AuthorsStore'
 import AuthStore from './AuthStore'
 import NotificationsStore from './NotificationsStore'
 import ReleasePageStore from './ReleasePageStore'
@@ -10,6 +11,7 @@ class Store {
 	releasesStore = ReleasesStore
 	reviewsStore = ReviewsStore
 	releasePageStore = ReleasePageStore
+	authorsStore = AuthorsStore
 }
 
 export default Store
