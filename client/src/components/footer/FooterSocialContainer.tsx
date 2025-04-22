@@ -1,8 +1,8 @@
 import { FC } from 'react'
-import FooterSocialItem, { IFooterSocialItem } from './FooterSocialItem'
+import FooterSocialItem, { IFooterSocialItemProps } from './FooterSocialItem'
 
 interface IFooterSocialContainerProps {
-	items: IFooterSocialItem[]
+	items: IFooterSocialItemProps[]
 }
 
 const FooterSocialContainer: FC<IFooterSocialContainerProps> = ({ items }) => {

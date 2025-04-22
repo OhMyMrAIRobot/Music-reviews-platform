@@ -19,11 +19,36 @@ const useCustomNavigate = () => {
 		navigate('/')
 	}
 
+	const navigateToFeedback = () => {
+		navigate('/feedback')
+	}
+
+	const navigateToRelease = (id: string) => {
+		navigate(`/release/${id}`)
+	}
+
+	const navigateToAuthors = () => {
+		navigate(`/authors`)
+	}
+
+	const navigateToReviews = () => {
+		navigate(`/reviews`)
+	}
+
+	const navigateToReleases = () => {
+		navigate(`/releases`)
+	}
+
 	return {
 		navigateToLogin,
 		navigateToRegistration,
 		navigateToRequestReset,
 		navigateToMain,
+		navigateToFeedback,
+		navigateToRelease,
+		navigateToAuthors,
+		navigateToReviews,
+		navigateToReleases,
 	}
 }
 

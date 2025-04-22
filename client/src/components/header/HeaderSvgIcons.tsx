@@ -98,21 +98,6 @@ export const ArrowBottomSvgIcon = () => (
 	</svg>
 )
 
-export const TickSvgIcon = () => (
-	<svg
-		xmlns='http://www.w3.org/2000/svg'
-		viewBox='0 0 16 16'
-		fill='currentColor'
-		className='w-4 h-4 text-white flex items-center justify-center'
-	>
-		<path
-			fillRule='evenodd'
-			d='M16.293 5.293a1 1 0 011.414 1.414L9 13.414 5.293 9.707a1 1 0 111.414-1.414L9 10.586l7.293-7.293z'
-			clipRule='evenodd'
-		/>
-	</svg>
-)
-
 export const LoginSvgIcon = () => (
 	<svg
 		stroke='currentColor'

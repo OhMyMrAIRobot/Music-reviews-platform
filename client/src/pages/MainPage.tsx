@@ -1,26 +1,15 @@
 import { observer } from 'mobx-react-lite'
-import { useState } from 'react'
-import { useStore } from '../hooks/UseStore'
+import LastReleasesContainer from '../components/container/LastReleasesContainer'
+import LastReviewsContainer from '../components/container/LastReviewsContainer'
+import TopReleasesContainer from '../components/container/TopReleasesContainer'
 
 const MainPage = observer(() => {
-	const { notificationsStore } = useStore()
-	const [count, setCount] = useState(0)
-
 	return (
 		<>
-			<div className='size-full bg-primary h-[1000px]'>
-				<button
-					onClick={() => {
-						notificationsStore.addNotification({
-							id: self.crypto.randomUUID(),
-							text: 'This is a notification!' + count,
-							isError: false,
-						})
-						setCount(count + 1)
-					}}
-				>
-					main MainPage
-				</button>
+			<div className='size-full bg-primary xl:px-5 flex flex-col gap-y-15'>
+				<TopReleasesContainer />
+				<LastReleasesContainer />
+				<LastReviewsContainer />
 			</div>
 		</>
 	)

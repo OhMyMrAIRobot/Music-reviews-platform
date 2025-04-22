@@ -3,7 +3,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { AuthAPI } from '../api/AuthAPI'
 import { IRegistrationData } from '../models/auth/RegistrationData'
 import { IResetPasswordData } from '../models/auth/ResetPasswordData'
-import { IUser } from '../models/Auth/User'
+import { IUser } from '../models/auth/User'
 
 class AuthStore {
 	isAuth: boolean = false

@@ -1,0 +1,34 @@
+import { FC } from 'react'
+import { AuthorTypesEnum } from '../../../models/author/AuthorTypes'
+
+interface IReleaseAuthorProps {
+	img: string
+	name: string
+	type: AuthorTypesEnum
+}
+
+const ReleaseAuthor: FC<IReleaseAuthorProps> = ({ img, name, type }) => {
+	return (
+		<button
+			className={`flex items-center justify-center text-sm font-medium h-10 gap-x-1.5 lg:gap-x-2 hover:bg-white/10 transition-colors duration-200 cursor-pointer px-1 py-2 
+				${type === AuthorTypesEnum.ARTIST ? 'rounded-full lg:px-3' : ''}
+				${
+					type === AuthorTypesEnum.PRODUCER
+						? 'rounded-md lg:px-2'
+						: 'rounded-md lg:px-2'
+				}
+				`}
+		>
+			<img
+				alt={name}
+				src={`${import.meta.env.VITE_SERVER_URL}/public/authors/avatars/${img}`}
+				loading='lazy'
+				decoding='async'
+				className='size-8 rounded-full overflow-hidden'
+			/>
+			<span className='font-bold'>{name}</span>
+		</button>
+	)
+}
+
+export default ReleaseAuthor

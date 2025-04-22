@@ -3,13 +3,13 @@ import { useEffect, useState } from 'react'
 import useCustomNavigate from '../../../hooks/UseCustomNavigate'
 import { useLoading } from '../../../hooks/UseLoading'
 import { useStore } from '../../../hooks/UseStore'
-import AuthButton from '../components/AuthButton'
-import AuthInfoContainer from '../components/AuthInfoContainer'
-import AuthInfoField from '../components/AuthInfoField'
-import AuthInput from '../components/AuthInput'
-import AuthLabel from '../components/AuthLabel'
-import AuthSubTitle from '../components/AuthSubTitle'
-import AuthTitle from '../components/AuthTitle'
+import FormButton from '../../form/FormButton'
+import FormInfoContainer from '../../form/FormInfoContainer'
+import FormInfoField from '../../form/FormInfoField'
+import FormInput from '../../form/FormInput'
+import FormLabel from '../../form/FormLabel'
+import FormSubTitle from '../../form/FormSubTitle'
+import FormTitle from '../../form/FormTitle'
 
 const LoginForm = observer(() => {
 	const [errors, setErrors] = useState<string[]>([])
@@ -32,13 +32,13 @@ const LoginForm = observer(() => {
 	return (
 		<div className='grid w-[350px] gap-6'>
 			<div className='grid gap-2 text-center'>
-				<AuthTitle title={'Вход'} />
-				<AuthSubTitle title={'Введите свои данные для входа в аккаунт'} />
+				<FormTitle title={'Вход'} />
+				<FormSubTitle title={'Введите свои данные для входа в аккаунт'} />
 			</div>
 			<div className='grid gap-3'>
 				<div className='grid gap-2'>
-					<AuthLabel name={'Email'} htmlFor={'AuthEmail'} />
-					<AuthInput
+					<FormLabel name={'Email'} htmlFor={'AuthEmail'} />
+					<FormInput
 						id={'AuthEmail'}
 						placeholder={'Ваш email'}
 						type={'email'}
@@ -48,7 +48,7 @@ const LoginForm = observer(() => {
 				</div>
 				<div className='grid gap-2'>
 					<div className='flex justify-between items-center select-none'>
-						<AuthLabel name={'Пароль'} htmlFor={'AuthPassword'} />
+						<FormLabel name={'Пароль'} htmlFor={'AuthPassword'} />
 						<button
 							onClick={navigateToRequestReset}
 							className='text-sm cursor-pointer font-bold underline'
@@ -56,7 +56,7 @@ const LoginForm = observer(() => {
 							Забыли пароль?
 						</button>
 					</div>
-					<AuthInput
+					<FormInput
 						id={'AuthPassword'}
 						placeholder={'Ваш пароль'}
 						type={'password'}
@@ -65,7 +65,7 @@ const LoginForm = observer(() => {
 					/>
 				</div>
 				<div className='grid gap-2'>
-					<AuthButton
+					<FormButton
 						title={isLoading ? 'Загрузка...' : 'Войти'}
 						onClick={() =>
 							login(email, password).then(errors => {
@@ -80,7 +80,7 @@ const LoginForm = observer(() => {
 						}
 						isInvert={true}
 					/>
-					<AuthButton
+					<FormButton
 						title={'Зарегистрироваться'}
 						onClick={navigateToRegistration}
 						isInvert={false}
@@ -88,11 +88,11 @@ const LoginForm = observer(() => {
 				</div>
 
 				{errors && (
-					<AuthInfoContainer>
+					<FormInfoContainer>
 						{errors.map(error => (
-							<AuthInfoField key={error} text={error} isError={true} />
+							<FormInfoField key={error} text={error} isError={true} />
 						))}
-					</AuthInfoContainer>
+					</FormInfoContainer>
 				)}
 			</div>
 		</div>

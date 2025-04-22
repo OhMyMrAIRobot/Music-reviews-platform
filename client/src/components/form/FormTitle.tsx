@@ -1,14 +1,14 @@
 import { FC } from 'react'
 
-interface IAuthTitleProps {
+interface IFormTitleProps {
 	title: string
 	className?: string
 }
 
-const AuthTitle: FC<IAuthTitleProps> = ({ title, className }) => {
+const FormTitle: FC<IFormTitleProps> = ({ title, className }) => {
 	return (
 		<h2 className={`text-2xl font-bold select-none ${className}`}>{title}</h2>
 	)
 }
 
-export default AuthTitle
+export default FormTitle

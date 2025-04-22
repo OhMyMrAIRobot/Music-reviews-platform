@@ -3,13 +3,13 @@ import { useEffect, useState } from 'react'
 import useCustomNavigate from '../../../hooks/UseCustomNavigate'
 import { useLoading } from '../../../hooks/UseLoading'
 import { useStore } from '../../../hooks/UseStore'
-import AuthButton from '../components/AuthButton'
-import AuthInfoContainer from '../components/AuthInfoContainer'
-import AuthInfoField from '../components/AuthInfoField'
-import AuthInput from '../components/AuthInput'
-import AuthLabel from '../components/AuthLabel'
-import AuthSubTitle from '../components/AuthSubTitle'
-import AuthTitle from '../components/AuthTitle'
+import FormButton from '../../form/FormButton'
+import FormInfoContainer from '../../form/FormInfoContainer'
+import FormInfoField from '../../form/FormInfoField'
+import FormInput from '../../form/FormInput'
+import FormLabel from '../../form/FormLabel'
+import FormSubTitle from '../../form/FormSubTitle'
+import FormTitle from '../../form/FormTitle'
 
 const ReqResetPasswordForm = observer(() => {
 	const [email, setEmail] = useState<string>('')
@@ -29,16 +29,16 @@ const ReqResetPasswordForm = observer(() => {
 	return (
 		<div className='grid w-[330px] gap-4'>
 			<div className='grid gap-1'>
-				<AuthTitle title={'Забыли пароль?'} />
-				<AuthSubTitle
+				<FormTitle title={'Забыли пароль?'} />
+				<FormSubTitle
 					title={
 						'Введите ваш адрес электронной почты для восстановления пароля'
 					}
 				/>
 			</div>
 			<div className='grid gap-2'>
-				<AuthLabel name={'Email'} htmlFor={'email'} />
-				<AuthInput
+				<FormLabel name={'Email'} htmlFor={'email'} />
+				<FormInput
 					id={'email'}
 					placeholder={'mail@example.com'}
 					type={'email'}
@@ -46,7 +46,7 @@ const ReqResetPasswordForm = observer(() => {
 					setValue={setEmail}
 				/>
 			</div>
-			<AuthButton
+			<FormButton
 				title={isLoading ? 'Отправка...' : 'Отправить письмо для сброса'}
 				onClick={() => {
 					sendRequest(email).then(result => {
@@ -67,11 +67,11 @@ const ReqResetPasswordForm = observer(() => {
 			/>
 
 			{errors && (
-				<AuthInfoContainer>
+				<FormInfoContainer>
 					{errors.map(error => (
-						<AuthInfoField key={error} text={error} isError={true} />
+						<FormInfoField key={error} text={error} isError={true} />
 					))}
-				</AuthInfoContainer>
+				</FormInfoContainer>
 			)}
 		</div>
 	)
