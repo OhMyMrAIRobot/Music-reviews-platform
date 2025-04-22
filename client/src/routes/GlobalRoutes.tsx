@@ -4,6 +4,7 @@ import AuthPage from '../pages/AuthPage'
 import FeedbackPage from '../pages/FeedbackPage'
 import MainPage from '../pages/MainPage'
 import ReleasePage from '../pages/ReleasePage'
+import ReleasesPage from '../pages/ReleasesPage'
 import ReviewsPage from '../pages/ReviewsPage'
 import { ROUTES } from './Routes'
 
@@ -15,6 +16,7 @@ const GlobalRoutes = () => {
 		<Route path={ROUTES.AUTHORS} element={<AuthorsPage />} key='authors' />,
 		<Route path={ROUTES.FEEDBACK} element={<FeedbackPage />} key='feedback' />,
 		<Route path={ROUTES.REVIEWS} element={<ReviewsPage />} key='reviews' />,
+		<Route path={ROUTES.RELEASES} element={<ReleasesPage />} key='releases' />,
 	]
 }
 

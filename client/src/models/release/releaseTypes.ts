@@ -3,3 +3,8 @@ export enum ReleaseTypesEnum {
 	SINGLE = 'Трек',
 	MULTISINGLE = 'Мультитрек',
 }
+
+export interface IReleaseType {
+	id: string
+	type: string
+}

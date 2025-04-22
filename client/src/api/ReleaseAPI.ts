@@ -1,7 +1,8 @@
 import axios from 'axios'
 import { IFavRelease } from '../models/release/FavRelease'
-import { IRelease } from '../models/release/Release'
+import { IRelease, IReleaseResponse } from '../models/release/Release'
 import { IReleaseDetails } from '../models/release/ReleaseDetails'
+import { IReleaseType } from '../models/release/ReleaseTypes'
 import { api } from './Instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
@@ -18,8 +19,21 @@ export const ReleaseAPI = {
 		return data
 	},
 
-	async fetchReleases(): Promise<IRelease[]> {
-		const { data } = await _api.get<IRelease[]>('list')
+	async fetchReleases(
+		typeId: string | null,
+		field: string,
+		order: string,
+		limit: number,
+		offset: number
+	): Promise<IReleaseResponse> {
+		const { data } = await _api.get<IReleaseResponse>(
+			`list?${typeId ? `type=${typeId}` : ''}
+			&field=${field}
+			&order=${order}
+			&limit=${limit}
+			&offset=${offset}
+			`
+		)
 		return data
 	},
 
@@ -39,6 +53,13 @@ export const ReleaseAPI = {
 		const { data } = await api.delete<IFavRelease>('/user-fav-releases', {
 			data: { releaseId },
 		})
+		return data
+	},
+
+	async fetchReleaseTypes(): Promise<IReleaseType[]> {
+		const { data } = await axios.get<IReleaseType[]>(
+			`${SERVER_URL}/release-types`
+		)
 		return data
 	},
 }

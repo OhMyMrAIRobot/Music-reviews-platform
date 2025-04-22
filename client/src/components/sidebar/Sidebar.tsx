@@ -22,6 +22,7 @@ const Sidebar = () => {
 		navigateToFeedback,
 		navigateToAuthors,
 		navigateToReviews,
+		navigateToReleases,
 	} = useCustomNavigate()
 
 	const isActive = (path: string) => {
@@ -114,10 +115,10 @@ const Sidebar = () => {
 		},
 		{
 			id: 'side-relises',
-			onClick: navigateToMain,
+			onClick: navigateToReleases,
 			icon: <RelisesSvgIcon className='size-5' />,
 			label: 'Релизы',
-			active: isActive('/main'),
+			active: isActive(ROUTES.RELEASES),
 		},
 	]
 

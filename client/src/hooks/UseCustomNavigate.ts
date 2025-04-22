@@ -35,6 +35,10 @@ const useCustomNavigate = () => {
 		navigate(`/reviews`)
 	}
 
+	const navigateToReleases = () => {
+		navigate(`/releases`)
+	}
+
 	return {
 		navigateToLogin,
 		navigateToRegistration,
@@ -44,6 +48,7 @@ const useCustomNavigate = () => {
 		navigateToRelease,
 		navigateToAuthors,
 		navigateToReviews,
+		navigateToReleases,
 	}
 }
 

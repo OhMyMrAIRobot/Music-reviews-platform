@@ -14,6 +14,7 @@ export const ROUTES = {
 	AUTHORS: '/authors',
 	FEEDBACK: '/feedback',
 	REVIEWS: '/reviews',
+	RELEASES: '/releases',
 } as const
 
 export type AppRoutes = keyof typeof ROUTES | keyof typeof ROUTES.AUTH

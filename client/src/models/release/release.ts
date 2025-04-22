@@ -1,3 +1,8 @@
+export interface IReleaseResponse {
+	count: number
+	releases: IRelease[]
+}
+
 export interface IRelease {
 	id: string
 	title: string
