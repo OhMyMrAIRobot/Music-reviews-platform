@@ -1,4 +1,9 @@
 export class ReleaseResponseDto {
+  count: number;
+  releases: ReleaseResponseData[];
+}
+
+export class ReleaseResponseData {
   id: string;
   title: string;
   img: string;

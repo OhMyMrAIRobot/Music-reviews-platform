@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { Roles } from 'src/auth/decorators/roles.decorator';
@@ -13,6 +14,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
 import { CreateReleaseDto } from './dto/create-release.dto';
+import { ReleasesQueryDto } from './dto/releases-query.dto';
 import { UpdateReleaseDto } from './dto/update-release.dto';
 import { ReleasesService } from './releases.service';
 
@@ -31,8 +33,8 @@ export class ReleasesController {
   }
 
   @Get('list')
-  findReleases() {
-    return this.releasesService.findReleases();
+  findReleases(@Query() query: ReleasesQueryDto) {
+    return this.releasesService.findReleases(query);
   }
 
   @Get('details/:id')
