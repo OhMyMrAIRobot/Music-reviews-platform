@@ -1,5 +1,6 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Role } from '@prisma/client';
+import { EntityInUseException } from 'src/exceptions/entity-in-use.exception';
 import { PrismaService } from '../../prisma/prisma.service';
 import { DuplicateFieldException } from '../exceptions/duplicate-field.exception';
 import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
@@ -69,7 +70,7 @@ export class RolesService {
     });
 
     if (usersWithRole != 0) {
-      throw new ConflictException(`Роль с id: ${id} всё еще используется!`);
+      throw new EntityInUseException('Роль', 'id', `${id}`);
     }
 
     return this.prisma.role.delete({

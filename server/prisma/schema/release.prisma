@@ -1,0 +1,63 @@
+model Release {
+  id            String   @id @default(cuid())
+  title         String   @db.VarChar(50)
+  publishDate   DateTime @map("publish_date")
+  img           String   @db.VarChar(255)
+  releaseTypeId String   @map("release_type_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  ReleaseType ReleaseType @relation(fields: [releaseTypeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  ReleaseProducer ReleaseProducer[]
+  ReleaseArtist   ReleaseArtist[]
+  ReleaseDesigner ReleaseDesigner[]
+  Review          Review[]
+  ReleaseRating   ReleaseRating[]
+  UserFavRelease  UserFavRelease[]
+
+  @@map("Releases")
+}
+
+model ReleaseType {
+  id      String    @id @default(cuid())
+  type    String    @unique @db.VarChar(30)
+  Release Release[]
+
+  @@map("Release_types")
+}
+
+model ReleaseProducer {
+  releaseId String @map("release_id")
+  authorId  String @map("author_id")
+
+  release Release @relation(fields: [releaseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  author Author @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([releaseId, authorId])
+  @@map("Release_producers")
+}
+
+model ReleaseArtist {
+  releaseId String @map("release_id")
+  authorId  String @map("author_id")
+
+  release Release @relation(fields: [releaseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  author Author @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([releaseId, authorId])
+  @@map("Release_artists")
+}
+
+model ReleaseDesigner {
+  releaseId String @map("release_id")
+  authorId  String @map("author_id")
+
+  release Release @relation(fields: [releaseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  author Author @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([releaseId, authorId])
+  @@map("Release_designers")
+}
