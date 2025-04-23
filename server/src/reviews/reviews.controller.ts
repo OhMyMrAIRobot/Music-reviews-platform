@@ -17,6 +17,7 @@ import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.inte
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { DeleteReviewDto } from './dto/delete-review.dto';
+import { ReleaseReviewParamsDto } from './dto/release-review-params.dto';
 import { ReleaseReviewQueryDto } from './dto/release-review-query.dto';
 import { ReviewsQueryDto } from './dto/reviews-query.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
@@ -33,10 +34,10 @@ export class ReviewsController {
 
   @Get('release/:id')
   findByReleaseId(
-    @Param('id') id: string,
+    @Param() params: ReleaseReviewParamsDto,
     @Query() query: ReleaseReviewQueryDto,
   ) {
-    return this.reviewsService.findByReleaseId(id, query);
+    return this.reviewsService.findByReleaseId(params.id, query);
   }
 
   @Get('user/:id')

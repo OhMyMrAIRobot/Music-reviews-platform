@@ -14,6 +14,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
 import { CreateReleaseDto } from './dto/create-release.dto';
+import { ReleaseDetailsParamsDto } from './dto/release-details-params.dto';
 import { ReleasesQueryDto } from './dto/releases-query.dto';
 import { UpdateReleaseDto } from './dto/update-release.dto';
 import { ReleasesService } from './releases.service';
@@ -38,8 +39,8 @@ export class ReleasesController {
   }
 
   @Get('details/:id')
-  findReleaseDetails(@Param('id') id: string) {
-    return this.releasesService.findReleaseDetails(id);
+  findReleaseDetails(@Param() params: ReleaseDetailsParamsDto) {
+    return this.releasesService.findReleaseDetails(params.id);
   }
 
   @Get(':id')
