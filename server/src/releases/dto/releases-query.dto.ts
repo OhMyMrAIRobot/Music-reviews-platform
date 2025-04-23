@@ -1,20 +1,10 @@
 import { Type } from 'class-transformer';
-import {
-  IsIn,
-  IsInt,
-  IsOptional,
-  IsString,
-  Matches,
-  Max,
-  Min,
-} from 'class-validator';
+import { IsIn, IsInt, IsOptional, Max, Min } from 'class-validator';
+import { IsEntityId } from 'src/decorators/is-entity-id.decorator';
 
 export class ReleasesQueryDto {
   @IsOptional()
-  @IsString()
-  @Matches(/^[a-zA-Z0-9]+$/, {
-    message: 'type может содержать только цифры и буквы',
-  })
+  @IsEntityId()
   type?: string;
 
   @IsOptional()

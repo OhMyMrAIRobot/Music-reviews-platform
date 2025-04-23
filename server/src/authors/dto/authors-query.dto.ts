@@ -1,19 +1,10 @@
 import { Type } from 'class-transformer';
-import {
-  IsInt,
-  IsOptional,
-  IsString,
-  Matches,
-  Max,
-  Min,
-} from 'class-validator';
+import { IsInt, IsOptional, Max, Min } from 'class-validator';
+import { IsEntityId } from 'src/decorators/is-entity-id.decorator';
 
 export class AuthorsQueryDto {
   @IsOptional()
-  @IsString()
-  @Matches(/^[a-zA-Z0-9]+$/, {
-    message: 'typeId может содержать только цифры и буквы',
-  })
+  @IsEntityId()
   typeId?: string;
 
   @IsOptional()
