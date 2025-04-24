@@ -104,6 +104,7 @@ export class ReleasesService {
           rt.type as release_type,
           (
             SELECT JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
+              'id', a.id,
               'name', a.name,
               'img', a.avatar_img
             ))
@@ -113,6 +114,7 @@ export class ReleasesService {
           ) AS artists,
           (
             SELECT JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
+              'id', a.id,
               'name', a.name,
               'img', a.avatar_img
             ))
@@ -122,6 +124,7 @@ export class ReleasesService {
           ) AS producers,
           (
             SELECT JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
+              'id', a.id,
               'name', a.name,
               'img', a.avatar_img
             ))
@@ -235,7 +238,7 @@ export class ReleasesService {
           rt.type AS release_type,
           (count(DISTINCT rev.id) FILTER (WHERE rev.text IS NOT NULL))::int AS text_count,
           (count(DISTINCT rev.id) FILTER (WHERE rev.text IS NULL))::int AS no_text_count,
-          json_agg(DISTINCT jsonb_build_object('name', a.name)) as author,
+          json_agg(DISTINCT jsonb_build_object('id', a.id, 'name', a.name)) as author,
           json_agg(DISTINCT jsonb_build_object(
                           'total', rr.total,
                           'type', rrt.type
