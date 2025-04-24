@@ -13,6 +13,7 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
+import { AuthorTopReleasesParamsDto } from './dto/author-top-releases-params.dto';
 import { CreateReleaseDto } from './dto/create-release.dto';
 import { ReleaseDetailsParamsDto } from './dto/release-details-params.dto';
 import { ReleasesQueryDto } from './dto/releases-query.dto';
@@ -36,6 +37,11 @@ export class ReleasesController {
   @Get('list')
   findReleases(@Query() query: ReleasesQueryDto) {
     return this.releasesService.findReleases(query);
+  }
+
+  @Get('author/top/:id')
+  findAuthorTopReleases(@Param() params: AuthorTopReleasesParamsDto) {
+    return this.releasesService.findAuthorTopReleases(params.id);
   }
 
   @Get('details/:id')

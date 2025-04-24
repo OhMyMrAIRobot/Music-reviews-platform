@@ -68,8 +68,8 @@ export class ReleasesService {
     });
   }
 
-  async findMostCommentedReleasesLastDay(): Promise<ReleaseResponseDto[]> {
-    return this.prisma.$queryRaw<ReleaseResponseDto[]>`
+  async findMostCommentedReleasesLastDay(): Promise<ReleaseResponseData[]> {
+    return this.prisma.$queryRaw<ReleaseResponseData[]>`
       SELECT r.id, r.title, r.img,
         rt.type as release_type,
         (count(DISTINCT rev.id) FILTER (WHERE rev.text IS NOT NULL))::int AS text_count,
@@ -149,6 +149,58 @@ export class ReleasesService {
         GROUP BY r.id, rt.type`;
 
     return this.prisma.$queryRawUnsafe<ReleaseDetailResponseDto>(rawQuery);
+  }
+
+  async findAuthorTopReleases(
+    authorId: string,
+  ): Promise<ReleaseResponseData[]> {
+    const rawQuery = `
+        WITH release_data as (
+          SELECT 
+              r.id,
+              r.title,
+              r.img,
+              r.publish_date,
+              rt.type AS release_type,
+              (count(DISTINCT rev.id) FILTER (WHERE rev.text IS NOT NULL))::int AS text_count,
+              (count(DISTINCT rev.id) FILTER (WHERE rev.text IS NULL))::int AS no_text_count,
+              json_agg(DISTINCT jsonb_build_object('id', a.id,'name', a.name)) as author,
+              json_agg(DISTINCT jsonb_build_object(
+                      'total', rr.total,
+                      'type', rrt.type
+              )) as ratings,
+              (SELECT rr.total FROM "Release_ratings" rr
+                    JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
+                WHERE rr.release_id = r.id AND rrt.type = 'super_user') AS super_user_rating,
+              (SELECT rr.total FROM "Release_ratings" rr
+                    JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
+                WHERE rr.release_id = r.id AND rrt.type = 'with_text') AS text_rating,
+              (SELECT rr.total FROM "Release_ratings" rr
+                    JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
+                WHERE rr.release_id = r.id AND rrt.type = 'no_text') AS no_text_rating
+
+          FROM "Releases" r
+              LEFT JOIN "Release_types" rt on r.release_type_id = rt.id
+              LEFT JOIN "Release_artists" ra on r.id = ra.release_id
+              LEFT JOIN "Authors" a on ra.author_id = a.id
+              LEFT JOIN "Release_producers" rp on r.id = rp.release_id
+              LEFT JOIN "Release_designers" rd on r.id = rd.author_id
+              LEFT JOIN "Reviews" rev on rev.release_id = r.id
+              LEFT JOIN "Release_ratings" rr on rr.release_id = r.id
+              LEFT JOIN "Release_rating_types" rrt on rr.release_rating_type_id = rrt.id
+          GROUP BY r.id, rt.type, r.publish_date
+        )
+        SELECT id, title, img, release_type, text_count, no_text_count, author, ratings
+        FROM release_data rd
+        WHERE EXISTS (
+            SELECT 1
+            FROM jsonb_array_elements(rd.author::jsonb) AS a
+            WHERE (a->>'id')::text = '${authorId}'
+        )
+        ORDER BY no_text_rating + text_rating + super_user_rating desc
+        LIMIT 15 OFFSET 0
+    `;
+    return this.prisma.$queryRawUnsafe<ReleaseResponseData[]>(rawQuery);
   }
 
   async findReleases(query: ReleasesQueryDto): Promise<ReleaseResponseDto> {
