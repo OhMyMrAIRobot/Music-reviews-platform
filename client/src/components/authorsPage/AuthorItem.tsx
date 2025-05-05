@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import useCustomNavigate from '../../hooks/UseCustomNavigate'
 import { IAuthorData } from '../../models/author/AuthorsResponse'
 import { AuthorTypesEnum } from '../../models/author/AuthorTypes'
 import { ReleaseRatingTypesEnum } from '../../models/release/ReleaseRatingTypes'
@@ -24,6 +25,8 @@ interface IProps {
 }
 
 const AuthorItem: FC<IProps> = ({ author }) => {
+	const { navigateToAuthor } = useCustomNavigate()
+
 	const trackRatings = author.release_type_stats.find(
 		r => r.type === ReleaseTypesEnum.SINGLE
 	)
@@ -33,7 +36,10 @@ const AuthorItem: FC<IProps> = ({ author }) => {
 	)
 
 	return (
-		<button className='border border-white/10 bg-zinc-900 shadow-sm p-3 rounded-2xl text-center cursor-pointer select-none flex flex-col gap-y-2'>
+		<button
+			onClick={() => navigateToAuthor(author.id)}
+			className='border border-white/10 bg-zinc-900 shadow-sm p-3 rounded-2xl text-center cursor-pointer select-none flex flex-col gap-y-2'
+		>
 			<div className='aspect-square max-w-30 md:max-w-45 w-full mx-auto relative rounded-full overflow-hidden'>
 				<img
 					alt={author.name}

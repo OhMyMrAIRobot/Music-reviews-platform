@@ -11,6 +11,7 @@ const ReleaseAuthorsContainer: FC<IProps> = ({ release }) => {
 		<div className='select-none mt-5 flex flex-wrap justify-center lg:justify-start gap-x-2 lg:gap-x-5 items-center lg:-ml-3'>
 			{release.artists?.map(artist => (
 				<ReleaseAuthor
+					id={artist.id}
 					img={artist.img}
 					name={artist.name}
 					type={AuthorTypesEnum.ARTIST}
@@ -22,6 +23,7 @@ const ReleaseAuthorsContainer: FC<IProps> = ({ release }) => {
 					<span className='opacity-70 font-medium'>prod.</span>
 					{release.producers?.map(producer => (
 						<ReleaseAuthor
+							id={producer.id}
 							img={producer.img}
 							name={producer.name}
 							type={AuthorTypesEnum.PRODUCER}
@@ -35,6 +37,7 @@ const ReleaseAuthorsContainer: FC<IProps> = ({ release }) => {
 					<span className='opacity-70 font-medium'>cover by</span>
 					{release.designers?.map(designer => (
 						<ReleaseAuthor
+							id={designer.id}
 							img={designer.img}
 							name={designer.name}
 							type={AuthorTypesEnum.DESIGNER}

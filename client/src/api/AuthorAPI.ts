@@ -1,6 +1,9 @@
 import axios from 'axios'
+import { IAuthor } from '../models/author/Author'
 import { IAuthorsResponseDto } from '../models/author/AuthorsResponse'
 import { IAuthorType } from '../models/author/AuthorTypes'
+import { IFavAuthor } from '../models/author/FavAuthor'
+import { api } from './Instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
 
@@ -26,9 +29,35 @@ export const AuthorAPI = {
 		return data
 	},
 
+	async fetchAuthorById(id: string) {
+		const { data } = await _api.get<IAuthor>(`/id/${id}`)
+		return data
+	},
+
 	async fetchAuthorTypes(): Promise<IAuthorType[]> {
 		const { data } = await axios.get<IAuthorType[]>(
 			`${SERVER_URL}/author-types`
+		)
+		return data
+	},
+
+	async addFavAuthor(authorId: string): Promise<IFavAuthor> {
+		const { data } = await api.post<IFavAuthor>('/user-fav-authors', {
+			authorId,
+		})
+		return data
+	},
+
+	async deleteFavAuthor(authorId: string): Promise<IFavAuthor> {
+		const { data } = await api.delete<IFavAuthor>('/user-fav-authors', {
+			data: { authorId },
+		})
+		return data
+	},
+
+	async fetchFavAuthorUsersIds(authorId: string): Promise<IFavAuthor[]> {
+		const { data } = await api.get<IFavAuthor[]>(
+			`/user-fav-authors/author/${authorId}`
 		)
 		return data
 	},

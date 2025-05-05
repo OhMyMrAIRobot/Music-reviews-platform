@@ -1,15 +1,19 @@
 import { FC } from 'react'
+import useCustomNavigate from '../../../hooks/UseCustomNavigate'
 import { AuthorTypesEnum } from '../../../models/author/AuthorTypes'
 
 interface IReleaseAuthorProps {
+	id: string
 	img: string
 	name: string
 	type: AuthorTypesEnum
 }
 
-const ReleaseAuthor: FC<IReleaseAuthorProps> = ({ img, name, type }) => {
+const ReleaseAuthor: FC<IReleaseAuthorProps> = ({ id, img, name, type }) => {
+	const { navigateToAuthor } = useCustomNavigate()
 	return (
 		<button
+			onClick={() => navigateToAuthor(id)}
 			className={`flex items-center justify-center text-sm font-medium h-10 gap-x-1.5 lg:gap-x-2 hover:bg-white/10 transition-colors duration-200 cursor-pointer px-1 py-2 
 				${type === AuthorTypesEnum.ARTIST ? 'rounded-full lg:px-3' : ''}
 				${

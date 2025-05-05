@@ -47,7 +47,9 @@ const ReleaseContainer: FC<IProps> = observer(({ release }) => {
 				loading='lazy'
 				decoding='async'
 				alt={release.title}
-				src={release.release_img}
+				src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
+					release.release_img
+				}`}
 				className='size-62 rounded-[10px] max-h-62'
 			/>
 			<div className='absolute w-full flex justify-center lg:hidden z-[-1] blur-2xl'>

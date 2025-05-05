@@ -7,6 +7,7 @@ export interface IReleaseDetails {
 	artists:
 		| [
 				{
+					id: string
 					img: string
 					name: string
 				}
@@ -15,6 +16,7 @@ export interface IReleaseDetails {
 	producers:
 		| [
 				{
+					id: string
 					img: string
 					name: string
 				}
@@ -23,6 +25,7 @@ export interface IReleaseDetails {
 	designers:
 		| [
 				{
+					id: string
 					img: string
 					name: string
 				}

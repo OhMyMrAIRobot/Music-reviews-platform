@@ -39,6 +39,10 @@ const useCustomNavigate = () => {
 		navigate(`/releases`)
 	}
 
+	const navigateToAuthor = (id: string) => {
+		navigate(`/author/${id}`)
+	}
+
 	return {
 		navigateToLogin,
 		navigateToRegistration,
@@ -49,6 +53,7 @@ const useCustomNavigate = () => {
 		navigateToAuthors,
 		navigateToReviews,
 		navigateToReleases,
+		navigateToAuthor,
 	}
 }
 

@@ -1,4 +1,5 @@
 import { Route } from 'react-router'
+import AuthorPage from '../pages/AuthorPage'
 import AuthorsPage from '../pages/AuthorsPage'
 import AuthPage from '../pages/AuthPage'
 import FeedbackPage from '../pages/FeedbackPage'
@@ -17,6 +18,7 @@ const GlobalRoutes = () => {
 		<Route path={ROUTES.FEEDBACK} element={<FeedbackPage />} key='feedback' />,
 		<Route path={ROUTES.REVIEWS} element={<ReviewsPage />} key='reviews' />,
 		<Route path={ROUTES.RELEASES} element={<ReleasesPage />} key='releases' />,
+		<Route path={ROUTES.AUTHOR} element={<AuthorPage />} key='author' />,
 	]
 }
 

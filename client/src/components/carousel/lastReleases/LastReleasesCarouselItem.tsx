@@ -26,12 +26,20 @@ export const GetReleaseIcon = (releaseType: string) => {
 }
 
 const LastReleasesCarouselItem: FC<IProps> = ({ release }) => {
-	const { navigateToRelease } = useCustomNavigate()
+	const { navigateToRelease, navigateToAuthor } = useCustomNavigate()
 	const ratingOrder = [
 		ReleaseRatingTypesEnum.SUPER_USER,
 		ReleaseRatingTypesEnum.WITH_TEXT,
 		ReleaseRatingTypesEnum.NO_TEXT,
 	]
+
+	const navigateToAuthorPage = (
+		id: string,
+		e: React.MouseEvent<HTMLButtonElement>
+	) => {
+		e.stopPropagation()
+		navigateToAuthor(id)
+	}
 
 	const ratings = ratingOrder
 		.map(type => release.ratings.find(r => r.type === type))
@@ -81,9 +89,13 @@ const LastReleasesCarouselItem: FC<IProps> = ({ release }) => {
 			</div>
 			<div className='flex flex-wrap gap-1 font-medium leading-3 mt-2 text-[13px]'>
 				{release.author.map(author => (
-					<div key={author.name} className='opacity-70'>
+					<button
+						onClick={e => navigateToAuthorPage(author.id, e)}
+						key={author.name}
+						className='opacity-70 hover:underline hover:opacity-100 transition-colors duration-300 cursor-pointer'
+					>
 						{author.name}
-					</div>
+					</button>
 				))}
 			</div>
 			<div className='flex mt-5 items-center px-1 pb-1 gap-1 text-white'>

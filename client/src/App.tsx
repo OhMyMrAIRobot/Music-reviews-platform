@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Routes } from 'react-router'
+import Loader from './components/Loader'
 import NotificationContainer from './components/notifications/NotificationContainer'
 import { useLoading } from './hooks/UseLoading'
 import { useStore } from './hooks/UseStore'
@@ -18,7 +19,9 @@ export function App() {
 	}, [])
 
 	return isLoading ? (
-		<div>Loading</div>
+		<div className='min-w-screen min-h-screen flex items-center justify-center'>
+			<Loader />
+		</div>
 	) : (
 		<Layout>
 			<Routes>{GlobalRoutes()}</Routes>
