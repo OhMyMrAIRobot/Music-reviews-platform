@@ -2,12 +2,10 @@ import { FC } from 'react'
 import useCustomNavigate from '../../hooks/UseCustomNavigate'
 import { IAuthorData } from '../../models/author/AuthorsResponse'
 import { AuthorTypesEnum } from '../../models/author/AuthorTypes'
-import { ReleaseRatingTypesEnum } from '../../models/release/ReleaseRatingTypes'
 import { ReleaseTypesEnum } from '../../models/release/ReleaseTypes'
 import { ReleaseLikesSvgIcon } from '../releasePage/releasePageSvgIcons'
 import TooltipSpan from '../releasePage/tooltip/TooltipSpan'
-import { AlbumSvgIcon, SingleSvgIcon } from '../svg/ReleaseSvgIcons'
-import AuthorCircleRating from './AuthorCircleRating'
+import AuthorReleaseTypesRatings from './AuthorReleaseTypesRatings'
 import { ArtistSvgIcon, DesignerSvgIcon, ProducerSvgIcon } from './AuthorSvg'
 
 export const ToolTip: FC<{ text: string }> = ({ text }) => {
@@ -26,14 +24,6 @@ interface IProps {
 
 const AuthorItem: FC<IProps> = ({ author }) => {
 	const { navigateToAuthor } = useCustomNavigate()
-
-	const trackRatings = author.release_type_stats.find(
-		r => r.type === ReleaseTypesEnum.SINGLE
-	)
-
-	const albumRatings = author.release_type_stats.find(
-		r => r.type === ReleaseTypesEnum.ALBUM
-	)
 
 	return (
 		<button
@@ -85,47 +75,15 @@ const AuthorItem: FC<IProps> = ({ author }) => {
 				</div>
 			</TooltipSpan>
 
-			{trackRatings && (
-				<div className='flex items-center justify-center text-sm gap-x-2'>
-					<SingleSvgIcon classname='size-5' />
-					<AuthorCircleRating
-						rating={trackRatings.ratings.super_user}
-						ratingType={ReleaseRatingTypesEnum.SUPER_USER}
-						releaseType={ReleaseTypesEnum.SINGLE}
-					/>
-					<AuthorCircleRating
-						rating={trackRatings.ratings.with_text}
-						ratingType={ReleaseRatingTypesEnum.WITH_TEXT}
-						releaseType={ReleaseTypesEnum.SINGLE}
-					/>
-					<AuthorCircleRating
-						rating={trackRatings.ratings.no_text}
-						ratingType={ReleaseRatingTypesEnum.NO_TEXT}
-						releaseType={ReleaseTypesEnum.SINGLE}
-					/>
-				</div>
-			)}
+			<AuthorReleaseTypesRatings
+				releaseType={ReleaseTypesEnum.SINGLE}
+				stats={author.release_type_stats}
+			/>
 
-			{albumRatings && (
-				<div className='flex items-center justify-center text-sm gap-x-2'>
-					<AlbumSvgIcon classname='size-5' />
-					<AuthorCircleRating
-						rating={albumRatings.ratings.super_user}
-						ratingType={ReleaseRatingTypesEnum.SUPER_USER}
-						releaseType={ReleaseTypesEnum.ALBUM}
-					/>
-					<AuthorCircleRating
-						rating={albumRatings.ratings.with_text}
-						ratingType={ReleaseRatingTypesEnum.WITH_TEXT}
-						releaseType={ReleaseTypesEnum.ALBUM}
-					/>
-					<AuthorCircleRating
-						rating={albumRatings.ratings.no_text}
-						ratingType={ReleaseRatingTypesEnum.NO_TEXT}
-						releaseType={ReleaseTypesEnum.ALBUM}
-					/>
-				</div>
-			)}
+			<AuthorReleaseTypesRatings
+				releaseType={ReleaseTypesEnum.ALBUM}
+				stats={author.release_type_stats}
+			/>
 		</button>
 	)
 }
