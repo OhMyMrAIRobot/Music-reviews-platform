@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { useParams } from 'react-router'
 import AuthorPageHeader from '../components/AuthorPage/AuthorPageHeader'
 import AuthorPageStats from '../components/AuthorPage/AuthorPageStats'
+import AuthorsPageReleasesCarousel from '../components/AuthorPage/AuthorsPageReleasesCarousel'
 import Loader from '../components/Loader'
 import { useLoading } from '../hooks/UseLoading'
 import { useStore } from '../hooks/UseStore'
@@ -16,7 +17,7 @@ const AuthorPage = observer(() => {
 
 	useEffect(() => {
 		if (id) {
-			fetchAuthor(id).then(() => console.log(authorPageStore.author))
+			fetchAuthor(id)
 		}
 	}, [])
 
@@ -27,6 +28,7 @@ const AuthorPage = observer(() => {
 			<div className='grid gap-10'>
 				<AuthorPageHeader author={authorPageStore.author} />
 				<AuthorPageStats author={authorPageStore.author} />
+				<AuthorsPageReleasesCarousel />
 			</div>
 		)
 	)

@@ -1,10 +1,15 @@
 import { EmblaOptionsType } from 'embla-carousel'
 import useEmblaCarousel from 'embla-carousel-react'
 import { observer } from 'mobx-react-lite'
-import { forwardRef, useEffect, useImperativeHandle } from 'react'
-import { useLoading } from '../../../hooks/UseLoading'
-import { useStore } from '../../../hooks/UseStore'
+import { forwardRef, useImperativeHandle } from 'react'
+import { IRelease } from '../../../models/release/Release'
+import Loader from '../../Loader'
 import LastReleasesCarouselItem from './LastReleasesCarouselItem'
+
+interface IProps {
+	items: IRelease[]
+	isLoading: boolean
+}
 
 export type CarouselRef = {
 	scrollPrev: () => void
@@ -12,17 +17,7 @@ export type CarouselRef = {
 }
 
 const LastReleasesCarousel = observer(
-	forwardRef<CarouselRef>((_, ref) => {
-		const { releasesStore } = useStore()
-
-		const { execute: fetch, isLoading } = useLoading(
-			releasesStore.fetchLastReleases
-		)
-
-		useEffect(() => {
-			fetch()
-		}, [])
-
+	forwardRef<CarouselRef, IProps>(({ items, isLoading }, ref) => {
 		const options: EmblaOptionsType = { align: 'start', slidesToScroll: 3 }
 		const [emblaRef, emblaApi] = useEmblaCarousel(options)
 
@@ -38,12 +33,12 @@ const LastReleasesCarousel = observer(
 		return (
 			<>
 				{isLoading ? (
-					<div>Loading...</div>
+					<Loader />
 				) : (
 					<div className='embla w-full'>
 						<div className='embla__viewport pt-2' ref={emblaRef}>
 							<div className='embla__container gap-1 touch-pan-y touch-pinch-zoom'>
-								{releasesStore.lastReleases.map(release => (
+								{items.map(release => (
 									<div
 										key={`${release.id}`}
 										className='flex-[0_0_160px] px-1 py-1.5 min-w-0'

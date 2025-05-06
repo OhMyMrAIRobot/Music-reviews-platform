@@ -1,6 +1,8 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { AuthorAPI } from '../api/AuthorAPI'
+import { ReleaseAPI } from '../api/ReleaseAPI'
 import { IAuthor } from '../models/author/Author'
+import { IRelease } from '../models/release/Release'
 
 class AuthorPageStore {
 	constructor() {
@@ -8,16 +10,30 @@ class AuthorPageStore {
 	}
 
 	author: IAuthor | null = null
+	topReleases: IRelease[] = []
 
 	setAuthor(data: IAuthor) {
 		this.author = data
 	}
 
+	setTopReleases(data: IRelease[]) {
+		this.topReleases = data
+	}
+
 	fetchAuthorById = async (id: string) => {
 		try {
 			const data = await AuthorAPI.fetchAuthorById(id)
-			console.log(data)
 			this.setAuthor(data)
+		} catch (e) {
+			console.log(e)
+		}
+	}
+
+	fetchTopReleases = async (authorId: string) => {
+		try {
+			const data = await ReleaseAPI.fetchAuthorTopReleases(authorId)
+			console.log(data)
+			this.setTopReleases(data)
 		} catch (e) {
 			console.log(e)
 		}

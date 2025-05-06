@@ -98,7 +98,7 @@ const LastReleasesCarouselItem: FC<IProps> = ({ release }) => {
 					</button>
 				))}
 			</div>
-			<div className='flex mt-5 items-center px-1 pb-1 gap-1 text-white'>
+			<div className='flex items-center px-1 pb-1 gap-1 text-white mt-auto pt-5'>
 				{ratings.map(rating => {
 					let className =
 						'inline-flex size-7 text-xs items-center justify-center font-semibold rounded-full '

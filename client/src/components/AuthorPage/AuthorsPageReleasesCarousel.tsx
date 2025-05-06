@@ -1,14 +1,15 @@
+import { observer } from 'mobx-react-lite'
 import { useEffect, useRef } from 'react'
-import useCustomNavigate from '../../hooks/UseCustomNavigate'
+import { useParams } from 'react-router'
 import { useLoading } from '../../hooks/UseLoading'
 import { useStore } from '../../hooks/UseStore'
 import LastReleasesCarousel, {
 	CarouselRef,
 } from '../carousel/lastReleases/LastReleasesCarousel'
-import MainCarouselSection from './MainCarouselSection'
+import MainCarouselSection from '../container/MainCarouselSection'
 
-const LastReleasesContainer = () => {
-	const { navigateToReleases } = useCustomNavigate()
+const AuthorsPageReleasesCarousel = observer(() => {
+	const { id } = useParams()
 	const carouselRef = useRef<CarouselRef>(null)
 
 	const handlePrev = () => {
@@ -19,33 +20,35 @@ const LastReleasesContainer = () => {
 		carouselRef.current?.scrollNext()
 	}
 
-	const { releasesStore } = useStore()
+	const { authorPageStore } = useStore()
 
 	const { execute: fetch, isLoading } = useLoading(
-		releasesStore.fetchLastReleases
+		authorPageStore.fetchTopReleases
 	)
 
 	useEffect(() => {
-		fetch()
+		if (id) {
+			fetch(id)
+		}
 	}, [])
 
 	return (
 		<MainCarouselSection
-			title={'Добавленные релизы'}
-			buttonTitle={'Все релизы'}
-			onButtonClick={navigateToReleases}
-			showButton={true}
+			title={'Лучшие работы'}
+			buttonTitle={''}
+			showButton={false}
+			onButtonClick={() => {}}
 			handlePrev={handlePrev}
 			handleNext={handleNext}
 			Carousel={
 				<LastReleasesCarousel
-					items={releasesStore.lastReleases}
+					items={authorPageStore.topReleases}
 					isLoading={isLoading}
 					ref={carouselRef}
 				/>
 			}
 		/>
 	)
-}
+})
 
-export default LastReleasesContainer
+export default AuthorsPageReleasesCarousel
