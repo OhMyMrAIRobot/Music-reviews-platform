@@ -13,8 +13,8 @@ interface IProps {
 
 const ReleaseReviewItem: FC<IProps> = observer(({ review }) => {
 	const { authStore, releasePageStore, notificationsStore } = useStore()
-	const isLiked = review.user_like_ids.some(
-		item => item.user_id === authStore.user?.id
+	const isLiked = review.user_fav_ids.some(
+		item => item.userId === authStore.user?.id
 	)
 
 	const [toggling, setToggling] = useState<boolean>(false)
@@ -47,11 +47,8 @@ const ReleaseReviewItem: FC<IProps> = observer(({ review }) => {
 			return
 		}
 
-		const promise = isLiked
-			? releasePageStore.deleteReviewFromFav(review.id)
-			: releasePageStore.addReviewToFav(review.id)
-
-		promise
+		releasePageStore
+			.toggleFavReview(review.id, isLiked)
 			.then(result => {
 				notificationsStore.addNotification({
 					id: self.crypto.randomUUID(),
@@ -59,16 +56,7 @@ const ReleaseReviewItem: FC<IProps> = observer(({ review }) => {
 					isError: !result.status,
 				})
 			})
-			.catch(() => {
-				notificationsStore.addNotification({
-					id: self.crypto.randomUUID(),
-					text: 'Ошибка при добавлении рецензии в понравившиеся!',
-					isError: true,
-				})
-			})
-			.finally(() => {
-				setToggling(false)
-			})
+			.finally(() => setToggling(false))
 	}
 
 	return (

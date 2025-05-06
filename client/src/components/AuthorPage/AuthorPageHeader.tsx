@@ -34,6 +34,13 @@ const AuthorPageHeader: FC<IProps> = observer(({ author }) => {
 			return
 		}
 
+		if (!authStore.user?.isActive) {
+			notificationsStore.addNoAuthNotification(
+				'Для добавления автора в список понравившихся требуется активировать аккаунт!'
+			)
+			return
+		}
+
 		authorPageStore.toggleFavAuthor(author.id, isLiked).then(result => {
 			notificationsStore.addNotification({
 				id: self.crypto.randomUUID(),

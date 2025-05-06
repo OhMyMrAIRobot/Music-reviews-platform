@@ -89,13 +89,13 @@ const LastReleasesCarouselItem: FC<IProps> = ({ release }) => {
 			</div>
 			<div className='flex flex-wrap gap-1 font-medium leading-3 mt-2 text-[13px]'>
 				{release.author.map(author => (
-					<button
+					<div
 						onClick={e => navigateToAuthorPage(author.id, e)}
 						key={author.name}
 						className='opacity-70 hover:underline hover:opacity-100 transition-colors duration-300 cursor-pointer'
 					>
 						{author.name}
-					</button>
+					</div>
 				))}
 			</div>
 			<div className='flex items-center px-1 pb-1 gap-1 text-white mt-auto pt-5'>

@@ -17,8 +17,8 @@ const ReviewItem: FC<IProps> = observer(({ review }) => {
 	const { authStore, notificationsStore, reviewsStore } = useStore()
 	const [show, setShow] = useState<boolean>(false)
 	const { navigateToRelease } = useCustomNavigate()
-	const isLiked = review.like_user_ids.some(
-		item => item.user_id === authStore.user?.id
+	const isLiked = review.user_fav_ids.some(
+		item => item.userId === authStore.user?.id
 	)
 
 	const [toggling, setToggling] = useState<boolean>(false)
@@ -51,11 +51,8 @@ const ReviewItem: FC<IProps> = observer(({ review }) => {
 			return
 		}
 
-		const promise = isLiked
-			? reviewsStore.deleteReviewFromFav(review.id)
-			: reviewsStore.addReviewToFav(review.id)
-
-		promise
+		reviewsStore
+			.toggleFavReview(review.id, isLiked)
 			.then(result => {
 				notificationsStore.addNotification({
 					id: self.crypto.randomUUID(),
@@ -63,16 +60,7 @@ const ReviewItem: FC<IProps> = observer(({ review }) => {
 					isError: !result.status,
 				})
 			})
-			.catch(() => {
-				notificationsStore.addNotification({
-					id: self.crypto.randomUUID(),
-					text: 'Ошибка при добавлении рецензии в понравившиеся!',
-					isError: true,
-				})
-			})
-			.finally(() => {
-				setToggling(false)
-			})
+			.finally(() => setToggling(false))
 	}
 
 	const ReviewHeader = () => {

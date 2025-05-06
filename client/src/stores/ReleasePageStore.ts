@@ -31,7 +31,7 @@ class ReleasePageStore {
 	fetchReleaseDetails = async (id: string) => {
 		try {
 			const data = await ReleaseAPI.fetchReleaseDetails(id)
-			this.setReviewDetails(data[0])
+			this.setReviewDetails(data)
 		} catch (e) {
 			console.log(e)
 		}
@@ -104,144 +104,79 @@ class ReleasePageStore {
 		}
 	}
 
-	addReleaseToFav = async (
-		releaseId: string
+	toggleFavRelease = async (
+		releaseId: string,
+		isFav: boolean
 	): Promise<{ status: boolean; message: string }> => {
 		try {
-			const data = await ReleaseAPI.addReleaseToFav(releaseId)
-
-			const alreadyLiked = this.releaseDetails?.user_like_ids.some(
-				entry => entry.user_id === data.userId
-			)
-
-			if (!alreadyLiked) {
-				runInAction(() => {
-					if (this.releaseDetails) {
-						this.releaseDetails?.user_like_ids.push({ user_id: data.userId })
-						this.releaseDetails.likes_count += 1
-					}
-				})
+			if (isFav) {
+				await ReleaseAPI.deleteReleaseFromFav(releaseId)
+			} else {
+				await ReleaseAPI.addReleaseToFav(releaseId)
 			}
+
+			const data = await ReleaseAPI.fetchFavReleaseUsersIds(releaseId)
+			console.log(data)
+			runInAction(() => {
+				if (this.releaseDetails) {
+					this.releaseDetails.user_fav_ids = data
+					this.releaseDetails.likes_count = data.length
+				}
+			})
 
 			return {
 				status: true,
-				message: 'Вы отметили релиз как понравившийся!',
+				message: isFav
+					? 'Вы убрали релиз из списка понравившихся!'
+					: 'Вы отметили релиз как понравившейся!',
 			}
-		} catch (e: any) {
+		} catch (e) {
 			console.log(e)
 			return {
 				status: false,
-				message: 'Не удалось отметь релиз как понравившийся!',
+				message: isFav
+					? 'Не удалось убрать релиз из списка понравившихся!'
+					: 'Не удалось отметь релиз как понравившейся!',
 			}
 		}
 	}
 
-	deleteReleaseFromFav = async (
-		releaseId: string
+	toggleFavReview = async (
+		reviewId: string,
+		isFav: boolean
 	): Promise<{ status: boolean; message: string }> => {
 		try {
-			const data = await ReleaseAPI.deleteReleaseFromFav(releaseId)
-			if (this.releaseDetails) {
-				const index = this.releaseDetails.user_like_ids.findIndex(
-					entry => entry.user_id === data.userId
-				)
-
-				if (index !== -1) {
-					runInAction(() => {
-						if (this.releaseDetails) {
-							this.releaseDetails?.user_like_ids.splice(index, 1)
-							this.releaseDetails.likes_count -= 1
-						}
-					})
-				}
-			}
-			return {
-				status: true,
-				message: 'Вы убрали релиз из списка понравившихся!',
-			}
-		} catch (e: any) {
-			console.log(e)
-			return {
-				status: false,
-				message: 'Не удалось убрать релиз из списка понравившихся!',
-			}
-		}
-	}
-
-	addReviewToFav = async (
-		reviewId: string
-	): Promise<{ status: boolean; message: string }> => {
-		try {
-			const data = await ReviewAPI.addReviewToFav(reviewId)
-
-			if (!this.releaseReviews) {
-				throw new Error()
+			if (isFav) {
+				await ReviewAPI.deleteReviewFromFav(reviewId)
+			} else {
+				await ReviewAPI.addReviewToFav(reviewId)
 			}
 
-			const releaseReview = this.releaseReviews.find(
-				item => item.id === data.reviewId
+			const data = await ReviewAPI.fetchFavReviewUsersIds(reviewId)
+			const reviewIdx = this.releaseReviews?.findIndex(
+				val => val.id === reviewId
 			)
-			if (releaseReview) {
-				const alreadyLiked = releaseReview.user_like_ids.some(
-					entry => entry.user_id === data.userId
-				)
 
-				if (!alreadyLiked) {
-					runInAction(() =>
-						releaseReview.user_like_ids.push({ user_id: data.userId })
-					)
-					releaseReview.likes_count += 1
+			runInAction(() => {
+				if (this.releaseReviews && reviewIdx && reviewIdx !== -1) {
+					this.releaseReviews[reviewIdx].user_fav_ids = data
+					this.releaseReviews[reviewIdx].likes_count = data.length
 				}
-			}
+			})
 
 			return {
 				status: true,
-				message: 'Вы отметили рецензию как понравившеюся!',
+				message: isFav
+					? 'Вы убрали рецензию из списка понравившихся!'
+					: 'Вы отметили рецензию как понравившеюся!',
 			}
-		} catch (e: any) {
+		} catch (e) {
 			console.log(e)
 			return {
 				status: false,
-				message: 'Не удалось отметь рецензию как понравившеюся!',
-			}
-		}
-	}
-
-	deleteReviewFromFav = async (
-		reviewId: string
-	): Promise<{ status: boolean; message: string }> => {
-		try {
-			const data = await ReviewAPI.deleteReviewFromFav(reviewId)
-
-			if (!this.releaseReviews) {
-				throw new Error()
-			}
-
-			const releaseReview = this.releaseReviews.find(
-				item => item.id === data.reviewId
-			)
-			if (releaseReview) {
-				const index = releaseReview.user_like_ids.findIndex(
-					entry => entry.user_id === data.userId
-				)
-
-				if (index !== -1) {
-					runInAction(() => {
-						releaseReview.user_like_ids.splice(index, 1)
-						releaseReview.likes_count -= 1
-					})
-				}
-			}
-
-			return {
-				status: true,
-				message: 'Вы убрали рецензию из списка понравившихся!',
-			}
-		} catch (e: any) {
-			console.log(e)
-			return {
-				status: false,
-				message: 'Не удалось убрать рецензию из списка понравившихся!',
+				message: isFav
+					? 'Не удалось убрать рецензию из списка понравившихся!'
+					: 'Не удалось отметь рецензию как понравившеюся!',
 			}
 		}
 	}

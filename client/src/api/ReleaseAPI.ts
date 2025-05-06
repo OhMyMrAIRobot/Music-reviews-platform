@@ -42,8 +42,15 @@ export const ReleaseAPI = {
 		return data
 	},
 
-	async fetchReleaseDetails(id: string): Promise<IReleaseDetails[]> {
-		const { data } = await _api.get<IReleaseDetails[]>(`/details/${id}`)
+	async fetchReleaseDetails(id: string): Promise<IReleaseDetails> {
+		const { data } = await _api.get<IReleaseDetails>(`/details/${id}`)
+		return data
+	},
+
+	async fetchFavReleaseUsersIds(releaseId: string): Promise<IFavRelease[]> {
+		const { data } = await axios.get<IFavRelease[]>(
+			`${SERVER_URL}/user-fav-releases/release/${releaseId}`
+		)
 		return data
 	},
 

@@ -45,6 +45,13 @@ export const ReviewAPI = {
 		return data
 	},
 
+	async fetchFavReviewUsersIds(reviewId: string): Promise<IFavReview[]> {
+		const { data } = await axios.get<IFavReview[]>(
+			`${SERVER_URL}/user-fav-reviews/review/${reviewId}`
+		)
+		return data
+	},
+
 	async addReviewToFav(reviewId: string): Promise<IFavReview> {
 		const { data } = await api.post<IFavReview>('/user-fav-reviews', {
 			reviewId,

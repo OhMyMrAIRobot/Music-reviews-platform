@@ -56,8 +56,8 @@ export const AuthorAPI = {
 	},
 
 	async fetchFavAuthorUsersIds(authorId: string): Promise<IFavAuthor[]> {
-		const { data } = await api.get<IFavAuthor[]>(
-			`/user-fav-authors/author/${authorId}`
+		const { data } = await axios.get<IFavAuthor[]>(
+			`${SERVER_URL}/user-fav-authors/author/${authorId}`
 		)
 		return data
 	},
