@@ -97,6 +97,41 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION handle_fav_review_points()
+    RETURNS TRIGGER AS $$
+DECLARE
+    points_change_author INT;
+    points_change_user INT;
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        points_change_author := 3;
+        points_change_user := 1;
+    ELSIF TG_OP = 'DELETE' THEN
+        points_change_author := -3;
+        points_change_user := -1;
+    ELSE
+        RETURN NULL;
+    END IF;
+
+    UPDATE "User_profiles"
+    SET points = GREATEST(points + points_change_author, 0)
+    FROM "Reviews"
+    WHERE "User_profiles".user_id = "Reviews".user_id
+      AND "Reviews".id = COALESCE(NEW.review_id, OLD.review_id);
+
+    UPDATE "User_profiles"
+    SET points = GREATEST(points + points_change_user, 0)
+    WHERE user_id = COALESCE(NEW.user_id, OLD.user_id);
+
+    RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER fav_review_points_trigger
+AFTER INSERT OR DELETE ON "User_fav_reviews"
+FOR EACH ROW
+EXECUTE FUNCTION handle_fav_review_points();
+
 CREATE OR REPLACE TRIGGER trg_update_release_rating
 AFTER INSERT OR UPDATE OR DELETE ON "Reviews"
 FOR EACH ROW
