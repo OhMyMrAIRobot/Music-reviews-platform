@@ -15,6 +15,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.interface';
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
+import { AuthorReviewsParamsDto } from './dto/author-reviews-params.dto';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { DeleteReviewDto } from './dto/delete-review.dto';
 import { ReleaseReviewParamsDto } from './dto/release-review-params.dto';
@@ -38,6 +39,11 @@ export class ReviewsController {
     @Query() query: ReleaseReviewQueryDto,
   ) {
     return this.reviewsService.findByReleaseId(params.id, query);
+  }
+
+  @Get('author/:id')
+  findByAuthorId(@Param() params: AuthorReviewsParamsDto) {
+    return this.reviewsService.findByAuthorId(params.id);
   }
 
   @Get('user/:id')

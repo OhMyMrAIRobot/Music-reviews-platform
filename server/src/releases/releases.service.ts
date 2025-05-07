@@ -5,7 +5,10 @@ import { EntityNotFoundException } from 'src/exceptions/entity-not-found.excepti
 import { NoDataProvidedException } from 'src/exceptions/no-data.exception';
 import { ReleaseTypesService } from 'src/release-types/release-types.service';
 import { CreateReleaseDto } from './dto/create-release.dto';
-import { ReleaseDetailResponseDto } from './dto/release-detail.response.dto';
+import {
+  QueryReleaseDetailResponseDto,
+  ReleaseDetailResponseDto,
+} from './dto/release-detail.response.dto';
 import {
   ReleaseResponseData,
   ReleaseResponseDto,
@@ -133,7 +136,10 @@ export class ReleasesService {
             WHERE rd.release_id = r.id
           ) AS designers,
           COUNT(DISTINCT ufr.user_id)::int AS likes_count,
-          JSON_AGG(DISTINCT JSONB_BUILD_OBJECT('user_id', ufr.user_id)) AS user_like_ids,
+          JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
+              'userId', ufr.user_id,
+              'releaseId', ufr.release_id
+              )) AS user_fav_ids,
           JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
               'type', rrt.type,
               'total', rr.total
@@ -151,11 +157,17 @@ export class ReleasesService {
         WHERE r.id = '${releaseId}'
         GROUP BY r.id, rt.type`;
 
-    return this.prisma.$queryRawUnsafe<ReleaseDetailResponseDto>(rawQuery);
+    const release =
+      await this.prisma.$queryRawUnsafe<QueryReleaseDetailResponseDto>(
+        rawQuery,
+      );
+
+    return release[0];
   }
 
-  async findAuthorTopReleases(
+  async findAuthorReleases(
     authorId: string,
+    findAll: boolean,
   ): Promise<ReleaseResponseData[]> {
     const rawQuery = `
         WITH release_data as (
@@ -200,8 +212,8 @@ export class ReleasesService {
             FROM jsonb_array_elements(rd.author::jsonb) AS a
             WHERE (a->>'id')::text = '${authorId}'
         )
-        ORDER BY no_text_rating + text_rating + super_user_rating desc
-        LIMIT 15 OFFSET 0
+        ORDER BY ${findAll ? 'rd.publish_date' : 'no_text_rating + text_rating + super_user_rating'} desc
+        ${findAll ? '' : 'LIMIT 15 OFFSET 0'}
     `;
     return this.prisma.$queryRawUnsafe<ReleaseResponseData[]>(rawQuery);
   }

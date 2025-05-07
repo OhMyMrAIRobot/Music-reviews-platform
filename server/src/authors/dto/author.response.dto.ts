@@ -4,7 +4,8 @@ export class AuthorResponseDto {
   cover: string;
   name: string;
   likes_count: number;
-  author_types: [{ type: string }];
+  user_fav_ids: { userId: string; authorId: string }[];
+  author_types: { type: string }[];
   release_type_stats: [
     {
       type: string;
@@ -16,3 +17,5 @@ export class AuthorResponseDto {
     },
   ];
 }
+
+export class QueryAuthorResponseDto extends Array<AuthorResponseDto> {}

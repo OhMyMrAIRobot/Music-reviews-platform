@@ -41,7 +41,12 @@ export class ReleasesController {
 
   @Get('author/top/:id')
   findAuthorTopReleases(@Param() params: AuthorTopReleasesParamsDto) {
-    return this.releasesService.findAuthorTopReleases(params.id);
+    return this.releasesService.findAuthorReleases(params.id, false);
+  }
+
+  @Get('author/all/:id')
+  findAuthorAllReleases(@Param() params: AuthorTopReleasesParamsDto) {
+    return this.releasesService.findAuthorReleases(params.id, true);
   }
 
   @Get('details/:id')

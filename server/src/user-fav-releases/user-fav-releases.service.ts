@@ -48,13 +48,13 @@ export class UserFavReleasesService {
       where: { userId },
     });
 
-    if (result.length === 0) {
-      throw new EntityNotFoundException(
-        'Понравившиеся релизы',
-        'id пользователя',
-        `${userId}`,
-      );
-    }
+    // if (result.length === 0) {
+    //   throw new EntityNotFoundException(
+    //     'Понравившиеся релизы',
+    //     'id пользователя',
+    //     `${userId}`,
+    //   );
+    // }
     return result;
   }
 
@@ -63,13 +63,13 @@ export class UserFavReleasesService {
       where: { releaseId },
     });
 
-    if (result.length === 0) {
-      throw new EntityNotFoundException(
-        'Пользователи, которорым понравился релиз',
-        'id',
-        `${releaseId}`,
-      );
-    }
+    // if (result.length === 0) {
+    //   throw new EntityNotFoundException(
+    //     'Пользователи, которорым понравился релиз',
+    //     'id',
+    //     `${releaseId}`,
+    //   );
+    // }
     return result;
   }
 

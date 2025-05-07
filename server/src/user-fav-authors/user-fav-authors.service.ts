@@ -48,13 +48,13 @@ export class UserFavAuthorsService {
       where: { userId },
     });
 
-    if (result.length === 0) {
-      throw new EntityNotFoundException(
-        'Понравившиеся авторы',
-        'id пользователя',
-        `${userId}`,
-      );
-    }
+    // if (result.length === 0) {
+    //   throw new EntityNotFoundException(
+    //     'Понравившиеся авторы',
+    //     'id пользователя',
+    //     `${userId}`,
+    //   );
+    // }
     return result;
   }
 
@@ -63,13 +63,13 @@ export class UserFavAuthorsService {
       where: { authorId },
     });
 
-    if (result.length === 0) {
-      throw new EntityNotFoundException(
-        'Пользователи, которорым понравилcя автора',
-        'id',
-        `${authorId}`,
-      );
-    }
+    // if (result.length === 0) {
+    //   throw new EntityNotFoundException(
+    //     'Пользователи, которорым понравилcя автора',
+    //     'id',
+    //     `${authorId}`,
+    //   );
+    // }
     return result;
   }
 

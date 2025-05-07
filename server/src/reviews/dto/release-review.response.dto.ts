@@ -20,9 +20,5 @@ export class ReleaseReview {
   avatar: string;
   position: number | null;
   likes_count: number;
-  user_like_ids: [
-    {
-      user_id: string | null;
-    },
-  ];
+  user_fav_ids: { userId: string; authorId: string }[];
 }
