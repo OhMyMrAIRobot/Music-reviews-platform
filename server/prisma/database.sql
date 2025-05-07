@@ -201,5 +201,69 @@ EXECUTE FUNCTION handle_favorite_points();
 -------------------------------------------------------------------------
 -------------------------------------------------------------------------
 
+--------------------------------------
+-- FUNCTION TO UPDATE REVIEW POINTS --
+CREATE OR REPLACE FUNCTION handle_review_points()
+    RETURNS TRIGGER AS $$
+DECLARE
+    points_change INT;
+    had_text BOOLEAN;
+    has_text BOOLEAN;
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        IF NEW.title IS NULL OR NEW.title = '' THEN
+            points_change := 25;
+        ELSE
+            points_change := 100;
+        END IF;
 
+        UPDATE "User_profiles"
+        SET points = points + points_change
+        WHERE user_id = NEW.user_id;
 
+    ELSIF TG_OP = 'UPDATE' THEN
+        had_text := (OLD.title IS NOT NULL AND OLD.title != '');
+        has_text := (NEW.title IS NOT NULL AND NEW.title != '');
+
+        IF NOT had_text AND has_text THEN
+            points_change := 75;
+            UPDATE "User_profiles"
+            SET points = points + points_change
+            WHERE user_id = NEW.user_id;
+
+        ELSIF had_text AND NOT has_text THEN
+            points_change := -75;
+            UPDATE "User_profiles"
+            SET points = GREATEST(points + points_change, 0)
+            WHERE user_id = NEW.user_id;
+        END IF;
+
+    ELSIF TG_OP = 'DELETE' THEN
+        IF OLD.title IS NULL OR OLD.title = '' THEN
+            points_change := -25;
+        ELSE
+            points_change := -100;
+        END IF;
+
+        UPDATE "User_profiles"
+        SET points = GREATEST(points + points_change, 0)
+        WHERE user_id = OLD.user_id;
+    END IF;
+
+    RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;
+END;
+$$ LANGUAGE plpgsql;
+
+-----------------------------------
+-- INSERT OR UPDATE ON "REVIEWS" --
+CREATE TRIGGER review_points_insert_update
+    AFTER INSERT OR UPDATE OF text ON "Reviews"
+    FOR EACH ROW
+EXECUTE FUNCTION handle_review_points();
+
+-------------------------
+-- DELETE ON "REVIEWS" --
+CREATE TRIGGER review_points_delete
+    AFTER DELETE ON "Reviews"
+    FOR EACH ROW
+EXECUTE FUNCTION handle_review_points();
