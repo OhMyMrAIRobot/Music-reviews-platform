@@ -21,6 +21,7 @@ import { UserFavAuthorsModule } from './user-fav-authors/user-fav-authors.module
 import { UserFavReleasesModule } from './user-fav-releases/user-fav-releases.module';
 import { UserFavReviewsModule } from './user-fav-reviews/user-fav-reviews.module';
 import { UsersModule } from './users/users.module';
+import { LeaderboardModule } from './leaderboard/leaderboard.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { UsersModule } from './users/users.module';
     UserFavReviewsModule,
     UserFavAuthorsModule,
     PrismaModule,
+    LeaderboardModule,
   ],
   controllers: [],
   providers: [],
