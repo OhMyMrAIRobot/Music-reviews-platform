@@ -34,31 +34,31 @@ const ReviewMarks: FC<IProps> = ({
 			<div className='flex gap-x-1.5 font-bold text-sx lg:text-sm'>
 				<TooltipSpan
 					tooltip={<ReviewToolTip text='Рифмы / Образы' />}
-					spanClassName='text-[rgba(35,101,199)]'
+					spanClassName='text-[rgba(35,101,199)] relative inline-block'
 				>
 					{rhymes}
 				</TooltipSpan>
 				<TooltipSpan
 					tooltip={<ReviewToolTip text='Структура / Ритмика' />}
-					spanClassName='text-[rgba(35,101,199)]'
+					spanClassName='text-[rgba(35,101,199)] relative inline-block'
 				>
 					{structure}
 				</TooltipSpan>
 				<TooltipSpan
 					tooltip={<ReviewToolTip text='Реализация стиля' />}
-					spanClassName='text-[rgba(35,101,199)]'
+					spanClassName='text-[rgba(35,101,199)] relative inline-block'
 				>
 					{realization}
 				</TooltipSpan>
 				<TooltipSpan
 					tooltip={<ReviewToolTip text='Индивидуальность / Харизма' />}
-					spanClassName='text-[rgba(35,101,199)]'
+					spanClassName='text-[rgba(35,101,199)] relative inline-block'
 				>
 					{individuality}
 				</TooltipSpan>
 				<TooltipSpan
 					tooltip={<ReviewToolTip text='Атмосфера / Вайб' />}
-					spanClassName='text-[rgba(160,80,222)]'
+					spanClassName='text-[rgba(160,80,222)] relative inline-block'
 				>
 					{atmosphere}
 				</TooltipSpan>

@@ -42,13 +42,13 @@ const AuthorPageReleaseItem: FC<IProps> = ({ release }) => {
 					<div className='flex gap-2 items-top font-semibold text-sm'>
 						{release.text_count > 0 && (
 							<div className='flex gap-0.75 items-center'>
-								<TextReviewSvgIcon />
+								<TextReviewSvgIcon classname='size-3' />
 								<span>{release.text_count}</span>
 							</div>
 						)}
 						{release.no_text_count > 0 && (
 							<div className='flex gap-0.75 items-center'>
-								<NoTextReviewSvgIcon />
+								<NoTextReviewSvgIcon classname='size-3' />
 								<span>{release.no_text_count}</span>
 							</div>
 						)}
@@ -84,8 +84,7 @@ const AuthorPageReleaseItem: FC<IProps> = ({ release }) => {
 
 			<div className='flex items-center gap-[5px] select-none ml-auto pr-5'>
 				{ratings.map(rating => {
-					let className =
-						'inline-flex size-[30px] lg:size-[45px] text-sm lg:text-[22px] items-center justify-center font-semibold rounded-full '
+					let className = ''
 					let tooltip = ''
 					if (rating?.type === ReleaseRatingTypesEnum.SUPER_USER) {
 						className += 'bg-[rgba(255,255,255,.1)]'
@@ -101,11 +100,15 @@ const AuthorPageReleaseItem: FC<IProps> = ({ release }) => {
 					return (
 						<TooltipSpan
 							key={rating?.type}
-							tooltip={<ToolTip text={tooltip} />}
-							spanClassName={className}
+							tooltip={<ToolTip>{tooltip}</ToolTip>}
+							spanClassName={'relative rounded-full'}
 							centered={false}
 						>
-							{rating?.total}
+							<div
+								className={`inline-flex size-[30px] lg:size-[45px] text-sm lg:text-[22px] items-center justify-center font-semibold rounded-full ${className}`}
+							>
+								{rating?.total}
+							</div>
 						</TooltipSpan>
 					)
 				})}

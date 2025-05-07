@@ -90,8 +90,12 @@ const AuthorPageHeader: FC<IProps> = observer(({ author }) => {
 							<h2 className='text-sm lg:text-4xl font-bold'>{author.name}</h2>
 							{author.author_types.map(type => (
 								<TooltipSpan
-									tooltip={<ToolTip text={type.type} />}
-									spanClassName='text-white'
+									tooltip={
+										<ToolTip>
+											<span>{type.type}</span>
+										</ToolTip>
+									}
+									spanClassName='text-white relative'
 									key={type.type}
 								>
 									{(() => {
@@ -110,10 +114,17 @@ const AuthorPageHeader: FC<IProps> = observer(({ author }) => {
 							))}
 						</div>
 
-						<div className='bg-zinc-950 px-3 py-1 lg:px-5 lg:py-3 rounded-xl items-center inline-flex gap-1 select-none'>
-							<ReleaseLikesSvgIcon />
-							<span className='leading-3'>{author.likes_count}</span>
-						</div>
+						<TooltipSpan
+							spanClassName='bg-zinc-950 px-3 py-1 lg:px-5 lg:py-3 rounded-xl items-center inline-flex gap-1 select-none relative'
+							tooltip={
+								<ToolTip>{'Количество добавлений в предпочтения'}</ToolTip>
+							}
+						>
+							<div className='flex items-center gap-1'>
+								<ReleaseLikesSvgIcon />
+								<span className='leading-3'>{author.likes_count}</span>
+							</div>
+						</TooltipSpan>
 					</div>
 				</div>
 			</div>

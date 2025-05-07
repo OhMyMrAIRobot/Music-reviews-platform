@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, ReactNode } from 'react'
 import useCustomNavigate from '../../hooks/UseCustomNavigate'
 import { IAuthorData } from '../../models/author/AuthorsResponse'
 import { AuthorTypesEnum } from '../../models/author/AuthorTypes'
@@ -8,12 +8,12 @@ import TooltipSpan from '../releasePage/tooltip/TooltipSpan'
 import AuthorReleaseTypesRatings from './AuthorReleaseTypesRatings'
 import { ArtistSvgIcon, DesignerSvgIcon, ProducerSvgIcon } from './AuthorSvg'
 
-export const ToolTip: FC<{ text: string }> = ({ text }) => {
+export const ToolTip: FC<{ children: ReactNode }> = ({ children }) => {
 	return (
 		<div
 			className={`bg-primary border-2 border-gray-600 rounded-lg text-white text-xs font-extrabold px-3 py-1 xs:max-w-30 md:max-w-45 lg:max-w-full lg:whitespace-nowrap`}
 		>
-			{text}
+			{children}
 		</div>
 	)
 }
@@ -45,8 +45,8 @@ const AuthorItem: FC<IProps> = ({ author }) => {
 				<span>{author.name}</span>
 				{author.author_types.map(type => (
 					<TooltipSpan
-						tooltip={<ToolTip text={type.type} />}
-						spanClassName='text-white'
+						tooltip={<ToolTip>{type.type}</ToolTip>}
+						spanClassName='text-white relative'
 						key={type.type}
 					>
 						{(() => {
@@ -66,8 +66,8 @@ const AuthorItem: FC<IProps> = ({ author }) => {
 			</div>
 
 			<TooltipSpan
-				tooltip={<ToolTip text={'Количество добавлений в предпочтения'} />}
-				spanClassName='text-white'
+				tooltip={<ToolTip>{'Количество добавлений в предпочтения'}</ToolTip>}
+				spanClassName='text-white relative'
 			>
 				<div className='flex gap-x-1 items-center justify-center font-medium'>
 					<ReleaseLikesSvgIcon />

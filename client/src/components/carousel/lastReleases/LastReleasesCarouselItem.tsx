@@ -67,13 +67,13 @@ const LastReleasesCarouselItem: FC<IProps> = ({ release }) => {
 					<div className='absolute bottom-1.5 left-1.5 bg-zinc-900 rounded-full px-1.5 flex gap-2 items-center font-semibold text-sm'>
 						{release.text_count > 0 && (
 							<div className='flex gap-0.75 items-center'>
-								<TextReviewSvgIcon />
+								<TextReviewSvgIcon classname='size-3' />
 								<span>{release.text_count}</span>
 							</div>
 						)}
 						{release.no_text_count > 0 && (
 							<div className='flex gap-0.75 items-center'>
-								<NoTextReviewSvgIcon />
+								<NoTextReviewSvgIcon classname='size-3' />
 								<span>{release.no_text_count}</span>
 							</div>
 						)}

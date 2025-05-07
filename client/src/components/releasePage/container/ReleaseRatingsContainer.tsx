@@ -23,7 +23,7 @@ const ReleaseRatingsContainer: FC<IProps> = ({ release }) => {
 		<div className='flex justify-center lg:justify-start gap-x-3 select-none'>
 			{ratings.map(rating => {
 				let className =
-					'w-20 h-8 lg:w-22 lg:h-10 rounded-3xl flex items-center justify-center text-xl lg:text-2xl font-bold '
+					'w-20 h-8 lg:w-22 lg:h-10 rounded-3xl flex items-center justify-center text-xl lg:text-2xl font-bold relative '
 
 				if (rating?.type === ReleaseRatingTypesEnum.SUPER_USER) {
 					className += 'bg-[rgba(255,255,255,.1)]'
@@ -41,7 +41,6 @@ const ReleaseRatingsContainer: FC<IProps> = ({ release }) => {
 					rating && (
 						<TooltipSpan
 							key={rating.type}
-							children={rating?.total}
 							tooltip={
 								<RatingDetailsTooltip
 									rating={rating}
@@ -50,7 +49,9 @@ const ReleaseRatingsContainer: FC<IProps> = ({ release }) => {
 								/>
 							}
 							spanClassName={className}
-						/>
+						>
+							{rating?.total}
+						</TooltipSpan>
 					)
 				)
 			})}

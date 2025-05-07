@@ -1,5 +1,7 @@
 import { useEffect } from 'react'
+import Loader from '../components/Loader'
 import LBHeader from '../components/leaderboardPage/LBHeader'
+import LBItem from '../components/leaderboardPage/LBItem'
 import { useLoading } from '../hooks/UseLoading'
 import { useStore } from '../hooks/UseStore'
 
@@ -11,12 +13,22 @@ const LeaderboardPage = () => {
 	)
 
 	useEffect(() => {
-		fetch().then(result => console.log(result))
+		fetch()
 	}, [])
 
 	return (
-		<div className='max-w-[1300px] mx-auto'>
+		<div className='max-w-[1000px] mx-auto'>
 			<LBHeader />
+			<div className='mt-5 flex flex-col gap-y-3.5'>
+				{isLoading ? (
+					<Loader />
+				) : (
+					leaderboardStore.items.length > 0 &&
+					leaderboardStore.items.map(item => (
+						<LBItem item={item} key={item.user_id} />
+					))
+				)}
+			</div>
 		</div>
 	)
 }
