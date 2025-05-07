@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
 import { useParams } from 'react-router'
+import AuthorPageReleases from '../components/authorPage/AuthorPageAllReleases/AuthorPageReleases'
 import AuthorPageHeader from '../components/authorPage/AuthorPageHeader'
 import AuthorPageReviewsCarousel from '../components/authorPage/AuthorPageReviewsCarousel'
 import AuthorPageStats from '../components/authorPage/AuthorPageStats'
@@ -20,7 +21,7 @@ const AuthorPage = observer(() => {
 		if (id) {
 			fetchAuthor(id)
 		}
-	}, [])
+	}, [id])
 
 	return isAuthorLoading ? (
 		<Loader />
@@ -31,6 +32,7 @@ const AuthorPage = observer(() => {
 				<AuthorPageStats author={authorPageStore.author} />
 				<AuthorsPageReleasesCarousel />
 				<AuthorPageReviewsCarousel />
+				<AuthorPageReleases />
 			</div>
 		)
 	)

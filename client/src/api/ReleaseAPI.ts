@@ -42,6 +42,11 @@ export const ReleaseAPI = {
 		return data
 	},
 
+	async fetchAuthorAllReleases(authorId: string): Promise<IRelease[]> {
+		const { data } = await _api.get<IRelease[]>(`author/all/${authorId}`)
+		return data
+	},
+
 	async fetchReleaseDetails(id: string): Promise<IReleaseDetails> {
 		const { data } = await _api.get<IReleaseDetails>(`/details/${id}`)
 		return data

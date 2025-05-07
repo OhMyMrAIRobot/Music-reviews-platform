@@ -27,19 +27,20 @@ export const GetReleaseIcon = (releaseType: string) => {
 
 const LastReleasesCarouselItem: FC<IProps> = ({ release }) => {
 	const { navigateToRelease, navigateToAuthor } = useCustomNavigate()
+
+	const navigateToAuthorPage = (
+		id: string,
+		e: React.MouseEvent<HTMLDivElement>
+	) => {
+		e.stopPropagation()
+		navigateToAuthor(id)
+	}
+
 	const ratingOrder = [
 		ReleaseRatingTypesEnum.SUPER_USER,
 		ReleaseRatingTypesEnum.WITH_TEXT,
 		ReleaseRatingTypesEnum.NO_TEXT,
 	]
-
-	const navigateToAuthorPage = (
-		id: string,
-		e: React.MouseEvent<HTMLButtonElement>
-	) => {
-		e.stopPropagation()
-		navigateToAuthor(id)
-	}
 
 	const ratings = ratingOrder
 		.map(type => release.ratings.find(r => r.type === type))
@@ -48,7 +49,7 @@ const LastReleasesCarouselItem: FC<IProps> = ({ release }) => {
 	return (
 		<button
 			onClick={() => navigateToRelease(release.id)}
-			className='bg-secondary hover:scale-105 p-1 overflow-hidden flex flex-col justify-start relative w-full h-full rounded-xl border border-zinc-800 duration-300 cursor-pointer'
+			className='bg-zinc-900 hover:scale-105 p-1 overflow-hidden flex flex-col justify-start relative w-full h-full rounded-xl border border-zinc-800 duration-300 cursor-pointer'
 		>
 			<div className='relative block'>
 				<div className='rounded-lg size-full min-h-35'>

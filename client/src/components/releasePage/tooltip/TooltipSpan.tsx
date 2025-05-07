@@ -4,12 +4,14 @@ interface ITooltipSpanProps {
 	children: ReactNode
 	tooltip: ReactNode
 	spanClassName: string
+	centered?: boolean
 }
 
 const TooltipSpan: FC<ITooltipSpanProps> = ({
 	children,
 	tooltip,
 	spanClassName,
+	centered = true,
 }) => {
 	const [show, setShow] = useState(false)
 
@@ -21,7 +23,11 @@ const TooltipSpan: FC<ITooltipSpanProps> = ({
 		>
 			<span className={spanClassName}>{children}</span>
 			<div
-				className={`absolute z-2000 bottom-full left-1/2 -translate-x-1/2 mb-0.5 rounded transition-all duration-300 ${
+				className={`absolute z-2000 bottom-full left-1/${
+					centered ? '2' : '1'
+				} -translate-x-1/${
+					centered ? '2' : '1'
+				} mb-0.5 rounded transition-all duration-300 ${
 					show ? 'opacity-100 visible' : 'opacity-0 invisible'
 				}`}
 			>

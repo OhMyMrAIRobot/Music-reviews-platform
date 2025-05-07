@@ -14,6 +14,7 @@ class AuthorPageStore {
 	author: IAuthor | null = null
 	topReleases: IRelease[] = []
 	lastReviews: IReview[] = []
+	allReleases: IRelease[] = []
 
 	setAuthor(data: IAuthor) {
 		this.author = data
@@ -25,6 +26,10 @@ class AuthorPageStore {
 
 	setLastReviews(data: IReview[]) {
 		this.lastReviews = data
+	}
+
+	setAllReleases(data: IRelease[]) {
+		this.allReleases = data
 	}
 
 	fetchAuthorById = async (id: string) => {
@@ -49,6 +54,15 @@ class AuthorPageStore {
 		try {
 			const data = await ReviewAPI.fetchReviewsByAuthorId(authorId)
 			this.setLastReviews(data)
+		} catch (e) {
+			console.log(e)
+		}
+	}
+
+	fetchAllReleases = async (authorId: string) => {
+		try {
+			const data = await ReleaseAPI.fetchAuthorAllReleases(authorId)
+			this.setAllReleases(data)
 		} catch (e) {
 			console.log(e)
 		}
