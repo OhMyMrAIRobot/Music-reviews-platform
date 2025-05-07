@@ -1,3 +1,5 @@
+---------------------------------------------
+-- FUNCTION TO CALCULATE AVG REVIEW SCORES --
 CREATE OR REPLACE FUNCTION get_avg_review_score(
     _release_id TEXT,
     rating_type TEXT,
@@ -37,6 +39,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+
+----------------------------------------
+-- FUNCTION TO UPDATE RELEASE RATINGS --
 create function update_release_rating() returns trigger
     language plpgsql
 as
@@ -97,6 +102,19 @@ BEGIN
 END;
 $$;
 
+--------------------------------------------
+-- INSERT OR UPDATE OR DELETE ON "Reviews" --
+CREATE OR REPLACE TRIGGER trg_update_release_rating
+AFTER INSERT OR UPDATE OR DELETE ON "Reviews"
+FOR EACH ROW
+EXECUTE FUNCTION update_release_rating();
+
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+
+------------------------------------------
+-- FUNCTION TO UPDATE FAV REVIEW POINTS --
 CREATE OR REPLACE FUNCTION handle_fav_review_points()
     RETURNS TRIGGER AS $$
 DECLARE
@@ -127,12 +145,40 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+--------------------------------------------
+-- INSERT OR DELETE ON "User_fav_reviews" --
 CREATE TRIGGER fav_review_points_trigger
 AFTER INSERT OR DELETE ON "User_fav_reviews"
 FOR EACH ROW
 EXECUTE FUNCTION handle_fav_review_points();
 
-CREATE OR REPLACE TRIGGER trg_update_release_rating
-AFTER INSERT OR UPDATE OR DELETE ON "Reviews"
-FOR EACH ROW
-EXECUTE FUNCTION update_release_rating();
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+
+-------------------------------------------
+-- FUNCTION TO UPDATE FAV RELEASE POINTS --
+CREATE OR REPLACE FUNCTION handle_fav_release_points()
+    RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        UPDATE "User_profiles"
+        SET points = points + 5
+        WHERE user_id = NEW.user_id;
+    ELSIF TG_OP = 'DELETE' THEN
+        UPDATE "User_profiles"
+        SET points = GREATEST(points - 5, 0)
+        WHERE user_id = OLD.user_id;
+    END IF;
+
+    RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;
+END;
+$$ LANGUAGE plpgsql;
+
+---------------------------------------------
+-- INSERT OR DELETE ON "User_fav_releases" --
+CREATE TRIGGER fav_release_points_trigger
+    AFTER INSERT OR DELETE ON "User_fav_releases"
+    FOR EACH ROW
+EXECUTE FUNCTION handle_fav_release_points();
+
