@@ -1,6 +1,7 @@
 import AuthorPageStore from './AuthorPageStore'
 import AuthorsStore from './AuthorsStore'
 import AuthStore from './AuthStore'
+import LeaderboardStore from './LeaderboardStore'
 import NotificationsStore from './NotificationsStore'
 import ReleasePageStore from './ReleasePageStore'
 import ReleasesStore from './ReleasesStore'
@@ -14,6 +15,7 @@ class Store {
 	releasePageStore = ReleasePageStore
 	authorsStore = AuthorsStore
 	authorPageStore = AuthorPageStore
+	leaderboardStore = LeaderboardStore
 }
 
 export default Store
