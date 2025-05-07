@@ -1,13 +1,15 @@
 import { useEffect, useRef } from 'react'
+import { useParams } from 'react-router'
 import useCustomNavigate from '../../hooks/UseCustomNavigate'
 import { useLoading } from '../../hooks/UseLoading'
 import { useStore } from '../../hooks/UseStore'
 import { CarouselRef } from '../carousel/lastReleases/LastReleasesCarousel'
 import LastReviewsCarousel from '../carousel/lastReviews/LastReviewsCarousel'
-import MainCarouselSection from './MainCarouselSection'
+import MainCarouselSection from '../container/MainCarouselSection'
 
-const LastReviewsContainer = () => {
-	const { reviewsStore } = useStore()
+const AuthorPageReviewsCarousel = () => {
+	const { id } = useParams()
+	const { authorPageStore } = useStore()
 	const { navigateToReviews } = useCustomNavigate()
 
 	const carouselRef = useRef<CarouselRef>(null)
@@ -20,18 +22,20 @@ const LastReviewsContainer = () => {
 	}
 
 	const { execute: fetch, isLoading } = useLoading(
-		reviewsStore.fetchLastReviews
+		authorPageStore.fetchLastReviews
 	)
 
 	useEffect(() => {
-		fetch()
+		if (id) {
+			fetch(id)
+		}
 	}, [])
 
 	return (
 		<MainCarouselSection
-			title={'Новые рецензии'}
-			buttonTitle={'Все рецензии'}
-			showButton={true}
+			title={'Последние рецензии'}
+			buttonTitle={''}
+			showButton={false}
 			onButtonClick={navigateToReviews}
 			handlePrev={handlePrev}
 			handleNext={handleNext}
@@ -39,12 +43,12 @@ const LastReviewsContainer = () => {
 				<LastReviewsCarousel
 					ref={carouselRef}
 					isLoading={isLoading}
-					items={reviewsStore.lastReviews}
-					rowCount={3}
+					items={authorPageStore.lastReviews}
+					rowCount={1}
 				/>
 			}
 		/>
 	)
 }
 
-export default LastReviewsContainer
+export default AuthorPageReviewsCarousel

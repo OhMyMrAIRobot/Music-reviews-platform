@@ -1,9 +1,10 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
 import { useParams } from 'react-router'
-import AuthorPageHeader from '../components/AuthorPage/AuthorPageHeader'
-import AuthorPageStats from '../components/AuthorPage/AuthorPageStats'
-import AuthorsPageReleasesCarousel from '../components/AuthorPage/AuthorsPageReleasesCarousel'
+import AuthorPageHeader from '../components/authorPage/AuthorPageHeader'
+import AuthorPageReviewsCarousel from '../components/authorPage/AuthorPageReviewsCarousel'
+import AuthorPageStats from '../components/authorPage/AuthorPageStats'
+import AuthorsPageReleasesCarousel from '../components/authorPage/AuthorsPageReleasesCarousel'
 import Loader from '../components/Loader'
 import { useLoading } from '../hooks/UseLoading'
 import { useStore } from '../hooks/UseStore'
@@ -25,10 +26,11 @@ const AuthorPage = observer(() => {
 		<Loader />
 	) : (
 		authorPageStore.author && (
-			<div className='grid gap-10'>
+			<div className='flex flex-col gap-10'>
 				<AuthorPageHeader author={authorPageStore.author} />
 				<AuthorPageStats author={authorPageStore.author} />
 				<AuthorsPageReleasesCarousel />
+				<AuthorPageReviewsCarousel />
 			</div>
 		)
 	)

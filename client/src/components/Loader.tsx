@@ -7,7 +7,7 @@ interface IProps {
 const Loader: FC<IProps> = ({ size = 20 }) => {
 	return (
 		<div
-			className={`size-${size} mx-auto border-t-4 border-b-1 border-white rounded-full animate-spin`}
+			className={`size-20 mx-auto border-t-4 border-b-1 border-white rounded-full animate-spin`}
 		></div>
 	)
 }
