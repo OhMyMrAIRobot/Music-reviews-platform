@@ -267,3 +267,76 @@ CREATE TRIGGER review_points_delete
     AFTER DELETE ON "Reviews"
     FOR EACH ROW
 EXECUTE FUNCTION handle_review_points();
+
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+
+----------------------------------------------
+-- FUNCTION TO UPDATE TOP_USERS_LEADERBOARD --
+CREATE OR REPLACE FUNCTION refresh_top_users()
+    RETURNS VOID AS $$
+BEGIN
+    LOCK TABLE "Top_users_leaderboard" IN EXCLUSIVE MODE;
+
+    DELETE FROM "Top_users_leaderboard"
+    WHERE user_id NOT IN (
+        SELECT user_id FROM "User_profiles"
+        WHERE points > 0
+        ORDER BY points DESC
+        LIMIT 90
+    );
+
+    INSERT INTO "Top_users_leaderboard" (id, user_id, rank, updated_at)
+    SELECT
+        gen_random_uuid(),
+        up.user_id,
+        ROW_NUMBER() OVER (ORDER BY up.points DESC) as rank,
+        Now()
+    FROM
+        "User_profiles" up
+    WHERE
+        up.points > 0 AND
+        up.user_id NOT IN (SELECT user_id FROM "Top_users_leaderboard")
+    ORDER BY
+        up.points DESC
+    LIMIT 90
+    ON CONFLICT (user_id)
+        DO UPDATE SET
+        rank = EXCLUDED.rank;
+
+    UPDATE "Top_users_leaderboard" t
+    SET
+        rank = subq.new_rank
+    FROM (
+             SELECT
+                 user_id,
+                 ROW_NUMBER() OVER (ORDER BY points DESC) as new_rank
+             FROM "User_profiles"
+             WHERE points > 0
+             ORDER BY points DESC
+             LIMIT 90
+         ) subq
+    WHERE t.user_id = subq.user_id;
+END;
+$$ LANGUAGE plpgsql;
+
+
+--------------------------------------------
+-- FUNCTION TO EXECUTE UPDATE LEADERBOARD --
+CREATE OR REPLACE FUNCTION update_leaderboard_on_change()
+    RETURNS TRIGGER AS $$
+BEGIN
+    IF (SELECT MAX(updated_at) FROM "Top_users_leaderboard") < NOW() - INTERVAL '30 minutes' THEN
+        PERFORM refresh_top_users();
+    END IF;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+------------------------------------
+-- TRIGGER FOR UPDATE LEADERBOARD --
+CREATE TRIGGER trigger_leaderboard_update
+    AFTER INSERT OR UPDATE OF points ON "User_profiles"
+    FOR EACH STATEMENT
+EXECUTE FUNCTION update_leaderboard_on_change();

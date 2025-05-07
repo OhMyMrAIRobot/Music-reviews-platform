@@ -9,12 +9,13 @@ model User {
   roleId String @map("role_id")
   role   Role   @relation(fields: [roleId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-  profile        UserProfile?
-  refreshToken   RefreshToken?
-  Review         Review[]
-  UserFavRelease UserFavRelease[]
-  UserFavReviews UserFavReview[]
-  UserFavAuthor  UserFavAuthor[]
+  profile             UserProfile?
+  refreshToken        RefreshToken?
+  Review              Review[]
+  UserFavRelease      UserFavRelease[]
+  UserFavReviews      UserFavReview[]
+  UserFavAuthor       UserFavAuthor[]
+  TopUsersLeaderboard TopUsersLeaderboard?
 
   @@map("Users")
 }
@@ -70,4 +71,15 @@ model UserFavAuthor {
 
   @@unique([userId, authorId])
   @@map("User_fav_authors")
+}
+
+model TopUsersLeaderboard {
+  id        String   @id @default(cuid())
+  userId    String   @unique @map("user_id")
+  rank      Int
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("Top_users_leaderboard")
 }
