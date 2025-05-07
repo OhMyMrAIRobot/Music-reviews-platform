@@ -153,12 +153,17 @@ class ReleasePageStore {
 			}
 
 			const data = await ReviewAPI.fetchFavReviewUsersIds(reviewId)
+
 			const reviewIdx = this.releaseReviews?.findIndex(
 				val => val.id === reviewId
 			)
 
 			runInAction(() => {
-				if (this.releaseReviews && reviewIdx && reviewIdx !== -1) {
+				if (
+					this.releaseReviews &&
+					reviewIdx !== undefined &&
+					reviewIdx !== -1
+				) {
 					this.releaseReviews[reviewIdx].user_fav_ids = data
 					this.releaseReviews[reviewIdx].likes_count = data.length
 				}

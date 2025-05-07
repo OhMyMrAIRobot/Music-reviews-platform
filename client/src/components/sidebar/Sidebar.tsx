@@ -141,7 +141,7 @@ const Sidebar = () => {
 	}
 
 	return (
-		<div className='relative z-200'>
+		<div className='relative z-2000'>
 			<aside className='fixed inset-y-0 hidden whitespace-nowrap left-0 w-13 hover:w-66 border-r bg-primary group overflow-hidden lg:flex flex-col border-white/15 transition-all duration-200'>
 				<SidebarSection items={sidebarFirstGroup} />
 				<Delimiter />

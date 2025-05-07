@@ -61,14 +61,14 @@ class ReviewsStore {
 			)
 
 			runInAction(() => {
-				if (reviewIdx && reviewIdx !== -1) {
+				if (reviewIdx !== undefined && reviewIdx !== -1) {
 					this.reviews[reviewIdx].user_fav_ids = data
 					this.reviews[reviewIdx].likes_count = data.length
 				}
 			})
 
 			runInAction(() => {
-				if (lastreviewIdx && lastreviewIdx !== -1) {
+				if (lastreviewIdx !== undefined && lastreviewIdx !== -1) {
 					this.lastReviews[lastreviewIdx].user_fav_ids = data
 					this.lastReviews[lastreviewIdx].likes_count = data.length
 				}

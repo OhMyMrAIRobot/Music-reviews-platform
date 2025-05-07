@@ -13,9 +13,9 @@ interface IProps {
 
 const ReleaseReviewItem: FC<IProps> = observer(({ review }) => {
 	const { authStore, releasePageStore, notificationsStore } = useStore()
-	const isLiked = review.user_fav_ids.some(
-		item => item.userId === authStore.user?.id
-	)
+	const isLiked =
+		review.user_fav_ids.some(item => item.userId === authStore.user?.id) ??
+		false
 
 	const [toggling, setToggling] = useState<boolean>(false)
 
