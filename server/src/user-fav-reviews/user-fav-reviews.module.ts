@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaModule } from 'prisma/prisma.module';
 import { ReviewsModule } from 'src/reviews/reviews.module';
 import { UsersModule } from 'src/users/users.module';
 import { UserFavReviewsController } from './user-fav-reviews.controller';
 import { UserFavReviewsService } from './user-fav-reviews.service';
 
 @Module({
-  imports: [UsersModule, ReviewsModule],
+  imports: [UsersModule, ReviewsModule, PrismaModule],
   controllers: [UserFavReviewsController],
-  providers: [UserFavReviewsService, PrismaService],
+  providers: [UserFavReviewsService],
   exports: [UserFavReviewsService],
 })
 export class UserFavReviewsModule {}

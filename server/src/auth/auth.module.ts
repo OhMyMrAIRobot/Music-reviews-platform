@@ -1,7 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { PrismaService } from '../../prisma/prisma.service';
+import { PrismaModule } from 'prisma/prisma.module';
 import { MailsModule } from '../mails/mails.module';
 import { RolesModule } from '../roles/roles.module';
 import { UsersModule } from '../users/users.module';
@@ -21,14 +21,9 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     }),
     RolesModule,
     MailsModule,
+    PrismaModule,
   ],
-  providers: [
-    AuthService,
-    JwtStrategy,
-    JwtNoActiveStrategy,
-    PrismaService,
-    TokensService,
-  ],
+  providers: [AuthService, JwtStrategy, JwtNoActiveStrategy, TokensService],
   controllers: [AuthController],
   exports: [JwtStrategy, AuthService, TokensService],
 })
