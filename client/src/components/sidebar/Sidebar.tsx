@@ -23,6 +23,7 @@ const Sidebar = () => {
 		navigateToAuthors,
 		navigateToReviews,
 		navigateToReleases,
+		navigateToLeaderboard,
 	} = useCustomNavigate()
 
 	const isActive = (path: string) => {
@@ -55,11 +56,11 @@ const Sidebar = () => {
 
 	const sidebarSecondGroup: ISidebarItemProps[] = [
 		{
-			id: 'side-top-90',
-			onClick: navigateToMain,
+			id: 'leaderboard',
+			onClick: navigateToLeaderboard,
 			icon: <NinetySvgIcon className='size-5 fill-white' />,
 			label: 'ТОП-90 пользователей',
-			active: isActive('/main'),
+			active: isActive(ROUTES.LEADERBOARD),
 		},
 		{
 			id: 'side-rating',
