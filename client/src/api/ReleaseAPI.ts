@@ -3,6 +3,7 @@ import { IFavRelease } from '../models/release/FavRelease'
 import { IRelease, IReleaseResponse } from '../models/release/Release'
 import { IReleaseDetails } from '../models/release/ReleaseDetails'
 import { IReleaseType } from '../models/release/ReleaseTypes'
+import { ITopRatingReleasesResponse } from '../models/release/TopRatingReleasesResponse'
 import { api } from './Instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
@@ -44,6 +45,17 @@ export const ReleaseAPI = {
 
 	async fetchAuthorAllReleases(authorId: string): Promise<IRelease[]> {
 		const { data } = await _api.get<IRelease[]>(`author/all/${authorId}`)
+		return data
+	},
+
+	async fetchTopRatingReleases(
+		year: number | null,
+		month: number | null
+	): Promise<ITopRatingReleasesResponse> {
+		const { data } = await _api.get<ITopRatingReleasesResponse>(`top-rating?
+			${year ? `year=${year}` : ''}&
+			${month ? `month=${month}` : ''}
+			`)
 		return data
 	},
 
