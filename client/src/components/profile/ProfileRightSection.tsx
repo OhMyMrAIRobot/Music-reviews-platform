@@ -1,4 +1,7 @@
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
+import { useParams } from 'react-router'
+import { useLoading } from '../../hooks/UseLoading'
+import { useStore } from '../../hooks/UseStore'
 import { IProfile } from '../../models/profile/Profile'
 import PreferProfileGrid from './PreferProfileGrid'
 import ProfileReviewsGrid from './ProfileReviewsGrid'
@@ -18,6 +21,31 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 	const [selectedSection, setSelectedSection] = useState<string>(
 		SectionValues.PREFER
 	)
+
+	const { id } = useParams()
+	const [reviewsCurrentPage, setReviewsCurrentPage] = useState<number>(1)
+	const [favCurrentPage, setFavCurrentPage] = useState<number>(1)
+
+	const { profileStore } = useStore()
+	const { execute: fetchReviews, isLoading: isReviewsLoading } = useLoading(
+		profileStore.fetchReviews
+	)
+
+	const { execute: fetchFavReviews, isLoading: isFavReviewsLoading } =
+		useLoading(profileStore.fetchFavReviews)
+
+	useEffect(() => {
+		if (id) {
+			switch (selectedSection) {
+				case SectionValues.REVIEWS:
+					fetchReviews(5, (reviewsCurrentPage - 1) * 5, id)
+					break
+				case SectionValues.LIKES:
+					fetchFavReviews(5, (favCurrentPage - 1) * 5, id)
+					break
+			}
+		}
+	}, [reviewsCurrentPage, favCurrentPage, id, selectedSection])
 
 	return (
 		<div className='xl:col-span-7'>
@@ -52,7 +80,24 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 				/>
 			</div>
 			{selectedSection === SectionValues.PREFER && <PreferProfileGrid />}
-			{selectedSection === SectionValues.REVIEWS && <ProfileReviewsGrid />}
+			{selectedSection === SectionValues.REVIEWS && (
+				<ProfileReviewsGrid
+					items={profileStore.reviews}
+					total={profileStore.reviewsCount}
+					currentPage={reviewsCurrentPage}
+					setCurrentPage={setReviewsCurrentPage}
+					isLoading={isReviewsLoading}
+				/>
+			)}
+			{selectedSection === SectionValues.LIKES && (
+				<ProfileReviewsGrid
+					items={profileStore.favReviews}
+					total={profileStore.favReviewsCount}
+					currentPage={favCurrentPage}
+					setCurrentPage={setFavCurrentPage}
+					isLoading={isFavReviewsLoading}
+				/>
+			)}
 		</div>
 	)
 }

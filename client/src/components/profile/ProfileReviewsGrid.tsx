@@ -1,32 +1,30 @@
-import { useEffect, useState } from 'react'
-import { useParams } from 'react-router'
-import { useLoading } from '../../hooks/UseLoading'
-import { useStore } from '../../hooks/UseStore'
+import { FC } from 'react'
+import { IReview } from '../../models/review/Review'
 import ReviewItem from '../carousel/lastReviews/ReviewItem'
 import Loader from '../Loader'
 import Pagination from '../pagination/Pagination'
 
-const ProfileReviewsGrid = () => {
-	const { id } = useParams()
-	const [currentPage, setCurrentPage] = useState<number>(1)
+interface IProps {
+	items: IReview[]
+	total: number
+	currentPage: number
+	setCurrentPage: (val: number) => void
+	isLoading: boolean
+}
 
-	const { profileStore } = useStore()
-	const { execute: fetchReviews, isLoading: isReviewsLoading } = useLoading(
-		profileStore.fetchReviews
-	)
-
-	useEffect(() => {
-		if (id) {
-			fetchReviews(5, (currentPage - 1) * 5, id)
-		}
-	}, [currentPage, id])
-
+const ProfileReviewsGrid: FC<IProps> = ({
+	items,
+	total,
+	currentPage,
+	setCurrentPage,
+	isLoading,
+}) => {
 	return (
 		<section className='mt-5'>
-			{!isReviewsLoading ? (
-				profileStore.reviews.length > 0 ? (
+			{!isLoading ? (
+				items.length > 0 ? (
 					<div className='gap-5 grid grid-cols-1 select-none'>
-						{profileStore.reviews.map(review => (
+						{items.map(review => (
 							<ReviewItem key={review.id} review={review} />
 						))}
 					</div>
@@ -41,11 +39,11 @@ const ProfileReviewsGrid = () => {
 				</div>
 			)}
 
-			{profileStore.reviews.length > 0 && (
+			{items.length > 0 && (
 				<div className='mt-10'>
 					<Pagination
 						currentPage={currentPage}
-						totalItems={profileStore.reviewsCount}
+						totalItems={total}
 						itemsPerPage={5}
 						onPageChange={setCurrentPage}
 						idToScroll={'profile-sections'}

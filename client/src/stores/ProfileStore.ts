@@ -15,6 +15,8 @@ export class ProfileStore {
 	preferred: IPreferredResponse | null = null
 	reviews: IReview[] = []
 	reviewsCount: number = 0
+	favReviews: IReview[] = []
+	favReviewsCount: number = 0
 
 	setProfile(data: IProfile) {
 		this.profile = data
@@ -34,6 +36,14 @@ export class ProfileStore {
 
 	setReviewsCount(data: number) {
 		this.reviewsCount = data
+	}
+
+	setFavReviews(data: IReview[]) {
+		this.favReviews = data
+	}
+
+	setFavReviewsCount(data: number) {
+		this.favReviewsCount = data
 	}
 
 	fetchProfile = async (id: string) => {
@@ -74,6 +84,26 @@ export class ProfileStore {
 			)
 			this.setReviews(data.reviews)
 			this.setReviewsCount(data.count)
+		} catch (e) {
+			console.log(e)
+		}
+	}
+
+	fetchFavReviews = async (
+		limit: number,
+		offset: number,
+		favUserId: string
+	) => {
+		try {
+			const data = await ReviewAPI.fetchReviews(
+				'desc',
+				limit,
+				offset,
+				null,
+				favUserId
+			)
+			this.setFavReviews(data.reviews)
+			this.setFavReviewsCount(data.count)
 		} catch (e) {
 			console.log(e)
 		}

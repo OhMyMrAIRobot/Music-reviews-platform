@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useState } from 'react'
+import useCustomNavigate from '../../../hooks/UseCustomNavigate'
 import { useStore } from '../../../hooks/UseStore'
 import { IReleaseReview } from '../../../models/review/ReleaseReview'
 import ReviewLikes from './ReviewLikes'
@@ -12,6 +13,7 @@ interface IProps {
 }
 
 const ReleaseReviewItem: FC<IProps> = observer(({ review }) => {
+	const { navigatoToProfile } = useCustomNavigate()
 	const { authStore, releasePageStore, notificationsStore } = useStore()
 	const isLiked =
 		review.user_fav_ids.some(item => item.userId === authStore.user?.id) ??
@@ -62,7 +64,10 @@ const ReleaseReviewItem: FC<IProps> = observer(({ review }) => {
 	return (
 		<div className='w-full bg-zinc-900 p-1.5 lg:p-[5px] flex flex-col border border-zinc-800 rounded-[15px] lg:rounded-[20px]'>
 			<div className='bg-zinc-950/70 px-2 py-2 rounded-[12px] flex gap-3 justify-between items-center select-none'>
-				<div className='flex items-center space-x-2 lg:space-x-3'>
+				<div
+					onClick={() => navigatoToProfile(review.user_id)}
+					className='flex items-center space-x-2 lg:space-x-3 cursor-pointer'
+				>
 					<ReviewUserImage
 						nickname={review.nickname}
 						img={review.avatar}

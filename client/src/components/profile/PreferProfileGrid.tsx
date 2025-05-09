@@ -23,22 +23,22 @@ const PreferProfileGrid = () => {
 			<div className='mt-5 grid lg:grid-cols-2 gap-y-4 lg:gap-y-8 gap-x-10'>
 				<PreferProfileGridItem
 					title={'Артисты'}
-					items={profileStore.preferred.artists}
+					items={profileStore.preferred.artists ?? []}
 					isAuthor={true}
 				/>
 				<PreferProfileGridItem
 					title={'Альбомы'}
-					items={profileStore.preferred.albums}
+					items={profileStore.preferred.albums ?? []}
 					isAuthor={false}
 				/>
 				<PreferProfileGridItem
 					title={'Треки'}
-					items={profileStore.preferred.tracks}
+					items={profileStore.preferred.tracks ?? []}
 					isAuthor={false}
 				/>
 				<PreferProfileGridItem
 					title={'Продюсеры'}
-					items={profileStore.preferred.producers}
+					items={profileStore.preferred.producers ?? []}
 					isAuthor={true}
 				/>
 			</div>

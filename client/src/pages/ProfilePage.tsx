@@ -18,7 +18,7 @@ const ProfilePage = () => {
 		if (id) {
 			fetchProfile(id)
 		}
-	}, [])
+	}, [id])
 	const profile = profileStore.profile
 
 	return isLoading ? (
