@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router'
+import { SearchTypesEnum } from '../models/search/SearchTypesEnum'
 import { ROUTES } from '../routes/Routes'
 
 const useCustomNavigate = () => {
@@ -52,6 +53,10 @@ const useCustomNavigate = () => {
 		navigate(ROUTES.RATINGS)
 	}
 
+	const navigateToSearch = (type: SearchTypesEnum) => {
+		navigate(`/search/${type}`)
+	}
+
 	return {
 		navigateToLogin,
 		navigateToRegistration,
@@ -65,6 +70,7 @@ const useCustomNavigate = () => {
 		navigateToAuthor,
 		navigateToLeaderboard,
 		navigateToRatings,
+		navigateToSearch,
 	}
 }
 
