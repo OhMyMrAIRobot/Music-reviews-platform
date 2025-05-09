@@ -31,6 +31,11 @@ export class ProfilesController {
     return this.profilesService.findByUserIdExtended(params.id);
   }
 
+  @Get('preferred/:id')
+  async findPreferred(@Param() params: FindProfileParamsDto) {
+    return this.profilesService.findPreferred(params.id);
+  }
+
   @UseGuards(JwtAuthGuard)
   @Patch()
   update(
