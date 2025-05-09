@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import useCustomNavigate from '../../hooks/UseCustomNavigate'
 import { IPreferredItem } from '../../models/profile/PreferredItem'
 
 interface IProps {
@@ -7,8 +8,15 @@ interface IProps {
 }
 
 const PreferItem: FC<IProps> = ({ item, isAuthor }) => {
+	const { navigateToAuthor, navigateToRelease } = useCustomNavigate()
+
 	return (
-		<button className='flex flex-col justify-start rounded-[25px] lg:rounded-[30px] hover:bg-opacity-[0.08] duration-300 cursor-pointer w-full p-1'>
+		<button
+			onClick={() =>
+				isAuthor ? navigateToAuthor(item.id) : navigateToRelease(item.id)
+			}
+			className='flex flex-col justify-start rounded-[25px] lg:rounded-[30px] hover:bg-opacity-[0.08] duration-300 cursor-pointer w-full p-1'
+		>
 			<img
 				loading='lazy'
 				decoding='async'

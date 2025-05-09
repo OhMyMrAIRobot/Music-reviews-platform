@@ -26,7 +26,7 @@ class ReviewsStore {
 
 	fetchLastReviews = async () => {
 		try {
-			const data = await ReviewAPI.fetchReviews('asc', 45, 0)
+			const data = await ReviewAPI.fetchReviews('asc', 45, 0, null, null)
 			this.setLastReviews(data.reviews)
 		} catch (e) {
 			console.log(e)
@@ -35,7 +35,13 @@ class ReviewsStore {
 
 	fetchReviews = async (order: string, limit: number, offset: number) => {
 		try {
-			const data = await ReviewAPI.fetchReviews(order, limit, offset)
+			const data = await ReviewAPI.fetchReviews(
+				order,
+				limit,
+				offset,
+				null,
+				null
+			)
 			this.setReviews(data.reviews)
 			this.setCount(data.count)
 		} catch (e) {

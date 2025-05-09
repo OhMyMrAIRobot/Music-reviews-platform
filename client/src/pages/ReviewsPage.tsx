@@ -61,7 +61,7 @@ const ReviewsPage = observer(() => {
 					)
 				) : (
 					<div className='mt-30'>
-						<Loader size={20} />
+						<Loader size='size-20' />
 					</div>
 				)}
 			</section>
@@ -73,7 +73,7 @@ const ReviewsPage = observer(() => {
 						totalItems={reviewsStore.reviewsCount}
 						itemsPerPage={12}
 						onPageChange={setCurrentPage}
-						idToScroll={'authors'}
+						idToScroll={'reviews'}
 					/>
 				</div>
 			)}

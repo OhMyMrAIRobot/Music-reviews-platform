@@ -1,6 +1,7 @@
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { IProfile } from '../../models/profile/Profile'
 import PreferProfileGrid from './PreferProfileGrid'
+import ProfileReviewsGrid from './ProfileReviewsGrid'
 import ProfileSelectButton from './ProfileSelectButton'
 
 interface IProps {
@@ -8,6 +9,16 @@ interface IProps {
 }
 
 const ProfileRightSection: FC<IProps> = ({ profile }) => {
+	const SectionValues = Object.freeze({
+		PREFER: 'Предпочтения',
+		REVIEWS: 'Рецензии и оценки',
+		LIKES: 'Понравилось',
+	})
+
+	const [selectedSection, setSelectedSection] = useState<string>(
+		SectionValues.PREFER
+	)
+
 	return (
 		<div className='xl:col-span-7'>
 			<div className='relative max-h-[300px] hidden xl:block'>
@@ -20,24 +31,28 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 					className='object-cover rounded-xl size-full'
 				/>
 			</div>
-			<div className='mt-5 flex gap-1 lg:gap-2 items-center'>
+			<div
+				className='mt-5 flex gap-1 lg:gap-2 items-center'
+				id='profile-sections'
+			>
 				<ProfileSelectButton
-					title={'Предпочтения'}
-					isActive={true}
-					onClick={() => {}}
+					title={SectionValues.PREFER}
+					isActive={selectedSection === SectionValues.PREFER}
+					onClick={() => setSelectedSection(SectionValues.PREFER)}
 				/>
 				<ProfileSelectButton
-					title={'Рецензии и оценки'}
-					isActive={false}
-					onClick={() => {}}
+					title={SectionValues.REVIEWS}
+					isActive={selectedSection === SectionValues.REVIEWS}
+					onClick={() => setSelectedSection(SectionValues.REVIEWS)}
 				/>
 				<ProfileSelectButton
-					title={'Понравилось'}
-					isActive={false}
-					onClick={() => {}}
+					title={SectionValues.LIKES}
+					isActive={selectedSection === SectionValues.LIKES}
+					onClick={() => setSelectedSection(SectionValues.LIKES)}
 				/>
 			</div>
-			<PreferProfileGrid />
+			{selectedSection === SectionValues.PREFER && <PreferProfileGrid />}
+			{selectedSection === SectionValues.REVIEWS && <ProfileReviewsGrid />}
 		</div>
 	)
 }

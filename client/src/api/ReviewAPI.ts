@@ -37,10 +37,18 @@ export const ReviewAPI = {
 	async fetchReviews(
 		order: string,
 		limit: number,
-		offset: number
+		offset: number,
+		userId: string | null,
+		favUserId: string | null
 	): Promise<IReviewsResponse> {
 		const { data } = await _api.get<IReviewsResponse>(
-			`/list?order=${order}&limit=${limit}&offset=${offset}`
+			`/list?
+			order=${order}
+			&limit=${limit}
+			&offset=${offset}
+			${userId ? `&userId=${userId}` : ''}
+			${favUserId ? `&favUserId=${favUserId}` : ''}
+			`
 		)
 		return data
 	},
