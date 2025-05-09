@@ -40,7 +40,7 @@ const SearchBar = () => {
 			default:
 				typeKey = SearchTypesEnum.AUTHORS
 		}
-		navigateToSearch(typeKey)
+		navigateToSearch(typeKey, searchText)
 	}
 
 	return (

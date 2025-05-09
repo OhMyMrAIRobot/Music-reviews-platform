@@ -53,8 +53,8 @@ const useCustomNavigate = () => {
 		navigate(ROUTES.RATINGS)
 	}
 
-	const navigateToSearch = (type: SearchTypesEnum) => {
-		navigate(`/search/${type}`)
+	const navigateToSearch = (type: SearchTypesEnum, query: string) => {
+		navigate(`/search/${type}?query=${encodeURIComponent(query)}`)
 	}
 
 	return {

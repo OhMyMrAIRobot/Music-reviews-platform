@@ -1,9 +1,8 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
-import AuthorItem from '../components/authorsPage/AuthorItem'
+import AuthorsPageGrid from '../components/authorsPage/AuthorsPageGrid'
 import ComboBox from '../components/header/buttons/ComboBox'
 import Loader from '../components/Loader'
-import Pagination from '../components/pagination/Pagination'
 import { useLoading } from '../hooks/UseLoading'
 import { useStore } from '../hooks/UseStore'
 
@@ -51,37 +50,13 @@ const AuthorsPage = observer(() => {
 				</div>
 			</div>
 
-			<section className='mt-5'>
-				{!isAuthorsLoading ? (
-					authorsStore.authors.length > 0 ? (
-						<div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 lg:gap-6'>
-							{authorsStore.authors.map(author => (
-								<AuthorItem key={author.id} author={author} />
-							))}
-						</div>
-					) : (
-						<p className='text-center text-2xl font-semibold mt-30'>
-							Авторы не найдены!
-						</p>
-					)
-				) : (
-					<div className='mt-30'>
-						<Loader size={20} />
-					</div>
-				)}
-			</section>
-
-			{authorsStore.authors.length > 0 && (
-				<div className='mt-50'>
-					<Pagination
-						currentPage={currentPage}
-						totalItems={authorsStore.authorsCount}
-						itemsPerPage={5}
-						onPageChange={setCurrentPage}
-						idToScroll={'authors'}
-					/>
-				</div>
-			)}
+			<AuthorsPageGrid
+				items={authorsStore.authors}
+				isLoading={isAuthorsLoading}
+				currentPage={currentPage}
+				setCurrentPage={setCurrentPage}
+				total={authorsStore.authorsCount}
+			/>
 		</>
 	)
 })

@@ -34,6 +34,17 @@ export const AuthorAPI = {
 		return data
 	},
 
+	async fetchAuthorsByName(
+		query: string,
+		limit: number,
+		offset: number
+	): Promise<IAuthorsResponseDto> {
+		const { data } = await _api.get<IAuthorsResponseDto>(
+			`/search/?searchQuery=${query}&limit=${limit}&offset=${offset}`
+		)
+		return data
+	},
+
 	async fetchAuthorTypes(): Promise<IAuthorType[]> {
 		const { data } = await axios.get<IAuthorType[]>(
 			`${SERVER_URL}/author-types`

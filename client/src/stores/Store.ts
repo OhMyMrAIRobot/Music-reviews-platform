@@ -7,6 +7,7 @@ import ReleasePageStore from './ReleasePageStore'
 import ReleaseRatingsPageStore from './ReleaseRatingsPageStore'
 import ReleasesStore from './ReleasesStore'
 import ReviewsStore from './ReviewsStore'
+import SearchStore from './SearchStore'
 
 class Store {
 	authStore = AuthStore
@@ -18,6 +19,7 @@ class Store {
 	authorPageStore = AuthorPageStore
 	leaderboardStore = LeaderboardStore
 	releaseRatingsPageStore = ReleaseRatingsPageStore
+	searchStore = SearchStore
 }
 
 export default Store
