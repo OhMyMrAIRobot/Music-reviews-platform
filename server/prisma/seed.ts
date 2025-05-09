@@ -128,6 +128,7 @@ async function main() {
       {
         id: '1',
         avatar: 'GoneFF.png',
+        coverImage: '0.png',
         bio: 'young designer from sp',
         userId: '1',
         points: 152892,

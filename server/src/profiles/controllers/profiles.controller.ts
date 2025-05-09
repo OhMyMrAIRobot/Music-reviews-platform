@@ -13,6 +13,7 @@ import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { IAuthenticatedRequest } from '../../auth/types/authenticated-request.interface';
 import { UserRoleEnum } from '../../roles/types/user-role.enum';
+import { FindProfileParamsDto } from '../dto/find-profile-params.dto';
 import { UpdateProfileDto } from '../dto/update-profile.dto';
 import { ProfilesService } from '../services/profiles.service';
 
@@ -20,10 +21,14 @@ import { ProfilesService } from '../services/profiles.service';
 export class ProfilesController {
   constructor(private readonly profilesService: ProfilesService) {}
 
-  @UseGuards(JwtAuthGuard)
-  @Get(':userId')
+  @Get('one/:userId')
   async findByUserId(@Param('userId') userId: string): Promise<UserProfile> {
     return this.profilesService.findByUserId(userId);
+  }
+
+  @Get('user/:id')
+  async findByUserIdExtended(@Param() params: FindProfileParamsDto) {
+    return this.profilesService.findByUserIdExtended(params.id);
   }
 
   @UseGuards(JwtAuthGuard)
