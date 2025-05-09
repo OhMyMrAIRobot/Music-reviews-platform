@@ -58,7 +58,7 @@ const useCustomNavigate = () => {
 	}
 
 	const navigatoToProfile = (id: string) => {
-		navigate(`profile/${id}`)
+		navigate(`/profile/${id}`)
 	}
 
 	return {

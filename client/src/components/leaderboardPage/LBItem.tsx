@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import useCustomNavigate from '../../hooks/UseCustomNavigate'
 import { ILeaderboardItem } from '../../models/leaderboard/LeaderboardItem'
 import { getLevelConfig, getUserLevel } from '../../utils/UserLevel'
 import { ToolTip } from '../authorsPage/AuthorItem'
@@ -12,6 +13,8 @@ interface IProps {
 }
 
 const LBItem: FC<IProps> = ({ item }) => {
+	const { navigatoToProfile } = useCustomNavigate()
+
 	function formatNumber(points: number) {
 		if (points >= 1000000000) {
 			const value = points / 1000000000
@@ -44,7 +47,10 @@ const LBItem: FC<IProps> = ({ item }) => {
 				</div>
 			</div>
 
-			<div className='flex shrink-0 space-x-4 items-center relative max-xl:w-1/2 max-xl:order-1 cursor-pointer'>
+			<div
+				onClick={() => navigatoToProfile(item.user_id)}
+				className='flex shrink-0 space-x-4 items-center relative max-xl:w-1/2 max-xl:order-1 cursor-pointer'
+			>
 				<div className='relative z-20'>
 					<span className='relative flex shrink-0 overflow-hidden rounded-full size-[40px] lg:size-[60px] border border-white/10'>
 						<img

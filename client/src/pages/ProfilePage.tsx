@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useParams } from 'react-router'
 import Loader from '../components/Loader'
 import ProfileLeftSection from '../components/profile/ProfileLeftSection'
+import ProfileRightSection from '../components/profile/ProfileRightSection'
 import { useLoading } from '../hooks/UseLoading'
 import { useStore } from '../hooks/UseStore'
 
@@ -26,6 +27,7 @@ const ProfilePage = () => {
 		profile && (
 			<div className='grid grid-cols-1 xl:grid-cols-10 gap-5'>
 				<ProfileLeftSection profile={profile} />
+				<ProfileRightSection profile={profile} />
 			</div>
 		)
 	)
