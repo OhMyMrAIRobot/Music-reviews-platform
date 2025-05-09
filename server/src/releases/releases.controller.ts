@@ -17,6 +17,7 @@ import { AuthorTopReleasesParamsDto } from './dto/author-top-releases-params.dto
 import { CreateReleaseDto } from './dto/create-release.dto';
 import { ReleaseDetailsParamsDto } from './dto/release-details-params.dto';
 import { ReleasesQueryDto } from './dto/releases-query.dto';
+import { TopRatingReleasesQuery } from './dto/top-rating-releases-query.dto';
 import { UpdateReleaseDto } from './dto/update-release.dto';
 import { ReleasesService } from './releases.service';
 
@@ -47,6 +48,11 @@ export class ReleasesController {
   @Get('author/all/:id')
   findAuthorAllReleases(@Param() params: AuthorTopReleasesParamsDto) {
     return this.releasesService.findAuthorReleases(params.id, true);
+  }
+
+  @Get('top-rating')
+  findTopRatingReleases(@Query() params: TopRatingReleasesQuery) {
+    return this.releasesService.findTopRatingReleases(params);
   }
 
   @Get('details/:id')

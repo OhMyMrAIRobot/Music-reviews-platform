@@ -14,6 +14,8 @@ import {
   ReleaseResponseDto,
 } from './dto/release.response.dto';
 import { ReleasesQueryDto } from './dto/releases-query.dto';
+import { TopRatingReleasesQuery } from './dto/top-rating-releases-query.dto';
+import { TopRatingReleasesResponseDto } from './dto/top-rating-releases.response.dto';
 import { UpdateReleaseDto } from './dto/update-release.dto';
 
 @Injectable()
@@ -216,6 +218,78 @@ export class ReleasesService {
         ${findAll ? '' : 'LIMIT 15 OFFSET 0'}
     `;
     return this.prisma.$queryRawUnsafe<ReleaseResponseData[]>(rawQuery);
+  }
+
+  async findTopRatingReleases(
+    query: TopRatingReleasesQuery,
+  ): Promise<TopRatingReleasesResponseDto> {
+    let month: number | null = null;
+    let year: number | null = null;
+    if (query.year && query.month) {
+      month = query.month;
+      year = query.year;
+    }
+    const years = await this.prisma.$queryRawUnsafe<
+      {
+        min_year: number;
+        max_year: number;
+      }[]
+    >(`
+      SELECT 
+        EXTRACT(YEAR FROM MIN(publish_date)) as min_year,
+        EXTRACT(YEAR FROM MAX(publish_date)) as max_year
+      FROM "Releases"
+    `);
+
+    const minYear = years[0]?.min_year ?? new Date().getFullYear();
+    const maxYear = years[0]?.max_year || new Date().getFullYear();
+
+    const rawQuery = `
+      WITH release_data as (
+          SELECT
+              r.id,
+              r.title,
+              r.img,
+              r.publish_date,
+              rt.type AS release_type,
+              (count(DISTINCT rev.id) FILTER (WHERE rev.text IS NOT NULL))::int AS text_count,
+              (count(DISTINCT rev.id) FILTER (WHERE rev.text IS NULL))::int AS no_text_count,
+              json_agg(DISTINCT jsonb_build_object('id', a.id,'name', a.name)) as author,
+              json_agg(DISTINCT jsonb_build_object(
+                      'total', rr.total,
+                      'type', rrt.type
+                                )) as ratings,
+              (SELECT rr.total FROM "Release_ratings" rr
+                                        JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
+              WHERE rr.release_id = r.id AND rrt.type = 'super_user') AS super_user_rating,
+              (SELECT rr.total FROM "Release_ratings" rr
+                                        JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
+              WHERE rr.release_id = r.id AND rrt.type = 'with_text') AS text_rating,
+              (SELECT rr.total FROM "Release_ratings" rr
+                                        JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
+              WHERE rr.release_id = r.id AND rrt.type = 'no_text') AS no_text_rating
+
+          FROM "Releases" r
+                  LEFT JOIN "Release_types" rt on r.release_type_id = rt.id
+                  LEFT JOIN "Release_artists" ra on r.id = ra.release_id
+                  LEFT JOIN "Authors" a on ra.author_id = a.id
+                  LEFT JOIN "Release_producers" rp on r.id = rp.release_id
+                  LEFT JOIN "Release_designers" rd on r.id = rd.author_id
+                  LEFT JOIN "Reviews" rev on rev.release_id = r.id
+                  LEFT JOIN "Release_ratings" rr on rr.release_id = r.id
+                  LEFT JOIN "Release_rating_types" rrt on rr.release_rating_type_id = rrt.id
+          GROUP BY r.id, rt.type, r.publish_date
+      )
+      SELECT id, title, img, release_type, text_count, no_text_count, author, ratings
+      FROM release_data rd
+      WHERE (${year} IS NULL OR EXTRACT(YEAR FROM rd.publish_date) = ${year})
+        AND (${month} IS NULL OR EXTRACT(MONTH FROM rd.publish_date) = ${month})
+      ORDER BY no_text_rating + text_rating + super_user_rating desc
+    `;
+    const releases =
+      await this.prisma.$queryRawUnsafe<ReleaseResponseData[]>(rawQuery);
+
+    return { minYear, maxYear, releases };
   }
 
   async findReleases(query: ReleasesQueryDto): Promise<ReleaseResponseDto> {
