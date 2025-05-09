@@ -205,7 +205,15 @@ export class ReviewsService {
   async findReviews(query: ReviewsQueryDto): Promise<ReviewsResponseDto> {
     const count = await this.prisma.review.count({
       where: {
-        text: { not: null },
+        AND: [
+          { text: { not: null } },
+          { userId: { equals: query.userId } },
+          {
+            UserFavReviews: query.favUserId
+              ? { some: { userId: query.favUserId } }
+              : undefined,
+          },
+        ],
       },
     });
 
@@ -243,7 +251,10 @@ export class ReviewsService {
             LEFT JOIN "Top_users_leaderboard" tul ON p.user_id = tul.user_id
             LEFT JOIN "Releases" r ON rev.release_id = r.id
             LEFT JOIN "User_fav_reviews" ufr ON rev.id = ufr.review_id
-      WHERE rev.text IS NOT NULL AND rev.title IS NOT NULL
+      WHERE rev.text IS NOT NULL 
+        AND rev.title IS NOT NULL
+        ${query.userId ? `AND rev.user_id = '${query.userId}'` : ''}
+        ${query.favUserId ? `AND ufr.user_id = '${query.favUserId}'` : ''}
       GROUP BY
           rev.id, rev.title, rev.text, rev.total, rev.rhymes, rev.structure, rev.realization,
           rev.individuality, rev.atmosphere, u.nickname, p.avatar, p.points, tul.rank,
