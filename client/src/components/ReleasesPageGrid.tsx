@@ -1,0 +1,61 @@
+import { FC } from 'react'
+import { IRelease } from '../models/release/Release'
+import LastReleasesCarouselItem from './carousel/lastReleases/LastReleasesCarouselItem'
+import Loader from './Loader'
+import Pagination from './pagination/Pagination'
+
+interface IProps {
+	items: IRelease[]
+	isLoading: boolean
+	currentPage: number
+	setCurrentPage: (val: number) => void
+	total: number
+}
+
+const ReleasesPageGrid: FC<IProps> = ({
+	items,
+	isLoading,
+	currentPage,
+	setCurrentPage,
+	total,
+}) => {
+	return (
+		<>
+			<section className='mt-5 overflow-hidden'>
+				{!isLoading ? (
+					items.length > 0 ? (
+						<div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 xl:gap-5'>
+							{items.map(release => (
+								<div className='p-2' key={release.id}>
+									<LastReleasesCarouselItem release={release} />
+								</div>
+							))}
+						</div>
+					) : (
+						<p className='text-center text-2xl font-semibold mt-30'>
+							Релизы не найдены!
+						</p>
+					)
+				) : (
+					<div className='mt-30'>
+						<Loader size={20} />
+					</div>
+				)}
+			</section>
+
+			{items.length > 0 && (
+				<div className='mt-50'>
+					<Pagination
+						currentPage={currentPage}
+						totalItems={total}
+						itemsPerPage={5}
+						onPageChange={setCurrentPage}
+						idToScroll={'releases'}
+					/>
+				</div>
+			)}
+		</>
+	)
+}
+
+export default ReleasesPageGrid

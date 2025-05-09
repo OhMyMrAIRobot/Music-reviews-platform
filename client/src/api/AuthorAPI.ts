@@ -18,30 +18,21 @@ const _api = axios.create({
 export const AuthorAPI = {
 	async fetchAuthors(
 		typeId: string | null,
+		query: string | null,
 		limit: number,
 		offset: number
 	): Promise<IAuthorsResponseDto> {
 		const { data } = await _api.get<IAuthorsResponseDto>(
-			`/list/?${
-				typeId ? `typeId=${typeId}&` : ''
-			}limit=${limit}&offset=${offset}`
+			`/list/?
+			${typeId ? `typeId=${typeId}&` : ''}
+			${query ? `&query=${query}&` : ''}
+			limit=${limit}&offset=${offset}`
 		)
 		return data
 	},
 
 	async fetchAuthorById(id: string) {
 		const { data } = await _api.get<IAuthor>(`/id/${id}`)
-		return data
-	},
-
-	async fetchAuthorsByName(
-		query: string,
-		limit: number,
-		offset: number
-	): Promise<IAuthorsResponseDto> {
-		const { data } = await _api.get<IAuthorsResponseDto>(
-			`/search/?searchQuery=${query}&limit=${limit}&offset=${offset}`
-		)
 		return data
 	},
 

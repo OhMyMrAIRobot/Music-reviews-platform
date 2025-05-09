@@ -1,5 +1,5 @@
 export enum SearchTypesEnum {
 	AUTHORS = 'authors',
-	Releases = 'releases',
-	Users = 'users',
+	RELEASES = 'releases',
+	USERS = 'users',
 }

@@ -32,10 +32,10 @@ const SearchBar = () => {
 				typeKey = SearchTypesEnum.AUTHORS
 				break
 			case SearchTypeValues.RELEASES:
-				typeKey = SearchTypesEnum.Releases
+				typeKey = SearchTypesEnum.RELEASES
 				break
 			case SearchTypeValues.USERS:
-				typeKey = SearchTypesEnum.Users
+				typeKey = SearchTypesEnum.USERS
 				break
 			default:
 				typeKey = SearchTypesEnum.AUTHORS

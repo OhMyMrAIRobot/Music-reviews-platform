@@ -48,6 +48,7 @@ class ReleasesStore {
 		try {
 			const data = await ReleaseAPI.fetchReleases(
 				null,
+				null,
 				'published',
 				'desc',
 				20,
@@ -69,6 +70,7 @@ class ReleasesStore {
 		try {
 			const data = await ReleaseAPI.fetchReleases(
 				typeId,
+				null,
 				field,
 				order,
 				limit,

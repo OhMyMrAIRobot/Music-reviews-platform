@@ -22,13 +22,16 @@ export const ReleaseAPI = {
 
 	async fetchReleases(
 		typeId: string | null,
+		query: string | null,
 		field: string,
 		order: string,
 		limit: number,
 		offset: number
 	): Promise<IReleaseResponse> {
 		const { data } = await _api.get<IReleaseResponse>(
-			`list?${typeId ? `type=${typeId}` : ''}
+			`list?
+			${typeId ? `type=${typeId}` : ''}
+			${query ? `&query=${query}` : ''}
 			&field=${field}
 			&order=${order}
 			&limit=${limit}

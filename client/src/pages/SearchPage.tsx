@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import AuthorsPageGrid from '../components/authorsPage/AuthorsPageGrid'
 import Loader from '../components/Loader'
+import ReleasesPageGrid from '../components/ReleasesPageGrid'
 import useCustomNavigate from '../hooks/UseCustomNavigate'
 import { useLoading } from '../hooks/UseLoading'
 import { useStore } from '../hooks/UseStore'
@@ -20,10 +21,22 @@ const SearchPage = observer(() => {
 	const { execute: fetchAuthors, isLoading: isAuthorsLoading } = useLoading(
 		searchStore.fetchAuthors
 	)
+	const { execute: fetchReleases, isLoading: isReleasesLoading } = useLoading(
+		searchStore.fetchReleases
+	)
 
 	useEffect(() => {
 		if (query.length > 0) {
-			fetchAuthors(query, 5, (currentPage - 1) * 5)
+			switch (type) {
+				case SearchTypesEnum.AUTHORS:
+					fetchAuthors(query, 5, (currentPage - 1) * 5)
+					break
+				case SearchTypesEnum.RELEASES:
+					fetchReleases(query, 5, (currentPage - 1) * 5)
+					break
+				default:
+					break
+			}
 		}
 	}, [currentPage, query, type])
 
@@ -48,6 +61,15 @@ const SearchPage = observer(() => {
 					currentPage={currentPage}
 					setCurrentPage={setCurrentPage}
 					total={searchStore.authorsCount}
+				/>
+			)}
+			{type === SearchTypesEnum.RELEASES && (
+				<ReleasesPageGrid
+					items={searchStore.releases}
+					isLoading={isReleasesLoading}
+					currentPage={currentPage}
+					setCurrentPage={setCurrentPage}
+					total={searchStore.releasesCount}
 				/>
 			)}
 		</>
