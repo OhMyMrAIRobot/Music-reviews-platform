@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router'
+import { ROUTES } from '../routes/Routes'
 
 const useCustomNavigate = () => {
 	const navigate = useNavigate()
@@ -20,7 +21,7 @@ const useCustomNavigate = () => {
 	}
 
 	const navigateToFeedback = () => {
-		navigate('/feedback')
+		navigate(ROUTES.FEEDBACK)
 	}
 
 	const navigateToRelease = (id: string) => {
@@ -28,15 +29,15 @@ const useCustomNavigate = () => {
 	}
 
 	const navigateToAuthors = () => {
-		navigate(`/authors`)
+		navigate(ROUTES.AUTHORS)
 	}
 
 	const navigateToReviews = () => {
-		navigate(`/reviews`)
+		navigate(ROUTES.REVIEWS)
 	}
 
 	const navigateToReleases = () => {
-		navigate(`/releases`)
+		navigate(ROUTES.RELEASES)
 	}
 
 	const navigateToAuthor = (id: string) => {
@@ -44,7 +45,11 @@ const useCustomNavigate = () => {
 	}
 
 	const navigateToLeaderboard = () => {
-		navigate(`/leaderboard`)
+		navigate(ROUTES.LEADERBOARD)
+	}
+
+	const navigateToRatings = () => {
+		navigate(ROUTES.RATINGS)
 	}
 
 	return {
@@ -59,6 +64,7 @@ const useCustomNavigate = () => {
 		navigateToReleases,
 		navigateToAuthor,
 		navigateToLeaderboard,
+		navigateToRatings,
 	}
 }
 

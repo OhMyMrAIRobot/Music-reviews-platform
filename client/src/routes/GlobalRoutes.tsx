@@ -6,6 +6,7 @@ import FeedbackPage from '../pages/FeedbackPage'
 import LeaderboardPage from '../pages/LeaderboardPage'
 import MainPage from '../pages/MainPage'
 import ReleasePage from '../pages/ReleasePage'
+import ReleaseRatingsPage from '../pages/ReleaseRatingsPage'
 import ReleasesPage from '../pages/ReleasesPage'
 import ReviewsPage from '../pages/ReviewsPage'
 import { ROUTES } from './Routes'
@@ -24,6 +25,11 @@ const GlobalRoutes = () => {
 			path={ROUTES.LEADERBOARD}
 			element={<LeaderboardPage />}
 			key='leaderboard'
+		/>,
+		<Route
+			path={ROUTES.RATINGS}
+			element={<ReleaseRatingsPage />}
+			key='author'
 		/>,
 	]
 }

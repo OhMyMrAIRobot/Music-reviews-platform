@@ -24,6 +24,7 @@ const Sidebar = () => {
 		navigateToReviews,
 		navigateToReleases,
 		navigateToLeaderboard,
+		navigateToRatings,
 	} = useCustomNavigate()
 
 	const isActive = (path: string) => {
@@ -64,10 +65,10 @@ const Sidebar = () => {
 		},
 		{
 			id: 'side-rating',
-			onClick: navigateToMain,
+			onClick: navigateToRatings,
 			icon: <RatingSvgIcon className='size-5' />,
 			label: 'Рейтинг',
-			active: isActive('/main'),
+			active: isActive(ROUTES.RATINGS),
 		},
 		// {
 		// 	id: 'side-awards',
