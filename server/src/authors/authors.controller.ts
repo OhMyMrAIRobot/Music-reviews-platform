@@ -17,7 +17,6 @@ import { AuthorsService } from './authors.service';
 import { AuthorsQueryDto } from './dto/authors-query.dto';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { GetAuthorParamsDto } from './dto/get-author-params.dto';
-import { SearchAuthorsQueryDto } from './dto/search-authors-query.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
 
 @Controller('authors')
@@ -49,11 +48,6 @@ export class AuthorsController {
   @Get('list')
   findAuthors(@Query() query: AuthorsQueryDto) {
     return this.authorsService.findAuthors(query);
-  }
-
-  @Get('search')
-  findByName(@Query() query: SearchAuthorsQueryDto) {
-    return this.authorsService.findByNameExtended(query);
   }
 
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)

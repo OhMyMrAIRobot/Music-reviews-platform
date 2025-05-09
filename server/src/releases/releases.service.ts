@@ -308,10 +308,19 @@ export class ReleasesService {
     const order = query.order ? query.order : 'desc';
     const limit = query.limit ? query.limit : 20;
     const offset = query.offset ? query.offset : 0;
+    const title = query.query ?? null;
 
     const count = await this.prisma.release.count({
       where: {
-        releaseTypeId: query.type ?? undefined,
+        AND: [
+          { releaseTypeId: query.type ?? undefined },
+          {
+            title: {
+              contains: title ?? '',
+              mode: 'insensitive',
+            },
+          },
+        ],
       },
     });
 
@@ -348,7 +357,8 @@ export class ReleasesService {
               LEFT JOIN "Reviews" rev on rev.release_id = r.id
               LEFT JOIN "Release_ratings" rr on rr.release_id = r.id
               LEFT JOIN "Release_rating_types" rrt on rr.release_rating_type_id = rrt.id
-          WHERE (${type} IS NULL OR r.release_type_id = ${type})
+          WHERE (${type} IS NULL OR r.release_type_id = ${type}) AND
+          (${title ? `'${title}'` : title}::text IS NULL OR r.title ILIKE '%' || ${title ? `'${title}'` : title} || '%')
           GROUP BY r.id, rt.type, r.publish_date
       )
       SELECT id, title, img, release_type, text_count, no_text_count, author, ratings
