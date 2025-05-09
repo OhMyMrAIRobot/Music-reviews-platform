@@ -9,7 +9,7 @@ import {
 	NinetySvgIcon,
 	QuestionSvgIcon,
 	RatingSvgIcon,
-	RelisesSvgIcon,
+	ReleasesSvgIcon,
 	ReviewsSvgIcon,
 } from './SidebarIcons'
 import { ISidebarItemProps } from './SidebarItem'
@@ -118,7 +118,7 @@ const Sidebar = () => {
 		{
 			id: 'side-relises',
 			onClick: navigateToReleases,
-			icon: <RelisesSvgIcon className='size-5' />,
+			icon: <ReleasesSvgIcon className='size-5' />,
 			label: 'Релизы',
 			active: isActive(ROUTES.RELEASES),
 		},

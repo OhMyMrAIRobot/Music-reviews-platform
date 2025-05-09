@@ -227,7 +227,7 @@ export const ReviewsSvgIcon: FC<ISvgProps> = ({ className }) => (
 	</svg>
 )
 
-export const RelisesSvgIcon: FC<ISvgProps> = ({ className }) => (
+export const ReleasesSvgIcon: FC<ISvgProps> = ({ className }) => (
 	<svg
 		xmlns='http://www.w3.org/2000/svg'
 		viewBox='0 0 25 25'
