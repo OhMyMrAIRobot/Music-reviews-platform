@@ -5,6 +5,7 @@ import AuthPage from '../pages/AuthPage'
 import FeedbackPage from '../pages/FeedbackPage'
 import LeaderboardPage from '../pages/LeaderboardPage'
 import MainPage from '../pages/MainPage'
+import ProfilePage from '../pages/ProfilePage'
 import ReleasePage from '../pages/ReleasePage'
 import ReleasesPage from '../pages/ReleasesPage'
 import ReleasesRatingsPage from '../pages/ReleasesRatingsPage'
@@ -23,6 +24,7 @@ const GlobalRoutes = () => {
 		<Route path={ROUTES.RELEASES} element={<ReleasesPage />} key='releases' />,
 		<Route path={ROUTES.AUTHOR} element={<AuthorPage />} key='author' />,
 		<Route path={ROUTES.SEARCH} element={<SearchPage />} key='search' />,
+		<Route path={ROUTES.PROFILE} element={<ProfilePage />} key='profile' />,
 		<Route
 			path={ROUTES.LEADERBOARD}
 			element={<LeaderboardPage />}

@@ -12,7 +12,7 @@ import PopupProfileButton from './PopupProfileButton'
 
 const ProfileButton = observer(() => {
 	const { authStore, notificationsStore } = useStore()
-	const { navigateToMain } = useCustomNavigate()
+	const { navigateToMain, navigatoToProfile } = useCustomNavigate()
 
 	const [isOpen, setIsOpen] = useState<boolean>(false)
 	const popUpProfRef = useRef<HTMLDivElement | null>(null)
@@ -51,7 +51,9 @@ const ProfileButton = observer(() => {
 				<PopupProfileButton
 					text='Моя страница'
 					icon={<ProfileSvgIcon />}
-					onClick={() => {}}
+					onClick={() => {
+						if (authStore.user?.id) navigatoToProfile(authStore.user.id)
+					}}
 				/>
 				<PopupProfileButton
 					text='Мне понравилось'

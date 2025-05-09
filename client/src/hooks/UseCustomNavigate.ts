@@ -57,6 +57,10 @@ const useCustomNavigate = () => {
 		navigate(`/search/${type}?query=${encodeURIComponent(query)}`)
 	}
 
+	const navigatoToProfile = (id: string) => {
+		navigate(`profile/${id}`)
+	}
+
 	return {
 		navigateToLogin,
 		navigateToRegistration,
@@ -71,6 +75,7 @@ const useCustomNavigate = () => {
 		navigateToLeaderboard,
 		navigateToRatings,
 		navigateToSearch,
+		navigatoToProfile,
 	}
 }
 

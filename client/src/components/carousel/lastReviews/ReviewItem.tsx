@@ -16,7 +16,7 @@ interface IProps {
 const ReviewItem: FC<IProps> = observer(({ review }) => {
 	const { authStore, notificationsStore, reviewsStore } = useStore()
 	const [show, setShow] = useState<boolean>(false)
-	const { navigateToRelease } = useCustomNavigate()
+	const { navigateToRelease, navigatoToProfile } = useCustomNavigate()
 	const isLiked = review.user_fav_ids.some(
 		item => item.userId === authStore.user?.id
 	)
@@ -66,7 +66,10 @@ const ReviewItem: FC<IProps> = observer(({ review }) => {
 	const ReviewHeader = () => {
 		return (
 			<div className='bg-zinc-950/70 p-2 rounded-[12px] flex gap-3'>
-				<div className='flex items-center space-x-2 lg:space-x-3 w-full'>
+				<div
+					onClick={() => navigatoToProfile(review.user_id)}
+					className='flex items-center space-x-2 lg:space-x-3 w-full cursor-pointer'
+				>
 					<ReviewUserImage
 						nickname={review.nickname}
 						img={review.profile_img}
