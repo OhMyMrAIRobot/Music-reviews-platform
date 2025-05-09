@@ -27,7 +27,7 @@ interface IProps {
 	maxYear: number
 }
 
-const ReleaseRatingsHeader: FC<IProps> = ({
+const ReleasesRatingsHeader: FC<IProps> = ({
 	selectedMonth,
 	setSelectedMonth,
 	selectedYear,
@@ -78,18 +78,22 @@ const ReleaseRatingsHeader: FC<IProps> = ({
 							}
 						/>
 					</div>
-					<div className='w-50'>
-						<ComboBox
-							options={Object.values(MonthEnum)}
-							onChange={handleMonthChange}
-							className='border border-white/10'
-							value={MonthEnum[selectedMonth as MonthEnumType] ?? 'Неизвестно'}
-						/>
-					</div>
+					{selectedYear !== null && (
+						<div className='w-50'>
+							<ComboBox
+								options={Object.values(MonthEnum)}
+								onChange={handleMonthChange}
+								className='border border-white/10'
+								value={
+									MonthEnum[selectedMonth as MonthEnumType] ?? 'Неизвестно'
+								}
+							/>
+						</div>
+					)}
 				</div>
 			</div>
 		</>
 	)
 }
 
-export default ReleaseRatingsHeader
+export default ReleasesRatingsHeader
