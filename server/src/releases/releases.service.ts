@@ -75,89 +75,16 @@ export class ReleasesService {
 
   async findMostCommentedReleasesLastDay(): Promise<ReleaseResponseData[]> {
     return this.prisma.$queryRaw<ReleaseResponseData[]>`
-      SELECT r.id, r.title, r.img,
-        rt.type as release_type,
-        (count(DISTINCT rev.id) FILTER (WHERE rev.text IS NOT NULL))::int AS text_count,
-        (count(DISTINCT rev.id) FILTER (WHERE rev.text IS NULL))::int AS no_text_count,
-        json_agg(DISTINCT jsonb_build_object('name', a.name)) AS author,
-        json_agg(DISTINCT jsonb_build_object(
-          'total', rr.total,
-          'type', rrt.type
-        )) as ratings
-      FROM "Releases" r
-      LEFT JOIN "Release_artists" ra ON r.id = ra.release_id
-      LEFT JOIN "Authors" a ON ra.author_id = a.id
-      LEFT JOIN "Reviews" rev on rev.release_id = r.id
-        AND rev.created_at >= NOW() - INTERVAL '24 hours'
-      LEFT JOIN "Release_types" rt on r.release_type_id = rt.id
-      LEFT JOIN "Release_ratings" rr on r.id = rr.release_id
-      LEFT JOIN "Release_rating_types" rrt on rr.release_rating_type_id = rrt.id
-      GROUP BY r.id, rt.type
-      ORDER BY COUNT(rev.id) DESC
-      LIMIT 15`;
+      SELECT id, title, img, release_type, text_count, no_text_count, author, ratings
+      FROM best_releases_last_24h LIMIT 15;
+    `;
   }
 
   async findReleaseDetails(
     releaseId: string,
   ): Promise<ReleaseDetailResponseDto> {
     const rawQuery = `
-        SELECT
-          r.id,
-          r.title,
-          EXTRACT(YEAR FROM r.publish_date) AS year,
-          r.img AS release_img,
-          rt.type as release_type,
-          (
-            SELECT JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
-              'id', a.id,
-              'name', a.name,
-              'img', a.avatar_img
-            ))
-            FROM "Release_artists" ra
-            JOIN "Authors" a on ra.author_id = a.id
-            WHERE ra.release_id = r.id
-          ) AS artists,
-          (
-            SELECT JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
-              'id', a.id,
-              'name', a.name,
-              'img', a.avatar_img
-            ))
-            FROM "Release_producers" rp
-            JOIN "Authors" a on rp.author_id = a.id
-            WHERE rp.release_id = r.id
-          ) AS producers,
-          (
-            SELECT JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
-              'id', a.id,
-              'name', a.name,
-              'img', a.avatar_img
-            ))
-            FROM "Release_designers" rd
-            JOIN "Authors" a on rd.author_id = a.id
-            WHERE rd.release_id = r.id
-          ) AS designers,
-          COUNT(DISTINCT ufr.user_id)::int AS likes_count,
-          JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
-              'userId', ufr.user_id,
-              'releaseId', ufr.release_id
-              )) AS user_fav_ids,
-          JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
-              'type', rrt.type,
-              'total', rr.total
-          )) AS ratings,
-          JSON_AGG(DISTINCT  JSONB_BUILD_OBJECT(
-              'type', rrt.type,
-              'details', rrd
-          )) AS rating_details
-        FROM "Releases" r
-        LEFT JOIN "Release_types" rt on r.release_type_id = rt.id
-        LEFT JOIN "User_fav_releases" ufr on r.id = ufr.release_id
-        LEFT JOIN "Release_ratings" rr on r.id = rr.release_id
-        LEFT JOIN "Release_rating_types" rrt on rr.release_rating_type_id = rrt.id
-        LEFT JOIN "Release_rating_details" rrd on rr.id = rrd.release_rating_id
-        WHERE r.id = '${releaseId}'
-        GROUP BY r.id, rt.type`;
+        SELECT * FROM release_summary WHERE id = '${releaseId}'`;
 
     const release =
       await this.prisma.$queryRawUnsafe<QueryReleaseDetailResponseDto>(

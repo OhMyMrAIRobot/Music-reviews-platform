@@ -1,9 +1,9 @@
 export class PreferredResponseDto {
   user_id: string;
-  artists: PreferredItem[];
-  producers: PreferredItem[];
-  tracks: PreferredItem[];
-  albums: PreferredItem[];
+  artists: PreferredItem[] | null;
+  producers: PreferredItem[] | null;
+  tracks: PreferredItem[] | null;
+  albums: PreferredItem[] | null;
 }
 
 class PreferredItem {
