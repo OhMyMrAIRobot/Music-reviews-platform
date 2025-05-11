@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
 import { useParams } from 'react-router'
+import UpdateProfileInfoForm from '../components/editProfilePage/UpdateProfileInfoForm'
 import UploadAvatarForm from '../components/editProfilePage/UploadAvatarForm'
 import UploadCoverForm from '../components/editProfilePage/UploadCoverForm'
 import useCustomNavigate from '../hooks/UseCustomNavigate'
@@ -22,6 +23,7 @@ const EditProfilePage = observer(() => {
 			<h1 className='text-3xl font-semibold mt-10'>Настройки профиля</h1>
 			<UploadAvatarForm />
 			<UploadCoverForm />
+			<UpdateProfileInfoForm />
 		</div>
 	)
 })

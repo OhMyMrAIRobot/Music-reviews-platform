@@ -20,12 +20,13 @@ class ReleaseRatingsPageStore {
 	}
 
 	setMaxYear(data: number) {
-		this.minYear = data
+		this.maxYear = data
 	}
 
 	fetchReleases = async (year: number | null, month: number | null) => {
 		try {
 			const data = await ReleaseAPI.fetchTopRatingReleases(year, month)
+			console.log(data)
 			this.setReleases(data.releases)
 			if (!this.minYear || !this.maxYear) {
 				this.setMinYear(data.minYear)

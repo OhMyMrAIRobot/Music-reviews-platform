@@ -12,7 +12,7 @@ interface IProps {
 
 const AuthorReleaseTypesRatings: FC<IProps> = ({ releaseType, stats }) => {
 	const ratings = stats.find(r => r.type === releaseType)
-
+	console.log(ratings)
 	return (
 		ratings && (
 			<div className='flex items-center justify-center text-sm gap-x-2'>
@@ -22,7 +22,7 @@ const AuthorReleaseTypesRatings: FC<IProps> = ({ releaseType, stats }) => {
 					<AlbumSvgIcon classname='size-5' />
 				)}
 				<AuthorCircleRating
-					rating={ratings.ratings.no_text}
+					rating={ratings.ratings.super_user}
 					ratingType={ReleaseRatingTypesEnum.SUPER_USER}
 					releaseType={releaseType}
 				/>

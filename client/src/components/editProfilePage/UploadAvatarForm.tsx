@@ -64,9 +64,7 @@ const UploadAvatarForm = observer(() => {
 					className='object-cover size-full'
 				/>
 			</div>
-			<div className='pt-6 border-t border-white/5'>
-				<SubmitButton onClick={handleSubmit} />
-			</div>
+			<SubmitButton onClick={handleSubmit} title='Отправить' />
 		</EditProfileSection>
 	)
 })

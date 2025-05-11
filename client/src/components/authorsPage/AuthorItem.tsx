@@ -38,6 +38,7 @@ const AuthorItem: FC<IProps> = ({ author }) => {
 					src={`${import.meta.env.VITE_SERVER_URL}/public/authors/avatars/${
 						author.img
 					}`}
+					className='size-full object-cover object-center'
 				/>
 			</div>
 
@@ -48,6 +49,7 @@ const AuthorItem: FC<IProps> = ({ author }) => {
 						tooltip={<ToolTip>{type.type}</ToolTip>}
 						spanClassName='text-white relative'
 						key={type.type}
+						centered={false}
 					>
 						{(() => {
 							switch (type.type) {

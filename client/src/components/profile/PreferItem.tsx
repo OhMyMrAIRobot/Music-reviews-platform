@@ -15,7 +15,7 @@ const PreferItem: FC<IProps> = ({ item, isAuthor }) => {
 			onClick={() =>
 				isAuthor ? navigateToAuthor(item.id) : navigateToRelease(item.id)
 			}
-			className='flex flex-col justify-start rounded-[25px] lg:rounded-[30px] hover:bg-opacity-[0.08] duration-300 cursor-pointer w-full p-1'
+			className='flex flex-col justify-start rounded-[25px] lg:rounded-[30px] hover:bg-opacity-[0.08] duration-300 cursor-pointer w-full p-1 aspect-square'
 		>
 			<img
 				loading='lazy'
@@ -23,7 +23,7 @@ const PreferItem: FC<IProps> = ({ item, isAuthor }) => {
 				src={`${import.meta.env.VITE_SERVER_URL}/public/${
 					isAuthor ? 'authors/avatars' : 'releases'
 				}/${item.image}`}
-				className={`w-full aspect-square hover:ring-4 ring-white/20 transition-all duration-300 ${
+				className={`size-full object-cover object-center hover:ring-4 ring-white/20 transition-all duration-300 ${
 					isAuthor ? 'rounded-full' : 'rounded-lg'
 				}`}
 			/>

@@ -56,14 +56,16 @@ const AuthorPageHeader: FC<IProps> = observer(({ author }) => {
 					<div className='absolute inset-2 bg-black/30 rounded-md'></div>
 
 					{author.cover === '1.png' && (
-						<img
-							loading='lazy'
-							decoding='async'
-							src={`${import.meta.env.VITE_SERVER_URL}/public/authors/avatars/${
-								author.img
-							}`}
-							className='size-25 lg:size-50 overflow-hidden absolute left-3 top-3 lg:left-5 lg:top-5 rounded-full border border-zinc-700'
-						/>
+						<div className='lg:size-50 overflow-hidden absolute left-3 top-3 lg:left-5 lg:top-5 rounded-full border border-zinc-700 z-100'>
+							<img
+								loading='lazy'
+								decoding='async'
+								src={`${
+									import.meta.env.VITE_SERVER_URL
+								}/public/authors/avatars/${author.img}`}
+								className='size-full object-cover object-center'
+							/>
+						</div>
 					)}
 
 					<button

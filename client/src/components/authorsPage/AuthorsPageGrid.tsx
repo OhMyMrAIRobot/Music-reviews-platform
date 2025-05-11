@@ -10,6 +10,7 @@ interface IProps {
 	currentPage: number
 	setCurrentPage: (val: number) => void
 	total: number
+	perPage: number
 }
 
 const AuthorsPageGrid: FC<IProps> = ({
@@ -18,10 +19,11 @@ const AuthorsPageGrid: FC<IProps> = ({
 	currentPage,
 	setCurrentPage,
 	total,
+	perPage,
 }) => {
 	return (
 		<>
-			<section className='mt-5'>
+			<section className='mt-5 overflow-hidden'>
 				{!isLoading ? (
 					items.length > 0 ? (
 						<div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 lg:gap-6'>
@@ -36,7 +38,7 @@ const AuthorsPageGrid: FC<IProps> = ({
 					)
 				) : (
 					<div className='mt-30'>
-						<Loader size={20} />
+						<Loader size={'size-20'} />
 					</div>
 				)}
 			</section>
@@ -46,7 +48,7 @@ const AuthorsPageGrid: FC<IProps> = ({
 					<Pagination
 						currentPage={currentPage}
 						totalItems={total}
-						itemsPerPage={5}
+						itemsPerPage={perPage}
 						onPageChange={setCurrentPage}
 						idToScroll={'authors'}
 					/>

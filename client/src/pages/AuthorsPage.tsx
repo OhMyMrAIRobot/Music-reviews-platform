@@ -10,7 +10,7 @@ const AuthorsPage = observer(() => {
 	const { authorsStore } = useStore()
 	const [selectedAuthorType, setSelectedAuthorType] = useState<string>()
 	const [currentPage, setCurrentPage] = useState<number>(1)
-
+	const perPage = 10
 	useEffect(() => {
 		fetchTypes()
 	}, [])
@@ -19,7 +19,7 @@ const AuthorsPage = observer(() => {
 		const type = authorsStore.authorTypes.find(
 			entry => entry.type === selectedAuthorType
 		)
-		fetchAuthors(type ? type.id : null, 5, (currentPage - 1) * 5)
+		fetchAuthors(type ? type.id : null, perPage, (currentPage - 1) * perPage)
 	}, [selectedAuthorType, currentPage])
 
 	const { execute: fetchAuthors, isLoading: isAuthorsLoading } = useLoading(
@@ -45,7 +45,7 @@ const AuthorsPage = observer(() => {
 							value={selectedAuthorType}
 						/>
 					) : (
-						<Loader size={10} />
+						<Loader size={'size-20'} />
 					)}
 				</div>
 			</div>
@@ -56,6 +56,7 @@ const AuthorsPage = observer(() => {
 				currentPage={currentPage}
 				setCurrentPage={setCurrentPage}
 				total={authorsStore.authorsCount}
+				perPage={perPage}
 			/>
 		</>
 	)

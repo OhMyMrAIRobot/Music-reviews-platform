@@ -22,7 +22,7 @@ const ReleasesPage = () => {
 		ReleaseSortFields.PUBLISHED_New
 	)
 	const [selectedType, setSelectedType] = useState<string>('Все')
-
+	const perPage = 10
 	const { execute: fetchReleases, isLoading: isReleasesLoading } = useLoading(
 		releasesStore.fetchReleases
 	)
@@ -74,7 +74,13 @@ const ReleasesPage = () => {
 				break
 		}
 
-		fetchReleases(type?.id ?? null, field, order, 5, (currentPage - 1) * 5)
+		fetchReleases(
+			type?.id ?? null,
+			field,
+			order,
+			perPage,
+			(currentPage - 1) * perPage
+		)
 	}, [selectedType, selectedSort, currentPage])
 
 	return (
@@ -101,7 +107,7 @@ const ReleasesPage = () => {
 							value={selectedType}
 						/>
 					) : (
-						<Loader size={10} />
+						<Loader size={'size-20'} />
 					)}
 				</div>
 
@@ -124,6 +130,7 @@ const ReleasesPage = () => {
 				currentPage={currentPage}
 				setCurrentPage={setCurrentPage}
 				total={releasesStore.releasesCount}
+				perPage={perPage}
 			/>
 		</>
 	)

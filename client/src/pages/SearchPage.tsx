@@ -25,14 +25,16 @@ const SearchPage = observer(() => {
 		searchStore.fetchReleases
 	)
 
+	const perPage = 10
+
 	useEffect(() => {
 		if (query.length > 0) {
 			switch (type) {
 				case SearchTypesEnum.AUTHORS:
-					fetchAuthors(query, 5, (currentPage - 1) * 5)
+					fetchAuthors(query, perPage, (currentPage - 1) * perPage)
 					break
 				case SearchTypesEnum.RELEASES:
-					fetchReleases(query, 5, (currentPage - 1) * 5)
+					fetchReleases(query, perPage, (currentPage - 1) * perPage)
 					break
 				default:
 					break
@@ -61,6 +63,7 @@ const SearchPage = observer(() => {
 					currentPage={currentPage}
 					setCurrentPage={setCurrentPage}
 					total={searchStore.authorsCount}
+					perPage={perPage}
 				/>
 			)}
 			{type === SearchTypesEnum.RELEASES && (
@@ -70,6 +73,7 @@ const SearchPage = observer(() => {
 					currentPage={currentPage}
 					setCurrentPage={setCurrentPage}
 					total={searchStore.releasesCount}
+					perPage={perPage}
 				/>
 			)}
 		</>

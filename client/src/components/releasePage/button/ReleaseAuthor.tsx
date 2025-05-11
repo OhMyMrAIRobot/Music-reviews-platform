@@ -23,13 +23,17 @@ const ReleaseAuthor: FC<IReleaseAuthorProps> = ({ id, img, name, type }) => {
 				}
 				`}
 		>
-			<img
-				alt={name}
-				src={`${import.meta.env.VITE_SERVER_URL}/public/authors/avatars/${img}`}
-				loading='lazy'
-				decoding='async'
-				className='size-8 rounded-full overflow-hidden'
-			/>
+			<div className='size-8 overflow-hidden rounded-full'>
+				<img
+					alt={name}
+					src={`${
+						import.meta.env.VITE_SERVER_URL
+					}/public/authors/avatars/${img}`}
+					loading='lazy'
+					decoding='async'
+					className='size-full object-cover'
+				/>
+			</div>
 			<span className='font-bold'>{name}</span>
 		</button>
 	)

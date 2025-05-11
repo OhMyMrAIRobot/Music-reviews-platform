@@ -3,16 +3,21 @@ import { FC } from 'react'
 interface IFormLabelProps {
 	name: string
 	htmlFor: string
+	isRequired?: boolean
 }
 
-const FormLabel: FC<IFormLabelProps> = ({ name, htmlFor }) => {
+const FormLabel: FC<IFormLabelProps> = ({
+	name,
+	htmlFor,
+	isRequired = true,
+}) => {
 	return (
 		<label
 			htmlFor={htmlFor}
 			className='text-sm font-bold leading-none select-none flex gap-0.5'
 		>
 			{name}
-			<span className='text-red-500'>*</span>
+			{isRequired && <span className='text-red-500'>*</span>}
 		</label>
 	)
 }

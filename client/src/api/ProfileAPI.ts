@@ -48,4 +48,19 @@ export const ProfileAPI = {
 		)
 		return data
 	},
+
+	async updateProfileBio(bio: string) {
+		const { data } = await api.patch<IUpdatedProfile>('/profiles', { bio })
+		return data
+	},
+
+	async updateUserInfo(email: string | null, nickname: string | null) {
+		const payload = Object.fromEntries(
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			Object.entries({ email, nickname }).filter(([_, value]) => value !== null)
+		)
+
+		const { data } = await api.patch<IUpdatedProfile>('/users', payload)
+		return data
+	},
 }
