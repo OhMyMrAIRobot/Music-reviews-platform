@@ -6,7 +6,7 @@ import EditProfileSection from './EditProfileSection'
 import SelectImageLabel from './SelectImageLabel'
 import SubmitButton from './SubmitButton'
 
-const UploadAvatarForm = observer(() => {
+const UploadCoverForm = observer(() => {
 	const { profileStore, notificationsStore } = useStore()
 	const { checkAuth } = useAuthCheck()
 	const [file, setFile] = useState<File | null>(null)
@@ -32,7 +32,7 @@ const UploadAvatarForm = observer(() => {
 
 		formData.append('file', file)
 
-		profileStore.uploadProfileAvatar(formData).then(result => {
+		profileStore.uploadProfileCover(formData).then(result => {
 			notificationsStore.addNotification({
 				id: self.crypto.randomUUID(),
 				text: result.message,
@@ -42,24 +42,24 @@ const UploadAvatarForm = observer(() => {
 	}
 
 	return (
-		<EditProfileSection title='Аватар'>
+		<EditProfileSection title='Обложка профиля'>
 			<div className='w-[144px] shrink-0'>
-				<SelectImageLabel htmlfor='avatar' />
+				<SelectImageLabel htmlfor='cover' />
 				<input
 					onChange={handleFileChange}
 					className='h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium hidden'
-					id='avatar'
+					id='cover'
 					accept='image/*'
 					type='file'
 				/>
 			</div>
-			<div className='relative w-36 h-36 rounded-full overflow-hidden'>
+			<div className='relative w-full max-h-28 sm:max-h-44 lg:max-h-64 rounded-lg overflow-hidden aspect-video'>
 				<img
-					alt='avatar'
+					alt='cover'
 					loading='lazy'
 					decoding='async'
-					src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-						profileStore.myProfile?.avatar
+					src={`${import.meta.env.VITE_SERVER_URL}/public/covers/${
+						profileStore.myProfile?.cover
 					}`}
 					className='object-cover size-full'
 				/>
@@ -71,4 +71,4 @@ const UploadAvatarForm = observer(() => {
 	)
 })
 
-export default UploadAvatarForm
+export default UploadCoverForm

@@ -35,4 +35,17 @@ export const ProfileAPI = {
 		)
 		return data
 	},
+
+	async uploadProfileCover(formData: FormData): Promise<IUpdatedProfile> {
+		const { data } = await api.post<IUpdatedProfile>(
+			'/uploads/cover',
+			formData,
+			{
+				headers: {
+					'Content-Type': 'multipart/form-data',
+				},
+			}
+		)
+		return data
+	},
 }

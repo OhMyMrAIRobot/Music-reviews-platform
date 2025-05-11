@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable, runInAction } from 'mobx'
 import { ProfileAPI } from '../api/ProfileAPI'
 import { ReviewAPI } from '../api/ReviewAPI'
 import { IPreferredResponse } from '../models/profile/PreferredResponse'
@@ -114,15 +114,28 @@ export class ProfileStore {
 	): Promise<{ status: boolean; message: string }> => {
 		try {
 			const data = await ProfileAPI.uploadProfileAvatar(formData)
-			const profile = this.myProfile
-			if (profile) {
-				profile.avatar = data.avatar
-				this.setMyProfile(profile)
-			}
+			runInAction(() => {
+				if (this.myProfile) this.myProfile.avatar = data.avatar
+			})
 			return { status: true, message: 'Вы успешно сменили аватар!' }
 		} catch (e) {
 			console.log(e)
 			return { status: false, message: 'Не удалось загрузить аватар!' }
+		}
+	}
+
+	uploadProfileCover = async (
+		formData: FormData
+	): Promise<{ status: boolean; message: string }> => {
+		try {
+			const data = await ProfileAPI.uploadProfileCover(formData)
+			runInAction(() => {
+				if (this.myProfile) this.myProfile.cover = data.coverImage
+			})
+			return { status: true, message: 'Вы успешно сменили обложку профиля!' }
+		} catch (e) {
+			console.log(e)
+			return { status: false, message: 'Не удалось загрузить обложку профиля!' }
 		}
 	}
 }
