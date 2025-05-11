@@ -3,7 +3,7 @@ model User {
   email     String   @unique @db.VarChar(60)
   nickname  String   @unique @db.VarChar(20)
   password  String   @map("password_hash")
-  isActive  Boolean  @default(false)
+  isActive  Boolean  @default(false) @map("is_active")
   createdAt DateTime @default(now()) @map("created_at")
 
   roleId String @map("role_id")

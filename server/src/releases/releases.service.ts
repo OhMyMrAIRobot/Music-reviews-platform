@@ -99,46 +99,58 @@ export class ReleasesService {
     findAll: boolean,
   ): Promise<ReleaseResponseData[]> {
     const rawQuery = `
-        WITH release_data as (
-          SELECT 
-              r.id,
-              r.title,
-              r.img,
-              r.publish_date,
-              rt.type AS release_type,
-              (count(DISTINCT rev.id) FILTER (WHERE rev.text IS NOT NULL))::int AS text_count,
-              (count(DISTINCT rev.id) FILTER (WHERE rev.text IS NULL))::int AS no_text_count,
-              json_agg(DISTINCT jsonb_build_object('id', a.id,'name', a.name)) as author,
-              json_agg(DISTINCT jsonb_build_object(
-                      'total', rr.total,
-                      'type', rrt.type
-              )) as ratings,
-              (SELECT rr.total FROM "Release_ratings" rr
-                    JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
+          WITH release_data as (
+            SELECT
+                r.id,
+                r.title,
+                r.img,
+                r.publish_date,
+                rt.type AS release_type,
+                (count(DISTINCT rev.id) FILTER (WHERE rev.text IS NOT NULL))::int AS text_count,
+                (count(DISTINCT rev.id) FILTER (WHERE rev.text IS NULL))::int AS no_text_count,
+                json_agg(DISTINCT jsonb_build_object('id', a.id,'name', a.name)) as author,
+                (
+                    SELECT
+                        json_agg(DISTINCT jsonb_build_object('id', asub.id,'name', asub.name))
+                    FROM "Releases" rsub
+                    LEFT JOIN "Release_artists" rasub on r.id = rasub.release_id
+                    LEFT JOIN "Release_producers" rpsub on r.id = rpsub.release_id
+                    LEFT JOIN "Release_designers" rdsub on r.id = rdsub.release_id
+                    LEFT JOIN "Authors" asub on
+                        rasub.author_id = asub.id
+                            OR rpsub.author_id = asub.id
+                            OR rdsub.author_id = asub.id
+                ) as authors,
+                json_agg(DISTINCT jsonb_build_object(
+                        'total', rr.total,
+                        'type', rrt.type
+                )) as ratings,
+                (SELECT rr.total FROM "Release_ratings" rr
+                                          JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
                 WHERE rr.release_id = r.id AND rrt.type = 'super_user') AS super_user_rating,
-              (SELECT rr.total FROM "Release_ratings" rr
-                    JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
+                (SELECT rr.total FROM "Release_ratings" rr
+                                          JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
                 WHERE rr.release_id = r.id AND rrt.type = 'with_text') AS text_rating,
-              (SELECT rr.total FROM "Release_ratings" rr
-                    JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
+                (SELECT rr.total FROM "Release_ratings" rr
+                                          JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
                 WHERE rr.release_id = r.id AND rrt.type = 'no_text') AS no_text_rating
 
-          FROM "Releases" r
-              LEFT JOIN "Release_types" rt on r.release_type_id = rt.id
-              LEFT JOIN "Release_artists" ra on r.id = ra.release_id
-              LEFT JOIN "Authors" a on ra.author_id = a.id
-              LEFT JOIN "Release_producers" rp on r.id = rp.release_id
-              LEFT JOIN "Release_designers" rd on r.id = rd.author_id
-              LEFT JOIN "Reviews" rev on rev.release_id = r.id
-              LEFT JOIN "Release_ratings" rr on rr.release_id = r.id
-              LEFT JOIN "Release_rating_types" rrt on rr.release_rating_type_id = rrt.id
-          GROUP BY r.id, rt.type, r.publish_date
+            FROM "Releases" r
+                    LEFT JOIN "Release_types" rt on r.release_type_id = rt.id
+                    LEFT JOIN "Release_artists" ra on r.id = ra.release_id
+                    LEFT JOIN "Authors" a on ra.author_id = a.id
+                    LEFT JOIN "Release_producers" rp on r.id = rp.release_id
+                    LEFT JOIN "Release_designers" rd on r.id = rd.author_id
+                    LEFT JOIN "Reviews" rev on rev.release_id = r.id
+                    LEFT JOIN "Release_ratings" rr on rr.release_id = r.id
+                    LEFT JOIN "Release_rating_types" rrt on rr.release_rating_type_id = rrt.id
+            GROUP BY r.id, rt.type, r.publish_date
         )
         SELECT id, title, img, release_type, text_count, no_text_count, author, ratings
         FROM release_data rd
         WHERE EXISTS (
             SELECT 1
-            FROM jsonb_array_elements(rd.author::jsonb) AS a
+            FROM jsonb_array_elements(rd.authors::jsonb) AS a
             WHERE (a->>'id')::text = '${authorId}'
         )
         ORDER BY ${findAll ? 'rd.publish_date' : 'no_text_rating + text_rating + super_user_rating'} desc

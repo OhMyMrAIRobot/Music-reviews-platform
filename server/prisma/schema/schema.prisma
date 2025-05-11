@@ -20,7 +20,7 @@ model Feedback {
   title            String   @db.VarChar(50)
   message          String
   createdAt        DateTime @default(now()) @map("created_at")
-  feedbackStatusId String
+  feedbackStatusId String   @map("feedback_status_id")
 
   feedbackStatus FeedbackStatus @relation(fields: [feedbackStatusId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
