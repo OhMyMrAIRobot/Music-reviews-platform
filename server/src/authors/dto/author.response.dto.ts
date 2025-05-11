@@ -4,7 +4,7 @@ export class AuthorResponseDto {
   cover: string;
   name: string;
   likes_count: number;
-  user_fav_ids: { userId: string; authorId: string }[];
+  user_fav_ids: { userId: string | null; authorId: string | null }[];
   author_types: { type: string }[];
   release_type_stats: [
     {
