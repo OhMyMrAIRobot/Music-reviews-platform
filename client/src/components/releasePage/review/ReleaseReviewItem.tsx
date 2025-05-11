@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useState } from 'react'
+import { useAuthCheck } from '../../../hooks/UseAuthCheck'
 import useCustomNavigate from '../../../hooks/UseCustomNavigate'
 import { useStore } from '../../../hooks/UseStore'
 import { IReleaseReview } from '../../../models/review/ReleaseReview'
@@ -14,6 +15,7 @@ interface IProps {
 
 const ReleaseReviewItem: FC<IProps> = observer(({ review }) => {
 	const { navigatoToProfile } = useCustomNavigate()
+	const { checkAuth } = useAuthCheck()
 	const { authStore, releasePageStore, notificationsStore } = useStore()
 	const isLiked =
 		review.user_fav_ids.some(item => item.userId === authStore.user?.id) ??
@@ -23,18 +25,7 @@ const ReleaseReviewItem: FC<IProps> = observer(({ review }) => {
 
 	const toggleFavReview = () => {
 		setToggling(true)
-		if (!authStore.isAuth) {
-			notificationsStore.addNoAuthNotification(
-				'Для добавления рецензии в понравившиеся требуется авторизация!'
-			)
-			setToggling(false)
-			return
-		}
-
-		if (!authStore.user?.isActive) {
-			notificationsStore.addNoAuthNotification(
-				'Для добавления рецензии в понравившиеся требуется активировать аккаунт!'
-			)
+		if (!checkAuth()) {
 			setToggling(false)
 			return
 		}

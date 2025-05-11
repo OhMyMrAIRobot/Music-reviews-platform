@@ -14,7 +14,8 @@ import PopupProfileButton from './PopupProfileButton'
 
 const ProfileButton = observer(() => {
 	const { authStore, notificationsStore, profileStore } = useStore()
-	const { navigateToMain, navigatoToProfile } = useCustomNavigate()
+	const { navigateToMain, navigatoToProfile, navigateToEditProfile } =
+		useCustomNavigate()
 
 	const { execute: fetchProfile, isLoading: isProfileLoading } = useLoading(
 		profileStore.fetchMyProfile
@@ -66,7 +67,7 @@ const ProfileButton = observer(() => {
 				)}
 			</button>
 			<div
-				className={`absolute right-0 w-[300px] mt-2 rounded-xl bg-primary border-2 border-white/15 grid gap-2 font-medium py-3 transition-all duration-125 ${
+				className={`absolute z-2000 right-0 w-[300px] mt-2 rounded-xl bg-primary border-2 border-white/15 grid gap-2 font-medium py-3 transition-all duration-125 ${
 					isOpen
 						? 'opacity-100 translate-y-0 pointer-events-auto'
 						: 'opacity-0 -translate-y-3 pointer-events-none'
@@ -84,12 +85,16 @@ const ProfileButton = observer(() => {
 				<PopupProfileButton
 					text='Мне понравилось'
 					icon={<HeartSvgIcon />}
-					onClick={() => {}}
+					onClick={() => {
+						if (authStore.user?.id) navigatoToProfile(authStore.user.id)
+					}}
 				/>
 				<PopupProfileButton
 					text='Настройки профиля'
 					icon={<SettingsSvgIcon />}
-					onClick={() => {}}
+					onClick={() => {
+						if (authStore.user?.id) navigateToEditProfile(authStore.user.id)
+					}}
 				/>
 
 				<div className='border-t border-white/15 pb-1'></div>

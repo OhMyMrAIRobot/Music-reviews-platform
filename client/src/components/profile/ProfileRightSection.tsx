@@ -56,7 +56,7 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 					src={`${import.meta.env.VITE_SERVER_URL}/public/covers/${
 						profile.cover
 					}`}
-					className='object-cover rounded-xl size-full'
+					className='object-cover rounded-xl size-full max-h-[300px]'
 				/>
 			</div>
 			<div

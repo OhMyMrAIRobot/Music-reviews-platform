@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { FC } from 'react'
+import { useAuthCheck } from '../../hooks/UseAuthCheck'
 import { useStore } from '../../hooks/UseStore'
 import { IAuthor } from '../../models/author/Author'
 import { AuthorTypesEnum } from '../../models/author/AuthorTypes'
@@ -20,6 +21,7 @@ interface IProps {
 }
 
 const AuthorPageHeader: FC<IProps> = observer(({ author }) => {
+	const { checkAuth } = useAuthCheck()
 	const { authorPageStore, authStore, notificationsStore } = useStore()
 
 	const isLiked = author.user_fav_ids.some(
@@ -27,19 +29,7 @@ const AuthorPageHeader: FC<IProps> = observer(({ author }) => {
 	)
 
 	const toggleFavAuthor = () => {
-		if (!authStore.isAuth) {
-			notificationsStore.addNoAuthNotification(
-				'Для добавления автора в список понравившихся требуется авторизация!'
-			)
-			return
-		}
-
-		if (!authStore.user?.isActive) {
-			notificationsStore.addNoAuthNotification(
-				'Для добавления автора в список понравившихся требуется активировать аккаунт!'
-			)
-			return
-		}
+		if (!checkAuth()) return
 
 		authorPageStore.toggleFavAuthor(author.id, isLiked).then(result => {
 			notificationsStore.addNotification({
@@ -53,9 +43,9 @@ const AuthorPageHeader: FC<IProps> = observer(({ author }) => {
 	return (
 		<section className='relative w-full h-45 md:h-62 lg:h-125 rounded-2xl overflow-hidden bg-red-500'>
 			<div className='size-full'>
-				<div className='relative size-full overflow-hidden rounded-2xl'>
+				<div className='relative size-full overflow-hidden rounded-2xl z-10'>
 					<img
-						className='absolute size-full object-cover left-0 top-0'
+						className='absolute size-full object-cover left-0 top-0 z-100'
 						loading='lazy'
 						decoding='async'
 						src={`${import.meta.env.VITE_SERVER_URL}/public/authors/covers/${

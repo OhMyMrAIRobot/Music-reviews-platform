@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useState } from 'react'
+import { useAuthCheck } from '../../../hooks/UseAuthCheck'
 import { useStore } from '../../../hooks/UseStore'
 import { IReleaseDetails } from '../../../models/release/ReleaseDetails'
 import {
@@ -15,6 +16,7 @@ interface IProps {
 
 const ReleaseContainer: FC<IProps> = observer(({ release }) => {
 	const { authStore, releasePageStore, notificationsStore } = useStore()
+	const { checkAuth } = useAuthCheck()
 	const [toggling, setToggling] = useState<boolean>(false)
 	const isLiked = release.user_fav_ids.some(
 		fav => fav.userId === authStore.user?.id
@@ -22,18 +24,7 @@ const ReleaseContainer: FC<IProps> = observer(({ release }) => {
 
 	const toggleFavRelease = () => {
 		setToggling(true)
-		if (!authStore.isAuth) {
-			notificationsStore.addNoAuthNotification(
-				'Для добавления релиза в список понравившихся требуется авторизация!'
-			)
-			setToggling(false)
-			return
-		}
-
-		if (!authStore.user?.isActive) {
-			notificationsStore.addNoAuthNotification(
-				'Для добавления релиза в список понравившихся требуется активировать аккаунт!'
-			)
+		if (!checkAuth()) {
 			setToggling(false)
 			return
 		}

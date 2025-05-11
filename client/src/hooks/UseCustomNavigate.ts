@@ -61,6 +61,10 @@ const useCustomNavigate = () => {
 		navigate(`/profile/${id}`)
 	}
 
+	const navigateToEditProfile = (id: string) => {
+		navigate(`/profile/edit/${id}`)
+	}
+
 	return {
 		navigateToLogin,
 		navigateToRegistration,
@@ -76,6 +80,7 @@ const useCustomNavigate = () => {
 		navigateToRatings,
 		navigateToSearch,
 		navigatoToProfile,
+		navigateToEditProfile,
 	}
 }
 

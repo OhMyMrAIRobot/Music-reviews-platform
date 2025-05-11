@@ -20,6 +20,7 @@ export const ROUTES = {
 	RATINGS: '/ratings',
 	SEARCH: '/search/:type',
 	PROFILE: '/profile/:id',
+	EDIT_PROFILE: 'profile/edit/:id',
 } as const
 
 export type AppRoutes = keyof typeof ROUTES | keyof typeof ROUTES.AUTH

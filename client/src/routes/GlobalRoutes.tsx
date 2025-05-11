@@ -2,6 +2,7 @@ import { Route } from 'react-router'
 import AuthorPage from '../pages/AuthorPage'
 import AuthorsPage from '../pages/AuthorsPage'
 import AuthPage from '../pages/AuthPage'
+import EditProfilePage from '../pages/EditProfilePage'
 import FeedbackPage from '../pages/FeedbackPage'
 import LeaderboardPage from '../pages/LeaderboardPage'
 import MainPage from '../pages/MainPage'
@@ -25,6 +26,11 @@ const GlobalRoutes = () => {
 		<Route path={ROUTES.AUTHOR} element={<AuthorPage />} key='author' />,
 		<Route path={ROUTES.SEARCH} element={<SearchPage />} key='search' />,
 		<Route path={ROUTES.PROFILE} element={<ProfilePage />} key='profile' />,
+		<Route
+			path={ROUTES.EDIT_PROFILE}
+			element={<EditProfilePage />}
+			key='edit_profile'
+		/>,
 		<Route
 			path={ROUTES.LEADERBOARD}
 			element={<LeaderboardPage />}

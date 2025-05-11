@@ -14,7 +14,9 @@ const AuthContainer: FC<IAuthContainerProps> = ({ children }) => {
 					alt='authImage'
 					decoding='async'
 					sizes='100vm'
-					src='https://risazatvorchestvo.com/_next/image?url=%2Fnoimage-single-big.jpg&w=3840&q=100'
+					src={`${
+						import.meta.env.VITE_SERVER_URL
+					}/public/assets/auth-cover.png`}
 					className='absolute h-full w-full left-0 top-0 right-0 bottom-0 object-center object-cover'
 				/>
 			</div>
