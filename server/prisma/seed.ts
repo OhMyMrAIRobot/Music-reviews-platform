@@ -7,6 +7,30 @@ import { UserRoleEnum } from '../src/roles/types/user-role.enum';
 const prisma = new PrismaClient();
 
 async function main() {
+  await prisma.author.deleteMany();
+  await prisma.authorType.deleteMany();
+  await prisma.authorOnType.deleteMany();
+  await prisma.user.deleteMany();
+  await prisma.role.deleteMany();
+  await prisma.userProfile.deleteMany();
+  await prisma.socialMedia.deleteMany();
+  await prisma.profileSocialMedia.deleteMany();
+  await prisma.release.deleteMany();
+  await prisma.releaseType.deleteMany();
+  await prisma.releaseArtist.deleteMany();
+  await prisma.releaseDesigner.deleteMany();
+  await prisma.releaseProducer.deleteMany();
+  await prisma.review.deleteMany();
+  await prisma.releaseRating.deleteMany();
+  await prisma.releaseRatingDetails.deleteMany();
+  await prisma.releaseRatingType.deleteMany();
+  await prisma.feedback.deleteMany();
+  await prisma.feedbackStatus.deleteMany();
+  await prisma.userFavAuthor.deleteMany();
+  await prisma.userFavRelease.deleteMany();
+  await prisma.userFavReview.deleteMany();
+  await prisma.topUsersLeaderboard.deleteMany();
+
   await prisma.role.createMany({
     data: [
       {
@@ -100,7 +124,7 @@ async function main() {
         password:
           '$2b$10$0bD/1z03VDQP3ko9BJ/2U.FGCyjcyY7sSXaf5.psHwB012H0xBswe',
         isActive: true,
-        roleId: '2',
+        roleId: '1',
       },
       {
         id: '9',
@@ -115,6 +139,15 @@ async function main() {
         id: '10',
         email: 'panikaa_@gmail.com',
         nickname: 'panikaa_',
+        password:
+          '$2b$10$0bD/1z03VDQP3ko9BJ/2U.FGCyjcyY7sSXaf5.psHwB012H0xBswe',
+        isActive: true,
+        roleId: '1',
+      },
+      {
+        id: '11',
+        email: 'THUNDER_BITS@gmail.com',
+        nickname: 'THUNDER_BITS',
         password:
           '$2b$10$0bD/1z03VDQP3ko9BJ/2U.FGCyjcyY7sSXaf5.psHwB012H0xBswe',
         isActive: true,
@@ -137,12 +170,14 @@ async function main() {
         id: '2',
         avatar: 'ar4iks.png',
         bio: 'young designer from sp',
+        coverImage: 'ar4iks.png',
         userId: '2',
         points: 89324,
       },
       {
         id: '3',
         avatar: 'corobok228.png',
+        coverImage: 'corobok228.png',
         bio: 'young designer from sp',
         userId: '3',
         points: 24295,
@@ -157,6 +192,7 @@ async function main() {
       {
         id: '5',
         avatar: '6g6.png',
+        coverImage: '6g6.png',
         bio: 'young designer from sp',
         userId: '5',
         points: 7769,
@@ -176,6 +212,7 @@ async function main() {
       {
         id: '8',
         avatar: 'norizeek.png',
+        coverImage: 'norizeek.png',
         bio: 'young designer from sp',
         userId: '8',
         points: 93295,
@@ -192,6 +229,63 @@ async function main() {
         bio: 'young designer from sp',
         userId: '10',
       },
+      {
+        id: '11',
+        avatar: 'THUNDER_BITS.png',
+        bio: 'young designer from sp',
+        userId: '11',
+        points: 12,
+      },
+    ],
+  });
+
+  await prisma.socialMedia.createMany({
+    data: [
+      {
+        id: '1',
+        name: 'Telegram',
+      },
+      {
+        id: '2',
+        name: 'YouTube',
+      },
+      {
+        id: '3',
+        name: 'Twitch',
+      },
+      {
+        id: '4',
+        name: 'VK',
+      },
+    ],
+  });
+
+  await prisma.profileSocialMedia.createMany({
+    data: [
+      {
+        id: '1',
+        profileId: '1',
+        socialId: '1',
+        url: 'https://www.google.com/',
+      },
+      {
+        id: '2',
+        profileId: '1',
+        socialId: '2',
+        url: 'https://www.google.com/',
+      },
+      {
+        id: '3',
+        profileId: '1',
+        socialId: '3',
+        url: 'https://www.google.com/',
+      },
+      {
+        id: '4',
+        profileId: '1',
+        socialId: '4',
+        url: 'https://www.google.com/',
+      },
     ],
   });
 
@@ -200,10 +294,6 @@ async function main() {
       {
         id: '1',
         type: ReleaseTypesEnum.ALBUM,
-      },
-      {
-        id: '2',
-        type: ReleaseTypesEnum.MULTISINGLE,
       },
       {
         id: '3',
@@ -235,6 +325,7 @@ async function main() {
         id: '1',
         name: 'Cold carti',
         avatarImg: '0.png',
+        coverImg: 'carti.png',
       },
       {
         id: '2',
@@ -243,15 +334,57 @@ async function main() {
       },
       {
         id: '3',
-        name: 'Kizaru',
+        name: 'SALUKI',
+        avatarImg: '3.png',
+        coverImg: '3.png',
       },
       {
         id: '4',
         name: 'Markul',
+        avatarImg: '4.png',
+        coverImg: '4.png',
       },
       {
         id: '5',
         name: 'Heronwater',
+        avatarImg: '5.png',
+        coverImg: '5.png',
+      },
+      {
+        id: '6',
+        name: 'PHARAOH',
+        avatarImg: '6.png',
+        coverImg: '6.png',
+      },
+      {
+        id: '7',
+        name: 'Meep',
+        avatarImg: '7.png',
+      },
+      {
+        id: '8',
+        name: 'Shumno',
+        avatarImg: '8.png',
+      },
+      {
+        id: '9',
+        name: 'Lawzy',
+        avatarImg: '9.png',
+      },
+      {
+        id: '10',
+        name: 'Wex',
+        avatarImg: '10.png',
+      },
+      {
+        id: '11',
+        name: 'Gokudo',
+        avatarImg: '11.png',
+      },
+      {
+        id: '12',
+        name: 'Palagin',
+        avatarImg: '12.png',
       },
     ],
   });
@@ -271,12 +404,48 @@ async function main() {
         authorTypeId: '1',
       },
       {
+        authorId: '3',
+        authorTypeId: '2',
+      },
+      {
         authorId: '4',
         authorTypeId: '1',
       },
       {
         authorId: '5',
         authorTypeId: '1',
+      },
+      {
+        authorId: '5',
+        authorTypeId: '2',
+      },
+      {
+        authorId: '6',
+        authorTypeId: '1',
+      },
+      {
+        authorId: '7',
+        authorTypeId: '2',
+      },
+      {
+        authorId: '8',
+        authorTypeId: '2',
+      },
+      {
+        authorId: '9',
+        authorTypeId: '2',
+      },
+      {
+        authorId: '10',
+        authorTypeId: '2',
+      },
+      {
+        authorId: '11',
+        authorTypeId: '2',
+      },
+      {
+        authorId: '12',
+        authorTypeId: '2',
       },
     ],
   });
@@ -297,6 +466,97 @@ async function main() {
         img: '2.png',
         releaseTypeId: '1',
       },
+      {
+        id: '3',
+        publishDate: new Date('2025-04-25').toISOString(),
+        title: '10:13',
+        img: '3.png',
+        releaseTypeId: '1',
+      },
+      {
+        id: '4',
+        publishDate: new Date('2022-03-25').toISOString(),
+        title: 'Халливуд Хоус',
+        img: '4.png',
+        releaseTypeId: '3',
+      },
+      {
+        id: '5',
+        publishDate: new Date('2024-11-22').toISOString(),
+        title: 'MAKE DEPRESSION GREAT AGAIN',
+        img: '5.png',
+        releaseTypeId: '1',
+      },
+      {
+        id: '6',
+        publishDate: new Date('2021-10-15').toISOString(),
+        title: 'Sense Of Human',
+        img: '6.png',
+        releaseTypeId: '1',
+      },
+      {
+        id: '7',
+        publishDate: new Date('2018-10-16').toISOString(),
+        title: 'Great Depression',
+        img: '7.png',
+        releaseTypeId: '1',
+      },
+      {
+        id: '8',
+        publishDate: new Date('2021-10-15').toISOString(),
+        title: 'Без фокусов',
+        img: '6.png',
+        releaseTypeId: '3',
+      },
+      {
+        id: '9',
+        publishDate: new Date('2024-06-28').toISOString(),
+        title: 'Низкие температуры',
+        img: '9.png',
+        releaseTypeId: '3',
+      },
+      {
+        id: '10',
+        publishDate: new Date('2024-11-15').toISOString(),
+        title: 'BOLSHIE KURTKI',
+        img: '10.png',
+        releaseTypeId: '1',
+      },
+      {
+        id: '11',
+        publishDate: new Date('2025-04-11').toISOString(),
+        title: '1ST DAY SMOKE',
+        img: '11.png',
+        releaseTypeId: '3',
+      },
+      {
+        id: '12',
+        publishDate: new Date('2024-11-15').toISOString(),
+        title: 'Dreamin Freestyle',
+        img: '12.png',
+        releaseTypeId: '3',
+      },
+      {
+        id: '13',
+        publishDate: new Date('2023-09-29').toISOString(),
+        title: 'Любить буду',
+        img: '13.png',
+        releaseTypeId: '3',
+      },
+      {
+        id: '14',
+        publishDate: new Date('2024-11-8').toISOString(),
+        title: 'Осадки',
+        img: '14.png',
+        releaseTypeId: '3',
+      },
+      {
+        id: '15',
+        publishDate: new Date('2021-10-1').toISOString(),
+        title: 'Zima Blue',
+        img: '15.png',
+        releaseTypeId: '3',
+      },
     ],
   });
 
@@ -310,6 +570,62 @@ async function main() {
         releaseId: '2',
         authorId: '1',
       },
+      {
+        releaseId: '3',
+        authorId: '6',
+      },
+      {
+        releaseId: '4',
+        authorId: '6',
+      },
+      {
+        releaseId: '5',
+        authorId: '4',
+      },
+      {
+        releaseId: '6',
+        authorId: '4',
+      },
+      {
+        releaseId: '7',
+        authorId: '4',
+      },
+      {
+        releaseId: '8',
+        authorId: '3',
+      },
+      {
+        releaseId: '8',
+        authorId: '4',
+      },
+      {
+        releaseId: '9',
+        authorId: '4',
+      },
+      {
+        releaseId: '10',
+        authorId: '3',
+      },
+      {
+        releaseId: '11',
+        authorId: '5',
+      },
+      {
+        releaseId: '12',
+        authorId: '5',
+      },
+      {
+        releaseId: '13',
+        authorId: '5',
+      },
+      {
+        releaseId: '14',
+        authorId: '4',
+      },
+      {
+        releaseId: '15',
+        authorId: '4',
+      },
     ],
   });
 
@@ -322,6 +638,50 @@ async function main() {
       {
         releaseId: '2',
         authorId: '2',
+      },
+      {
+        releaseId: '4',
+        authorId: '6',
+      },
+      {
+        releaseId: '4',
+        authorId: '7',
+      },
+      {
+        releaseId: '8',
+        authorId: '3',
+      },
+      {
+        releaseId: '9',
+        authorId: '8',
+      },
+      {
+        releaseId: '10',
+        authorId: '3',
+      },
+      {
+        releaseId: '11',
+        authorId: '5',
+      },
+      {
+        releaseId: '11',
+        authorId: '9',
+      },
+      {
+        releaseId: '11',
+        authorId: '10',
+      },
+      {
+        releaseId: '13',
+        authorId: '11',
+      },
+      {
+        releaseId: '14',
+        authorId: '12',
+      },
+      {
+        releaseId: '15',
+        authorId: '8',
       },
     ],
   });
@@ -525,6 +885,461 @@ async function main() {
         total: 28,
         createdAt: new Date(Date.now() - 1 * 3600 * 1000),
       },
+      // ------------------------------- 3
+      {
+        id: '14',
+        releaseId: '3',
+        userId: '11',
+        rhymes: 9,
+        structure: 10,
+        realization: 10,
+        individuality: 10,
+        atmosphere: 10,
+        total: 88,
+        title: 'Один из лучших в карьере',
+        text: 'Альбом ждал с нетерпением как только был анонсирован Глебом, ожидания были высочайшие. С момента дропа Филармонии и Фриквенси хотелось хоть немного, но старого Фараона версии 2016-2018 агрессивного, читающего Фараона, но в праймовом качестве. В принципе это я и получил на это альбоме и довольно таки предостаточно. Чем мне нравится альбом Фосфор, это его атмосферой и битами, которые соответствуют этой атмосфере, думаю с этим старые фанаты Глеба со мной согласятся. Здесь биты очень даже атмосферные и отдают очень сильно старым стилем Фараона. При первом прослушивании на реакции Флома в записи (Риса) довольно сильно зашел. Затем при втором прослушивании на реакции пацанов с канала SHOSLYSHNO понравился еще больше.',
+        createdAt: new Date(Date.now() - 1 * 3600 * 1000),
+      },
+      {
+        id: '15',
+        releaseId: '3',
+        userId: '1',
+        rhymes: 9,
+        structure: 9,
+        realization: 9,
+        individuality: 9,
+        atmosphere: 10,
+        total: 81,
+        title: 'Хороший собранный плейлист хороших песен',
+        text: 'Альбом дерзкий, фара снова выдал жесткий плейлист. Очень разно звучит, инфлюенс западной музыки прям слышно — от A Milli Лила Уэйна, 2пака до плохого бани. Трек "На крышах" вообще как Trophies Дрейка, но всё сделано под свой вайб, звучит по своему.\n\nПосле прошлых работ, которые я частично скипнул, 10 13 звучит кайфово. Много музла для всех ушей — залетит и тем, кто любит покачать головой, и тем, кто любит когда текст на подумать. Есть треки про любовь, хейт на индустрию, и просто качественная попса.\n\nПесня про рок-стара как и в названии - не очень, но я такое и не люблю особо. В целом — жёстко советую, прям верочка которая многим зайдёт.\n\nТоп треки альбома "10:13": Москва, Танцы на останках, Большая цель, Чисто Символически, Солнце(Попса)\nБоттом трек: Рок Стар Sh',
+        createdAt: new Date(Date.now() - 2 * 3600 * 1000),
+      },
+      {
+        id: '16',
+        releaseId: '3',
+        userId: '2',
+        rhymes: 8,
+        structure: 9,
+        realization: 9,
+        individuality: 9,
+        atmosphere: 10,
+        total: 79,
+        createdAt: new Date(Date.now() - 3 * 3600 * 1000),
+      },
+      {
+        id: '17',
+        releaseId: '3',
+        userId: '4',
+        rhymes: 10,
+        structure: 9,
+        realization: 9,
+        individuality: 10,
+        atmosphere: 10,
+        total: 86,
+        title: 'Лучший в своём стиле',
+        text: 'Очень интересный релиз, поскольку раньше я альбомы Фараона полностью не слушал. А тут, сразу после выхода, я понял, что хочу это заценить. И должен сказать, что альбом надо прочувствовать, он не вызывает какие-то отдельные ощущение. 10:13 - это солянка эмоций в жизне одного артиста, который уже давно заявил о себе.\n\nПо итогу хочу сказать, что альбом Глеба - это всё же праздник, не всегда весёлый, но праздник. В 10:13 все истории взяты из жизни Фараона, его детские воспоминания про Москву, его разнообразная личность: Глеб показывает себя, как уличный рэпер, как рокстар, как романтик, как русский парень с постоянными проблемами. Этот образ, я уверен уже многим знаком. Альбому присущи все качества Фараона, за что его слушатель его так любят. Очень классно снова услышать старика, особенно когда этот старичок однажды изменил жанр...',
+        createdAt: new Date(Date.now() - 6 * 3600 * 1000),
+      },
+      {
+        id: '18',
+        releaseId: '3',
+        userId: '5',
+        rhymes: 8,
+        structure: 8,
+        realization: 8,
+        individuality: 9,
+        atmosphere: 6,
+        total: 62,
+        createdAt: new Date(Date.now() - 4 * 3600 * 1000),
+      },
+
+      // ------------------------------- 4
+      {
+        id: '19',
+        releaseId: '4',
+        userId: '1',
+        rhymes: 8,
+        structure: 9,
+        realization: 9,
+        individuality: 9,
+        atmosphere: 10,
+        total: 79,
+        createdAt: new Date(Date.now() - 4 * 3600 * 1000),
+      },
+      {
+        id: '20',
+        releaseId: '4',
+        userId: '2',
+        rhymes: 9,
+        structure: 9,
+        realization: 9,
+        individuality: 9,
+        atmosphere: 10,
+        total: 81,
+        title: 'Эго Фары // Спустя 3 года // Legendarity SZN',
+        text: 'Синглу 3 года.\n\nЗдесь Глеб в очередной раз дал сильный парт. Трек, который можно разбирать на цитаты. И трек, где Фара вернул и сказал «Siemens».\n\nКайф, что во втором припеве, прям в начале, изменён голос на более агрессивный. Серьёзное эго Глеба здесь сильно и на агрессивном тащит.\n\nТрушный Фара с кучей отсылок. Также сам клипец наполнен мрачной атмосферой, но, при этом, большой красотой. Трек, который спокойно можно разбирать на цитаты и всё это заправлено сильным битом. Мрачный трек, который, по моему мнению, идеально подходит для прослушивания зимой.\n\nPhlow Rage Mode.\n\nВсем Голивудского Риса!',
+        createdAt: new Date(Date.now() - 2 * 3600 * 1000),
+      },
+      {
+        id: '21',
+        releaseId: '4',
+        userId: '5',
+        rhymes: 8,
+        structure: 9,
+        realization: 9,
+        individuality: 10,
+        atmosphere: 10,
+        total: 81,
+        createdAt: new Date(Date.now() - 4 * 3600 * 1000),
+      },
+
+      // ------------------------------- 5
+      {
+        id: '22',
+        releaseId: '5',
+        userId: '1',
+        rhymes: 10,
+        structure: 10,
+        realization: 10,
+        individuality: 10,
+        atmosphere: 10,
+        total: 90,
+        title: 'Личная исповедь Маркула.',
+        text: '3 года ожидания оказались полностью оправданы, Маркул снова смог удивить своих слушателей и превзойти самого себя.\n\nЕсли sense of human был концептуальным альбомом построенным на теме 7 смертных грехов, то MGDA стал альбомом который является его жизнью. Буквально в каждом треке поется про его жизнь и что он пережил.\n\nДепрессия снова стала великой, в свою очередь Маркул выпустил альбом который можно слушать на репите и каждый раз он будет звучать как в первый раз.',
+        createdAt: new Date(Date.now() - 13 * 3600 * 1000),
+      },
+      {
+        id: '23',
+        releaseId: '5',
+        userId: '7',
+        rhymes: 10,
+        structure: 8,
+        realization: 10,
+        individuality: 10,
+        atmosphere: 10,
+        total: 88,
+        title: '27 минут чистого удовольствия.',
+        text: 'Пожалуй этот альбом запал мне в сердце с самого момента его выхода, качественный звук, способные притянуть к себе внимание текста, все это делает его лучшей работой Маркула. По настоящему взрослой и с глубоким смыслом.\nВ целом по альбому могу сказать что, эта работа уникальна, много таких не бывает.\nХочется посоветовать это произведение искусства каждому человеку окружающему меня.',
+        createdAt: new Date(Date.now() - 12 * 3600 * 1000),
+      },
+      {
+        id: '24',
+        releaseId: '5',
+        userId: '5',
+        rhymes: 10,
+        structure: 10,
+        realization: 10,
+        individuality: 10,
+        atmosphere: 10,
+        total: 90,
+        createdAt: new Date(Date.now() - 15 * 3600 * 1000),
+      },
+      {
+        id: '25',
+        releaseId: '5',
+        userId: '6',
+        rhymes: 9,
+        structure: 9,
+        realization: 9,
+        individuality: 9,
+        atmosphere: 10,
+        total: 81,
+        createdAt: new Date(Date.now() - 11 * 3600 * 1000),
+      },
+      {
+        id: '26',
+        releaseId: '5',
+        userId: '3',
+        rhymes: 9,
+        structure: 9,
+        realization: 9,
+        individuality: 9,
+        atmosphere: 10,
+        total: 81,
+        title: 'ЛИЧНЫЙ ДНЕВНИК MARKULA',
+        text: 'Маркул с каждым альбомом прогрессирует и этот альбом в данный момент времени считается апогеем его творчества. Альбом превосходит по читке Sense of human, и считай в два раза сильнее Great Depression. Все треки разнообразные, особенно запали в душу: MDGA,Колыбельная, Первый раз. Три года ожидания были не зря. Альбом сделал не для чартов, а как осмысление пройденного пути. MDGA отличное интро, которое задаёт атмосферу альбом. Колыбельная это трек про детство и пройденный путь.По моему мнению альбом претендует на звание альбома года, а может и АЛЬБОМ ГОДА. Спасибо Марку за ещё один альбом.',
+        createdAt: new Date(Date.now() - 6 * 3600 * 1000),
+      },
+      {
+        id: '27',
+        releaseId: '6',
+        userId: '1',
+        rhymes: 10,
+        structure: 10,
+        realization: 10,
+        individuality: 10,
+        atmosphere: 10,
+        total: 90,
+        title: 'Прайм Марка?',
+        text: 'Концептуально сильнейшая работа Марка за всё время, на момент выхода второй депрессии (MDGA), от которой я ожидал прорывного звука и погружения в мир депрессии и грусти, если сравнивать Sense of Human с MDGA, то Sense of Human является погружение в мир грехов и пороков Марка, погружение просто космическое, с первый скитов ощущение что ты действительно находишься в том баре и наблюдаешь за всеми грехами Маркула по очереди, будто сам Марк сидит напротив тебя и травит байки о своём прошлом и настоящем, дикторы постарались на славу как и сами артисты. Маркул задал планку качества для 2021 года, до сих пор переслушиваю с наслаждением этот альбом и всё ещё этот альбом не надоедает, есть пару проходных треков, но саму концепцию альбома это не портит, люблю Маркула за его особый подход и трепетному написанию музыки.',
+        createdAt: new Date(Date.now() - 1 * 3600 * 1000),
+      },
+      {
+        id: '28',
+        releaseId: '6',
+        userId: '7',
+        rhymes: 10,
+        structure: 10,
+        realization: 9,
+        individuality: 10,
+        atmosphere: 10,
+        total: 88,
+        title: 'Концептуально проработанный релиз',
+        text: 'Смог удержать и даже превзойти планку после Great Depression.\nРифмы и образы\nМарк отличный текстовик этот альбом не стал исключением, твёрдая 10\nСтруктура\nКонцепт про смертные грехи, ни один трек не затянут, отличное аутро, хороший завершающий трек. 10\nРеализация\nЕсть пару треков, которые мне не зашли и показались, что сведены странновато, только из-за этого 9.\n(Фит с дайсом) Daly, Лабиринт, Никто не увидит\nИндивидуальность\nНа высоте очень узнаваем 10\nАтмосфера\nПолно эпизодов про смертные грехи, которые погружают тебя в эту атмосферу, почти каждый трек связан\nс концептом\n10',
+        createdAt: new Date(Date.now() - 2 * 3600 * 1000),
+      },
+      {
+        id: '29',
+        releaseId: '7',
+        userId: '1',
+        rhymes: 10,
+        structure: 8,
+        realization: 10,
+        individuality: 8,
+        atmosphere: 8,
+        total: 74,
+        title: 'Назад в будущее',
+        text: 'Я решил начать серию рецензий на релизы своих любимых артистов и первым будет этот альбом. Многие считают этот альбом первым в дискографии Маркула, он и сам в своих интервью его таким называет, стараясь лишний раз не упоминать другие свои работы. А зря, ведь "Сухим из воды" 2015 года - вполне неплохая пластинка для того времени с хорошим текстом и интересными мыслями, которая кстати и дала первый толчок Марку в светлое будущее. Ну а "Tranzit" 2017 года - очень классный сборник треков, в котором вы сможете найти даже несколько очень громких хитов: Леброн, Mouline Rouge, Последний билет. Там еще в 2011 году выходил альбом "Взвешенный рэп", но даже самые преданные фанаты Маркула о нем либо не знают, либо делают вид, что не знают, поскольку это совсем не уровень, хотя парочка интересных треков там есть. Да, нужно понимать, что выпускай Маркул по сей день подобные альбомы, как эти три, он бы не был тир-1 артистом СНГ и скорее всего уже все давно бы его позабыли, но в становлении артиста это были очень важные релизы.',
+        createdAt: new Date(Date.now() - 8 * 3600 * 1000),
+      },
+      {
+        id: '30',
+        releaseId: '7',
+        userId: '4',
+        rhymes: 10,
+        structure: 10,
+        realization: 8,
+        individuality: 8,
+        atmosphere: 9,
+        total: 78,
+        createdAt: new Date(Date.now() - 8 * 3600 * 1000),
+      },
+      {
+        id: '31',
+        releaseId: '8',
+        userId: '1',
+        rhymes: 10,
+        structure: 10,
+        realization: 9,
+        individuality: 9,
+        atmosphere: 10,
+        total: 86,
+        createdAt: new Date(Date.now() - 1 * 3600 * 1000),
+      },
+      {
+        id: '32',
+        releaseId: '8',
+        userId: '4',
+        rhymes: 10,
+        structure: 10,
+        realization: 8,
+        individuality: 8,
+        atmosphere: 9,
+        total: 78,
+        createdAt: new Date(Date.now() - 1 * 3600 * 1000),
+      },
+      {
+        id: '33',
+        releaseId: '8',
+        userId: '5',
+        rhymes: 10,
+        structure: 10,
+        realization: 9,
+        individuality: 10,
+        atmosphere: 10,
+        total: 88,
+        createdAt: new Date(Date.now() - 1 * 3600 * 1000),
+      },
+      {
+        id: '34',
+        releaseId: '9',
+        userId: '1',
+        rhymes: 10,
+        structure: 10,
+        realization: 9,
+        individuality: 10,
+        atmosphere: 10,
+        total: 88,
+        createdAt: new Date(Date.now() - 1 * 3600 * 1000),
+      },
+      {
+        id: '35',
+        releaseId: '9',
+        userId: '8',
+        rhymes: 9,
+        structure: 9,
+        realization: 9,
+        individuality: 9,
+        atmosphere: 10,
+        total: 81,
+        createdAt: new Date(Date.now() - 2 * 3600 * 1000),
+      },
+      {
+        id: '36',
+        releaseId: '9',
+        userId: '4',
+        rhymes: 10,
+        structure: 10,
+        realization: 10,
+        individuality: 10,
+        atmosphere: 10,
+        total: 90,
+        title: 'Держит уровень',
+        text: 'Первый сингл с альбома, и какой же сильный.\nРифмы / образы\nУ Марка всегда хорошие текста, со смыслом, которые очень интересно слушать. « Сегодня для районов\nзавтра сделал попсово» Да мы дети 90ых значит дети навсегда» « у меня ведь нет работы только песни\nи семья» « Зависть это вирус и я с ними на дистанции»\nСтруктура\nСильнейшее развитие от самого начало и до конца. Особенно понравился припев 10\nРеализация стиля\nА когда не 10? Прайм Марк?\nИндивидуальность\nМастер своего дела, чувствует свой стиль 10\nАтмосфера\nОчень атмосферный трек, очень сильно понравился припев и последний куплет. 10',
+        createdAt: new Date(Date.now() - 8 * 3600 * 1000),
+      },
+      {
+        id: '37',
+        releaseId: '9',
+        userId: '11',
+        rhymes: 10,
+        structure: 10,
+        realization: 10,
+        individuality: 10,
+        atmosphere: 8,
+        total: 82,
+        title: 'Очередное доказательство, что Маркул не может сделать плохо',
+        text: 'Наконец-то Маркул дропает трек с его грядущего альбома, который многие так сильно ждут. Сказать, что он сильный, это ничего не сказать, но смог ли он меня собой зацепить?\n\nТекста у Маркула всегда сильные, и этот трек не стал исключением. Круто, что он поднимает в этом треке ту же тему, которую поднимал на альбоме "Sense Of Human".\n\nСтруктура - единственное, над чем мне еще пришлось немного подумать. В треке нет повторяющихся\nпартов, что круто, но сначала мне показалось, что куплет кажется слегка затянутым. Но аутро послеприпева заставило меня поставить здесь 10 баллов. Прям отлично оно собой завершило трек.\n\nЗа реализацию здесь не за что снижать. Всё на высшем уровне: бит, сведение, исполнение. Маркул не может сделать плохо.\n\nЗа харизму здесь так же максималка. Нигде даже намека не услышал на просадку в харизме. Всёмаксимально уверенно исполнено.\n\nПо итогу трек получает от меня максимальную базу, но от этого не заходит мне на 100%. Просто нет внем для меня чего-то такого, из-за чего прям сразу же хотелось забрать его в плейлист. Но этобезусловно сильная работа.',
+        createdAt: new Date(Date.now() - 10 * 3600 * 1000),
+      },
+      {
+        id: '38',
+        releaseId: '10',
+        userId: '1',
+        rhymes: 6,
+        structure: 10,
+        realization: 10,
+        individuality: 10,
+        atmosphere: 10,
+        total: 81,
+        title: 'ВРЕМЯ НАДЕВАТЬ БОЛЬШИЕ КУРТКИ!',
+        text: 'После альбома "Wild East" ожидания были выше некуда. Такое отношение не совсем правильное, ибо Дикий Восток делался в течение нескольких лет, а в данном случае было где-то 1,5 года + мы получили до этого "Beach Rock Hotel". Но несмотря на это, всё равно хотелось невероятного мяса. И грёбаный шеф-повар приготовил его как нельзя лучше!!!\n\nДерзкий, дорогой, эпичный и всё такой же дикий Восток расширяет свою вселенную. Абсолютно новый, но с знакомыми оттенками. Вообще прикольная концепция - грубо-говоря разделить альбомы на части света. "Wild East" - ну тут понятно, это восток. "Beach Rock Hotel" - атмосфера юга, лета и тепла. Ну и "Bolshie Kurtki" - промозглый холод, северная стилистика.',
+        createdAt: new Date(Date.now() - 18 * 3600 * 1000),
+      },
+      {
+        id: '39',
+        releaseId: '10',
+        userId: '2',
+        rhymes: 8,
+        structure: 9,
+        realization: 10,
+        individuality: 10,
+        atmosphere: 10,
+        total: 83,
+        createdAt: new Date(Date.now() - 4 * 3600 * 1000),
+      },
+      {
+        id: '40',
+        releaseId: '10',
+        userId: '3',
+        rhymes: 8,
+        structure: 10,
+        realization: 10,
+        individuality: 10,
+        atmosphere: 9,
+        total: 84,
+        createdAt: new Date(Date.now() - 2 * 3600 * 1000),
+      },
+      {
+        id: '41',
+        releaseId: '11',
+        userId: '1',
+        rhymes: 8,
+        structure: 10,
+        realization: 10,
+        individuality: 10,
+        atmosphere: 9,
+        total: 84,
+        createdAt: new Date(Date.now() - 5 * 3600 * 1000),
+      },
+      {
+        id: '42',
+        releaseId: '12',
+        userId: '5',
+        rhymes: 10,
+        structure: 9,
+        realization: 10,
+        individuality: 10,
+        atmosphere: 9,
+        total: 84,
+        title: 'SSCAUTT',
+        text: 'Хорошая работа , цепляет . Артисту веришь . Колкие и сильные панчи вызывающие эмоции не могут не работать . Это одна из главных фишек артиста , сильный альбом ! Достойный хорошей оценки . Ставлю 84 балла только потому что знаю что данный артист может сделать еще сильнее и качественнее . Фавориты на альбоме «против ветра» , «не тот парень». От началка до конца альбом вызвал мурашки , последний трек поставил жирную точку . Все так как и должно быть .',
+        createdAt: new Date(Date.now() - 9 * 3600 * 1000),
+      },
+      {
+        id: '43',
+        releaseId: '12',
+        userId: '8',
+        rhymes: 8,
+        structure: 10,
+        realization: 10,
+        individuality: 10,
+        atmosphere: 9,
+        total: 84,
+        createdAt: new Date(Date.now() - 5 * 3600 * 1000),
+      },
+      {
+        id: '44',
+        releaseId: '13',
+        userId: '8',
+        rhymes: 10,
+        structure: 10,
+        realization: 10,
+        individuality: 10,
+        atmosphere: 10,
+        total: 90,
+        title: 'Прайм Вотера',
+        text: 'Лично для меня это лучший альбом 2023 года, вообще это был отличный год для вотера, тогда он выпустил и большой хит "Дай мне посмотреть" и лучший свой альбом в карьере.\n\nЕсли сравнивать этот альбом с прошлыми, то в нём так же смешной и колкий текст, но в добавок к этому сильный апгрейд в плане звучания и битов. Также к моменту выпуска этого альбома у Вотера уже сформировалась собственная харизма и индивидуальность.\n\nСледует отметить и разнообразие альбома, тут были тречки сделанные в прошлом стиле, например "Мяу", так и треки, которые открыли для Вотера новый жанр, а именно лирику: "Зависим", "2 часа ночи".\n\nЕсли сравнивать DMCB и ODYSSEY, то это оба качественные альбомы с интересными текстами, но чисто по настроению этот альбом мне заходит больше на данный момент.',
+        createdAt: new Date(Date.now() - 3 * 3600 * 1000),
+      },
+      {
+        id: '45',
+        releaseId: '12',
+        userId: '9',
+        rhymes: 9,
+        structure: 9,
+        realization: 9,
+        individuality: 9,
+        atmosphere: 9,
+        total: 78,
+        createdAt: new Date(Date.now() - 9 * 3600 * 1000),
+      },
+      {
+        id: '46',
+        releaseId: '14',
+        userId: '2',
+        rhymes: 9,
+        structure: 9,
+        realization: 9,
+        individuality: 9,
+        atmosphere: 9,
+        total: 78,
+        createdAt: new Date(Date.now() - 3 * 3600 * 1000),
+      },
+      {
+        id: '47',
+        releaseId: '14',
+        userId: '1',
+        rhymes: 10,
+        structure: 9,
+        realization: 10,
+        individuality: 10,
+        atmosphere: 9,
+        total: 84,
+        createdAt: new Date(Date.now() - 4 * 3600 * 1000),
+      },
+      {
+        id: '48',
+        releaseId: '15',
+        userId: '2',
+        rhymes: 10,
+        structure: 9,
+        realization: 10,
+        individuality: 10,
+        atmosphere: 9,
+        total: 84,
+        createdAt: new Date(Date.now() - 4 * 3600 * 1000),
+      },
     ],
   });
 
@@ -547,11 +1362,74 @@ async function main() {
       // ------------------------------- 2
       {
         releaseId: '2',
+        userId: '2',
+      },
+
+      // ------------------------------- 3
+      {
+        releaseId: '3',
         userId: '1',
       },
       {
-        releaseId: '2',
+        releaseId: '3',
         userId: '2',
+      },
+      {
+        releaseId: '3',
+        userId: '11',
+      },
+      {
+        releaseId: '3',
+        userId: '4',
+      },
+
+      // ------------------------------- 5
+      {
+        releaseId: '5',
+        userId: '1',
+      },
+
+      // ------------------------------- 6
+
+      {
+        releaseId: '6',
+        userId: '1',
+      },
+
+      // ------------------------------- 8
+      {
+        releaseId: '8',
+        userId: '1',
+      },
+
+      // ------------------------------- 9
+      {
+        releaseId: '9',
+        userId: '1',
+      },
+
+      // ------------------------------- 10
+      {
+        releaseId: '10',
+        userId: '1',
+      },
+
+      // ------------------------------- 11
+      {
+        releaseId: '11',
+        userId: '1',
+      },
+
+      // ------------------------------- 12
+      {
+        releaseId: '12',
+        userId: '1',
+      },
+
+      // ------------------------------- 12
+      {
+        releaseId: '13',
+        userId: '1',
       },
     ],
   });
@@ -565,6 +1443,10 @@ async function main() {
       },
       {
         reviewId: '2',
+        userId: '1',
+      },
+      {
+        reviewId: '16',
         userId: '1',
       },
 
@@ -583,6 +1465,14 @@ async function main() {
         reviewId: '8',
         userId: '3',
       },
+      {
+        reviewId: '16',
+        userId: '3',
+      },
+      {
+        reviewId: '15',
+        userId: '3',
+      },
 
       // ------------------------------- 4
       {
@@ -592,14 +1482,42 @@ async function main() {
     ],
   });
 
-  // const reviews = await prisma.review.findMany(); // Получаем все отзывы
-
-  // for (const review of reviews) {
-  //   await prisma.review.update({
-  //     where: { id: review.id },
-  //     data: { id: review.id }, // Обновляем, не меняя значение
-  //   });
-  // }
+  await prisma.userFavAuthor.createMany({
+    data: [
+      {
+        userId: '1',
+        authorId: '1',
+      },
+      {
+        userId: '1',
+        authorId: '2',
+      },
+      {
+        userId: '1',
+        authorId: '3',
+      },
+      {
+        userId: '1',
+        authorId: '4',
+      },
+      {
+        userId: '1',
+        authorId: '5',
+      },
+      {
+        userId: '1',
+        authorId: '6',
+      },
+      {
+        userId: '1',
+        authorId: '7',
+      },
+      {
+        userId: '1',
+        authorId: '10',
+      },
+    ],
+  });
 
   console.log('Seeding completed.');
 }

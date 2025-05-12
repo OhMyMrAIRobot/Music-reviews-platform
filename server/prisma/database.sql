@@ -283,7 +283,7 @@ BEGIN
     WHERE user_id NOT IN (
         SELECT user_id FROM "User_profiles"
         WHERE points > 0
-        ORDER BY points DESC
+        ORDER BY points DESC, user_id
         LIMIT 90
     );
 
@@ -291,7 +291,7 @@ BEGIN
     SELECT
         gen_random_uuid(),
         up.user_id,
-        ROW_NUMBER() OVER (ORDER BY up.points DESC) as rank,
+        ROW_NUMBER() OVER (ORDER BY up.points DESC, up.user_id) as rank,
         Now()
     FROM
         "User_profiles" up
@@ -299,7 +299,7 @@ BEGIN
         up.points > 0 AND
         up.user_id NOT IN (SELECT user_id FROM "Top_users_leaderboard")
     ORDER BY
-        up.points DESC
+        up.points DESC, up.user_id
     LIMIT 90
     ON CONFLICT (user_id)
         DO UPDATE SET
@@ -311,10 +311,10 @@ BEGIN
     FROM (
              SELECT
                  user_id,
-                 ROW_NUMBER() OVER (ORDER BY points DESC) as new_rank
+                 ROW_NUMBER() OVER (ORDER BY points DESC, user_id) as new_rank
              FROM "User_profiles"
              WHERE points > 0
-             ORDER BY points DESC
+             ORDER BY points DESC, user_id
              LIMIT 90
          ) subq
     WHERE t.user_id = subq.user_id;
@@ -518,4 +518,4 @@ GROUP BY tul.user_id,
          u.nickname,
          up.avatar,
          up.cover_image
-ORDER BY up.points DESC
+ORDER BY up.points DESC, tul.user_id

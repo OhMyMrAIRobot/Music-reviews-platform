@@ -153,7 +153,7 @@ export class ReleasesService {
             FROM jsonb_array_elements(rd.authors::jsonb) AS a
             WHERE (a->>'id')::text = '${authorId}'
         )
-        ORDER BY ${findAll ? 'rd.publish_date' : 'no_text_rating + text_rating + super_user_rating'} desc
+        ORDER BY ${findAll ? 'rd.publish_date' : 'no_text_rating + text_rating + super_user_rating'} desc, id ASC
         ${findAll ? '' : 'LIMIT 15 OFFSET 0'}
     `;
     return this.prisma.$queryRawUnsafe<ReleaseResponseData[]>(rawQuery);
@@ -223,7 +223,7 @@ export class ReleasesService {
       FROM release_data rd
       WHERE (${year} IS NULL OR EXTRACT(YEAR FROM rd.publish_date) = ${year})
         AND (${month} IS NULL OR EXTRACT(MONTH FROM rd.publish_date) = ${month})
-      ORDER BY no_text_rating + text_rating + super_user_rating desc
+      ORDER BY no_text_rating + text_rating + super_user_rating desc, id ASC
     `;
     const releases =
       await this.prisma.$queryRawUnsafe<ReleaseResponseData[]>(rawQuery);
@@ -302,7 +302,7 @@ export class ReleasesService {
       )
       SELECT id, title, img, release_type, text_count, no_text_count, author, ratings
       FROM release_data rd
-      ORDER BY ${field} ${order}
+      ORDER BY ${field} ${order}, id ASC
       LIMIT ${limit} OFFSET ${offset}
     `;
 

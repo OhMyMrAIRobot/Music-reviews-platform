@@ -259,7 +259,7 @@ export class ReviewsService {
           rev.id, rev.title, rev.text, rev.total, rev.rhymes, rev.structure, rev.realization,
           rev.individuality, rev.atmosphere, u.nickname, p.avatar, p.points, tul.rank,
           r.img, r.title, r.id, rev.created_at, rev.user_id
-      ORDER BY rev.created_at ${order}
+      ORDER BY rev.created_at ${order}, rev.id ASC
       LIMIT ${limit}
       OFFSET ${offset}`;
 
@@ -314,7 +314,7 @@ export class ReviewsService {
           rev.id, rev.title, rev.text, rev.total, rev.rhymes, rev.structure, rev.realization,
           rev.individuality, rev.atmosphere, u.nickname, p.avatar, p.points, tul.rank,
           r.img, r.title, r.id, rev.created_at, rev.user_id
-      ORDER BY rev.created_at desc
+      ORDER BY rev.created_at desc, rev.id ASC
       LIMIT 25
       OFFSET 0
       `);
