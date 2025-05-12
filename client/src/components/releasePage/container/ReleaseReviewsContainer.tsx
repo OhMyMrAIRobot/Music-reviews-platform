@@ -37,7 +37,7 @@ const ReleaseReviewsContainer: FC<IProps> = ({
 		>
 			{isLoading ? (
 				<Loader />
-			) : reviews && reviews.length !== 0 ? (
+			) : totalItems > 0 ? (
 				<>
 					<ReleaseReviewsHeader
 						count={totalItems}
@@ -45,22 +45,25 @@ const ReleaseReviewsContainer: FC<IProps> = ({
 						setSelectedSort={setSelectedSort}
 					/>
 					<div className='grid grid-cols-1 max-w-200 w-full mx-auto gap-5 mt-5'>
-						{reviews.map(
-							review =>
-								review.text && (
-									<ReleaseReviewItem key={review.id} review={review} />
-								)
-						)}
+						{reviews &&
+							reviews.map(
+								review =>
+									review.text && (
+										<ReleaseReviewItem key={review.id} review={review} />
+									)
+							)}
 					</div>
-					<div className='mt-10'>
-						<Pagination
-							currentPage={currentPage}
-							totalItems={totalItems}
-							itemsPerPage={5}
-							onPageChange={setCurrentPage}
-							idToScroll='release-reviews'
-						/>
-					</div>
+					{totalItems > 0 && (
+						<div className='mt-10'>
+							<Pagination
+								currentPage={currentPage}
+								totalItems={totalItems}
+								itemsPerPage={5}
+								onPageChange={setCurrentPage}
+								idToScroll='release-reviews'
+							/>
+						</div>
+					)}
 				</>
 			) : (
 				<div className='text-center border font-medium border-zinc-950 bg-gradient-to-br from-white/10 rounded-xl text-xs lg:sm w-full lg:max-w-[800px] sm:max-w-[600px] py-2 mx-auto'>

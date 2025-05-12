@@ -22,7 +22,7 @@ const ReleasesPage = () => {
 		ReleaseSortFields.PUBLISHED_New
 	)
 	const [selectedType, setSelectedType] = useState<string>('Все')
-	const perPage = 10
+	const perPage = 12
 	const { execute: fetchReleases, isLoading: isReleasesLoading } = useLoading(
 		releasesStore.fetchReleases
 	)
@@ -114,7 +114,7 @@ const ReleasesPage = () => {
 				<span className='hidden sm:block text-white/70 font-bold '>
 					Сортировать по:
 				</span>
-				<div className='w-full sm:w-78'>
+				<div className='w-full sm:w-82'>
 					<ComboBox
 						options={Object.values(ReleaseSortFields)}
 						onChange={setSelectedSort}
