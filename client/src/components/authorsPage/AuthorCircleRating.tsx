@@ -52,8 +52,8 @@ const AuthorCircleRating: FC<IProps> = ({
 
 	return (
 		<TooltipSpan
-			tooltip={rating ? <ToolTip text={tooltipText} /> : <></>}
-			spanClassName={''}
+			tooltip={rating ? <ToolTip>{tooltipText}</ToolTip> : <></>}
+			spanClassName={'relative'}
 		>
 			<div
 				className={`inline-flex size-8 text-xs items-center justify-center font-semibold rounded-full ${className}`}

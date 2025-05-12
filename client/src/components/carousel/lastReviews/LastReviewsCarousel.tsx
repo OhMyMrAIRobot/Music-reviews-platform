@@ -1,20 +1,20 @@
 import { EmblaOptionsType } from 'embla-carousel'
 import useEmblaCarousel from 'embla-carousel-react'
 import { observer } from 'mobx-react-lite'
-import { forwardRef, useEffect, useImperativeHandle } from 'react'
-import { useLoading } from '../../../hooks/UseLoading'
-import { useStore } from '../../../hooks/UseStore'
+import { forwardRef, useImperativeHandle } from 'react'
+import { IReview } from '../../../models/review/Review'
+import Loader from '../../Loader'
 import { CarouselRef } from '../lastReleases/LastReleasesCarousel'
 import ReviewItem from './ReviewItem'
 
+interface IProps {
+	items: IReview[]
+	rowCount: number
+	isLoading: boolean
+}
+
 const LastReviewsCarousel = observer(
-	forwardRef<CarouselRef>((_, ref) => {
-		const { reviewsStore } = useStore()
-
-		const { execute: fetch, isLoading } = useLoading(
-			reviewsStore.fetchLastReviews
-		)
-
+	forwardRef<CarouselRef, IProps>(({ items, rowCount, isLoading }, ref) => {
 		const options: EmblaOptionsType = { align: 'start', slidesToScroll: 'auto' }
 		const [emblaRef, emblaApi] = useEmblaCarousel(options)
 
@@ -27,29 +27,25 @@ const LastReviewsCarousel = observer(
 			[emblaApi]
 		)
 
-		useEffect(() => {
-			fetch()
-		}, [])
-
 		return (
 			<>
 				{isLoading ? (
-					<div>Loading...</div>
+					<Loader />
 				) : (
 					<div className='embla w-full select-none'>
 						<div className='embla__viewport pt-2' ref={emblaRef}>
 							<div className='embla__container gap-1 touch-pan-y touch-pinch-zoom'>
-								{reviewsStore.lastReviews.length > 0 &&
+								{items.length > 0 &&
 									Array.from({
-										length: Math.ceil(reviewsStore.lastReviews.length / 3),
+										length: Math.ceil(items.length / rowCount),
 									}).map((_, idx) => (
 										<div
 											className='flex-[0_0_100%] md:flex-[0_0_33%] px-1'
 											key={idx}
 										>
-											<div className='grid grid-rows-3 gap-4'>
-												{reviewsStore.lastReviews
-													.slice(idx * 3, idx * 3 + 3)
+											<div className={`grid grid-rows-${rowCount} gap-4`}>
+												{items
+													.slice(idx * rowCount, idx * rowCount + rowCount)
 													.map(review => (
 														<ReviewItem review={review} key={review.id} />
 													))}

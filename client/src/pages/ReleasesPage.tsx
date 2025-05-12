@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
-import LastReleasesCarouselItem from '../components/carousel/lastReleases/LastReleasesCarouselItem'
 import ComboBox from '../components/header/buttons/ComboBox'
 import Loader from '../components/Loader'
-import Pagination from '../components/pagination/Pagination'
+import ReleasesPageGrid from '../components/ReleasesPageGrid'
 import { useLoading } from '../hooks/UseLoading'
 import { useStore } from '../hooks/UseStore'
 
@@ -23,7 +22,7 @@ const ReleasesPage = () => {
 		ReleaseSortFields.PUBLISHED_New
 	)
 	const [selectedType, setSelectedType] = useState<string>('Все')
-
+	const perPage = 12
 	const { execute: fetchReleases, isLoading: isReleasesLoading } = useLoading(
 		releasesStore.fetchReleases
 	)
@@ -75,7 +74,13 @@ const ReleasesPage = () => {
 				break
 		}
 
-		fetchReleases(type?.id ?? null, field, order, 5, (currentPage - 1) * 5)
+		fetchReleases(
+			type?.id ?? null,
+			field,
+			order,
+			perPage,
+			(currentPage - 1) * perPage
+		)
 	}, [selectedType, selectedSort, currentPage])
 
 	return (
@@ -102,14 +107,14 @@ const ReleasesPage = () => {
 							value={selectedType}
 						/>
 					) : (
-						<Loader size={10} />
+						<Loader size={'size-20'} />
 					)}
 				</div>
 
 				<span className='hidden sm:block text-white/70 font-bold '>
 					Сортировать по:
 				</span>
-				<div className='w-full sm:w-78'>
+				<div className='w-full sm:w-82'>
 					<ComboBox
 						options={Object.values(ReleaseSortFields)}
 						onChange={setSelectedSort}
@@ -119,39 +124,14 @@ const ReleasesPage = () => {
 				</div>
 			</div>
 
-			<section className='mt-5 overflow-hidden'>
-				{!isReleasesLoading ? (
-					releasesStore.releases.length > 0 ? (
-						<div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 xl:gap-5'>
-							{releasesStore.releases.map(release => (
-								<div className='p-2' key={release.id}>
-									<LastReleasesCarouselItem release={release} />
-								</div>
-							))}
-						</div>
-					) : (
-						<p className='text-center text-2xl font-semibold mt-30'>
-							Релизы не найдены!
-						</p>
-					)
-				) : (
-					<div className='mt-30'>
-						<Loader size={20} />
-					</div>
-				)}
-			</section>
-
-			{releasesStore.releases.length > 0 && (
-				<div className='mt-50'>
-					<Pagination
-						currentPage={currentPage}
-						totalItems={releasesStore.releasesCount}
-						itemsPerPage={5}
-						onPageChange={setCurrentPage}
-						idToScroll={'releases'}
-					/>
-				</div>
-			)}
+			<ReleasesPageGrid
+				items={releasesStore.releases}
+				isLoading={isReleasesLoading}
+				currentPage={currentPage}
+				setCurrentPage={setCurrentPage}
+				total={releasesStore.releasesCount}
+				perPage={perPage}
+			/>
 		</>
 	)
 }

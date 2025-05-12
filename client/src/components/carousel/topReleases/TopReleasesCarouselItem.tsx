@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import useCustomNavigate from '../../../hooks/UseCustomNavigate'
 
 interface ITopReleasesCarouselItemProps {
 	id: string
@@ -7,12 +8,17 @@ interface ITopReleasesCarouselItemProps {
 }
 
 const TopReleasesCarouselItem: FC<ITopReleasesCarouselItemProps> = ({
+	id,
 	img,
 	title,
 }) => {
+	const { navigateToRelease } = useCustomNavigate()
 	return (
 		<div className='embla__slide flex-[0_0_64px] mr-1 lg:mr-7'>
-			<button className='flex flex-col items-center space-y-1.5 lg:space-y-2.5 cursor-pointer select-none w-13 lg:w-17'>
+			<button
+				onClick={() => navigateToRelease(id)}
+				className='flex flex-col items-center space-y-1.5 lg:space-y-2.5 cursor-pointer select-none w-13 lg:w-17'
+			>
 				<img
 					alt='test'
 					loading='lazy'

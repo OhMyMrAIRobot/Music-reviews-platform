@@ -9,7 +9,7 @@ import {
 	NinetySvgIcon,
 	QuestionSvgIcon,
 	RatingSvgIcon,
-	RelisesSvgIcon,
+	ReleasesSvgIcon,
 	ReviewsSvgIcon,
 } from './SidebarIcons'
 import { ISidebarItemProps } from './SidebarItem'
@@ -23,6 +23,8 @@ const Sidebar = () => {
 		navigateToAuthors,
 		navigateToReviews,
 		navigateToReleases,
+		navigateToLeaderboard,
+		navigateToRatings,
 	} = useCustomNavigate()
 
 	const isActive = (path: string) => {
@@ -55,18 +57,18 @@ const Sidebar = () => {
 
 	const sidebarSecondGroup: ISidebarItemProps[] = [
 		{
-			id: 'side-top-90',
-			onClick: navigateToMain,
+			id: 'leaderboard',
+			onClick: navigateToLeaderboard,
 			icon: <NinetySvgIcon className='size-5 fill-white' />,
 			label: 'ТОП-90 пользователей',
-			active: isActive('/main'),
+			active: isActive(ROUTES.LEADERBOARD),
 		},
 		{
 			id: 'side-rating',
-			onClick: navigateToMain,
+			onClick: navigateToRatings,
 			icon: <RatingSvgIcon className='size-5' />,
 			label: 'Рейтинг',
-			active: isActive('/main'),
+			active: isActive(ROUTES.RATINGS),
 		},
 		// {
 		// 	id: 'side-awards',
@@ -116,7 +118,7 @@ const Sidebar = () => {
 		{
 			id: 'side-relises',
 			onClick: navigateToReleases,
-			icon: <RelisesSvgIcon className='size-5' />,
+			icon: <ReleasesSvgIcon className='size-5' />,
 			label: 'Релизы',
 			active: isActive(ROUTES.RELEASES),
 		},
@@ -141,7 +143,7 @@ const Sidebar = () => {
 	}
 
 	return (
-		<div className='relative z-200'>
+		<div className='relative z-2000'>
 			<aside className='fixed inset-y-0 hidden whitespace-nowrap left-0 w-13 hover:w-66 border-r bg-primary group overflow-hidden lg:flex flex-col border-white/15 transition-all duration-200'>
 				<SidebarSection items={sidebarFirstGroup} />
 				<Delimiter />

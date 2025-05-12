@@ -26,7 +26,16 @@ export const GetReleaseIcon = (releaseType: string) => {
 }
 
 const LastReleasesCarouselItem: FC<IProps> = ({ release }) => {
-	const { navigateToRelease } = useCustomNavigate()
+	const { navigateToRelease, navigateToAuthor } = useCustomNavigate()
+
+	const navigateToAuthorPage = (
+		id: string,
+		e: React.MouseEvent<HTMLDivElement>
+	) => {
+		e.stopPropagation()
+		navigateToAuthor(id)
+	}
+
 	const ratingOrder = [
 		ReleaseRatingTypesEnum.SUPER_USER,
 		ReleaseRatingTypesEnum.WITH_TEXT,
@@ -40,7 +49,7 @@ const LastReleasesCarouselItem: FC<IProps> = ({ release }) => {
 	return (
 		<button
 			onClick={() => navigateToRelease(release.id)}
-			className='bg-secondary hover:scale-105 p-1 overflow-hidden flex flex-col justify-start relative w-full h-full rounded-xl border border-zinc-800 duration-300 cursor-pointer'
+			className='bg-zinc-900 hover:scale-105 p-1 overflow-hidden flex flex-col justify-start relative w-full h-full rounded-xl border border-zinc-800 duration-300 cursor-pointer'
 		>
 			<div className='relative block'>
 				<div className='rounded-lg size-full min-h-35'>
@@ -58,13 +67,13 @@ const LastReleasesCarouselItem: FC<IProps> = ({ release }) => {
 					<div className='absolute bottom-1.5 left-1.5 bg-zinc-900 rounded-full px-1.5 flex gap-2 items-center font-semibold text-sm'>
 						{release.text_count > 0 && (
 							<div className='flex gap-0.75 items-center'>
-								<TextReviewSvgIcon />
+								<TextReviewSvgIcon classname='size-3' />
 								<span>{release.text_count}</span>
 							</div>
 						)}
 						{release.no_text_count > 0 && (
 							<div className='flex gap-0.75 items-center'>
-								<NoTextReviewSvgIcon />
+								<NoTextReviewSvgIcon classname='size-3' />
 								<span>{release.no_text_count}</span>
 							</div>
 						)}
@@ -81,12 +90,16 @@ const LastReleasesCarouselItem: FC<IProps> = ({ release }) => {
 			</div>
 			<div className='flex flex-wrap gap-1 font-medium leading-3 mt-2 text-[13px]'>
 				{release.author.map(author => (
-					<div key={author.name} className='opacity-70'>
+					<div
+						onClick={e => navigateToAuthorPage(author.id, e)}
+						key={author.name}
+						className='opacity-70 hover:underline hover:opacity-100 transition-colors duration-300 cursor-pointer'
+					>
 						{author.name}
 					</div>
 				))}
 			</div>
-			<div className='flex mt-5 items-center px-1 pb-1 gap-1 text-white'>
+			<div className='flex items-center px-1 pb-1 gap-1 text-white mt-auto pt-5'>
 				{ratings.map(rating => {
 					let className =
 						'inline-flex size-7 text-xs items-center justify-center font-semibold rounded-full '

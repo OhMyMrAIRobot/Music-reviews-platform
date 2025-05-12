@@ -3,6 +3,7 @@ import { IFavRelease } from '../models/release/FavRelease'
 import { IRelease, IReleaseResponse } from '../models/release/Release'
 import { IReleaseDetails } from '../models/release/ReleaseDetails'
 import { IReleaseType } from '../models/release/ReleaseTypes'
+import { ITopRatingReleasesResponse } from '../models/release/TopRatingReleasesResponse'
 import { api } from './Instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
@@ -21,13 +22,16 @@ export const ReleaseAPI = {
 
 	async fetchReleases(
 		typeId: string | null,
+		query: string | null,
 		field: string,
 		order: string,
 		limit: number,
 		offset: number
 	): Promise<IReleaseResponse> {
 		const { data } = await _api.get<IReleaseResponse>(
-			`list?${typeId ? `type=${typeId}` : ''}
+			`list?
+			${typeId ? `type=${typeId}` : ''}
+			${query ? `&query=${query}` : ''}
 			&field=${field}
 			&order=${order}
 			&limit=${limit}
@@ -37,8 +41,36 @@ export const ReleaseAPI = {
 		return data
 	},
 
-	async fetchReleaseDetails(id: string): Promise<IReleaseDetails[]> {
-		const { data } = await _api.get<IReleaseDetails[]>(`/details/${id}`)
+	async fetchAuthorTopReleases(authorId: string): Promise<IRelease[]> {
+		const { data } = await _api.get<IRelease[]>(`author/top/${authorId}`)
+		return data
+	},
+
+	async fetchAuthorAllReleases(authorId: string): Promise<IRelease[]> {
+		const { data } = await _api.get<IRelease[]>(`author/all/${authorId}`)
+		return data
+	},
+
+	async fetchTopRatingReleases(
+		year: number | null,
+		month: number | null
+	): Promise<ITopRatingReleasesResponse> {
+		const { data } = await _api.get<ITopRatingReleasesResponse>(`top-rating?
+			${year ? `year=${year}` : ''}&
+			${month ? `month=${month}` : ''}
+			`)
+		return data
+	},
+
+	async fetchReleaseDetails(id: string): Promise<IReleaseDetails> {
+		const { data } = await _api.get<IReleaseDetails>(`/details/${id}`)
+		return data
+	},
+
+	async fetchFavReleaseUsersIds(releaseId: string): Promise<IFavRelease[]> {
+		const { data } = await axios.get<IFavRelease[]>(
+			`${SERVER_URL}/user-fav-releases/release/${releaseId}`
+		)
 		return data
 	},
 

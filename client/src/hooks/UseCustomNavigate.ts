@@ -1,4 +1,6 @@
 import { useNavigate } from 'react-router'
+import { SearchTypesEnum } from '../models/search/SearchTypesEnum'
+import { ROUTES } from '../routes/Routes'
 
 const useCustomNavigate = () => {
 	const navigate = useNavigate()
@@ -20,7 +22,7 @@ const useCustomNavigate = () => {
 	}
 
 	const navigateToFeedback = () => {
-		navigate('/feedback')
+		navigate(ROUTES.FEEDBACK)
 	}
 
 	const navigateToRelease = (id: string) => {
@@ -28,15 +30,39 @@ const useCustomNavigate = () => {
 	}
 
 	const navigateToAuthors = () => {
-		navigate(`/authors`)
+		navigate(ROUTES.AUTHORS)
 	}
 
 	const navigateToReviews = () => {
-		navigate(`/reviews`)
+		navigate(ROUTES.REVIEWS)
 	}
 
 	const navigateToReleases = () => {
-		navigate(`/releases`)
+		navigate(ROUTES.RELEASES)
+	}
+
+	const navigateToAuthor = (id: string) => {
+		navigate(`/author/${id}`)
+	}
+
+	const navigateToLeaderboard = () => {
+		navigate(ROUTES.LEADERBOARD)
+	}
+
+	const navigateToRatings = () => {
+		navigate(ROUTES.RATINGS)
+	}
+
+	const navigateToSearch = (type: SearchTypesEnum, query: string) => {
+		navigate(`/search/${type}?query=${encodeURIComponent(query)}`)
+	}
+
+	const navigatoToProfile = (id: string) => {
+		navigate(`/profile/${id}`)
+	}
+
+	const navigateToEditProfile = (id: string) => {
+		navigate(`/profile/edit/${id}`)
 	}
 
 	return {
@@ -49,6 +75,12 @@ const useCustomNavigate = () => {
 		navigateToAuthors,
 		navigateToReviews,
 		navigateToReleases,
+		navigateToAuthor,
+		navigateToLeaderboard,
+		navigateToRatings,
+		navigateToSearch,
+		navigatoToProfile,
+		navigateToEditProfile,
 	}
 }
 

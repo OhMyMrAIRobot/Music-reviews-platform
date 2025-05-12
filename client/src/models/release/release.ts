@@ -10,6 +10,6 @@ export interface IRelease {
 	release_type: string
 	text_count: number
 	no_text_count: number
-	author: [{ name: string }]
-	ratings: [{ type: string; total: number }]
+	author: { id: string; name: string }[]
+	ratings: { type: string; total: number }[]
 }

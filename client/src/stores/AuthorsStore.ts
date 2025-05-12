@@ -39,7 +39,7 @@ class AuthorsStore {
 		offset: number = 0
 	) => {
 		try {
-			const data = await AuthorAPI.fetchAuthors(typeId, limit, offset)
+			const data = await AuthorAPI.fetchAuthors(typeId, null, limit, offset)
 			this.setAuthorsCount(data.count)
 			this.setAuthors(data.authors)
 		} catch (e) {

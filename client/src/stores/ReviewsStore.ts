@@ -26,7 +26,7 @@ class ReviewsStore {
 
 	fetchLastReviews = async () => {
 		try {
-			const data = await ReviewAPI.fetchReviews('asc', 45, 0)
+			const data = await ReviewAPI.fetchReviews('asc', 45, 0, null, null)
 			this.setLastReviews(data.reviews)
 		} catch (e) {
 			console.log(e)
@@ -35,7 +35,13 @@ class ReviewsStore {
 
 	fetchReviews = async (order: string, limit: number, offset: number) => {
 		try {
-			const data = await ReviewAPI.fetchReviews(order, limit, offset)
+			const data = await ReviewAPI.fetchReviews(
+				order,
+				limit,
+				offset,
+				null,
+				null
+			)
 			this.setReviews(data.reviews)
 			this.setCount(data.count)
 		} catch (e) {
@@ -43,100 +49,50 @@ class ReviewsStore {
 		}
 	}
 
-	addReviewToFav = async (
-		reviewId: string
+	toggleFavReview = async (
+		reviewId: string,
+		isFav: boolean
 	): Promise<{ status: boolean; message: string }> => {
 		try {
-			const data = await ReviewAPI.addReviewToFav(reviewId)
-			const lastReview = this.lastReviews.find(
-				item => item.id === data.reviewId
+			if (isFav) {
+				await ReviewAPI.deleteReviewFromFav(reviewId)
+			} else {
+				await ReviewAPI.addReviewToFav(reviewId)
+			}
+
+			const data = await ReviewAPI.fetchFavReviewUsersIds(reviewId)
+			const reviewIdx = this.reviews?.findIndex(val => val.id === reviewId)
+			const lastreviewIdx = this.lastReviews.findIndex(
+				val => val.id === reviewId
 			)
-			const review = this.reviews.find(item => item.id === data.reviewId)
 
-			if (lastReview) {
-				const alreadyLiked = lastReview.like_user_ids.some(
-					entry => entry.user_id === data.userId
-				)
-
-				if (!alreadyLiked) {
-					runInAction(() => {
-						lastReview.like_user_ids.push({ user_id: data.userId })
-						lastReview.likes_count += 1
-					})
+			runInAction(() => {
+				if (reviewIdx !== undefined && reviewIdx !== -1) {
+					this.reviews[reviewIdx].user_fav_ids = data
+					this.reviews[reviewIdx].likes_count = data.length
 				}
-			}
+			})
 
-			if (review) {
-				const alreadyLiked = review.like_user_ids.some(
-					entry => entry.user_id === data.userId
-				)
-
-				if (!alreadyLiked) {
-					runInAction(() => {
-						review.like_user_ids.push({ user_id: data.userId })
-						review.likes_count += 1
-					})
+			runInAction(() => {
+				if (lastreviewIdx !== undefined && lastreviewIdx !== -1) {
+					this.lastReviews[lastreviewIdx].user_fav_ids = data
+					this.lastReviews[lastreviewIdx].likes_count = data.length
 				}
-			}
+			})
 
 			return {
 				status: true,
-				message: 'Вы отметили рецензию как понравившеюся!',
+				message: isFav
+					? 'Вы убрали рецензию из списка понравившихся!'
+					: 'Вы отметили рецензию как понравившеюся!',
 			}
-		} catch (e: any) {
+		} catch (e) {
 			console.log(e)
 			return {
 				status: false,
-				message: 'Не удалось отметь рецензию как понравившеюся!',
-			}
-		}
-	}
-
-	deleteReviewFromFav = async (
-		reviewId: string
-	): Promise<{ status: boolean; message: string }> => {
-		try {
-			const data = await ReviewAPI.deleteReviewFromFav(reviewId)
-			const lastReview = this.lastReviews.find(
-				item => item.id === data.reviewId
-			)
-			const review = this.reviews.find(item => item.id === data.reviewId)
-
-			if (lastReview) {
-				const index = lastReview.like_user_ids.findIndex(
-					entry => entry.user_id === data.userId
-				)
-
-				if (index !== -1) {
-					runInAction(() => {
-						lastReview.like_user_ids.splice(index, 1)
-						lastReview.likes_count -= 1
-					})
-				}
-			}
-
-			if (review) {
-				const index = review.like_user_ids.findIndex(
-					entry => entry.user_id === data.userId
-				)
-
-				if (index !== -1) {
-					runInAction(() => {
-						review.like_user_ids.splice(index, 1)
-						review.likes_count -= 1
-					})
-				}
-			}
-
-			return {
-				status: true,
-				message: 'Вы убрали рецензию из списка понравившихся!',
-			}
-		} catch (e: any) {
-			console.log(e)
-			return {
-				status: false,
-				message: 'Не удалось убрать рецензию из списка понравившихся!',
+				message: isFav
+					? 'Не удалось убрать рецензию из списка понравившихся!'
+					: 'Не удалось отметь рецензию как понравившеюся!',
 			}
 		}
 	}

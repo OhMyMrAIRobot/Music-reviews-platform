@@ -1,9 +1,10 @@
-import { UserLevelsEnum } from '../models/profile/userLevels'
+import { UserLevelsEnum } from '../models/profile/UserLevels'
 
 interface LevelConfig {
 	name: string
 	image: string
 	minPoints: number
+	color: string
 }
 
 export const LEVELS: { level: UserLevelsEnum; config: LevelConfig }[] = [
@@ -13,6 +14,7 @@ export const LEVELS: { level: UserLevelsEnum; config: LevelConfig }[] = [
 			name: 'Серебряный уровень',
 			image: 'silver.png',
 			minPoints: 3000,
+			color: 'border-gray-400 bg-gray-600',
 		},
 	},
 	{
@@ -21,6 +23,7 @@ export const LEVELS: { level: UserLevelsEnum; config: LevelConfig }[] = [
 			name: 'Золотой уровень',
 			image: 'gold.png',
 			minPoints: 15000,
+			color: 'border-yellow-500 bg-yellow-700',
 		},
 	},
 	{
@@ -29,6 +32,7 @@ export const LEVELS: { level: UserLevelsEnum; config: LevelConfig }[] = [
 			name: 'Изумрудный уровень',
 			image: 'emerald.png',
 			minPoints: 60000,
+			color: 'border-green-400 bg-green-600',
 		},
 	},
 	{
@@ -37,6 +41,7 @@ export const LEVELS: { level: UserLevelsEnum; config: LevelConfig }[] = [
 			name: 'Сапфировый уровень',
 			image: 'sapphire.png',
 			minPoints: 150000,
+			color: 'border-blue-600 bg-blue-800',
 		},
 	},
 	{
@@ -45,6 +50,7 @@ export const LEVELS: { level: UserLevelsEnum; config: LevelConfig }[] = [
 			name: 'Рубиновый уровень',
 			image: 'ruby.png',
 			minPoints: 300000,
+			color: 'border-red-600 bg-red-800',
 		},
 	},
 ]

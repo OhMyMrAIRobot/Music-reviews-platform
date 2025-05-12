@@ -1,13 +1,13 @@
 import { FC } from 'react'
 
 interface IProps {
-	size?: number
+	size?: string
 }
 
-const Loader: FC<IProps> = ({ size = 20 }) => {
+const Loader: FC<IProps> = ({ size = 'size-20' }) => {
 	return (
 		<div
-			className={`size-${size} mx-auto border-t-4 border-b-1 border-white rounded-full animate-spin`}
+			className={`${size} mx-auto border-t-4 border-b-1 border-white rounded-full animate-spin`}
 		></div>
 	)
 }

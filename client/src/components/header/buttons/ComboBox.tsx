@@ -54,7 +54,7 @@ const ComboBox: FC<ComboBoxProps> = ({
 			</button>
 
 			<ul
-				className={`absolute left-0 mt-3 py-2 px-2 z-100 w-full bg-white border border-zinc-700 text-sm font-medium rounded-md shadow-lg bg-primary transition-all duration-125 flex flex-col gap-y-1.5 ${
+				className={`absolute left-0 mt-3 py-2 px-2 z-100 w-full bg-white border border-zinc-700 text-sm font-medium rounded-md shadow-lg bg-primary transition-all duration-125 flex flex-col gap-y-1.5 max-h-70 overflow-scroll ${
 					isOpen
 						? 'opacity-100 translate-y-0 pointer-events-auto'
 						: 'opacity-0 -translate-y-3 pointer-events-none'

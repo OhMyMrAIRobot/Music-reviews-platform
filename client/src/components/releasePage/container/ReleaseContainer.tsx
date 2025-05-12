@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
-import { FC } from 'react'
+import { FC, useState } from 'react'
+import { useAuthCheck } from '../../../hooks/UseAuthCheck'
 import { useStore } from '../../../hooks/UseStore'
 import { IReleaseDetails } from '../../../models/release/ReleaseDetails'
 import {
@@ -15,30 +16,29 @@ interface IProps {
 
 const ReleaseContainer: FC<IProps> = observer(({ release }) => {
 	const { authStore, releasePageStore, notificationsStore } = useStore()
-
-	const isLiked = release.user_like_ids.some(
-		val => val.user_id === authStore.user?.id
+	const { checkAuth } = useAuthCheck()
+	const [toggling, setToggling] = useState<boolean>(false)
+	const isLiked = release.user_fav_ids.some(
+		fav => fav.userId === authStore.user?.id
 	)
 
 	const toggleFavRelease = () => {
-		if (!authStore.isAuth) {
-			notificationsStore.addNoAuthNotification(
-				'Для добавления релиза в понравившиеся требуется авторизация!'
-			)
+		setToggling(true)
+		if (!checkAuth()) {
+			setToggling(false)
 			return
 		}
 
-		const promise = isLiked
-			? releasePageStore.deleteReleaseFromFav(release.id)
-			: releasePageStore.addReleaseToFav(release.id)
-
-		promise.then(result => {
-			notificationsStore.addNotification({
-				id: self.crypto.randomUUID(),
-				text: result.message,
-				isError: !result.status,
+		releasePageStore
+			.toggleFavRelease(release.id, isLiked)
+			.then(result => {
+				notificationsStore.addNotification({
+					id: self.crypto.randomUUID(),
+					text: result.message,
+					isError: !result.status,
+				})
 			})
-		})
+			.finally(() => setToggling(false))
 	}
 
 	return (
@@ -47,7 +47,9 @@ const ReleaseContainer: FC<IProps> = observer(({ release }) => {
 				loading='lazy'
 				decoding='async'
 				alt={release.title}
-				src={release.release_img}
+				src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
+					release.release_img
+				}`}
 				className='size-62 rounded-[10px] max-h-62'
 			/>
 			<div className='absolute w-full flex justify-center lg:hidden z-[-1] blur-2xl'>
@@ -82,6 +84,7 @@ const ReleaseContainer: FC<IProps> = observer(({ release }) => {
 					</div>
 				)}
 				<button
+					disabled={toggling}
 					onClick={toggleFavRelease}
 					className={`inline-flex items-center justify-center whitespace-nowrap text-sm font-medium border border-white/20 size-10 lg:size-12 rounded-full bg-zinc-950 hover:bg-white/5 transition-colors duration-300 cursor-pointer ${
 						isLiked ? 'text-pink-600' : 'text-white'

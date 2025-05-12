@@ -1,10 +1,14 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
+import useCustomNavigate from '../../hooks/UseCustomNavigate'
+import { useLoading } from '../../hooks/UseLoading'
+import { useStore } from '../../hooks/UseStore'
 import LastReleasesCarousel, {
 	CarouselRef,
 } from '../carousel/lastReleases/LastReleasesCarousel'
 import MainCarouselSection from './MainCarouselSection'
 
 const LastReleasesContainer = () => {
+	const { navigateToReleases } = useCustomNavigate()
 	const carouselRef = useRef<CarouselRef>(null)
 
 	const handlePrev = () => {
@@ -15,14 +19,31 @@ const LastReleasesContainer = () => {
 		carouselRef.current?.scrollNext()
 	}
 
+	const { releasesStore } = useStore()
+
+	const { execute: fetch, isLoading } = useLoading(
+		releasesStore.fetchLastReleases
+	)
+
+	useEffect(() => {
+		fetch()
+	}, [])
+
 	return (
 		<MainCarouselSection
 			title={'Добавленные релизы'}
 			buttonTitle={'Все релизы'}
-			onButtonClick={() => {}}
+			onButtonClick={navigateToReleases}
+			showButton={true}
 			handlePrev={handlePrev}
 			handleNext={handleNext}
-			Carousel={<LastReleasesCarousel ref={carouselRef} />}
+			Carousel={
+				<LastReleasesCarousel
+					items={releasesStore.lastReleases}
+					isLoading={isLoading}
+					ref={carouselRef}
+				/>
+			}
 		/>
 	)
 }

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { IFavReview } from '../models/review/FavReview'
 import { IReleaseReviewResponse } from '../models/review/ReleaseReview'
-import { IReviewsResponse } from '../models/review/Review'
+import { IReview, IReviewsResponse } from '../models/review/Review'
 import { IReviewData } from '../models/review/ReviewData'
 import { api } from './Instance'
 
@@ -37,10 +37,30 @@ export const ReviewAPI = {
 	async fetchReviews(
 		order: string,
 		limit: number,
-		offset: number
+		offset: number,
+		userId: string | null,
+		favUserId: string | null
 	): Promise<IReviewsResponse> {
 		const { data } = await _api.get<IReviewsResponse>(
-			`/list?order=${order}&limit=${limit}&offset=${offset}`
+			`/list?
+			order=${order}
+			&limit=${limit}
+			&offset=${offset}
+			${userId ? `&userId=${userId}` : ''}
+			${favUserId ? `&favUserId=${favUserId}` : ''}
+			`
+		)
+		return data
+	},
+
+	async fetchReviewsByAuthorId(authorId: string): Promise<IReview[]> {
+		const { data } = await _api.get<IReview[]>(`/author/${authorId}`)
+		return data
+	},
+
+	async fetchFavReviewUsersIds(reviewId: string): Promise<IFavReview[]> {
+		const { data } = await axios.get<IFavReview[]>(
+			`${SERVER_URL}/user-fav-reviews/review/${reviewId}`
 		)
 		return data
 	},

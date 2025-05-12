@@ -7,7 +7,7 @@ import { useStore } from '../../../hooks/UseStore'
 import TopReleasesCarouselItem from './TopReleasesCarouselItem'
 
 const TopReleasesCarousel = observer(() => {
-	const options: EmblaOptionsType = { dragFree: true }
+	const options: EmblaOptionsType = { dragFree: true, align: 'start' }
 	const [emblaRef] = useEmblaCarousel(options)
 
 	const { releasesStore } = useStore()
@@ -27,7 +27,7 @@ const TopReleasesCarousel = observer(() => {
 			) : (
 				<div className='embla w-full'>
 					<div className='embla__viewport pt-2 px-1.5' ref={emblaRef}>
-						<div className='embla__container justify-center'>
+						<div className='embla__container justify-start'>
 							{releasesStore.topReleases.map(release => (
 								<TopReleasesCarouselItem
 									key={release.id}

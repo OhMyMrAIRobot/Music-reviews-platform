@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useState } from 'react'
+import { useAuthCheck } from '../../../hooks/UseAuthCheck'
 import useCustomNavigate from '../../../hooks/UseCustomNavigate'
 import { useStore } from '../../../hooks/UseStore'
 import { IReview } from '../../../models/review/Review'
@@ -15,28 +16,18 @@ interface IProps {
 
 const ReviewItem: FC<IProps> = observer(({ review }) => {
 	const { authStore, notificationsStore, reviewsStore } = useStore()
+	const { checkAuth } = useAuthCheck()
 	const [show, setShow] = useState<boolean>(false)
-	const { navigateToRelease } = useCustomNavigate()
-	const isLiked = review.like_user_ids.some(
-		item => item.user_id === authStore.user?.id
+	const { navigateToRelease, navigatoToProfile } = useCustomNavigate()
+	const isLiked = review.user_fav_ids.some(
+		item => item.userId === authStore.user?.id
 	)
 
 	const [toggling, setToggling] = useState<boolean>(false)
 
 	const toggleFavReview = () => {
 		setToggling(true)
-		if (!authStore.isAuth) {
-			notificationsStore.addNoAuthNotification(
-				'Для добавления рецензии в понравившиеся требуется авторизация!'
-			)
-			setToggling(false)
-			return
-		}
-
-		if (!authStore.user?.isActive) {
-			notificationsStore.addNoAuthNotification(
-				'Для добавления рецензии в понравившиеся требуется активировать аккаунт!'
-			)
+		if (!checkAuth()) {
 			setToggling(false)
 			return
 		}
@@ -51,11 +42,8 @@ const ReviewItem: FC<IProps> = observer(({ review }) => {
 			return
 		}
 
-		const promise = isLiked
-			? reviewsStore.deleteReviewFromFav(review.id)
-			: reviewsStore.addReviewToFav(review.id)
-
-		promise
+		reviewsStore
+			.toggleFavReview(review.id, isLiked)
 			.then(result => {
 				notificationsStore.addNotification({
 					id: self.crypto.randomUUID(),
@@ -63,22 +51,16 @@ const ReviewItem: FC<IProps> = observer(({ review }) => {
 					isError: !result.status,
 				})
 			})
-			.catch(() => {
-				notificationsStore.addNotification({
-					id: self.crypto.randomUUID(),
-					text: 'Ошибка при добавлении рецензии в понравившиеся!',
-					isError: true,
-				})
-			})
-			.finally(() => {
-				setToggling(false)
-			})
+			.finally(() => setToggling(false))
 	}
 
 	const ReviewHeader = () => {
 		return (
 			<div className='bg-zinc-950/70 p-2 rounded-[12px] flex gap-3'>
-				<div className='flex items-center space-x-2 lg:space-x-3 w-full'>
+				<div
+					onClick={() => navigatoToProfile(review.user_id)}
+					className='flex items-center space-x-2 lg:space-x-3 w-full cursor-pointer'
+				>
 					<ReviewUserImage
 						nickname={review.nickname}
 						img={review.profile_img}
@@ -133,7 +115,7 @@ const ReviewItem: FC<IProps> = observer(({ review }) => {
 				>
 					<MoveToReviewSvgIcon />
 					<div
-						className={`absolute -top-10 left-1/2 -translate-x-1/2 bg-primary border-2 border-gray-600 rounded-xl text-white text-xs font-semibold px-3 py-2 shadow z-100 whitespace-nowrap transition-all duration-300 ${
+						className={`absolute -top-10 left-1/1 -translate-x-1/1 bg-primary border-2 border-gray-600 rounded-xl text-white text-xs font-semibold px-3 py-2 shadow z-100 whitespace-nowrap transition-all duration-300 ${
 							show ? 'opacity-100 visible' : 'opacity-0 invisible'
 						}`}
 					>

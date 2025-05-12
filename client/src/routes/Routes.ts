@@ -11,10 +11,16 @@ export const ROUTES = {
 	},
 	MAIN: '/',
 	RELEASE: '/release/:id',
+	RELEASES: '/releases',
+	AUTHOR: '/author/:id',
 	AUTHORS: '/authors',
 	FEEDBACK: '/feedback',
 	REVIEWS: '/reviews',
-	RELEASES: '/releases',
+	LEADERBOARD: '/leaderboard',
+	RATINGS: '/ratings',
+	SEARCH: '/search/:type',
+	PROFILE: '/profile/:id',
+	EDIT_PROFILE: 'profile/edit/:id',
 } as const
 
 export type AppRoutes = keyof typeof ROUTES | keyof typeof ROUTES.AUTH
