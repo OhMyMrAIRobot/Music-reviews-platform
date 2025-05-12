@@ -1,20 +1,11 @@
 import { Type } from 'class-transformer';
-import {
-  IsIn,
-  IsInt,
-  IsOptional,
-  IsString,
-  Matches,
-  Max,
-  Min,
-} from 'class-validator';
+import { IsIn, IsInt, IsOptional, Length, Max, Min } from 'class-validator';
+import { IsEntityId } from 'src/decorators/is-entity-id.decorator';
+import { IsSearchQuery } from 'src/decorators/is-search-query.decorator';
 
 export class ReleasesQueryDto {
   @IsOptional()
-  @IsString()
-  @Matches(/^[a-zA-Z0-9]+$/, {
-    message: 'type может содержать только цифры и буквы',
-  })
+  @IsEntityId()
   type?: string;
 
   @IsOptional()
@@ -27,6 +18,13 @@ export class ReleasesQueryDto {
     'withTextRating',
   ])
   field?: string;
+
+  @IsOptional()
+  @IsSearchQuery()
+  @Length(1, 50, {
+    message: 'Длина поисковой строки должна быть от 1 до 50 символов',
+  })
+  query?: string;
 
   @IsOptional()
   @IsIn(['asc', 'desc'])

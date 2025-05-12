@@ -107,15 +107,6 @@ export class ReviewsService {
     const offset = query.offset ? query.offset : 0;
 
     const rawQuery = `
-        WITH ranked_profiles AS (
-          SELECT
-              user_id,
-              ROW_NUMBER() OVER (ORDER BY points DESC)::int AS position
-          FROM "User_profiles"
-          ORDER BY points DESC
-          LIMIT 5
-        )
-
         SELECT
           r.id,
           r.rhymes,
@@ -133,16 +124,19 @@ export class ReviewsService {
           u.nickname,
           up.avatar,
           up.points,
-          rp.position,
+          tul.rank AS position,
           COUNT(DISTINCT ufr.user_id)::INT as likes_count,
-          JSONB_AGG(DISTINCT JSONB_BUILD_OBJECT('user_id', ufr.user_id)) as user_like_ids
+          JSONB_AGG(DISTINCT JSONB_BUILD_OBJECT(
+              'userId', ufr.user_id,
+              'reviewId', ufr.review_id
+            )) as user_fav_ids
         FROM "Reviews" r
         LEFT JOIN "Users" u on r.user_id = u.id
         LEFT JOIN "User_profiles" up on u.id = up.user_id
-        LEFT JOIN ranked_profiles rp ON r.user_id = rp.user_id
+        LEFT JOIN "Top_users_leaderboard" tul ON up.user_id = tul.user_id
         LEFT JOIN "User_fav_reviews" ufr on r.id = ufr.review_id
         WHERE r.release_id = '${releaseId}'
-        GROUP BY r.id, r.rhymes, r.structure, r.realization, r.individuality, r.atmosphere, r.total, r.title, r.text, u.id, u.nickname, up.avatar,rp.position, r.created_at, up.points
+        GROUP BY r.id, r.rhymes, r.structure, r.realization, r.individuality, r.atmosphere, r.total, r.title, r.text, u.id, u.nickname, up.avatar, tul.rank, r.created_at, up.points
         ORDER BY ${field} ${order}, r.id ASC
         LIMIT ${limit}
         OFFSET ${offset}`;
@@ -211,7 +205,15 @@ export class ReviewsService {
   async findReviews(query: ReviewsQueryDto): Promise<ReviewsResponseDto> {
     const count = await this.prisma.review.count({
       where: {
-        text: { not: null },
+        AND: [
+          { text: { not: null } },
+          { userId: { equals: query.userId } },
+          {
+            UserFavReviews: query.favUserId
+              ? { some: { userId: query.favUserId } }
+              : undefined,
+          },
+        ],
       },
     });
 
@@ -220,13 +222,61 @@ export class ReviewsService {
     const offset = query.offset ? query.offset : 0;
 
     const rawQuery = `
-      WITH ranked_profiles AS (
-          SELECT
-              user_id,
-              ROW_NUMBER() OVER (ORDER BY points DESC)::int AS position
-          FROM "User_profiles"
-          ORDER BY points DESC
-          LIMIT 5
+      SELECT
+          rev.id,
+          rev.title,
+          rev.text,
+          rev.total,
+          rev.rhymes,
+          rev.structure,
+          rev.realization,
+          rev.individuality,
+          rev.atmosphere,
+          rev.user_id,
+          u.nickname,
+          p.avatar AS profile_img,
+          p.points,
+          tul.rank AS position,
+          r.img AS release_img,
+          r.title AS release_title,
+          r.id AS release_id,
+          COUNT(DISTINCT ufr.user_id)::int AS likes_count,
+          json_agg(DISTINCT jsonb_build_object(
+              'userId', ufr.user_id,
+              'reviewId', ufr.review_id
+          )) AS user_fav_ids
+      FROM "Reviews" rev
+            LEFT JOIN "Users" u ON rev.user_id = u.id
+            LEFT JOIN "User_profiles" p ON u.id = p.user_id
+            LEFT JOIN "Top_users_leaderboard" tul ON p.user_id = tul.user_id
+            LEFT JOIN "Releases" r ON rev.release_id = r.id
+            LEFT JOIN "User_fav_reviews" ufr ON rev.id = ufr.review_id
+      WHERE rev.text IS NOT NULL 
+        AND rev.title IS NOT NULL
+        ${query.userId ? `AND rev.user_id = '${query.userId}'` : ''}
+        ${query.favUserId ? `AND ufr.user_id = '${query.favUserId}'` : ''}
+      GROUP BY
+          rev.id, rev.title, rev.text, rev.total, rev.rhymes, rev.structure, rev.realization,
+          rev.individuality, rev.atmosphere, u.nickname, p.avatar, p.points, tul.rank,
+          r.img, r.title, r.id, rev.created_at, rev.user_id
+      ORDER BY rev.created_at ${order}, rev.id ASC
+      LIMIT ${limit}
+      OFFSET ${offset}`;
+
+    const reviews =
+      await this.prisma.$queryRawUnsafe<ReviewQueryDataDto[]>(rawQuery);
+
+    return { count, reviews };
+  }
+
+  async findByAuthorId(authorId: string): Promise<ReviewQueryDataDto[]> {
+    return this.prisma.$queryRawUnsafe(`
+      WITH author_releases AS (
+        SELECT release_id FROM "Release_designers" WHERE author_id = '${authorId}'
+        UNION
+        SELECT release_id FROM "Release_producers" WHERE author_id = '${authorId}'
+        UNION
+        SELECT release_id FROM "Release_artists" WHERE author_id = '${authorId}'
       )
 
       SELECT
@@ -243,31 +293,31 @@ export class ReviewsService {
           u.nickname,
           p.avatar AS profile_img,
           p.points,
-          rp.position,
+          tul.rank AS position,
           r.img AS release_img,
           r.title AS release_title,
           r.id AS release_id,
           COUNT(DISTINCT ufr.user_id)::int AS likes_count,
-          json_agg(DISTINCT jsonb_build_object('user_id', ufr.user_id)) AS like_user_ids
+          json_agg(DISTINCT jsonb_build_object(
+                  'userId', ufr.user_id,
+                  'reviewId', ufr.review_id
+          )) AS user_fav_ids
       FROM "Reviews" rev
-            LEFT JOIN "Users" u ON rev.user_id = u.id
-            LEFT JOIN "User_profiles" p ON u.id = p.user_id
-            LEFT JOIN ranked_profiles rp ON p.user_id = rp.user_id
-            LEFT JOIN "Releases" r ON rev.release_id = r.id
-            LEFT JOIN "User_fav_reviews" ufr ON rev.id = ufr.review_id
+              LEFT JOIN "Users" u ON rev.user_id = u.id
+              LEFT JOIN "User_profiles" p ON u.id = p.user_id
+              LEFT JOIN "Top_users_leaderboard" tul ON p.user_id = tul.user_id
+              LEFT JOIN "Releases" r ON rev.release_id = r.id
+              LEFT JOIN "User_fav_reviews" ufr ON rev.id = ufr.review_id
+              JOIN author_releases ar ON r.id = ar.release_id
       WHERE rev.text IS NOT NULL AND rev.title IS NOT NULL
       GROUP BY
           rev.id, rev.title, rev.text, rev.total, rev.rhymes, rev.structure, rev.realization,
-          rev.individuality, rev.atmosphere, u.nickname, p.avatar, p.points, rp.position,
+          rev.individuality, rev.atmosphere, u.nickname, p.avatar, p.points, tul.rank,
           r.img, r.title, r.id, rev.created_at, rev.user_id
-      ORDER BY rev.created_at ${order}
-      LIMIT ${limit}
-      OFFSET ${offset}`;
-
-    const reviews =
-      await this.prisma.$queryRawUnsafe<ReviewQueryDataDto[]>(rawQuery);
-
-    return { count, reviews };
+      ORDER BY rev.created_at desc, rev.id ASC
+      LIMIT 25
+      OFFSET 0
+      `);
   }
 
   private calculateTotalScore(

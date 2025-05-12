@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
-import { SocialMediaService } from './social-media.service';
+import { PrismaModule } from 'prisma/prisma.module';
 import { SocialMediaController } from './social-media.controller';
-import { PrismaService } from '../../prisma/prisma.service';
+import { SocialMediaService } from './social-media.service';
 
 @Module({
+  imports: [PrismaModule],
   controllers: [SocialMediaController],
-  providers: [SocialMediaService, PrismaService],
+  providers: [SocialMediaService],
   exports: [SocialMediaService],
 })
 export class SocialMediaModule {}

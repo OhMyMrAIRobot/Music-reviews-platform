@@ -16,6 +16,7 @@ import { UserRoleEnum } from 'src/roles/types/user-role.enum';
 import { AuthorsService } from './authors.service';
 import { AuthorsQueryDto } from './dto/authors-query.dto';
 import { CreateAuthorDto } from './dto/create-author.dto';
+import { GetAuthorParamsDto } from './dto/get-author-params.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
 
 @Controller('authors')
@@ -37,6 +38,11 @@ export class AuthorsController {
   @Get('one/:id')
   findOne(@Param('id') id: string) {
     return this.authorsService.findOne(id);
+  }
+
+  @Get('id/:id')
+  findById(@Param() params: GetAuthorParamsDto) {
+    return this.authorsService.findById(params.id);
   }
 
   @Get('list')

@@ -53,13 +53,13 @@ export class UserFavReviewsService {
       where: { userId },
     });
 
-    if (result.length === 0) {
-      throw new EntityNotFoundException(
-        'Понравившиеся рецензии',
-        'id пользователя',
-        `${userId}`,
-      );
-    }
+    // if (result.length === 0) {
+    //   throw new EntityNotFoundException(
+    //     'Понравившиеся рецензии',
+    //     'id пользователя',
+    //     `${userId}`,
+    //   );
+    // }
     return result;
   }
 
@@ -68,13 +68,13 @@ export class UserFavReviewsService {
       where: { reviewId },
     });
 
-    if (result.length === 0) {
-      throw new EntityNotFoundException(
-        'Пользователи, которорым понравилась рецензия',
-        'id',
-        `${reviewId}`,
-      );
-    }
+    // if (result.length === 0) {
+    //   throw new EntityNotFoundException(
+    //     'Пользователи, которорым понравилась рецензия',
+    //     'id',
+    //     `${reviewId}`,
+    //   );
+    // }
     return result;
   }
 

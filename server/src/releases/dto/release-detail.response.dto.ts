@@ -7,6 +7,7 @@ export class ReleaseDetailResponseDto {
   artists:
     | [
         {
+          id: string;
           img: string;
           name: string;
         },
@@ -15,7 +16,9 @@ export class ReleaseDetailResponseDto {
   producers:
     | [
         {
+          id: string;
           img: string;
+          fd;
           name: string;
         },
       ]
@@ -23,14 +26,15 @@ export class ReleaseDetailResponseDto {
   designers:
     | [
         {
+          id: string;
           img: string;
           name: string;
         },
       ]
     | null;
   likes_count: number;
-  user_like_ids: [{ user_id: string }];
-  ratings: [{ type: string; total: number }];
+  user_fav_ids: { userId: string; releaseId: string }[];
+  ratings: { type: string; total: number }[];
   rating_details: [
     {
       type: string;
@@ -45,3 +49,5 @@ export class ReleaseDetailResponseDto {
     },
   ];
 }
+
+export class QueryReleaseDetailResponseDto extends Array<ReleaseDetailResponseDto> {}

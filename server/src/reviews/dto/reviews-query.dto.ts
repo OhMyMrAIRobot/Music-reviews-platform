@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsIn, IsInt, IsOptional, Max, Min } from 'class-validator';
+import { IsEntityId } from 'src/decorators/is-entity-id.decorator';
 
 export class ReviewsQueryDto {
   @IsOptional()
@@ -18,4 +19,12 @@ export class ReviewsQueryDto {
   @IsInt()
   @Min(0)
   offset?: number;
+
+  @IsOptional()
+  @IsEntityId()
+  userId?: string;
+
+  @IsOptional()
+  @IsEntityId()
+  favUserId?: string;
 }

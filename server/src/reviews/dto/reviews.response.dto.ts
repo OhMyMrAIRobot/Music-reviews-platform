@@ -22,9 +22,5 @@ export class ReviewQueryDataDto {
   release_title: string;
   release_id: string;
   likes_count: number;
-  like_user_ids: [
-    {
-      user_id: string | null;
-    },
-  ];
+  user_fav_ids: { userId: string; reviewId: string }[];
 }

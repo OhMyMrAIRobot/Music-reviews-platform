@@ -13,8 +13,11 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
+import { AuthorTopReleasesParamsDto } from './dto/author-top-releases-params.dto';
 import { CreateReleaseDto } from './dto/create-release.dto';
+import { ReleaseDetailsParamsDto } from './dto/release-details-params.dto';
 import { ReleasesQueryDto } from './dto/releases-query.dto';
+import { TopRatingReleasesQuery } from './dto/top-rating-releases-query.dto';
 import { UpdateReleaseDto } from './dto/update-release.dto';
 import { ReleasesService } from './releases.service';
 
@@ -37,9 +40,24 @@ export class ReleasesController {
     return this.releasesService.findReleases(query);
   }
 
+  @Get('author/top/:id')
+  findAuthorTopReleases(@Param() params: AuthorTopReleasesParamsDto) {
+    return this.releasesService.findAuthorReleases(params.id, false);
+  }
+
+  @Get('author/all/:id')
+  findAuthorAllReleases(@Param() params: AuthorTopReleasesParamsDto) {
+    return this.releasesService.findAuthorReleases(params.id, true);
+  }
+
+  @Get('top-rating')
+  findTopRatingReleases(@Query() params: TopRatingReleasesQuery) {
+    return this.releasesService.findTopRatingReleases(params);
+  }
+
   @Get('details/:id')
-  findReleaseDetails(@Param('id') id: string) {
-    return this.releasesService.findReleaseDetails(id);
+  findReleaseDetails(@Param() params: ReleaseDetailsParamsDto) {
+    return this.releasesService.findReleaseDetails(params.id);
   }
 
   @Get(':id')

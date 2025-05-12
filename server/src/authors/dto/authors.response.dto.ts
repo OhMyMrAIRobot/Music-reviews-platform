@@ -8,7 +8,7 @@ export class AuthorQueryResponse {
   img: string;
   name: string;
   likes_count: number;
-  author_types: [{ type: string }];
+  author_types: { type: string }[];
   release_type_stats: [
     {
       type: string;
