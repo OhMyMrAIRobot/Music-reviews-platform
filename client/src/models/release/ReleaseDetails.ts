@@ -1,4 +1,4 @@
-import { IFavRelease } from './FavRelease'
+import { IFavRelease } from './fav-release'
 
 export interface IReleaseDetails {
 	id: string

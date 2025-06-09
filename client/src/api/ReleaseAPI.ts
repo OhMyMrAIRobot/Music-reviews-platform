@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { IFavRelease } from '../models/release/FavRelease'
+import { IFavRelease } from '../models/release/fav-release'
 import { IRelease, IReleaseResponse } from '../models/release/Release'
 import { IReleaseDetails } from '../models/release/ReleaseDetails'
 import { IReleaseType } from '../models/release/ReleaseTypes'

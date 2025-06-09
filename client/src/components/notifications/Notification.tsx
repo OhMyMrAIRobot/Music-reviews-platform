@@ -37,7 +37,7 @@ const Notification: FC<INotificationProps> = ({ text, isError, onClose }) => {
 				}}
 				className='size-3 cursor-pointer'
 			>
-				<CloseSvgIcon />
+				<CloseSvgIcon classname={''} />
 			</button>
 		</div>
 	)

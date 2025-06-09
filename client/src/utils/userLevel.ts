@@ -1,4 +1,4 @@
-import { UserLevelsEnum } from '../models/profile/UserLevels'
+import { UserLevelsEnum } from '../models/profile/userLevels'
 
 interface LevelConfig {
 	name: string
