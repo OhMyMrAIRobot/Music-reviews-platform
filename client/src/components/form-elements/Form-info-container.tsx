@@ -1,10 +1,10 @@
 import { FC, ReactNode } from 'react'
 
-interface IFormInfoContainerProps {
+interface IProps {
 	children: ReactNode
 }
 
-const FormInfoContainer: FC<IFormInfoContainerProps> = ({ children }) => {
+const FormInfoContainer: FC<IProps> = ({ children }) => {
 	return <div className='grid gap-2'>{children}</div>
 }
 

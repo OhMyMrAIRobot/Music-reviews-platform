@@ -4,12 +4,12 @@ import useCustomNavigate from '../../../hooks/UseCustomNavigate'
 import { useLoading } from '../../../hooks/UseLoading'
 import { useStore } from '../../../hooks/UseStore'
 import FormButton from '../../form-elements/Form-button'
+import FormInfoContainer from '../../form-elements/Form-info-container'
+import FormInfoField from '../../form-elements/Form-info-field'
 import FormInput from '../../form-elements/Form-input'
 import FormLabel from '../../form-elements/Form-label'
 import FormSubTitle from '../../form-elements/Form-subtitle'
 import FormTitle from '../../form-elements/Form-title'
-import FormInfoContainer from '../../form-elements/FormInfoContainer'
-import FormInfoField from '../../form-elements/FormInfoField'
 
 const ReqResetPasswordForm = observer(() => {
 	const [email, setEmail] = useState<string>('')

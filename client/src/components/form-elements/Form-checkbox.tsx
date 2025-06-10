@@ -1,6 +1,6 @@
 import { FC } from 'react'
 
-interface IAuthCheckboxProps {
+interface IProps {
 	checked: boolean
 	setChecked: (value: boolean) => void
 }
@@ -22,7 +22,7 @@ const TickSvgIcon = () => (
 	</svg>
 )
 
-const AuthCheckbox: FC<IAuthCheckboxProps> = ({ checked, setChecked }) => {
+const FormCheckbox: FC<IProps> = ({ checked, setChecked }) => {
 	return (
 		<button
 			onClick={() => setChecked(!checked)}
@@ -39,4 +39,4 @@ const AuthCheckbox: FC<IAuthCheckboxProps> = ({ checked, setChecked }) => {
 	)
 }
 
-export default AuthCheckbox
+export default FormCheckbox

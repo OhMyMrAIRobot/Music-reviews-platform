@@ -1,18 +1,22 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
-import useCustomNavigate from '../../../hooks/UseCustomNavigate'
-import { useLoading } from '../../../hooks/UseLoading'
-import { useStore } from '../../../hooks/UseStore'
-import { IRegistrationData } from '../../../models/auth/RegistrationData'
-import FormButton from '../../form-elements/Form-button'
-import FormInput from '../../form-elements/Form-input'
-import FormLabel from '../../form-elements/Form-label'
-import FormTitle from '../../form-elements/Form-title'
-import FormInfoContainer from '../../form-elements/FormInfoContainer'
-import FormInfoField from '../../form-elements/FormInfoField'
-import AuthCheckbox from '../components/AuthCheckbox'
+import FormButton from '../../../../components/form-elements/Form-button'
+import FormCheckbox from '../../../../components/form-elements/Form-checkbox'
+import FormInfoContainer from '../../../../components/form-elements/Form-info-container'
+import FormInfoField from '../../../../components/form-elements/Form-info-field'
+import FormInput from '../../../../components/form-elements/Form-input'
+import FormLabel from '../../../../components/form-elements/Form-label'
+import FormTitle from '../../../../components/form-elements/Form-title'
+import useCustomNavigate from '../../../../hooks/UseCustomNavigate'
+import { useLoading } from '../../../../hooks/UseLoading'
+import { useStore } from '../../../../hooks/UseStore'
+import { IRegistrationData } from '../../../../models/auth/registration-data'
 
 const RegistrationForm = observer(() => {
+	const { authStore, notificationsStore } = useStore()
+
+	const { navigateToMain, navigateToLogin } = useCustomNavigate()
+
 	const [formData, setFormData] = useState<IRegistrationData>({
 		email: '',
 		nickname: '',
@@ -22,16 +26,14 @@ const RegistrationForm = observer(() => {
 		policyChecked: false,
 	})
 	const [errors, setErrors] = useState<string[]>([])
-	const { navigateToMain, navigateToLogin } = useCustomNavigate()
 
-	const { authStore, notificationsStore } = useStore()
 	const { execute: register, isLoading } = useLoading(authStore.register)
 
 	useEffect(() => {
 		if (authStore.isAuth) {
 			navigateToMain()
 		}
-	}, [authStore.isAuth])
+	}, [authStore.isAuth, navigateToMain])
 
 	const handleChange = (
 		field: keyof typeof formData,
@@ -70,10 +72,11 @@ const RegistrationForm = observer(() => {
 		linkHref: string
 	) => (
 		<div className='flex items-center space-x-2 select-none'>
-			<AuthCheckbox
+			<FormCheckbox
 				checked={formData[id] as boolean}
 				setChecked={value => handleChange(id, value)}
 			/>
+
 			<span className='text-sm font-medium'>
 				Принимаю условия
 				<br />
@@ -84,6 +87,21 @@ const RegistrationForm = observer(() => {
 			</span>
 		</div>
 	)
+
+	const handleRegistration = () => {
+		register(formData).then(result => {
+			if (Array.isArray(result)) {
+				setErrors(result)
+			} else {
+				notificationsStore.addNotification({
+					id: self.crypto.randomUUID(),
+					text: 'Вы успешно зарегистрировались!',
+					isError: false,
+				})
+				notificationsStore.addEmailSentNotification(result)
+			}
+		})
+	}
 
 	return (
 		<div className='grid w-[350px] gap-2 py-10'>
@@ -116,27 +134,14 @@ const RegistrationForm = observer(() => {
 				<FormButton
 					title={isLoading ? 'Загрузка...' : 'Создать аккаунт'}
 					isInvert={true}
-					onClick={() =>
-						register(formData).then(result => {
-							if (Array.isArray(result)) {
-								setErrors(result)
-							} else {
-								notificationsStore.addNotification({
-									id: self.crypto.randomUUID(),
-									text: 'Вы успешно зарегистрировались!',
-									isError: false,
-								})
-								notificationsStore.addEmailSentNotification(result)
-							}
-						})
-					}
+					onClick={handleRegistration}
 				/>
 
 				<div className='flex justify-center items-center font-medium text-sm gap-1 mt-2 select-none'>
 					<h6 className=''>Уже есть аккаунт?</h6>
 					<button
 						onClick={navigateToLogin}
-						className='underline cursor-pointer'
+						className='hover:underline cursor-pointer'
 					>
 						Войти
 					</button>
