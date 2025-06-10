@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { getLevelConfig, getUserLevel } from '../../../utils/UserLevel'
+import { getLevelConfig, getUserLevel } from '../../../utils/user-level'
 
 interface IProps {
 	nickname: string

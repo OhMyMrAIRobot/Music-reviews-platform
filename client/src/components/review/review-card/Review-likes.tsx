@@ -30,6 +30,7 @@ const ReviewLikes: FC<IProps> = ({
 						: 'opacity-50 hover:opacity-100 group-hover:opacity-100'
 				}`}
 			/>
+
 			{likesCount > 0 && (
 				<span className='font-bold lg:text-lg'>{likesCount}</span>
 			)}

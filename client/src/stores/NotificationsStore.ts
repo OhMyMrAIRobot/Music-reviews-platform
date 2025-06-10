@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx'
-import { INotification } from '../models/auth/Notification'
+import { INotification } from '../models/Auth/Notification'
 
 class NotificationsStore {
 	notifications: INotification[] = []
@@ -28,7 +28,7 @@ class NotificationsStore {
 		})
 	}
 
-	addNoAuthNotification(text: string) {
+	addErrorNotification(text: string) {
 		this.addNotification({
 			id: self.crypto.randomUUID(),
 			text: text,

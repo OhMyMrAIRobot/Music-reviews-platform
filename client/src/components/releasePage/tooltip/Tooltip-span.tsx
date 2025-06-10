@@ -1,13 +1,13 @@
 import { FC, ReactNode, useState } from 'react'
 
-interface ITooltipSpanProps {
+interface IProps {
 	children: ReactNode
 	tooltip: ReactNode
 	spanClassName: string
 	centered?: boolean
 }
 
-const TooltipSpan: FC<ITooltipSpanProps> = ({
+const TooltipSpan: FC<IProps> = ({
 	children,
 	tooltip,
 	spanClassName,

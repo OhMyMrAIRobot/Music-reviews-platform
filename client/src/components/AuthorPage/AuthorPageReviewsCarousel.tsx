@@ -5,7 +5,7 @@ import { useLoading } from '../../hooks/UseLoading'
 import { useStore } from '../../hooks/UseStore'
 import { CarouselRef } from '../../types/carousel-ref'
 import CarouselContainer from '../carousel/Carousel-container'
-import LastReviewsCarousel from '../carousel/lastReviews/LastReviewsCarousel'
+import LastReviewsCarousel from '../carousel/Last-reviews-carousel'
 
 const AuthorPageReviewsCarousel = () => {
 	const { id } = useParams()

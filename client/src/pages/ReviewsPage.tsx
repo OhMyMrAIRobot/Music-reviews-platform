@@ -1,9 +1,9 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
-import ReviewItem from '../components/carousel/lastReviews/ReviewItem'
 import ComboBox from '../components/header/buttons/ComboBox'
 import Loader from '../components/Loader'
 import Pagination from '../components/pagination/Pagination'
+import ReviewCard from '../components/review/review-card/Review-card'
 import { useLoading } from '../hooks/UseLoading'
 import { useStore } from '../hooks/UseStore'
 
@@ -51,7 +51,11 @@ const ReviewsPage = observer(() => {
 					reviewsStore.reviews.length > 0 ? (
 						<div className='gap-3 xl:gap-5 grid md:grid-cols-2 xl:grid-cols-3'>
 							{reviewsStore.reviews.map(review => (
-								<ReviewItem key={review.id} review={review} />
+								<ReviewCard
+									key={review.id}
+									review={review}
+									storeToggle={reviewsStore.toggleFavReview}
+								/>
 							))}
 						</div>
 					) : (

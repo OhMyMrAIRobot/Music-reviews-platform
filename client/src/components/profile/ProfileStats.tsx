@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import useCustomNavigate from '../../hooks/UseCustomNavigate'
 import { IProfile } from '../../models/profile/Profile'
-import { getLevelConfig, getUserLevel } from '../../utils/UserLevel'
+import { getLevelConfig, getUserLevel } from '../../utils/user-level'
 import { HeartFilledSvgIcon, HeartSvgIcon } from '../header/HeaderSvgIcons'
 import { NoTextReviewSvgIcon, TextReviewSvgIcon } from '../svg/ReleaseSvgIcons'
 import ProfileInfoRow from './ProfileInfoRow'

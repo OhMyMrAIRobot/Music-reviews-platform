@@ -14,7 +14,7 @@ import {
 	ReleaseLikesSvgIcon,
 	ToggleFavReleaseSvgIcon,
 } from '../releasePage/releasePageSvgIcons'
-import TooltipSpan from '../releasePage/tooltip/TooltipSpan'
+import TooltipSpan from '../releasePage/tooltip/Tooltip-span'
 
 interface IProps {
 	author: IAuthor

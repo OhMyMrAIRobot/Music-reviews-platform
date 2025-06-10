@@ -1,15 +1,6 @@
 import { FC } from 'react'
-import TooltipSpan from '../tooltip/TooltipSpan'
-
-const ReviewToolTip: FC<{ text: string }> = ({ text }) => {
-	return (
-		<div
-			className={`bg-primary border-2 border-gray-600 rounded-full text-white text-xs font-extrabold px-2 py-1 whitespace-nowrap`}
-		>
-			{text}
-		</div>
-	)
-}
+import TooltipSpan from '../../releasePage/tooltip/Tooltip-span'
+import ReviewToolTip from './Review-tooltip'
 
 interface IProps {
 	total: number
