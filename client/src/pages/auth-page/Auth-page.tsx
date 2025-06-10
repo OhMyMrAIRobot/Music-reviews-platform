@@ -1,5 +1,5 @@
-import AuthContainer from '../components/auth/components/AuthContainer'
-import AuthRoutes from '../routes/AuthRoutes'
+import AuthRoutes from '../../routes/AuthRoutes'
+import AuthContainer from './ui/Auth-container'
 
 const AuthPage = () => {
 	return (

@@ -1,6 +1,6 @@
 import { FC } from 'react'
 
-interface IFormInputProps {
+interface IProps {
 	id: string
 	placeholder: string
 	type: string
@@ -8,13 +8,7 @@ interface IFormInputProps {
 	setValue: (value: string) => void
 }
 
-const FormInput: FC<IFormInputProps> = ({
-	id,
-	placeholder,
-	type,
-	value,
-	setValue,
-}) => {
+const FormInput: FC<IProps> = ({ id, placeholder, type, value, setValue }) => {
 	return (
 		<input
 			id={id}

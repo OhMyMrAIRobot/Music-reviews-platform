@@ -1,11 +1,11 @@
 import { FC } from 'react'
 
-interface IFormTitleProps {
+interface IProps {
 	title: string
 	className?: string
 }
 
-const FormTitle: FC<IFormTitleProps> = ({ title, className }) => {
+const FormTitle: FC<IProps> = ({ title, className }) => {
 	return (
 		<h2 className={`text-2xl font-bold select-none ${className}`}>{title}</h2>
 	)

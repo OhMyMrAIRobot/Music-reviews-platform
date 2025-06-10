@@ -3,11 +3,11 @@ import { useParams } from 'react-router'
 import useCustomNavigate from '../../../hooks/UseCustomNavigate'
 import { useLoading } from '../../../hooks/UseLoading'
 import { useStore } from '../../../hooks/UseStore'
-import FormButton from '../../form/FormButton'
-import FormInfoContainer from '../../form/FormInfoContainer'
-import FormInfoField from '../../form/FormInfoField'
-import FormSubTitle from '../../form/FormSubTitle'
-import FormTitle from '../../form/FormTitle'
+import FormButton from '../../form-elements/Form-button'
+import FormSubTitle from '../../form-elements/Form-subtitle'
+import FormTitle from '../../form-elements/Form-title'
+import FormInfoContainer from '../../form-elements/FormInfoContainer'
+import FormInfoField from '../../form-elements/FormInfoField'
 
 const ActivationForm = () => {
 	const [errors, setErrors] = useState<string[]>([])

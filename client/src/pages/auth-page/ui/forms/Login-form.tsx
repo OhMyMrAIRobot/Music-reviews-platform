@@ -1,15 +1,15 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
-import useCustomNavigate from '../../../hooks/UseCustomNavigate'
-import { useLoading } from '../../../hooks/UseLoading'
-import { useStore } from '../../../hooks/UseStore'
-import FormButton from '../../form/FormButton'
-import FormInfoContainer from '../../form/FormInfoContainer'
-import FormInfoField from '../../form/FormInfoField'
-import FormInput from '../../form/FormInput'
-import FormLabel from '../../form/FormLabel'
-import FormSubTitle from '../../form/FormSubTitle'
-import FormTitle from '../../form/FormTitle'
+import FormButton from '../../../../components/form-elements/Form-button'
+import FormInput from '../../../../components/form-elements/Form-input'
+import FormLabel from '../../../../components/form-elements/Form-label'
+import FormSubTitle from '../../../../components/form-elements/Form-subtitle'
+import FormTitle from '../../../../components/form-elements/Form-title'
+import FormInfoContainer from '../../../../components/form-elements/FormInfoContainer'
+import FormInfoField from '../../../../components/form-elements/FormInfoField'
+import useCustomNavigate from '../../../../hooks/UseCustomNavigate'
+import { useLoading } from '../../../../hooks/UseLoading'
+import { useStore } from '../../../../hooks/UseStore'
 
 const LoginForm = observer(() => {
 	const [errors, setErrors] = useState<string[]>([])
@@ -27,7 +27,19 @@ const LoginForm = observer(() => {
 		if (authStore.isAuth) {
 			navigateToMain()
 		}
-	}, [authStore.isAuth])
+	}, [authStore.isAuth, navigateToMain])
+
+	const handleLogin = () => {
+		login(email, password).then(errors => {
+			setErrors(errors)
+			if (authStore.isAuth)
+				notificationsStore.addNotification({
+					id: self.crypto.randomUUID(),
+					text: 'Вы успешно вошли!',
+					isError: false,
+				})
+		})
+	}
 
 	return (
 		<div className='grid w-[350px] gap-6'>
@@ -35,9 +47,11 @@ const LoginForm = observer(() => {
 				<FormTitle title={'Вход'} />
 				<FormSubTitle title={'Введите свои данные для входа в аккаунт'} />
 			</div>
+
 			<div className='grid gap-3'>
 				<div className='grid gap-2'>
 					<FormLabel name={'Email'} htmlFor={'AuthEmail'} />
+
 					<FormInput
 						id={'AuthEmail'}
 						placeholder={'Ваш email'}
@@ -46,16 +60,19 @@ const LoginForm = observer(() => {
 						setValue={setEmail}
 					/>
 				</div>
+
 				<div className='grid gap-2'>
 					<div className='flex justify-between items-center select-none'>
 						<FormLabel name={'Пароль'} htmlFor={'AuthPassword'} />
+
 						<button
 							onClick={navigateToRequestReset}
-							className='text-sm cursor-pointer font-bold underline'
+							className='text-sm cursor-pointer font-bold hover:underline'
 						>
 							Забыли пароль?
 						</button>
 					</div>
+
 					<FormInput
 						id={'AuthPassword'}
 						placeholder={'Ваш пароль'}
@@ -64,22 +81,14 @@ const LoginForm = observer(() => {
 						setValue={setPassword}
 					/>
 				</div>
+
 				<div className='grid gap-2'>
 					<FormButton
 						title={isLoading ? 'Загрузка...' : 'Войти'}
-						onClick={() =>
-							login(email, password).then(errors => {
-								setErrors(errors)
-								if (authStore.isAuth)
-									notificationsStore.addNotification({
-										id: self.crypto.randomUUID(),
-										text: 'Вы успешно вошли!',
-										isError: false,
-									})
-							})
-						}
+						onClick={handleLogin}
 						isInvert={true}
 					/>
+
 					<FormButton
 						title={'Зарегистрироваться'}
 						onClick={navigateToRegistration}

@@ -1,16 +1,12 @@
 import { FC } from 'react'
 
-interface IFormLabelProps {
+interface IProps {
 	name: string
 	htmlFor: string
 	isRequired?: boolean
 }
 
-const FormLabel: FC<IFormLabelProps> = ({
-	name,
-	htmlFor,
-	isRequired = true,
-}) => {
+const FormLabel: FC<IProps> = ({ name, htmlFor, isRequired = true }) => {
 	return (
 		<label
 			htmlFor={htmlFor}

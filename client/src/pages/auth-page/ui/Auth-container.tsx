@@ -1,10 +1,10 @@
 import { FC, ReactNode } from 'react'
 
-interface IAuthContainerProps {
+interface IProps {
 	children: ReactNode
 }
 
-const AuthContainer: FC<IAuthContainerProps> = ({ children }) => {
+const AuthContainer: FC<IProps> = ({ children }) => {
 	return (
 		<div className='border border-white/15 rounded-[0.5rem] grid lg:grid-cols-2 min-h-[700px]'>
 			<div className='flex items-center justify-center h-full'>{children}</div>
