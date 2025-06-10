@@ -1,37 +1,49 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
-import useCustomNavigate from '../../../hooks/UseCustomNavigate'
-import { useLoading } from '../../../hooks/UseLoading'
-import { useStore } from '../../../hooks/UseStore'
-import FormButton from '../../form-elements/Form-button'
-import FormInfoContainer from '../../form-elements/Form-info-container'
-import FormInfoField from '../../form-elements/Form-info-field'
-import FormSubTitle from '../../form-elements/Form-subtitle'
-import FormTitle from '../../form-elements/Form-title'
+import FormButton from '../../../../components/form-elements/Form-button'
+import FormInfoContainer from '../../../../components/form-elements/Form-info-container'
+import FormInfoField from '../../../../components/form-elements/Form-info-field'
+import FormSubTitle from '../../../../components/form-elements/Form-subtitle'
+import FormTitle from '../../../../components/form-elements/Form-title'
+import useCustomNavigate from '../../../../hooks/UseCustomNavigate'
+import { useLoading } from '../../../../hooks/UseLoading'
+import { useStore } from '../../../../hooks/UseStore'
 
 const ActivationForm = () => {
-	const [errors, setErrors] = useState<string[]>([])
 	const { token } = useParams()
+
 	const { notificationsStore, authStore } = useStore()
 	const { navigateToMain } = useCustomNavigate()
+
+	const [errors, setErrors] = useState<string[]>([])
+
 	const { execute: resend, isLoading } = useLoading(authStore.resendActivation)
 
 	useEffect(() => {
 		if (token) {
 			authStore.activate(token).then(errors => {
 				if (errors.length === 0) {
-					notificationsStore.addNotification({
-						id: self.crypto.randomUUID(),
-						text: 'Аккаунт успешно активирован!',
-						isError: false,
-					})
+					notificationsStore.addSuccessNotification(
+						'Аккаунт успешно активирован!'
+					)
 					navigateToMain()
 				} else {
 					setErrors(errors)
 				}
 			})
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
+
+	const handleResend = () => {
+		resend().then(result => {
+			if (Array.isArray(result)) {
+				setErrors(result)
+			} else {
+				notificationsStore.addEmailSentNotification(result)
+			}
+		})
+	}
 
 	return (
 		<div className='grid w-[350px] gap-6 text-center'>
@@ -52,15 +64,7 @@ const ActivationForm = () => {
 				<FormButton
 					title={isLoading ? 'Отправка...' : 'Отправить письмо активации'}
 					isInvert={true}
-					onClick={() => {
-						resend().then(result => {
-							if (Array.isArray(result)) {
-								setErrors(result)
-							} else {
-								notificationsStore.addEmailSentNotification(result)
-							}
-						})
-					}}
+					onClick={handleResend}
 				/>
 			)}
 			{errors && (

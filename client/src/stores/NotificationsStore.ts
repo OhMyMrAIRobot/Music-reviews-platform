@@ -35,6 +35,14 @@ class NotificationsStore {
 			isError: true,
 		})
 	}
+
+	addSuccessNotification(text: string) {
+		this.addNotification({
+			id: self.crypto.randomUUID(),
+			text: text,
+			isError: false,
+		})
+	}
 }
 
 export default new NotificationsStore()
