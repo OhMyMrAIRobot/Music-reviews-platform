@@ -1,13 +1,13 @@
 import { UserLevelsEnum } from '../models/profile/userLevels'
 
-interface LevelConfig {
+interface ILevelConfig {
 	name: string
 	image: string
 	minPoints: number
 	color: string
 }
 
-export const LEVELS: { level: UserLevelsEnum; config: LevelConfig }[] = [
+export const LEVELS: { level: UserLevelsEnum; config: ILevelConfig }[] = [
 	{
 		level: UserLevelsEnum.Silver,
 		config: {
@@ -64,7 +64,7 @@ export function getUserLevel(points: number): UserLevelsEnum | null {
 	return null
 }
 
-export function getLevelConfig(level: UserLevelsEnum): LevelConfig {
+export function getLevelConfig(level: UserLevelsEnum): ILevelConfig {
 	const found = LEVELS.find(l => l.level === level)
 	if (!found) throw new Error('Invalid user level')
 	return found.config

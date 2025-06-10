@@ -2,9 +2,9 @@ import { useEffect, useRef } from 'react'
 import useCustomNavigate from '../../hooks/UseCustomNavigate'
 import { useLoading } from '../../hooks/UseLoading'
 import { useStore } from '../../hooks/UseStore'
-import { CarouselRef } from '../carousel/lastReleases/LastReleasesCarousel'
+import { CarouselRef } from '../../types/carousel-ref'
+import CarouselContainer from '../carousel/Carousel-container'
 import LastReviewsCarousel from '../carousel/lastReviews/LastReviewsCarousel'
-import MainCarouselSection from './MainCarouselSection'
 
 const LastReviewsContainer = () => {
 	const { reviewsStore } = useStore()
@@ -28,7 +28,7 @@ const LastReviewsContainer = () => {
 	}, [])
 
 	return (
-		<MainCarouselSection
+		<CarouselContainer
 			title={'Новые рецензии'}
 			buttonTitle={'Все рецензии'}
 			showButton={true}

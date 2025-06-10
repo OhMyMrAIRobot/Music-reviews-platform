@@ -1,8 +1,8 @@
 import { FC } from 'react'
 import { IRelease } from '../models/release/Release'
-import LastReleasesCarouselItem from './carousel/lastReleases/LastReleasesCarouselItem'
 import Loader from './Loader'
 import Pagination from './pagination/Pagination'
+import ReleaseCard from './release/Release-card'
 
 interface IProps {
 	items: IRelease[]
@@ -29,7 +29,7 @@ const ReleasesPageGrid: FC<IProps> = ({
 						<div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 xl:gap-5'>
 							{items.map(release => (
 								<div className='p-2' key={release.id}>
-									<LastReleasesCarouselItem release={release} />
+									<ReleaseCard release={release} />
 								</div>
 							))}
 						</div>

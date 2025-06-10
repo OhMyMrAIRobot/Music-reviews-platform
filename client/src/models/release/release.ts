@@ -1,3 +1,4 @@
+import { IReleaseAuthor } from './release-author'
 import { IReleaseRating } from './release-rating'
 
 export interface IReleaseResponse {
@@ -12,6 +13,6 @@ export interface IRelease {
 	release_type: string
 	text_count: number
 	no_text_count: number
-	author: { id: string; name: string }[]
+	author: IReleaseAuthor[]
 	ratings: IReleaseRating[]
 }

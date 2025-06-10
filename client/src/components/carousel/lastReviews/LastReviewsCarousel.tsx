@@ -3,8 +3,8 @@ import useEmblaCarousel from 'embla-carousel-react'
 import { observer } from 'mobx-react-lite'
 import { forwardRef, useImperativeHandle } from 'react'
 import { IReview } from '../../../models/review/Review'
+import { CarouselRef } from '../../../types/carousel-ref'
 import Loader from '../../Loader'
-import { CarouselRef } from '../lastReleases/LastReleasesCarousel'
 import ReviewItem from './ReviewItem'
 
 interface IProps {
