@@ -3,9 +3,9 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { ReleaseAPI } from '../api/release-api'
 import { ReviewAPI } from '../api/review-api'
-import { IReleaseDetails } from '../model/release/release-details'
-import { IReleaseReview } from '../model/review/release-review'
-import { IReviewData } from '../model/review/review-data'
+import { IReleaseDetails } from '../models/release/release-details'
+import { IReleaseReview } from '../models/review/release-review'
+import { IReviewData } from '../models/review/review-data'
 
 class ReleasePageStore {
 	constructor() {

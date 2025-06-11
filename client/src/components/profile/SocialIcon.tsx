@@ -1,4 +1,4 @@
-import { SocialMediaEnum } from '../../model/profile/social-media-enum'
+import { SocialMediaEnum } from '../../models/profile/social-media-enum'
 import {
 	TelegramSvgIcon,
 	TwitchSvgIcon,

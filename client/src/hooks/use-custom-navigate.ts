@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router'
-import { SearchTypesEnum } from '../model/search/search-types-enum'
+import { SearchTypesEnum } from '../models/search/search-types-enum'
 import { ROUTES } from '../routes/Routes'
 
 const useCustomNavigate = () => {

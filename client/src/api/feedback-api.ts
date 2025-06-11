@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { IFeedback } from '../model/feedback/feedback'
+import { IFeedback } from '../models/feedback/feedback'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
 const _api = axios.create({

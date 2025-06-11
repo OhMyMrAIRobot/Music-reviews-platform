@@ -3,7 +3,7 @@ import useEmblaCarousel from 'embla-carousel-react'
 import { observer } from 'mobx-react-lite'
 import { forwardRef, useImperativeHandle } from 'react'
 import ReleaseCard from '../../../../../components/release/Release-card'
-import { IRelease } from '../../../../../model/release/release'
+import { IRelease } from '../../../../../models/release/release'
 import { CarouselRef } from '../../../../../types/carousel-ref'
 
 interface IProps {

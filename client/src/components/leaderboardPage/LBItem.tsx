@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import useCustomNavigate from '../../hooks/use-custom-navigate'
-import { ILeaderboardItem } from '../../model/leaderboard/leaderboard-item'
+import { ILeaderboardItem } from '../../models/leaderboard/leaderboard-item'
 import { getLevelConfig, getUserLevel } from '../../utils/user-level'
 import { ToolTip } from '../authorsPage/AuthorItem'
 import { HeartFilledSvgIcon, HeartSvgIcon } from '../header/HeaderSvgIcons'

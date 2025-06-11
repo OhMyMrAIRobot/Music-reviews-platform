@@ -1,8 +1,8 @@
 import { makeAutoObservable } from 'mobx'
 import { AuthorAPI } from '../api/author-api'
 import { ReleaseAPI } from '../api/release-api'
-import { IAuthorData } from '../model/author/authors-response'
-import { IRelease } from '../model/release/release'
+import { IAuthorData } from '../models/author/authors-response'
+import { IRelease } from '../models/release/release'
 
 class SearchStore {
 	constructor() {

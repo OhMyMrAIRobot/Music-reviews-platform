@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useParams } from 'react-router'
 import { useLoading } from '../../../hooks/use-loading'
 import { useStore } from '../../../hooks/use-store'
-import { ReleaseTypesEnum } from '../../../model/release/release-types'
+import { ReleaseTypesEnum } from '../../../models/release/release-types'
 import Loader from '../../Loader'
 import AuthorsPageReleasesCol from './AuthorsPageReleasesCol'
 

@@ -1,8 +1,8 @@
 import axios from 'axios'
-import { IAuthor } from '../model/author/author'
-import { IAuthorType } from '../model/author/author-type'
-import { IAuthorsResponse } from '../model/author/authors-response'
-import { IFavAuthor } from '../model/author/fav-author'
+import { IAuthor } from '../models/author/author'
+import { IAuthorType } from '../models/author/author-type'
+import { IAuthorsResponse } from '../models/author/authors-response'
+import { IFavAuthor } from '../models/author/fav-author'
 import { api } from './api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL

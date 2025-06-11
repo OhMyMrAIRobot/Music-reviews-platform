@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
 import { AuthAPI } from '../api/auth-api'
-import { IRegistrationRequest } from '../model/auth/request/registration-request'
-import { IResetPasswordRequest } from '../model/auth/request/reset-password-request'
-import { IUser } from '../model/auth/user'
+import { IRegistrationRequest } from '../models/auth/request/registration-request'
+import { IResetPasswordRequest } from '../models/auth/request/reset-password-request'
+import { IUser } from '../models/auth/user'
 
 class AuthStore {
 	isAuth: boolean = false

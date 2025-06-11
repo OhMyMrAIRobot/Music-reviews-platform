@@ -1,9 +1,9 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { ProfileAPI } from '../api/profile-api'
 import { ReviewAPI } from '../api/review-api'
-import { IPreferred } from '../model/profile/preferred'
-import { IProfile } from '../model/profile/profile'
-import { IReview } from '../model/review/review'
+import { IPreferred } from '../models/profile/preferred'
+import { IProfile } from '../models/profile/profile'
+import { IReview } from '../models/review/review'
 
 export class ProfileStore {
 	constructor() {

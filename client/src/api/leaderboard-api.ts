@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { ILeaderboardItem } from '../model/leaderboard/leaderboard-item'
+import { ILeaderboardItem } from '../models/leaderboard/leaderboard-item'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
 

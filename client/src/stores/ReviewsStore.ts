@@ -1,6 +1,6 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { ReviewAPI } from '../api/review-api'
-import { IReview } from '../model/review/review'
+import { IReview } from '../models/review/review'
 import { TogglePromiseResult } from '../types/toggle-promise-result'
 
 class ReviewsStore {

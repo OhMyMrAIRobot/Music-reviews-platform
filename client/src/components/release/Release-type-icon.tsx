@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { ReleaseTypesEnum } from '../../model/release/release-types'
+import { ReleaseTypesEnum } from '../../models/release/release-types'
 import { AlbumSvgIcon, SingleSvgIcon } from '../svg/ReleaseSvgIcons'
 
 interface IProps {

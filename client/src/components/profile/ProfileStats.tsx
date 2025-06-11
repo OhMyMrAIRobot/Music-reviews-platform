@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import useCustomNavigate from '../../hooks/use-custom-navigate'
-import { IProfile } from '../../model/profile/profile'
+import { IProfile } from '../../models/profile/profile'
 import { getLevelConfig, getUserLevel } from '../../utils/user-level'
 import { HeartFilledSvgIcon, HeartSvgIcon } from '../header/HeaderSvgIcons'
 import { NoTextReviewSvgIcon, TextReviewSvgIcon } from '../svg/ReleaseSvgIcons'

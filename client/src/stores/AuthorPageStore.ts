@@ -2,9 +2,9 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { AuthorAPI } from '../api/author-api'
 import { ReleaseAPI } from '../api/release-api'
 import { ReviewAPI } from '../api/review-api'
-import { IAuthor } from '../model/author/author'
-import { IRelease } from '../model/release/release'
-import { IReview } from '../model/review/review'
+import { IAuthor } from '../models/author/author'
+import { IRelease } from '../models/release/release'
+import { IReview } from '../models/review/review'
 
 class AuthorPageStore {
 	constructor() {

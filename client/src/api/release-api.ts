@@ -1,9 +1,9 @@
 import axios from 'axios'
-import { IFavRelease } from '../model/release/fav-release'
-import { IRelease, IReleaseResponse } from '../model/release/release'
-import { IReleaseDetails } from '../model/release/release-details'
-import { IReleaseType } from '../model/release/release-types'
-import { ITopRatingReleases } from '../model/release/top-rating-releases'
+import { IFavRelease } from '../models/release/fav-release'
+import { IRelease, IReleaseResponse } from '../models/release/release'
+import { IReleaseDetails } from '../models/release/release-details'
+import { IReleaseType } from '../models/release/release-types'
+import { ITopRatingReleases } from '../models/release/top-rating-releases'
 import { api } from './api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL

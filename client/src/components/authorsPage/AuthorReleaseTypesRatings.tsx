@@ -1,7 +1,7 @@
 import { FC } from 'react'
-import { IReleaseTypeStats } from '../../model/author/authors-response'
-import { ReleaseRatingTypesEnum } from '../../model/release/release-rating-types-enum'
-import { ReleaseTypesEnum } from '../../model/release/release-types'
+import { IReleaseTypeStats } from '../../models/author/authors-response'
+import { ReleaseRatingTypesEnum } from '../../models/release/release-rating-types-enum'
+import { ReleaseTypesEnum } from '../../models/release/release-types'
 import { AlbumSvgIcon, SingleSvgIcon } from '../svg/ReleaseSvgIcons'
 import AuthorCircleRating from './AuthorCircleRating'
 

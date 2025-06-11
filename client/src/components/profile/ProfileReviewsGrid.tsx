@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { useStore } from '../../hooks/use-store'
-import { IReview } from '../../model/review/review'
+import { IReview } from '../../models/review/review'
 import Loader from '../Loader'
 import Pagination from '../pagination/Pagination'
 import ReviewCard from '../review/review-card/Review-card'

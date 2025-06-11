@@ -1,8 +1,8 @@
 import axios from 'axios'
-import { IFavReview } from '../model/review/fav-review'
-import { IReleaseReviewResponse } from '../model/review/release-review'
-import { IReview, IReviewsResponse } from '../model/review/review'
-import { IReviewData } from '../model/review/review-data'
+import { IFavReview } from '../models/review/fav-review'
+import { IReleaseReviewResponse } from '../models/review/release-review'
+import { IReview, IReviewsResponse } from '../models/review/review'
+import { IReviewData } from '../models/review/review-data'
 import { api } from './api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL

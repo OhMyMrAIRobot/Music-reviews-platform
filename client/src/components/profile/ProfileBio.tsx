@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { IProfile } from '../../model/profile/profile'
+import { IProfile } from '../../models/profile/profile'
 import SocialItem from './SocialItem'
 
 interface IProps {

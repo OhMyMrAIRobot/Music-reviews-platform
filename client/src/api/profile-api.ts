@@ -1,7 +1,7 @@
 import axios from 'axios'
-import { IPreferred } from '../model/profile/preferred'
-import { IProfile } from '../model/profile/profile'
-import { IUpdatedProfile } from '../model/profile/updated-profile'
+import { IPreferred } from '../models/profile/preferred'
+import { IProfile } from '../models/profile/profile'
+import { IUpdatedProfile } from '../models/profile/updated-profile'
 import { api } from './api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL

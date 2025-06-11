@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios'
-import { IAuthResponse } from '../model/auth/response/auth-response'
-import { IEmailResponse } from '../model/auth/response/email-response'
-import { IRegisterResponse } from '../model/auth/response/register-response'
+import { IAuthResponse } from '../models/auth/response/auth-response'
+import { IEmailResponse } from '../models/auth/response/email-response'
+import { IRegisterResponse } from '../models/auth/response/register-response'
 import { api } from './api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
