@@ -1,9 +1,9 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useState } from 'react'
-import { useAuthCheck } from '../../../hooks/UseAuthCheck'
-import useCustomNavigate from '../../../hooks/UseCustomNavigate'
-import { useStore } from '../../../hooks/UseStore'
-import { IReleaseReview } from '../../../models/review/ReleaseReview'
+import { useAuth } from '../../../hooks/use-auth'
+import useCustomNavigate from '../../../hooks/use-custom-navigate'
+import { useStore } from '../../../hooks/use-store'
+import { IReleaseReview } from '../../../models/review/release-review'
 import ReviewLikes from '../../review/review-card/Review-likes'
 import ReviewMarks from '../../review/review-card/Review-marks'
 import ReviewTitle from '../../review/review-card/Review-title'
@@ -15,8 +15,12 @@ interface IProps {
 
 const ReleaseReviewItem: FC<IProps> = observer(({ review }) => {
 	const { navigatoToProfile } = useCustomNavigate()
-	const { checkAuth } = useAuthCheck()
-	const { authStore, releasePageStore, notificationsStore } = useStore()
+	const { checkAuth } = useAuth()
+	const {
+		authStore,
+		releasePageStore,
+		notificationStore: notificationsStore,
+	} = useStore()
 	const isLiked =
 		review.user_fav_ids.some(item => item.userId === authStore.user?.id) ??
 		false

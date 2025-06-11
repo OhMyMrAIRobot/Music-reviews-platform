@@ -3,8 +3,8 @@ import { useParams } from 'react-router'
 import Loader from '../components/Loader'
 import ProfileLeftSection from '../components/profile/ProfileLeftSection'
 import ProfileRightSection from '../components/profile/ProfileRightSection'
-import { useLoading } from '../hooks/UseLoading'
-import { useStore } from '../hooks/UseStore'
+import { useLoading } from '../hooks/use-loading'
+import { useStore } from '../hooks/use-store'
 
 const ProfilePage = () => {
 	const { id } = useParams()

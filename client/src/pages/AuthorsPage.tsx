@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react'
 import AuthorsPageGrid from '../components/authorsPage/AuthorsPageGrid'
 import ComboBox from '../components/header/buttons/ComboBox'
 import Loader from '../components/Loader'
-import { useLoading } from '../hooks/UseLoading'
-import { useStore } from '../hooks/UseStore'
+import { useLoading } from '../hooks/use-loading'
+import { useStore } from '../hooks/use-store'
 
 const AuthorsPage = observer(() => {
 	const { authorsStore } = useStore()

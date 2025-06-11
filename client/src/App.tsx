@@ -2,10 +2,10 @@ import { useEffect } from 'react'
 import { Routes } from 'react-router'
 import Loader from './components/Loader'
 import NotificationContainer from './components/notifications/NotificationContainer'
-import { useLoading } from './hooks/UseLoading'
-import { useStore } from './hooks/UseStore'
+import { useLoading } from './hooks/use-loading'
+import { useStore } from './hooks/use-store'
 import Layout from './Layout'
-import GlobalRoutes from './routes/GlobalRoutes'
+import GlobalRoutes from './routes/Global-routes'
 
 export function App() {
 	const { authStore } = useStore()
@@ -16,6 +16,7 @@ export function App() {
 		if (localStorage.getItem('token')) {
 			checkAuth()
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	return isLoading ? (

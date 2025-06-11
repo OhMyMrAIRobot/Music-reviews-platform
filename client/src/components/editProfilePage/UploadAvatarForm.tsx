@@ -1,14 +1,14 @@
 import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
-import { useAuthCheck } from '../../hooks/UseAuthCheck'
-import { useStore } from '../../hooks/UseStore'
+import { useAuth } from '../../hooks/use-auth'
+import { useStore } from '../../hooks/use-store'
 import EditProfileSection from './EditProfileSection'
 import SelectImageLabel from './SelectImageLabel'
 import SubmitButton from './SubmitButton'
 
 const UploadAvatarForm = observer(() => {
-	const { profileStore, notificationsStore } = useStore()
-	const { checkAuth } = useAuthCheck()
+	const { profileStore, notificationStore: notificationsStore } = useStore()
+	const { checkAuth } = useAuth()
 	const [file, setFile] = useState<File | null>(null)
 
 	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {

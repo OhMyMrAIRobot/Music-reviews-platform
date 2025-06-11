@@ -1,9 +1,9 @@
 import { observer } from 'mobx-react-lite'
 import { FC } from 'react'
-import { useAuthCheck } from '../../hooks/UseAuthCheck'
-import { useStore } from '../../hooks/UseStore'
-import { IAuthor } from '../../models/author/Author'
-import { AuthorTypesEnum } from '../../models/author/AuthorTypes'
+import { useAuth } from '../../hooks/use-auth'
+import { useStore } from '../../hooks/use-store'
+import { IAuthor } from '../../models/author/author'
+import { AuthorTypesEnum } from '../../models/author/author-type'
 import { ToolTip } from '../authorsPage/AuthorItem'
 import {
 	ArtistSvgIcon,
@@ -21,8 +21,12 @@ interface IProps {
 }
 
 const AuthorPageHeader: FC<IProps> = observer(({ author }) => {
-	const { checkAuth } = useAuthCheck()
-	const { authorPageStore, authStore, notificationsStore } = useStore()
+	const { checkAuth } = useAuth()
+	const {
+		authorPageStore,
+		authStore,
+		notificationStore: notificationsStore,
+	} = useStore()
 
 	const isLiked = author.user_fav_ids.some(
 		val => val.userId === authStore.user?.id

@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useParams } from 'react-router'
-import { useLoading } from '../../hooks/UseLoading'
-import { useStore } from '../../hooks/UseStore'
+import { useLoading } from '../../hooks/use-loading'
+import { useStore } from '../../hooks/use-store'
 import Loader from '../Loader'
 import PreferProfileGridItem from './PreferProfileGridItem'
 

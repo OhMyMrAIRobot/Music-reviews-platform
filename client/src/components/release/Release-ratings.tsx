@@ -1,6 +1,6 @@
 import { FC } from 'react'
-import { ReleaseRatingTypesEnum } from '../../models/release/ReleaseRatingTypes'
 import { IReleaseRating } from '../../models/release/release-rating'
+import { ReleaseRatingTypesEnum } from '../../models/release/release-rating-types-enum'
 
 interface IProps {
 	ratings: IReleaseRating[]

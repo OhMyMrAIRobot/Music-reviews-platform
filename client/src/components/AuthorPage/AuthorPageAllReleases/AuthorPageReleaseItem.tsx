@@ -1,7 +1,7 @@
 import { FC } from 'react'
-import useCustomNavigate from '../../../hooks/UseCustomNavigate'
-import { IRelease } from '../../../models/release/Release'
-import { ReleaseRatingTypesEnum } from '../../../models/release/ReleaseRatingTypes'
+import useCustomNavigate from '../../../hooks/use-custom-navigate'
+import { IRelease } from '../../../models/release/release'
+import { ReleaseRatingTypesEnum } from '../../../models/release/release-rating-types-enum'
 import { ToolTip } from '../../authorsPage/AuthorItem'
 import TooltipSpan from '../../releasePage/tooltip/Tooltip-span'
 import {

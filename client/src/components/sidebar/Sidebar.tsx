@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router'
-import useCustomNavigate from '../../hooks/UseCustomNavigate'
-import { ROUTES } from '../../routes/Routes'
+import useCustomNavigate from '../../hooks/use-custom-navigate'
+import { ROUTES } from '../../routes/routes-enum'
 import {
 	AboutSvgIcon,
 	AuthorsSvgIcon,

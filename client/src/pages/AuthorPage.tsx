@@ -7,8 +7,8 @@ import AuthorPageReviewsCarousel from '../components/authorPage/AuthorPageReview
 import AuthorPageStats from '../components/authorPage/AuthorPageStats'
 import AuthorsPageReleasesCarousel from '../components/authorPage/AuthorsPageReleasesCarousel'
 import Loader from '../components/Loader'
-import { useLoading } from '../hooks/UseLoading'
-import { useStore } from '../hooks/UseStore'
+import { useLoading } from '../hooks/use-loading'
+import { useStore } from '../hooks/use-store'
 
 const AuthorPage = observer(() => {
 	const { id } = useParams()

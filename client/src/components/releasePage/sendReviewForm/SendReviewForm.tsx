@@ -1,8 +1,8 @@
 import { FC, useEffect, useState } from 'react'
-import useCustomNavigate from '../../../hooks/UseCustomNavigate'
-import { useStore } from '../../../hooks/UseStore'
-import { IReleaseReview } from '../../../models/review/ReleaseReview'
-import { IReviewData } from '../../../models/review/ReviewData'
+import useCustomNavigate from '../../../hooks/use-custom-navigate'
+import { useStore } from '../../../hooks/use-store'
+import { IReleaseReview } from '../../../models/review/release-review'
+import { IReviewData } from '../../../models/review/review-data'
 import FormInfoContainer from '../../form-elements/Form-info-container'
 import FormInfoField from '../../form-elements/Form-info-field'
 import SwitchButton from '../button/SwitchButton'
@@ -28,7 +28,11 @@ interface IProps {
 }
 
 const SendReviewForm: FC<IProps> = ({ id, fetchReviews }) => {
-	const { authStore, releasePageStore, notificationsStore } = useStore()
+	const {
+		authStore,
+		releasePageStore,
+		notificationStore: notificationsStore,
+	} = useStore()
 
 	const { navigateToLogin } = useCustomNavigate()
 

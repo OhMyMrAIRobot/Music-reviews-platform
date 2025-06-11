@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react'
 import AuthorsPageReleasesCol from '../components/authorPage/AuthorPageAllReleases/AuthorsPageReleasesCol'
 import Loader from '../components/Loader'
 import ReleasesRatingsHeader from '../components/releasesRatingsPage/ReleasesRatingsHeader'
-import { useLoading } from '../hooks/UseLoading'
-import { useStore } from '../hooks/UseStore'
-import { ReleaseTypesEnum } from '../models/release/ReleaseTypes'
+import { useLoading } from '../hooks/use-loading'
+import { useStore } from '../hooks/use-store'
+import { ReleaseTypesEnum } from '../models/release/release-types'
 
 const ReleasesRatingsPage = observer(() => {
 	const [month, setMonth] = useState<number>(new Date().getMonth() + 1)

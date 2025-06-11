@@ -1,6 +1,6 @@
 import { FC } from 'react'
-import useCustomNavigate from '../../hooks/UseCustomNavigate'
-import { IPreferredItem } from '../../models/profile/PreferredItem'
+import useCustomNavigate from '../../hooks/use-custom-navigate'
+import { IPreferredItem } from '../../models/profile/preferred-item'
 
 interface IProps {
 	item: IPreferredItem

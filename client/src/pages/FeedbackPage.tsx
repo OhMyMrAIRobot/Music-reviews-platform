@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FeedbackAPI } from '../api/FeedbackAPI'
+import { FeedbackAPI } from '../api/feedback-api'
 import FormButton from '../components/form-elements/Form-button'
 import FormInfoContainer from '../components/form-elements/Form-info-container'
 import FormInfoField from '../components/form-elements/Form-info-field'
@@ -8,20 +8,20 @@ import FormLabel from '../components/form-elements/Form-label'
 import FormSubTitle from '../components/form-elements/Form-subtitle'
 import FormTitle from '../components/form-elements/Form-title'
 import FormTextbox from '../components/form-elements/FormTextbox'
-import { useLoading } from '../hooks/UseLoading'
-import { useStore } from '../hooks/UseStore'
-import { IFeedbackData } from '../models/feedback/FeedbackData'
+import { useLoading } from '../hooks/use-loading'
+import { useStore } from '../hooks/use-store'
+import { IFeedback } from '../models/feedback/feedback'
 
 const FeedbackPage = () => {
-	const [feedbackData, setFeedbackData] = useState<IFeedbackData>({
+	const [feedbackData, setFeedbackData] = useState<IFeedback>({
 		email: '',
 		title: '',
 		message: '',
 	})
 	const [errors, setErrors] = useState<string[]>([])
-	const { notificationsStore } = useStore()
+	const { notificationStore: notificationsStore } = useStore()
 
-	const handleChange = (field: keyof IFeedbackData, value: string) => {
+	const handleChange = (field: keyof IFeedback, value: string) => {
 		setFeedbackData(prev => ({ ...prev, [field]: value }))
 	}
 

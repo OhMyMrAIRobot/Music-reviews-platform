@@ -1,6 +1,6 @@
 import { FC } from 'react'
-import { AuthorTypesEnum } from '../../../models/author/AuthorTypes'
-import { IReleaseDetails } from '../../../models/release/ReleaseDetails'
+import { AuthorTypesEnum } from '../../../models/author/author-type'
+import { IReleaseDetails } from '../../../models/release/release-details'
 import ReleaseAuthor from '../button/ReleaseAuthor'
 interface IProps {
 	release: IReleaseDetails

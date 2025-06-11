@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import ComboBox from '../components/header/buttons/ComboBox'
 import Loader from '../components/Loader'
 import ReleasesPageGrid from '../components/ReleasesPageGrid'
-import { useLoading } from '../hooks/UseLoading'
-import { useStore } from '../hooks/UseStore'
+import { useLoading } from '../hooks/use-loading'
+import { useStore } from '../hooks/use-store'
 
 const ReleaseSortFields = Object.freeze({
 	PUBLISHED_New: 'Дата релиза (новые)',

@@ -1,7 +1,7 @@
 import { EmblaOptionsType } from 'embla-carousel'
 import useEmblaCarousel from 'embla-carousel-react'
 import { FC } from 'react'
-import { IPreferredItem } from '../../models/profile/PreferredItem'
+import { IPreferredItem } from '../../models/profile/preferred-item'
 import PreferItem from './PreferItem'
 
 interface IProps {

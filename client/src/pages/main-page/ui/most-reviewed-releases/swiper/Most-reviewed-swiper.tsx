@@ -4,7 +4,7 @@ import {
 	NextSvgIcon,
 	PrevSvgIcon,
 } from '../../../../../components/svg/ReleaseSvgIcons'
-import { useStore } from '../../../../../hooks/UseStore'
+import { useStore } from '../../../../../hooks/use-store'
 import MostReviewedSwiperButton from './Most-reviewed-swiper-button'
 import MostReviewedCarouselCard from './Most-reviewed-swiper-card'
 

@@ -4,8 +4,8 @@ import ComboBox from '../components/header/buttons/ComboBox'
 import Loader from '../components/Loader'
 import Pagination from '../components/pagination/Pagination'
 import ReviewCard from '../components/review/review-card/Review-card'
-import { useLoading } from '../hooks/UseLoading'
-import { useStore } from '../hooks/UseStore'
+import { useLoading } from '../hooks/use-loading'
+import { useStore } from '../hooks/use-store'
 
 const ReviewsOrderEnum = Object.freeze({
 	NEW: 'Новые',
