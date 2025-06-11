@@ -19,7 +19,7 @@ const FeedbackPage = () => {
 		message: '',
 	})
 	const [errors, setErrors] = useState<string[]>([])
-	const { notificationsStore } = useStore()
+	const { notificationStore: notificationsStore } = useStore()
 
 	const handleChange = (field: keyof IFeedback, value: string) => {
 		setFeedbackData(prev => ({ ...prev, [field]: value }))

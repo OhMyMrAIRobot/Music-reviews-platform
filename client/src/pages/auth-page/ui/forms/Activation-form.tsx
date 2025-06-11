@@ -12,7 +12,7 @@ import { useStore } from '../../../../hooks/use-store'
 const ActivationForm = () => {
 	const { token } = useParams()
 
-	const { notificationsStore, authStore } = useStore()
+	const { notificationStore: notificationsStore, authStore } = useStore()
 	const { navigateToMain } = useCustomNavigate()
 
 	const [errors, setErrors] = useState<string[]>([])

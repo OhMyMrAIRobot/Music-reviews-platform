@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx'
 import { INotification } from '../models/notification/notification'
 
-class NotificationsStore {
+class NotificationStore {
 	notifications: INotification[] = []
 
 	constructor() {
@@ -45,4 +45,4 @@ class NotificationsStore {
 	}
 }
 
-export default new NotificationsStore()
+export default new NotificationStore()

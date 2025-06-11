@@ -28,7 +28,11 @@ interface IProps {
 }
 
 const SendReviewForm: FC<IProps> = ({ id, fetchReviews }) => {
-	const { authStore, releasePageStore, notificationsStore } = useStore()
+	const {
+		authStore,
+		releasePageStore,
+		notificationStore: notificationsStore,
+	} = useStore()
 
 	const { navigateToLogin } = useCustomNavigate()
 

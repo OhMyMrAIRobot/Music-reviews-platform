@@ -13,7 +13,7 @@ import { useStore } from '../../../../hooks/use-store'
 import { IRegistrationRequest } from '../../../../models/auth/request/registration-request'
 
 const RegistrationForm = observer(() => {
-	const { authStore, notificationsStore } = useStore()
+	const { authStore, notificationStore: notificationsStore } = useStore()
 
 	const { navigateToMain, navigateToLogin } = useCustomNavigate()
 

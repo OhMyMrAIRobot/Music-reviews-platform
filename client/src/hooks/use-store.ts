@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import Store from '../stores/Store'
+import Store from '../stores/store.ts'
 
 export const StoreContext = createContext<Store | null>(null)
 

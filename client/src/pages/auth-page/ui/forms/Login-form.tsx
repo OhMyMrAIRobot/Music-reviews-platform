@@ -19,7 +19,7 @@ const LoginForm = observer(() => {
 	const { navigateToMain, navigateToRegistration, navigateToRequestReset } =
 		useCustomNavigate()
 
-	const { authStore, notificationsStore } = useStore()
+	const { authStore, notificationStore: notificationsStore } = useStore()
 
 	const { execute: login, isLoading } = useLoading(authStore.login)
 

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable } from 'mobx'
 import { ReleaseAPI } from '../api/release-api'
 import { IRelease } from '../models/release/release'

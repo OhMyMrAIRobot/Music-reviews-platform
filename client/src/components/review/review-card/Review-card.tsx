@@ -18,7 +18,7 @@ interface IProps {
 }
 
 const ReviewCard: FC<IProps> = observer(({ review, storeToggle }) => {
-	const { authStore, notificationsStore } = useStore()
+	const { authStore, notificationStore: notificationsStore } = useStore()
 
 	const { checkAuth } = useAuth()
 

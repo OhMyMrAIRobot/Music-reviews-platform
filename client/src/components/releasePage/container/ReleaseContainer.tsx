@@ -15,7 +15,11 @@ interface IProps {
 }
 
 const ReleaseContainer: FC<IProps> = observer(({ release }) => {
-	const { authStore, releasePageStore, notificationsStore } = useStore()
+	const {
+		authStore,
+		releasePageStore,
+		notificationStore: notificationsStore,
+	} = useStore()
 	const { checkAuth } = useAuth()
 	const [toggling, setToggling] = useState<boolean>(false)
 	const isLiked = release.user_fav_ids.some(

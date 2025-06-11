@@ -15,7 +15,7 @@ import { IResetPasswordRequest } from '../../../../models/auth/request/reset-pas
 const ResetPasswordForm = () => {
 	const { token } = useParams()
 
-	const { authStore, notificationsStore } = useStore()
+	const { authStore, notificationStore: notificationsStore } = useStore()
 
 	const { navigateToMain } = useCustomNavigate()
 

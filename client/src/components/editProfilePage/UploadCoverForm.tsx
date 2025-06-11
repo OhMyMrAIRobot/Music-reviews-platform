@@ -7,7 +7,7 @@ import SelectImageLabel from './SelectImageLabel'
 import SubmitButton from './SubmitButton'
 
 const UploadCoverForm = observer(() => {
-	const { profileStore, notificationsStore } = useStore()
+	const { profileStore, notificationStore: notificationsStore } = useStore()
 	const { checkAuth } = useAuth()
 	const [file, setFile] = useState<File | null>(null)
 

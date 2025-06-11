@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 import { useStore } from './use-store'
 
 export const useAuth = () => {
-	const { authStore, notificationsStore } = useStore()
+	const { authStore, notificationStore: notificationsStore } = useStore()
 
 	const checkAuth = useCallback((): boolean => {
 		if (!authStore.isAuth) {

@@ -22,7 +22,11 @@ interface IProps {
 
 const AuthorPageHeader: FC<IProps> = observer(({ author }) => {
 	const { checkAuth } = useAuth()
-	const { authorPageStore, authStore, notificationsStore } = useStore()
+	const {
+		authorPageStore,
+		authStore,
+		notificationStore: notificationsStore,
+	} = useStore()
 
 	const isLiked = author.user_fav_ids.some(
 		val => val.userId === authStore.user?.id

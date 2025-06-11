@@ -16,7 +16,11 @@ interface IProps {
 const ReleaseReviewItem: FC<IProps> = observer(({ review }) => {
 	const { navigatoToProfile } = useCustomNavigate()
 	const { checkAuth } = useAuth()
-	const { authStore, releasePageStore, notificationsStore } = useStore()
+	const {
+		authStore,
+		releasePageStore,
+		notificationStore: notificationsStore,
+	} = useStore()
 	const isLiked =
 		review.user_fav_ids.some(item => item.userId === authStore.user?.id) ??
 		false

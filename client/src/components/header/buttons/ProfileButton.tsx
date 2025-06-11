@@ -13,7 +13,11 @@ import {
 import PopupProfileButton from './PopupProfileButton'
 
 const ProfileButton = observer(() => {
-	const { authStore, notificationsStore, profileStore } = useStore()
+	const {
+		authStore,
+		notificationStore: notificationsStore,
+		profileStore,
+	} = useStore()
 	const { navigateToMain, navigatoToProfile, navigateToEditProfile } =
 		useCustomNavigate()
 

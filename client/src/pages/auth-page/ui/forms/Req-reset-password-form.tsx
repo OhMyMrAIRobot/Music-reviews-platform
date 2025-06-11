@@ -12,7 +12,7 @@ import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
 
 const ReqResetPasswordForm = observer(() => {
-	const { authStore, notificationsStore } = useStore()
+	const { authStore, notificationStore: notificationsStore } = useStore()
 
 	const { navigateToMain } = useCustomNavigate()
 
