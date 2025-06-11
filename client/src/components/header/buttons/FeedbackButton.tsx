@@ -1,4 +1,4 @@
-import useCustomNavigate from '../../../hooks/UseCustomNavigate'
+import useCustomNavigate from '../../../hooks/use-custom-navigate'
 import { FeedbackSvgIcon } from '../../sidebar/SidebarIcons'
 
 const FeedbackButton = () => {

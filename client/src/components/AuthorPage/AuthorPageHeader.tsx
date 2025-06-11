@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { FC } from 'react'
-import { useAuthCheck } from '../../hooks/UseAuthCheck'
-import { useStore } from '../../hooks/UseStore'
+import { useAuth } from '../../hooks/use-auth'
+import { useStore } from '../../hooks/use-store'
 import { IAuthor } from '../../model/author/author'
 import { AuthorTypesEnum } from '../../model/author/author-type'
 import { ToolTip } from '../authorsPage/AuthorItem'
@@ -21,7 +21,7 @@ interface IProps {
 }
 
 const AuthorPageHeader: FC<IProps> = observer(({ author }) => {
-	const { checkAuth } = useAuthCheck()
+	const { checkAuth } = useAuth()
 	const { authorPageStore, authStore, notificationsStore } = useStore()
 
 	const isLiked = author.user_fav_ids.some(

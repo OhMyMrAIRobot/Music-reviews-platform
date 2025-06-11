@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react'
-import useCustomNavigate from '../../../hooks/UseCustomNavigate'
-import { useStore } from '../../../hooks/UseStore'
+import useCustomNavigate from '../../../hooks/use-custom-navigate'
+import { useStore } from '../../../hooks/use-store'
 import { IReleaseReview } from '../../../model/review/release-review'
 import { IReviewData } from '../../../model/review/review-data'
 import FormInfoContainer from '../../form-elements/Form-info-container'

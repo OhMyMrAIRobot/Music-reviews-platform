@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import useCustomNavigate from '../../hooks/UseCustomNavigate'
+import useCustomNavigate from '../../hooks/use-custom-navigate'
 import { SearchTypesEnum } from '../../model/search/search-types-enum'
 import { SearchSvgIcon } from './HeaderSvgIcons'
 import ComboBox from './buttons/ComboBox'

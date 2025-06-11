@@ -1,8 +1,8 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useRef, useState } from 'react'
-import useCustomNavigate from '../../../hooks/UseCustomNavigate'
-import { useLoading } from '../../../hooks/UseLoading'
-import { useStore } from '../../../hooks/UseStore'
+import useCustomNavigate from '../../../hooks/use-custom-navigate'
+import { useLoading } from '../../../hooks/use-loading'
+import { useStore } from '../../../hooks/use-store'
 import Loader from '../../Loader'
 import {
 	HeartSvgIcon,

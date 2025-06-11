@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useState } from 'react'
-import { useAuthCheck } from '../../../hooks/UseAuthCheck'
-import { useStore } from '../../../hooks/UseStore'
+import { useAuth } from '../../../hooks/use-auth'
+import { useStore } from '../../../hooks/use-store'
 import { IReleaseDetails } from '../../../model/release/release-details'
 import {
 	ReleaseLikesSvgIcon,
@@ -16,7 +16,7 @@ interface IProps {
 
 const ReleaseContainer: FC<IProps> = observer(({ release }) => {
 	const { authStore, releasePageStore, notificationsStore } = useStore()
-	const { checkAuth } = useAuthCheck()
+	const { checkAuth } = useAuth()
 	const [toggling, setToggling] = useState<boolean>(false)
 	const isLiked = release.user_fav_ids.some(
 		fav => fav.userId === authStore.user?.id

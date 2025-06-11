@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
-import { useAuthCheck } from '../../hooks/UseAuthCheck'
-import { useStore } from '../../hooks/UseStore'
+import { useAuth } from '../../hooks/use-auth'
+import { useStore } from '../../hooks/use-store'
 import FormInput from '../form-elements/Form-input'
 import FormLabel from '../form-elements/Form-label'
 import FormTextbox from '../form-elements/FormTextbox'
@@ -10,7 +10,7 @@ import SubmitButton from './SubmitButton'
 
 const UpdateProfileInfoForm = observer(() => {
 	const { profileStore, authStore } = useStore()
-	const { checkAuth } = useAuthCheck()
+	const { checkAuth } = useAuth()
 
 	const [email, setEmail] = useState<string>(authStore.user?.email ?? '')
 	const [nickname, setNickname] = useState<string>(

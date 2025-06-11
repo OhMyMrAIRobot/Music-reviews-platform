@@ -5,9 +5,9 @@ import FormInfoContainer from '../../../../components/form-elements/Form-info-co
 import FormInfoField from '../../../../components/form-elements/Form-info-field'
 import FormSubTitle from '../../../../components/form-elements/Form-subtitle'
 import FormTitle from '../../../../components/form-elements/Form-title'
-import useCustomNavigate from '../../../../hooks/UseCustomNavigate'
-import { useLoading } from '../../../../hooks/UseLoading'
-import { useStore } from '../../../../hooks/UseStore'
+import useCustomNavigate from '../../../../hooks/use-custom-navigate'
+import { useLoading } from '../../../../hooks/use-loading'
+import { useStore } from '../../../../hooks/use-store'
 
 const ActivationForm = () => {
 	const { token } = useParams()

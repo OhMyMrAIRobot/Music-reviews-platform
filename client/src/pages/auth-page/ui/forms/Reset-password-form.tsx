@@ -7,9 +7,9 @@ import FormInput from '../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../components/form-elements/Form-label'
 import FormSubTitle from '../../../../components/form-elements/Form-subtitle'
 import FormTitle from '../../../../components/form-elements/Form-title'
-import useCustomNavigate from '../../../../hooks/UseCustomNavigate'
-import { useLoading } from '../../../../hooks/UseLoading'
-import { useStore } from '../../../../hooks/UseStore'
+import useCustomNavigate from '../../../../hooks/use-custom-navigate'
+import { useLoading } from '../../../../hooks/use-loading'
+import { useStore } from '../../../../hooks/use-store'
 import { IResetPasswordRequest } from '../../../../model/auth/request/reset-password-request'
 
 const ResetPasswordForm = () => {

@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import useCustomNavigate from '../../hooks/UseCustomNavigate'
+import useCustomNavigate from '../../hooks/use-custom-navigate'
 import { ILeaderboardItem } from '../../model/leaderboard/leaderboard-item'
 import { getLevelConfig, getUserLevel } from '../../utils/user-level'
 import { ToolTip } from '../authorsPage/AuthorItem'

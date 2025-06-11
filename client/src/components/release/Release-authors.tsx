@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import useCustomNavigate from '../../hooks/UseCustomNavigate'
+import useCustomNavigate from '../../hooks/use-custom-navigate'
 import { IReleaseAuthor } from '../../model/release/release-author'
 
 interface IProps {

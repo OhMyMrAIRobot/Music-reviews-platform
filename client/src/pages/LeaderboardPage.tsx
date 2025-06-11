@@ -1,9 +1,9 @@
 import { useEffect } from 'react'
-import Loader from '../components/Loader'
 import LBHeader from '../components/leaderboardPage/LBHeader'
 import LBItem from '../components/leaderboardPage/LBItem'
-import { useLoading } from '../hooks/UseLoading'
-import { useStore } from '../hooks/UseStore'
+import Loader from '../components/Loader'
+import { useLoading } from '../hooks/use-loading'
+import { useStore } from '../hooks/use-store'
 
 const LeaderboardPage = () => {
 	const { leaderboardStore } = useStore()

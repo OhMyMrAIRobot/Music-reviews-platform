@@ -4,9 +4,9 @@ import { useParams, useSearchParams } from 'react-router'
 import AuthorsPageGrid from '../components/authorsPage/AuthorsPageGrid'
 import Loader from '../components/Loader'
 import ReleasesPageGrid from '../components/ReleasesPageGrid'
-import useCustomNavigate from '../hooks/UseCustomNavigate'
-import { useLoading } from '../hooks/UseLoading'
-import { useStore } from '../hooks/UseStore'
+import useCustomNavigate from '../hooks/use-custom-navigate'
+import { useLoading } from '../hooks/use-loading'
+import { useStore } from '../hooks/use-store'
 import { SearchTypesEnum } from '../model/search/search-types-enum'
 
 const SearchPage = observer(() => {

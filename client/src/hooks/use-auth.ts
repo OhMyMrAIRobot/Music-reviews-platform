@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
-import { useStore } from './UseStore'
+import { useStore } from './use-store'
 
-export const useAuthCheck = () => {
+export const useAuth = () => {
 	const { authStore, notificationsStore } = useStore()
 
 	const checkAuth = useCallback((): boolean => {

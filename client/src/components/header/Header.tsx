@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
-import useCustomNavigate from '../../hooks/UseCustomNavigate'
-import { useStore } from '../../hooks/UseStore'
+import useCustomNavigate from '../../hooks/use-custom-navigate'
+import { useStore } from '../../hooks/use-store'
 import BurgerMenuButton from './buttons/BurgerMenuButton'
 import FeedbackButton from './buttons/FeedbackButton'
 import LoginButton from './buttons/LoginButton'

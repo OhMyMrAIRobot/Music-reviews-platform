@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import useCustomNavigate from '../../hooks/UseCustomNavigate'
+import useCustomNavigate from '../../hooks/use-custom-navigate'
 import { IPreferredItem } from '../../model/profile/preferred-item'
 
 interface IProps {

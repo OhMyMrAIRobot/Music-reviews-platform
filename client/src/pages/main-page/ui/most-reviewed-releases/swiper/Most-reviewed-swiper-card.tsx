@@ -3,7 +3,7 @@ import ReleaseAuthors from '../../../../../components/release/Release-authors'
 import ReleaseRatings from '../../../../../components/release/Release-ratings'
 import ReleaseTypeIcon from '../../../../../components/release/Release-type-icon'
 import { TextReviewSvgIcon } from '../../../../../components/svg/ReleaseSvgIcons'
-import useCustomNavigate from '../../../../../hooks/UseCustomNavigate'
+import useCustomNavigate from '../../../../../hooks/use-custom-navigate'
 import { IRelease } from '../../../../../model/release/release'
 
 interface IProps {

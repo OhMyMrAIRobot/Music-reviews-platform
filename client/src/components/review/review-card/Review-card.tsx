@@ -1,8 +1,8 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useState } from 'react'
-import { useAuthCheck } from '../../../hooks/UseAuthCheck'
-import useCustomNavigate from '../../../hooks/UseCustomNavigate'
-import { useStore } from '../../../hooks/UseStore'
+import { useAuth } from '../../../hooks/use-auth'
+import useCustomNavigate from '../../../hooks/use-custom-navigate'
+import { useStore } from '../../../hooks/use-store'
 import { IReview } from '../../../model/review/review'
 import { TogglePromiseResult } from '../../../types/toggle-promise-result'
 import { MoveToReviewSvgIcon } from '../../svg/ReviewSvgIcons'
@@ -20,7 +20,7 @@ interface IProps {
 const ReviewCard: FC<IProps> = observer(({ review, storeToggle }) => {
 	const { authStore, notificationsStore } = useStore()
 
-	const { checkAuth } = useAuthCheck()
+	const { checkAuth } = useAuth()
 
 	const { navigateToRelease } = useCustomNavigate()
 

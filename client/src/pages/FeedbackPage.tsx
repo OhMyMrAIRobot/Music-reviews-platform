@@ -8,8 +8,8 @@ import FormLabel from '../components/form-elements/Form-label'
 import FormSubTitle from '../components/form-elements/Form-subtitle'
 import FormTitle from '../components/form-elements/Form-title'
 import FormTextbox from '../components/form-elements/FormTextbox'
-import { useLoading } from '../hooks/UseLoading'
-import { useStore } from '../hooks/UseStore'
+import { useLoading } from '../hooks/use-loading'
+import { useStore } from '../hooks/use-store'
 import { IFeedback } from '../model/feedback/feedback'
 
 const FeedbackPage = () => {

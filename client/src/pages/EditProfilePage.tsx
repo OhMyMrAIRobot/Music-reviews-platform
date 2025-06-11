@@ -4,8 +4,8 @@ import { useParams } from 'react-router'
 import UpdateProfileInfoForm from '../components/editProfilePage/UpdateProfileInfoForm'
 import UploadAvatarForm from '../components/editProfilePage/UploadAvatarForm'
 import UploadCoverForm from '../components/editProfilePage/UploadCoverForm'
-import useCustomNavigate from '../hooks/UseCustomNavigate'
-import { useStore } from '../hooks/UseStore'
+import useCustomNavigate from '../hooks/use-custom-navigate'
+import { useStore } from '../hooks/use-store'
 
 const EditProfilePage = observer(() => {
 	const { authStore } = useStore()

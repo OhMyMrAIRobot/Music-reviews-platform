@@ -2,8 +2,8 @@ import { EmblaOptionsType } from 'embla-carousel'
 import useEmblaCarousel from 'embla-carousel-react'
 import { observer } from 'mobx-react-lite'
 import { FC, useEffect } from 'react'
-import { useLoading } from '../../../../../hooks/UseLoading'
-import { useStore } from '../../../../../hooks/UseStore'
+import { useLoading } from '../../../../../hooks/use-loading'
+import { useStore } from '../../../../../hooks/use-store'
 import MostReviewedCarouselItem from './Most-reviewed-carousel-item'
 
 interface IProps {

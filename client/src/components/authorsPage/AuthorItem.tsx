@@ -1,5 +1,5 @@
 import { FC, ReactNode } from 'react'
-import useCustomNavigate from '../../hooks/UseCustomNavigate'
+import useCustomNavigate from '../../hooks/use-custom-navigate'
 import { AuthorTypesEnum } from '../../model/author/author-type'
 import { IAuthorData } from '../../model/author/authors-response'
 import { ReleaseTypesEnum } from '../../model/release/release-types'

@@ -7,8 +7,8 @@ import ReleaseReviewsContainer, {
 	ReleaseReviewsSortEnum,
 } from '../components/releasePage/container/ReleaseReviewsContainer'
 import SendReviewForm from '../components/releasePage/sendReviewForm/SendReviewForm'
-import { useLoading } from '../hooks/UseLoading'
-import { useStore } from '../hooks/UseStore'
+import { useLoading } from '../hooks/use-loading'
+import { useStore } from '../hooks/use-store'
 
 const ReleasePage = observer(() => {
 	const { id } = useParams()
