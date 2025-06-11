@@ -2,7 +2,7 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { AuthAPI } from '../api/AuthAPI'
 import { IRegistrationData } from '../models/auth/registration-data'
-import { IResetPasswordData } from '../models/auth/ResetPasswordData'
+import { IResetPasswordData } from '../models/auth/reset-password-data'
 import { IUser } from '../models/auth/User'
 
 class AuthStore {

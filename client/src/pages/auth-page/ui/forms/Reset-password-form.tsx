@@ -1,27 +1,43 @@
 import { useState } from 'react'
 import { useParams } from 'react-router'
-import useCustomNavigate from '../../../hooks/UseCustomNavigate'
-import { useLoading } from '../../../hooks/UseLoading'
-import { useStore } from '../../../hooks/UseStore'
-import { IResetPasswordData } from '../../../models/auth/ResetPasswordData'
-import FormButton from '../../form-elements/Form-button'
-import FormInfoContainer from '../../form-elements/Form-info-container'
-import FormInfoField from '../../form-elements/Form-info-field'
-import FormInput from '../../form-elements/Form-input'
-import FormLabel from '../../form-elements/Form-label'
-import FormSubTitle from '../../form-elements/Form-subtitle'
-import FormTitle from '../../form-elements/Form-title'
+import FormButton from '../../../../components/form-elements/Form-button'
+import FormInfoContainer from '../../../../components/form-elements/Form-info-container'
+import FormInfoField from '../../../../components/form-elements/Form-info-field'
+import FormInput from '../../../../components/form-elements/Form-input'
+import FormLabel from '../../../../components/form-elements/Form-label'
+import FormSubTitle from '../../../../components/form-elements/Form-subtitle'
+import FormTitle from '../../../../components/form-elements/Form-title'
+import useCustomNavigate from '../../../../hooks/UseCustomNavigate'
+import { useLoading } from '../../../../hooks/UseLoading'
+import { useStore } from '../../../../hooks/UseStore'
+import { IResetPasswordData } from '../../../../models/auth/reset-password-data'
 
 const ResetPasswordForm = () => {
+	const { token } = useParams()
+
+	const { authStore, notificationsStore } = useStore()
+
+	const { navigateToMain } = useCustomNavigate()
+
 	const [formData, setFormData] = useState<IResetPasswordData>({
 		password: '',
 		passwordConfirm: '',
 	})
 	const [errors, setErrors] = useState<string[]>([])
-	const { authStore, notificationsStore } = useStore()
-	const { token } = useParams()
+
 	const { execute: reset, isLoading } = useLoading(authStore.resetPassword)
-	const { navigateToMain } = useCustomNavigate()
+
+	const onSubmit = () => {
+		reset(formData, token).then(errors => {
+			setErrors(errors)
+			if (errors.length === 0) {
+				notificationsStore.addSuccessNotification(
+					'Ваш пароль был успешно сброшен!'
+				)
+				navigateToMain()
+			}
+		})
+	}
 
 	const handleChange = (
 		field: keyof typeof formData,
@@ -60,23 +76,13 @@ const ResetPasswordForm = () => {
 				<FormTitle title={'Сброс пароля'} />
 				<FormSubTitle title={'Введите новый пароль для аккаунта'} />
 			</div>
-			{renderInput('password', 'Пароль', 'password')}
+
+			{renderInput('password', 'Новый пароль', 'password')}
 			{renderInput('passwordConfirm', 'Подтвердите пароль', 'password')}
+
 			<FormButton
-				title={isLoading ? 'Сброс...' : 'Сбросить пароль'}
-				onClick={() =>
-					reset(formData, token).then(errors => {
-						setErrors(errors)
-						if (errors.length === 0) {
-							notificationsStore.addNotification({
-								id: self.crypto.randomUUID(),
-								text: 'Ваш пароль был успешно сброшен!',
-								isError: false,
-							})
-							navigateToMain()
-						}
-					})
-				}
+				title={isLoading ? 'Сброс пароля...' : 'Сбросить пароль'}
+				onClick={onSubmit}
 				isInvert={true}
 			/>
 
