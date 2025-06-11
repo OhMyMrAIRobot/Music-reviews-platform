@@ -12,7 +12,7 @@ import ReleasesPage from '../pages/ReleasesPage'
 import ReleasesRatingsPage from '../pages/ReleasesRatingsPage'
 import ReviewsPage from '../pages/ReviewsPage'
 import SearchPage from '../pages/SearchPage'
-import { ROUTES } from './Routes'
+import { ROUTES } from './routes-enum'
 
 const GlobalRoutes = () => {
 	return [
