@@ -1,4 +1,4 @@
-export interface IResetPasswordData {
+export interface IResetPasswordRequest {
 	password: string
 	passwordConfirm: string
 }

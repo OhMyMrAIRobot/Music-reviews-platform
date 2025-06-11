@@ -4,7 +4,7 @@ import { IRelease, IReleaseResponse } from '../models/release/Release'
 import { IReleaseDetails } from '../models/release/ReleaseDetails'
 import { IReleaseType } from '../models/release/ReleaseTypes'
 import { ITopRatingReleasesResponse } from '../models/release/TopRatingReleasesResponse'
-import { api } from './Instance'
+import { api } from './instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
 const _api = axios.create({

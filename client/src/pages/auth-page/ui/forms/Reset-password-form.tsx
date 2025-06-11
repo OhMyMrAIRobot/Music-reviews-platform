@@ -10,7 +10,7 @@ import FormTitle from '../../../../components/form-elements/Form-title'
 import useCustomNavigate from '../../../../hooks/UseCustomNavigate'
 import { useLoading } from '../../../../hooks/UseLoading'
 import { useStore } from '../../../../hooks/UseStore'
-import { IResetPasswordData } from '../../../../models/auth/reset-password-data'
+import { IResetPasswordRequest } from '../../../../models/auth/request/reset-password-request'
 
 const ResetPasswordForm = () => {
 	const { token } = useParams()
@@ -19,7 +19,7 @@ const ResetPasswordForm = () => {
 
 	const { navigateToMain } = useCustomNavigate()
 
-	const [formData, setFormData] = useState<IResetPasswordData>({
+	const [formData, setFormData] = useState<IResetPasswordRequest>({
 		password: '',
 		passwordConfirm: '',
 	})

@@ -10,14 +10,14 @@ import FormTitle from '../../../../components/form-elements/Form-title'
 import useCustomNavigate from '../../../../hooks/UseCustomNavigate'
 import { useLoading } from '../../../../hooks/UseLoading'
 import { useStore } from '../../../../hooks/UseStore'
-import { IRegistrationData } from '../../../../models/auth/registration-data'
+import { IRegistrationRequest } from '../../../../models/auth/request/registration-request'
 
 const RegistrationForm = observer(() => {
 	const { authStore, notificationsStore } = useStore()
 
 	const { navigateToMain, navigateToLogin } = useCustomNavigate()
 
-	const [formData, setFormData] = useState<IRegistrationData>({
+	const [formData, setFormData] = useState<IRegistrationRequest>({
 		email: '',
 		nickname: '',
 		password: '',

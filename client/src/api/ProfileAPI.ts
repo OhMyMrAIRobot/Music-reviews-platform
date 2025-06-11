@@ -2,7 +2,7 @@ import axios from 'axios'
 import { IPreferredResponse } from '../models/profile/PreferredResponse'
 import { IProfile } from '../models/profile/Profile'
 import { IUpdatedProfile } from '../models/profile/UpdatedProfile'
-import { api } from './Instance'
+import { api } from './instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
 const _api = axios.create({

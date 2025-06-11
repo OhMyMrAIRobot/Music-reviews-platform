@@ -1,6 +1,6 @@
+import AuthStore from './auth-store'
 import AuthorPageStore from './AuthorPageStore'
 import AuthorsStore from './AuthorsStore'
-import AuthStore from './AuthStore'
 import LeaderboardStore from './LeaderboardStore'
 import NotificationsStore from './NotificationsStore'
 import ProfileStore from './ProfileStore'

@@ -3,7 +3,7 @@ import { IFavReview } from '../models/review/FavReview'
 import { IReleaseReviewResponse } from '../models/review/ReleaseReview'
 import { IReview, IReviewsResponse } from '../models/review/Review'
 import { IReviewData } from '../models/review/ReviewData'
-import { api } from './Instance'
+import { api } from './instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
 const _api = axios.create({

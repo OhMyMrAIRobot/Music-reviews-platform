@@ -3,7 +3,7 @@ import { IAuthor } from '../models/author/Author'
 import { IAuthorsResponseDto } from '../models/author/AuthorsResponse'
 import { IAuthorType } from '../models/author/AuthorTypes'
 import { IFavAuthor } from '../models/author/FavAuthor'
-import { api } from './Instance'
+import { api } from './instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
 

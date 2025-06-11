@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
-import { AuthAPI } from '../api/AuthAPI'
-import { IRegistrationData } from '../models/auth/registration-data'
-import { IResetPasswordData } from '../models/auth/reset-password-data'
-import { IUser } from '../models/auth/User'
+import { AuthAPI } from '../api/auth-api'
+import { IRegistrationRequest } from '../models/auth/request/registration-request'
+import { IResetPasswordRequest } from '../models/auth/request/reset-password-request'
+import { IUser } from '../models/auth/user'
 
 class AuthStore {
 	isAuth: boolean = false
@@ -61,7 +61,7 @@ class AuthStore {
 	}
 
 	register = async (
-		formData: IRegistrationData
+		formData: IRegistrationRequest
 	): Promise<string[] | boolean> => {
 		const errors: string[] = []
 
@@ -130,7 +130,7 @@ class AuthStore {
 	}
 
 	resetPassword = async (
-		formData: IResetPasswordData,
+		formData: IResetPasswordRequest,
 		token: string
 	): Promise<string[]> => {
 		if (formData.password !== formData.passwordConfirm) {
