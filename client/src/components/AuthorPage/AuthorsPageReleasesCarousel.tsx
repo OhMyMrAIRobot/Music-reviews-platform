@@ -3,10 +3,9 @@ import { useEffect, useRef } from 'react'
 import { useParams } from 'react-router'
 import { useLoading } from '../../hooks/UseLoading'
 import { useStore } from '../../hooks/UseStore'
-import LastReleasesCarousel, {
-	CarouselRef,
-} from '../carousel/lastReleases/LastReleasesCarousel'
-import MainCarouselSection from '../container/MainCarouselSection'
+import LastReleasesCarousel from '../../pages/main-page/ui/last-releases/carousel/Last-releases-carousel'
+import { CarouselRef } from '../../types/carousel-ref'
+import CarouselContainer from '../carousel/Carousel-container'
 
 const AuthorsPageReleasesCarousel = observer(() => {
 	const { id } = useParams()
@@ -33,7 +32,7 @@ const AuthorsPageReleasesCarousel = observer(() => {
 	}, [])
 
 	return (
-		<MainCarouselSection
+		<CarouselContainer
 			title={'Лучшие работы'}
 			buttonTitle={''}
 			showButton={false}

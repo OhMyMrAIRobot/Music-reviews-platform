@@ -3,9 +3,9 @@ import { useParams } from 'react-router'
 import useCustomNavigate from '../../hooks/UseCustomNavigate'
 import { useLoading } from '../../hooks/UseLoading'
 import { useStore } from '../../hooks/UseStore'
-import { CarouselRef } from '../carousel/lastReleases/LastReleasesCarousel'
-import LastReviewsCarousel from '../carousel/lastReviews/LastReviewsCarousel'
-import MainCarouselSection from '../container/MainCarouselSection'
+import { CarouselRef } from '../../types/carousel-ref'
+import CarouselContainer from '../carousel/Carousel-container'
+import LastReviewsCarousel from '../carousel/Last-reviews-carousel'
 
 const AuthorPageReviewsCarousel = () => {
 	const { id } = useParams()
@@ -32,7 +32,7 @@ const AuthorPageReviewsCarousel = () => {
 	}, [])
 
 	return (
-		<MainCarouselSection
+		<CarouselContainer
 			title={'Последние рецензии'}
 			buttonTitle={''}
 			showButton={false}

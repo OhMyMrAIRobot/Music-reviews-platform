@@ -1,8 +1,9 @@
 import { FC } from 'react'
+import { useStore } from '../../hooks/UseStore'
 import { IReview } from '../../models/review/Review'
-import ReviewItem from '../carousel/lastReviews/ReviewItem'
 import Loader from '../Loader'
 import Pagination from '../pagination/Pagination'
+import ReviewCard from '../review/review-card/Review-card'
 
 interface IProps {
 	items: IReview[]
@@ -19,13 +20,20 @@ const ProfileReviewsGrid: FC<IProps> = ({
 	setCurrentPage,
 	isLoading,
 }) => {
+	//TODO: USE PROFILE STORE
+	const { reviewsStore } = useStore()
+
 	return (
 		<section className='mt-5'>
 			{!isLoading ? (
 				items.length > 0 ? (
 					<div className='gap-5 grid grid-cols-1 select-none'>
 						{items.map(review => (
-							<ReviewItem key={review.id} review={review} />
+							<ReviewCard
+								key={review.id}
+								review={review}
+								storeToggle={reviewsStore.toggleFavReview}
+							/>
 						))}
 					</div>
 				) : (

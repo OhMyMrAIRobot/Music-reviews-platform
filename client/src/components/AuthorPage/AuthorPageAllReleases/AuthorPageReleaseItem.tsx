@@ -3,7 +3,7 @@ import useCustomNavigate from '../../../hooks/UseCustomNavigate'
 import { IRelease } from '../../../models/release/Release'
 import { ReleaseRatingTypesEnum } from '../../../models/release/ReleaseRatingTypes'
 import { ToolTip } from '../../authorsPage/AuthorItem'
-import TooltipSpan from '../../releasePage/tooltip/TooltipSpan'
+import TooltipSpan from '../../releasePage/tooltip/Tooltip-span'
 import {
 	NoTextReviewSvgIcon,
 	TextReviewSvgIcon,

@@ -4,7 +4,7 @@ import { IAuthorData } from '../../models/author/AuthorsResponse'
 import { AuthorTypesEnum } from '../../models/author/AuthorTypes'
 import { ReleaseTypesEnum } from '../../models/release/ReleaseTypes'
 import { ReleaseLikesSvgIcon } from '../releasePage/releasePageSvgIcons'
-import TooltipSpan from '../releasePage/tooltip/TooltipSpan'
+import TooltipSpan from '../releasePage/tooltip/Tooltip-span'
 import AuthorReleaseTypesRatings from './AuthorReleaseTypesRatings'
 import { ArtistSvgIcon, DesignerSvgIcon, ProducerSvgIcon } from './AuthorSvg'
 

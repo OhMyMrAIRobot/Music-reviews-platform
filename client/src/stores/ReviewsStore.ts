@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
 import { ReviewAPI } from '../api/ReviewAPI'
 import { IReview } from '../models/review/Review'
+import { TogglePromiseResult } from '../types/toggle-promise-result'
 
 class ReviewsStore {
 	constructor() {
@@ -52,7 +52,7 @@ class ReviewsStore {
 	toggleFavReview = async (
 		reviewId: string,
 		isFav: boolean
-	): Promise<{ status: boolean; message: string }> => {
+	): Promise<TogglePromiseResult> => {
 		try {
 			if (isFav) {
 				await ReviewAPI.deleteReviewFromFav(reviewId)

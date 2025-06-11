@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { ReleaseRatingTypesEnum } from '../../models/release/ReleaseRatingTypes'
 import { ReleaseTypesEnum } from '../../models/release/ReleaseTypes'
-import TooltipSpan from '../releasePage/tooltip/TooltipSpan'
+import TooltipSpan from '../releasePage/tooltip/Tooltip-span'
 import { ToolTip } from './AuthorItem'
 
 interface IProps {

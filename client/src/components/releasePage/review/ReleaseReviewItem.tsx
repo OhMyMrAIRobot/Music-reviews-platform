@@ -4,10 +4,10 @@ import { useAuthCheck } from '../../../hooks/UseAuthCheck'
 import useCustomNavigate from '../../../hooks/UseCustomNavigate'
 import { useStore } from '../../../hooks/UseStore'
 import { IReleaseReview } from '../../../models/review/ReleaseReview'
-import ReviewLikes from './ReviewLikes'
-import ReviewMarks from './ReviewMarks'
-import ReviewTitle from './ReviewTitle'
-import ReviewUserImage from './ReviewUserImage'
+import ReviewLikes from '../../review/review-card/Review-likes'
+import ReviewMarks from '../../review/review-card/Review-marks'
+import ReviewTitle from '../../review/review-card/Review-title'
+import ReviewUserImage from '../../review/review-card/Review-user-image'
 
 interface IProps {
 	review: IReleaseReview

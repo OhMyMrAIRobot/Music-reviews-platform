@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import ReleaseAuthors from '../../../../../components/release/Release-authors'
 import ReleaseRatings from '../../../../../components/release/Release-ratings'
 import ReleaseTypeIcon from '../../../../../components/release/Release-type-icon'
 import { TextReviewSvgIcon } from '../../../../../components/svg/ReleaseSvgIcons'
@@ -19,7 +20,7 @@ const MostReviewedCarouselCard: FC<IProps> = ({ release, index }) => {
 				{/* COVER */}
 				<div className='flex flex-col items-center gap-2 relative '>
 					<span className='font-semibold absolute left-3 top-3 lg:left-4 lg:top-4 bg-black/10 text-white backdrop-blur-md text-[12px] lg:text-[13px] h-7 rounded-full px-3 flex items-center'>
-						Топ-{index + 1} за сутки на РЗТ
+						Топ-{index + 1} за сутки
 					</span>
 
 					<ReleaseTypeIcon
@@ -45,16 +46,11 @@ const MostReviewedCarouselCard: FC<IProps> = ({ release, index }) => {
 						<span className='text-left lg:text-xl font-medium block'>
 							{release.title}
 						</span>
-						<div className='flex flex-wrap gap-1 font-semibold leading-3 mt-2'>
-							{release.author.map((author, index) => (
-								<div key={author.name} className='flex'>
-									<div className='opacity-50'>{author.name}</div>
-									<span className='ml-[1px] pr-[3px] opacity-50'>
-										{index < release.author.length - 1 && ','}
-									</span>
-								</div>
-							))}
-						</div>
+
+						<ReleaseAuthors
+							authors={release.author}
+							className='font-semibold'
+						/>
 					</div>
 
 					<div className='flex shrink-0 gap-[5px] items-center'>

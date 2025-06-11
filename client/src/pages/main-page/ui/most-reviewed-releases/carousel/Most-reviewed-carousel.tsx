@@ -36,7 +36,7 @@ const MostReviewedCarousel: FC<IProps> = observer(({ setShow, setIndex }) => {
 									key={`skeleton-${index}`}
 									className='bg-gray-400 rounded-full embla__slide flex-[0_0_64px] animate-pulse aspect-square'
 								>
-									<div className='opacity-0 w-13 lg:w-17'>123</div>
+									<div className='opacity-0 w-13 lg:w-17'>_</div>
 								</div>
 						  ))
 						: // ITEM VIEW

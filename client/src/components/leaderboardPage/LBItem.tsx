@@ -1,10 +1,10 @@
 import { FC } from 'react'
 import useCustomNavigate from '../../hooks/UseCustomNavigate'
 import { ILeaderboardItem } from '../../models/leaderboard/LeaderboardItem'
-import { getLevelConfig, getUserLevel } from '../../utils/UserLevel'
+import { getLevelConfig, getUserLevel } from '../../utils/user-level'
 import { ToolTip } from '../authorsPage/AuthorItem'
 import { HeartFilledSvgIcon, HeartSvgIcon } from '../header/HeaderSvgIcons'
-import TooltipSpan from '../releasePage/tooltip/TooltipSpan'
+import TooltipSpan from '../releasePage/tooltip/Tooltip-span'
 import { NoTextReviewSvgIcon, TextReviewSvgIcon } from '../svg/ReleaseSvgIcons'
 import { LogoSvg } from './LBSvgIcons'
 

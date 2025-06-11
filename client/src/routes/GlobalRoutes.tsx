@@ -1,7 +1,7 @@
 import { Route } from 'react-router'
+import AuthPage from '../pages/auth-page/Auth-page'
 import AuthorPage from '../pages/AuthorPage'
 import AuthorsPage from '../pages/AuthorsPage'
-import AuthPage from '../pages/AuthPage'
 import EditProfilePage from '../pages/EditProfilePage'
 import FeedbackPage from '../pages/FeedbackPage'
 import LeaderboardPage from '../pages/LeaderboardPage'

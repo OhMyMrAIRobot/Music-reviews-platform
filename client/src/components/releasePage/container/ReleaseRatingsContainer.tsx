@@ -2,7 +2,7 @@ import { FC } from 'react'
 import { IReleaseDetails } from '../../../models/release/ReleaseDetails'
 import { ReleaseRatingTypesEnum } from '../../../models/release/ReleaseRatingTypes'
 import RatingDetailsTooltip from '../tooltip/RatingDetailsTooltip'
-import TooltipSpan from '../tooltip/TooltipSpan'
+import TooltipSpan from '../tooltip/Tooltip-span'
 
 interface IProps {
 	release: IReleaseDetails

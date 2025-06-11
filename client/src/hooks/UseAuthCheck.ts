@@ -6,14 +6,14 @@ export const useAuthCheck = () => {
 
 	const checkAuth = useCallback((): boolean => {
 		if (!authStore.isAuth) {
-			notificationsStore.addNoAuthNotification(
+			notificationsStore.addErrorNotification(
 				'Для выполнения этого действия требуется авторизация!'
 			)
 			return false
 		}
 
 		if (!authStore.user?.isActive) {
-			notificationsStore.addNoAuthNotification(
+			notificationsStore.addErrorNotification(
 				'Для выполнения этого действия требуется активировать аккаунт!'
 			)
 			return false
