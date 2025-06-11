@@ -2,8 +2,8 @@ import { observer } from 'mobx-react-lite'
 import { FC } from 'react'
 import { useAuthCheck } from '../../hooks/UseAuthCheck'
 import { useStore } from '../../hooks/UseStore'
-import { IAuthor } from '../../models/author/Author'
-import { AuthorTypesEnum } from '../../models/author/AuthorTypes'
+import { IAuthor } from '../../model/author/author'
+import { AuthorTypesEnum } from '../../model/author/author-type'
 import { ToolTip } from '../authorsPage/AuthorItem'
 import {
 	ArtistSvgIcon,

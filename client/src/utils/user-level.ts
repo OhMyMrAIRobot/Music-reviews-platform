@@ -1,4 +1,10 @@
-import { UserLevelsEnum } from '../models/profile/userLevels'
+enum UserLevelsEnum {
+	Silver = 'silver',
+	Gold = 'gold',
+	Emerald = 'emerald',
+	Sapphire = 'sapphire',
+	Ruby = 'ruby',
+}
 
 interface ILevelConfig {
 	name: string

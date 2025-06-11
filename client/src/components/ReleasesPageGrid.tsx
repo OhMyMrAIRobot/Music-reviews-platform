@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { IRelease } from '../models/release/Release'
+import { IRelease } from '../model/release/release'
 import Loader from './Loader'
 import Pagination from './pagination/Pagination'
 import ReleaseCard from './release/Release-card'

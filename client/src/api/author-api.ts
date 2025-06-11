@@ -1,9 +1,9 @@
 import axios from 'axios'
-import { IAuthor } from '../models/author/Author'
-import { IAuthorsResponseDto } from '../models/author/AuthorsResponse'
-import { IAuthorType } from '../models/author/AuthorTypes'
-import { IFavAuthor } from '../models/author/FavAuthor'
-import { api } from './instance'
+import { IAuthor } from '../model/author/author'
+import { IAuthorType } from '../model/author/author-type'
+import { IAuthorsResponse } from '../model/author/authors-response'
+import { IFavAuthor } from '../model/author/fav-author'
+import { api } from './api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
 
@@ -21,8 +21,8 @@ export const AuthorAPI = {
 		query: string | null,
 		limit: number,
 		offset: number
-	): Promise<IAuthorsResponseDto> {
-		const { data } = await _api.get<IAuthorsResponseDto>(
+	): Promise<IAuthorsResponse> {
+		const { data } = await _api.get<IAuthorsResponse>(
 			`/list/?
 			${typeId ? `typeId=${typeId}&` : ''}
 			${query ? `&query=${query}&` : ''}

@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { IAuthorData } from '../../models/author/AuthorsResponse'
+import { IAuthorData } from '../../model/author/authors-response'
 import Loader from '../Loader'
 import Pagination from '../pagination/Pagination'
 import AuthorItem from './AuthorItem'

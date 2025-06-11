@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import useCustomNavigate from '../../hooks/UseCustomNavigate'
-import { IReleaseAuthor } from '../../models/release/release-author'
+import { IReleaseAuthor } from '../../model/release/release-author'
 
 interface IProps {
 	authors: IReleaseAuthor[]

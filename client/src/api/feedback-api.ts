@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { IFeedbackData } from '../models/feedback/FeedbackData'
+import { IFeedback } from '../model/feedback/feedback'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
 const _api = axios.create({
@@ -10,7 +10,7 @@ const _api = axios.create({
 })
 
 export const FeedbackAPI = {
-	async sendFeedback(feedbackData: IFeedbackData) {
+	async sendFeedback(feedbackData: IFeedback) {
 		return _api.post('/', {
 			...feedbackData,
 		})

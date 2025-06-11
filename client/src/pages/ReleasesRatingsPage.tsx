@@ -5,7 +5,7 @@ import Loader from '../components/Loader'
 import ReleasesRatingsHeader from '../components/releasesRatingsPage/ReleasesRatingsHeader'
 import { useLoading } from '../hooks/UseLoading'
 import { useStore } from '../hooks/UseStore'
-import { ReleaseTypesEnum } from '../models/release/ReleaseTypes'
+import { ReleaseTypesEnum } from '../model/release/release-types'
 
 const ReleasesRatingsPage = observer(() => {
 	const [month, setMonth] = useState<number>(new Date().getMonth() + 1)

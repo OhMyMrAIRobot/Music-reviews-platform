@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { IRelease } from '../../../../../models/release/Release'
+import { IRelease } from '../../../../../model/release/release'
 
 interface IProps {
 	release: IRelease

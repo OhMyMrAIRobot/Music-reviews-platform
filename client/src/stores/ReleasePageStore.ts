@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
-import { ReleaseAPI } from '../api/ReleaseAPI'
-import { ReviewAPI } from '../api/ReviewAPI'
-import { IReleaseDetails } from '../models/release/ReleaseDetails'
-import { IReleaseReview } from '../models/review/ReleaseReview'
-import { IReviewData } from '../models/review/ReviewData'
+import { ReleaseAPI } from '../api/release-api'
+import { ReviewAPI } from '../api/review-api'
+import { IReleaseDetails } from '../model/release/release-details'
+import { IReleaseReview } from '../model/review/release-review'
+import { IReviewData } from '../model/review/review-data'
 
 class ReleasePageStore {
 	constructor() {

@@ -1,4 +1,4 @@
-export interface IFeedbackData {
+export interface IFeedback {
 	email: string
 	title: string
 	message: string

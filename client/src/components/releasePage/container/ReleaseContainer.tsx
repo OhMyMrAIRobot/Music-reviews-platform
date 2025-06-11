@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { FC, useState } from 'react'
 import { useAuthCheck } from '../../../hooks/UseAuthCheck'
 import { useStore } from '../../../hooks/UseStore'
-import { IReleaseDetails } from '../../../models/release/ReleaseDetails'
+import { IReleaseDetails } from '../../../model/release/release-details'
 import {
 	ReleaseLikesSvgIcon,
 	ToggleFavReleaseSvgIcon,

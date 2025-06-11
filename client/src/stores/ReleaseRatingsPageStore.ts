@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx'
-import { ReleaseAPI } from '../api/ReleaseAPI'
-import { IRelease } from '../models/release/Release'
+import { ReleaseAPI } from '../api/release-api'
+import { IRelease } from '../model/release/release'
 
 class ReleaseRatingsPageStore {
 	constructor() {

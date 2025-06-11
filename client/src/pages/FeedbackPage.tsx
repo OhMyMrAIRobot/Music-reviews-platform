@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FeedbackAPI } from '../api/FeedbackAPI'
+import { FeedbackAPI } from '../api/feedback-api'
 import FormButton from '../components/form-elements/Form-button'
 import FormInfoContainer from '../components/form-elements/Form-info-container'
 import FormInfoField from '../components/form-elements/Form-info-field'
@@ -10,10 +10,10 @@ import FormTitle from '../components/form-elements/Form-title'
 import FormTextbox from '../components/form-elements/FormTextbox'
 import { useLoading } from '../hooks/UseLoading'
 import { useStore } from '../hooks/UseStore'
-import { IFeedbackData } from '../models/feedback/FeedbackData'
+import { IFeedback } from '../model/feedback/feedback'
 
 const FeedbackPage = () => {
-	const [feedbackData, setFeedbackData] = useState<IFeedbackData>({
+	const [feedbackData, setFeedbackData] = useState<IFeedback>({
 		email: '',
 		title: '',
 		message: '',
@@ -21,7 +21,7 @@ const FeedbackPage = () => {
 	const [errors, setErrors] = useState<string[]>([])
 	const { notificationsStore } = useStore()
 
-	const handleChange = (field: keyof IFeedbackData, value: string) => {
+	const handleChange = (field: keyof IFeedback, value: string) => {
 		setFeedbackData(prev => ({ ...prev, [field]: value }))
 	}
 

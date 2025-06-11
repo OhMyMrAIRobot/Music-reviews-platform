@@ -1,6 +1,6 @@
 import { FC } from 'react'
-import { IReleaseDetails } from '../../../models/release/ReleaseDetails'
-import { ReleaseRatingTypesEnum } from '../../../models/release/ReleaseRatingTypes'
+import { IReleaseDetails } from '../../../model/release/release-details'
+import { ReleaseRatingTypesEnum } from '../../../model/release/release-rating-types-enum'
 import RatingDetailsTooltip from '../tooltip/RatingDetailsTooltip'
 import TooltipSpan from '../tooltip/Tooltip-span'
 

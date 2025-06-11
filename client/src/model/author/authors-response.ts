@@ -1,4 +1,4 @@
-export interface IAuthorsResponseDto {
+export interface IAuthorsResponse {
 	count: number
 	authors: IAuthorData[]
 }

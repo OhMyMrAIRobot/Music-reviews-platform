@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable } from 'mobx'
-import { ReleaseAPI } from '../api/ReleaseAPI'
-import { IRelease } from '../models/release/Release'
-import { IReleaseType } from '../models/release/ReleaseTypes'
+import { ReleaseAPI } from '../api/release-api'
+import { IRelease } from '../model/release/release'
+import { IReleaseType } from '../model/release/release-types'
 
 class ReleasesStore {
 	constructor() {

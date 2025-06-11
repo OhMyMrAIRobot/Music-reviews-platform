@@ -1,5 +1,5 @@
-import { IReleaseTypeStats } from './AuthorsResponse'
-import { IFavAuthor } from './FavAuthor'
+import { IReleaseTypeStats } from './authors-response'
+import { IFavAuthor } from './fav-author'
 
 export interface IAuthor {
 	id: string

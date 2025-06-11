@@ -1,10 +1,10 @@
 import axios from 'axios'
-import { IFavRelease } from '../models/release/fav-release'
-import { IRelease, IReleaseResponse } from '../models/release/Release'
-import { IReleaseDetails } from '../models/release/ReleaseDetails'
-import { IReleaseType } from '../models/release/ReleaseTypes'
-import { ITopRatingReleasesResponse } from '../models/release/TopRatingReleasesResponse'
-import { api } from './instance'
+import { IFavRelease } from '../model/release/fav-release'
+import { IRelease, IReleaseResponse } from '../model/release/release'
+import { IReleaseDetails } from '../model/release/release-details'
+import { IReleaseType } from '../model/release/release-types'
+import { ITopRatingReleases } from '../model/release/top-rating-releases'
+import { api } from './api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
 const _api = axios.create({
@@ -54,8 +54,8 @@ export const ReleaseAPI = {
 	async fetchTopRatingReleases(
 		year: number | null,
 		month: number | null
-	): Promise<ITopRatingReleasesResponse> {
-		const { data } = await _api.get<ITopRatingReleasesResponse>(`top-rating?
+	): Promise<ITopRatingReleases> {
+		const { data } = await _api.get<ITopRatingReleases>(`top-rating?
 			${year ? `year=${year}` : ''}&
 			${month ? `month=${month}` : ''}
 			`)

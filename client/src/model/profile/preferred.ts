@@ -1,6 +1,6 @@
-import { IPreferredItem } from './PreferredItem'
+import { IPreferredItem } from './preferred-item'
 
-export interface IPreferredResponse {
+export interface IPreferred {
 	user_id: string
 	artists: IPreferredItem[] | null
 	producers: IPreferredItem[] | null

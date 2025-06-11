@@ -1,8 +1,8 @@
 import axios from 'axios'
-import { IPreferredResponse } from '../models/profile/PreferredResponse'
-import { IProfile } from '../models/profile/Profile'
-import { IUpdatedProfile } from '../models/profile/UpdatedProfile'
-import { api } from './instance'
+import { IPreferred } from '../model/profile/preferred'
+import { IProfile } from '../model/profile/profile'
+import { IUpdatedProfile } from '../model/profile/updated-profile'
+import { api } from './api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
 const _api = axios.create({
@@ -18,8 +18,8 @@ export const ProfileAPI = {
 		return data
 	},
 
-	async fetchPreferred(id: string): Promise<IPreferredResponse> {
-		const { data } = await _api.get<IPreferredResponse>(`preferred/${id}`)
+	async fetchPreferred(id: string): Promise<IPreferred> {
+		const { data } = await _api.get<IPreferred>(`preferred/${id}`)
 		return data
 	},
 

@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import useCustomNavigate from '../../../hooks/UseCustomNavigate'
-import { AuthorTypesEnum } from '../../../models/author/AuthorTypes'
+import { AuthorTypesEnum } from '../../../model/author/author-type'
 
 interface IReleaseAuthorProps {
 	id: string

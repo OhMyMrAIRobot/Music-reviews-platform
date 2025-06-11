@@ -10,7 +10,7 @@ import FormTitle from '../../../../components/form-elements/Form-title'
 import useCustomNavigate from '../../../../hooks/UseCustomNavigate'
 import { useLoading } from '../../../../hooks/UseLoading'
 import { useStore } from '../../../../hooks/UseStore'
-import { IResetPasswordRequest } from '../../../../models/auth/request/reset-password-request'
+import { IResetPasswordRequest } from '../../../../model/auth/request/reset-password-request'
 
 const ResetPasswordForm = () => {
 	const { token } = useParams()

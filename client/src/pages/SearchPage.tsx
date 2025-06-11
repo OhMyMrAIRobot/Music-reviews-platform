@@ -7,7 +7,7 @@ import ReleasesPageGrid from '../components/ReleasesPageGrid'
 import useCustomNavigate from '../hooks/UseCustomNavigate'
 import { useLoading } from '../hooks/UseLoading'
 import { useStore } from '../hooks/UseStore'
-import { SearchTypesEnum } from '../models/search/SearchTypesEnum'
+import { SearchTypesEnum } from '../model/search/search-types-enum'
 
 const SearchPage = observer(() => {
 	const [isLoading, setIsloading] = useState<boolean>(true)

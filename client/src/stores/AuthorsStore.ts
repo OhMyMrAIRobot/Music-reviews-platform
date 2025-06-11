@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx'
-import { AuthorAPI } from '../api/AuthorAPI'
-import { IAuthorType } from '../models/author/AuthorTypes'
-import { IAuthorData } from '../models/author/AuthorsResponse'
+import { AuthorAPI } from '../api/author-api'
+import { IAuthorType } from '../model/author/author-type'
+import { IAuthorData } from '../model/author/authors-response'
 
 class AuthorsStore {
 	constructor() {

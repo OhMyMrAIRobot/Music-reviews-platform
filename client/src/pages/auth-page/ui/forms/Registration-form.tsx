@@ -10,7 +10,7 @@ import FormTitle from '../../../../components/form-elements/Form-title'
 import useCustomNavigate from '../../../../hooks/UseCustomNavigate'
 import { useLoading } from '../../../../hooks/UseLoading'
 import { useStore } from '../../../../hooks/UseStore'
-import { IRegistrationRequest } from '../../../../models/auth/request/registration-request'
+import { IRegistrationRequest } from '../../../../model/auth/request/registration-request'
 
 const RegistrationForm = observer(() => {
 	const { authStore, notificationsStore } = useStore()

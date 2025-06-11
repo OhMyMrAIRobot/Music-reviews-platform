@@ -1,9 +1,9 @@
 import { makeAutoObservable, runInAction } from 'mobx'
-import { ProfileAPI } from '../api/ProfileAPI'
-import { ReviewAPI } from '../api/ReviewAPI'
-import { IPreferredResponse } from '../models/profile/PreferredResponse'
-import { IProfile } from '../models/profile/Profile'
-import { IReview } from '../models/review/Review'
+import { ProfileAPI } from '../api/profile-api'
+import { ReviewAPI } from '../api/review-api'
+import { IPreferred } from '../model/profile/preferred'
+import { IProfile } from '../model/profile/profile'
+import { IReview } from '../model/review/review'
 
 export class ProfileStore {
 	constructor() {
@@ -12,7 +12,7 @@ export class ProfileStore {
 
 	profile: IProfile | null = null
 	myProfile: IProfile | null = null
-	preferred: IPreferredResponse | null = null
+	preferred: IPreferred | null = null
 	reviews: IReview[] = []
 	reviewsCount: number = 0
 	favReviews: IReview[] = []
@@ -26,7 +26,7 @@ export class ProfileStore {
 		this.myProfile = data
 	}
 
-	setPreferred(data: IPreferredResponse) {
+	setPreferred(data: IPreferred) {
 		this.preferred = data
 	}
 

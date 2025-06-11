@@ -1,4 +1,4 @@
-import { IFavReview } from './FavReview'
+import { IFavReview } from './fav-review'
 
 export interface IReleaseReviewResponse {
 	count: number

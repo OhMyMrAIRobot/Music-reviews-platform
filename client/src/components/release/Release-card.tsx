@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import useCustomNavigate from '../../hooks/UseCustomNavigate'
-import { IRelease } from '../../models/release/Release'
+import { IRelease } from '../../model/release/release'
 import { NoTextReviewSvgIcon, TextReviewSvgIcon } from '../svg/ReleaseSvgIcons'
 import ReleaseAuthors from './Release-authors'
 import ReleaseRatings from './Release-ratings'

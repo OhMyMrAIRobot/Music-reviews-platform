@@ -1,6 +1,6 @@
 import { FC } from 'react'
-import { ReleaseRatingTypesEnum } from '../../models/release/ReleaseRatingTypes'
-import { ReleaseTypesEnum } from '../../models/release/ReleaseTypes'
+import { ReleaseRatingTypesEnum } from '../../model/release/release-rating-types-enum'
+import { ReleaseTypesEnum } from '../../model/release/release-types'
 import TooltipSpan from '../releasePage/tooltip/Tooltip-span'
 import { ToolTip } from './AuthorItem'
 
