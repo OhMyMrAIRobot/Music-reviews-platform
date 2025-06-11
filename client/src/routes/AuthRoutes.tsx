@@ -1,9 +1,9 @@
 import { Route, Routes } from 'react-router'
-import ReqResetPasswordForm from '../components/auth/forms/ReqResetPasswordForm'
 import ResetPasswordForm from '../components/auth/forms/ResetPasswordForm'
 import ActivationForm from '../pages/auth-page/ui/forms/Activation-form'
 import LoginForm from '../pages/auth-page/ui/forms/Login-form'
 import RegistrationForm from '../pages/auth-page/ui/forms/Registration-form'
+import ReqResetPasswordForm from '../pages/auth-page/ui/forms/Req-reset-password-form'
 import { ROUTES } from './Routes'
 
 const AuthRoutes = () => {
