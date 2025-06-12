@@ -34,8 +34,10 @@ const LastReleasesCarousel = observer(
 							  Array.from({ length: 15 }).map((_, index) => (
 									<div
 										key={`last-rel-skeleton-${index}`}
-										className='bg-gray-400 flex-[0_0_160px] h-64 min-w-0 animate-pulse opacity-40'
-									></div>
+										className='flex-[0_0_160px] px-1 py-1.5 min-w-0 min-h-64'
+									>
+										<ReleaseCard isLoading={isLoading} />
+									</div>
 							  ))
 							: // ITEM VIEW
 							  items.map(release => (
@@ -43,7 +45,7 @@ const LastReleasesCarousel = observer(
 										key={`${release.id}`}
 										className='flex-[0_0_160px] px-1 py-1.5 min-w-0'
 									>
-										<ReleaseCard release={release} />
+										<ReleaseCard release={release} isLoading={isLoading} />
 									</div>
 							  ))}
 					</div>

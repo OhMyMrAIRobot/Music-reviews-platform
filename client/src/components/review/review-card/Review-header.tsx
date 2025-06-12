@@ -38,12 +38,14 @@ const ReviewHeader: FC<IProps> = ({ review }) => {
 				/>
 
 				<img
+					loading='lazy'
+					decoding='async'
 					onClick={() => navigateToRelease(review.release_id)}
 					alt={review.release_title}
 					src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
 						review.release_img
 					}`}
-					className='rounded size-10 lg:size-11 cursor-pointer'
+					className='rounded size-10 lg:size-11 cursor-pointer aspect-square'
 				/>
 			</div>
 		</div>

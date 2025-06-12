@@ -1,28 +1,23 @@
 import { useEffect, useState } from 'react'
-import ComboBox from '../components/header/buttons/ComboBox'
-import Loader from '../components/Loader'
-import ReleasesPageGrid from '../components/ReleasesPageGrid'
-import { useLoading } from '../hooks/use-loading'
-import { useStore } from '../hooks/use-store'
-
-const ReleaseSortFields = Object.freeze({
-	PUBLISHED_New: 'Дата релиза (новые)',
-	PUBLISHED_OLD: 'Дата релиза (старые)',
-	NO_TEXT_COUNT: 'Количество оценок без рецензий',
-	TEXT_COUNT: 'Количество рецензий',
-	SUPER_USER_RATING: 'Рейтинг супер-пользователей (90 - 0)',
-	WITH_TEXT_RATING: 'Рейтинг пользователей (90 - 0)',
-	NO_TEXT_RATING: 'Рейтинг без рецензий (90 - 0)',
-})
+import ComboBox from '../../components/buttons/Combo-box'
+import Loader from '../../components/Loader'
+import ReleasesGrid from '../../components/release/Releases-grid'
+import { useLoading } from '../../hooks/use-loading'
+import { useStore } from '../../hooks/use-store'
+import { ReleaseSortFields } from '../../models/release/release-sort-fields'
 
 const ReleasesPage = () => {
+	const perPage = 12
+
 	const { releasesStore } = useStore()
+
 	const [currentPage, setCurrentPage] = useState<number>(1)
+
 	const [selectedSort, setSelectedSort] = useState<string>(
-		ReleaseSortFields.PUBLISHED_New
+		ReleaseSortFields.PUBLISHED_NEW
 	)
 	const [selectedType, setSelectedType] = useState<string>('Все')
-	const perPage = 12
+
 	const { execute: fetchReleases, isLoading: isReleasesLoading } = useLoading(
 		releasesStore.fetchReleases
 	)
@@ -33,7 +28,7 @@ const ReleasesPage = () => {
 
 	useEffect(() => {
 		fetchReleaseTypes()
-	}, [])
+	}, [fetchReleaseTypes])
 
 	useEffect(() => {
 		const type = releasesStore.releaseTypes.find(
@@ -52,7 +47,7 @@ const ReleasesPage = () => {
 				field = 'textCount'
 				order = 'desc'
 				break
-			case ReleaseSortFields.PUBLISHED_New:
+			case ReleaseSortFields.PUBLISHED_NEW:
 				field = 'published'
 				order = 'desc'
 				break
@@ -81,7 +76,13 @@ const ReleasesPage = () => {
 			perPage,
 			(currentPage - 1) * perPage
 		)
-	}, [selectedType, selectedSort, currentPage])
+	}, [
+		selectedType,
+		selectedSort,
+		currentPage,
+		releasesStore.releaseTypes,
+		fetchReleases,
+	])
 
 	return (
 		<>
@@ -107,7 +108,7 @@ const ReleasesPage = () => {
 							value={selectedType}
 						/>
 					) : (
-						<Loader size={'size-20'} />
+						<Loader size={'size-5'} />
 					)}
 				</div>
 
@@ -124,7 +125,7 @@ const ReleasesPage = () => {
 				</div>
 			</div>
 
-			<ReleasesPageGrid
+			<ReleasesGrid
 				items={releasesStore.releases}
 				isLoading={isReleasesLoading}
 				currentPage={currentPage}

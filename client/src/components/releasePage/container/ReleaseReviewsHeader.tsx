@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import ComboBox from '../../header/buttons/ComboBox'
+import ComboBox from '../../buttons/Combo-box'
 import { ReleaseReviewsSortEnum } from './ReleaseReviewsContainer'
 
 interface IProps {

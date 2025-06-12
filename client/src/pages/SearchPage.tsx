@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import AuthorsPageGrid from '../components/authorsPage/AuthorsPageGrid'
 import Loader from '../components/Loader'
-import ReleasesPageGrid from '../components/ReleasesPageGrid'
+import ReleasesGrid from '../components/release/Releases-grid'
 import useCustomNavigate from '../hooks/use-custom-navigate'
 import { useLoading } from '../hooks/use-loading'
 import { useStore } from '../hooks/use-store'
@@ -67,7 +67,7 @@ const SearchPage = observer(() => {
 				/>
 			)}
 			{type === SearchTypesEnum.RELEASES && (
-				<ReleasesPageGrid
+				<ReleasesGrid
 					items={searchStore.releases}
 					isLoading={isReleasesLoading}
 					currentPage={currentPage}

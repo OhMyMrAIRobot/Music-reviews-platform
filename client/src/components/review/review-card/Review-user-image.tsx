@@ -13,11 +13,13 @@ const ReviewUserImage: FC<IProps> = ({ nickname, img, points }) => {
 	return (
 		<div className='relative'>
 			<img
+				loading='lazy'
+				decoding='async'
 				alt={nickname}
 				src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${img}`}
 				width={38}
 				height={38}
-				className='rounded-full border border-white/10 size-10 lg:size-11 cursor-pointer'
+				className='rounded-full border border-white/10 size-10 lg:size-11 cursor-pointer aspect-square'
 			/>
 			{level && (
 				<img

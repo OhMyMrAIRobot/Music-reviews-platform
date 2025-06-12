@@ -1,6 +1,6 @@
 import { FC, useEffect, useRef, useState } from 'react'
-import { TickSvgIcon } from '../../releasePage/releasePageSvgIcons'
-import { ArrowBottomSvgIcon } from '../HeaderSvgIcons'
+import { ArrowBottomSvgIcon } from '../header/HeaderSvgIcons'
+import { TickSvgIcon } from '../releasePage/releasePageSvgIcons'
 
 interface ComboBoxProps {
 	options: string[]

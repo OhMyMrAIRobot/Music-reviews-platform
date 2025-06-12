@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
 import AuthorsPageGrid from '../components/authorsPage/AuthorsPageGrid'
-import ComboBox from '../components/header/buttons/ComboBox'
+import ComboBox from '../components/buttons/Combo-box'
 import Loader from '../components/Loader'
 import { useLoading } from '../hooks/use-loading'
 import { useStore } from '../hooks/use-store'

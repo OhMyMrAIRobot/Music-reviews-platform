@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
-import ComboBox from '../components/header/buttons/ComboBox'
+import ComboBox from '../components/buttons/Combo-box'
 import Loader from '../components/Loader'
 import Pagination from '../components/pagination/Pagination'
 import ReviewCard from '../components/review/review-card/Review-card'

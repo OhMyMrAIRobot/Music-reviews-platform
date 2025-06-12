@@ -1,6 +1,6 @@
 import { FC } from 'react'
 
-interface PaginationProps {
+interface IProps {
 	currentPage: number
 	totalItems: number
 	itemsPerPage: number
@@ -8,7 +8,7 @@ interface PaginationProps {
 	idToScroll: string
 }
 
-const Pagination: FC<PaginationProps> = ({
+const Pagination: FC<IProps> = ({
 	currentPage,
 	totalItems,
 	itemsPerPage,
