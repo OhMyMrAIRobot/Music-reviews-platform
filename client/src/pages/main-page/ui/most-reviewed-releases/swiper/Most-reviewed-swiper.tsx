@@ -16,7 +16,7 @@ interface IProps {
 }
 
 const MostReviewedSwiper: FC<IProps> = ({ show, setShow, index, setIndex }) => {
-	const { releasesStore } = useStore()
+	const { mainPageStore } = useStore()
 
 	return (
 		<div
@@ -45,7 +45,7 @@ const MostReviewedSwiper: FC<IProps> = ({ show, setShow, index, setIndex }) => {
 					className='hidden absolute left-[calc(50%-620px)] transform -translate-y-1/2 top-1/2 blur-xs h-full xl:flex items-center scale-90 slide-in-top'
 				>
 					<MostReviewedCarouselCard
-						release={releasesStore.topReleases[index - 1]}
+						release={mainPageStore.mostReviewedReleases[index - 1]}
 						index={index - 1}
 					/>
 				</div>
@@ -63,25 +63,25 @@ const MostReviewedSwiper: FC<IProps> = ({ show, setShow, index, setIndex }) => {
 				className='relative slide-in-top h-full flex items-center justify-center'
 			>
 				<MostReviewedCarouselCard
-					release={releasesStore.topReleases[index]}
+					release={mainPageStore.mostReviewedReleases[index]}
 					index={index}
 				/>
 			</div>
 
 			<MostReviewedSwiperButton
-				disabled={index === releasesStore.topReleases.length - 1}
+				disabled={index === mainPageStore.mostReviewedReleases.length - 1}
 				onClick={() => setIndex(index + 1)}
 			>
 				<NextSvgIcon />
 			</MostReviewedSwiperButton>
 
-			{index + 1 < releasesStore.topReleases.length && (
+			{index + 1 < mainPageStore.mostReviewedReleases.length && (
 				<div
 					key={`next-${index}`}
 					className='hidden absolute right-[calc(50%-620px)] transform -translate-y-1/2 top-1/2 blur-xs h-full xl:flex items-center scale-90 slide-in-top'
 				>
 					<MostReviewedCarouselCard
-						release={releasesStore.topReleases[index + 1]}
+						release={mainPageStore.mostReviewedReleases[index + 1]}
 						index={index + 1}
 					/>
 				</div>

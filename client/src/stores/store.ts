@@ -1,3 +1,4 @@
+import mainPageStore from '../pages/main-page/store/main-page-store'
 import AuthStore from './auth-store'
 import AuthorPageStore from './author-page-store'
 import AuthorsStore from './authors-store'
@@ -12,6 +13,7 @@ import SearchStore from './search-store'
 
 class Store {
 	authStore = AuthStore
+	mainPageStore = mainPageStore
 	notificationStore = NotificationStore
 	releasesStore = ReleasesStore
 	reviewsStore = ReviewsStore

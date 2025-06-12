@@ -1,4 +1,4 @@
-import { makeAutoObservable, runInAction } from 'mobx'
+import { makeAutoObservable } from 'mobx'
 import { ReviewAPI } from '../api/review-api'
 import { IReview } from '../models/review/review'
 import { TogglePromiseResult } from '../types/toggle-promise-result'
@@ -8,13 +8,8 @@ class ReviewsStore {
 		makeAutoObservable(this)
 	}
 
-	lastReviews: IReview[] = []
 	reviews: IReview[] = []
 	reviewsCount: number = 0
-
-	setLastReviews(data: IReview[]) {
-		this.lastReviews = data
-	}
 
 	setReviews(data: IReview[]) {
 		this.reviews = data
@@ -22,15 +17,6 @@ class ReviewsStore {
 
 	setCount(data: number) {
 		this.reviewsCount = data
-	}
-
-	fetchLastReviews = async () => {
-		try {
-			const data = await ReviewAPI.fetchReviews('asc', 45, 0, null, null)
-			this.setLastReviews(data.reviews)
-		} catch (e) {
-			console.log(e)
-		}
 	}
 
 	fetchReviews = async (order: string, limit: number, offset: number) => {
@@ -60,25 +46,25 @@ class ReviewsStore {
 				await ReviewAPI.addReviewToFav(reviewId)
 			}
 
-			const data = await ReviewAPI.fetchFavReviewUsersIds(reviewId)
-			const reviewIdx = this.reviews?.findIndex(val => val.id === reviewId)
-			const lastreviewIdx = this.lastReviews.findIndex(
-				val => val.id === reviewId
-			)
+			// const data = await ReviewAPI.fetchFavReviewUsersIds(reviewId)
+			// const reviewIdx = this.reviews?.findIndex(val => val.id === reviewId)
+			// const lastreviewIdx = this.lastReviews.findIndex(
+			// 	val => val.id === reviewId
+			// )
 
-			runInAction(() => {
-				if (reviewIdx !== undefined && reviewIdx !== -1) {
-					this.reviews[reviewIdx].user_fav_ids = data
-					this.reviews[reviewIdx].likes_count = data.length
-				}
-			})
+			// runInAction(() => {
+			// 	if (reviewIdx !== undefined && reviewIdx !== -1) {
+			// 		this.reviews[reviewIdx].user_fav_ids = data
+			// 		this.reviews[reviewIdx].likes_count = data.length
+			// 	}
+			// })
 
-			runInAction(() => {
-				if (lastreviewIdx !== undefined && lastreviewIdx !== -1) {
-					this.lastReviews[lastreviewIdx].user_fav_ids = data
-					this.lastReviews[lastreviewIdx].likes_count = data.length
-				}
-			})
+			// runInAction(() => {
+			// 	if (lastreviewIdx !== undefined && lastreviewIdx !== -1) {
+			// 		this.lastReviews[lastreviewIdx].user_fav_ids = data
+			// 		this.lastReviews[lastreviewIdx].likes_count = data.length
+			// 	}
+			// })
 
 			return {
 				status: true,

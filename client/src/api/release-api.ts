@@ -15,7 +15,7 @@ const _api = axios.create({
 })
 
 export const ReleaseAPI = {
-	async fetchTopReleases(): Promise<IRelease[]> {
+	async fetchMostReviewed(): Promise<IRelease[]> {
 		const { data } = await _api.get<IRelease[]>('list/most-commented')
 		return data
 	},
