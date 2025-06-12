@@ -9,7 +9,7 @@ import { ReleaseSortFields } from '../../models/release/release-sort-fields'
 const ReleasesPage = () => {
 	const perPage = 12
 
-	const { releasesStore } = useStore()
+	const { releasesPageStore } = useStore()
 
 	const [currentPage, setCurrentPage] = useState<number>(1)
 
@@ -19,11 +19,11 @@ const ReleasesPage = () => {
 	const [selectedType, setSelectedType] = useState<string>('Все')
 
 	const { execute: fetchReleases, isLoading: isReleasesLoading } = useLoading(
-		releasesStore.fetchReleases
+		releasesPageStore.fetchReleases
 	)
 
 	const { execute: fetchReleaseTypes, isLoading: isTypesLoading } = useLoading(
-		releasesStore.fetchReleaseTypes
+		releasesPageStore.fetchReleaseTypes
 	)
 
 	useEffect(() => {
@@ -31,7 +31,7 @@ const ReleasesPage = () => {
 	}, [fetchReleaseTypes])
 
 	useEffect(() => {
-		const type = releasesStore.releaseTypes.find(
+		const type = releasesPageStore.releaseTypes.find(
 			entry => entry.type === selectedType
 		)
 
@@ -80,7 +80,7 @@ const ReleasesPage = () => {
 		selectedType,
 		selectedSort,
 		currentPage,
-		releasesStore.releaseTypes,
+		releasesPageStore.releaseTypes,
 		fetchReleases,
 	])
 
@@ -97,11 +97,11 @@ const ReleasesPage = () => {
 					Тип релизов:
 				</span>
 				<div className='w-full sm:w-55'>
-					{!isTypesLoading && releasesStore.releaseTypes.length > 0 ? (
+					{!isTypesLoading && releasesPageStore.releaseTypes.length > 0 ? (
 						<ComboBox
 							options={[
 								'Все',
-								...releasesStore.releaseTypes.map(entry => entry.type),
+								...releasesPageStore.releaseTypes.map(entry => entry.type),
 							]}
 							onChange={setSelectedType}
 							className='border border-white/10'
@@ -126,11 +126,11 @@ const ReleasesPage = () => {
 			</div>
 
 			<ReleasesGrid
-				items={releasesStore.releases}
+				items={releasesPageStore.releases}
 				isLoading={isReleasesLoading}
 				currentPage={currentPage}
 				setCurrentPage={setCurrentPage}
-				total={releasesStore.releasesCount}
+				total={releasesPageStore.releasesCount}
 				perPage={perPage}
 			/>
 		</>

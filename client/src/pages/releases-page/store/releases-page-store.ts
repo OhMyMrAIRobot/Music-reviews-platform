@@ -3,7 +3,7 @@ import { ReleaseAPI } from '../../../api/release-api'
 import { IRelease } from '../../../models/release/release'
 import { IReleaseType } from '../../../models/release/release-types'
 
-class ReleasesStore {
+class ReleasesPageStore {
 	constructor() {
 		makeAutoObservable(this)
 	}
@@ -57,4 +57,4 @@ class ReleasesStore {
 	}
 }
 
-export default new ReleasesStore()
+export default new ReleasesPageStore()

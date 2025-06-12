@@ -5,7 +5,7 @@ interface IProps {
 	position: number | null
 }
 
-const ReviewTitle: FC<IProps> = ({ nickname, position }) => {
+const ReviewAuthor: FC<IProps> = ({ nickname, position }) => {
 	return (
 		<div className='flex flex-col gap-1 justify-center'>
 			<button className='text-sm lg:text-lg font-semibold block items-center max-w-35 text-ellipsis overflow-hidden whitespace-nowrap cursor-pointer'>
@@ -20,4 +20,4 @@ const ReviewTitle: FC<IProps> = ({ nickname, position }) => {
 	)
 }
 
-export default ReviewTitle
+export default ReviewAuthor

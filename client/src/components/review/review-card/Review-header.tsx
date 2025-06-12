@@ -1,8 +1,8 @@
 import { FC } from 'react'
 import useCustomNavigate from '../../../hooks/use-custom-navigate'
 import { IReview } from '../../../models/review/review'
+import ReviewAuthor from './Review-author'
 import ReviewMarks from './Review-marks'
-import ReviewTitle from './Review-title'
 import ReviewUserImage from './Review-user-image'
 
 interface IProps {
@@ -24,7 +24,7 @@ const ReviewHeader: FC<IProps> = ({ review }) => {
 					points={review.points}
 				/>
 
-				<ReviewTitle nickname={review.nickname} position={review.position} />
+				<ReviewAuthor nickname={review.nickname} position={review.position} />
 			</div>
 
 			<div className='flex items-center justify-end gap-2 lg:gap-4 select-none'>

@@ -41,7 +41,7 @@ const ReleasesGrid: FC<IProps> = ({
 									<ReleaseCard release={release} isLoading={isLoading} />
 								</div>
 						  ))}
-					{items.length === 0 && (
+					{items.length === 0 && !isLoading && (
 						<p className='text-center text-2xl font-semibold mt-10 absolute w-full'>
 							Релизы не найдены!
 						</p>

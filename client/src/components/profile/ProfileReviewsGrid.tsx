@@ -21,7 +21,7 @@ const ProfileReviewsGrid: FC<IProps> = ({
 	isLoading,
 }) => {
 	//TODO: USE PROFILE STORE
-	const { reviewsStore } = useStore()
+	const { reviewsPageStore } = useStore()
 
 	return (
 		<section className='mt-5'>
@@ -32,7 +32,8 @@ const ProfileReviewsGrid: FC<IProps> = ({
 							<ReviewCard
 								key={review.id}
 								review={review}
-								storeToggle={reviewsStore.toggleFavReview}
+								storeToggle={reviewsPageStore.toggleFavReview}
+								isLoading={false}
 							/>
 						))}
 					</div>

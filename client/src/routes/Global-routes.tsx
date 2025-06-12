@@ -10,7 +10,7 @@ import ProfilePage from '../pages/ProfilePage'
 import ReleasePage from '../pages/ReleasePage'
 import ReleasesPage from '../pages/releases-page/Releases-page'
 import ReleasesRatingsPage from '../pages/ReleasesRatingsPage'
-import ReviewsPage from '../pages/ReviewsPage'
+import ReviewsPage from '../pages/reviews-page/Reviews-page'
 import SearchPage from '../pages/SearchPage'
 import { ROUTES } from './routes-enum'
 

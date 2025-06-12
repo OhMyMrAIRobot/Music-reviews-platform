@@ -1,9 +1,10 @@
 import { makeAutoObservable } from 'mobx'
-import { ReviewAPI } from '../api/review-api'
-import { IReview } from '../models/review/review'
-import { TogglePromiseResult } from '../types/toggle-promise-result'
+import { ReviewAPI } from '../../../api/review-api'
+import { IReview } from '../../../models/review/review'
+import { TogglePromiseResult } from '../../../types/toggle-promise-result'
+import { toggleFav } from '../../../utils/toggle-fav'
 
-class ReviewsStore {
+class ReviewsPageStore {
 	constructor() {
 		makeAutoObservable(this)
 	}
@@ -39,41 +40,20 @@ class ReviewsStore {
 		reviewId: string,
 		isFav: boolean
 	): Promise<TogglePromiseResult> => {
-		try {
-			if (isFav) {
-				await ReviewAPI.deleteReviewFromFav(reviewId)
-			} else {
-				await ReviewAPI.addReviewToFav(reviewId)
-			}
+		const result = await toggleFav(this.reviews, reviewId, isFav, {
+			add: ReviewAPI.addReviewToFav,
+			delete: ReviewAPI.deleteReviewFromFav,
+			fetch: ReviewAPI.fetchFavReviewUsersIds,
+		})
 
-			// const data = await ReviewAPI.fetchFavReviewUsersIds(reviewId)
-			// const reviewIdx = this.reviews?.findIndex(val => val.id === reviewId)
-			// const lastreviewIdx = this.lastReviews.findIndex(
-			// 	val => val.id === reviewId
-			// )
-
-			// runInAction(() => {
-			// 	if (reviewIdx !== undefined && reviewIdx !== -1) {
-			// 		this.reviews[reviewIdx].user_fav_ids = data
-			// 		this.reviews[reviewIdx].likes_count = data.length
-			// 	}
-			// })
-
-			// runInAction(() => {
-			// 	if (lastreviewIdx !== undefined && lastreviewIdx !== -1) {
-			// 		this.lastReviews[lastreviewIdx].user_fav_ids = data
-			// 		this.lastReviews[lastreviewIdx].likes_count = data.length
-			// 	}
-			// })
-
+		if (result) {
 			return {
 				status: true,
 				message: isFav
 					? 'Вы убрали рецензию из списка понравившихся!'
 					: 'Вы отметили рецензию как понравившеюся!',
 			}
-		} catch (e) {
-			console.log(e)
+		} else {
 			return {
 				status: false,
 				message: isFav
@@ -84,4 +64,4 @@ class ReviewsStore {
 	}
 }
 
-export default new ReviewsStore()
+export default new ReviewsPageStore()
