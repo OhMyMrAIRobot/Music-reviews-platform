@@ -42,7 +42,7 @@ const ComboBox: FC<ComboBoxProps> = ({
 	return (
 		<div
 			ref={comboRef}
-			className={`relative inline-block w-full h-full bg-primary rounded-md ${className}`}
+			className={`relative inline-block w-full h-full bg-primary rounded-md ${className} select-none`}
 		>
 			<button
 				onClick={() => setIsOpen(!isOpen)}

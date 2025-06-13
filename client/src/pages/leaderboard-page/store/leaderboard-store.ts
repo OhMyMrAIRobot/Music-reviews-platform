@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx'
-import { LeaderboardAPI } from '../api/leaderboard-api'
-import { ILeaderboardItem } from '../models/leaderboard/leaderboard-item'
+import { LeaderboardAPI } from '../../../api/leaderboard-api'
+import { ILeaderboardItem } from '../../../models/leaderboard/leaderboard-item'
 
 class LeaderboardStore {
 	constructor() {

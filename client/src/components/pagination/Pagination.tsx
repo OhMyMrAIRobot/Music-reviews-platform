@@ -71,7 +71,7 @@ const Pagination: FC<IProps> = ({
 	const pageNumbers = getPageNumbers()
 
 	return (
-		<div className='flex flex-wrap items-center justify-center gap-1 w-full'>
+		<div className='flex flex-wrap items-center justify-center gap-1 w-full select-none'>
 			<button
 				onClick={handlePrev}
 				hidden={currentPage === 1}

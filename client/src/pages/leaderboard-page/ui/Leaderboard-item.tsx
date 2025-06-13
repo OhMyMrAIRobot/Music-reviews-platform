@@ -1,0 +1,169 @@
+import { FC } from 'react'
+import TooltipSpan from '../../../components/releasePage/tooltip/Tooltip-span'
+import NoTextReviewSvg from '../../../components/review/svg/No-text-review-svg'
+import TextReviewSvg from '../../../components/review/svg/Text-review-svg'
+import HeartFillSvg from '../../../components/svg/Heart-fill-svg'
+import HeartSvg from '../../../components/svg/Heart-svg'
+import LogoSmallSvg from '../../../components/svg/Logo-small-svg'
+import Tooltip from '../../../components/tooltip/Tooltip'
+import useCustomNavigate from '../../../hooks/use-custom-navigate'
+import { ILeaderboardItem } from '../../../models/leaderboard/leaderboard-item'
+import { formatNumber } from '../../../utils/format-number'
+import { getLevelConfig, getUserLevel } from '../../../utils/user-level'
+
+interface IProps {
+	item?: ILeaderboardItem
+	isLoading: boolean
+}
+
+const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
+	const { navigatoToProfile } = useCustomNavigate()
+
+	const level = getUserLevel(item?.points ?? 0)
+
+	return isLoading ? (
+		<div className='bg-gray-400 w-full h-25 lg:h-31 xl:h-19 animate-pulse opacity-40 rounded-lg' />
+	) : (
+		item && (
+			<div className='bg-zinc-900 border border-white/10 flex max-xl:flex-wrap p-[3px] xl:pr-2 xl:h-[75px] max-xl:gap-y-2 rounded-lg items-stretch relative group xl:hover:bg-zinc-800 transition-all select-none'>
+				<div className='absolute max-xl:order-11 size-5 lg:size-8 xl:size-auto max-xl:text-[10px] z-20 max-xl:rounded-full max-xl:-top-2 max-xl:-left-2 bg-zinc-950 xl:relative border border-white/10 flex items-center justify-center aspect-square rounded-lg mr-1'>
+					{item.rank}
+				</div>
+
+				<div className='h-full relative max-xl:order-3'>
+					<div className='flex items-center text-[10px] sm:text-sm h-7 xl:h-full justify-center gap-1.5 xl:flex-col xl:ml-auto min-w-[75px] lg:min-w-[80px] px-2 font-semibold bg-zinc-950 border border-white/10 rounded-lg'>
+						<LogoSmallSvg className={'w-[30px] h-[20px] size-5'} />
+
+						<span className='leading-3 font-bold xl:text-lg'>
+							{formatNumber(item.points)}
+						</span>
+					</div>
+				</div>
+
+				<div
+					onClick={() => navigatoToProfile(item.user_id)}
+					className='flex shrink-0 space-x-4 items-center relative max-xl:w-1/2 max-xl:order-1 cursor-pointer'
+				>
+					<div className='relative z-20'>
+						<span className='relative flex shrink-0 overflow-hidden rounded-full size-[40px] lg:size-[60px] border border-white/10'>
+							<img
+								loading='lazy'
+								decoding='async'
+								alt={item.nickname}
+								className='aspect-square h-full w-full'
+								src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
+									item.avatar
+								}`}
+							/>
+						</span>
+
+						{level && (
+							<div className='absolute -bottom-0.5 -right-2'>
+								<img
+									alt={item.avatar + level}
+									loading='lazy'
+									decoding='async'
+									width='38'
+									height='38'
+									className='size-6 lg:size-[38px]'
+									src={`${import.meta.env.VITE_SERVER_URL}/public/assets/${
+										getLevelConfig(level).image
+									}`}
+								/>
+							</div>
+						)}
+					</div>
+
+					<div className='w-[100px] xl:w-[150px] 2xl:w-[200px]'>
+						<div className='text-ellipsis max-w-full whitespace-nowrap overflow-hidden text-[12px] sm:text-lg font-semibold'>
+							{item.nickname}
+						</div>
+					</div>
+				</div>
+
+				<div className='h-14 sm:h-20 xl:h-auto relative xl:w-[260px] rounded-r-lg xl:rounded-r-2xl overflow-hidden xl:mr-5 max-xl:order-2 max-xl:w-1/2 xl:block shrink-0'>
+					<div className='bg-gradient-to-r from-zinc-900 h-full w-full absolute top-0 left-[-1px] z-10'></div>
+					<img
+						alt='user cover'
+						loading='lazy'
+						decoding='async'
+						data-nimg='fill'
+						className='object-cover'
+						sizes='100vw'
+						src={`${import.meta.env.VITE_SERVER_URL}/public/covers/${
+							item.cover
+						}`}
+					/>
+				</div>
+
+				<TooltipSpan
+					tooltip={
+						<Tooltip>
+							<div className='font-medium space-y-1'>
+								<div className='flex gap-x-2'>
+									<TextReviewSvg className='size-5' />
+									Написано рецензий
+								</div>
+								<div className='flex gap-x-2'>
+									<NoTextReviewSvg className='size-5' />
+									Поставлено оценок без рецензий
+								</div>
+							</div>
+						</Tooltip>
+					}
+					spanClassName={
+						'bg-zinc-950 border border-white/10 max-xl:order-5 flex xl:flex-col text-[10px] sm:text-sm justify-center items-center gap-1 lg:gap-2 px-1 xl:px-4 rounded-lg relative mr-1 xl:mr-2 min-w-[100px] xl:ml-auto'
+					}
+					centered={true}
+				>
+					<div className='flex items-center gap-1.5'>
+						<TextReviewSvg className='size-4 xl:size-6' />
+						<span className='font-semibold'>{item.text_count}</span>
+					</div>
+					<div className='flex items-center gap-1.5'>
+						<NoTextReviewSvg className='size-4 xl:size-6' />
+						<span className='font-semibold'>{item.no_text_count}</span>
+					</div>
+				</TooltipSpan>
+
+				<TooltipSpan
+					tooltip={
+						<Tooltip>
+							<div className='font-medium space-y-1'>
+								<div className='flex gap-x-2'>
+									<HeartFillSvg className={'size-[19px]'} />
+									Получено лайков на свои рецензии от пользователей
+								</div>
+								<div className='flex gap-x-2'>
+									<HeartSvg className={'size-[19px]'} />
+									Поставлено лайков на рецензии пользователей
+								</div>
+							</div>
+						</Tooltip>
+					}
+					spanClassName={
+						'bg-zinc-950 border border-white/10 flex xl:flex-col max-xl:order-6 h-7 xl:h-full text-[10px] sm:text-sm items-center justify-center gap-1 lg:gap-2 px-1 xl:px-4 rounded-lg relative min-w-[100px]'
+					}
+					centered={true}
+				>
+					<div className='flex items-center gap-1.5'>
+						<HeartFillSvg className={'size-[19px]'} />
+
+						<span className='font-semibold'>
+							{formatNumber(item.received_likes)}
+						</span>
+					</div>
+					<div className='flex items-center gap-1.5'>
+						<HeartSvg className={'size-[19px]'} />
+
+						<span className='font-semibold'>
+							{formatNumber(item.given_likes)}
+						</span>
+					</div>
+				</TooltipSpan>
+			</div>
+		)
+	)
+}
+
+export default LeaderboardItem

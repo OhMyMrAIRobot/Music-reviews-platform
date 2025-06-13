@@ -1,9 +1,7 @@
 import { FC } from 'react'
+import NextSvg from '../../../../../components/carousel/svg/Next-svg'
+import PrevSvg from '../../../../../components/carousel/svg/Prev-svg'
 import { CloseSvgIcon } from '../../../../../components/notifications/NotificationSvgIcons'
-import {
-	NextSvgIcon,
-	PrevSvgIcon,
-} from '../../../../../components/svg/ReleaseSvgIcons'
 import { useStore } from '../../../../../hooks/use-store'
 import MostReviewedSwiperButton from './Most-reviewed-swiper-button'
 import MostReviewedCarouselCard from './Most-reviewed-swiper-card'
@@ -55,7 +53,7 @@ const MostReviewedSwiper: FC<IProps> = ({ show, setShow, index, setIndex }) => {
 				disabled={index === 0}
 				onClick={() => setIndex(index - 1)}
 			>
-				<PrevSvgIcon />
+				<PrevSvg className={''} />
 			</MostReviewedSwiperButton>
 
 			<div
@@ -72,7 +70,7 @@ const MostReviewedSwiper: FC<IProps> = ({ show, setShow, index, setIndex }) => {
 				disabled={index === mainPageStore.mostReviewedReleases.length - 1}
 				onClick={() => setIndex(index + 1)}
 			>
-				<NextSvgIcon />
+				<NextSvg className={''} />
 			</MostReviewedSwiperButton>
 
 			{index + 1 < mainPageStore.mostReviewedReleases.length && (

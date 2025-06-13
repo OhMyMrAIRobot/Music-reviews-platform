@@ -2,7 +2,7 @@ import { FC } from 'react'
 import ReleaseAuthors from '../../../../../components/release/Release-authors'
 import ReleaseRatings from '../../../../../components/release/Release-ratings'
 import ReleaseTypeIcon from '../../../../../components/release/Release-type-icon'
-import { TextReviewSvgIcon } from '../../../../../components/svg/ReleaseSvgIcons'
+import TextReviewSvg from '../../../../../components/review/svg/Text-review-svg'
 import useCustomNavigate from '../../../../../hooks/use-custom-navigate'
 import { IRelease } from '../../../../../models/release/release'
 
@@ -77,7 +77,7 @@ const MostReviewedCarouselCard: FC<IProps> = ({ release, index }) => {
 						}}
 						className='border border-white/0 px-3 h-full bg-white/10 flex items-center rounded-full min-w-20 lg:min-w-25 justify-center text-center gap-1 hover:bg-white/15 hover:border-white/10 cursor-pointer transition-colors duration-200'
 					>
-						<TextReviewSvgIcon classname={'size-5 mr-1'} />
+						<TextReviewSvg className={'size-5 mr-1'} />
 						<span>{release.text_count + release.no_text_count}</span>
 					</button>
 				</div>

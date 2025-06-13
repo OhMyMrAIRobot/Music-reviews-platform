@@ -1,8 +1,9 @@
-const LBHeader = () => {
+const LeaderboardTitle = () => {
 	return (
-		<div className='relative py-5 lg:py-12 rounded-2xl overflow-hidden border flex justify-center items-center border-white/10'>
+		<div className='relative py-5 lg:py-12 rounded-2xl overflow-hidden border flex justify-center items-center border-white/10 select-none'>
 			<div className='z-10 relative text-center max-w-140'>
 				<h1 className='lg:text-4xl font-bold'>Рейтинг топ-90</h1>
+
 				<div className='text-xs lg:text-base mt-1 lg:mt-4 px-2'>
 					90 пользователей получивших наибольшее количество баллов сообщества за
 					совокупность авторских лайков, рецензий, оценок без рецензий,
@@ -19,4 +20,4 @@ const LBHeader = () => {
 	)
 }
 
-export default LBHeader
+export default LeaderboardTitle

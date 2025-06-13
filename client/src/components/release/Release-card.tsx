@@ -1,7 +1,8 @@
 import { FC } from 'react'
 import useCustomNavigate from '../../hooks/use-custom-navigate'
 import { IRelease } from '../../models/release/release'
-import { NoTextReviewSvgIcon, TextReviewSvgIcon } from '../svg/ReleaseSvgIcons'
+import NoTextReviewSvg from '../review/svg/No-text-review-svg'
+import TextReviewSvg from '../review/svg/Text-review-svg'
 import ReleaseAuthors from './Release-authors'
 import ReleaseRatings from './Release-ratings'
 import ReleaseTypeIcon from './Release-type-icon'
@@ -38,13 +39,13 @@ const ReleaseCard: FC<IProps> = ({ release, isLoading }) => {
 						<div className='absolute bottom-1.5 left-1.5 bg-zinc-900 rounded-full px-1.5 flex gap-2 items-center font-semibold text-sm'>
 							{release.text_count > 0 && (
 								<div className='flex gap-0.75 items-center'>
-									<TextReviewSvgIcon classname='size-3' />
+									<TextReviewSvg className='size-3' />
 									<span>{release.text_count}</span>
 								</div>
 							)}
 							{release.no_text_count > 0 && (
 								<div className='flex gap-0.75 items-center'>
-									<NoTextReviewSvgIcon classname='size-3' />
+									<NoTextReviewSvg className='size-3' />
 									<span>{release.no_text_count}</span>
 								</div>
 							)}

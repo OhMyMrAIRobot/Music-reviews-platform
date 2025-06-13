@@ -23,47 +23,6 @@ export const ProfileSvgIcon = () => (
 	</svg>
 )
 
-export const HeartSvgIcon = () => (
-	<svg
-		stroke='currentColor'
-		fill='none'
-		strokeWidth='0'
-		width='25'
-		height='25'
-		viewBox='0 0 20 20'
-		className='size-[19px]'
-	>
-		<g clipPath='url(#clip0_4127_2080)'>
-			<path
-				d='M15.18 2.5L17.5 4.83V7.75L10 15.44L2.5 7.75V4.83L4.82 2.5H7.74L8.23 2.99L10.01 4.78L11.79 2.99L12.28 2.5H15.2M16.24 0H11.24L10.02 1.23L8.8 0H3.78L0 3.8V8.77L10 19.02L20 8.77V3.8L16.22 0H16.24Z'
-				fill='currentColor'
-				stroke='currentColor'
-			></path>
-		</g>
-		<defs>
-			<clipPath id='clip0_4127_2080'>
-				<rect width='20' height='19.02' fill='white'></rect>
-			</clipPath>
-		</defs>
-	</svg>
-)
-
-export const HeartFilledSvgIcon = () => (
-	<svg
-		xmlns='http://www.w3.org/2000/svg'
-		width='27'
-		height='25'
-		viewBox='0 0 27 25'
-		fill='none'
-		className='size-[19px]'
-	>
-		<path
-			d='M21.897 0H15.147L13.5 1.61672L11.853 0H5.103L0 4.99474V11.5273L13.5 25L27 11.5273V4.99474L21.897 0Z'
-			fill='white'
-		/>
-	</svg>
-)
-
 export const SettingsSvgIcon = () => (
 	<svg
 		stroke='currentColor'
