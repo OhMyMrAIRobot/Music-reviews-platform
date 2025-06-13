@@ -1,10 +1,10 @@
 import { FC } from 'react'
-import { IRelease } from '../../models/release/release'
-import Pagination from '../pagination/Pagination'
-import ReleaseCard from './Release-card'
+import { IAuthorData } from '../../../models/author/authors-response'
+import Pagination from '../../pagination/Pagination'
+import AuthorCard from './Author-card'
 
 interface IProps {
-	items: IRelease[]
+	items: IAuthorData[]
 	isLoading: boolean
 	currentPage: number
 	setCurrentPage: (val: number) => void
@@ -12,7 +12,7 @@ interface IProps {
 	perPage: number
 }
 
-const ReleasesGrid: FC<IProps> = ({
+const AuthorsGrid: FC<IProps> = ({
 	items,
 	isLoading,
 	currentPage,
@@ -23,27 +23,29 @@ const ReleasesGrid: FC<IProps> = ({
 	return (
 		<>
 			<section className='mt-5 overflow-hidden'>
-				<div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 xl:gap-5'>
+				<div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 lg:gap-6'>
 					{isLoading
 						? Array.from({
 								length:
 									total > 0 ? total - (currentPage - 1) * perPage : perPage,
 						  }).map((_, idx) => (
-								<div
-									className='p-2 min-h-72 md:min-h-80'
-									key={`release-skeleton-${idx}`}
-								>
-									<ReleaseCard isLoading={true} />
-								</div>
+								<AuthorCard
+									key={`author-skeleton-${idx}`}
+									isLoading={isLoading}
+								/>
 						  ))
-						: items.map(release => (
-								<div className='p-2' key={release.id}>
-									<ReleaseCard release={release} isLoading={isLoading} />
-								</div>
+						: items.length > 0 &&
+						  items.map(author => (
+								<AuthorCard
+									key={author.id}
+									author={author}
+									isLoading={isLoading}
+								/>
 						  ))}
+
 					{items.length === 0 && !isLoading && (
 						<p className='text-center text-2xl font-semibold mt-10 absolute w-full'>
-							Релизы не найдены!
+							Авторы не найдены!
 						</p>
 					)}
 				</div>
@@ -56,7 +58,7 @@ const ReleasesGrid: FC<IProps> = ({
 						totalItems={total}
 						itemsPerPage={perPage}
 						onPageChange={setCurrentPage}
-						idToScroll={'releases'}
+						idToScroll={'authors'}
 					/>
 				</div>
 			)}
@@ -64,4 +66,4 @@ const ReleasesGrid: FC<IProps> = ({
 	)
 }
 
-export default ReleasesGrid
+export default AuthorsGrid

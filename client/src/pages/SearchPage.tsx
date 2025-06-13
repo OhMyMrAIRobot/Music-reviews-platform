@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router'
-import AuthorsPageGrid from '../components/authorsPage/AuthorsPageGrid'
+import AuthorsGrid from '../components/author/authors-grid/Authors-grid'
 import Loader from '../components/Loader'
 import ReleasesGrid from '../components/release/Releases-grid'
 import useCustomNavigate from '../hooks/use-custom-navigate'
@@ -57,7 +57,7 @@ const SearchPage = observer(() => {
 	) : (
 		<>
 			{type === SearchTypesEnum.AUTHORS && (
-				<AuthorsPageGrid
+				<AuthorsGrid
 					items={searchStore.authors}
 					isLoading={isAuthorsLoading}
 					currentPage={currentPage}

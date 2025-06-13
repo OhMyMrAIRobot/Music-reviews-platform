@@ -1,9 +1,9 @@
 import { makeAutoObservable } from 'mobx'
-import { AuthorAPI } from '../api/author-api'
-import { IAuthorType } from '../models/author/author-type'
-import { IAuthorData } from '../models/author/authors-response'
+import { AuthorAPI } from '../../../api/author-api'
+import { IAuthorType } from '../../../models/author/author-type'
+import { IAuthorData } from '../../../models/author/authors-response'
 
-class AuthorsStore {
+class AuthorsPageStore {
 	constructor() {
 		makeAutoObservable(this)
 	}
@@ -48,4 +48,4 @@ class AuthorsStore {
 	}
 }
 
-export default new AuthorsStore()
+export default new AuthorsPageStore()

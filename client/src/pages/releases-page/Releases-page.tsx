@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import ComboBox from '../../components/buttons/Combo-box'
-import Loader from '../../components/Loader'
 import ReleasesGrid from '../../components/release/Releases-grid'
 import { useLoading } from '../../hooks/use-loading'
 import { useStore } from '../../hooks/use-store'
@@ -92,11 +91,12 @@ const ReleasesPage = () => {
 			>
 				Добавленные релизы
 			</h1>
+
 			<div className='rounded-lg border border-white/10 bg-zinc-900 p-3 shadow-sm mt-5 flex gap-4 items-center'>
 				<span className='hidden sm:block text-white/70 font-bold '>
 					Тип релизов:
 				</span>
-				<div className='w-full sm:w-55'>
+				<div className='w-full sm:w-55 h-10'>
 					{!isTypesLoading && releasesPageStore.releaseTypes.length > 0 ? (
 						<ComboBox
 							options={[
@@ -108,14 +108,14 @@ const ReleasesPage = () => {
 							value={selectedType}
 						/>
 					) : (
-						<Loader size={'size-5'} />
+						<div className='bg-gray-400 animate-pulse opacity-40 w-full h-full rounded-md' />
 					)}
 				</div>
 
 				<span className='hidden sm:block text-white/70 font-bold '>
 					Сортировать по:
 				</span>
-				<div className='w-full sm:w-82'>
+				<div className='w-full sm:w-82 h-10'>
 					<ComboBox
 						options={Object.values(ReleaseSortFields)}
 						onChange={setSelectedSort}

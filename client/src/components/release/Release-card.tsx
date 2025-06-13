@@ -15,7 +15,7 @@ const ReleaseCard: FC<IProps> = ({ release, isLoading }) => {
 	const { navigateToRelease } = useCustomNavigate()
 
 	return isLoading ? (
-		<div className='bg-gray-400 w-full h-full animate-pulse opacity-40'></div>
+		<div className='bg-gray-400 w-full h-full animate-pulse opacity-40 rounded-xl' />
 	) : (
 		release && (
 			<button

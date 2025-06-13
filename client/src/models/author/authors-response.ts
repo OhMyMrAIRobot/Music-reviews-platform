@@ -1,3 +1,5 @@
+import { IAuthorType } from './author-type'
+
 export interface IAuthorsResponse {
 	count: number
 	authors: IAuthorData[]
@@ -8,7 +10,7 @@ export interface IAuthorData {
 	img: string
 	name: string
 	likes_count: number
-	author_types: { type: string }[]
+	author_types: IAuthorType[]
 	release_type_stats: IReleaseTypeStats[]
 }
 

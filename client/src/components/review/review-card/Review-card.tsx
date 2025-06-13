@@ -65,7 +65,7 @@ const ReviewCard: FC<IProps> = observer(
 		}
 
 		return isLoading ? (
-			<div className='bg-gray-400 rounded-lg animate-pulse opacity-40 h-64' />
+			<div className='bg-gray-400 animate-pulse opacity-40 h-64 rounded-[15px] lg:rounded-[20px]' />
 		) : (
 			review && (
 				<div className='bg-zinc-900 relative p-1.5 flex flex-col mx-auto border border-zinc-800 rounded-[15px] lg:rounded-[20px] w-full max-w-full min-w-0'>

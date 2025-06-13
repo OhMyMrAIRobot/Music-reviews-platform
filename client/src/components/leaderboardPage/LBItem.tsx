@@ -2,10 +2,10 @@ import { FC } from 'react'
 import useCustomNavigate from '../../hooks/use-custom-navigate'
 import { ILeaderboardItem } from '../../models/leaderboard/leaderboard-item'
 import { getLevelConfig, getUserLevel } from '../../utils/user-level'
-import { ToolTip } from '../authorsPage/AuthorItem'
 import { HeartFilledSvgIcon, HeartSvgIcon } from '../header/HeaderSvgIcons'
 import TooltipSpan from '../releasePage/tooltip/Tooltip-span'
 import { NoTextReviewSvgIcon, TextReviewSvgIcon } from '../svg/ReleaseSvgIcons'
+import Tooltip from '../tooltip/Tooltip'
 import { LogoSvg } from './LBSvgIcons'
 
 interface IProps {
@@ -100,7 +100,7 @@ const LBItem: FC<IProps> = ({ item }) => {
 
 			<TooltipSpan
 				tooltip={
-					<ToolTip>
+					<Tooltip>
 						<div className='font-medium space-y-1'>
 							<div className='flex gap-x-2'>
 								<TextReviewSvgIcon classname='size-5' />
@@ -111,7 +111,7 @@ const LBItem: FC<IProps> = ({ item }) => {
 								Поставлено оценок без рецензий
 							</div>
 						</div>
-					</ToolTip>
+					</Tooltip>
 				}
 				spanClassName={
 					'bg-zinc-950 border border-white/10 max-xl:order-5 flex xl:flex-col text-[10px] sm:text-sm justify-center items-center gap-1 lg:gap-2 px-1 xl:px-4 rounded-lg relative mr-1 xl:mr-2 min-w-[100px] xl:ml-auto'
@@ -132,7 +132,7 @@ const LBItem: FC<IProps> = ({ item }) => {
 
 			<TooltipSpan
 				tooltip={
-					<ToolTip>
+					<Tooltip>
 						<div className='font-medium space-y-1'>
 							<div className='flex gap-x-2'>
 								<HeartFilledSvgIcon />
@@ -143,7 +143,7 @@ const LBItem: FC<IProps> = ({ item }) => {
 								Поставлено лайков на рецензии пользователей
 							</div>
 						</div>
-					</ToolTip>
+					</Tooltip>
 				}
 				spanClassName={
 					'bg-zinc-950 border border-white/10 flex xl:flex-col max-xl:order-6 h-7 xl:h-full text-[10px] sm:text-sm items-center justify-center gap-1 lg:gap-2 px-1 xl:px-4 rounded-lg relative min-w-[100px]'
