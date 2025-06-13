@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import LBHeader from '../components/leaderboardPage/LBHeader'
 import LBItem from '../components/leaderboardPage/LBItem'
-import Loader from '../components/Loader'
+import Loader from '../components/loader/loader'
 import { useLoading } from '../hooks/use-loading'
 import { useStore } from '../hooks/use-store'
 

@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useParams } from 'react-router'
-import Loader from '../components/Loader'
+import Loader from '../components/loader/loader'
 import ProfileLeftSection from '../components/profile/ProfileLeftSection'
 import ProfileRightSection from '../components/profile/ProfileRightSection'
 import { useLoading } from '../hooks/use-loading'

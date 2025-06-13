@@ -1,10 +1,10 @@
 import { makeAutoObservable } from 'mobx'
-import { AuthorAPI } from '../api/author-api'
-import { ReleaseAPI } from '../api/release-api'
-import { IAuthorData } from '../models/author/authors-response'
-import { IRelease } from '../models/release/release'
+import { AuthorAPI } from '../../../api/author-api'
+import { ReleaseAPI } from '../../../api/release-api'
+import { IAuthorData } from '../../../models/author/authors-response'
+import { IRelease } from '../../../models/release/release'
 
-class SearchStore {
+class SearchPageStore {
 	constructor() {
 		makeAutoObservable(this)
 	}
@@ -67,4 +67,4 @@ class SearchStore {
 	}
 }
 
-export default new SearchStore()
+export default new SearchPageStore()

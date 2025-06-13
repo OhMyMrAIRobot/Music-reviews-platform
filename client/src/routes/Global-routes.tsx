@@ -11,7 +11,7 @@ import ReleasePage from '../pages/ReleasePage'
 import ReleasesPage from '../pages/releases-page/Releases-page'
 import ReleasesRatingsPage from '../pages/ReleasesRatingsPage'
 import ReviewsPage from '../pages/reviews-page/Reviews-page'
-import SearchPage from '../pages/SearchPage'
+import SearchPage from '../pages/search-page/Search-page'
 import { ROUTES } from './routes-enum'
 
 const GlobalRoutes = () => {

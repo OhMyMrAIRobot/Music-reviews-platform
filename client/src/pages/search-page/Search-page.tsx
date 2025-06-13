@@ -1,31 +1,36 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router'
-import AuthorsGrid from '../components/author/authors-grid/Authors-grid'
-import Loader from '../components/Loader'
-import ReleasesGrid from '../components/release/Releases-grid'
-import useCustomNavigate from '../hooks/use-custom-navigate'
-import { useLoading } from '../hooks/use-loading'
-import { useStore } from '../hooks/use-store'
-import { SearchTypesEnum } from '../models/search/search-types-enum'
+import AuthorsGrid from '../../components/author/authors-grid/Authors-grid'
+import Loader from '../../components/loader/loader'
+import ReleasesGrid from '../../components/release/Releases-grid'
+import useCustomNavigate from '../../hooks/use-custom-navigate'
+import { useLoading } from '../../hooks/use-loading'
+import { useStore } from '../../hooks/use-store'
+import { SearchTypesEnum } from '../../models/search/search-types-enum'
+
+const perPage = 10
 
 const SearchPage = observer(() => {
+	const { type } = useParams()
+
+	const { searchPageStore } = useStore()
+
+	const { navigateToMain } = useCustomNavigate()
+
 	const [isLoading, setIsloading] = useState<boolean>(true)
 	const [currentPage, setCurrentPage] = useState<number>(1)
+
 	const [searchParams] = useSearchParams()
 	const query = searchParams.get('query') || ''
 
-	const { type } = useParams()
-	const { navigateToMain } = useCustomNavigate()
-	const { searchStore } = useStore()
 	const { execute: fetchAuthors, isLoading: isAuthorsLoading } = useLoading(
-		searchStore.fetchAuthors
-	)
-	const { execute: fetchReleases, isLoading: isReleasesLoading } = useLoading(
-		searchStore.fetchReleases
+		searchPageStore.fetchAuthors
 	)
 
-	const perPage = 10
+	const { execute: fetchReleases, isLoading: isReleasesLoading } = useLoading(
+		searchPageStore.fetchReleases
+	)
 
 	useEffect(() => {
 		if (query.length > 0) {
@@ -40,7 +45,7 @@ const SearchPage = observer(() => {
 					break
 			}
 		}
-	}, [currentPage, query, type])
+	}, [currentPage, fetchAuthors, fetchReleases, query, type])
 
 	useEffect(() => {
 		if (
@@ -50,6 +55,7 @@ const SearchPage = observer(() => {
 			navigateToMain()
 		}
 		setIsloading(false)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	return isLoading ? (
@@ -58,21 +64,21 @@ const SearchPage = observer(() => {
 		<>
 			{type === SearchTypesEnum.AUTHORS && (
 				<AuthorsGrid
-					items={searchStore.authors}
+					items={searchPageStore.authors}
 					isLoading={isAuthorsLoading}
 					currentPage={currentPage}
 					setCurrentPage={setCurrentPage}
-					total={searchStore.authorsCount}
+					total={searchPageStore.authorsCount}
 					perPage={perPage}
 				/>
 			)}
 			{type === SearchTypesEnum.RELEASES && (
 				<ReleasesGrid
-					items={searchStore.releases}
+					items={searchPageStore.releases}
 					isLoading={isReleasesLoading}
 					currentPage={currentPage}
 					setCurrentPage={setCurrentPage}
-					total={searchStore.releasesCount}
+					total={searchPageStore.releasesCount}
 					perPage={perPage}
 				/>
 			)}
