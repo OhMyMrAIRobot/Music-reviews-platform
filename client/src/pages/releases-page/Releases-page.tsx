@@ -1,42 +1,36 @@
 import { useEffect, useState } from 'react'
-import ComboBox from '../components/header/buttons/ComboBox'
-import Loader from '../components/Loader'
-import ReleasesPageGrid from '../components/ReleasesPageGrid'
-import { useLoading } from '../hooks/use-loading'
-import { useStore } from '../hooks/use-store'
-
-const ReleaseSortFields = Object.freeze({
-	PUBLISHED_New: 'Дата релиза (новые)',
-	PUBLISHED_OLD: 'Дата релиза (старые)',
-	NO_TEXT_COUNT: 'Количество оценок без рецензий',
-	TEXT_COUNT: 'Количество рецензий',
-	SUPER_USER_RATING: 'Рейтинг супер-пользователей (90 - 0)',
-	WITH_TEXT_RATING: 'Рейтинг пользователей (90 - 0)',
-	NO_TEXT_RATING: 'Рейтинг без рецензий (90 - 0)',
-})
+import ComboBox from '../../components/buttons/Combo-box'
+import ReleasesGrid from '../../components/release/Releases-grid'
+import { useLoading } from '../../hooks/use-loading'
+import { useStore } from '../../hooks/use-store'
+import { ReleaseSortFields } from '../../models/release/release-sort-fields'
 
 const ReleasesPage = () => {
-	const { releasesStore } = useStore()
+	const perPage = 12
+
+	const { releasesPageStore } = useStore()
+
 	const [currentPage, setCurrentPage] = useState<number>(1)
+
 	const [selectedSort, setSelectedSort] = useState<string>(
-		ReleaseSortFields.PUBLISHED_New
+		ReleaseSortFields.PUBLISHED_NEW
 	)
 	const [selectedType, setSelectedType] = useState<string>('Все')
-	const perPage = 12
+
 	const { execute: fetchReleases, isLoading: isReleasesLoading } = useLoading(
-		releasesStore.fetchReleases
+		releasesPageStore.fetchReleases
 	)
 
 	const { execute: fetchReleaseTypes, isLoading: isTypesLoading } = useLoading(
-		releasesStore.fetchReleaseTypes
+		releasesPageStore.fetchReleaseTypes
 	)
 
 	useEffect(() => {
 		fetchReleaseTypes()
-	}, [])
+	}, [fetchReleaseTypes])
 
 	useEffect(() => {
-		const type = releasesStore.releaseTypes.find(
+		const type = releasesPageStore.releaseTypes.find(
 			entry => entry.type === selectedType
 		)
 
@@ -52,7 +46,7 @@ const ReleasesPage = () => {
 				field = 'textCount'
 				order = 'desc'
 				break
-			case ReleaseSortFields.PUBLISHED_New:
+			case ReleaseSortFields.PUBLISHED_NEW:
 				field = 'published'
 				order = 'desc'
 				break
@@ -81,7 +75,13 @@ const ReleasesPage = () => {
 			perPage,
 			(currentPage - 1) * perPage
 		)
-	}, [selectedType, selectedSort, currentPage])
+	}, [
+		selectedType,
+		selectedSort,
+		currentPage,
+		releasesPageStore.releaseTypes,
+		fetchReleases,
+	])
 
 	return (
 		<>
@@ -91,30 +91,31 @@ const ReleasesPage = () => {
 			>
 				Добавленные релизы
 			</h1>
+
 			<div className='rounded-lg border border-white/10 bg-zinc-900 p-3 shadow-sm mt-5 flex gap-4 items-center'>
 				<span className='hidden sm:block text-white/70 font-bold '>
 					Тип релизов:
 				</span>
-				<div className='w-full sm:w-55'>
-					{!isTypesLoading && releasesStore.releaseTypes.length > 0 ? (
+				<div className='w-full sm:w-55 h-10'>
+					{!isTypesLoading && releasesPageStore.releaseTypes.length > 0 ? (
 						<ComboBox
 							options={[
 								'Все',
-								...releasesStore.releaseTypes.map(entry => entry.type),
+								...releasesPageStore.releaseTypes.map(entry => entry.type),
 							]}
 							onChange={setSelectedType}
 							className='border border-white/10'
 							value={selectedType}
 						/>
 					) : (
-						<Loader size={'size-20'} />
+						<div className='bg-gray-400 animate-pulse opacity-40 w-full h-full rounded-md' />
 					)}
 				</div>
 
 				<span className='hidden sm:block text-white/70 font-bold '>
 					Сортировать по:
 				</span>
-				<div className='w-full sm:w-82'>
+				<div className='w-full sm:w-82 h-10'>
 					<ComboBox
 						options={Object.values(ReleaseSortFields)}
 						onChange={setSelectedSort}
@@ -124,12 +125,12 @@ const ReleasesPage = () => {
 				</div>
 			</div>
 
-			<ReleasesPageGrid
-				items={releasesStore.releases}
+			<ReleasesGrid
+				items={releasesPageStore.releases}
 				isLoading={isReleasesLoading}
 				currentPage={currentPage}
 				setCurrentPage={setCurrentPage}
-				total={releasesStore.releasesCount}
+				total={releasesPageStore.releasesCount}
 				perPage={perPage}
 			/>
 		</>

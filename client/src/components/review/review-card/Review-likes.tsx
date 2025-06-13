@@ -17,11 +17,13 @@ const ReviewLikes: FC<IProps> = ({
 		<button
 			disabled={toggling}
 			onClick={toggleFavReview}
-			className={`flex items-center justify-center gap-1 px-4 py-2 border rounded-full cursor-pointer group select-none ${
+			className={`flex items-center justify-center gap-1 px-4 h-8 lg:h-10 border rounded-full cursor-pointer group select-none ${
 				isLiked ? 'bg-white/20 border-white/40' : 'bg-white/5 border-white/5'
 			} ${toggling ? 'opacity-50' : 'opacity-100'}`}
 		>
 			<img
+				loading='lazy'
+				decoding='async'
 				alt={'heart'}
 				src={`${import.meta.env.VITE_SERVER_URL}/public/assets/heart.png`}
 				className={`w-5 lg:w-7 transition-opacity duration-300 ${

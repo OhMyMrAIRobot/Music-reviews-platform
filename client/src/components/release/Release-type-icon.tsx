@@ -1,6 +1,7 @@
 import { FC } from 'react'
 import { ReleaseTypesEnum } from '../../models/release/release-types'
-import { AlbumSvgIcon, SingleSvgIcon } from '../svg/ReleaseSvgIcons'
+import AlbumSvg from './svg/Album-svg'
+import SingleSvg from './svg/Single-svg'
 
 interface IProps {
 	type: string
@@ -10,11 +11,11 @@ interface IProps {
 const ReleaseTypeIcon: FC<IProps> = ({ type, className }) => {
 	switch (type) {
 		case ReleaseTypesEnum.ALBUM:
-			return <AlbumSvgIcon classname={className} />
+			return <AlbumSvg className={className} />
 		case ReleaseTypesEnum.SINGLE:
-			return <SingleSvgIcon classname={className} />
+			return <SingleSvg className={className} />
 		default:
-			return <SingleSvgIcon classname={className} />
+			return <SingleSvg className={className} />
 	}
 }
 

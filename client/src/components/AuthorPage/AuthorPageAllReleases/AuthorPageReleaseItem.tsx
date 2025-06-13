@@ -2,12 +2,12 @@ import { FC } from 'react'
 import useCustomNavigate from '../../../hooks/use-custom-navigate'
 import { IRelease } from '../../../models/release/release'
 import { ReleaseRatingTypesEnum } from '../../../models/release/release-rating-types-enum'
-import { ToolTip } from '../../authorsPage/AuthorItem'
 import TooltipSpan from '../../releasePage/tooltip/Tooltip-span'
 import {
 	NoTextReviewSvgIcon,
 	TextReviewSvgIcon,
 } from '../../svg/ReleaseSvgIcons'
+import Tooltip from '../../tooltip/Tooltip'
 
 interface IProps {
 	release: IRelease
@@ -100,7 +100,7 @@ const AuthorPageReleaseItem: FC<IProps> = ({ release }) => {
 					return (
 						<TooltipSpan
 							key={rating?.type}
-							tooltip={<ToolTip>{tooltip}</ToolTip>}
+							tooltip={<Tooltip>{tooltip}</Tooltip>}
 							spanClassName={'relative rounded-full'}
 							centered={false}
 						>

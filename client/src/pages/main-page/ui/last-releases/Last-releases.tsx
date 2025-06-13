@@ -11,10 +11,10 @@ const LastReleases = () => {
 
 	const carouselRef = useRef<CarouselRef>(null)
 
-	const { releasesStore } = useStore()
+	const { mainPageStore } = useStore()
 
 	const { execute: fetch, isLoading } = useLoading(
-		releasesStore.fetchLastReleases
+		mainPageStore.fetchLastReleases
 	)
 
 	useEffect(() => {
@@ -35,7 +35,7 @@ const LastReleases = () => {
 			}}
 			Carousel={
 				<LastReleasesCarousel
-					items={releasesStore.lastReleases}
+					items={mainPageStore.lastReleases}
 					isLoading={isLoading}
 					ref={carouselRef}
 				/>

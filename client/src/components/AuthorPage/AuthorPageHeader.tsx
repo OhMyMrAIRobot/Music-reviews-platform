@@ -4,17 +4,15 @@ import { useAuth } from '../../hooks/use-auth'
 import { useStore } from '../../hooks/use-store'
 import { IAuthor } from '../../models/author/author'
 import { AuthorTypesEnum } from '../../models/author/author-type'
-import { ToolTip } from '../authorsPage/AuthorItem'
-import {
-	ArtistSvgIcon,
-	DesignerSvgIcon,
-	ProducerSvgIcon,
-} from '../authorsPage/AuthorSvg'
+import ArtistSvg from '../author/svg/Artist-svg'
+import DesignerSvg from '../author/svg/Designer-svg'
+import ProducerSvg from '../author/svg/Producer-svg'
 import {
 	ReleaseLikesSvgIcon,
 	ToggleFavReleaseSvgIcon,
 } from '../releasePage/releasePageSvgIcons'
 import TooltipSpan from '../releasePage/tooltip/Tooltip-span'
+import Tooltip from '../tooltip/Tooltip'
 
 interface IProps {
 	author: IAuthor
@@ -87,9 +85,9 @@ const AuthorPageHeader: FC<IProps> = observer(({ author }) => {
 							{author.author_types.map(type => (
 								<TooltipSpan
 									tooltip={
-										<ToolTip>
+										<Tooltip>
 											<span>{type.type}</span>
-										</ToolTip>
+										</Tooltip>
 									}
 									spanClassName='text-white relative'
 									key={type.type}
@@ -97,11 +95,11 @@ const AuthorPageHeader: FC<IProps> = observer(({ author }) => {
 									{(() => {
 										switch (type.type) {
 											case AuthorTypesEnum.ARTIST:
-												return <ArtistSvgIcon />
+												return <ArtistSvg className={'size-7'} />
 											case AuthorTypesEnum.PRODUCER:
-												return <ProducerSvgIcon />
+												return <ProducerSvg className={'size-7'} />
 											case AuthorTypesEnum.DESIGNER:
-												return <DesignerSvgIcon />
+												return <DesignerSvg className={'size-7'} />
 											default:
 												return null
 										}
@@ -113,7 +111,7 @@ const AuthorPageHeader: FC<IProps> = observer(({ author }) => {
 						<TooltipSpan
 							spanClassName='bg-zinc-950 px-3 py-1 lg:px-5 lg:py-3 rounded-xl items-center inline-flex gap-1 select-none relative'
 							tooltip={
-								<ToolTip>{'Количество добавлений в предпочтения'}</ToolTip>
+								<Tooltip>{'Количество добавлений в предпочтения'}</Tooltip>
 							}
 						>
 							<div className='flex items-center gap-1'>

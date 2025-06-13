@@ -1,8 +1,8 @@
 import { FC } from 'react'
-import { ReleaseRatingTypesEnum } from '../../models/release/release-rating-types-enum'
-import { ReleaseTypesEnum } from '../../models/release/release-types'
-import TooltipSpan from '../releasePage/tooltip/Tooltip-span'
-import { ToolTip } from './AuthorItem'
+import { ReleaseRatingTypesEnum } from '../../../models/release/release-rating-types-enum'
+import { ReleaseTypesEnum } from '../../../models/release/release-types'
+import TooltipSpan from '../../releasePage/tooltip/Tooltip-span'
+import Tooltip from '../../tooltip/Tooltip'
 
 interface IProps {
 	rating: number | null
@@ -10,11 +10,7 @@ interface IProps {
 	releaseType: ReleaseTypesEnum
 }
 
-const AuthorCircleRating: FC<IProps> = ({
-	rating,
-	ratingType,
-	releaseType,
-}) => {
+const AuthorRatingsItem: FC<IProps> = ({ rating, ratingType, releaseType }) => {
 	const releaseTypeText =
 		releaseType === ReleaseTypesEnum.ALBUM ? 'альбомов' : 'треков'
 
@@ -52,7 +48,7 @@ const AuthorCircleRating: FC<IProps> = ({
 
 	return (
 		<TooltipSpan
-			tooltip={rating ? <ToolTip>{tooltipText}</ToolTip> : <></>}
+			tooltip={rating ? <Tooltip>{tooltipText}</Tooltip> : <></>}
 			spanClassName={'relative'}
 		>
 			<div
@@ -64,4 +60,4 @@ const AuthorCircleRating: FC<IProps> = ({
 	)
 }
 
-export default AuthorCircleRating
+export default AuthorRatingsItem

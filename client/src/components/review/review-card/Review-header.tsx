@@ -1,8 +1,8 @@
 import { FC } from 'react'
 import useCustomNavigate from '../../../hooks/use-custom-navigate'
 import { IReview } from '../../../models/review/review'
+import ReviewAuthor from './Review-author'
 import ReviewMarks from './Review-marks'
-import ReviewTitle from './Review-title'
 import ReviewUserImage from './Review-user-image'
 
 interface IProps {
@@ -24,7 +24,7 @@ const ReviewHeader: FC<IProps> = ({ review }) => {
 					points={review.points}
 				/>
 
-				<ReviewTitle nickname={review.nickname} position={review.position} />
+				<ReviewAuthor nickname={review.nickname} position={review.position} />
 			</div>
 
 			<div className='flex items-center justify-end gap-2 lg:gap-4 select-none'>
@@ -38,12 +38,14 @@ const ReviewHeader: FC<IProps> = ({ review }) => {
 				/>
 
 				<img
+					loading='lazy'
+					decoding='async'
 					onClick={() => navigateToRelease(review.release_id)}
 					alt={review.release_title}
 					src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
 						review.release_img
 					}`}
-					className='rounded size-10 lg:size-11 cursor-pointer'
+					className='rounded size-10 lg:size-11 cursor-pointer aspect-square'
 				/>
 			</div>
 		</div>

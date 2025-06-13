@@ -4,9 +4,9 @@ import { useAuth } from '../../../hooks/use-auth'
 import useCustomNavigate from '../../../hooks/use-custom-navigate'
 import { useStore } from '../../../hooks/use-store'
 import { IReleaseReview } from '../../../models/review/release-review'
+import ReviewAuthor from '../../review/review-card/Review-author'
 import ReviewLikes from '../../review/review-card/Review-likes'
 import ReviewMarks from '../../review/review-card/Review-marks'
-import ReviewTitle from '../../review/review-card/Review-title'
 import ReviewUserImage from '../../review/review-card/Review-user-image'
 
 interface IProps {
@@ -68,7 +68,7 @@ const ReleaseReviewItem: FC<IProps> = observer(({ review }) => {
 						img={review.avatar}
 						points={review.points}
 					/>
-					<ReviewTitle nickname={review.nickname} position={review.position} />
+					<ReviewAuthor nickname={review.nickname} position={review.position} />
 				</div>
 				<ReviewMarks
 					total={review.total}

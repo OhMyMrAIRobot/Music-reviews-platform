@@ -1,26 +1,16 @@
 import { makeAutoObservable } from 'mobx'
-import { ReleaseAPI } from '../api/release-api'
-import { IRelease } from '../models/release/release'
-import { IReleaseType } from '../models/release/release-types'
+import { ReleaseAPI } from '../../../api/release-api'
+import { IRelease } from '../../../models/release/release'
+import { IReleaseType } from '../../../models/release/release-types'
 
-class ReleasesStore {
+class ReleasesPageStore {
 	constructor() {
 		makeAutoObservable(this)
 	}
 
-	topReleases: IRelease[] = []
-	lastReleases: IRelease[] = []
 	releasesCount: number = 0
 	releases: IRelease[] = []
 	releaseTypes: IReleaseType[] = []
-
-	setTopReleases(data: IRelease[]) {
-		this.topReleases = data
-	}
-
-	setLastReleases(data: IRelease[]) {
-		this.lastReleases = data
-	}
 
 	setReleasesCount(data: number) {
 		this.releasesCount = data
@@ -32,31 +22,6 @@ class ReleasesStore {
 
 	setReleaseTypes(data: IReleaseType[]) {
 		this.releaseTypes = data
-	}
-
-	fetchTopReleases = async () => {
-		try {
-			const data = await ReleaseAPI.fetchTopReleases()
-			this.setTopReleases(data)
-		} catch (e) {
-			console.log(e)
-		}
-	}
-
-	fetchLastReleases = async () => {
-		try {
-			const data = await ReleaseAPI.fetchReleases(
-				null,
-				null,
-				'published',
-				'desc',
-				20,
-				0
-			)
-			this.setLastReleases(data.releases)
-		} catch (e) {
-			console.log(e)
-		}
 	}
 
 	fetchReleases = async (
@@ -92,4 +57,4 @@ class ReleasesStore {
 	}
 }
 
-export default new ReleasesStore()
+export default new ReleasesPageStore()

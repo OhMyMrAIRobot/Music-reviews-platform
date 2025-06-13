@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import useCustomNavigate from '../../hooks/use-custom-navigate'
 import { SearchTypesEnum } from '../../models/search/search-types-enum'
+import ComboBox from '../buttons/Combo-box'
 import { SearchSvgIcon } from './HeaderSvgIcons'
-import ComboBox from './buttons/ComboBox'
 
 const SearchBar = () => {
 	const SearchTypeValues = Object.freeze({

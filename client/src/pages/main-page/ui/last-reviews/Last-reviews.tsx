@@ -9,12 +9,12 @@ import { CarouselRef } from '../../../../types/carousel-ref'
 const LastReviews = () => {
 	const carouselRef = useRef<CarouselRef>(null)
 
-	const { reviewsStore } = useStore()
+	const { mainPageStore } = useStore()
 
 	const { navigateToReviews } = useCustomNavigate()
 
 	const { execute: fetch, isLoading } = useLoading(
-		reviewsStore.fetchLastReviews
+		mainPageStore.fetchLastReviews
 	)
 
 	useEffect(() => {
@@ -37,9 +37,9 @@ const LastReviews = () => {
 				<LastReviewsCarousel
 					ref={carouselRef}
 					isLoading={isLoading}
-					items={reviewsStore.lastReviews}
+					items={mainPageStore.lastReviews}
 					rowCount={3}
-					storeToggle={reviewsStore.toggleFavReview}
+					storeToggle={mainPageStore.toggleFavReview}
 				/>
 			}
 		/>

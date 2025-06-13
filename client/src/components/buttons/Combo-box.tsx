@@ -1,6 +1,6 @@
 import { FC, useEffect, useRef, useState } from 'react'
-import { TickSvgIcon } from '../../releasePage/releasePageSvgIcons'
-import { ArrowBottomSvgIcon } from '../HeaderSvgIcons'
+import { ArrowBottomSvgIcon } from '../header/HeaderSvgIcons'
+import { TickSvgIcon } from '../releasePage/releasePageSvgIcons'
 
 interface ComboBoxProps {
 	options: string[]
@@ -42,7 +42,7 @@ const ComboBox: FC<ComboBoxProps> = ({
 	return (
 		<div
 			ref={comboRef}
-			className={`relative inline-block w-full bg-primary rounded-md ${className}`}
+			className={`relative inline-block w-full h-full bg-primary rounded-md ${className}`}
 		>
 			<button
 				onClick={() => setIsOpen(!isOpen)}

@@ -15,10 +15,10 @@ const MostReviewedCarousel: FC<IProps> = observer(({ setShow, setIndex }) => {
 	const options: EmblaOptionsType = { dragFree: true, align: 'start' }
 	const [emblaRef] = useEmblaCarousel(options)
 
-	const { releasesStore } = useStore()
+	const { mainPageStore } = useStore()
 
 	const { execute: fetch, isLoading } = useLoading(
-		releasesStore.fetchTopReleases
+		mainPageStore.fetchTopReleases
 	)
 
 	useEffect(() => {
@@ -40,7 +40,7 @@ const MostReviewedCarousel: FC<IProps> = observer(({ setShow, setIndex }) => {
 								</div>
 						  ))
 						: // ITEM VIEW
-						  releasesStore.topReleases.map((release, index) => (
+						  mainPageStore.mostReviewedReleases.map((release, index) => (
 								<MostReviewedCarouselItem
 									key={release.id}
 									release={release}

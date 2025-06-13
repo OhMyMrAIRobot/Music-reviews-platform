@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { IAuthor } from '../../models/author/author'
 import { ReleaseTypesEnum } from '../../models/release/release-types'
-import AuthorReleaseTypesRatings from '../authorsPage/AuthorReleaseTypesRatings'
+import AuthorReleaseTypesRatings from '../author/author-ratings/Author-release-types-ratings'
 
 interface IProps {
 	author: IAuthor

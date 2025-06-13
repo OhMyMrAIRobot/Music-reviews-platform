@@ -45,16 +45,16 @@ const LastReviewsCarousel = observer(
 								),
 							}).map((_, idx) => (
 								<div
-									className='flex-[0_0_100%] md:flex-[0_0_33%] px-1'
+									className='flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_33%]  px-1'
 									key={idx}
 								>
 									<div className={`grid grid-rows-${rowCount} gap-4`}>
 										{isLoading
 											? // SCELETON
 											  Array.from({ length: rowCount }).map((_, i) => (
-													<div
+													<ReviewCard
 														key={`last-review-skeleton-${idx}-${i}`}
-														className='bg-gray-400 rounded-lg animate-pulse opacity-40 h-64'
+														isLoading={isLoading}
 													/>
 											  ))
 											: // ITEM VIEW
@@ -64,6 +64,7 @@ const LastReviewsCarousel = observer(
 														<ReviewCard
 															review={review}
 															key={review.id}
+															isLoading={isLoading}
 															storeToggle={storeToggle}
 														/>
 													))}
