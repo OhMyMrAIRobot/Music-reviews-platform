@@ -1,25 +1,26 @@
 import { useState } from 'react'
-import { FeedbackAPI } from '../api/feedback-api'
-import FormButton from '../components/form-elements/Form-button'
-import FormInfoContainer from '../components/form-elements/Form-info-container'
-import FormInfoField from '../components/form-elements/Form-info-field'
-import FormInput from '../components/form-elements/Form-input'
-import FormLabel from '../components/form-elements/Form-label'
-import FormSubTitle from '../components/form-elements/Form-subtitle'
-import FormTitle from '../components/form-elements/Form-title'
-import FormTextbox from '../components/form-elements/FormTextbox'
-import { useLoading } from '../hooks/use-loading'
-import { useStore } from '../hooks/use-store'
-import { IFeedback } from '../models/feedback/feedback'
+import { FeedbackAPI } from '../../api/feedback-api'
+import FormButton from '../../components/form-elements/Form-button'
+import FormInfoContainer from '../../components/form-elements/Form-info-container'
+import FormInfoField from '../../components/form-elements/Form-info-field'
+import FormInput from '../../components/form-elements/Form-input'
+import FormLabel from '../../components/form-elements/Form-label'
+import FormSubTitle from '../../components/form-elements/Form-subtitle'
+import FormTitle from '../../components/form-elements/Form-title'
+import FormTextbox from '../../components/form-elements/FormTextbox'
+import { useLoading } from '../../hooks/use-loading'
+import { useStore } from '../../hooks/use-store'
+import { IFeedback } from '../../models/feedback/feedback'
 
 const FeedbackPage = () => {
+	const { notificationStore: notificationsStore } = useStore()
+
 	const [feedbackData, setFeedbackData] = useState<IFeedback>({
 		email: '',
 		title: '',
 		message: '',
 	})
 	const [errors, setErrors] = useState<string[]>([])
-	const { notificationStore: notificationsStore } = useStore()
 
 	const handleChange = (field: keyof IFeedback, value: string) => {
 		setFeedbackData(prev => ({ ...prev, [field]: value }))
@@ -29,11 +30,7 @@ const FeedbackPage = () => {
 		setErrors([])
 		try {
 			await FeedbackAPI.sendFeedback(feedbackData)
-			notificationsStore.addNotification({
-				id: self.crypto.randomUUID(),
-				text: 'Отзыв успешно отправлен!',
-				isError: false,
-			})
+			notificationsStore.addSuccessNotification('Отзыв успешно отправлен!')
 			setFeedbackData({ email: '', title: '', message: '' })
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (e: any) {
