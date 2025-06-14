@@ -1,17 +1,17 @@
 import { FC } from 'react'
-import { LoginSvgIcon } from '../HeaderSvgIcons'
+import LoginSvg from '../svg/Login-svg'
 
-interface ILoginIconButtonProps {
+interface IProps {
 	onClick: () => void
 }
 
-const LoginIconButton: FC<ILoginIconButtonProps> = ({ onClick }) => {
+const LoginIconButton: FC<IProps> = ({ onClick }) => {
 	return (
 		<button
 			onClick={onClick}
 			className='flex justify-center items-center rounded-md text-sm font-medium bg-white/5 border border-white/10 size-10'
 		>
-			<LoginSvgIcon />
+			<LoginSvg className={'size-5'} />
 		</button>
 	)
 }

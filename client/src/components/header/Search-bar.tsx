@@ -1,22 +1,17 @@
 import { useState } from 'react'
 import useCustomNavigate from '../../hooks/use-custom-navigate'
+import { SearchBarOptions } from '../../models/search/search-bar-options'
 import { SearchTypesEnum } from '../../models/search/search-types-enum'
 import ComboBox from '../buttons/Combo-box'
-import { SearchSvgIcon } from './HeaderSvgIcons'
+import SearchSvg from './svg/Search-svg'
 
 const SearchBar = () => {
-	const SearchTypeValues = Object.freeze({
-		AUTHORS: 'Авторы',
-		RELEASES: 'Релизы',
-		USERS: 'Пользователи',
-	})
+	const { navigateToSearch } = useCustomNavigate()
 
 	const [searchText, setSearchText] = useState<string>('')
 	const [selectedType, setSelectedType] = useState<string>(
-		SearchTypeValues.AUTHORS
+		SearchBarOptions.AUTHORS
 	)
-
-	const { navigateToSearch } = useCustomNavigate()
 
 	const handleKeyPress = (e: React.KeyboardEvent) => {
 		if (e.key === 'Enter') {
@@ -28,14 +23,11 @@ const SearchBar = () => {
 		let typeKey: SearchTypesEnum
 
 		switch (selectedType) {
-			case SearchTypeValues.AUTHORS:
+			case SearchBarOptions.AUTHORS:
 				typeKey = SearchTypesEnum.AUTHORS
 				break
-			case SearchTypeValues.RELEASES:
+			case SearchBarOptions.RELEASES:
 				typeKey = SearchTypesEnum.RELEASES
-				break
-			case SearchTypeValues.USERS:
-				typeKey = SearchTypesEnum.USERS
 				break
 			default:
 				typeKey = SearchTypesEnum.AUTHORS
@@ -44,12 +36,12 @@ const SearchBar = () => {
 	}
 
 	return (
-		<div className='max-lg:hidden flex lg:w-[400px] h-10 rounded-md border border-zinc-700 bg-zinc-900'>
+		<div className='hidden lg:flex lg:w-[400px] h-10 rounded-md border border-white/10 select-none bg-[#242527]/75 focus-within:border-white/70'>
 			<button
 				onClick={handleSearchClick}
-				className='w-10 h-full px-3 text-sm rounded-md cursor-pointer font-medium text-gray-500 transition-colors bg-zinc-900 hover:bg-white/10 hover:text-white duration-200'
+				className='w-10 h-full px-3 text-sm rounded-md cursor-pointer font-medium text-gray-500 transition-colors hover:bg-white/15 hover:text-white duration-200'
 			>
-				<SearchSvgIcon />
+				<SearchSvg className={'size-4'} />
 			</button>
 
 			<input
@@ -58,14 +50,14 @@ const SearchBar = () => {
 				value={searchText}
 				onChange={e => setSearchText(e.target.value)}
 				placeholder='Поиск...'
-				className='w-[180px] bg-zinc-900 outline-none text-sm font-medium text-white placeholder:text-gray-500'
+				className='w-[180px] outline-none text-sm font-medium text-white placeholder:text-gray-500 pl-1'
 			/>
 
 			<ComboBox
-				options={Object.values(SearchTypeValues)}
+				options={Object.values(SearchBarOptions)}
 				value={selectedType}
 				onChange={setSelectedType}
-				className='rounded-md border-l border-zinc-700 relative inline-block'
+				className='rounded-md border-l border-white/10 relative inline-block'
 			/>
 		</div>
 	)

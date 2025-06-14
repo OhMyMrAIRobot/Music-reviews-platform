@@ -5,9 +5,10 @@ import { IReleaseReview } from '../../../models/review/release-review'
 import { IReviewData } from '../../../models/review/review-data'
 import FormInfoContainer from '../../form-elements/Form-info-container'
 import FormInfoField from '../../form-elements/Form-info-field'
+import TickSvg from '../../svg/Tick-svg'
 import SwitchButton from '../button/SwitchButton'
 import WarningAlert from '../container/WarningAlert'
-import { TickSvgIcon, TrashSvgIcon } from '../releasePageSvgIcons'
+import { TrashSvgIcon } from '../releasePageSvgIcons'
 import MarksReviewForm from './MarksReviewForm'
 import TextReviewForm from './TextReviewForm'
 
@@ -219,7 +220,7 @@ const SendReviewForm: FC<IProps> = ({ id, fetchReviews }) => {
 										: 'cursor-pointer hover:bg-white/50 bg-white'
 								}`}
 							>
-								<TickSvgIcon className='size-8' />
+								<TickSvg className='size-8' />
 							</button>
 						</div>
 						<div className='w-1/2'>

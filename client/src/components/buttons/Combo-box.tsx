@@ -1,6 +1,6 @@
 import { FC, useEffect, useRef, useState } from 'react'
-import { ArrowBottomSvgIcon } from '../header/HeaderSvgIcons'
-import { TickSvgIcon } from '../releasePage/releasePageSvgIcons'
+import ArrowBottomSvg from '../header/svg/Arrow-bottom-svg'
+import TickSvg from '../svg/Tick-svg'
 
 interface ComboBoxProps {
 	options: string[]
@@ -50,11 +50,11 @@ const ComboBox: FC<ComboBoxProps> = ({
 				className='flex w-full gap-x-1 h-full justify-between items-center px-3 text-sm font-medium text-white cursor-pointer py-2'
 			>
 				<span>{selected}</span>
-				<ArrowBottomSvgIcon />
+				<ArrowBottomSvg className='h-5 w-4 opacity-70' />
 			</button>
 
 			<ul
-				className={`absolute left-0 mt-3 py-2 px-2 z-100 w-full bg-white border border-zinc-700 text-sm font-medium rounded-md shadow-lg bg-primary transition-all duration-125 flex flex-col gap-y-1.5 max-h-70 overflow-scroll ${
+				className={`absolute left-0 mt-3 py-2 px-2 z-100 w-full bg-white border border-white/10 text-sm font-medium rounded-md shadow-lg bg-primary transition-all duration-125 flex flex-col gap-y-1.5 max-h-70 overflow-scroll ${
 					isOpen
 						? 'opacity-100 translate-y-0 pointer-events-auto'
 						: 'opacity-0 -translate-y-3 pointer-events-none'
@@ -72,9 +72,7 @@ const ComboBox: FC<ComboBoxProps> = ({
 						}}
 					>
 						<span className='w-5'>
-							{selected === option ? (
-								<TickSvgIcon className='size-3.5' />
-							) : null}
+							{selected === option ? <TickSvg className='size-3.5' /> : null}
 						</span>
 						{option}
 					</li>

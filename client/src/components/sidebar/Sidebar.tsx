@@ -1,10 +1,10 @@
 import { useLocation } from 'react-router'
 import useCustomNavigate from '../../hooks/use-custom-navigate'
 import { ROUTES } from '../../routes/routes-enum'
+import PencilSvg from '../svg/Pencil-svg'
 import {
 	AboutSvgIcon,
 	AuthorsSvgIcon,
-	FeedbackSvgIcon,
 	HomeSvgIcon,
 	NinetySvgIcon,
 	QuestionSvgIcon,
@@ -128,7 +128,7 @@ const Sidebar = () => {
 		{
 			id: 'side-feedback',
 			onClick: navigateToFeedback,
-			icon: <FeedbackSvgIcon className='size-3' />,
+			icon: <PencilSvg className='size-3' />,
 			label: 'Обратная связь',
 			active: isActive(ROUTES.FEEDBACK),
 		},

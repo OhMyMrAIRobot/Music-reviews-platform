@@ -3,25 +3,19 @@ import { useEffect, useRef, useState } from 'react'
 import useCustomNavigate from '../../../hooks/use-custom-navigate'
 import { useLoading } from '../../../hooks/use-loading'
 import { useStore } from '../../../hooks/use-store'
-import Loader from '../../loader/loader'
+import ProfileSvg from '../../profile/svg/Profile-svg'
 import HeartSvg from '../../svg/Heart-svg'
-import {
-	LogoutSvgIcon,
-	ProfileSvgIcon,
-	SettingsSvgIcon,
-} from '../HeaderSvgIcons'
-import PopupProfileButton from './PopupProfileButton'
+import SettingsSvg from '../../svg/Settings-svg'
+import LogoutSvg from '../svg/Logout-svg'
+import PopupProfileButton from './Popup-profile-button'
 
 const ProfileButton = observer(() => {
-	const {
-		authStore,
-		notificationStore: notificationsStore,
-		profileStore,
-	} = useStore()
+	const { authStore, notificationStore, profileStore } = useStore()
+
 	const { navigateToMain, navigatoToProfile, navigateToEditProfile } =
 		useCustomNavigate()
 
-	const { execute: fetchProfile, isLoading: isProfileLoading } = useLoading(
+	const { execute: fetchProfile, isLoading } = useLoading(
 		profileStore.fetchMyProfile
 	)
 
@@ -29,7 +23,7 @@ const ProfileButton = observer(() => {
 		if (authStore.isAuth && authStore.user) {
 			fetchProfile(authStore.user.id)
 		}
-	}, [authStore.isAuth, authStore.user])
+	}, [authStore.isAuth, authStore.user, fetchProfile])
 
 	const [isOpen, setIsOpen] = useState<boolean>(false)
 	const popUpProfRef = useRef<HTMLDivElement | null>(null)
@@ -51,15 +45,30 @@ const ProfileButton = observer(() => {
 		}
 	}, [])
 
+	const logOut = () => {
+		authStore.logOut().then(() => {
+			if (!authStore.isAuth) {
+				navigateToMain()
+			}
+			notificationStore.addNotification({
+				id: self.crypto.randomUUID(),
+				text: !authStore.isAuth
+					? 'Вы успешно вышли из аккаунта!'
+					: 'Произошла ошибка при выходе!',
+				isError: authStore.isAuth,
+			})
+		})
+	}
+
 	return (
-		<div ref={popUpProfRef} className='relative inline-block rounded-md'>
-			<button
-				onClick={() => setIsOpen(!isOpen)}
-				className='rounded-full h-10 w-10 overflow-hidden cursor-pointer'
-			>
-				{isProfileLoading ? (
-					<Loader size='size-10' />
-				) : (
+		<div ref={popUpProfRef} className='relative flex rounded-md items-center'>
+			{isLoading ? (
+				<div className='size-10 bg-gray-400 animate-pulse opacity-40 rounded-full' />
+			) : (
+				<button
+					onClick={() => setIsOpen(!isOpen)}
+					className='rounded-full size-10 overflow-hidden cursor-pointer aspect-square'
+				>
 					<img
 						loading='lazy'
 						decoding='async'
@@ -68,10 +77,11 @@ const ProfileButton = observer(() => {
 						}`}
 						className='size-full aspect-square'
 					/>
-				)}
-			</button>
+				</button>
+			)}
+
 			<div
-				className={`absolute z-2000 right-0 w-[300px] mt-2 rounded-xl bg-primary border-2 border-white/15 grid gap-2 font-medium py-3 transition-all duration-125 ${
+				className={`absolute z-2000 right-0 w-[300px] top-14 rounded-lg bg-zinc-950 border border-white/10 grid gap-2 font-medium py-3 transition-all duration-125 ${
 					isOpen
 						? 'opacity-100 translate-y-0 pointer-events-auto'
 						: 'opacity-0 -translate-y-3 pointer-events-none'
@@ -81,7 +91,7 @@ const ProfileButton = observer(() => {
 
 				<PopupProfileButton
 					text='Моя страница'
-					icon={<ProfileSvgIcon />}
+					icon={<ProfileSvg className={'size-5.5'} />}
 					onClick={() => {
 						if (authStore.user?.id) navigatoToProfile(authStore.user.id)
 					}}
@@ -95,31 +105,18 @@ const ProfileButton = observer(() => {
 				/>
 				<PopupProfileButton
 					text='Настройки профиля'
-					icon={<SettingsSvgIcon />}
+					icon={<SettingsSvg className={'size-7'} />}
 					onClick={() => {
 						if (authStore.user?.id) navigateToEditProfile(authStore.user.id)
 					}}
 				/>
 
-				<div className='border-t border-white/15 pb-1'></div>
+				<div className='border-t border-white/10 pb-1'></div>
 
 				<PopupProfileButton
 					text='Выйти из профиля'
-					icon={<LogoutSvgIcon />}
-					onClick={() => {
-						authStore.logOut().then(() => {
-							if (!authStore.isAuth) {
-								navigateToMain()
-							}
-							notificationsStore.addNotification({
-								id: self.crypto.randomUUID(),
-								text: !authStore.isAuth
-									? 'Вы успешно вышли из аккаунта!'
-									: 'Произошла ошибка при выходе!',
-								isError: authStore.isAuth,
-							})
-						})
-					}}
+					icon={<LogoutSvg className='size-4.5' />}
+					onClick={logOut}
 				/>
 			</div>
 		</div>
