@@ -1,15 +1,17 @@
 import { useEffect, useRef } from 'react'
 import { useParams } from 'react-router'
-import useCustomNavigate from '../../hooks/use-custom-navigate'
-import { useLoading } from '../../hooks/use-loading'
-import { useStore } from '../../hooks/use-store'
-import { CarouselRef } from '../../types/carousel-ref'
-import CarouselContainer from '../carousel/Carousel-container'
-import LastReviewsCarousel from '../carousel/Last-reviews-carousel'
+import CarouselContainer from '../../../components/carousel/Carousel-container'
+import LastReviewsCarousel from '../../../components/carousel/Last-reviews-carousel'
+import useCustomNavigate from '../../../hooks/use-custom-navigate'
+import { useLoading } from '../../../hooks/use-loading'
+import { useStore } from '../../../hooks/use-store'
+import { CarouselRef } from '../../../types/carousel-ref'
 
-const AuthorPageReviewsCarousel = () => {
+const AuthorDetailsReviewsCarousel = () => {
 	const { id } = useParams()
-	const { authorPageStore } = useStore()
+
+	const { authorDetailsPageStore } = useStore()
+
 	const { navigateToReviews } = useCustomNavigate()
 
 	const carouselRef = useRef<CarouselRef>(null)
@@ -22,14 +24,14 @@ const AuthorPageReviewsCarousel = () => {
 	}
 
 	const { execute: fetch, isLoading } = useLoading(
-		authorPageStore.fetchLastReviews
+		authorDetailsPageStore.fetchLastReviews
 	)
 
 	useEffect(() => {
 		if (id) {
 			fetch(id)
 		}
-	}, [])
+	}, [fetch, id])
 
 	return (
 		<CarouselContainer
@@ -43,12 +45,13 @@ const AuthorPageReviewsCarousel = () => {
 				<LastReviewsCarousel
 					ref={carouselRef}
 					isLoading={isLoading}
-					items={authorPageStore.lastReviews}
+					items={authorDetailsPageStore.lastReviews}
 					rowCount={1}
+					storeToggle={authorDetailsPageStore.toggleFavReview}
 				/>
 			}
 		/>
 	)
 }
 
-export default AuthorPageReviewsCarousel
+export default AuthorDetailsReviewsCarousel

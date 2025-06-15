@@ -6,7 +6,7 @@ import MostReviewedReleases from './ui/most-reviewed-releases/carousel/Most-revi
 const MainPage = observer(() => {
 	return (
 		<>
-			<div className='size-full bg-primary xl:px-5 flex flex-col gap-y-15'>
+			<div className='size-full xl:px-5 flex flex-col gap-y-15'>
 				<MostReviewedReleases />
 				<LastReleases />
 				<LastReviews />

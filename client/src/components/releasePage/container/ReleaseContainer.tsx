@@ -3,10 +3,8 @@ import { FC, useState } from 'react'
 import { useAuth } from '../../../hooks/use-auth'
 import { useStore } from '../../../hooks/use-store'
 import { IReleaseDetails } from '../../../models/release/release-details'
-import {
-	ReleaseLikesSvgIcon,
-	ToggleFavReleaseSvgIcon,
-} from '../releasePageSvgIcons'
+import BookmarkSvg from '../../svg/Bookmark-svg'
+import { ToggleFavReleaseSvgIcon } from '../releasePageSvgIcons'
 import ReleaseAuthorsContainer from './ReleaseAuthorsContainer'
 import ReleaseRatingsContainer from './ReleaseRatingsContainer'
 
@@ -83,7 +81,7 @@ const ReleaseContainer: FC<IProps> = observer(({ release }) => {
 			<div className='absolute right-1 lg:right-3 top-5 lg:top-3 z-20 flex items-center gap-x-3 '>
 				{release.likes_count > 0 && (
 					<div className='bg-zinc-950 px-2 py-1 lg:px-3 lg:py-2 flex rounded-xl items-center gap-x-1'>
-						<ReleaseLikesSvgIcon />
+						<BookmarkSvg className={'size-5 fill-[rgba(35,101,199,1)]'} />
 						{release.likes_count}
 					</div>
 				)}

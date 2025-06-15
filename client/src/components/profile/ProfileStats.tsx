@@ -4,8 +4,8 @@ import { IProfile } from '../../models/profile/profile'
 import { getLevelConfig, getUserLevel } from '../../utils/user-level'
 import NoTextReviewSvg from '../review/svg/No-text-review-svg'
 import TextReviewSvg from '../review/svg/Text-review-svg'
-import HeartFillSvg from '../svg/Heart-fill-svg'
-import HeartSvg from '../svg/Heart-svg'
+import PixelHeartFillSvg from '../svg/Pixel-heart-fill-svg'
+import PixelHeartSvg from '../svg/Pixel-heart-svg'
 import ProfileInfoRow from './ProfileInfoRow'
 
 interface IProps {
@@ -93,12 +93,12 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
 				<ProfileInfoRow
 					title={'Получено лайков'}
 					value={profile.received_likes}
-					icon={<HeartSvg className={'size-[19px]'} />}
+					icon={<PixelHeartSvg className={'size-[19px]'} />}
 				/>
 				<ProfileInfoRow
 					title={'Поставлено лайков'}
 					value={profile.given_likes}
-					icon={<HeartFillSvg className={'size-[19px]'} />}
+					icon={<PixelHeartFillSvg className={'size-[19px]'} />}
 				/>
 			</div>
 		</div>

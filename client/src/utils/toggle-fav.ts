@@ -2,7 +2,7 @@
 import { runInAction } from 'mobx'
 
 export const toggleFav = async (
-	array: any[],
+	item: any[] | any,
 	id: string,
 	isFav: boolean,
 	api: {
@@ -19,14 +19,21 @@ export const toggleFav = async (
 		}
 
 		const data = await api.fetch(id)
-		const idx = array.findIndex(val => val.id === id)
+		if (Array.isArray(item)) {
+			const idx = item.findIndex(val => val.id === id)
 
-		runInAction(() => {
-			if (idx !== -1) {
-				array[idx].user_fav_ids = data
-				array[idx].likes_count = data.length
-			}
-		})
+			runInAction(() => {
+				if (idx !== -1) {
+					item[idx].user_fav_ids = data
+					item[idx].likes_count = data.length
+				}
+			})
+		} else {
+			runInAction(() => {
+				item.user_fav_ids = data
+				item.likes_count = data.length
+			})
+		}
 
 		return true
 	} catch (e) {

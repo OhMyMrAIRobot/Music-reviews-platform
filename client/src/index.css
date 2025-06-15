@@ -19,18 +19,6 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
-.bg-primary {
-	@apply bg-[var(--background-dark-primary)];
-}
-
-.bg-accent {
-	@apply bg-[var(--background-dark-primary)];
-}
-
-.bg-secondary {
-	@apply bg-[var(--background-dark-secondary)];
-}
-
 body {
 	margin: 0;
 	padding: 0;

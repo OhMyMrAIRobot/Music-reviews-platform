@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { ISvgProps } from '../../models/svg/svg-props'
 
-const HeartFillSvg: FC<ISvgProps> = ({ className }) => {
+const PixelHeartFillSvg: FC<ISvgProps> = ({ className }) => {
 	return (
 		<svg
 			xmlns='http://www.w3.org/2000/svg'
@@ -17,4 +17,4 @@ const HeartFillSvg: FC<ISvgProps> = ({ className }) => {
 	)
 }
 
-export default HeartFillSvg
+export default PixelHeartFillSvg

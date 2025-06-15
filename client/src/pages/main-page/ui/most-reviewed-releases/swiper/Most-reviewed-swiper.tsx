@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import { createPortal } from 'react-dom'
 import NextSvg from '../../../../../components/carousel/svg/Next-svg'
 import PrevSvg from '../../../../../components/carousel/svg/Prev-svg'
 import { CloseSvgIcon } from '../../../../../components/notifications/NotificationSvgIcons'
@@ -16,7 +17,7 @@ interface IProps {
 const MostReviewedSwiper: FC<IProps> = ({ show, setShow, index, setIndex }) => {
 	const { mainPageStore } = useStore()
 
-	return (
+	return createPortal(
 		<div
 			className={`fixed inset-0 z-[1000000] backdrop-blur-3xl overflow-y-auto h-[100vh] flex items-center justify-center transition-all duration-200 gap-3 ${
 				show
@@ -84,7 +85,8 @@ const MostReviewedSwiper: FC<IProps> = ({ show, setShow, index, setIndex }) => {
 					/>
 				</div>
 			)}
-		</div>
+		</div>,
+		document.body
 	)
 }
 

@@ -4,7 +4,7 @@ import useCustomNavigate from '../../../hooks/use-custom-navigate'
 import { useLoading } from '../../../hooks/use-loading'
 import { useStore } from '../../../hooks/use-store'
 import ProfileSvg from '../../profile/svg/Profile-svg'
-import HeartSvg from '../../svg/Heart-svg'
+import PixelHeartSvg from '../../svg/Pixel-heart-svg'
 import SettingsSvg from '../../svg/Settings-svg'
 import LogoutSvg from '../svg/Logout-svg'
 import PopupProfileButton from './Popup-profile-button'
@@ -98,7 +98,7 @@ const ProfileButton = observer(() => {
 				/>
 				<PopupProfileButton
 					text='Мне понравилось'
-					icon={<HeartSvg className={'size-[19px]'} />}
+					icon={<PixelHeartSvg className={'size-[19px]'} />}
 					onClick={() => {
 						if (authStore.user?.id) navigatoToProfile(authStore.user.id)
 					}}

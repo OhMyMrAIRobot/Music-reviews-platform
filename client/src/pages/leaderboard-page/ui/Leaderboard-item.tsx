@@ -2,9 +2,9 @@ import { FC } from 'react'
 import TooltipSpan from '../../../components/releasePage/tooltip/Tooltip-span'
 import NoTextReviewSvg from '../../../components/review/svg/No-text-review-svg'
 import TextReviewSvg from '../../../components/review/svg/Text-review-svg'
-import HeartFillSvg from '../../../components/svg/Heart-fill-svg'
-import HeartSvg from '../../../components/svg/Heart-svg'
 import LogoSmallSvg from '../../../components/svg/Logo-small-svg'
+import PixelHeartFillSvg from '../../../components/svg/Pixel-heart-fill-svg'
+import PixelHeartSvg from '../../../components/svg/Pixel-heart-svg'
 import Tooltip from '../../../components/tooltip/Tooltip'
 import useCustomNavigate from '../../../hooks/use-custom-navigate'
 import { ILeaderboardItem } from '../../../models/leaderboard/leaderboard-item'
@@ -131,11 +131,11 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 						<Tooltip>
 							<div className='font-medium space-y-1'>
 								<div className='flex gap-x-2'>
-									<HeartFillSvg className={'size-[19px]'} />
+									<PixelHeartFillSvg className={'size-[19px]'} />
 									Получено лайков на свои рецензии от пользователей
 								</div>
 								<div className='flex gap-x-2'>
-									<HeartSvg className={'size-[19px]'} />
+									<PixelHeartSvg className={'size-[19px]'} />
 									Поставлено лайков на рецензии пользователей
 								</div>
 							</div>
@@ -147,14 +147,14 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 					centered={true}
 				>
 					<div className='flex items-center gap-1.5'>
-						<HeartFillSvg className={'size-[19px]'} />
+						<PixelHeartFillSvg className={'size-[19px]'} />
 
 						<span className='font-semibold'>
 							{formatNumber(item.received_likes)}
 						</span>
 					</div>
 					<div className='flex items-center gap-1.5'>
-						<HeartSvg className={'size-[19px]'} />
+						<PixelHeartSvg className={'size-[19px]'} />
 
 						<span className='font-semibold'>
 							{formatNumber(item.given_likes)}
