@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useParams } from 'react-router'
 import { useLoading } from '../../hooks/use-loading'
 import { useStore } from '../../hooks/use-store'
-import Loader from '../loader/loader'
+import Loader from '../Loader.tsx'
 import PreferProfileGridItem from './PreferProfileGridItem'
 
 const PreferProfileGrid = () => {
@@ -17,7 +17,7 @@ const PreferProfileGrid = () => {
 	}, [])
 
 	return isLoading ? (
-		<Loader />
+		<Loader className={'size-20'} />
 	) : (
 		profileStore.preferred && (
 			<div className='mt-5 grid lg:grid-cols-2 gap-y-4 lg:gap-y-8 gap-x-10'>

@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { ISvgProps } from '../../../models/svg/svg-props'
+import { ISvgProps } from '../../models/svg/svg-props'
 
 const PrevSvg: FC<ISvgProps> = ({ className }) => {
 	return (

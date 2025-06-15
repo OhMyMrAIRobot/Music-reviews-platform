@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
-import Loader from '../components/loader/loader'
+import Loader from '../components/Loader.tsx'
 import ReleaseContainer from '../components/releasePage/container/ReleaseContainer'
 import ReleaseReviewsContainer, {
 	ReleaseReviewsSortEnum,
@@ -58,7 +58,7 @@ const ReleasePage = observer(() => {
 
 	return isReleaseLoading ? (
 		<div className='w-full'>
-			<Loader />
+			<Loader className={'size-20'} />
 		</div>
 	) : release ? (
 		<>

@@ -2,7 +2,6 @@ import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import AuthorsGrid from '../../components/author/authors-grid/Authors-grid'
-import Loader from '../../components/loader/loader'
 import ReleasesGrid from '../../components/release/Releases-grid'
 import useCustomNavigate from '../../hooks/use-custom-navigate'
 import { useLoading } from '../../hooks/use-loading'
@@ -58,31 +57,31 @@ const SearchPage = observer(() => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
-	return isLoading ? (
-		<Loader />
-	) : (
-		<>
-			{type === SearchTypesEnum.AUTHORS && (
-				<AuthorsGrid
-					items={searchPageStore.authors}
-					isLoading={isAuthorsLoading}
-					currentPage={currentPage}
-					setCurrentPage={setCurrentPage}
-					total={searchPageStore.authorsCount}
-					perPage={perPage}
-				/>
-			)}
-			{type === SearchTypesEnum.RELEASES && (
-				<ReleasesGrid
-					items={searchPageStore.releases}
-					isLoading={isReleasesLoading}
-					currentPage={currentPage}
-					setCurrentPage={setCurrentPage}
-					total={searchPageStore.releasesCount}
-					perPage={perPage}
-				/>
-			)}
-		</>
+	return (
+		!isLoading && (
+			<>
+				{type === SearchTypesEnum.AUTHORS && (
+					<AuthorsGrid
+						items={searchPageStore.authors}
+						isLoading={isAuthorsLoading}
+						currentPage={currentPage}
+						setCurrentPage={setCurrentPage}
+						total={searchPageStore.authorsCount}
+						perPage={perPage}
+					/>
+				)}
+				{type === SearchTypesEnum.RELEASES && (
+					<ReleasesGrid
+						items={searchPageStore.releases}
+						isLoading={isReleasesLoading}
+						currentPage={currentPage}
+						setCurrentPage={setCurrentPage}
+						total={searchPageStore.releasesCount}
+						perPage={perPage}
+					/>
+				)}
+			</>
+		)
 	)
 })
 
