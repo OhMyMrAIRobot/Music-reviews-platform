@@ -1,33 +1,18 @@
 import { FC } from 'react'
-import ComboBox from '../buttons/Combo-box'
-
-const MonthEnum = Object.freeze({
-	1: 'Январь',
-	2: 'Февраль',
-	3: 'Март',
-	4: 'Апрель',
-	5: 'Май',
-	6: 'Июнь',
-	7: 'Июль',
-	8: 'Август',
-	9: 'Сентябрь',
-	10: 'Октябрь',
-	11: 'Ноябрь',
-	12: 'Декабрь',
-})
-
-type MonthEnumType = keyof typeof MonthEnum
+import ComboBox from '../../../components/buttons/Combo-box'
+import { MonthEnum, MonthEnumType } from '../../../types/month-enum-type'
 
 interface IProps {
 	selectedMonth: number
 	setSelectedMonth: (value: number) => void
 	selectedYear: number | null
 	setSelectedYear: (value: number | null) => void
-	minYear: number
+	minYear: number | null
 	maxYear: number
+	isLoading: boolean
 }
 
-const ReleasesRatingsHeader: FC<IProps> = ({
+const ReleasesRatingPageHeader: FC<IProps> = ({
 	selectedMonth,
 	setSelectedMonth,
 	selectedYear,
@@ -44,7 +29,7 @@ const ReleasesRatingsHeader: FC<IProps> = ({
 
 	const yearOptions = [
 		'Все время',
-		...Array.from({ length: maxYear - minYear + 1 }, (_, i) =>
+		...Array.from({ length: minYear ? maxYear - minYear + 1 : 0 }, (_, i) =>
 			(maxYear - i).toString()
 		),
 	]
@@ -68,26 +53,36 @@ const ReleasesRatingsHeader: FC<IProps> = ({
 					Фильтр
 				</p>
 				<div className='flex flex-col gap-y-2 md:flex-row md:gap-x-5'>
-					<div className='w-50'>
-						<ComboBox
-							options={yearOptions}
-							onChange={handleYearChange}
-							className='border border-white/10'
-							value={
-								selectedYear === null ? yearOptions[0] : selectedYear.toString()
-							}
-						/>
-					</div>
-					{selectedYear !== null && (
-						<div className='w-50'>
+					<div className='w-50 h-10'>
+						{!minYear ? (
+							<div className='bg-gray-400 animate-pulse opacity-40 w-full h-full rounded-md' />
+						) : (
 							<ComboBox
-								options={Object.values(MonthEnum)}
-								onChange={handleMonthChange}
+								options={yearOptions}
+								onChange={handleYearChange}
 								className='border border-white/10'
 								value={
-									MonthEnum[selectedMonth as MonthEnumType] ?? 'Неизвестно'
+									selectedYear === null
+										? yearOptions[0]
+										: selectedYear.toString()
 								}
 							/>
+						)}
+					</div>
+					{selectedYear !== null && (
+						<div className='w-50 h-10'>
+							{!minYear ? (
+								<div className='bg-gray-400 animate-pulse opacity-40 w-full h-full rounded-md' />
+							) : (
+								<ComboBox
+									options={Object.values(MonthEnum)}
+									onChange={handleMonthChange}
+									className='border border-white/10'
+									value={
+										MonthEnum[selectedMonth as MonthEnumType] ?? 'Неизвестно'
+									}
+								/>
+							)}
 						</div>
 					)}
 				</div>
@@ -96,4 +91,4 @@ const ReleasesRatingsHeader: FC<IProps> = ({
 	)
 }
 
-export default ReleasesRatingsHeader
+export default ReleasesRatingPageHeader

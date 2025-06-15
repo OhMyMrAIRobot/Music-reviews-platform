@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { useStore } from '../../hooks/use-store'
 import { IReview } from '../../models/review/review'
-import Loader from '../loader/loader'
+import Loader from '../Loader.tsx'
 import Pagination from '../pagination/Pagination'
 import ReviewCard from '../review/review-card/Review-card'
 
@@ -44,7 +44,7 @@ const ProfileReviewsGrid: FC<IProps> = ({
 				)
 			) : (
 				<div className='mt-30'>
-					<Loader size='size-20' />
+					<Loader className={'size-20'} />
 				</div>
 			)}
 

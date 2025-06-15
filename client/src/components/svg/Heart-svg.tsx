@@ -4,24 +4,16 @@ import { ISvgProps } from '../../models/svg/svg-props'
 const HeartSvg: FC<ISvgProps> = ({ className }) => {
 	return (
 		<svg
+			viewBox='0 0 24 24'
+			xmlns='http://www.w3.org/2000/svg'
+			fill='currentColor'
 			stroke='currentColor'
-			fill='none'
-			strokeWidth='0'
-			viewBox='0 0 20 20'
+			strokeWidth='2'
+			strokeLinecap='round'
+			strokeLinejoin='round'
 			className={className}
 		>
-			<g clipPath='url(#clip0_4127_2080)'>
-				<path
-					d='M15.18 2.5L17.5 4.83V7.75L10 15.44L2.5 7.75V4.83L4.82 2.5H7.74L8.23 2.99L10.01 4.78L11.79 2.99L12.28 2.5H15.2M16.24 0H11.24L10.02 1.23L8.8 0H3.78L0 3.8V8.77L10 19.02L20 8.77V3.8L16.22 0H16.24Z'
-					fill='currentColor'
-					stroke='currentColor'
-				></path>
-			</g>
-			<defs>
-				<clipPath id='clip0_4127_2080'>
-					<rect width='20' height='19.02' fill='white'></rect>
-				</clipPath>
-			</defs>
+			<path d='M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z'></path>
 		</svg>
 	)
 }

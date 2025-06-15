@@ -1,6 +1,6 @@
 import { FC } from 'react'
-import NextSvg from './svg/Next-svg'
-import PrevSvg from './svg/Prev-svg'
+import NextSvg from '../svg/Next-svg'
+import PrevSvg from '../svg/Prev-svg'
 
 interface IProps {
 	isNext: boolean

@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useParams } from 'react-router'
-import Loader from '../components/loader/loader'
+import Loader from '../components/Loader.tsx'
 import ProfileLeftSection from '../components/profile/ProfileLeftSection'
 import ProfileRightSection from '../components/profile/ProfileRightSection'
 import { useLoading } from '../hooks/use-loading'
@@ -22,7 +22,7 @@ const ProfilePage = () => {
 	const profile = profileStore.profile
 
 	return isLoading ? (
-		<Loader />
+		<Loader className={'size-20'} />
 	) : (
 		profile && (
 			<div className='grid grid-cols-1 xl:grid-cols-10 gap-5'>

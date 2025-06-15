@@ -1,12 +1,14 @@
-import { makeAutoObservable, runInAction } from 'mobx'
-import { AuthorAPI } from '../api/author-api'
-import { ReleaseAPI } from '../api/release-api'
-import { ReviewAPI } from '../api/review-api'
-import { IAuthor } from '../models/author/author'
-import { IRelease } from '../models/release/release'
-import { IReview } from '../models/review/review'
+import { makeAutoObservable } from 'mobx'
+import { AuthorAPI } from '../../../api/author-api'
+import { ReleaseAPI } from '../../../api/release-api'
+import { ReviewAPI } from '../../../api/review-api'
+import { IAuthor } from '../../../models/author/author'
+import { IRelease } from '../../../models/release/release'
+import { IReview } from '../../../models/review/review'
+import { TogglePromiseResult } from '../../../types/toggle-promise-result'
+import { toggleFav } from '../../../utils/toggle-fav'
 
-class AuthorPageStore {
+class AuthorDetailsPageStore {
 	constructor() {
 		makeAutoObservable(this)
 	}
@@ -71,31 +73,21 @@ class AuthorPageStore {
 	toggleFavAuthor = async (
 		authorId: string,
 		isFav: boolean
-	): Promise<{ status: boolean; message: string }> => {
-		try {
-			if (isFav) {
-				await AuthorAPI.deleteFavAuthor(authorId)
-			} else {
-				await AuthorAPI.addFavAuthor(authorId)
-			}
+	): Promise<TogglePromiseResult> => {
+		const result = await toggleFav(this.author, authorId, isFav, {
+			add: AuthorAPI.addFavAuthor,
+			delete: AuthorAPI.deleteFavAuthor,
+			fetch: AuthorAPI.fetchFavAuthorUsersIds,
+		})
 
-			const data = await AuthorAPI.fetchFavAuthorUsersIds(authorId)
-
-			runInAction(() => {
-				if (this.author) {
-					this.author.user_fav_ids = data
-					this.author.likes_count = data.length
-				}
-			})
-
+		if (result) {
 			return {
 				status: true,
 				message: isFav
 					? 'Вы убрали автора из списка понравившихся'
 					: 'Вы отметили автора как понравившегося!',
 			}
-		} catch (e) {
-			console.log(e)
+		} else {
 			return {
 				status: false,
 				message: isFav
@@ -104,6 +96,33 @@ class AuthorPageStore {
 			}
 		}
 	}
+
+	toggleFavReview = async (
+		reviewId: string,
+		isFav: boolean
+	): Promise<TogglePromiseResult> => {
+		const result = await toggleFav(this.lastReviews, reviewId, isFav, {
+			add: ReviewAPI.addReviewToFav,
+			delete: ReviewAPI.deleteReviewFromFav,
+			fetch: ReviewAPI.fetchFavReviewUsersIds,
+		})
+
+		if (result) {
+			return {
+				status: true,
+				message: isFav
+					? 'Вы убрали рецензию из списка понравившихся!'
+					: 'Вы отметили рецензию как понравившеюся!',
+			}
+		} else {
+			return {
+				status: false,
+				message: isFav
+					? 'Не удалось убрать рецензию из списка понравившихся!'
+					: 'Не удалось отметь рецензию как понравившеюся!',
+			}
+		}
+	}
 }
 
-export default new AuthorPageStore()
+export default new AuthorDetailsPageStore()

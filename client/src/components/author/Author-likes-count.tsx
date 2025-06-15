@@ -1,6 +1,6 @@
 import { FC } from 'react'
-import { ReleaseLikesSvgIcon } from '../releasePage/releasePageSvgIcons'
 import TooltipSpan from '../releasePage/tooltip/Tooltip-span'
+import BookmarkSvg from '../svg/Bookmark-svg'
 import Tooltip from '../tooltip/Tooltip'
 
 interface IProps {
@@ -14,7 +14,7 @@ const AuthorLikesCount: FC<IProps> = ({ count }) => {
 			spanClassName='text-white relative'
 		>
 			<div className='flex gap-x-1 items-center justify-center font-medium'>
-				<ReleaseLikesSvgIcon />
+				<BookmarkSvg className={'size-5 fill-[rgba(35,101,199,1)]'} />
 				<span>{count}</span>
 			</div>
 		</TooltipSpan>

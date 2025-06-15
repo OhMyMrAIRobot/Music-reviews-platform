@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { IReleaseReview } from '../../../models/review/release-review'
-import Loader from '../../loader/loader'
+import Loader from '../../Loader.tsx'
 import Pagination from '../../pagination/Pagination'
 import ReleaseReviewItem from '../review/ReleaseReviewItem'
 import ReleaseReviewsHeader from './ReleaseReviewsHeader'
@@ -36,7 +36,7 @@ const ReleaseReviewsContainer: FC<IProps> = ({
 			className='w-full grid grid-cols-1 mt-5 lg:mt-10'
 		>
 			{isLoading ? (
-				<Loader />
+				<Loader className={'size-20'} />
 			) : totalItems > 0 ? (
 				<>
 					<ReleaseReviewsHeader

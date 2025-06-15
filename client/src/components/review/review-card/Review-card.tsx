@@ -93,7 +93,7 @@ const ReviewCard: FC<IProps> = observer(
 						>
 							<MoveToReviewSvgIcon />
 							<div
-								className={`absolute -top-10 left-1/1 -translate-x-1/1 bg-primary border-2 border-gray-600 rounded-xl text-white text-xs font-semibold px-3 py-2 shadow z-100 whitespace-nowrap transition-all duration-300 ${
+								className={`absolute -top-10 left-1/1 -translate-x-1/1 bg-zinc-950 border-2 border-gray-600 rounded-xl text-white text-xs font-semibold px-3 py-2 shadow z-100 whitespace-nowrap transition-all duration-300 ${
 									show ? 'opacity-100 visible' : 'opacity-0 invisible'
 								}`}
 							>

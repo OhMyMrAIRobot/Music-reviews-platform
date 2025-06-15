@@ -1,7 +1,6 @@
 import { FC, ReactNode } from 'react'
 
 export interface ISidebarItemProps {
-	id: string
 	onClick: () => void
 	icon: ReactNode
 	label: string
@@ -22,7 +21,7 @@ const SidebarItem: FC<ISidebarItemProps> = ({
 			}`}
 		>
 			<span className='flex items-center justify-center size-9'>{icon}</span>
-			<span className='absolute ml-9 text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-all duration-300'>
+			<span className='absolute ml-9 text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-all duration-200'>
 				{label}
 			</span>
 		</button>

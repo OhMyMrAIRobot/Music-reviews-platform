@@ -1,7 +1,5 @@
-import { createContext, useContext } from 'react'
-import Store from '../stores/store.ts'
-
-export const StoreContext = createContext<Store | null>(null)
+import { useContext } from 'react'
+import { StoreContext } from '../contexts/store-context'
 
 export const useStore = () => {
 	const context = useContext(StoreContext)

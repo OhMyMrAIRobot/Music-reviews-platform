@@ -1,15 +1,15 @@
 import { FC } from 'react'
-import SidebarItem, { ISidebarItemProps } from './SidebarItem'
+import SidebarItem, { ISidebarItemProps } from './Sidebar-item'
 
-interface ISidebarSectionProps {
+interface IProps {
 	items: ISidebarItemProps[]
 }
 
-const SidebarSection: FC<ISidebarSectionProps> = ({ items }) => {
+const SidebarSection: FC<IProps> = ({ items }) => {
 	return (
 		<nav className='flex flex-col items-start gap-1 px-2 py-3'>
 			{items.map(item => (
-				<SidebarItem key={item.id} {...item} />
+				<SidebarItem key={item.label} {...item} />
 			))}
 		</nav>
 	)
