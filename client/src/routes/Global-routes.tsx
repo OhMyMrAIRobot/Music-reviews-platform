@@ -9,7 +9,7 @@ import MainPage from '../pages/main-page/Main-page'
 import ProfilePage from '../pages/ProfilePage'
 import ReleasePage from '../pages/ReleasePage'
 import ReleasesPage from '../pages/releases-page/Releases-page'
-import ReleasesRatingsPage from '../pages/ReleasesRatingsPage'
+import ReleasesRatingPage from '../pages/releases-rating-page/Releases-rating-page'
 import ReviewsPage from '../pages/reviews-page/Reviews-page'
 import SearchPage from '../pages/search-page/Search-page'
 import { ROUTES } from './routes-enum'
@@ -38,7 +38,7 @@ const GlobalRoutes = () => {
 		/>,
 		<Route
 			path={ROUTES.RATINGS}
-			element={<ReleasesRatingsPage />}
+			element={<ReleasesRatingPage />}
 			key='author'
 		/>,
 	]

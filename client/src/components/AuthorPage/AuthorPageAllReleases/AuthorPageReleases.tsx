@@ -4,7 +4,7 @@ import { useLoading } from '../../../hooks/use-loading'
 import { useStore } from '../../../hooks/use-store'
 import { ReleaseTypesEnum } from '../../../models/release/release-types'
 import Loader from '../../loader/loader'
-import AuthorsPageReleasesCol from './AuthorsPageReleasesCol'
+import ReleasesColumn from '../../release/releases-column/Releases-column'
 
 const AuthorPageReleases = () => {
 	const { id } = useParams()
@@ -35,8 +35,12 @@ const AuthorPageReleases = () => {
 				<Loader />
 			) : (
 				<div className='grid grid-cols-1 lg:grid-cols-2 gap-5'>
-					<AuthorsPageReleasesCol title={'Треки'} releases={tracks} />
-					<AuthorsPageReleasesCol title={'Альбомы'} releases={albums} />
+					<ReleasesColumn title={'Треки'} releases={tracks} isLoading={false} />
+					<ReleasesColumn
+						title={'Альбомы'}
+						releases={albums}
+						isLoading={false}
+					/>
 				</div>
 			)}
 		</section>

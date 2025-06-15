@@ -49,7 +49,7 @@ const MostReviewedCarouselCard: FC<IProps> = ({ release, index }) => {
 
 						<ReleaseAuthors
 							authors={release.author}
-							className='font-semibold'
+							className='font-semibold mt-2 leading-3'
 						/>
 					</div>
 
@@ -57,6 +57,7 @@ const MostReviewedCarouselCard: FC<IProps> = ({ release, index }) => {
 						<ReleaseRatings
 							ratings={release.ratings}
 							className={'size-9 2xl:size-11 text-base'}
+							showHint={false}
 						/>
 					</div>
 				</div>

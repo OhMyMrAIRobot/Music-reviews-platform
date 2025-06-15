@@ -1,10 +1,9 @@
 import { FC } from 'react'
 import useCustomNavigate from '../../hooks/use-custom-navigate'
 import { IRelease } from '../../models/release/release'
-import NoTextReviewSvg from '../review/svg/No-text-review-svg'
-import TextReviewSvg from '../review/svg/Text-review-svg'
 import ReleaseAuthors from './Release-authors'
 import ReleaseRatings from './Release-ratings'
+import ReleaseReviewsCount from './Release-reviews-count'
 import ReleaseTypeIcon from './Release-type-icon'
 
 interface IProps {
@@ -35,22 +34,13 @@ const ReleaseCard: FC<IProps> = ({ release, isLoading }) => {
 							}`}
 						/>
 					</div>
-					{(release.text_count > 0 || release.no_text_count > 0) && (
-						<div className='absolute bottom-1.5 left-1.5 bg-zinc-900 rounded-full px-1.5 flex gap-2 items-center font-semibold text-sm'>
-							{release.text_count > 0 && (
-								<div className='flex gap-0.75 items-center'>
-									<TextReviewSvg className='size-3' />
-									<span>{release.text_count}</span>
-								</div>
-							)}
-							{release.no_text_count > 0 && (
-								<div className='flex gap-0.75 items-center'>
-									<NoTextReviewSvg className='size-3' />
-									<span>{release.no_text_count}</span>
-								</div>
-							)}
-						</div>
-					)}
+
+					<ReleaseReviewsCount
+						textCount={release.text_count}
+						noTextCount={release.no_text_count}
+						className='absolute bottom-1.5 left-1.5 bg-zinc-900 rounded-full px-1.5'
+					/>
+
 					<div className='absolute bottom-1.5 right-1.5 bg-zinc-900 size-6 rounded-full flex items-center justify-center'>
 						<ReleaseTypeIcon
 							type={release.release_type}
@@ -66,13 +56,14 @@ const ReleaseCard: FC<IProps> = ({ release, isLoading }) => {
 
 				<ReleaseAuthors
 					authors={release.author}
-					className='text-[13px] font-medium'
+					className='text-[13px] font-medium mt-2 leading-3'
 				/>
 
 				<div className='flex items-center px-1 pb-1 gap-1 text-white mt-auto pt-5'>
 					<ReleaseRatings
 						ratings={release.ratings}
 						className={'size-7 text-xs'}
+						showHint={false}
 					/>
 				</div>
 			</button>

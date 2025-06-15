@@ -19,7 +19,7 @@ const ReleaseAuthors: FC<IProps> = ({ authors, className }) => {
 	}
 
 	return (
-		<div className={`flex flex-wrap gap-1 leading-3 mt-2 ${className}`}>
+		<div className={`flex flex-wrap gap-1 items-center ${className}`}>
 			{authors.map((author, index) => (
 				<div
 					onClick={e => navigateToAuthorPage(author.id, e)}

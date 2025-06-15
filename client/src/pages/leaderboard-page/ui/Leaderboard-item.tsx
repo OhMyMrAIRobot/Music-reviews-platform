@@ -117,11 +117,11 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 					centered={true}
 				>
 					<div className='flex items-center gap-1.5'>
-						<TextReviewSvg className='size-4 xl:size-6' />
+						<TextReviewSvg className='size-4 xl:size-5' />
 						<span className='font-semibold'>{item.text_count}</span>
 					</div>
 					<div className='flex items-center gap-1.5'>
-						<NoTextReviewSvg className='size-4 xl:size-6' />
+						<NoTextReviewSvg className='size-4 xl:size-5' />
 						<span className='font-semibold'>{item.no_text_count}</span>
 					</div>
 				</TooltipSpan>
