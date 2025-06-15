@@ -6,7 +6,7 @@ import AuthorPageHeader from '../components/authorPage/AuthorPageHeader'
 import AuthorPageReviewsCarousel from '../components/authorPage/AuthorPageReviewsCarousel'
 import AuthorPageStats from '../components/authorPage/AuthorPageStats'
 import AuthorsPageReleasesCarousel from '../components/authorPage/AuthorsPageReleasesCarousel'
-import Loader from '../components/Loader'
+import Loader from '../components/loader/loader'
 import { useLoading } from '../hooks/use-loading'
 import { useStore } from '../hooks/use-store'
 

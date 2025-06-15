@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
-import Loader from '../components/Loader'
+import Loader from '../components/loader/loader'
 import ReleaseContainer from '../components/releasePage/container/ReleaseContainer'
 import ReleaseReviewsContainer, {
 	ReleaseReviewsSortEnum,

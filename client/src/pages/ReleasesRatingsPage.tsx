@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
 import AuthorsPageReleasesCol from '../components/authorPage/AuthorPageAllReleases/AuthorsPageReleasesCol'
-import Loader from '../components/Loader'
+import Loader from '../components/loader/loader'
 import ReleasesRatingsHeader from '../components/releasesRatingsPage/ReleasesRatingsHeader'
 import { useLoading } from '../hooks/use-loading'
 import { useStore } from '../hooks/use-store'

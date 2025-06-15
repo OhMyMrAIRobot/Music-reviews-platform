@@ -1,5 +1,6 @@
 import { FC } from 'react'
-import { NextSvgIcon, PrevSvgIcon } from '../svg/ReleaseSvgIcons'
+import NextSvg from './svg/Next-svg'
+import PrevSvg from './svg/Prev-svg'
 
 interface IProps {
 	isNext: boolean
@@ -13,7 +14,7 @@ const CarouselNavButton: FC<IProps> = ({ isNext, handleNext, handlePrev }) => {
 			onClick={isNext ? handleNext : handlePrev}
 			className='relative rounded-full h-10 w-10 bg-zinc-900 hover:bg-zinc-800 flex items-center justify-center cursor-pointer transition-colors'
 		>
-			{isNext ? <NextSvgIcon /> : <PrevSvgIcon />}
+			{isNext ? <NextSvg className={''} /> : <PrevSvg className={''} />}
 		</button>
 	)
 }

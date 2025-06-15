@@ -3,10 +3,8 @@ import useCustomNavigate from '../../../hooks/use-custom-navigate'
 import { IRelease } from '../../../models/release/release'
 import { ReleaseRatingTypesEnum } from '../../../models/release/release-rating-types-enum'
 import TooltipSpan from '../../releasePage/tooltip/Tooltip-span'
-import {
-	NoTextReviewSvgIcon,
-	TextReviewSvgIcon,
-} from '../../svg/ReleaseSvgIcons'
+import NoTextReviewSvg from '../../review/svg/No-text-review-svg'
+import TextReviewSvg from '../../review/svg/Text-review-svg'
 import Tooltip from '../../tooltip/Tooltip'
 
 interface IProps {
@@ -42,13 +40,13 @@ const AuthorPageReleaseItem: FC<IProps> = ({ release }) => {
 					<div className='flex gap-2 items-top font-semibold text-sm'>
 						{release.text_count > 0 && (
 							<div className='flex gap-0.75 items-center'>
-								<TextReviewSvgIcon classname='size-3' />
+								<TextReviewSvg className='size-3' />
 								<span>{release.text_count}</span>
 							</div>
 						)}
 						{release.no_text_count > 0 && (
 							<div className='flex gap-0.75 items-center'>
-								<NoTextReviewSvgIcon classname='size-3' />
+								<NoTextReviewSvg className='size-3' />
 								<span>{release.no_text_count}</span>
 							</div>
 						)}

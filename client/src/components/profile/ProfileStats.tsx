@@ -2,8 +2,10 @@ import { FC } from 'react'
 import useCustomNavigate from '../../hooks/use-custom-navigate'
 import { IProfile } from '../../models/profile/profile'
 import { getLevelConfig, getUserLevel } from '../../utils/user-level'
-import { HeartFilledSvgIcon, HeartSvgIcon } from '../header/HeaderSvgIcons'
-import { NoTextReviewSvgIcon, TextReviewSvgIcon } from '../svg/ReleaseSvgIcons'
+import NoTextReviewSvg from '../review/svg/No-text-review-svg'
+import TextReviewSvg from '../review/svg/Text-review-svg'
+import HeartFillSvg from '../svg/Heart-fill-svg'
+import HeartSvg from '../svg/Heart-svg'
 import ProfileInfoRow from './ProfileInfoRow'
 
 interface IProps {
@@ -73,12 +75,12 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
 				<ProfileInfoRow
 					title={'Рецензий'}
 					value={profile.text_count}
-					icon={<TextReviewSvgIcon classname={'size-5'} />}
+					icon={<TextReviewSvg className={'size-5'} />}
 				/>
 				<ProfileInfoRow
 					title={'Оценок без рецензий'}
 					value={profile.no_text_count}
-					icon={<NoTextReviewSvgIcon classname={'size-5'} />}
+					icon={<NoTextReviewSvg className={'size-5'} />}
 				/>
 			</div>
 
@@ -91,12 +93,12 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
 				<ProfileInfoRow
 					title={'Получено лайков'}
 					value={profile.received_likes}
-					icon={<HeartSvgIcon />}
+					icon={<HeartSvg className={'size-[19px]'} />}
 				/>
 				<ProfileInfoRow
 					title={'Поставлено лайков'}
 					value={profile.given_likes}
-					icon={<HeartFilledSvgIcon />}
+					icon={<HeartFillSvg className={'size-[19px]'} />}
 				/>
 			</div>
 		</div>

@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { IReleaseReview } from '../../../models/review/release-review'
-import Loader from '../../Loader'
+import Loader from '../../loader/loader'
 import Pagination from '../../pagination/Pagination'
 import ReleaseReviewItem from '../review/ReleaseReviewItem'
 import ReleaseReviewsHeader from './ReleaseReviewsHeader'
