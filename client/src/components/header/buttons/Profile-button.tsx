@@ -61,7 +61,10 @@ const ProfileButton = observer(() => {
 	}
 
 	return (
-		<div ref={popUpProfRef} className='relative flex rounded-md items-center'>
+		<div
+			ref={popUpProfRef}
+			className='relative flex rounded-md items-center select-none'
+		>
 			{isLoading ? (
 				<div className='size-10 bg-gray-400 animate-pulse opacity-40 rounded-full' />
 			) : (

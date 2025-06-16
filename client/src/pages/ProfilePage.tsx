@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 import { useParams } from 'react-router'
-import Loader from '../components/Loader.tsx'
 import ProfileLeftSection from '../components/profile/ProfileLeftSection'
 import ProfileRightSection from '../components/profile/ProfileRightSection'
+import Loader from '../components/utils/Loader.tsx'
 import { useLoading } from '../hooks/use-loading'
 import { useStore } from '../hooks/use-store'
 

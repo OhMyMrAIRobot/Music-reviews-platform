@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Routes } from 'react-router'
-import Loader from './components/Loader'
 import NotificationContainer from './components/notifications/NotificationContainer'
+import Loader from './components/utils/Loader'
 import { useLoading } from './hooks/use-loading'
 import { useStore } from './hooks/use-store'
 import Layout from './Layout'

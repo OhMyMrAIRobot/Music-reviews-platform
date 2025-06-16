@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useParams } from 'react-router'
 import { useLoading } from '../../hooks/use-loading'
 import { useStore } from '../../hooks/use-store'
-import Loader from '../Loader.tsx'
+import Loader from '../utils/Loader.tsx'
 import PreferProfileGridItem from './PreferProfileGridItem'
 
 const PreferProfileGrid = () => {

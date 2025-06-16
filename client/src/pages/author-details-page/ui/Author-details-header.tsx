@@ -1,8 +1,8 @@
 import { observer } from 'mobx-react-lite'
-import { FC } from 'react'
-import AuthorLikesCount from '../../../components/author/Author-likes-count'
+import { FC, useState } from 'react'
 import AuthorTypes from '../../../components/author/Author-types'
 import ToggleFavButton from '../../../components/buttons/Toggle-fav-button'
+import LikesCount from '../../../components/utils/Likes-count'
 import { useAuth } from '../../../hooks/use-auth'
 import { useStore } from '../../../hooks/use-store'
 import { IAuthor } from '../../../models/author/author'
@@ -17,11 +17,17 @@ const AuthorDetailsHeader: FC<IProps> = observer(({ author, isLoading }) => {
 
 	const { authorDetailsPageStore, authStore, notificationStore } = useStore()
 
+	const [toggling, setToggling] = useState<boolean>(false)
+
 	const isLiked =
 		author?.user_fav_ids.some(val => val.userId === authStore.user?.id) ?? false
 
 	const toggleFavAuthor = () => {
-		if (!checkAuth()) return
+		setToggling(true)
+		if (!checkAuth()) {
+			setToggling(false)
+			return
+		}
 
 		authorDetailsPageStore
 			.toggleFavAuthor(author?.id ?? '', isLiked)
@@ -32,6 +38,7 @@ const AuthorDetailsHeader: FC<IProps> = observer(({ author, isLoading }) => {
 					isError: !result.status,
 				})
 			})
+			.finally(() => setToggling(false))
 	}
 
 	return isLoading ? (
@@ -69,6 +76,7 @@ const AuthorDetailsHeader: FC<IProps> = observer(({ author, isLoading }) => {
 							onClick={toggleFavAuthor}
 							isLiked={isLiked}
 							className='absolute top-3 right-3 z-300 size-10 lg:size-12'
+							toggling={toggling}
 						/>
 
 						<div className='flex absolute bottom-5 left-5 lg:bottom-10 lg:left-10 gap-3 z-300'>
@@ -79,7 +87,7 @@ const AuthorDetailsHeader: FC<IProps> = observer(({ author, isLoading }) => {
 							</div>
 
 							<div className='bg-zinc-950 px-3 py-1 lg:px-5 lg:py-3 rounded-xl items-center inline-flex'>
-								<AuthorLikesCount count={author.likes_count} />
+								<LikesCount count={author.likes_count} />
 							</div>
 						</div>
 					</div>

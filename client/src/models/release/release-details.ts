@@ -1,4 +1,7 @@
 import { IFavRelease } from './fav-release'
+import { IReleaseDetailsAuthor } from './release-details-author'
+import { IReleaseRating } from './release-rating'
+import { IReleaseRatingDetails } from './release-rating-details'
 
 export interface IReleaseDetails {
 	id: string
@@ -6,39 +9,11 @@ export interface IReleaseDetails {
 	year: number
 	release_img: string
 	release_type: string
-	artists:
-		| {
-				id: string
-				img: string
-				name: string
-		  }[]
-		| null
-	producers:
-		| {
-				id: string
-				img: string
-				name: string
-		  }[]
-		| null
-	designers:
-		| {
-				id: string
-				img: string
-				name: string
-		  }[]
-		| null
+	artists: IReleaseDetailsAuthor[] | null
+	producers: IReleaseDetailsAuthor[] | null
+	designers: IReleaseDetailsAuthor[] | null
 	likes_count: number
 	user_fav_ids: IFavRelease[]
-	ratings: { type: string; total: number }[]
-	rating_details: {
-		type: string
-		details: {
-			rhymes: number
-			structure: number
-			atmosphere: number
-			realization: number
-			individuality: number
-			release_rating_id: string
-		}
-	}[]
+	ratings: IReleaseRating[]
+	rating_details: IReleaseRatingDetails[]
 }

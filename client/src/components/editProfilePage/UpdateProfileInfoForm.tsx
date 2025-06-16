@@ -4,7 +4,7 @@ import { useAuth } from '../../hooks/use-auth'
 import { useStore } from '../../hooks/use-store'
 import FormInput from '../form-elements/Form-input'
 import FormLabel from '../form-elements/Form-label'
-import FormTextbox from '../form-elements/FormTextbox'
+import FormTextbox from '../form-elements/Form-textbox'
 import EditProfileSection from './EditProfileSection'
 import SubmitButton from './SubmitButton'
 

@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import TooltipSpan from '../../releasePage/tooltip/Tooltip-span'
+import TooltipSpan from '../../tooltip/Tooltip-span'
 import ReviewToolTip from './Review-tooltip'
 
 interface IProps {

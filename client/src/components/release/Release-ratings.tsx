@@ -1,8 +1,8 @@
 import { FC } from 'react'
 import { IReleaseRating } from '../../models/release/release-rating'
 import { ReleaseRatingTypesEnum } from '../../models/release/release-rating-types-enum'
-import TooltipSpan from '../releasePage/tooltip/Tooltip-span'
 import Tooltip from '../tooltip/Tooltip'
+import TooltipSpan from '../tooltip/Tooltip-span'
 
 interface IProps {
 	ratings: IReleaseRating[]
