@@ -143,7 +143,7 @@ export class AuthorsService {
             FROM author_releases ar
             JOIN "Release_ratings" rr ON ar.release_id = rr.release_id
             JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
-            WHERE rr.total > 0  -- Исключаем нулевые оценки
+            WHERE rr.total > 0
             GROUP BY ar.author_id, ar.release_type, rrt.type
         ),
 
@@ -171,7 +171,7 @@ export class AuthorsService {
                     'userId', ufa.user_id, 
                     'authorId', ufa.author_id
             )) as user_fav_ids,
-            jsonb_agg(DISTINCT jsonb_build_object('type', at.type)) AS author_types,
+            jsonb_agg(DISTINCT jsonb_build_object('id', at.id, 'type', at.type)) AS author_types,
             jsonb_agg(
                 jsonb_build_object(
                     'type', rs.release_type,
@@ -282,7 +282,7 @@ export class AuthorsService {
             FROM author_releases ar
             JOIN "Release_ratings" rr ON ar.release_id = rr.release_id
             JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
-            WHERE rr.total > 0  -- Исключаем нулевые оценки
+            WHERE rr.total > 0
             GROUP BY ar.author_id, ar.release_type, rrt.type
         ),
 
@@ -310,7 +310,7 @@ export class AuthorsService {
                     'userId', ufa.user_id, 
                     'authorId', ufa.author_id
             )) as user_fav_ids,
-            jsonb_agg(DISTINCT jsonb_build_object('type', at.type)) AS author_types,
+            jsonb_agg(DISTINCT jsonb_build_object('id', at.id, 'type', at.type)) AS author_types,
             jsonb_agg(
                 jsonb_build_object(
                     'type', rs.release_type,

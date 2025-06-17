@@ -7,8 +7,8 @@ import { ReleaseTypesService } from 'src/release-types/release-types.service';
 import { CreateReleaseDto } from './dto/create-release.dto';
 import {
   QueryReleaseDetailResponseDto,
-  ReleaseDetailResponseDto,
-} from './dto/release-detail.response.dto';
+  ReleaseDetailsResponseDto,
+} from './dto/release-details.response.dto';
 import {
   ReleaseResponseData,
   ReleaseResponseDto,
@@ -82,7 +82,7 @@ export class ReleasesService {
 
   async findReleaseDetails(
     releaseId: string,
-  ): Promise<ReleaseDetailResponseDto> {
+  ): Promise<ReleaseDetailsResponseDto> {
     const rawQuery = `
         SELECT * FROM release_summary WHERE id = '${releaseId}'`;
 

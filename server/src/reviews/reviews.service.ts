@@ -222,6 +222,16 @@ export class ReviewsService {
     const offset = query.offset ? query.offset : 0;
 
     const rawQuery = `
+      WITH filtered_reviews AS (
+        SELECT rev.id
+        FROM "Reviews" rev
+        LEFT JOIN "User_fav_reviews" ufr ON rev.id = ufr.review_id
+        WHERE rev.text IS NOT NULL 
+          AND rev.title IS NOT NULL
+          ${query.userId ? `AND rev.user_id = '${query.userId}'` : ''}
+          ${query.favUserId ? `AND ufr.user_id = '${query.favUserId}'` : ''}
+        GROUP BY rev.id
+      )
       SELECT
           rev.id,
           rev.title,
@@ -244,17 +254,14 @@ export class ReviewsService {
           json_agg(DISTINCT jsonb_build_object(
               'userId', ufr.user_id,
               'reviewId', ufr.review_id
-          )) AS user_fav_ids
+          )) FILTER (WHERE ufr.user_id IS NOT NULL) AS user_fav_ids
       FROM "Reviews" rev
-            LEFT JOIN "Users" u ON rev.user_id = u.id
-            LEFT JOIN "User_profiles" p ON u.id = p.user_id
-            LEFT JOIN "Top_users_leaderboard" tul ON p.user_id = tul.user_id
-            LEFT JOIN "Releases" r ON rev.release_id = r.id
-            LEFT JOIN "User_fav_reviews" ufr ON rev.id = ufr.review_id
-      WHERE rev.text IS NOT NULL 
-        AND rev.title IS NOT NULL
-        ${query.userId ? `AND rev.user_id = '${query.userId}'` : ''}
-        ${query.favUserId ? `AND ufr.user_id = '${query.favUserId}'` : ''}
+      LEFT JOIN "Users" u ON rev.user_id = u.id
+      LEFT JOIN "User_profiles" p ON u.id = p.user_id
+      LEFT JOIN "Top_users_leaderboard" tul ON p.user_id = tul.user_id
+      LEFT JOIN "Releases" r ON rev.release_id = r.id
+      LEFT JOIN "User_fav_reviews" ufr ON rev.id = ufr.review_id
+      WHERE rev.id IN (SELECT id FROM filtered_reviews)
       GROUP BY
           rev.id, rev.title, rev.text, rev.total, rev.rhymes, rev.structure, rev.realization,
           rev.individuality, rev.atmosphere, u.nickname, p.avatar, p.points, tul.rank,
