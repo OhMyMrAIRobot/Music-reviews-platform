@@ -20,7 +20,8 @@ const AuthorDetailsHeader: FC<IProps> = observer(({ author, isLoading }) => {
 	const [toggling, setToggling] = useState<boolean>(false)
 
 	const isLiked =
-		author?.user_fav_ids.some(val => val.userId === authStore.user?.id) ?? false
+		author?.user_fav_ids?.some(val => val.userId === authStore.user?.id) ??
+		false
 
 	const toggleFavAuthor = () => {
 		setToggling(true)

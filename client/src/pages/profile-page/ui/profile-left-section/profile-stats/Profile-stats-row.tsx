@@ -6,9 +6,9 @@ interface IProps {
 	icon: ReactNode
 }
 
-const ProfileInfoRow: FC<IProps> = ({ title, value, icon }) => {
+const ProfileStatsRow: FC<IProps> = ({ title, value, icon }) => {
 	return (
-		<div className='flex justify-between items-center'>
+		<div className='flex justify-between items-center select-none'>
 			<div className='flex justify-between items-center space-x-1.5'>
 				{icon}
 				<span className='font-semibold'>{title}</span>
@@ -18,4 +18,4 @@ const ProfileInfoRow: FC<IProps> = ({ title, value, icon }) => {
 	)
 }
 
-export default ProfileInfoRow
+export default ProfileStatsRow

@@ -3,20 +3,20 @@ import { useEffect, useRef, useState } from 'react'
 import useCustomNavigate from '../../../hooks/use-custom-navigate'
 import { useLoading } from '../../../hooks/use-loading'
 import { useStore } from '../../../hooks/use-store'
-import ProfileSvg from '../../profile/svg/Profile-svg'
 import PixelHeartSvg from '../../svg/Pixel-heart-svg'
 import SettingsSvg from '../../svg/Settings-svg'
 import LogoutSvg from '../svg/Logout-svg'
+import ProfileSvg from '../svg/Profile-svg'
 import PopupProfileButton from './Popup-profile-button'
 
 const ProfileButton = observer(() => {
-	const { authStore, notificationStore, profileStore } = useStore()
+	const { authStore, notificationStore } = useStore()
 
 	const { navigateToMain, navigatoToProfile, navigateToEditProfile } =
 		useCustomNavigate()
 
 	const { execute: fetchProfile, isLoading } = useLoading(
-		profileStore.fetchMyProfile
+		authStore.fetchProfile
 	)
 
 	useEffect(() => {
@@ -76,7 +76,7 @@ const ProfileButton = observer(() => {
 						loading='lazy'
 						decoding='async'
 						src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-							profileStore.myProfile?.avatar
+							authStore.profile?.avatar
 						}`}
 						className='size-full aspect-square'
 					/>

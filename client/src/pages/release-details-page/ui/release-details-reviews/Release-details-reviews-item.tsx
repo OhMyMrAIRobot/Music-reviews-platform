@@ -22,7 +22,7 @@ const ReleaseDetailsReviewsItem: FC<IProps> = observer(
 
 		const { authStore, releaseDetailsPageStore, notificationStore } = useStore()
 		const isLiked =
-			review?.user_fav_ids.some(item => item.userId === authStore.user?.id) ??
+			review?.user_fav_ids?.some(item => item.userId === authStore.user?.id) ??
 			false
 
 		const [toggling, setToggling] = useState<boolean>(false)

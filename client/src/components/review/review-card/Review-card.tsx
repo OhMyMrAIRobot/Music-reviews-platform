@@ -30,7 +30,7 @@ const ReviewCard: FC<IProps> = observer(
 		const [show, setShow] = useState<boolean>(false)
 
 		const isLiked =
-			review?.user_fav_ids.some(item => item.userId === authStore.user?.id) ??
+			review?.user_fav_ids?.some(item => item.userId === authStore.user?.id) ??
 			false
 
 		const toggleFavReview = () => {
@@ -97,7 +97,7 @@ const ReviewCard: FC<IProps> = observer(
 									show ? 'opacity-100 visible' : 'opacity-0 invisible'
 								}`}
 							>
-								Перейти к рецензии
+								Перейти к релизу
 							</div>
 						</button>
 					</div>

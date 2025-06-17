@@ -1,17 +1,18 @@
 import { makeAutoObservable, runInAction } from 'mobx'
-import { ProfileAPI } from '../api/profile-api'
-import { ReviewAPI } from '../api/review-api'
-import { IPreferred } from '../models/profile/preferred'
-import { IProfile } from '../models/profile/profile'
-import { IReview } from '../models/review/review'
+import { ProfileAPI } from '../../../api/profile-api'
+import { ReviewAPI } from '../../../api/review-api'
+import { IPreferred } from '../../../models/profile/preferred'
+import { IProfile } from '../../../models/profile/profile'
+import { IReview } from '../../../models/review/review'
+import { TogglePromiseResult } from '../../../types/toggle-promise-result'
+import { toggleFav } from '../../../utils/toggle-fav'
 
-export class ProfileStore {
+export class ProfilePageStore {
 	constructor() {
 		makeAutoObservable(this)
 	}
 
 	profile: IProfile | null = null
-	myProfile: IProfile | null = null
 	preferred: IPreferred | null = null
 	reviews: IReview[] = []
 	reviewsCount: number = 0
@@ -20,10 +21,6 @@ export class ProfileStore {
 
 	setProfile(data: IProfile) {
 		this.profile = data
-	}
-
-	setMyProfile(data: IProfile) {
-		this.myProfile = data
 	}
 
 	setPreferred(data: IPreferred) {
@@ -50,15 +47,6 @@ export class ProfileStore {
 		try {
 			const data = await ProfileAPI.fetchProfile(id)
 			this.setProfile(data)
-		} catch (e) {
-			console.log(e)
-		}
-	}
-
-	fetchMyProfile = async (id: string) => {
-		try {
-			const data = await ProfileAPI.fetchProfile(id)
-			this.setMyProfile(data)
 		} catch (e) {
 			console.log(e)
 		}
@@ -109,35 +97,39 @@ export class ProfileStore {
 		}
 	}
 
-	uploadProfileAvatar = async (
-		formData: FormData
-	): Promise<{ status: boolean; message: string }> => {
-		try {
-			const data = await ProfileAPI.uploadProfileAvatar(formData)
-			runInAction(() => {
-				if (this.myProfile) this.myProfile.avatar = data.avatar
-			})
-			return { status: true, message: 'Вы успешно сменили аватар!' }
-		} catch (e) {
-			console.log(e)
-			return { status: false, message: 'Не удалось загрузить аватар!' }
-		}
-	}
+	toggleFavReview = async (
+		reviewId: string,
+		isFav: boolean
+	): Promise<TogglePromiseResult> => {
+		const result = await toggleFav(this.favReviews, reviewId, isFav, {
+			add: ReviewAPI.addReviewToFav,
+			delete: ReviewAPI.deleteReviewFromFav,
+			fetch: ReviewAPI.fetchFavReviewUsersIds,
+		})
 
-	uploadProfileCover = async (
-		formData: FormData
-	): Promise<{ status: boolean; message: string }> => {
-		try {
-			const data = await ProfileAPI.uploadProfileCover(formData)
+		if (result) {
 			runInAction(() => {
-				if (this.myProfile) this.myProfile.cover = data.coverImage
+				const idx = this.favReviews.findIndex(rev => rev.id === reviewId)
+				if (idx !== -1) {
+					this.favReviews.splice(idx, 1)
+					this.favReviewsCount--
+				}
 			})
-			return { status: true, message: 'Вы успешно сменили обложку профиля!' }
-		} catch (e) {
-			console.log(e)
-			return { status: false, message: 'Не удалось загрузить обложку профиля!' }
+			return {
+				status: true,
+				message: isFav
+					? 'Вы убрали рецензию из списка понравившихся!'
+					: 'Вы отметили рецензию как понравившеюся!',
+			}
+		} else {
+			return {
+				status: false,
+				message: isFav
+					? 'Не удалось убрать рецензию из списка понравившихся!'
+					: 'Не удалось отметь рецензию как понравившеюся!',
+			}
 		}
 	}
 }
 
-export default new ProfileStore()
+export default new ProfilePageStore()

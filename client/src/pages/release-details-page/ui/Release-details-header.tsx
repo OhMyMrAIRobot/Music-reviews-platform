@@ -19,7 +19,7 @@ const ReleaseDetailsHeader: FC<IProps> = observer(({ release }) => {
 
 	const [toggling, setToggling] = useState<boolean>(false)
 
-	const isLiked = release.user_fav_ids.some(
+	const isLiked = release.user_fav_ids?.some(
 		fav => fav.userId === authStore.user?.id
 	)
 

@@ -1,25 +1,27 @@
 import { useEffect } from 'react'
 import { useParams } from 'react-router'
-import ProfileLeftSection from '../components/profile/ProfileLeftSection'
-import ProfileRightSection from '../components/profile/ProfileRightSection'
-import Loader from '../components/utils/Loader.tsx'
-import { useLoading } from '../hooks/use-loading'
-import { useStore } from '../hooks/use-store'
+import Loader from '../../components/utils/Loader.tsx'
+import { useLoading } from '../../hooks/use-loading.ts'
+import { useStore } from '../../hooks/use-store.ts'
+import ProfileLeftSection from './ui/profile-left-section/Profile-left-section.tsx'
+import ProfileRightSection from './ui/profile-right-section/Profile-right-section.tsx'
 
 const ProfilePage = () => {
 	const { id } = useParams()
 
-	const { profileStore } = useStore()
+	const { profilePageStore } = useStore()
+
 	const { execute: fetchProfile, isLoading } = useLoading(
-		profileStore.fetchProfile
+		profilePageStore.fetchProfile
 	)
 
 	useEffect(() => {
 		if (id) {
 			fetchProfile(id)
 		}
-	}, [id])
-	const profile = profileStore.profile
+	}, [fetchProfile, id])
+
+	const profile = profilePageStore.profile
 
 	return isLoading ? (
 		<Loader className={'size-20'} />

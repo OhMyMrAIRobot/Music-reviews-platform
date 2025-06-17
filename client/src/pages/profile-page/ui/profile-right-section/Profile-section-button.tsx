@@ -6,7 +6,7 @@ interface IProps {
 	onClick: () => void
 }
 
-const ProfileSelectButton: FC<IProps> = ({ title, isActive, onClick }) => {
+const ProfileSectionButton: FC<IProps> = ({ title, isActive, onClick }) => {
 	return (
 		<button
 			onClick={onClick}
@@ -19,4 +19,4 @@ const ProfileSelectButton: FC<IProps> = ({ title, isActive, onClick }) => {
 	)
 }
 
-export default ProfileSelectButton
+export default ProfileSectionButton

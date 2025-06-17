@@ -1,21 +1,27 @@
 import { EmblaOptionsType } from 'embla-carousel'
 import useEmblaCarousel from 'embla-carousel-react'
 import { FC } from 'react'
-import { IPreferredItem } from '../../models/profile/preferred-item'
-import PreferItem from './PreferItem'
+import { IPreferredItem } from '../../../../../models/profile/preferred-item'
+import ProfilePreferencesItem from './Profile-preferences-item'
 
 interface IProps {
 	title: string
 	items: IPreferredItem[]
 	isAuthor: boolean
+	isLoading: boolean
 }
 
-const PreferProfileGridItem: FC<IProps> = ({ title, items, isAuthor }) => {
+const ProfilePreferencesGridRow: FC<IProps> = ({
+	title,
+	items,
+	isAuthor,
+	isLoading,
+}) => {
 	const options: EmblaOptionsType = { dragFree: true, align: 'start' }
 	const [emblaRef] = useEmblaCarousel(options)
 
 	return (
-		<div>
+		<div className='w-full overflow-hidden'>
 			<div className='text-lg font-semibold mb-2 relative'>
 				<div className='relative max-lg:text-sm z-10 bg-gradient-to-r from-zinc-950 from-80% to-zinc-950/0 inline-flex pr-10 '>
 					{title}
@@ -28,18 +34,22 @@ const PreferProfileGridItem: FC<IProps> = ({ title, items, isAuthor }) => {
 			<div className='embla w-full'>
 				<div className='embla__viewport w-full' ref={emblaRef}>
 					<div className='grid grid-flow-col auto-cols-[20%] w-full'>
-						{
-							// [...Array(10)].flatMap(() =>
-							items.map(item => (
-								<div
-									className='aspect-square'
-									key={`${item.id}-${Math.random()}`}
-								>
-									<PreferItem item={item} isAuthor={isAuthor} />
-								</div>
-							))
-							// )
-						}
+						{isLoading
+							? Array.from({ length: 5 }).map((_, idx) => (
+									<ProfilePreferencesItem
+										key={`Profile-preferences-skeleton-${idx}-${Math.random}`}
+										isAuthor={isAuthor}
+										isLoading={isLoading}
+									/>
+							  ))
+							: items.map(item => (
+									<ProfilePreferencesItem
+										key={item.id}
+										item={item}
+										isAuthor={isAuthor}
+										isLoading={isLoading}
+									/>
+							  ))}
 					</div>
 				</div>
 			</div>
@@ -47,4 +57,4 @@ const PreferProfileGridItem: FC<IProps> = ({ title, items, isAuthor }) => {
 	)
 }
 
-export default PreferProfileGridItem
+export default ProfilePreferencesGridRow

@@ -9,7 +9,7 @@ import EditProfileSection from './EditProfileSection'
 import SubmitButton from './SubmitButton'
 
 const UpdateProfileInfoForm = observer(() => {
-	const { profileStore, authStore } = useStore()
+	const { profilePageStore: profileStore, authStore } = useStore()
 	const { checkAuth } = useAuth()
 
 	const [email, setEmail] = useState<string>(authStore.user?.email ?? '')
