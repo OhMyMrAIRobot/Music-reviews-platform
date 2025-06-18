@@ -54,7 +54,7 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 
 	return (
 		<div className='xl:col-span-7'>
-			<div className='relative max-h-[300px] h-full hidden xl:block'>
+			<div className='relative max-h-[300px] h-full hidden xl:block select-none'>
 				<img
 					loading='lazy'
 					decoding='async'

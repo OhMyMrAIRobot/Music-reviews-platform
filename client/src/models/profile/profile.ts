@@ -2,7 +2,7 @@ export interface IProfile {
 	id: string
 	nickname: string
 	created_at: string
-	bio: string
+	bio: string | null
 	avatar: string
 	cover: string
 	points: number

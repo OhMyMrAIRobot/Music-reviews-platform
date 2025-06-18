@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
 import { ProfileAPI } from '../api/profile-api'
 import { IProfile } from '../models/profile/profile'
@@ -50,6 +51,22 @@ class ProfileStore {
 		} catch (e) {
 			console.log(e)
 			return { status: false, message: 'Не удалось загрузить обложку профиля!' }
+		}
+	}
+
+	updateProfileBio = async (bio: string): Promise<string[]> => {
+		try {
+			const result = await ProfileAPI.updateProfileBio(bio)
+			runInAction(() => {
+				if (this.profile) {
+					this.profile.bio = result.bio
+				}
+			})
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
 		}
 	}
 }

@@ -22,7 +22,7 @@ const EditProfilePage = observer(() => {
 	}, [])
 
 	return (
-		<div className='flex flex-col min-h-screen bg-white/5 -mt-10 gap-y-10 items-center pb-10'>
+		<div className='flex flex-col min-h-screen w-full bg-white/5 -mt-10 gap-y-10 items-center pb-10 px-5'>
 			<h1 className='text-3xl font-semibold mt-10'>Настройки профиля</h1>
 			<UploadAvatarForm />
 			<UploadCoverForm />
