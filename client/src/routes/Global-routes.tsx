@@ -2,12 +2,12 @@ import { Route } from 'react-router'
 import AuthPage from '../pages/auth-page/Auth-page'
 import AuthorDetailsPage from '../pages/author-details-page/Author-details-page'
 import AuthorsPage from '../pages/authors-page/Authors-page'
-import EditProfilePage from '../pages/EditProfilePage'
+import EditProfilePage from '../pages/edit-profile-page/Edit-profile-page'
 import FeedbackPage from '../pages/feedback-page/Feedback-page'
 import LeaderboardPage from '../pages/leaderboard-page/Leaderboard-page'
 import MainPage from '../pages/main-page/Main-page'
-import ProfilePage from '../pages/ProfilePage'
-import ReleasePage from '../pages/ReleasePage'
+import ProfilePage from '../pages/profile-page/Profile-page'
+import ReleaseDetailsPage from '../pages/release-details-page/Release-details-page'
 import ReleasesPage from '../pages/releases-page/Releases-page'
 import ReleasesRatingPage from '../pages/releases-rating-page/Releases-rating-page'
 import ReviewsPage from '../pages/reviews-page/Reviews-page'
@@ -18,7 +18,11 @@ const GlobalRoutes = () => {
 	return [
 		<Route path={ROUTES.MAIN} element={<MainPage />} key='main' />,
 		<Route path={ROUTES.AUTH.AUTH} element={<AuthPage />} key='auth' />,
-		<Route path={ROUTES.RELEASE} element={<ReleasePage />} key='release' />,
+		<Route
+			path={ROUTES.RELEASE}
+			element={<ReleaseDetailsPage />}
+			key='release'
+		/>,
 		<Route path={ROUTES.AUTHORS} element={<AuthorsPage />} key='authors' />,
 		<Route path={ROUTES.FEEDBACK} element={<FeedbackPage />} key='feedback' />,
 		<Route path={ROUTES.REVIEWS} element={<ReviewsPage />} key='reviews' />,

@@ -67,7 +67,7 @@ const LoginForm = observer(() => {
 
 						<button
 							onClick={navigateToRequestReset}
-							className='text-sm cursor-pointer font-bold hover:underline'
+							className='text-sm cursor-pointer font-bold hover:underline underline-offset-4'
 						>
 							Забыли пароль?
 						</button>

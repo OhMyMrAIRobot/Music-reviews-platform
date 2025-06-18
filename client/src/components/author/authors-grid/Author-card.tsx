@@ -2,7 +2,7 @@ import { FC } from 'react'
 import useCustomNavigate from '../../../hooks/use-custom-navigate'
 import { IAuthorData } from '../../../models/author/authors-response'
 import { ReleaseTypesEnum } from '../../../models/release/release-types'
-import AuthorLikesCount from '../Author-likes-count'
+import LikesCount from '../../utils/Likes-count'
 import AuthorReleaseTypesRatings from '../author-ratings/Author-release-types-ratings'
 import AuthorTypes from '../Author-types'
 
@@ -39,7 +39,7 @@ const AuthorCard: FC<IProps> = ({ author, isLoading }) => {
 					<AuthorTypes types={author.author_types} />
 				</div>
 
-				<AuthorLikesCount count={author.likes_count} />
+				<LikesCount count={author.likes_count} />
 
 				<AuthorReleaseTypesRatings
 					releaseType={ReleaseTypesEnum.SINGLE}

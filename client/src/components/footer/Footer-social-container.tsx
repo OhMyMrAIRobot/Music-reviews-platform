@@ -8,8 +8,8 @@ interface IProps {
 const FooterSocialContainer: FC<IProps> = ({ items }) => {
 	return (
 		<div className='flex gap-3 flex-wrap items-center'>
-			{items.map(item => (
-				<FooterSocialItem key={item.href} {...item} />
+			{items.map((item, idx) => (
+				<FooterSocialItem key={idx} {...item} />
 			))}
 		</div>
 	)

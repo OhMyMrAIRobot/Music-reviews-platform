@@ -35,7 +35,7 @@ const ReleasesColumnItem: FC<IProps> = ({ release, isLoading }) => {
 					/>
 
 					<p
-						className='hover:underline font-medium text-sm lg:text-base overflow-hidden transition-all duration-200 select-none cursor-pointer line-clamp-1'
+						className='hover:underline underline-offset-4 font-medium text-sm lg:text-base overflow-hidden transition-all duration-200 select-none cursor-pointer line-clamp-1'
 						onClick={() => navigateToRelease(release.id)}
 					>
 						{release.title}

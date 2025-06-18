@@ -80,7 +80,7 @@ const RegistrationForm = observer(() => {
 			<span className='text-sm font-medium'>
 				Принимаю условия
 				<br />
-				<a href={linkHref} className='underline'>
+				<a href={linkHref} className='underline underline-offset-2'>
 					{linkText}
 				</a>
 				<span className='text-red-500 ml-1'>*</span>
@@ -141,7 +141,7 @@ const RegistrationForm = observer(() => {
 					<h6 className=''>Уже есть аккаунт?</h6>
 					<button
 						onClick={navigateToLogin}
-						className='hover:underline cursor-pointer'
+						className='hover:underline cursor-pointer underline-offset-4'
 					>
 						Войти
 					</button>

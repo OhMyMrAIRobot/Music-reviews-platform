@@ -26,7 +26,7 @@ const ReleaseAuthors: FC<IProps> = ({ authors, className }) => {
 					key={author.name}
 					className='flex'
 				>
-					<div className='opacity-50 hover:underline hover:opacity-90 transition-all duration-200 cursor-pointer'>
+					<div className='opacity-50 hover:underline underline-offset-4 hover:opacity-90 transition-all duration-200 cursor-pointer'>
 						{author.name}
 					</div>
 					<span className='ml-[1px] pr-[3px] opacity-50'>

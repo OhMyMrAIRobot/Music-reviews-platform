@@ -1,13 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
 import { AuthAPI } from '../api/auth-api'
+import { ProfileAPI } from '../api/profile-api'
 import { IRegistrationRequest } from '../models/auth/request/registration-request'
 import { IResetPasswordRequest } from '../models/auth/request/reset-password-request'
 import { IUser } from '../models/auth/user'
+import { IProfile } from '../models/profile/profile'
+import { TogglePromiseResult } from '../types/toggle-promise-result'
 
 class AuthStore {
 	isAuth: boolean = false
 	user: IUser | null = null
+	profile: IProfile | null = null
 
 	constructor() {
 		makeAutoObservable(this)
@@ -15,6 +19,10 @@ class AuthStore {
 
 	setAuth(value: boolean) {
 		this.isAuth = value
+	}
+
+	setProfile(data: IProfile) {
+		this.profile = data
 	}
 
 	setAuthorization(user: IUser, token: string) {
@@ -148,6 +156,45 @@ class AuthStore {
 			return Array.isArray(e.response?.data?.message)
 				? e.response?.data?.message
 				: [e.response?.data?.message]
+		}
+	}
+
+	fetchProfile = async (id: string) => {
+		try {
+			const data = await ProfileAPI.fetchProfile(id)
+			this.setProfile(data)
+		} catch (e) {
+			console.log(e)
+		}
+	}
+
+	uploadProfileAvatar = async (
+		formData: FormData
+	): Promise<TogglePromiseResult> => {
+		try {
+			const data = await ProfileAPI.uploadProfileAvatar(formData)
+			runInAction(() => {
+				if (this.profile) this.profile.avatar = data.avatar
+			})
+			return { status: true, message: 'Вы успешно сменили аватар!' }
+		} catch (e) {
+			console.log(e)
+			return { status: false, message: 'Не удалось загрузить аватар!' }
+		}
+	}
+
+	uploadProfileCover = async (
+		formData: FormData
+	): Promise<TogglePromiseResult> => {
+		try {
+			const data = await ProfileAPI.uploadProfileCover(formData)
+			runInAction(() => {
+				if (this.profile) this.profile.cover = data.coverImage
+			})
+			return { status: true, message: 'Вы успешно сменили обложку профиля!' }
+		} catch (e) {
+			console.log(e)
+			return { status: false, message: 'Не удалось загрузить обложку профиля!' }
 		}
 	}
 }
