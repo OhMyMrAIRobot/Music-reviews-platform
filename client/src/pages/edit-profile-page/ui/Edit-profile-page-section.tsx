@@ -6,9 +6,13 @@ interface IProps {
 	description?: string
 }
 
-const EditProfileSection: FC<IProps> = ({ children, title, description }) => {
+const EditProfilePageSection: FC<IProps> = ({
+	children,
+	title,
+	description,
+}) => {
 	return (
-		<div className='rounded-lg border border-white/10 bg-zinc-950 shadow-sm p-5 w-200 flex flex-col gap-y-5'>
+		<div className='rounded-lg border border-white/10 bg-zinc-950 shadow-sm p-5 w-200 flex flex-col gap-y-5 overflow-hidden'>
 			<div className='flex flex-col gap-y-1.5'>
 				<h3 className='text-2xl font-semibold leading-none tracking-tight'>
 					{title}
@@ -22,4 +26,4 @@ const EditProfileSection: FC<IProps> = ({ children, title, description }) => {
 	)
 }
 
-export default EditProfileSection
+export default EditProfilePageSection

@@ -6,6 +6,7 @@ import { IRegistrationRequest } from '../models/auth/request/registration-reques
 import { IResetPasswordRequest } from '../models/auth/request/reset-password-request'
 import { IUser } from '../models/auth/user'
 import { IProfile } from '../models/profile/profile'
+import { TogglePromiseResult } from '../types/toggle-promise-result'
 
 class AuthStore {
 	isAuth: boolean = false
@@ -169,7 +170,7 @@ class AuthStore {
 
 	uploadProfileAvatar = async (
 		formData: FormData
-	): Promise<{ status: boolean; message: string }> => {
+	): Promise<TogglePromiseResult> => {
 		try {
 			const data = await ProfileAPI.uploadProfileAvatar(formData)
 			runInAction(() => {
@@ -184,7 +185,7 @@ class AuthStore {
 
 	uploadProfileCover = async (
 		formData: FormData
-	): Promise<{ status: boolean; message: string }> => {
+	): Promise<TogglePromiseResult> => {
 		try {
 			const data = await ProfileAPI.uploadProfileCover(formData)
 			runInAction(() => {

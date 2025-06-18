@@ -98,6 +98,7 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 					setCurrentPage={setReviewsCurrentPage}
 					isLoading={isReviewsLoading}
 					perPage={perPage}
+					storeToggle={profilePageStore.toggleReview}
 				/>
 			)}
 
@@ -109,6 +110,7 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 					setCurrentPage={setFavCurrentPage}
 					isLoading={isFavReviewsLoading}
 					perPage={perPage}
+					storeToggle={profilePageStore.toggleFavReview}
 				/>
 			)}
 		</div>

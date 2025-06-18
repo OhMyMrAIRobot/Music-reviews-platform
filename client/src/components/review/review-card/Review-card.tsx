@@ -20,7 +20,7 @@ interface IProps {
 
 const ReviewCard: FC<IProps> = observer(
 	({ review, isLoading, storeToggle }) => {
-		const { authStore, notificationStore: notificationsStore } = useStore()
+		const { authStore, notificationStore } = useStore()
 
 		const { checkAuth } = useAuth()
 
@@ -41,7 +41,7 @@ const ReviewCard: FC<IProps> = observer(
 			}
 
 			if (authStore.user?.id === review?.user_id) {
-				notificationsStore.addErrorNotification(
+				notificationStore.addErrorNotification(
 					'Вы не можете отметить свою рецензию как понравившеюся!'
 				)
 				setToggling(false)
@@ -49,13 +49,13 @@ const ReviewCard: FC<IProps> = observer(
 			}
 
 			if (!storeToggle) {
-				notificationsStore.addErrorNotification('Произошла ошибка!')
+				notificationStore.addErrorNotification('Произошла ошибка!')
 				return
 			}
 
 			storeToggle(review?.id ?? '', isLiked)
 				.then(result => {
-					notificationsStore.addNotification({
+					notificationStore.addNotification({
 						id: self.crypto.randomUUID(),
 						text: result.message,
 						isError: !result.status,

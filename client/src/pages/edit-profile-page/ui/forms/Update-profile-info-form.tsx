@@ -1,29 +1,29 @@
 import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
-import { useAuth } from '../../hooks/use-auth'
-import { useStore } from '../../hooks/use-store'
-import FormInput from '../form-elements/Form-input'
-import FormLabel from '../form-elements/Form-label'
-import FormTextbox from '../form-elements/Form-textbox'
-import EditProfileSection from './EditProfileSection'
-import SubmitButton from './SubmitButton'
+import FormInput from '../../../../components/form-elements/Form-input'
+import FormLabel from '../../../../components/form-elements/Form-label'
+import FormTextbox from '../../../../components/form-elements/Form-textbox'
+import { useAuth } from '../../../../hooks/use-auth'
+import { useStore } from '../../../../hooks/use-store'
+import EditProfileSubmitButton from '../buttons/Edit-profile-submit-button'
+import EditProfilePageSection from '../Edit-profile-page-section'
 
 const UpdateProfileInfoForm = observer(() => {
-	const { profilePageStore: profileStore, authStore } = useStore()
+	const { authStore } = useStore()
 	const { checkAuth } = useAuth()
 
 	const [email, setEmail] = useState<string>(authStore.user?.email ?? '')
 	const [nickname, setNickname] = useState<string>(
 		authStore.user?.nickname ?? ''
 	)
-	const [bio, setBio] = useState<string>(profileStore.myProfile?.bio ?? '')
+	const [bio, setBio] = useState<string>(authStore.profile?.bio ?? '')
 
 	const handleSubmit = () => {
 		if (!checkAuth()) return
 	}
 
 	return (
-		<EditProfileSection
+		<EditProfilePageSection
 			title='Обложка профиля'
 			description='Вы можете обновить данные своего профиля'
 		>
@@ -64,8 +64,12 @@ const UpdateProfileInfoForm = observer(() => {
 					/>
 				</div>
 			</div>
-			<SubmitButton onClick={handleSubmit} title='Отправить' />
-		</EditProfileSection>
+			<EditProfileSubmitButton
+				handleClick={handleSubmit}
+				disabled={true}
+				isLoading={false}
+			/>
+		</EditProfilePageSection>
 	)
 })
 

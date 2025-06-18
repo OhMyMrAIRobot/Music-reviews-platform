@@ -1,4 +1,4 @@
-import { makeAutoObservable, runInAction } from 'mobx'
+import { makeAutoObservable } from 'mobx'
 import { ProfileAPI } from '../../../api/profile-api'
 import { ReviewAPI } from '../../../api/review-api'
 import { IPreferred } from '../../../models/profile/preferred'
@@ -97,6 +97,33 @@ export class ProfilePageStore {
 		}
 	}
 
+	toggleReview = async (
+		reviewId: string,
+		isFav: boolean
+	): Promise<TogglePromiseResult> => {
+		const result = await toggleFav(this.reviews, reviewId, isFav, {
+			add: ReviewAPI.addReviewToFav,
+			delete: ReviewAPI.deleteReviewFromFav,
+			fetch: ReviewAPI.fetchFavReviewUsersIds,
+		})
+
+		if (result) {
+			return {
+				status: true,
+				message: isFav
+					? 'Вы убрали рецензию из списка понравившихся!'
+					: 'Вы отметили рецензию как понравившеюся!',
+			}
+		} else {
+			return {
+				status: false,
+				message: isFav
+					? 'Не удалось убрать рецензию из списка понравившихся!'
+					: 'Не удалось отметь рецензию как понравившеюся!',
+			}
+		}
+	}
+
 	toggleFavReview = async (
 		reviewId: string,
 		isFav: boolean
@@ -108,13 +135,6 @@ export class ProfilePageStore {
 		})
 
 		if (result) {
-			runInAction(() => {
-				const idx = this.favReviews.findIndex(rev => rev.id === reviewId)
-				if (idx !== -1) {
-					this.favReviews.splice(idx, 1)
-					this.favReviewsCount--
-				}
-			})
 			return {
 				status: true,
 				message: isFav

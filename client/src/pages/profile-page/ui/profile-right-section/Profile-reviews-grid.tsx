@@ -2,8 +2,8 @@ import { observer } from 'mobx-react-lite'
 import { FC } from 'react'
 import Pagination from '../../../../components/pagination/Pagination.tsx'
 import ReviewCard from '../../../../components/review/review-card/Review-card.tsx'
-import { useStore } from '../../../../hooks/use-store.ts'
 import { IReview } from '../../../../models/review/review.ts'
+import { TogglePromiseResult } from '../../../../types/toggle-promise-result.ts'
 
 interface IProps {
 	items: IReview[]
@@ -12,12 +12,22 @@ interface IProps {
 	perPage: number
 	setCurrentPage: (val: number) => void
 	isLoading: boolean
+	storeToggle?: (
+		reviewId: string,
+		isLiked: boolean
+	) => Promise<TogglePromiseResult>
 }
 
 const ProfileReviewsGrid: FC<IProps> = observer(
-	({ items, total, currentPage, setCurrentPage, perPage, isLoading }) => {
-		const { profilePageStore } = useStore()
-
+	({
+		items,
+		total,
+		currentPage,
+		setCurrentPage,
+		perPage,
+		isLoading,
+		storeToggle,
+	}) => {
 		return (
 			<section className='mt-5'>
 				<div className='gap-5 grid grid-cols-1 select-none'>
@@ -25,7 +35,6 @@ const ProfileReviewsGrid: FC<IProps> = observer(
 						? Array.from({ length: perPage }).map((_, idx) => (
 								<ReviewCard
 									key={`Profile-reviews-skeleton-${idx}`}
-									storeToggle={profilePageStore.toggleFavReview}
 									isLoading={isLoading}
 								/>
 						  ))
@@ -33,7 +42,7 @@ const ProfileReviewsGrid: FC<IProps> = observer(
 								<ReviewCard
 									key={review.id}
 									review={review}
-									storeToggle={profilePageStore.toggleFavReview}
+									storeToggle={storeToggle}
 									isLoading={isLoading}
 								/>
 						  ))}

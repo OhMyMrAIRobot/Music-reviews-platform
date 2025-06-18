@@ -1,21 +1,24 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
 import { useParams } from 'react-router'
-import UpdateProfileInfoForm from '../components/editProfilePage/UpdateProfileInfoForm'
-import UploadAvatarForm from '../components/editProfilePage/UploadAvatarForm'
-import UploadCoverForm from '../components/editProfilePage/UploadCoverForm'
-import useCustomNavigate from '../hooks/use-custom-navigate'
-import { useStore } from '../hooks/use-store'
+import useCustomNavigate from '../../hooks/use-custom-navigate'
+import { useStore } from '../../hooks/use-store'
+import UpdateProfileInfoForm from './ui/forms/Update-profile-info-form'
+import UploadAvatarForm from './ui/forms/Upload-avatar-form'
+import UploadCoverForm from './ui/forms/Upload-cover-form'
 
 const EditProfilePage = observer(() => {
-	const { authStore } = useStore()
-	const { navigateToMain } = useCustomNavigate()
 	const { id } = useParams()
+
+	const { authStore } = useStore()
+
+	const { navigateToMain } = useCustomNavigate()
 
 	useEffect(() => {
 		if (!authStore.isAuth || authStore.user?.id !== id) {
 			navigateToMain()
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	return (
