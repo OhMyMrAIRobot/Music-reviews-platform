@@ -1,0 +1,85 @@
+import { FC, useEffect, useRef, useState } from 'react'
+import ArrowBottomSvg from '../header/svg/Arrow-bottom-svg'
+import TickSvg from '../svg/Tick-svg'
+
+interface ComboBoxProps {
+	options: string[]
+	value?: string
+	onChange: (selected: string) => void
+	className?: string
+	placeholder?: string
+}
+
+const ComboBox: FC<ComboBoxProps> = ({
+	options,
+	value,
+	onChange,
+	className = '',
+	placeholder = '',
+}) => {
+	if (!options || options.length === 0) {
+		throw new Error('ComboBox: options must be a non-empty array.')
+	}
+
+	const [isOpen, setIsOpen] = useState(false)
+	const comboRef = useRef<HTMLDivElement | null>(null)
+
+	const selected = value ?? placeholder
+
+	const handleClickOutside = (event: MouseEvent) => {
+		if (comboRef.current && !comboRef.current.contains(event.target as Node)) {
+			setIsOpen(false)
+		}
+	}
+
+	useEffect(() => {
+		document.addEventListener('click', handleClickOutside)
+		return () => {
+			document.removeEventListener('click', handleClickOutside)
+		}
+	}, [])
+
+	return (
+		<div
+			ref={comboRef}
+			className={`relative inline-block w-full h-full bg-zinc-950 rounded-md ${className} select-none`}
+		>
+			<button
+				onClick={() => setIsOpen(!isOpen)}
+				role='combobox'
+				className='flex w-full gap-x-1 h-full justify-between items-center px-3 text-sm font-medium text-white cursor-pointer py-2'
+			>
+				<span>{selected}</span>
+				<ArrowBottomSvg className='h-5 w-4 opacity-70' />
+			</button>
+
+			<ul
+				className={`absolute left-0 mt-3 py-2 px-2 z-100 w-full border border-white/10 text-sm font-medium rounded-md shadow-lg bg-zinc-950 transition-all duration-125 flex flex-col gap-y-1.5 max-h-70 overflow-scroll ${
+					isOpen
+						? 'opacity-100 translate-y-0 pointer-events-auto'
+						: 'opacity-0 -translate-y-3 pointer-events-none'
+				}`}
+			>
+				{options.map(option => (
+					<li
+						key={option}
+						className={`flex items-center py-2 px-2 cursor-pointer text-sm font-medium hover:bg-white/5 transition-colors duration-300 rounded-md ${
+							selected === option ? 'bg-white/10' : ''
+						}`}
+						onClick={() => {
+							onChange(option)
+							setIsOpen(false)
+						}}
+					>
+						<span className='w-5'>
+							{selected === option ? <TickSvg className='size-3.5' /> : null}
+						</span>
+						{option}
+					</li>
+				))}
+			</ul>
+		</div>
+	)
+}
+
+export default ComboBox

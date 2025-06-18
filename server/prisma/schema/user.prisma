@@ -1,0 +1,85 @@
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique @db.VarChar(60)
+  nickname  String   @unique @db.VarChar(20)
+  password  String   @map("password_hash")
+  isActive  Boolean  @default(false) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  roleId String @map("role_id")
+  role   Role   @relation(fields: [roleId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  profile             UserProfile?
+  refreshToken        RefreshToken?
+  Review              Review[]
+  UserFavRelease      UserFavRelease[]
+  UserFavReviews      UserFavReview[]
+  UserFavAuthor       UserFavAuthor[]
+  TopUsersLeaderboard TopUsersLeaderboard?
+
+  @@map("Users")
+}
+
+model RefreshToken {
+  id        String @id @default(cuid())
+  tokenHash String @map("token_hash")
+
+  userId String @unique @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("Refresh_tokens")
+}
+
+model Role {
+  id   String @id @default(cuid())
+  role String @unique @db.VarChar(40)
+
+  users User[]
+
+  @@map("Roles")
+}
+
+model UserFavRelease {
+  userId    String @map("user_id")
+  releaseId String @map("release_id")
+
+  release Release @relation(fields: [releaseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([userId, releaseId])
+  @@map("User_fav_releases")
+}
+
+model UserFavReview {
+  userId   String @map("user_id")
+  reviewId String @map("review_id")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([userId, reviewId])
+  @@map("User_fav_reviews")
+}
+
+model UserFavAuthor {
+  userId   String @map("user_id")
+  authorId String @map("author_id")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  author Author @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([userId, authorId])
+  @@map("User_fav_authors")
+}
+
+model TopUsersLeaderboard {
+  id        String   @id @default(cuid())
+  userId    String   @unique @map("user_id")
+  rank      Int
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("Top_users_leaderboard")
+}

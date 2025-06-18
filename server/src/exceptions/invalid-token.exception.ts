@@ -2,6 +2,6 @@ import { UnauthorizedException } from '@nestjs/common';
 
 export class InvalidTokenException extends UnauthorizedException {
   constructor() {
-    super('Invalid or expired activation token');
+    super('Токен истёк или недействителен!');
   }
 }

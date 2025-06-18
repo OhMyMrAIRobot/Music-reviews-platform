@@ -1,0 +1,36 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["prismaSchemaFolder"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Feedback {
+  id               String   @id @default(cuid())
+  email            String   @db.VarChar(100)
+  title            String   @db.VarChar(50)
+  message          String
+  createdAt        DateTime @default(now()) @map("created_at")
+  feedbackStatusId String   @map("feedback_status_id")
+
+  feedbackStatus FeedbackStatus @relation(fields: [feedbackStatusId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@map("Feedbacks")
+}
+
+model FeedbackStatus {
+  id       String     @id @default(cuid())
+  status   String     @unique @db.VarChar(30)
+  Feedback Feedback[]
+
+  @@map("Feedback_statuses")
+}

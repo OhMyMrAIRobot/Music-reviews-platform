@@ -1,6 +1,8 @@
 import { FC } from 'react'
+import NextSvg from '../svg/Next-svg'
+import PrevSvg from '../svg/Prev-svg'
 
-interface PaginationProps {
+interface IProps {
 	currentPage: number
 	totalItems: number
 	itemsPerPage: number
@@ -8,7 +10,7 @@ interface PaginationProps {
 	idToScroll: string
 }
 
-const Pagination: FC<PaginationProps> = ({
+const Pagination: FC<IProps> = ({
 	currentPage,
 	totalItems,
 	itemsPerPage,
@@ -71,26 +73,13 @@ const Pagination: FC<PaginationProps> = ({
 	const pageNumbers = getPageNumbers()
 
 	return (
-		<div className='flex flex-wrap items-center justify-center gap-1 w-full'>
+		<div className='flex flex-wrap items-center justify-center gap-1 w-full select-none'>
 			<button
 				onClick={handlePrev}
 				hidden={currentPage === 1}
 				className='inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium h-7 md:h-10  px-4 py-2 gap-1 hover:bg-white/10 transition-colors duration-300 cursor-pointer'
 			>
-				<svg
-					xmlns='http://www.w3.org/2000/svg'
-					width='24'
-					height='24'
-					viewBox='0 0 24 24'
-					fill='none'
-					stroke='currentColor'
-					strokeWidth='2'
-					strokeLinecap='round'
-					strokeLinejoin='round'
-					className='h-4 w-4'
-				>
-					<path d='m15 18-6-6 6-6'></path>
-				</svg>
+				<PrevSvg className={'size-4'} />
 				Предыдущая
 			</button>
 
@@ -126,20 +115,7 @@ const Pagination: FC<PaginationProps> = ({
 				className='inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium h-7 md:h-10  px-4 py-2 gap-1 hover:bg-white/10 transition-colors duration-300 cursor-pointer'
 			>
 				Следующая
-				<svg
-					xmlns='http://www.w3.org/2000/svg'
-					width='24'
-					height='24'
-					viewBox='0 0 24 24'
-					fill='none'
-					stroke='currentColor'
-					strokeWidth='2'
-					strokeLinecap='round'
-					strokeLinejoin='round'
-					className='h-4 w-4'
-				>
-					<path d='m9 18 6-6-6-6'></path>
-				</svg>
+				<NextSvg className={'size-4'} />
 			</button>
 		</div>
 	)

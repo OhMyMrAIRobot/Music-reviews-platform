@@ -1,46 +1,52 @@
-import FooterContactLink from './FooterContactLink'
-import FooterLink from './FooterLink'
-import FooterSocialContainer from './FooterSocialContainer'
-import { IFooterSocialItemProps, SocialSvgIcon } from './FooterSocialItem'
+import useCustomNavigate from '../../hooks/use-custom-navigate'
+import TelegramSvg from '../svg/Telegram-svg'
+import TwitchSvg from '../svg/Twitch-svg'
+import VkSvg from '../svg/Vk-svg'
+import YouTubeSvg from '../svg/YouTube-svg'
+import FooterContactLink from './Footer-contact-link'
+import FooterLink from './Footer-link'
+import FooterSocialContainer from './Footer-social-container'
+import { IFooterSocialItemProps } from './Footer-social-item'
+
+const footerSocials: IFooterSocialItemProps[] = [
+	{
+		href: '/',
+		icon: <TelegramSvg className={'size-4'} />,
+	},
+	{
+		href: '/',
+		icon: <YouTubeSvg className={'size-4'} />,
+	},
+	{
+		href: '/',
+		icon: <TwitchSvg className={'size-4'} />,
+	},
+	{
+		href: '/',
+		icon: <VkSvg className={'size-4'} />,
+	},
+]
 
 const Footer = () => {
-	const footerSocials: IFooterSocialItemProps[] = [
-		{
-			id: 'footer-social-1',
-			href: '/',
-			icon: <SocialSvgIcon className='size-5' />,
-		},
-		{
-			id: 'footer-social-2',
-			href: '/',
-			icon: <SocialSvgIcon className='size-5' />,
-		},
-		{
-			id: 'footer-social-3',
-			href: '/',
-			icon: <SocialSvgIcon className='size-5' />,
-		},
-		{
-			id: 'footer-social-4',
-			href: '/',
-			icon: <SocialSvgIcon className='size-5' />,
-		},
-	]
+	const { navigateToFeedback } = useCustomNavigate()
 
 	return (
-		<footer className='2xl:container p-5 lg:py-10 mt-auto bg-primary lg:w-full lg:mr-0 mr-auto'>
+		<footer className='2xl:container p-5 lg:py-10 mt-auto lg:w-full lg:mr-0 mr-auto'>
 			<div className='grid lg:grid-cols-2 items-center gap-4'>
 				<FooterSocialContainer items={footerSocials} />
+
 				<div className='text-xs lg:text-right lg:text-sm'>
 					<h6 className='opacity-50'>«Some application title» © 2025</h6>
+
 					<div className='flex flex-col gap-y-0.5 opacity-80 items-start lg:items-end mt-2'>
-						<FooterLink href='/' text='Обратная связь' />
+						<FooterLink text='Обратная связь' onClick={navigateToFeedback} />
 						<FooterLink
-							href='/'
 							text='Политика обработки персональных данных'
+							onClick={() => {}}
 						/>
-						<FooterLink href='/' text='Пользовательское соглашение' />
+						<FooterLink text='Пользовательское соглашение' onClick={() => {}} />
 					</div>
+
 					<div className='flex flex-col gap-y-0.5 opacity-80 mt-2'>
 						<FooterContactLink
 							label='Техническая поддержка'

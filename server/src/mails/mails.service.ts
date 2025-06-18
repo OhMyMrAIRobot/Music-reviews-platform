@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import * as nodemailer from 'nodemailer';
 import * as fs from 'fs';
+import * as nodemailer from 'nodemailer';
 import * as path from 'path';
 
 @Injectable()
@@ -22,21 +22,21 @@ export class MailsService {
   async sendRegistrationEmail(email: string, username: string, token: string) {
     await this.sendEmail(email, 'Добро пожаловать в MyApp!', 'register', {
       username: username,
-      activationLink: `http://localhost:3001/auth/activate?token=${token}`,
+      activationLink: `${process.env.FRONTEND}/auth/activate/${token}`,
     });
   }
 
   async sendActivationEmail(email: string, username: string, token: string) {
     await this.sendEmail(email, 'Активация аккаунта MyApp!', 'activation', {
       username: username,
-      activationLink: `http://localhost:3001/auth/activate?token=${token}`,
+      activationLink: `${process.env.FRONTEND}/auth/activate/${token}`,
     });
   }
 
   async sendResetPasswordEmail(email: string, username: string, token: string) {
     await this.sendEmail(email, 'Сброс пароля!', 'reset-password', {
       username: username,
-      resetLink: `http://localhost:3001/auth/reset?token=${token}`,
+      resetLink: `${process.env.FRONTEND}/auth/reset-password/${token}`,
     });
   }
 
@@ -45,7 +45,7 @@ export class MailsService {
     subject: string,
     templateName: string,
     variables: Record<string, string>,
-  ) {
+  ): Promise<any> {
     const htmlContent = this.loadTemplate(templateName, variables);
 
     return this.transporter.sendMail({
