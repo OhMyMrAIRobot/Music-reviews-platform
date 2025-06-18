@@ -1,4 +1,4 @@
-export class ReleaseDetailResponseDto {
+export class ReleaseDetailsResponseDto {
   id: string;
   title: string;
   year: number;
@@ -35,19 +35,17 @@ export class ReleaseDetailResponseDto {
   likes_count: number;
   user_fav_ids: { userId: string; releaseId: string }[];
   ratings: { type: string; total: number }[];
-  rating_details: [
-    {
-      type: string;
-      details: {
-        rhymes: number;
-        structure: number;
-        atmosphere: number;
-        realization: number;
-        individuality: number;
-        release_rating_id: string;
-      };
-    },
-  ];
+  rating_details: {
+    type: string;
+    details: {
+      rhymes: number;
+      structure: number;
+      atmosphere: number;
+      realization: number;
+      individuality: number;
+      release_rating_id: string;
+    };
+  }[];
 }
 
-export class QueryReleaseDetailResponseDto extends Array<ReleaseDetailResponseDto> {}
+export class QueryReleaseDetailResponseDto extends Array<ReleaseDetailsResponseDto> {}
