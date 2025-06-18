@@ -1,0 +1,19 @@
+import { FC } from 'react'
+import { ISvgProps } from '../../models/svg/svg-props'
+
+const BookmarkSvg: FC<ISvgProps> = ({ className }) => {
+	return (
+		<svg
+			stroke='currentColor'
+			fill='currentColor'
+			strokeWidth='0'
+			viewBox='0 0 384 512'
+			className={className}
+			xmlns='http://www.w3.org/2000/svg'
+		>
+			<path d='M0 512V48C0 21.49 21.49 0 48 0h288c26.51 0 48 21.49 48 48v464L192 400 0 512z'></path>
+		</svg>
+	)
+}
+
+export default BookmarkSvg

@@ -1,0 +1,101 @@
+import { observer } from 'mobx-react-lite'
+import { FC, useState } from 'react'
+import AuthorTypes from '../../../components/author/Author-types'
+import ToggleFavButton from '../../../components/buttons/Toggle-fav-button'
+import LikesCount from '../../../components/utils/Likes-count'
+import { useAuth } from '../../../hooks/use-auth'
+import { useStore } from '../../../hooks/use-store'
+import { IAuthor } from '../../../models/author/author'
+
+interface IProps {
+	author?: IAuthor
+	isLoading: boolean
+}
+
+const AuthorDetailsHeader: FC<IProps> = observer(({ author, isLoading }) => {
+	const { checkAuth } = useAuth()
+
+	const { authorDetailsPageStore, authStore, notificationStore } = useStore()
+
+	const [toggling, setToggling] = useState<boolean>(false)
+
+	const isLiked =
+		author?.user_fav_ids?.some(val => val.userId === authStore.user?.id) ??
+		false
+
+	const toggleFavAuthor = () => {
+		setToggling(true)
+		if (!checkAuth()) {
+			setToggling(false)
+			return
+		}
+
+		authorDetailsPageStore
+			.toggleFavAuthor(author?.id ?? '', isLiked)
+			.then(result => {
+				notificationStore.addNotification({
+					id: self.crypto.randomUUID(),
+					text: result.message,
+					isError: !result.status,
+				})
+			})
+			.finally(() => setToggling(false))
+	}
+
+	return isLoading ? (
+		<div className='bg-gray-400 animate-pulse opacity-40 relative w-full h-45 md:h-62 lg:h-125 rounded-2xl overflow-hidden' />
+	) : (
+		author && (
+			<section className='relative w-full h-45 md:h-62 lg:h-125 rounded-2xl overflow-hidden'>
+				<div className='size-full'>
+					<div className='relative size-full overflow-hidden rounded-2xl z-10'>
+						<img
+							className='absolute size-full object-cover left-0 top-0 z-100 select-none'
+							loading='lazy'
+							decoding='async'
+							src={`${import.meta.env.VITE_SERVER_URL}/public/authors/covers/${
+								author.cover
+							}`}
+							alt={author.name}
+						/>
+						<div className='absolute inset-2 bg-black/20 rounded-md z-200 pointer-events-none'></div>
+
+						{author.cover === '1.png' && (
+							<div className='size-25 lg:size-50 overflow-hidden absolute left-3 top-3 lg:left-5 lg:top-5 rounded-full border border-zinc-700 z-100'>
+								<img
+									loading='lazy'
+									decoding='async'
+									src={`${
+										import.meta.env.VITE_SERVER_URL
+									}/public/authors/avatars/${author.img}`}
+									className='size-full object-cover object-center'
+								/>
+							</div>
+						)}
+
+						<ToggleFavButton
+							onClick={toggleFavAuthor}
+							isLiked={isLiked}
+							className='absolute top-3 right-3 z-300 size-10 lg:size-12'
+							toggling={toggling}
+						/>
+
+						<div className='flex absolute bottom-5 left-5 lg:bottom-10 lg:left-10 gap-3 z-300'>
+							<div className='bg-zinc-950 px-3 py-2 lg:px-5 lg:py-3 rounded-xl inline-flex items-center gap-2'>
+								<h2 className='text-sm lg:text-4xl font-bold'>{author.name}</h2>
+
+								<AuthorTypes types={author.author_types} />
+							</div>
+
+							<div className='bg-zinc-950 px-3 py-1 lg:px-5 lg:py-3 rounded-xl items-center inline-flex'>
+								<LikesCount count={author.likes_count} />
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		)
+	)
+})
+
+export default AuthorDetailsHeader
