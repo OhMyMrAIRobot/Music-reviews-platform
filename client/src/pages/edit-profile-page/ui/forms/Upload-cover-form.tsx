@@ -11,13 +11,13 @@ import SelectedImageLabel from '../labels/Selected-image-label'
 const UploadCoverForm = observer(() => {
 	const { checkAuth } = useAuth()
 
-	const { notificationStore, authStore } = useStore()
+	const { notificationStore, profileStore } = useStore()
 
 	const [file, setFile] = useState<File | null>(null)
 	const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 
 	const { execute: updateCover, isLoading } = useLoading(
-		authStore.uploadProfileCover
+		profileStore.uploadProfileCover
 	)
 
 	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,7 +77,7 @@ const UploadCoverForm = observer(() => {
 					src={
 						previewUrl ||
 						`${import.meta.env.VITE_SERVER_URL}/public/covers/${
-							authStore.profile?.cover
+							profileStore.profile?.cover
 						}`
 					}
 					className='object-cover size-full'

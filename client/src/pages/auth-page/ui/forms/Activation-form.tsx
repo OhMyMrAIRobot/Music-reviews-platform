@@ -12,7 +12,7 @@ import { useStore } from '../../../../hooks/use-store'
 const ActivationForm = () => {
 	const { token } = useParams()
 
-	const { notificationStore: notificationsStore, authStore } = useStore()
+	const { notificationStore, authStore } = useStore()
 	const { navigateToMain } = useCustomNavigate()
 
 	const [errors, setErrors] = useState<string[]>([])
@@ -23,7 +23,7 @@ const ActivationForm = () => {
 		if (token) {
 			authStore.activate(token).then(errors => {
 				if (errors.length === 0) {
-					notificationsStore.addSuccessNotification(
+					notificationStore.addSuccessNotification(
 						'Аккаунт успешно активирован!'
 					)
 					navigateToMain()
@@ -40,7 +40,7 @@ const ActivationForm = () => {
 			if (Array.isArray(result)) {
 				setErrors(result)
 			} else {
-				notificationsStore.addEmailSentNotification(result)
+				notificationStore.addEmailSentNotification(result)
 			}
 		})
 	}
@@ -65,6 +65,7 @@ const ActivationForm = () => {
 					title={isLoading ? 'Отправка...' : 'Отправить письмо активации'}
 					isInvert={true}
 					onClick={handleResend}
+					disabled={isLoading}
 				/>
 			)}
 			{errors && (

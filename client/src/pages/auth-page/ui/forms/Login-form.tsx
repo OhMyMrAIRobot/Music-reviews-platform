@@ -19,7 +19,7 @@ const LoginForm = observer(() => {
 	const { navigateToMain, navigateToRegistration, navigateToRequestReset } =
 		useCustomNavigate()
 
-	const { authStore, notificationStore: notificationsStore } = useStore()
+	const { authStore, notificationStore } = useStore()
 
 	const { execute: login, isLoading } = useLoading(authStore.login)
 
@@ -33,7 +33,7 @@ const LoginForm = observer(() => {
 		login(email, password).then(errors => {
 			setErrors(errors)
 			if (authStore.isAuth)
-				notificationsStore.addNotification({
+				notificationStore.addNotification({
 					id: self.crypto.randomUUID(),
 					text: 'Вы успешно вошли!',
 					isError: false,
@@ -87,12 +87,14 @@ const LoginForm = observer(() => {
 						title={isLoading ? 'Загрузка...' : 'Войти'}
 						onClick={handleLogin}
 						isInvert={true}
+						disabled={isLoading}
 					/>
 
 					<FormButton
 						title={'Зарегистрироваться'}
 						onClick={navigateToRegistration}
 						isInvert={false}
+						disabled={false}
 					/>
 				</div>
 

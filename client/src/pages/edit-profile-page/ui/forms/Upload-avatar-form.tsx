@@ -11,13 +11,13 @@ import SelectedImageLabel from '../labels/Selected-image-label'
 const UploadAvatarForm = observer(() => {
 	const { checkAuth } = useAuth()
 
-	const { authStore, notificationStore } = useStore()
+	const { profileStore, notificationStore } = useStore()
 
 	const [file, setFile] = useState<File | null>(null)
 	const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 
 	const { execute: updateAvatar, isLoading } = useLoading(
-		authStore.uploadProfileAvatar
+		profileStore.uploadProfileAvatar
 	)
 
 	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,7 +77,7 @@ const UploadAvatarForm = observer(() => {
 					src={
 						previewUrl ||
 						`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-							authStore.profile?.avatar
+							profileStore.profile?.avatar
 						}`
 					}
 					className='aspect-square size-full'

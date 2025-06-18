@@ -10,9 +10,11 @@ import ReviewsPageStore from '../pages/reviews-page/store/reviews-page-store'
 import SearchPageStore from '../pages/search-page/store/search-page-store'
 import AuthStore from './auth-store'
 import NotificationStore from './notification-store'
+import profileStore from './profile-store'
 
 class Store {
 	authStore = AuthStore
+	profileStore = profileStore
 	mainPageStore = mainPageStore
 	notificationStore = NotificationStore
 	releasesPageStore = ReleasesPageStore
