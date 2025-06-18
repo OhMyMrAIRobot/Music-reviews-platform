@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Routes } from 'react-router'
-import NotificationContainer from './components/notifications/NotificationContainer'
+import NotificationsContainer from './components/notifications/Notifications-container'
 import Loader from './components/utils/Loader'
 import { useLoading } from './hooks/use-loading'
 import { useStore } from './hooks/use-store'
@@ -26,7 +26,7 @@ export function App() {
 	) : (
 		<Layout>
 			<Routes>{GlobalRoutes()}</Routes>
-			<NotificationContainer />
+			<NotificationsContainer />
 		</Layout>
 	)
 }

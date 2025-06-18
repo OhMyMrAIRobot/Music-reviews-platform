@@ -8,8 +8,15 @@ class NotificationStore {
 		makeAutoObservable(this)
 	}
 
+	startNotificationTimer(id: string) {
+		setTimeout(() => {
+			this.removeNotification(id)
+		}, 5000)
+	}
+
 	addNotification(notification: INotification) {
 		this.notifications.push(notification)
+		this.startNotificationTimer(notification.id)
 	}
 
 	removeNotification(id: string) {

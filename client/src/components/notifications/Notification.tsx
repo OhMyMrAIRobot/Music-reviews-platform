@@ -1,25 +1,28 @@
 import { FC, useEffect, useState } from 'react'
-import { CloseSvgIcon } from './NotificationSvgIcons'
+import CloseSvg from '../svg/Close-svg'
 
-interface INotificationProps {
+interface IProps {
 	text: string
 	isError: boolean
 	onClose: () => void
 }
 
-const Notification: FC<INotificationProps> = ({ text, isError, onClose }) => {
+const Notification: FC<IProps> = ({ text, isError, onClose }) => {
 	const [isExiting, setIsExiting] = useState(false)
+
+	const handleClose = () => {
+		setIsExiting(true)
+		setTimeout(() => onClose(), 300)
+	}
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
-			setIsExiting(true)
-			setTimeout(() => {
-				onClose()
-			}, 300)
-		}, 5000)
+			handleClose()
+		}, 4700)
 
 		return () => clearTimeout(timer)
-	}, [onClose])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
 	return (
 		<div
@@ -30,14 +33,8 @@ const Notification: FC<INotificationProps> = ({ text, isError, onClose }) => {
 			} ${isExiting ? 'animate-slideOut' : 'animate-slideIn'}`}
 		>
 			<p>{text}</p>
-			<button
-				onClick={() => {
-					setIsExiting(true)
-					setTimeout(() => onClose(), 300)
-				}}
-				className='size-3 cursor-pointer'
-			>
-				<CloseSvgIcon classname={''} />
+			<button onClick={handleClose} className='size-3 cursor-pointer'>
+				<CloseSvg className={'size-4'} />
 			</button>
 		</div>
 	)

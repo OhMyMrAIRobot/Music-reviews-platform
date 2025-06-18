@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { createPortal } from 'react-dom'
-import { CloseSvgIcon } from '../../../../../components/notifications/NotificationSvgIcons'
+import CloseSvg from '../../../../../components/svg/Close-svg'
 import NextSvg from '../../../../../components/svg/Next-svg'
 import PrevSvg from '../../../../../components/svg/Prev-svg'
 import { useStore } from '../../../../../hooks/use-store'
@@ -31,8 +31,8 @@ const MostReviewedSwiper: FC<IProps> = ({ show, setShow, index, setIndex }) => {
 					setIndex(0)
 				}}
 			>
-				<CloseSvgIcon
-					classname={
+				<CloseSvg
+					className={
 						'absolute right-1 top-2.5 lg:right-5 lg:top-5 size-8 lg:size-10 bg-zinc-950 rounded-full flex items-center justify-center border border-white/10 cursor-pointer p-2'
 					}
 				/>
