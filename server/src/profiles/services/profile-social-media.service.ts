@@ -63,7 +63,7 @@ export class ProfileSocialMediaService {
   }
 
   async update(
-    id: string,
+    socialId: string,
     userId: string,
     updateDto: UpdateProfileSocialMediaDto,
   ): Promise<ProfileSocialMedia> {
@@ -71,31 +71,44 @@ export class ProfileSocialMediaService {
       throw new NoDataProvidedException();
     }
 
-    const profileSocial = await this.getById(id);
-    await this.checkBelongsToUser(profileSocial, userId);
+    const profileSocial = await this.getSocial(socialId, userId);
 
     return this.prisma.profileSocialMedia.update({
-      where: { id },
+      where: {
+        profileId_socialId: { profileId: profileSocial.profileId, socialId },
+      },
       data: updateDto,
     });
   }
 
-  async delete(id: string, userId: string): Promise<ProfileSocialMedia> {
-    const profileSocial = await this.getById(id);
-    await this.checkBelongsToUser(profileSocial, userId);
+  async delete(socialId: string, userId: string): Promise<ProfileSocialMedia> {
+    const profileSocial = await this.getSocial(socialId, userId);
 
     return this.prisma.profileSocialMedia.delete({
-      where: { id },
+      where: {
+        profileId_socialId: { profileId: profileSocial.profileId, socialId },
+      },
     });
   }
 
-  private async getById(id: string): Promise<ProfileSocialMedia> {
+  private async getSocial(
+    socialId: string,
+    userId: string,
+  ): Promise<ProfileSocialMedia> {
+    const profile = await this.profilesService.findByUserId(userId);
+
     const profileSocial = await this.prisma.profileSocialMedia.findUnique({
-      where: { id },
+      where: {
+        profileId_socialId: { profileId: profile.id, socialId },
+      },
     });
 
     if (!profileSocial) {
-      throw new EntityNotFoundException('Profile social media', 'id', `${id}`);
+      throw new EntityNotFoundException(
+        `Социальная сеть с id ${socialId} и`,
+        'id пользователя',
+        `${userId}`,
+      );
     }
 
     return profileSocial;

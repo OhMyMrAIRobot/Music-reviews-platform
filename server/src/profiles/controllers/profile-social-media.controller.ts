@@ -22,7 +22,7 @@ export class ProfileSocialMediaController {
   ) {}
 
   @Get(':userId')
-  getAllByUserId(@Param('userId') userId: string) {
+  findAllByUserId(@Param('userId') userId: string) {
     return this.profileSocialMediaService.findAllByUserId(userId);
   }
 
@@ -36,18 +36,25 @@ export class ProfileSocialMediaController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Patch(':id')
+  @Patch(':socialId')
   update(
     @Request() req: IAuthenticatedRequest,
-    @Param('id') id: string,
+    @Param('socialId') socialId: string,
     @Body() updateDto: UpdateProfileSocialMediaDto,
   ) {
-    return this.profileSocialMediaService.update(id, req.user.id, updateDto);
+    return this.profileSocialMediaService.update(
+      socialId,
+      req.user.id,
+      updateDto,
+    );
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete(':id')
-  delete(@Request() req: IAuthenticatedRequest, @Param('id') id: string) {
-    return this.profileSocialMediaService.delete(id, req.user.id);
+  @Delete(':socialId')
+  delete(
+    @Request() req: IAuthenticatedRequest,
+    @Param('socialId') socialId: string,
+  ) {
+    return this.profileSocialMediaService.delete(socialId, req.user.id);
   }
 }
