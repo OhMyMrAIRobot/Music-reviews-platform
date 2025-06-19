@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx'
 import { ReviewAPI } from '../../../api/review-api'
-import { IReview } from '../../../models/social-media/review.ts'
+import { IReview } from '../../../models/review/review.ts'
 import { TogglePromiseResult } from '../../../types/toggle-promise-result'
 import { toggleFav } from '../../../utils/toggle-fav'
 

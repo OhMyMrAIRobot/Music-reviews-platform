@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { FC } from 'react'
 import Pagination from '../../../../components/pagination/Pagination.tsx'
 import ReviewCard from '../../../../components/review/review-card/Review-card.tsx'
-import { IReview } from '../../../../models/social-media/review.ts'
+import { IReview } from '../../../../models/review/review.ts'
 import { TogglePromiseResult } from '../../../../types/toggle-promise-result.ts'
 
 interface IProps {

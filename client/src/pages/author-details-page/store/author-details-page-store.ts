@@ -4,7 +4,7 @@ import { ReleaseAPI } from '../../../api/release-api'
 import { ReviewAPI } from '../../../api/review-api'
 import { IAuthor } from '../../../models/author/author'
 import { IRelease } from '../../../models/release/release'
-import { IReview } from '../../../models/social-media/review.ts'
+import { IReview } from '../../../models/review/review.ts'
 import { TogglePromiseResult } from '../../../types/toggle-promise-result'
 import { toggleFav } from '../../../utils/toggle-fav'
 
