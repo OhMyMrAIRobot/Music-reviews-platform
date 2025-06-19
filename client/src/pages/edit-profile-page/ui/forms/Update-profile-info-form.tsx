@@ -42,7 +42,7 @@ const UpdateProfileInfoForm = observer(() => {
 	return (
 		<EditProfilePageSection
 			title='Данные профиля'
-			description='Вы можете обновить данные своего профиля'
+			description='Здесь Вы можете обновить данные своего профиля.'
 		>
 			<div className='flex flex-col gap-4'>
 				<div className='grid gap-3'>

@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import useCustomNavigate from '../../../hooks/use-custom-navigate'
-import { IReview } from '../../../models/review/review'
+import { IReview } from '../../../models/social-media/review.ts'
 import ReviewAuthor from './Review-author'
 import ReviewMarks from './Review-marks'
 import ReviewUserImage from './Review-user-image'

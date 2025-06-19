@@ -11,5 +11,5 @@ export interface IProfile {
 	no_text_count: number
 	received_likes: number
 	given_likes: number
-	social: { url: string | null; name: string | null }[]
+	social: { id: string; url: string | null; name: string | null }[]
 }

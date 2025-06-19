@@ -13,8 +13,8 @@ const _api = axios.create({
 })
 
 export const ProfileAPI = {
-	async fetchProfile(id: string): Promise<IProfile> {
-		const { data } = await _api.get<IProfile>(`user/${id}`)
+	async fetchProfile(userId: string): Promise<IProfile> {
+		const { data } = await _api.get<IProfile>(`user/${userId}`)
 		return data
 	},
 
@@ -49,7 +49,7 @@ export const ProfileAPI = {
 		return data
 	},
 
-	async updateProfileBio(bio: string) {
+	async updateProfileBio(bio: string): Promise<IUpdatedProfile> {
 		const { data } = await api.patch<IUpdatedProfile>('/profiles', { bio })
 		return data
 	},

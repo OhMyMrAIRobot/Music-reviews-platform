@@ -4,6 +4,7 @@ import { useParams } from 'react-router'
 import useCustomNavigate from '../../hooks/use-custom-navigate'
 import { useStore } from '../../hooks/use-store'
 import UpdateProfileInfoForm from './ui/forms/Update-profile-info-form'
+import UpdateProfileSocialsForm from './ui/forms/Update-profile-socials-form'
 import UploadAvatarForm from './ui/forms/Upload-avatar-form'
 import UploadCoverForm from './ui/forms/Upload-cover-form'
 
@@ -27,6 +28,7 @@ const EditProfilePage = observer(() => {
 			<UploadAvatarForm />
 			<UploadCoverForm />
 			<UpdateProfileInfoForm />
+			<UpdateProfileSocialsForm />
 		</div>
 	)
 })
