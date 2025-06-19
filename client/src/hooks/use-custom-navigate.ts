@@ -53,6 +53,10 @@ const useCustomNavigate = () => {
 		navigate(ROUTES.RATINGS)
 	}
 
+	const navigateToActivation = () => {
+		navigate('/auth/activate')
+	}
+
 	const navigateToSearch = (type: SearchTypesEnum, query: string) => {
 		navigate(`/search/${type}?query=${encodeURIComponent(query)}`)
 	}
@@ -81,6 +85,7 @@ const useCustomNavigate = () => {
 		navigateToSearch,
 		navigatoToProfile,
 		navigateToEditProfile,
+		navigateToActivation,
 	}
 }
 
