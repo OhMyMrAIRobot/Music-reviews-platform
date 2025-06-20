@@ -1,7 +1,7 @@
 import { FC, ReactNode } from 'react'
-import Footer from './components/footer/Footer'
-import Header from './components/header/Header'
-import Sidebar from './components/sidebar/Sidebar'
+import Footer from './footer/Footer'
+import Header from './header/Header'
+import Sidebar from './sidebar/Sidebar'
 
 interface ILayoutProps {
 	children: ReactNode

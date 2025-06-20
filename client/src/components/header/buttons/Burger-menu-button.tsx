@@ -1,8 +1,13 @@
+import { FC } from 'react'
 import BurgerMenuSvg from '../svg/Burger-menu-svg'
 
-const BurgerMenuButton = () => {
+interface IProps {
+	onClick: () => void
+}
+
+const BurgerMenuButton: FC<IProps> = ({ onClick }) => {
 	return (
-		<button className='p-3'>
+		<button onClick={onClick} className='p-3'>
 			<BurgerMenuSvg className={'size-8'} />
 		</button>
 	)
