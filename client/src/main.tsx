@@ -1,14 +1,16 @@
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router'
 import { App } from './App.tsx'
-import { StoreContext } from './contexts/store-context.ts'
 import './index.css'
-import Store from './stores/store.ts'
+import { SidebarOverlayProvider } from './providers/Sidebar-overlay-context-provider.tsx'
+import { StoreContextProvider } from './providers/Store-context-provider.tsx'
 
 createRoot(document.getElementById('root')!).render(
-	<StoreContext.Provider value={new Store()}>
-		<BrowserRouter>
-			<App />
-		</BrowserRouter>
-	</StoreContext.Provider>
+	<StoreContextProvider>
+		<SidebarOverlayProvider>
+			<BrowserRouter>
+				<App />
+			</BrowserRouter>
+		</SidebarOverlayProvider>
+	</StoreContextProvider>
 )

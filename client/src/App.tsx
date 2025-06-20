@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
 import { Routes } from 'react-router'
+import Layout from './components/Layout'
 import NotificationsContainer from './components/notifications/Notifications-container'
 import Loader from './components/utils/Loader'
 import { useLoading } from './hooks/use-loading'
 import { useStore } from './hooks/use-store'
-import Layout from './Layout'
 import GlobalRoutes from './routes/Global-routes'
 
 export function App() {

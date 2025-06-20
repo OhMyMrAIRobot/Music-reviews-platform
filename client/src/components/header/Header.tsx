@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import useCustomNavigate from '../../hooks/use-custom-navigate'
+import { useSidebarOverlay } from '../../hooks/use-sidebar-overlay'
 import { useStore } from '../../hooks/use-store'
 import AboutSvg from '../sidebar/svg/About-svg'
 import LogoFullSvg from '../svg/Logo-full-svg'
@@ -13,6 +14,8 @@ import SearchBar from './Search-bar'
 
 const Header = observer(() => {
 	const { authStore } = useStore()
+
+	const { openSidebarOverlay } = useSidebarOverlay()
 
 	const {
 		navigateToLogin,
@@ -32,7 +35,7 @@ const Header = observer(() => {
 					<LogoFullSvg className={''} />
 				</button>
 
-				<SearchBar />
+				<SearchBar className={'hidden lg:flex lg:w-[400px]'} />
 
 				<div className='ml-auto hidden lg:flex items-center gap-8'>
 					{authStore.user?.isActive === false && (
@@ -75,7 +78,7 @@ const Header = observer(() => {
 					) : (
 						<LoginIconButton onClick={navigateToLogin} />
 					)}
-					<BurgerMenuButton />
+					<BurgerMenuButton onClick={openSidebarOverlay} />
 				</div>
 			</div>
 		</header>
