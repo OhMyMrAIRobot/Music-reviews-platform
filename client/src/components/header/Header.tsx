@@ -1,10 +1,12 @@
 import { observer } from 'mobx-react-lite'
 import useCustomNavigate from '../../hooks/use-custom-navigate'
 import { useStore } from '../../hooks/use-store'
+import AboutSvg from '../sidebar/svg/About-svg'
 import LogoFullSvg from '../svg/Logo-full-svg'
+import PencilSvg from '../svg/Pencil-svg'
 import BurgerMenuButton from './buttons/Burger-menu-button'
-import FeedbackButton from './buttons/Feedback-button'
 import HeaderButton from './buttons/Header-button'
+import HeaderSvgButton from './buttons/Header-svg-button'
 import LoginIconButton from './buttons/Login-icon-button'
 import ProfileButton from './buttons/Profile-button'
 import SearchBar from './Search-bar'
@@ -12,8 +14,13 @@ import SearchBar from './Search-bar'
 const Header = observer(() => {
 	const { authStore } = useStore()
 
-	const { navigateToLogin, navigateToRegistration, navigateToMain } =
-		useCustomNavigate()
+	const {
+		navigateToLogin,
+		navigateToRegistration,
+		navigateToMain,
+		navigateToFeedback,
+		navigateToActivation,
+	} = useCustomNavigate()
 
 	return (
 		<header className='sticky top-0 z-1000 w-full bg-[#09090B]/60 border-b border-[#27272A]/40 backdrop-blur-3xl'>
@@ -27,8 +34,22 @@ const Header = observer(() => {
 
 				<SearchBar />
 
-				<div className='ml-auto flex items-center gap-8 max-lg:hidden'>
-					<FeedbackButton />
+				<div className='ml-auto hidden lg:flex items-center gap-8'>
+					{authStore.user?.isActive === false && (
+						<HeaderSvgButton
+							title={'Активация аккаунта'}
+							onClick={navigateToActivation}
+						>
+							<AboutSvg className={'size-5'} />
+						</HeaderSvgButton>
+					)}
+
+					<HeaderSvgButton
+						title={'Обратная связь'}
+						onClick={navigateToFeedback}
+					>
+						<PencilSvg className='size-3' />
+					</HeaderSvgButton>
 
 					{!authStore.isAuth && (
 						<div className='flex gap-3'>

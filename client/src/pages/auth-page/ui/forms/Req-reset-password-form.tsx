@@ -12,7 +12,7 @@ import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
 
 const ReqResetPasswordForm = observer(() => {
-	const { authStore, notificationStore: notificationsStore } = useStore()
+	const { authStore, notificationStore } = useStore()
 
 	const { navigateToMain } = useCustomNavigate()
 
@@ -35,7 +35,7 @@ const ReqResetPasswordForm = observer(() => {
 			if (Array.isArray(result)) {
 				setErrors(result)
 			} else {
-				notificationsStore.addNotification({
+				notificationStore.addNotification({
 					id: self.crypto.randomUUID(),
 					text: result
 						? 'Письмо с инструкциями по восстановлению пароля отправлено на вашу почту!'
@@ -70,6 +70,7 @@ const ReqResetPasswordForm = observer(() => {
 				title={isLoading ? 'Отправка...' : 'Отправить письмо для сброса'}
 				onClick={onSubmit}
 				isInvert={true}
+				disabled={isLoading}
 			/>
 
 			{errors && (

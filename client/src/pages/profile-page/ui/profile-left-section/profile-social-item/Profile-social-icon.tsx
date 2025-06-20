@@ -3,7 +3,7 @@ import TelegramSvg from '../../../../../components/svg/Telegram-svg'
 import TwitchSvg from '../../../../../components/svg/Twitch-svg'
 import VkSvg from '../../../../../components/svg/Vk-svg'
 import YouTubeSvg from '../../../../../components/svg/YouTube-svg'
-import { SocialMediaEnum } from '../../../../../models/profile/social-media-enum'
+import { SocialMediaEnum } from '../../../../../models/social-media/social-media-enum'
 
 interface IProps {
 	name: string

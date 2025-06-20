@@ -10,13 +10,13 @@ import ProfileSvg from '../svg/Profile-svg'
 import PopupProfileButton from './Popup-profile-button'
 
 const ProfileButton = observer(() => {
-	const { authStore, notificationStore } = useStore()
+	const { authStore, profileStore, notificationStore } = useStore()
 
 	const { navigateToMain, navigatoToProfile, navigateToEditProfile } =
 		useCustomNavigate()
 
 	const { execute: fetchProfile, isLoading } = useLoading(
-		authStore.fetchProfile
+		profileStore.fetchProfile
 	)
 
 	useEffect(() => {
@@ -76,7 +76,7 @@ const ProfileButton = observer(() => {
 						loading='lazy'
 						decoding='async'
 						src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-							authStore.profile?.avatar
+							profileStore.profile?.avatar
 						}`}
 						className='size-full aspect-square'
 					/>

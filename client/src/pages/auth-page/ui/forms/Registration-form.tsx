@@ -13,7 +13,7 @@ import { useStore } from '../../../../hooks/use-store'
 import { IRegistrationRequest } from '../../../../models/auth/request/registration-request'
 
 const RegistrationForm = observer(() => {
-	const { authStore, notificationStore: notificationsStore } = useStore()
+	const { authStore, notificationStore } = useStore()
 
 	const { navigateToMain, navigateToLogin } = useCustomNavigate()
 
@@ -93,12 +93,10 @@ const RegistrationForm = observer(() => {
 			if (Array.isArray(result)) {
 				setErrors(result)
 			} else {
-				notificationsStore.addNotification({
-					id: self.crypto.randomUUID(),
-					text: 'Вы успешно зарегистрировались!',
-					isError: false,
-				})
-				notificationsStore.addEmailSentNotification(result)
+				notificationStore.addSuccessNotification(
+					'Вы успешно зарегистрировались!'
+				)
+				notificationStore.addEmailSentNotification(result)
 			}
 		})
 	}
@@ -135,6 +133,7 @@ const RegistrationForm = observer(() => {
 					title={isLoading ? 'Загрузка...' : 'Создать аккаунт'}
 					isInvert={true}
 					onClick={handleRegistration}
+					disabled={isLoading}
 				/>
 
 				<div className='flex justify-center items-center font-medium text-sm gap-1 mt-2 select-none'>

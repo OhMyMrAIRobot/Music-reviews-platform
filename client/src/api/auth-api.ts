@@ -1,7 +1,8 @@
 import axios, { AxiosResponse } from 'axios'
+import { IUpdateUserData } from '../models/auth/request/update-user-data'
 import { IAuthResponse } from '../models/auth/response/auth-response'
+import { IAuthResponseWithEmail } from '../models/auth/response/auth-response-with-email'
 import { IEmailResponse } from '../models/auth/response/email-response'
-import { IRegisterResponse } from '../models/auth/response/register-response'
 import { api } from './api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
@@ -36,8 +37,8 @@ export const AuthAPI = {
 		email: string,
 		nickname: string,
 		password: string
-	): Promise<IRegisterResponse> {
-		const { data } = await _api.post<IRegisterResponse>('register', {
+	): Promise<IAuthResponseWithEmail> {
+		const { data } = await _api.post<IAuthResponseWithEmail>('register', {
 			email,
 			nickname,
 			password,
@@ -69,6 +70,15 @@ export const AuthAPI = {
 
 	async resendActivation(): Promise<IEmailResponse> {
 		const { data } = await api.post('auth/resend-activation')
+		return data
+	},
+
+	async updateUser(
+		updateData: IUpdateUserData
+	): Promise<IAuthResponseWithEmail> {
+		const { data } = await api.patch<IAuthResponseWithEmail>('users', {
+			...updateData,
+		})
 		return data
 	},
 }

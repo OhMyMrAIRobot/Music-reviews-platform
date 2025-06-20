@@ -28,9 +28,11 @@ const ProfileInfo: FC<IProps> = ({ profile }) => {
 				Дата регистрации: {profile.created_at}
 			</div>
 
-			<div className='text-sm leading-5 mt-2.5 text-zinc-300 text-center'>
-				{profile.bio}
-			</div>
+			{profile.bio && (
+				<div className='text-sm leading-5 mt-2.5 text-zinc-300 text-center'>
+					{profile.bio}
+				</div>
+			)}
 
 			<div className='flex space-x-2 mt-5'>
 				{profile.social.map(

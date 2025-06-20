@@ -2,7 +2,7 @@ import { makeAutoObservable } from 'mobx'
 import { ReleaseAPI } from '../../../api/release-api'
 import { ReviewAPI } from '../../../api/review-api'
 import { IRelease } from '../../../models/release/release'
-import { IReview } from '../../../models/review/review'
+import { IReview } from '../../../models/review/review.ts'
 import { TogglePromiseResult } from '../../../types/toggle-promise-result'
 import { toggleFav } from '../../../utils/toggle-fav'
 

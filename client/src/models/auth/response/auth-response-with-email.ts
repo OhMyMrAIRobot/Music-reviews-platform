@@ -1,6 +1,6 @@
 import { IUser } from '../user'
 
-export interface IRegisterResponse {
+export interface IAuthResponseWithEmail {
 	user: IUser
 	accessToken: string
 	emailSent: boolean

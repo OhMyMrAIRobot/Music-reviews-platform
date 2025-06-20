@@ -15,7 +15,7 @@ import { IResetPasswordRequest } from '../../../../models/auth/request/reset-pas
 const ResetPasswordForm = () => {
 	const { token } = useParams()
 
-	const { authStore, notificationStore: notificationsStore } = useStore()
+	const { authStore, notificationStore } = useStore()
 
 	const { navigateToMain } = useCustomNavigate()
 
@@ -31,7 +31,7 @@ const ResetPasswordForm = () => {
 		reset(formData, token).then(errors => {
 			setErrors(errors)
 			if (errors.length === 0) {
-				notificationsStore.addSuccessNotification(
+				notificationStore.addSuccessNotification(
 					'Ваш пароль был успешно сброшен!'
 				)
 				navigateToMain()
@@ -84,6 +84,7 @@ const ResetPasswordForm = () => {
 				title={isLoading ? 'Сброс пароля...' : 'Сбросить пароль'}
 				onClick={onSubmit}
 				isInvert={true}
+				disabled={isLoading}
 			/>
 
 			{errors && (
