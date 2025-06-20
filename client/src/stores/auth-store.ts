@@ -3,6 +3,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { AuthAPI } from '../api/auth-api'
 import { IRegistrationRequest } from '../models/auth/request/registration-request'
 import { IResetPasswordRequest } from '../models/auth/request/reset-password-request'
+import { IUpdateUserData } from '../models/auth/request/update-user-data'
 import { IUser } from '../models/auth/user'
 
 class AuthStore {
@@ -144,6 +145,51 @@ class AuthStore {
 			)
 			this.setAuthorization(user, accessToken)
 			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
+		}
+	}
+
+	updateUserData = async (
+		email: string,
+		nickname: string,
+		newPassword: string,
+		newPasswordConfirm: string,
+		password: string
+	): Promise<string[] | boolean> => {
+		try {
+			const data: IUpdateUserData = { password }
+
+			if (this.user) {
+				if (
+					email.length > 0 &&
+					email.toLowerCase() !== this.user.email.toLowerCase()
+				) {
+					data.email = email
+				}
+
+				if (
+					nickname.length >= 0 &&
+					nickname.toLowerCase() !== this.user.nickname.toLowerCase()
+				) {
+					data.nickname = nickname
+				}
+
+				if (newPassword === newPasswordConfirm) {
+					if (newPassword.length > 0) {
+						data.newPassword = newPassword
+					}
+				} else {
+					return ['Пароли не совпадают!']
+				}
+			}
+
+			const { user, accessToken, emailSent } = await AuthAPI.updateUser(data)
+			this.setAuthorization(user, accessToken)
+
+			return emailSent
 		} catch (e: any) {
 			return Array.isArray(e.response?.data?.message)
 				? e.response?.data?.message

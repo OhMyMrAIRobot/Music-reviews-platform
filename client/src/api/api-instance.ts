@@ -22,7 +22,9 @@ api.interceptors.response.use(
 	},
 	async error => {
 		const originalRequest = error.config
-		if (error.response?.status === 401) {
+		if (error.response?.status === 401 && !originalRequest._isRetry) {
+			originalRequest._isRetry = true
+
 			const { data } = await axios.post<IAuthResponse>(
 				`${SERVER_URL}/auth/refresh`,
 				{},

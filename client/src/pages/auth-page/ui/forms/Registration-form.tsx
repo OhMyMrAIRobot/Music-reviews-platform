@@ -93,11 +93,9 @@ const RegistrationForm = observer(() => {
 			if (Array.isArray(result)) {
 				setErrors(result)
 			} else {
-				notificationStore.addNotification({
-					id: self.crypto.randomUUID(),
-					text: 'Вы успешно зарегистрировались!',
-					isError: false,
-				})
+				notificationStore.addSuccessNotification(
+					'Вы успешно зарегистрировались!'
+				)
 				notificationStore.addEmailSentNotification(result)
 			}
 		})
