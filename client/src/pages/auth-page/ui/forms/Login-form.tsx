@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import FormButton from '../../../../components/form-elements/Form-button'
 import FormInfoContainer from '../../../../components/form-elements/Form-info-container'
 import FormInfoField from '../../../../components/form-elements/Form-info-field'
@@ -16,18 +16,11 @@ const LoginForm = observer(() => {
 	const [email, setEmail] = useState<string>('')
 	const [password, setPassword] = useState<string>('')
 
-	const { navigateToMain, navigateToRegistration, navigateToRequestReset } =
-		useCustomNavigate()
+	const { navigateToRegistration, navigateToRequestReset } = useCustomNavigate()
 
 	const { authStore, notificationStore } = useStore()
 
 	const { execute: login, isLoading } = useLoading(authStore.login)
-
-	useEffect(() => {
-		if (authStore.isAuth) {
-			navigateToMain()
-		}
-	}, [authStore.isAuth, navigateToMain])
 
 	const handleLogin = () => {
 		login(email, password).then(errors => {

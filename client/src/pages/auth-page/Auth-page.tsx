@@ -1,11 +1,11 @@
-import AuthRoutes from '../../routes/Auth-routes'
-import AuthContainer from './ui/Auth-container'
+import { Outlet } from 'react-router'
+import AuthLayout from './ui/Auth-layout'
 
 const AuthPage = () => {
 	return (
-		<AuthContainer>
-			<AuthRoutes />
-		</AuthContainer>
+		<AuthLayout>
+			<Outlet />
+		</AuthLayout>
 	)
 }
 

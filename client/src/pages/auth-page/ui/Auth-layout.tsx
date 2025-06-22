@@ -4,7 +4,7 @@ interface IProps {
 	children: ReactNode
 }
 
-const AuthContainer: FC<IProps> = ({ children }) => {
+const AuthLayout: FC<IProps> = ({ children }) => {
 	return (
 		<div className='border border-white/15 rounded-[0.5rem] grid lg:grid-cols-2 min-h-[700px]'>
 			<div className='flex items-center justify-center h-full'>{children}</div>
@@ -24,4 +24,4 @@ const AuthContainer: FC<IProps> = ({ children }) => {
 	)
 }
 
-export default AuthContainer
+export default AuthLayout

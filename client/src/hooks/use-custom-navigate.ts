@@ -65,8 +65,8 @@ const useCustomNavigate = () => {
 		navigate(`/profile/${id}`)
 	}
 
-	const navigateToEditProfile = (id: string) => {
-		navigate(`/profile/edit/${id}`)
+	const navigateToEditProfile = () => {
+		navigate(ROUTES.EDIT_PROFILE)
 	}
 
 	return {

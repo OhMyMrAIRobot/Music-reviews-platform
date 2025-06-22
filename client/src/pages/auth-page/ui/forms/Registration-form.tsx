@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import FormButton from '../../../../components/form-elements/Form-button'
 import FormCheckbox from '../../../../components/form-elements/Form-checkbox'
 import FormInfoContainer from '../../../../components/form-elements/Form-info-container'
@@ -15,7 +15,7 @@ import { IRegistrationRequest } from '../../../../models/auth/request/registrati
 const RegistrationForm = observer(() => {
 	const { authStore, notificationStore } = useStore()
 
-	const { navigateToMain, navigateToLogin } = useCustomNavigate()
+	const { navigateToLogin } = useCustomNavigate()
 
 	const [formData, setFormData] = useState<IRegistrationRequest>({
 		email: '',
@@ -28,12 +28,6 @@ const RegistrationForm = observer(() => {
 	const [errors, setErrors] = useState<string[]>([])
 
 	const { execute: register, isLoading } = useLoading(authStore.register)
-
-	useEffect(() => {
-		if (authStore.isAuth) {
-			navigateToMain()
-		}
-	}, [authStore.isAuth, navigateToMain])
 
 	const handleChange = (
 		field: keyof typeof formData,
