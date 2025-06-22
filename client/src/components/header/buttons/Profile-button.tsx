@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router'
 import useCustomNavigate from '../../../hooks/use-custom-navigate'
 import { useLoading } from '../../../hooks/use-loading'
 import { useStore } from '../../../hooks/use-store'
@@ -14,6 +15,8 @@ const ProfileButton = observer(() => {
 
 	const { navigateToMain, navigatoToProfile, navigateToEditProfile } =
 		useCustomNavigate()
+
+	const navigate = useNavigate()
 
 	const { execute: fetchProfile, isLoading } = useLoading(
 		profileStore.fetchProfile
@@ -103,7 +106,7 @@ const ProfileButton = observer(() => {
 					text='Мне понравилось'
 					icon={<PixelHeartSvg className={'size-[19px]'} />}
 					onClick={() => {
-						if (authStore.user?.id) navigatoToProfile(authStore.user.id)
+						if (authStore.user?.id) navigate('/admin')
 					}}
 				/>
 				<PopupProfileButton

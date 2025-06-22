@@ -1,18 +1,18 @@
 // routes.constants.ts
 export const ROUTES = {
 	AUTH: {
-		AUTH: '/auth/*',
-		LOGIN: '/login',
-		REGISTER: '/register',
-		REQUEST_RESET: '/request-reset',
-		RESET_PASSWORD: '/reset-password/:token',
-		ACTIVATE: '/activate',
-		ACTIVATE_WITH_TOKEN: '/activate/:token',
+		PREFIX: 'auth',
+		LOGIN: 'login',
+		REGISTER: 'register',
+		REQUEST_RESET: 'request-reset',
+		RESET_PASSWORD: 'reset-password/:token',
+		ACTIVATE: 'activate',
+		ACTIVATE_WITH_TOKEN: 'activate/:token',
 	},
 	MAIN: '/',
-	RELEASE: '/release/:id',
+	RELEASE_DETAILS: '/release/:id',
 	RELEASES: '/releases',
-	AUTHOR: '/author/:id',
+	AUTHOR_DETAILS: '/author/:id',
 	AUTHORS: '/authors',
 	FEEDBACK: '/feedback',
 	REVIEWS: '/reviews',
@@ -20,7 +20,12 @@ export const ROUTES = {
 	RATINGS: '/ratings',
 	SEARCH: '/search/:type',
 	PROFILE: '/profile/:id',
-	EDIT_PROFILE: 'profile/edit/:id',
+	EDIT_PROFILE: 'profile/edit',
+	ADMIN: {
+		PREFIX: 'admin',
+		TEST: '',
+	},
+	NOT_DEFINED: '*',
 } as const
 
 export type AppRoutes = keyof typeof ROUTES | keyof typeof ROUTES.AUTH

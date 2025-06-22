@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import FormButton from '../../../../components/form-elements/Form-button'
 import FormInfoContainer from '../../../../components/form-elements/Form-info-container'
 import FormInfoField from '../../../../components/form-elements/Form-info-field'
@@ -7,14 +7,11 @@ import FormInput from '../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../components/form-elements/Form-label'
 import FormSubTitle from '../../../../components/form-elements/Form-subtitle'
 import FormTitle from '../../../../components/form-elements/Form-title'
-import useCustomNavigate from '../../../../hooks/use-custom-navigate'
 import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
 
 const ReqResetPasswordForm = observer(() => {
 	const { authStore, notificationStore } = useStore()
-
-	const { navigateToMain } = useCustomNavigate()
 
 	const [email, setEmail] = useState<string>('')
 	const [errors, setErrors] = useState<string[]>([])
@@ -22,13 +19,6 @@ const ReqResetPasswordForm = observer(() => {
 	const { execute: sendRequest, isLoading } = useLoading(
 		authStore.sendReqResetPassword
 	)
-
-	useEffect(() => {
-		if (authStore.isAuth) {
-			navigateToMain()
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
 
 	const onSubmit = () => {
 		sendRequest(email).then(result => {

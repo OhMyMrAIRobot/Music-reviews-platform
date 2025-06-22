@@ -16,5 +16,5 @@ export function useLoading<T>(asyncFunction: (...args: any[]) => Promise<T>) {
 		[asyncFunction]
 	)
 
-	return { execute, isLoading }
+	return { execute, isLoading, setIsLoading }
 }
