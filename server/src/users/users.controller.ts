@@ -46,7 +46,7 @@ export class UsersController {
     const user = await this.usersService.update(req.user.id, updateUserDto);
     const result = await this.authService.login(res, user);
 
-    let emailSent = true;
+    let emailSent = false;
     if (!user.isActive) {
       const activationToken = this.tokensService.generateActivationToken(
         user.id,
@@ -58,6 +58,7 @@ export class UsersController {
           user.nickname,
           activationToken,
         );
+        emailSent = true;
       } catch (e) {
         emailSent = false;
         console.log(e);
