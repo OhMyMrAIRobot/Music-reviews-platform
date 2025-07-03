@@ -16,7 +16,7 @@ const AdminSidebarItem: FC<IAdminSidebarItemProps> = ({
 	return (
 		<button
 			onClick={onClick}
-			className={`h-9 flex w-full items-center justify-start rounded-lg cursor-pointer duration-200 transition-colors group ${
+			className={`h-9 flex w-full items-center justify-start rounded-lg cursor-pointer duration-200 transition-colors group select-none ${
 				isActive ? 'bg-white/10' : 'hover:bg-white/10'
 			}`}
 		>

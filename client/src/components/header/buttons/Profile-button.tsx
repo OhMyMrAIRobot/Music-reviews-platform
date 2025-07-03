@@ -113,7 +113,7 @@ const ProfileButton = observer(() => {
 					text='Настройки профиля'
 					icon={<SettingsSvg className={'size-7'} />}
 					onClick={() => {
-						if (authStore.user?.id) navigateToEditProfile(authStore.user.id)
+						if (authStore.user?.id) navigateToEditProfile()
 					}}
 				/>
 

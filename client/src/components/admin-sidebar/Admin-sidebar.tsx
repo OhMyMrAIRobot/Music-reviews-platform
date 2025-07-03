@@ -63,9 +63,7 @@ const AdminSidebar = () => {
 			</span>
 
 			{adminSidebarItems.map(item => (
-				<>
-					<AdminSidebarItem key={item.title} {...item} />
-				</>
+				<AdminSidebarItem key={item.title} {...item} />
 			))}
 
 			<div className='mt-auto'>
