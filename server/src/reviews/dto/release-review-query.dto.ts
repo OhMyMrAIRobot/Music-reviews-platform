@@ -1,6 +1,8 @@
 // review-query.dto.ts
 import { Type } from 'class-transformer';
 import { IsIn, IsInt, IsOptional, Max, Min } from 'class-validator';
+import { IsSortOrder } from 'src/decorators/is-sort-order.decorator';
+import { SortOrder } from 'src/types/sort-order.type';
 
 export class ReleaseReviewQueryDto {
   @IsOptional()
@@ -8,8 +10,8 @@ export class ReleaseReviewQueryDto {
   field?: string;
 
   @IsOptional()
-  @IsIn(['asc', 'desc'])
-  order?: 'asc' | 'desc';
+  @IsSortOrder()
+  order?: SortOrder;
 
   @IsOptional()
   @Type(() => Number)
