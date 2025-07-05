@@ -1,10 +1,16 @@
 import { ConflictException, Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { plainToClass, plainToInstance } from 'class-transformer';
 import { PrismaService } from '../../prisma/prisma.service';
 import { DuplicateFieldException } from '../exceptions/duplicate-field.exception';
 import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
 import { InvalidCredentialsException } from '../exceptions/invalid-credentials.exception';
+import { GetUsersQueryDto } from './dto/get-users-query.dto';
+import {
+  GetUsersPrismaResponseDto,
+  GetUsersResponseDto,
+} from './dto/get-users-response.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 import { UserWithPasswordResponseDto } from './dto/user-with-password-response.dto';
@@ -38,9 +44,46 @@ export class UsersService {
     return;
   }
 
-  async findAll(): Promise<UserResponseDto[]> {
-    const users = await this.prisma.user.findMany();
-    return plainToInstance(UserResponseDto, users);
+  async findAll(query: GetUsersQueryDto): Promise<GetUsersResponseDto> {
+    const { limit = 10, offset = 0, query: searchTerm, role, order } = query;
+
+    const where: Prisma.UserWhereInput = searchTerm
+      ? {
+          OR: [
+            { nickname: { contains: searchTerm, mode: 'insensitive' } },
+            { email: { contains: searchTerm, mode: 'insensitive' } },
+          ],
+        }
+      : {};
+
+    if (role) {
+      where.role = {
+        role: {
+          equals: role,
+          mode: 'insensitive',
+        },
+      };
+    }
+
+    const [total, users] = await Promise.all([
+      this.prisma.user.count({ where }),
+
+      this.prisma.user.findMany({
+        where,
+        take: limit,
+        skip: offset,
+        include: {
+          role: true,
+          profile: { select: { avatar: true } },
+        },
+        orderBy: { createdAt: order ?? 'desc' },
+      }),
+    ]);
+
+    return {
+      total,
+      users: plainToInstance(GetUsersPrismaResponseDto, users),
+    };
   }
 
   async findOne(

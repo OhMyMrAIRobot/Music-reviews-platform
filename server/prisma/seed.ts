@@ -61,7 +61,7 @@ async function main() {
         password:
           '$2b$10$0bD/1z03VDQP3ko9BJ/2U.FGCyjcyY7sSXaf5.psHwB012H0xBswe',
         isActive: true,
-        roleId: '2',
+        roleId: '3',
       },
       {
         id: '2',

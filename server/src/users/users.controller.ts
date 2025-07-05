@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Patch,
+  Query,
   Request,
   Res,
   UseGuards,
@@ -18,6 +19,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { AuthService } from '../auth/services/auth.service';
 import { IAuthenticatedRequest } from '../auth/types/authenticated-request.interface';
 import { UserRoleEnum } from '../roles/types/user-role.enum';
+import { GetUsersQueryDto } from './dto/get-users-query.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 import { UsersService } from './users.service';
@@ -77,8 +79,8 @@ export class UsersController {
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
-  async findAll(): Promise<UserResponseDto[]> {
-    return this.usersService.findAll();
+  async findAll(@Query() query: GetUsersQueryDto) {
+    return this.usersService.findAll(query);
   }
 
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
