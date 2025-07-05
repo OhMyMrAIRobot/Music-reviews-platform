@@ -21,7 +21,9 @@ const AdminSearchBar: FC<IProps> = ({
 	}
 
 	const handleSearchClick = () => {
+		// if (searchText.trim().length > 0) {
 		onSubmit()
+		// }
 	}
 
 	return (

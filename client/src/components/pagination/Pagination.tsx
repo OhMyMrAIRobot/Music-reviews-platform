@@ -6,7 +6,7 @@ interface IProps {
 	currentPage: number
 	totalItems: number
 	itemsPerPage: number
-	onPageChange: (page: number) => void
+	setCurrentPage: (page: number) => void
 	idToScroll: string
 }
 
@@ -14,7 +14,7 @@ const Pagination: FC<IProps> = ({
 	currentPage,
 	totalItems,
 	itemsPerPage,
-	onPageChange,
+	setCurrentPage,
 	idToScroll,
 }) => {
 	const totalPages = Math.ceil(totalItems / itemsPerPage)
@@ -30,7 +30,7 @@ const Pagination: FC<IProps> = ({
 				scrollToUp()
 			}, 100)
 
-			onPageChange(currentPage - 1)
+			setCurrentPage(currentPage - 1)
 		}
 	}
 
@@ -39,7 +39,7 @@ const Pagination: FC<IProps> = ({
 			setTimeout(() => {
 				scrollToUp()
 			}, 100)
-			onPageChange(currentPage + 1)
+			setCurrentPage(currentPage + 1)
 		}
 	}
 
@@ -98,10 +98,12 @@ const Pagination: FC<IProps> = ({
 							setTimeout(() => {
 								scrollToUp()
 							}, 100)
-							onPageChange(Number(page))
+							setCurrentPage(Number(page))
 						}}
-						className={`inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium hover:bg-white/10 transition-colors duration-300 cursor-pointer size-7 lg:size-10 text-[12px] lg:text-sm  ${
-							currentPage === page ? 'border border-white/20' : ''
+						className={`inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium transition-colors duration-300 cursor-pointer size-7 lg:size-10 text-[12px] lg:text-sm  ${
+							currentPage === page
+								? 'border border-white/20'
+								: 'hover:bg-white/10'
 						}`}
 					>
 						{page}

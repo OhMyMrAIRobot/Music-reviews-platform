@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
 import { AuthAPI } from '../api/auth-api'
+import { IAuthUser } from '../models/auth/auth-user'
 import { IRegistrationRequest } from '../models/auth/request/registration-request'
 import { IResetPasswordRequest } from '../models/auth/request/reset-password-request'
 import { IUpdateUserData } from '../models/auth/request/update-user-data'
-import { IUser } from '../models/auth/user'
 
 class AuthStore {
 	isAuth: boolean = false
-	user: IUser | null = null
+	user: IAuthUser | null = null
 
 	constructor() {
 		makeAutoObservable(this)
@@ -18,7 +18,7 @@ class AuthStore {
 		this.isAuth = value
 	}
 
-	setAuthorization(user: IUser, token: string) {
+	setAuthorization(user: IAuthUser, token: string) {
 		runInAction(() => {
 			this.isAuth = true
 			this.user = user

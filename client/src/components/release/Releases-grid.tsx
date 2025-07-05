@@ -55,7 +55,7 @@ const ReleasesGrid: FC<IProps> = ({
 						currentPage={currentPage}
 						totalItems={total}
 						itemsPerPage={perPage}
-						onPageChange={setCurrentPage}
+						setCurrentPage={setCurrentPage}
 						idToScroll={'releases'}
 					/>
 				</div>

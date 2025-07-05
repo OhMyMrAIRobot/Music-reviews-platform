@@ -1,7 +1,7 @@
-import { IUser } from '../user'
+import { IAuthUser } from '../auth-user'
 
 export interface IAuthResponseWithEmail {
-	user: IUser
+	user: IAuthUser
 	accessToken: string
 	emailSent: boolean
 }

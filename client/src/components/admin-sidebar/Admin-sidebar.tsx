@@ -1,4 +1,6 @@
+import { useActivePath } from '../../hooks/use-active-path'
 import useCustomNavigate from '../../hooks/use-custom-navigate'
+import { ROUTES } from '../../routes/routes-enum'
 import LogoutSvg from '../header/svg/Logout-svg'
 import ProfileSvg from '../header/svg/Profile-svg'
 import TextReviewSvg from '../review/svg/Text-review-svg'
@@ -10,12 +12,14 @@ import PencilSvg from '../svg/Pencil-svg'
 import AdminSidebarItem, { IAdminSidebarItemProps } from './Admin-sidebar-item'
 
 const AdminSidebar = () => {
-	const { navigateToMain } = useCustomNavigate()
+	const { navigateToMain, navigateToAdminUsers } = useCustomNavigate()
+
+	const { isActive } = useActivePath()
 
 	const adminSidebarItems: IAdminSidebarItemProps[] = [
 		{
 			title: 'Релизы',
-			isActive: true,
+			isActive: false,
 			onClick: () => {
 				throw new Error('Function not implemented.')
 			},
@@ -23,10 +27,8 @@ const AdminSidebar = () => {
 		},
 		{
 			title: 'Пользователи',
-			isActive: false,
-			onClick: () => {
-				throw new Error('Function not implemented.')
-			},
+			isActive: isActive(`/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.USERS}`),
+			onClick: navigateToAdminUsers,
 			svgIcon: <ProfileSvg className={'size-5'} />,
 		},
 		{

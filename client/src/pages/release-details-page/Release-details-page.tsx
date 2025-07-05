@@ -5,6 +5,7 @@ import Loader from '../../components/utils/Loader.tsx'
 import { useLoading } from '../../hooks/use-loading.ts'
 import { useStore } from '../../hooks/use-store.ts'
 import { ReleaseReviewSortField } from '../../models/review/release-review-sort-fields.ts'
+import { SortOrder } from '../../types/sort-order-type.ts'
 import ReleaseDetailsHeader from './ui/Release-details-header.tsx'
 import ReleaseDetailsReviews from './ui/release-details-reviews/Release-details-reviews.tsx'
 import SendReviewForm from './ui/send-review-form/Send-review-form.tsx'
@@ -41,7 +42,7 @@ const ReleaseDetailsPage = observer(() => {
 
 	const fetchReviews = async (): Promise<void> => {
 		let field = 'created'
-		let order: 'asc' | 'desc' = 'desc'
+		let order: SortOrder = 'desc'
 
 		if (selectedSort === ReleaseReviewSortField.OLD) {
 			order = 'asc'

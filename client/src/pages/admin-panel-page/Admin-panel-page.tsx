@@ -1,17 +1,13 @@
-import AdminHeader from '../../components/admin-header/Admin-header'
+import { Outlet } from 'react-router'
 import AdminSidebar from '../../components/admin-sidebar/Admin-sidebar'
 
 const AdminPanelPage = () => {
 	return (
-		<div className='bg-white/5 min-h-4000 min-w-screen flex'>
+		<div className='bg-white/5 w-screen flex'>
 			<AdminSidebar />
-			<AdminHeader
-				title={'Пользователи'}
-				searchText={''}
-				setSearchText={function (val: string): void {
-					throw new Error('Function not implemented.')
-				}}
-			/>
+			<div className='ml-14 lg:ml-50 w-full'>
+				<Outlet />
+			</div>
 		</div>
 	)
 }

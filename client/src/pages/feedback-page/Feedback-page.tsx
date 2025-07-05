@@ -91,6 +91,7 @@ const FeedbackPage = () => {
 				title={isLoading ? 'Отправка...' : 'Отправить'}
 				isInvert={true}
 				onClick={send}
+				disabled={isLoading}
 			/>
 
 			{errors && (

@@ -3,6 +3,7 @@ export interface IUser {
 	email: string
 	nickname: string
 	isActive: boolean
-	roleId: string
-	createdAt: Date
+	createdAt: string
+	role: string
+	avatar: string
 }
