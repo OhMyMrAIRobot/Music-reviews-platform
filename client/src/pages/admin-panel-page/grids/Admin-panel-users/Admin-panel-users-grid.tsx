@@ -13,7 +13,7 @@ import AdminPanelUsersGridItem from './Admin-panel-users-grid-item'
 const AdminPanelUsersGrid = observer(() => {
 	const perPage = 10
 
-	const { adminPageUsersStore } = useStore()
+	const { adminPageUsersStore, notificationStore } = useStore()
 
 	const [searchText, setSearchText] = useState<string>('')
 	const [activeOption, setActiveOption] = useState<string>(
@@ -46,6 +46,17 @@ const AdminPanelUsersGrid = observer(() => {
 		fetchUsers()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentPage, order])
+
+	const deleteUser = async (id: string) => {
+		adminPageUsersStore.deleteUser(id).then(result => {
+			notificationStore.addNotification({
+				id: self.crypto.randomUUID(),
+				text: result.message,
+				isError: !result.status,
+			})
+			fetchUsers()
+		})
+	}
 
 	return (
 		<div className='flex flex-col h-screen'>
@@ -91,6 +102,7 @@ const AdminPanelUsersGrid = observer(() => {
 										user={user}
 										isLoading={isLoading}
 										position={(currentPage - 1) * perPage + idx + 1}
+										deleteUser={() => deleteUser(user.id)}
 									/>
 							  ))}
 					</div>

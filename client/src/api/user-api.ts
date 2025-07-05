@@ -19,4 +19,8 @@ export const UserAPI = {
 			`)
 		return data
 	},
+
+	async deleteUser(id: string) {
+		return await api.delete(`/users/${id}`)
+	},
 }

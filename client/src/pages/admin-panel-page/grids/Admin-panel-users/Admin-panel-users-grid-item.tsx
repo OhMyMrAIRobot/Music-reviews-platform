@@ -15,6 +15,7 @@ interface IProps {
 	position?: number
 	order?: SortOrder
 	toggleOrder?: () => void
+	deleteUser?: () => void
 }
 
 const AdminPanelUsersGridItem: FC<IProps> = ({
@@ -24,6 +25,7 @@ const AdminPanelUsersGridItem: FC<IProps> = ({
 	position,
 	order,
 	toggleOrder,
+	deleteUser,
 }) => {
 	const [modalOpen, setModalOpen] = useState<boolean>(false)
 
@@ -46,6 +48,12 @@ const AdminPanelUsersGridItem: FC<IProps> = ({
 		}
 	}
 
+	const handleDelete = () => {
+		if (deleteUser) {
+			deleteUser()
+		}
+	}
+
 	return isLoading ? (
 		<div className='bg-gray-400 w-full h-12 rounded-lg animate-pulse opacity-40' />
 	) : (
@@ -53,9 +61,7 @@ const AdminPanelUsersGridItem: FC<IProps> = ({
 			<ConfirmationModal
 				title={'Вы действительно хотите удалить пользователя?'}
 				isOpen={modalOpen}
-				onConfirm={function (): void {
-					throw new Error('Function not implemented.')
-				}}
+				onConfirm={handleDelete}
 				onCancel={() => setModalOpen(false)}
 			/>
 			<div
