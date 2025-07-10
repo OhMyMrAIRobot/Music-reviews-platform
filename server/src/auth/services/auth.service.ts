@@ -3,7 +3,6 @@ import {
   InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { plainToClass } from 'class-transformer';
 import { Response } from 'express';
@@ -24,7 +23,6 @@ import { TokensService } from './tokens.service';
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
-    private readonly jwtService: JwtService,
     private readonly rolesService: RolesService,
     private readonly tokensService: TokensService,
     private readonly prisma: PrismaService,
@@ -48,7 +46,7 @@ export class AuthService {
   }
 
   async login(res: Response, user: UserResponseDto) {
-    const role = await this.rolesService.findById(user.roleId);
+    const role = await this.rolesService.findByName(user.role.role);
 
     const validRole = this.rolesService.getValidRole(role.role);
 
@@ -120,6 +118,9 @@ export class AuthService {
             password: hashedPassword,
             roleId: userRole.id,
           },
+          include: {
+            role: true,
+          },
         });
 
         await prisma.userProfile.create({
@@ -168,6 +169,7 @@ export class AuthService {
     const updatedUser = await this.prisma.user.update({
       where: { id },
       data: resetPasswordDto,
+      include: { role: true },
     });
 
     return this.login(res, updatedUser);

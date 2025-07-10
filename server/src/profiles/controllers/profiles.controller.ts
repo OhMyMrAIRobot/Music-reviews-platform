@@ -21,7 +21,7 @@ import { ProfilesService } from '../services/profiles.service';
 export class ProfilesController {
   constructor(private readonly profilesService: ProfilesService) {}
 
-  @Get('one/:userId')
+  @Get(':userId')
   async findByUserId(@Param('userId') userId: string): Promise<UserProfile> {
     return this.profilesService.findByUserId(userId);
   }
@@ -56,9 +56,10 @@ export class ProfilesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch(':userId')
   updateByUserId(
+    @Request() req: IAuthenticatedRequest,
     @Param('userId') userId: string,
     @Body() updateProfileDto: UpdateProfileDto,
   ): Promise<UserProfile> {
-    return this.profilesService.updateByUserId(userId, updateProfileDto);
+    return this.profilesService.adminUpdate(req, userId, updateProfileDto);
   }
 }

@@ -12,6 +12,7 @@ import { UsersService } from './users.service';
     RolesModule,
     MailsModule,
     PrismaModule,
+    RolesModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],

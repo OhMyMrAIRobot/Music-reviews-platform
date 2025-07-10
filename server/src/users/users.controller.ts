@@ -19,6 +19,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { AuthService } from '../auth/services/auth.service';
 import { IAuthenticatedRequest } from '../auth/types/authenticated-request.interface';
 import { UserRoleEnum } from '../roles/types/user-role.enum';
+import { AdminUpdateUserDto } from './dto/admin-update-user.dto';
 import { GetUsersQueryDto } from './dto/get-users-query.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
@@ -73,7 +74,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Delete()
   async delete(@Request() req: IAuthenticatedRequest) {
-    return this.usersService.remove(req.user.id);
+    return this.usersService.delete(req.user.id);
   }
 
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
@@ -85,8 +86,29 @@ export class UsersController {
 
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('user-info/:id')
+  async getUserFullInfo(@Param('id') id: string) {
+    return this.usersService.getFullUserInfoById(id);
+  }
+
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Patch(':id')
+  async adminUpdateUser(
+    @Param('id') id: string,
+    @Body() dto: AdminUpdateUserDto,
+    @Request() req: IAuthenticatedRequest,
+  ) {
+    return this.usersService.adminUpdate(id, dto, req);
+  }
+
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(':id')
-  async removeById(@Param('id') id: string): Promise<UserResponseDto> {
-    return this.usersService.remove(id);
+  async removeById(
+    @Param('id') id: string,
+    @Request() req: IAuthenticatedRequest,
+  ): Promise<UserResponseDto> {
+    return this.usersService.adminDelete(req, id);
   }
 }

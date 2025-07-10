@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UserProfile } from '@prisma/client';
+import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.interface';
+import { UsersService } from 'src/users/users.service';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { EntityNotFoundException } from '../../exceptions/entity-not-found.exception';
 import { NoDataProvidedException } from '../../exceptions/no-data.exception';
@@ -15,7 +17,10 @@ import { UpdateProfileDto } from '../dto/update-profile.dto';
 
 @Injectable()
 export class ProfilesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly usersService: UsersService,
+  ) {}
 
   async findAll(): Promise<UserProfile[]> {
     return this.prisma.userProfile.findMany();
@@ -47,6 +52,16 @@ export class ProfilesService {
       where: { userId },
       data: updateProfileDto,
     });
+  }
+
+  async adminUpdate(
+    req: IAuthenticatedRequest,
+    userId: string,
+    dto: UpdateProfileDto,
+  ) {
+    await this.usersService.checkPermissions(req.user, userId);
+
+    return this.updateByUserId(userId, dto);
   }
 
   async findByUserIdExtended(userId: string): Promise<ProfileResponseDto> {

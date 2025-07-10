@@ -1,4 +1,5 @@
 import { Exclude, Expose, Transform } from 'class-transformer';
+import { formatUserCreatedAt } from '../utils/format-user-created-at';
 
 interface UserProfileResponseObject {
   profile?: { avatar: string };
@@ -31,7 +32,7 @@ export class GetUsersPrismaResponseDto {
   isActive: boolean;
 
   @Expose()
-  @Transform(({ value }) => formatDate(value as Date))
+  @Transform(({ value }) => formatUserCreatedAt(value as Date))
   createdAt: string;
 
   @Expose()
@@ -52,14 +53,4 @@ export class GetUsersPrismaResponseDto {
 
   @Exclude()
   profile?: UserProfileResponseObject;
-}
-
-function formatDate(date: Date): string {
-  if (!date) return '';
-
-  const pad = (n: number) => n.toString().padStart(2, '0');
-
-  return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()} ${pad(
-    date.getHours(),
-  )}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
 }

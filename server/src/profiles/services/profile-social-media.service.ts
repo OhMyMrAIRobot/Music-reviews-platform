@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { ProfileSocialMedia } from '@prisma/client';
+import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.interface';
+import { UsersService } from 'src/users/users.service';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { DuplicateFieldException } from '../../exceptions/duplicate-field.exception';
 import { EntityNotFoundException } from '../../exceptions/entity-not-found.exception';
-import { InsufficientPermissionsException } from '../../exceptions/insufficient-permissions.exception';
 import { NoDataProvidedException } from '../../exceptions/no-data.exception';
 import { SocialMediaService } from '../../social-media/social-media.service';
+import { AdminCreateSocialMediaDto } from '../dto/admin-create-social-media.dto';
 import { CreateProfileSocialMediaDto } from '../dto/create-profile-social-media.dto';
 import { UpdateProfileSocialMediaDto } from '../dto/update-profile-social-media.dto';
 import { ProfilesService } from './profiles.service';
@@ -16,6 +18,7 @@ export class ProfileSocialMediaService {
     private readonly prisma: PrismaService,
     private readonly profilesService: ProfilesService,
     private readonly socialMediaService: SocialMediaService,
+    private readonly usersService: UsersService,
   ) {}
 
   async create(
@@ -91,6 +94,38 @@ export class ProfileSocialMediaService {
     });
   }
 
+  async adminCreate(
+    req: IAuthenticatedRequest,
+    userId: string,
+    socialId: string,
+    dto: AdminCreateSocialMediaDto,
+  ): Promise<ProfileSocialMedia> {
+    await this.usersService.checkPermissions(req.user, userId);
+
+    return this.create(userId, { socialId, url: dto.url });
+  }
+
+  async adminUpdate(
+    req: IAuthenticatedRequest,
+    userId: string,
+    socialId: string,
+    dto: UpdateProfileSocialMediaDto,
+  ) {
+    await this.usersService.checkPermissions(req.user, userId);
+
+    return this.update(socialId, userId, dto);
+  }
+
+  async adminDelete(
+    req: IAuthenticatedRequest,
+    userId: string,
+    socialId: string,
+  ) {
+    await this.usersService.checkPermissions(req.user, userId);
+
+    return this.delete(socialId, userId);
+  }
+
   private async getSocial(
     socialId: string,
     userId: string,
@@ -112,16 +147,5 @@ export class ProfileSocialMediaService {
     }
 
     return profileSocial;
-  }
-
-  private async checkBelongsToUser(
-    profileSocial: ProfileSocialMedia,
-    userId: string,
-  ) {
-    const profile = await this.profilesService.findByUserId(userId);
-
-    if (profileSocial.profileId !== profile.id) {
-      throw new InsufficientPermissionsException();
-    }
   }
 }
