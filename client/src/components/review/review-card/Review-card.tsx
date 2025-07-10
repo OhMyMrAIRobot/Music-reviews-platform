@@ -5,7 +5,7 @@ import useCustomNavigate from '../../../hooks/use-custom-navigate'
 import { useStore } from '../../../hooks/use-store'
 import { IReview } from '../../../models/review/review.ts'
 import { TogglePromiseResult } from '../../../types/toggle-promise-result'
-import { MoveToReviewSvgIcon } from '../../svg/ReviewSvgIcons'
+import MoveToSvg from '../../svg/Move-to-svg.tsx'
 import ReviewHeader from './Review-header'
 import ReviewLikes from './Review-likes'
 
@@ -91,7 +91,7 @@ const ReviewCard: FC<IProps> = observer(
 							onMouseEnter={() => setShow(true)}
 							onMouseLeave={() => setShow(false)}
 						>
-							<MoveToReviewSvgIcon />
+							<MoveToSvg className='size-6 text-zinc-400 stroke-white fill-zinc-400' />
 							<div
 								className={`absolute -top-10 left-1/1 -translate-x-1/1 bg-zinc-950 border-2 border-gray-600 rounded-xl text-white text-xs font-semibold px-3 py-2 shadow z-100 whitespace-nowrap transition-all duration-300 ${
 									show ? 'opacity-100 visible' : 'opacity-0 invisible'

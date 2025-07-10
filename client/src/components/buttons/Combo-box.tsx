@@ -1,4 +1,5 @@
 import { FC, useEffect, useRef, useState } from 'react'
+import { getRoleColor } from '../../utils/get-role-color'
 import ArrowBottomSvg from '../header/svg/Arrow-bottom-svg'
 import TickSvg from '../svg/Tick-svg'
 
@@ -49,7 +50,7 @@ const ComboBox: FC<ComboBoxProps> = ({
 				role='combobox'
 				className='flex w-full gap-x-1 h-full justify-between items-center px-3 text-sm font-medium text-white cursor-pointer py-2'
 			>
-				<span>{selected}</span>
+				<span className={`${getRoleColor(selected)}`}>{selected}</span>
 				<ArrowBottomSvg className='h-5 w-4 opacity-70' />
 			</button>
 
@@ -65,7 +66,7 @@ const ComboBox: FC<ComboBoxProps> = ({
 						key={option}
 						className={`flex items-center py-2 px-2 cursor-pointer text-sm font-medium hover:bg-white/5 transition-colors duration-300 rounded-md ${
 							selected === option ? 'bg-white/10' : ''
-						}`}
+						} ${getRoleColor(option)}`}
 						onClick={() => {
 							onChange(option)
 							setIsOpen(false)

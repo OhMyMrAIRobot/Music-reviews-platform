@@ -3,10 +3,12 @@ import ArrowBottomSvg from '../../../../components/header/svg/Arrow-bottom-svg'
 import ConfirmationModal from '../../../../components/modals/Confirmation-modal'
 import EditSvg from '../../../../components/svg/Edit-svg'
 import TrashSvg from '../../../../components/svg/Trash-svg'
-import { RolesEnum } from '../../../../models/role/roles-enum'
 import { SortOrderEnum } from '../../../../models/sort/sort-order-enum'
 import { IUser } from '../../../../models/user/user'
+import { UserStatusesEnum } from '../../../../models/user/user-statuses-enum'
 import { SortOrder } from '../../../../types/sort-order-type'
+import { getRoleColor } from '../../../../utils/get-role-color'
+import AdminDashboardEditUserModal from './Admin-dashboard-edit-user-modal/Admin-dashboard-edit-user-modal'
 
 interface IProps {
 	className?: string
@@ -18,7 +20,7 @@ interface IProps {
 	deleteUser?: () => void
 }
 
-const AdminPanelUsersGridItem: FC<IProps> = ({
+const AdminDashboardUsersGridItem: FC<IProps> = ({
 	className,
 	user,
 	isLoading,
@@ -27,20 +29,8 @@ const AdminPanelUsersGridItem: FC<IProps> = ({
 	toggleOrder,
 	deleteUser,
 }) => {
-	const [modalOpen, setModalOpen] = useState<boolean>(false)
-
-	const getRoleColor = (role: string): string => {
-		switch (role) {
-			case RolesEnum.ADMIN:
-				return 'text-red-700'
-			case RolesEnum.SUPER_USER:
-				return 'text-yellow-400'
-			case RolesEnum.USER:
-				return 'text-green-200'
-			default:
-				return ''
-		}
-	}
+	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
+	const [editModelOpen, setEditModalOpen] = useState<boolean>(false)
 
 	const toggle = () => {
 		if (toggleOrder) {
@@ -58,12 +48,23 @@ const AdminPanelUsersGridItem: FC<IProps> = ({
 		<div className='bg-gray-400 w-full h-12 rounded-lg animate-pulse opacity-40' />
 	) : (
 		<>
-			<ConfirmationModal
-				title={'Вы действительно хотите удалить пользователя?'}
-				isOpen={modalOpen}
-				onConfirm={handleDelete}
-				onCancel={() => setModalOpen(false)}
-			/>
+			{user && (
+				<>
+					<ConfirmationModal
+						title={'Вы действительно хотите удалить пользователя?'}
+						isOpen={confModalOpen}
+						onConfirm={handleDelete}
+						onCancel={() => setConfModalOpen(false)}
+					/>
+
+					<AdminDashboardEditUserModal
+						isOpen={editModelOpen}
+						userId={user.id}
+						onClose={() => setEditModalOpen(false)}
+					/>
+				</>
+			)}
+
 			<div
 				className={`${className} text-[10px] md:text-sm h-10 md:h-12 w-full rounded-lg grid grid-cols-10 lg:grid-cols-12 items-center px-3 border border-white/10 text-nowrap`}
 			>
@@ -126,7 +127,9 @@ const AdminPanelUsersGridItem: FC<IProps> = ({
 									: 'text-red-500 bg-red-500/15'
 							}`}
 						>
-							{user.isActive ? 'Активирован' : 'Не активирован'}
+							{user.isActive
+								? UserStatusesEnum.ACTIVE
+								: UserStatusesEnum.NON_ACTIVE}
 						</span>
 					) : (
 						'Статус аккаунта'
@@ -135,12 +138,15 @@ const AdminPanelUsersGridItem: FC<IProps> = ({
 				<div className='col-span-1'>
 					{user ? (
 						<div className='flex gap-x-3 justify-end'>
-							<button className='border border-white/15 size-8 flex items-center justify-center rounded-lg cursor-pointer text-white/70 hover:text-white hover:border-white/70 transition-colors duration-200'>
+							<button
+								onClick={() => setEditModalOpen(true)}
+								className='border border-white/15 size-8 flex items-center justify-center rounded-lg cursor-pointer text-white/70 hover:text-white hover:border-white/70 transition-colors duration-200'
+							>
 								<EditSvg className={'size-4'} />
 							</button>
 
 							<button
-								onClick={() => setModalOpen(true)}
+								onClick={() => setConfModalOpen(true)}
 								className='border border-white/15 size-8 flex items-center justify-center rounded-lg cursor-pointer text-white/70 hover:text-red-500 hover:border-red-500 transition-colors duration-200'
 							>
 								<TrashSvg className={'size-4'} />
@@ -155,4 +161,4 @@ const AdminPanelUsersGridItem: FC<IProps> = ({
 	)
 }
 
-export default AdminPanelUsersGridItem
+export default AdminDashboardUsersGridItem

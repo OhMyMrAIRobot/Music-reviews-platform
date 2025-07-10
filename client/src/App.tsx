@@ -53,18 +53,11 @@ export function App() {
 					<Route element={<AuthRoute />}>{AuthRouteList()}</Route>
 				</Route>
 
+				{/* ADMIN ROUTES */}
 				<Route element={<AdminRoute />} path={ROUTES.ADMIN.PREFIX}>
 					{AdminRouteList()}
 				</Route>
 			</Routes>
-			{/* <Layout>
-				<Routes>{GlobalRoutes()}</Routes>
-			</Layout>
-			<Routes>
-				<Route element={<AdminRoutes />}>
-					<Route element={<AdminPanelPage />} path='/admin' />
-				</Route>
-			</Routes> */}
 			<NotificationsContainer />
 		</>
 	)

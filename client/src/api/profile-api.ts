@@ -54,13 +54,13 @@ export const ProfileAPI = {
 		return data
 	},
 
-	async updateUserInfo(email: string | null, nickname: string | null) {
-		const payload = Object.fromEntries(
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			Object.entries({ email, nickname }).filter(([_, value]) => value !== null)
-		)
-
-		const { data } = await api.patch<IUpdatedProfile>('/users', payload)
+	async adminUpdateProfileBio(
+		userId: string,
+		bio: string
+	): Promise<IUpdatedProfile> {
+		const { data } = await api.patch<IUpdatedProfile>(`/profiles/${userId}`, {
+			bio,
+		})
 		return data
 	},
 }

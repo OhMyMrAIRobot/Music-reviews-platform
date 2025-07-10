@@ -6,7 +6,7 @@ const NotificationsContainer = observer(() => {
 	const { notificationStore } = useStore()
 
 	return (
-		<div className='fixed z-500 right-0 bottom-0 text-sm p-5 grid gap-3'>
+		<div className='fixed z-5000 right-0 bottom-0 text-sm p-5 grid gap-3'>
 			{notificationStore.notifications.map(notification => (
 				<Notification
 					key={notification.id}

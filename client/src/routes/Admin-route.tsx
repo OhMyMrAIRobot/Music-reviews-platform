@@ -1,16 +1,18 @@
 import { observer } from 'mobx-react-lite'
 import { Navigate } from 'react-router'
 import { useStore } from '../hooks/use-store'
-import AdminPanelPage from '../pages/admin-panel-page/Admin-panel-page'
+import { RolesEnum } from '../models/role/roles-enum'
+import AdminDashboardPage from '../pages/admin-dashboard-page/Admin-dashboard-page'
 import { ROUTES } from './routes-enum'
 
 const AdminRoute = observer(() => {
 	const { authStore } = useStore()
 
-	// TODO: FIX ROLE
-	return authStore.user?.roleId === '3' ? (
+	const role = authStore.user?.role.role
+
+	return role === RolesEnum.ADMIN || role === RolesEnum.ROOT_ADMIN ? (
 		<>
-			<AdminPanelPage />
+			<AdminDashboardPage />
 		</>
 	) : (
 		<Navigate to={ROUTES.MAIN} replace />
