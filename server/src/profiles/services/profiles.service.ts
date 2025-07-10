@@ -13,6 +13,7 @@ import {
   ProfileResponseDto,
   QueryProfileResponseDto,
 } from '../dto/profile.response.dto';
+import { UpdateProfileImagesDto } from '../dto/update-profile-images.dto';
 import { UpdateProfileDto } from '../dto/update-profile.dto';
 
 @Injectable()
@@ -40,7 +41,7 @@ export class ProfilesService {
 
   async updateByUserId(
     userId: string,
-    updateProfileDto: UpdateProfileDto,
+    updateProfileDto: UpdateProfileDto | UpdateProfileImagesDto,
   ): Promise<UserProfile> {
     if (!updateProfileDto || Object.keys(updateProfileDto).length === 0) {
       throw new NoDataProvidedException();
@@ -57,7 +58,7 @@ export class ProfilesService {
   async adminUpdate(
     req: IAuthenticatedRequest,
     userId: string,
-    dto: UpdateProfileDto,
+    dto: UpdateProfileDto | UpdateProfileImagesDto,
   ) {
     await this.usersService.checkPermissions(req.user, userId);
 

@@ -12,9 +12,7 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.interface';
-import { UpdateProfileDto } from 'src/profiles/dto/update-profile.dto';
 import { ProfilesService } from 'src/profiles/services/profiles.service';
-import { UploadsService } from './uploads.service';
 
 function createStorage(folder: string) {
   const dir = `./public/${folder}`;
@@ -34,10 +32,7 @@ function createStorage(folder: string) {
 
 @Controller('uploads')
 export class UploadsController {
-  constructor(
-    private readonly uploadsService: UploadsService,
-    private readonly profilesService: ProfilesService,
-  ) {}
+  constructor(private readonly profilesService: ProfilesService) {}
 
   @UseGuards(JwtAuthGuard)
   @Post('avatar')
@@ -52,7 +47,7 @@ export class UploadsController {
   ) {
     return this.profilesService.updateByUserId(req.user.id, {
       avatar: file.filename,
-    } as UpdateProfileDto);
+    });
   }
 
   @UseGuards(JwtAuthGuard)
@@ -68,6 +63,6 @@ export class UploadsController {
   ) {
     return this.profilesService.updateByUserId(req.user.id, {
       coverImage: file.filename,
-    } as UpdateProfileDto);
+    });
   }
 }

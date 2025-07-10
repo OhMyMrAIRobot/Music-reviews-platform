@@ -199,13 +199,11 @@ async function main() {
       },
       {
         id: '6',
-        avatar: '1.png',
         bio: 'young designer from sp',
         userId: '6',
       },
       {
         id: '7',
-        avatar: '1.png',
         bio: 'young designer from sp',
         userId: '7',
       },
@@ -225,7 +223,6 @@ async function main() {
       },
       {
         id: '10',
-        avatar: '1.png',
         bio: 'young designer from sp',
         userId: '10',
       },
