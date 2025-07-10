@@ -50,6 +50,14 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 			adminDashboardUsersStore.updateBio
 		)
 
+		const { execute: deleteAvatar, isLoading: isAvatarLoading } = useLoading(
+			adminDashboardUsersStore.deleteAvatar
+		)
+
+		const { execute: deleteCover, isLoading: isCoverLoading } = useLoading(
+			adminDashboardUsersStore.deleteCover
+		)
+
 		useEffect(() => {
 			if (isOpen) {
 				fetchProfile(userId).then(() => {
@@ -119,7 +127,9 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 								loading='lazy'
 								decoding='async'
 								src={`${import.meta.env.VITE_SERVER_URL}/public/covers/${
-									user.profile?.coverImage
+									user.profile?.coverImage === ''
+										? import.meta.env.VITE_DEFAULT_COVER
+										: user.profile?.coverImage
 								}`}
 								className='aspect-video size-full'
 							/>
@@ -131,7 +141,9 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 									loading='lazy'
 									decoding='async'
 									src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-										user?.profile?.avatar
+										user.profile?.avatar === ''
+											? import.meta.env.VITE_DEFAULT_AVATAR
+											: user.profile?.avatar
 									}`}
 									className='aspect-square'
 								/>
@@ -142,17 +154,44 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 									title={'Профиль'}
 									onClick={() => navigatoToProfile(userId)}
 									svg={<MoveToSvg className={'size-4'} />}
+									disabled={false}
 								/>
 
 								<EditUserModalButton
+									disabled={user.profile?.avatar === '' || isAvatarLoading}
 									title={'Удалить аватар'}
-									onClick={() => navigatoToProfile(userId)}
+									onClick={() =>
+										deleteAvatar(user.id).then(errors => {
+											if (errors.length === 0) {
+												notificationStore.addSuccessNotification(
+													'Вы успешно удалили аватар профиля!'
+												)
+											} else {
+												errors.forEach(err => {
+													notificationStore.addErrorNotification(err)
+												})
+											}
+										})
+									}
 									svg={<TrashSvg className={'size-4'} />}
 								/>
 
 								<EditUserModalButton
+									disabled={user.profile?.coverImage === '' || isCoverLoading}
 									title={'Удалить обложку'}
-									onClick={() => navigatoToProfile(userId)}
+									onClick={() =>
+										deleteCover(user.id).then(errors => {
+											if (errors.length === 0) {
+												notificationStore.addSuccessNotification(
+													'Вы успешно удалили обложку профиля!'
+												)
+											} else {
+												errors.forEach(err => {
+													notificationStore.addErrorNotification(err)
+												})
+											}
+										})
+									}
 									svg={<TrashSvg className={'size-4'} />}
 								/>
 							</div>

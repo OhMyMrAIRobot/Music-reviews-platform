@@ -77,7 +77,9 @@ const UploadCoverForm = observer(() => {
 					src={
 						previewUrl ||
 						`${import.meta.env.VITE_SERVER_URL}/public/covers/${
-							profileStore.profile?.cover
+							profileStore.profile?.cover === ''
+								? import.meta.env.VITE_DEFAULT_COVER
+								: profileStore.profile?.cover
 						}`
 					}
 					className='object-cover size-full'

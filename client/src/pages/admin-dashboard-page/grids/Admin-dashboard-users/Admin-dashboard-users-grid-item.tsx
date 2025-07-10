@@ -79,7 +79,9 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 								loading='lazy'
 								decoding='async'
 								src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-									user.avatar
+									user.avatar === ''
+										? import.meta.env.VITE_DEFAULT_AVATAR
+										: user.avatar
 								}`}
 								className='size-9 aspect-square rounded-full select-none'
 							/>

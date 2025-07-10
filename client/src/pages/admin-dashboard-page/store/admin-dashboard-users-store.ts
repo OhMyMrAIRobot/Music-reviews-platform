@@ -179,6 +179,41 @@ class AdminDashboardUsersStore {
 				: [e.response?.data?.message]
 		}
 	}
+
+	deleteAvatar = async (userId: string): Promise<string[]> => {
+		try {
+			const result = await ProfileAPI.adminDeleteProfileAvatar(userId)
+
+			const idx = this.users.findIndex(usr => usr.id === this.user?.id)
+			runInAction(() => {
+				if (this.user && this.user.profile) {
+					this.user.profile.avatar = result.avatar
+					if (idx !== -1) {
+						this.users[idx].avatar = result.avatar
+					}
+				}
+			})
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
+		}
+	}
+
+	deleteCover = async (userId: string): Promise<string[]> => {
+		try {
+			const result = await ProfileAPI.adminDeleteProfileCover(userId)
+			if (this.user && this.user.profile) {
+				this.user.profile.coverImage = result.coverImage
+			}
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
+		}
+	}
 }
 
 export default new AdminDashboardUsersStore()

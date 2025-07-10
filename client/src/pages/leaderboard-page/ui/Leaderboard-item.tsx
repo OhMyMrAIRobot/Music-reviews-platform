@@ -52,7 +52,9 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 								alt={item.nickname}
 								className='aspect-square h-full w-full'
 								src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-									item.avatar
+									item.avatar === ''
+										? import.meta.env.VITE_DEFAULT_AVATAR
+										: item.avatar
 								}`}
 							/>
 						</span>
@@ -91,7 +93,9 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 						className='object-cover'
 						sizes='100vw'
 						src={`${import.meta.env.VITE_SERVER_URL}/public/covers/${
-							item.cover
+							item.cover === ''
+								? import.meta.env.VITE_DEFAULT_COVER
+								: item.cover
 						}`}
 					/>
 				</div>

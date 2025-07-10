@@ -59,7 +59,9 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 					loading='lazy'
 					decoding='async'
 					src={`${import.meta.env.VITE_SERVER_URL}/public/covers/${
-						profile.cover
+						profile.cover === ''
+							? import.meta.env.VITE_DEFAULT_COVER
+							: profile.cover
 					}`}
 					className='object-cover rounded-xl size-full max-h-[300px] h-full'
 				/>

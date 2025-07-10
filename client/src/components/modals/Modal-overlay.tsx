@@ -33,7 +33,7 @@ const ModalOverlay: FC<IProps> = ({ isOpen, onCancel, children }) => {
 	return createPortal(
 		<div
 			onClick={handleOverlayClick}
-			className={`fixed inset-0 h-screen bg-black/40 flex items-center justify-center select-none transition-opacity duration-300 z-1000 ${
+			className={`fixed inset-0 h-screen bg-black/40 flex items-center justify-center select-none transition-opacity duration-300 z-1000 backdrop-blur-sm ${
 				isVisible ? 'opacity-100' : 'opacity-0'
 			}`}
 		>

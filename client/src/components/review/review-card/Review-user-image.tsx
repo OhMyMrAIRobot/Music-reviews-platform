@@ -16,7 +16,9 @@ const ReviewUserImage: FC<IProps> = ({ nickname, img, points }) => {
 				loading='lazy'
 				decoding='async'
 				alt={nickname}
-				src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${img}`}
+				src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
+					img === '' ? import.meta.env.VITE_DEFAULT_AVATAR : img
+				}`}
 				className='rounded-full border border-white/10 min-w-10 size-10 lg:size-11 cursor-pointer aspect-square'
 			/>
 			{level && (

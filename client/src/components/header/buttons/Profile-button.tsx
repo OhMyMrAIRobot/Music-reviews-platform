@@ -79,7 +79,9 @@ const ProfileButton = observer(() => {
 						loading='lazy'
 						decoding='async'
 						src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-							profileStore.profile?.avatar
+							profileStore.profile?.avatar === ''
+								? import.meta.env.VITE_DEFAULT_AVATAR
+								: profileStore.profile?.avatar
 						}`}
 						className='size-full aspect-square'
 					/>

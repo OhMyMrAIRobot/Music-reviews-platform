@@ -77,7 +77,9 @@ const UploadAvatarForm = observer(() => {
 					src={
 						previewUrl ||
 						`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-							profileStore.profile?.avatar
+							profileStore.profile?.avatar === ''
+								? import.meta.env.VITE_DEFAULT_AVATAR
+								: profileStore.profile?.avatar
 						}`
 					}
 					className='aspect-square size-full'

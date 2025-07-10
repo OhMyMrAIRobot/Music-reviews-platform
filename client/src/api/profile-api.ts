@@ -36,6 +36,18 @@ export const ProfileAPI = {
 		return data
 	},
 
+	async deleteProfileAvatar(): Promise<IUpdatedProfile> {
+		const { data } = await api.delete<IUpdatedProfile>('profiles/avatar')
+		return data
+	},
+
+	async adminDeleteProfileAvatar(userId: string): Promise<IUpdatedProfile> {
+		const { data } = await api.delete<IUpdatedProfile>(
+			`profiles/${userId}/avatar`
+		)
+		return data
+	},
+
 	async uploadProfileCover(formData: FormData): Promise<IUpdatedProfile> {
 		const { data } = await api.post<IUpdatedProfile>(
 			'/uploads/cover',
@@ -45,6 +57,18 @@ export const ProfileAPI = {
 					'Content-Type': 'multipart/form-data',
 				},
 			}
+		)
+		return data
+	},
+
+	async deleteProfileCover(): Promise<IUpdatedProfile> {
+		const { data } = await api.delete<IUpdatedProfile>('profiles/cover')
+		return data
+	},
+
+	async adminDeleteProfileCover(userId: string): Promise<IUpdatedProfile> {
+		const { data } = await api.delete<IUpdatedProfile>(
+			`profiles/${userId}/cover`
 		)
 		return data
 	},

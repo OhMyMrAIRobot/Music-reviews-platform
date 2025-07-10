@@ -47,7 +47,9 @@ const AdminHeader: FC<IProps> = observer(({ title, setText }) => {
 							loading='lazy'
 							decoding='async'
 							src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-								profileStore.profile?.avatar
+								profileStore.profile?.avatar === ''
+									? import.meta.env.VITE_DEFAULT_AVATAR
+									: profileStore.profile?.avatar
 							}`}
 							className='aspect-square rounded-full size-10 select-none'
 						/>
