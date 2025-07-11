@@ -100,13 +100,14 @@ export class AuthController {
       user.email,
     );
 
-    let emailSent = true;
+    let emailSent = false;
     try {
       await this.mailsService.sendActivationEmail(
         user.email,
         user.nickname,
         activationToken,
       );
+      emailSent = true;
     } catch (e) {
       emailSent = false;
       console.log(e);
@@ -122,13 +123,14 @@ export class AuthController {
       user.email,
     );
 
-    let emailSent = true;
+    let emailSent = false;
     try {
       await this.mailsService.sendResetPasswordEmail(
         user.email,
         user.nickname,
         resetToken,
       );
+      emailSent = true;
     } catch (e) {
       emailSent = false;
       console.log(e);

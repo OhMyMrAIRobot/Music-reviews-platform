@@ -1,11 +1,13 @@
 import { Type } from 'class-transformer';
-import { IsIn, IsInt, IsOptional, Max, Min } from 'class-validator';
+import { IsInt, IsOptional, Max, Min } from 'class-validator';
 import { IsEntityId } from 'src/decorators/is-entity-id.decorator';
+import { IsSortOrder } from 'src/decorators/is-sort-order.decorator';
+import { SortOrder } from 'src/types/sort-order.type';
 
 export class ReviewsQueryDto {
   @IsOptional()
-  @IsIn(['asc', 'desc'])
-  order?: 'asc' | 'desc';
+  @IsSortOrder()
+  order?: SortOrder;
 
   @IsOptional()
   @Type(() => Number)

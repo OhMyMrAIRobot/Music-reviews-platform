@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -21,7 +22,7 @@ import { ProfilesService } from '../services/profiles.service';
 export class ProfilesController {
   constructor(private readonly profilesService: ProfilesService) {}
 
-  @Get('one/:userId')
+  @Get(':userId')
   async findByUserId(@Param('userId') userId: string): Promise<UserProfile> {
     return this.profilesService.findByUserId(userId);
   }
@@ -56,9 +57,50 @@ export class ProfilesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch(':userId')
   updateByUserId(
+    @Request() req: IAuthenticatedRequest,
     @Param('userId') userId: string,
     @Body() updateProfileDto: UpdateProfileDto,
   ): Promise<UserProfile> {
-    return this.profilesService.updateByUserId(userId, updateProfileDto);
+    return this.profilesService.adminUpdate(req, userId, updateProfileDto);
+  }
+
+  @Delete('avatar')
+  @UseGuards(JwtAuthGuard)
+  deleteAvatar(@Request() req: IAuthenticatedRequest) {
+    return this.profilesService.updateByUserId(req.user.id, {
+      avatar: '',
+    });
+  }
+
+  @Delete('cover')
+  @UseGuards(JwtAuthGuard)
+  deleteCover(@Request() req: IAuthenticatedRequest) {
+    return this.profilesService.updateByUserId(req.user.id, {
+      coverImage: '',
+    });
+  }
+
+  @Delete(':userId/avatar')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  adminDeleteAvatar(
+    @Request() req: IAuthenticatedRequest,
+    @Param('userId') userId: string,
+  ) {
+    return this.profilesService.adminUpdate(req, userId, {
+      avatar: '',
+    });
+  }
+
+  @Delete(':userId/cover')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  adminDeleteCover(
+    @Request() req: IAuthenticatedRequest,
+    @Param('userId') userId: string,
+  ) {
+    return this.profilesService.adminUpdate(req, userId, {
+      coverImage: '',
+    });
   }
 }

@@ -66,8 +66,8 @@ export class TokensService {
 
       return decodedToken;
     } catch (e) {
-      throw new InvalidTokenException();
       console.log(e);
+      throw new InvalidTokenException();
     }
   }
 

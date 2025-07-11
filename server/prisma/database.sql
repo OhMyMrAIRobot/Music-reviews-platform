@@ -477,7 +477,7 @@ SELECT
                  JOIN "Reviews" rev ON ufr.review_id = rev.id
         WHERE ufr.user_id = u.id AND rev.user_id != u.id
     )::int AS given_likes,
-    JSON_AGG(DISTINCT JSONB_BUILD_OBJECT('name', sm.name, 'url', psm.url)) AS social
+    JSON_AGG(DISTINCT JSONB_BUILD_OBJECT('id', sm.id, 'name', sm.name, 'url', psm.url)) AS social
 FROM "User_profiles" up
          JOIN "Users" u ON up.user_id = u.id
          LEFT JOIN "Top_users_leaderboard" tul ON up.user_id = tul.user_id

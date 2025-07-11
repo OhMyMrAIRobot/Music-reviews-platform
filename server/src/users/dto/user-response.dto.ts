@@ -1,4 +1,4 @@
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude, Expose, Type } from 'class-transformer';
 
 export class UserResponseDto {
   @Expose()
@@ -13,7 +13,7 @@ export class UserResponseDto {
   @Expose()
   isActive: boolean;
 
-  @Expose()
+  @Exclude()
   roleId: string;
 
   @Expose()
@@ -21,4 +21,11 @@ export class UserResponseDto {
 
   @Exclude()
   password: string;
+
+  @Expose()
+  @Type(() => Object)
+  role: {
+    id: string;
+    role: string;
+  };
 }

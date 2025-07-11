@@ -1,36 +1,17 @@
 import { Type } from 'class-transformer';
-import { IsIn, IsInt, IsOptional, Length, Max, Min } from 'class-validator';
-import { IsEntityId } from 'src/decorators/is-entity-id.decorator';
+import { IsEnum, IsInt, IsOptional, Length, Max, Min } from 'class-validator';
 import { IsSearchQuery } from 'src/decorators/is-search-query.decorator';
 import { IsSortOrder } from 'src/decorators/is-sort-order.decorator';
+import { UserRoleEnum } from 'src/roles/types/user-role.enum';
 import { SortOrder } from 'src/types/sort-order.type';
 
-export class ReleasesQueryDto {
-  @IsOptional()
-  @IsEntityId()
-  type?: string;
-
-  @IsOptional()
-  @IsIn([
-    'published',
-    'noTextCount',
-    'textCount',
-    'superUserRating',
-    'noTextRating',
-    'withTextRating',
-  ])
-  field?: string;
-
+export class GetUsersQueryDto {
   @IsOptional()
   @IsSearchQuery()
   @Length(1, 50, {
     message: 'Длина поисковой строки должна быть от 1 до 50 символов',
   })
   query?: string;
-
-  @IsOptional()
-  @IsSortOrder()
-  order?: SortOrder;
 
   @IsOptional()
   @Type(() => Number)
@@ -44,4 +25,12 @@ export class ReleasesQueryDto {
   @IsInt()
   @Min(0)
   offset?: number;
+
+  @IsOptional()
+  @IsEnum(UserRoleEnum)
+  role?: UserRoleEnum;
+
+  @IsOptional()
+  @IsSortOrder()
+  order?: SortOrder;
 }
