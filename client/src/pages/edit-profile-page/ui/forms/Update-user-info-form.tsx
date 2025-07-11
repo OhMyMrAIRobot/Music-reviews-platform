@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import FormButton from '../../../../components/form-elements/Form-button'
 import FormInfoContainer from '../../../../components/form-elements/Form-info-container'
 import FormInfoField from '../../../../components/form-elements/Form-info-field'
 import FormInput from '../../../../components/form-elements/Form-input'
@@ -6,7 +7,6 @@ import FormLabel from '../../../../components/form-elements/Form-label'
 import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
 import EditProfilePageSection from '../Edit-profile-page-section'
-import EditProfileSubmitButton from '../buttons/Edit-profile-submit-button'
 
 const UpdateUserInfoForm = () => {
 	const { authStore, notificationStore } = useStore()
@@ -129,17 +129,22 @@ const UpdateUserInfoForm = () => {
 					/>
 				</div>
 
-				<EditProfileSubmitButton
-					handleClick={handleSubmit}
-					disabled={
-						password.length < 6 ||
-						isLoading ||
-						email.length === 0 ||
-						nickname.length === 0 ||
-						newPassword !== newPasswordConfirm
-					}
-					isLoading={false}
-				/>
+				<div className='pt-6 border-t border-white/5 w-full'>
+					<div className='w-38'>
+						<FormButton
+							title={isLoading ? 'Сохранение...' : 'Сохранить'}
+							isInvert={true}
+							onClick={handleSubmit}
+							disabled={
+								password.length < 6 ||
+								isLoading ||
+								email.length === 0 ||
+								nickname.length === 0 ||
+								newPassword !== newPasswordConfirm
+							}
+						/>
+					</div>
+				</div>
 			</div>
 
 			<div className='w-full lg:w-1/2'>

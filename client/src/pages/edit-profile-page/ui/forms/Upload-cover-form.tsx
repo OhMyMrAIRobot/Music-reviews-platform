@@ -1,9 +1,9 @@
 import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
+import FormButton from '../../../../components/form-elements/Form-button'
 import { useAuth } from '../../../../hooks/use-auth'
 import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
-import EditProfileSubmitButton from '../buttons/Edit-profile-submit-button'
 import EditProfilePageSection from '../Edit-profile-page-section'
 import SelectImageLabel from '../labels/Select-image-label'
 import SelectedImageLabel from '../labels/Selected-image-label'
@@ -19,6 +19,19 @@ const UploadCoverForm = observer(() => {
 	const { execute: updateCover, isLoading } = useLoading(
 		profileStore.uploadProfileCover
 	)
+
+	const { execute: deleteCover, isLoading: isDeleting } = useLoading(
+		profileStore.deleteProfileCover
+	)
+
+	const handleDelete = async () => {
+		const errors = await deleteCover()
+		if (errors.length === 0) {
+			notificationStore.addSuccessNotification('Вы успешно удалили обложку!')
+		} else {
+			errors.forEach(err => notificationStore.addErrorNotification(err))
+		}
+	}
 
 	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (event.target.files && event.target.files[0]) {
@@ -77,18 +90,36 @@ const UploadCoverForm = observer(() => {
 					src={
 						previewUrl ||
 						`${import.meta.env.VITE_SERVER_URL}/public/covers/${
-							profileStore.profile?.cover
+							profileStore.profile?.cover === ''
+								? import.meta.env.VITE_DEFAULT_COVER
+								: profileStore.profile?.cover
 						}`
 					}
 					className='object-cover size-full'
 				/>
 			</div>
 
-			<EditProfileSubmitButton
-				handleClick={handleSubmit}
-				disabled={!file || isLoading}
-				isLoading={isLoading}
-			/>
+			<div className='pt-6 border-t border-white/5 w-full'>
+				<div className='flex justify-between'>
+					<div className='w-38'>
+						<FormButton
+							title={isLoading ? 'Сохранение...' : 'Сохранить'}
+							isInvert={true}
+							onClick={handleSubmit}
+							disabled={!file || isLoading}
+						/>
+					</div>
+
+					<div className='w-42'>
+						<FormButton
+							title={isDeleting ? 'Удаление...' : 'Удалить обложку'}
+							isInvert={false}
+							onClick={handleDelete}
+							disabled={profileStore.profile?.cover === '' || isDeleting}
+						/>
+					</div>
+				</div>
+			</div>
 		</EditProfilePageSection>
 	)
 })

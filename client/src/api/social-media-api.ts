@@ -42,4 +42,35 @@ export const SocialMediaAPI = {
 		)
 		return data
 	},
+
+	async adminAddSocial(
+		userId: string,
+		socialId: string,
+		url: string
+	): Promise<IProfileSocialMedia> {
+		const { data } = await api.post<IProfileSocialMedia>(
+			`/profile-social-media/${userId}/${socialId}`,
+			{ url }
+		)
+		return data
+	},
+
+	async adminEditSocial(
+		userId: string,
+		socialId: string,
+		url: string
+	): Promise<IProfileSocialMedia> {
+		const { data } = await api.patch<IProfileSocialMedia>(
+			`/profile-social-media/${userId}/${socialId}`,
+			{ url }
+		)
+		return data
+	},
+
+	async adminDeleteSocial(userId: string, socialId: string) {
+		const { data } = await api.delete<IProfileSocialMedia>(
+			`/profile-social-media/${userId}/${socialId}`
+		)
+		return data
+	},
 }

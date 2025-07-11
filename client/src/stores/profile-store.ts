@@ -55,6 +55,22 @@ class ProfileStore {
 		}
 	}
 
+	deleteProfileAvatar = async (): Promise<string[]> => {
+		try {
+			const result = await ProfileAPI.deleteProfileAvatar()
+			runInAction(() => {
+				if (this.profile) {
+					this.profile.avatar = result.avatar
+				}
+			})
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
+		}
+	}
+
 	uploadProfileCover = async (
 		formData: FormData
 	): Promise<TogglePromiseResult> => {
@@ -67,6 +83,22 @@ class ProfileStore {
 		} catch (e) {
 			console.log(e)
 			return { status: false, message: 'Не удалось загрузить обложку профиля!' }
+		}
+	}
+
+	deleteProfileCover = async (): Promise<string[]> => {
+		try {
+			const result = await ProfileAPI.deleteProfileCover()
+			runInAction(() => {
+				if (this.profile) {
+					this.profile.cover = result.coverImage
+				}
+			})
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
 		}
 	}
 

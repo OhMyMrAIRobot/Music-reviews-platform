@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
 import { AuthAPI } from '../api/auth-api'
+import { UserAPI } from '../api/user-api'
+import { IAuthUser } from '../models/auth/auth-user'
 import { IRegistrationRequest } from '../models/auth/request/registration-request'
 import { IResetPasswordRequest } from '../models/auth/request/reset-password-request'
-import { IUpdateUserData } from '../models/auth/request/update-user-data'
-import { IUser } from '../models/auth/user'
+import { IUpdateUserData } from '../models/user/update-user-data'
 
 class AuthStore {
 	isAuth: boolean = false
-	user: IUser | null = null
+	user: IAuthUser | null = null
 
 	constructor() {
 		makeAutoObservable(this)
@@ -18,7 +19,7 @@ class AuthStore {
 		this.isAuth = value
 	}
 
-	setAuthorization(user: IUser, token: string) {
+	setAuthorization(user: IAuthUser, token: string) {
 		runInAction(() => {
 			this.isAuth = true
 			this.user = user
@@ -186,7 +187,7 @@ class AuthStore {
 				}
 			}
 
-			const { user, accessToken, emailSent } = await AuthAPI.updateUser(data)
+			const { user, accessToken, emailSent } = await UserAPI.updateUser(data)
 			this.setAuthorization(user, accessToken)
 
 			return emailSent

@@ -79,7 +79,9 @@ const ProfileButton = observer(() => {
 						loading='lazy'
 						decoding='async'
 						src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-							profileStore.profile?.avatar
+							profileStore.profile?.avatar === ''
+								? import.meta.env.VITE_DEFAULT_AVATAR
+								: profileStore.profile?.avatar
 						}`}
 						className='size-full aspect-square'
 					/>
@@ -113,7 +115,7 @@ const ProfileButton = observer(() => {
 					text='Настройки профиля'
 					icon={<SettingsSvg className={'size-7'} />}
 					onClick={() => {
-						if (authStore.user?.id) navigateToEditProfile(authStore.user.id)
+						if (authStore.user?.id) navigateToEditProfile()
 					}}
 				/>
 

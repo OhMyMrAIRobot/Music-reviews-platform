@@ -64,7 +64,7 @@ const ReleaseDetailsReviews: FC<IProps> = ({
 						currentPage={currentPage}
 						totalItems={totalItems}
 						itemsPerPage={perPage}
-						onPageChange={setCurrentPage}
+						setCurrentPage={setCurrentPage}
 						idToScroll='release-reviews'
 					/>
 				</div>

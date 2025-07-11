@@ -1,9 +1,9 @@
 import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
+import FormButton from '../../../../components/form-elements/Form-button'
 import { useAuth } from '../../../../hooks/use-auth'
 import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
-import EditProfileSubmitButton from '../buttons/Edit-profile-submit-button'
 import EditProfilePageSection from '../Edit-profile-page-section'
 import SelectImageLabel from '../labels/Select-image-label'
 import SelectedImageLabel from '../labels/Selected-image-label'
@@ -18,6 +18,10 @@ const UploadAvatarForm = observer(() => {
 
 	const { execute: updateAvatar, isLoading } = useLoading(
 		profileStore.uploadProfileAvatar
+	)
+
+	const { execute: deleteAvatar, isLoading: isDeleting } = useLoading(
+		profileStore.deleteProfileAvatar
 	)
 
 	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,6 +59,15 @@ const UploadAvatarForm = observer(() => {
 		})
 	}
 
+	const handleDelete = async () => {
+		const errors = await deleteAvatar()
+		if (errors.length === 0) {
+			notificationStore.addSuccessNotification('Вы успешно удалили аватар!')
+		} else {
+			errors.forEach(err => notificationStore.addErrorNotification(err))
+		}
+	}
+
 	return (
 		<EditProfilePageSection title='Аватар'>
 			<div className='w-[144px]'>
@@ -77,18 +90,36 @@ const UploadAvatarForm = observer(() => {
 					src={
 						previewUrl ||
 						`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-							profileStore.profile?.avatar
+							profileStore.profile?.avatar === ''
+								? import.meta.env.VITE_DEFAULT_AVATAR
+								: profileStore.profile?.avatar
 						}`
 					}
 					className='aspect-square size-full'
 				/>
 			</div>
 
-			<EditProfileSubmitButton
-				handleClick={handleSubmit}
-				disabled={!file || isLoading}
-				isLoading={isLoading}
-			/>
+			<div className='pt-6 border-t border-white/5 w-full'>
+				<div className='flex justify-between'>
+					<div className='w-38'>
+						<FormButton
+							title={isLoading ? 'Сохранение...' : 'Сохранить'}
+							isInvert={true}
+							onClick={handleSubmit}
+							disabled={!file || isLoading}
+						/>
+					</div>
+
+					<div className='w-42'>
+						<FormButton
+							title={isDeleting ? 'Удаление...' : 'Удалить аватар'}
+							isInvert={false}
+							onClick={handleDelete}
+							disabled={profileStore.profile?.avatar === '' || isDeleting}
+						/>
+					</div>
+				</div>
+			</div>
 		</EditProfilePageSection>
 	)
 })

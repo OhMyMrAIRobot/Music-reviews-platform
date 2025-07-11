@@ -57,7 +57,7 @@ const AuthorsGrid: FC<IProps> = ({
 						currentPage={currentPage}
 						totalItems={total}
 						itemsPerPage={perPage}
-						onPageChange={setCurrentPage}
+						setCurrentPage={setCurrentPage}
 						idToScroll={'authors'}
 					/>
 				</div>

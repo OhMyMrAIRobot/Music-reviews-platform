@@ -1,4 +1,3 @@
-import { useLocation } from 'react-router'
 import TextReviewSvg from '../components/review/svg/Text-review-svg'
 import { ISidebarItemProps } from '../components/sidebar/Sidebar-item'
 import AboutSvg from '../components/sidebar/svg/About-svg'
@@ -10,10 +9,10 @@ import RatingsSvg from '../components/sidebar/svg/Ratings-svg'
 import ReleaseSvg from '../components/sidebar/svg/Release-svg'
 import PencilSvg from '../components/svg/Pencil-svg'
 import { ROUTES } from '../routes/routes-enum'
+import { useActivePath } from './use-active-path'
 import useCustomNavigate from './use-custom-navigate'
 
 export const useSidebarGroups = () => {
-	const location = useLocation()
 	const {
 		navigateToMain,
 		navigateToFeedback,
@@ -24,9 +23,7 @@ export const useSidebarGroups = () => {
 		navigateToRatings,
 	} = useCustomNavigate()
 
-	const isActive = (path: string) => {
-		return location.pathname === path
-	}
+	const { isActive } = useActivePath()
 
 	const sidebarFirstGroup: ISidebarItemProps[] = [
 		{

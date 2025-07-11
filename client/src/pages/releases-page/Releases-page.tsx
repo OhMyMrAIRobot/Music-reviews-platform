@@ -4,6 +4,7 @@ import ReleasesGrid from '../../components/release/Releases-grid'
 import { useLoading } from '../../hooks/use-loading'
 import { useStore } from '../../hooks/use-store'
 import { ReleaseSortFields } from '../../models/release/release-sort-fields'
+import { SortOrder } from '../../types/sort-order-type'
 
 const ReleasesPage = () => {
 	const perPage = 12
@@ -35,7 +36,7 @@ const ReleasesPage = () => {
 		)
 
 		let field = ''
-		let order = ''
+		let order: SortOrder = 'desc'
 
 		switch (selectedSort) {
 			case ReleaseSortFields.NO_TEXT_COUNT:

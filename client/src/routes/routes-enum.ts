@@ -23,7 +23,8 @@ export const ROUTES = {
 	EDIT_PROFILE: 'profile/edit',
 	ADMIN: {
 		PREFIX: 'admin',
-		TEST: '',
+		USERS: 'users',
+		NOT_DEFINED: '*',
 	},
 	NOT_DEFINED: '*',
 } as const

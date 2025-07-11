@@ -1,6 +1,8 @@
 export interface IUpdateUserData {
-	password: string
+	password?: string
 	email?: string
 	nickname?: string
 	newPassword?: string
+	roleId?: string
+	isActive?: boolean
 }

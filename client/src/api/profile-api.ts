@@ -36,6 +36,18 @@ export const ProfileAPI = {
 		return data
 	},
 
+	async deleteProfileAvatar(): Promise<IUpdatedProfile> {
+		const { data } = await api.delete<IUpdatedProfile>('profiles/avatar')
+		return data
+	},
+
+	async adminDeleteProfileAvatar(userId: string): Promise<IUpdatedProfile> {
+		const { data } = await api.delete<IUpdatedProfile>(
+			`profiles/${userId}/avatar`
+		)
+		return data
+	},
+
 	async uploadProfileCover(formData: FormData): Promise<IUpdatedProfile> {
 		const { data } = await api.post<IUpdatedProfile>(
 			'/uploads/cover',
@@ -49,18 +61,30 @@ export const ProfileAPI = {
 		return data
 	},
 
+	async deleteProfileCover(): Promise<IUpdatedProfile> {
+		const { data } = await api.delete<IUpdatedProfile>('profiles/cover')
+		return data
+	},
+
+	async adminDeleteProfileCover(userId: string): Promise<IUpdatedProfile> {
+		const { data } = await api.delete<IUpdatedProfile>(
+			`profiles/${userId}/cover`
+		)
+		return data
+	},
+
 	async updateProfileBio(bio: string): Promise<IUpdatedProfile> {
 		const { data } = await api.patch<IUpdatedProfile>('/profiles', { bio })
 		return data
 	},
 
-	async updateUserInfo(email: string | null, nickname: string | null) {
-		const payload = Object.fromEntries(
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			Object.entries({ email, nickname }).filter(([_, value]) => value !== null)
-		)
-
-		const { data } = await api.patch<IUpdatedProfile>('/users', payload)
+	async adminUpdateProfileBio(
+		userId: string,
+		bio: string
+	): Promise<IUpdatedProfile> {
+		const { data } = await api.patch<IUpdatedProfile>(`/profiles/${userId}`, {
+			bio,
+		})
 		return data
 	},
 }

@@ -6,6 +6,7 @@ import ReviewCard from '../../components/review/review-card/Review-card'
 import { useLoading } from '../../hooks/use-loading'
 import { useStore } from '../../hooks/use-store'
 import { ReviewSortFields } from '../../models/review/review-sort-fields'
+import { SortOrder } from '../../types/sort-order-type'
 
 const ReviewsPage = observer(() => {
 	const perPage = 12
@@ -21,7 +22,8 @@ const ReviewsPage = observer(() => {
 	)
 
 	useEffect(() => {
-		const order = selectedOrder === ReviewSortFields.NEW ? 'asc' : 'desc'
+		const order: SortOrder =
+			selectedOrder === ReviewSortFields.NEW ? 'asc' : 'desc'
 		fetch(order, perPage, (currentPage - 1) * perPage)
 	}, [currentPage, fetch, selectedOrder])
 
@@ -82,7 +84,7 @@ const ReviewsPage = observer(() => {
 						currentPage={currentPage}
 						totalItems={reviewsPageStore.reviewsCount}
 						itemsPerPage={perPage}
-						onPageChange={setCurrentPage}
+						setCurrentPage={setCurrentPage}
 						idToScroll={'reviews'}
 					/>
 				</div>

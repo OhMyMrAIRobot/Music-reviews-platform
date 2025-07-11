@@ -1,5 +1,4 @@
 import axios, { AxiosResponse } from 'axios'
-import { IUpdateUserData } from '../models/auth/request/update-user-data'
 import { IAuthResponse } from '../models/auth/response/auth-response'
 import { IAuthResponseWithEmail } from '../models/auth/response/auth-response-with-email'
 import { IEmailResponse } from '../models/auth/response/email-response'
@@ -70,15 +69,6 @@ export const AuthAPI = {
 
 	async resendActivation(): Promise<IEmailResponse> {
 		const { data } = await api.post('auth/resend-activation')
-		return data
-	},
-
-	async updateUser(
-		updateData: IUpdateUserData
-	): Promise<IAuthResponseWithEmail> {
-		const { data } = await api.patch<IAuthResponseWithEmail>('users', {
-			...updateData,
-		})
 		return data
 	},
 }

@@ -60,7 +60,7 @@ const ProfileReviewsGrid: FC<IProps> = observer(
 							currentPage={currentPage}
 							totalItems={total}
 							itemsPerPage={perPage}
-							onPageChange={setCurrentPage}
+							setCurrentPage={setCurrentPage}
 							idToScroll={'profile-sections'}
 						/>
 					</div>

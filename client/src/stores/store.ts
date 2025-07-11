@@ -1,3 +1,4 @@
+import AdminDashboardUsersStore from '../pages/admin-dashboard-page/store/admin-dashboard-users-store'
 import AuthorDetailsPageStore from '../pages/author-details-page/store/author-details-page-store'
 import AuthorsPageStore from '../pages/authors-page/store/authors-page-store'
 import LeaderboardStore from '../pages/leaderboard-page/store/leaderboard-store'
@@ -26,6 +27,7 @@ class Store {
 	releasesRatingPageStore = ReleasesRatingPageStore
 	searchPageStore = SearchPageStore
 	profilePageStore = ProfilePageStore
+	adminDashboardUsersStore = AdminDashboardUsersStore
 }
 
 export default Store

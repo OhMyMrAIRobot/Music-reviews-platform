@@ -14,7 +14,9 @@ const ProfileInfo: FC<IProps> = ({ profile }) => {
 					loading='lazy'
 					decoding='async'
 					src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-						profile.avatar
+						profile.avatar === ''
+							? import.meta.env.VITE_DEFAULT_AVATAR
+							: profile.avatar
 					}`}
 					className='rounded-full size-[100px] lg:size-[130px] block aspect-square'
 				/>

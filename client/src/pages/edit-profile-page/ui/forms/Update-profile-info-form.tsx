@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
+import FormButton from '../../../../components/form-elements/Form-button'
 import FormInfoContainer from '../../../../components/form-elements/Form-info-container'
 import FormInfoField from '../../../../components/form-elements/Form-info-field'
 import FormLabel from '../../../../components/form-elements/Form-label'
@@ -8,7 +9,6 @@ import { useAuth } from '../../../../hooks/use-auth'
 import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
 import notificationStore from '../../../../stores/notification-store'
-import EditProfileSubmitButton from '../buttons/Edit-profile-submit-button'
 import EditProfilePageSection from '../Edit-profile-page-section'
 
 const UpdateProfileInfoForm = observer(() => {
@@ -69,11 +69,17 @@ const UpdateProfileInfoForm = observer(() => {
 					)}
 				</div>
 			</div>
-			<EditProfileSubmitButton
-				handleClick={handleSubmit}
-				disabled={isLoading}
-				isLoading={isLoading}
-			/>
+
+			<div className='pt-6 border-t border-white/5 w-full'>
+				<div className='w-38'>
+					<FormButton
+						title={isLoading ? 'Сохранение...' : 'Сохранить'}
+						isInvert={true}
+						onClick={handleSubmit}
+						disabled={bio === profileStore.profile?.bio || isLoading}
+					/>
+				</div>
+			</div>
 		</EditProfilePageSection>
 	)
 })

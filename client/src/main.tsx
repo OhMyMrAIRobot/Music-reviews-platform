@@ -7,10 +7,10 @@ import { StoreContextProvider } from './providers/Store-context-provider.tsx'
 
 createRoot(document.getElementById('root')!).render(
 	<StoreContextProvider>
-		<SidebarOverlayProvider>
-			<BrowserRouter>
+		<BrowserRouter>
+			<SidebarOverlayProvider>
 				<App />
-			</BrowserRouter>
-		</SidebarOverlayProvider>
+			</SidebarOverlayProvider>
+		</BrowserRouter>
 	</StoreContextProvider>
 )
