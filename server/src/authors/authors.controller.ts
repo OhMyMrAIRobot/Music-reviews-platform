@@ -30,11 +30,6 @@ export class AuthorsController {
     return this.authorsService.create(createAuthorDto);
   }
 
-  @Get()
-  findAll() {
-    return this.authorsService.findAll();
-  }
-
   @Get('one/:id')
   findOne(@Param('id') id: string) {
     return this.authorsService.findOne(id);
@@ -50,6 +45,13 @@ export class AuthorsController {
     return this.authorsService.findAuthors(query);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Get()
+  findAll(@Query() query: AuthorsQueryDto) {
+    return this.authorsService.findAll(query);
+  }
+
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch(':id')
@@ -57,8 +59,8 @@ export class AuthorsController {
     return this.authorsService.update(id, updateAuthorDto);
   }
 
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.authorsService.remove(id);

@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Author } from '@prisma/client';
+import { Author, Prisma } from '@prisma/client';
+import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
+import { AuthorTypesService } from 'src/author-types/author-types.service';
 import { DuplicateFieldException } from 'src/exceptions/duplicate-field.exception';
 import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
 import { NoDataProvidedException } from 'src/exceptions/no-data.exception';
@@ -14,11 +16,15 @@ import {
   AuthorsResponseDto,
 } from './dto/authors.response.dto';
 import { CreateAuthorDto } from './dto/create-author.dto';
+import { FindAuthorsResponseDto } from './dto/find-authors-response.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
 
 @Injectable()
 export class AuthorsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly authorTypesService: AuthorTypesService,
+  ) {}
 
   async create(createAuthorDto: CreateAuthorDto): Promise<Author> {
     const existingAuthor = await this.findByName(createAuthorDto.name);
@@ -36,8 +42,58 @@ export class AuthorsService {
     });
   }
 
-  async findAll(): Promise<Author[]> {
-    return this.prisma.author.findMany();
+  async findAll(query: AuthorsQueryDto): Promise<FindAuthorsResponseDto> {
+    const { limit = 10, offset = 0, query: name, typeId } = query;
+
+    if (typeId) {
+      await this.authorTypesService.findOne(typeId);
+    }
+
+    const where: Prisma.AuthorWhereInput = {
+      AND: [
+        {
+          types: typeId
+            ? {
+                some: {
+                  authorTypeId: typeId,
+                },
+              }
+            : undefined,
+        },
+        {
+          name: {
+            contains: name ?? '',
+            mode: 'insensitive',
+          },
+        },
+      ],
+    };
+
+    const [count, authors] = await Promise.all([
+      this.prisma.author.count({ where }),
+      this.prisma.author.findMany({
+        where,
+        take: limit,
+        skip: offset,
+        include: {
+          types: {
+            include: {
+              authorType: true,
+            },
+          },
+        },
+      }),
+    ]);
+
+    const result = {
+      total: count,
+      authors: authors.map((author) => ({
+        ...author,
+        types: author.types.map((t) => t.authorType),
+      })),
+    };
+
+    return plainToInstance(FindAuthorsResponseDto, result);
   }
 
   async findOne(id: string): Promise<Author> {
@@ -201,6 +257,10 @@ export class AuthorsService {
     const name = query.query ?? null;
     const limit = query.limit ? query.limit : 20;
     const offset = query.offset ? query.offset : 0;
+
+    if (query.typeId) {
+      await this.authorTypesService.findOne(query.typeId);
+    }
 
     const count = await this.prisma.author.count({
       where: {
