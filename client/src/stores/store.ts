@@ -1,3 +1,4 @@
+import AdminDashboardAuthorsStore from '../pages/admin-dashboard-page/store/admin-dashboard-authors-store'
 import AdminDashboardUsersStore from '../pages/admin-dashboard-page/store/admin-dashboard-users-store'
 import AuthorDetailsPageStore from '../pages/author-details-page/store/author-details-page-store'
 import AuthorsPageStore from '../pages/authors-page/store/authors-page-store'
@@ -10,10 +11,12 @@ import ReleasesRatingPageStore from '../pages/releases-rating-page/store/release
 import ReviewsPageStore from '../pages/reviews-page/store/reviews-page-store'
 import SearchPageStore from '../pages/search-page/store/search-page-store'
 import AuthStore from './auth-store'
+import MetaStore from './meta-store'
 import NotificationStore from './notification-store'
 import ProfileStore from './profile-store'
 
 class Store {
+	metaStore = MetaStore
 	authStore = AuthStore
 	profileStore = ProfileStore
 	mainPageStore = mainPageStore
@@ -28,6 +31,7 @@ class Store {
 	searchPageStore = SearchPageStore
 	profilePageStore = ProfilePageStore
 	adminDashboardUsersStore = AdminDashboardUsersStore
+	adminDashboardAuthorsStore = AdminDashboardAuthorsStore
 }
 
 export default Store

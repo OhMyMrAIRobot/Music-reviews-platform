@@ -8,7 +8,7 @@ import { useStore } from '../../hooks/use-store'
 const AuthorsPage = observer(() => {
 	const perPage = 10
 
-	const { authorsPageStore } = useStore()
+	const { authorsPageStore, metaStore } = useStore()
 
 	const [selectedAuthorType, setSelectedAuthorType] = useState<string>()
 	const [currentPage, setCurrentPage] = useState<number>(1)
@@ -18,11 +18,11 @@ const AuthorsPage = observer(() => {
 	)
 
 	const { execute: fetchTypes, isLoading: isTypesLoading } = useLoading(
-		authorsPageStore.fetchAuthorTypes
+		metaStore.fetchAuthorTypes
 	)
 
 	useEffect(() => {
-		const type = authorsPageStore.authorTypes.find(
+		const type = metaStore.authorTypes.find(
 			entry => entry.type === selectedAuthorType
 		)
 		fetchAuthors(type ? type.id : null, perPage, (currentPage - 1) * perPage)
@@ -41,9 +41,9 @@ const AuthorsPage = observer(() => {
 
 			<div className='rounded-lg border border-white/10 bg-zinc-900 p-3 shadow-sm mt-5'>
 				<div className='w-full sm:w-55 h-10'>
-					{!isTypesLoading && authorsPageStore.authorTypes.length > 0 ? (
+					{!isTypesLoading && metaStore.authorTypes.length > 0 ? (
 						<ComboBox
-							options={authorsPageStore.authorTypes.map(entry => entry.type)}
+							options={metaStore.authorTypes.map(entry => entry.type)}
 							onChange={setSelectedAuthorType}
 							className='border border-white/10'
 							placeholder='Выберите тип автора'

@@ -73,6 +73,10 @@ const useCustomNavigate = () => {
 		navigate(`/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.USERS}`)
 	}
 
+	const navigateToAdminAuthors = () => {
+		navigate(`/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.AUTHORS}`)
+	}
+
 	return {
 		navigateToLogin,
 		navigateToRegistration,
@@ -91,6 +95,7 @@ const useCustomNavigate = () => {
 		navigateToEditProfile,
 		navigateToActivation,
 		navigateToAdminUsers,
+		navigateToAdminAuthors,
 	}
 }
 

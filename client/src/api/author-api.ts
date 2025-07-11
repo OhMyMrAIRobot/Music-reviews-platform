@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { IAdminAuthorsResponse } from '../models/author/admin-authors-response'
 import { IAuthor } from '../models/author/author'
 import { IAuthorType } from '../models/author/author-type'
 import { IAuthorsResponse } from '../models/author/authors-response'
@@ -60,6 +61,22 @@ export const AuthorAPI = {
 	async fetchFavAuthorUsersIds(authorId: string): Promise<IFavAuthor[]> {
 		const { data } = await axios.get<IFavAuthor[]>(
 			`${SERVER_URL}/user-fav-authors/author/${authorId}`
+		)
+		return data
+	},
+
+	async adminFetchAuthors(
+		typeId: string | null,
+		query: string | null,
+		limit: number,
+		offset: number
+	): Promise<IAdminAuthorsResponse> {
+		const { data } = await api.get<IAdminAuthorsResponse>(
+			`/authors/?
+			${typeId ? `typeId=${typeId}&` : ''}
+			${query ? `&query=${query}&` : ''}
+			limit=${limit}
+			&offset=${offset}`
 		)
 		return data
 	},

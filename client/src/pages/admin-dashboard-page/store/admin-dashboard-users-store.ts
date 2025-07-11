@@ -1,10 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
 import { ProfileAPI } from '../../../api/profile-api'
-import { RolesAPI } from '../../../api/role-api'
 import { SocialMediaAPI } from '../../../api/social-media-api'
 import { UserAPI } from '../../../api/user-api'
-import { IRole } from '../../../models/role/role'
 import { IUpdateUserData } from '../../../models/user/update-user-data'
 import { IUser } from '../../../models/user/user'
 import { IUserInfo } from '../../../models/user/user-info'
@@ -20,8 +18,6 @@ class AdminDashboardUsersStore {
 	count: number = 0
 	users: IUser[] = []
 
-	roles: IRole[] = []
-
 	user: IUserInfo | null = null
 
 	setUsers(data: IUsersResponse) {
@@ -29,10 +25,6 @@ class AdminDashboardUsersStore {
 			this.count = data.total
 			this.users = data.users
 		})
-	}
-
-	setRoles(data: IRole[]) {
-		this.roles = data
 	}
 
 	setUser(data: IUserInfo | null) {
@@ -68,16 +60,6 @@ class AdminDashboardUsersStore {
 		try {
 			const data = await UserAPI.fetchUserInfo(id)
 			this.setUser(data)
-		} catch (e) {
-			console.log(e)
-		}
-	}
-
-	fetchRoles = async () => {
-		try {
-			const data = await RolesAPI.fetchRoles()
-
-			this.setRoles(data)
 		} catch (e) {
 			console.log(e)
 		}

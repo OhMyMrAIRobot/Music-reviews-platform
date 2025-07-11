@@ -10,10 +10,10 @@ interface IProps {
 }
 
 const EditUserModalInputs: FC<IProps> = ({ user }) => {
-	const { profileStore, notificationStore } = useStore()
+	const { notificationStore, metaStore } = useStore()
 
 	const { execute: fetchSocials, isLoading: isSocialsLoading } = useLoading(
-		profileStore.fetchSocials
+		metaStore.fetchSocials
 	)
 
 	const { execute: toggleSocial, isLoading: isTogglingSocial } = useLoading(
@@ -21,7 +21,7 @@ const EditUserModalInputs: FC<IProps> = ({ user }) => {
 	)
 
 	useEffect(() => {
-		if (profileStore.socials.length === 0) {
+		if (metaStore.socials.length === 0) {
 			fetchSocials()
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -37,7 +37,7 @@ const EditUserModalInputs: FC<IProps> = ({ user }) => {
 								className='bg-gray-400 w-full h-10 animate-pulse opacity-40 rounded-md'
 							/>
 					  ))
-					: profileStore.socials.map(social => {
+					: metaStore.socials.map(social => {
 							const initialValue =
 								user.profile?.socialMedia.find(el => el.id === social.id)
 									?.url ?? ''
