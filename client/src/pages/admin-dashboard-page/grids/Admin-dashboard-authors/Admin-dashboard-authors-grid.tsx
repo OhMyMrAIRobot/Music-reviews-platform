@@ -10,7 +10,8 @@ import AdminDashboardAuthorsGridItem from './Admin-dashboard-authors-grid-item'
 const AdminDashboardAuthorsGrid = () => {
 	const perPage = 10
 
-	const { adminDashboardAuthorsStore, metaStore } = useStore()
+	const { adminDashboardAuthorsStore, metaStore, notificationStore } =
+		useStore()
 
 	const [searchText, setSearchText] = useState<string>('')
 	const [currentPage, setCurrentPage] = useState<number>(1)
@@ -33,6 +34,16 @@ const AdminDashboardAuthorsGrid = () => {
 			typeId = type?.id ?? null
 		}
 		return fetch(typeId, searchText, perPage, (currentPage - 1) * perPage)
+	}
+
+	const deleteAuthor = async (id: string) => {
+		const result = await adminDashboardAuthorsStore.deleteAuthor(id)
+		if (result.length === 0) {
+			notificationStore.addSuccessNotification('Вы успешно удалили автора!')
+			fetchAuthors()
+		} else {
+			result.forEach(err => notificationStore.addErrorNotification(err))
+		}
 	}
 
 	useEffect(() => {
@@ -102,6 +113,7 @@ const AdminDashboardAuthorsGrid = () => {
 										author={author}
 										isLoading={isLoading}
 										position={(currentPage - 1) * perPage + idx + 1}
+										deleteAuthor={() => deleteAuthor(author.id)}
 									/>
 							  ))}
 					</div>

@@ -80,4 +80,8 @@ export const AuthorAPI = {
 		)
 		return data
 	},
+
+	async deleteAuthor(id: string) {
+		return api.delete(`/authors/${id}`)
+	},
 }

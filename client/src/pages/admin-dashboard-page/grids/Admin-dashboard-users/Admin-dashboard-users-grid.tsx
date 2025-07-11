@@ -36,6 +36,19 @@ const AdminDashboardUsersGrid = observer(() => {
 		)
 	}
 
+	const deleteUser = async (id: string) => {
+		const result = await adminDashboardUsersStore.deleteUser(id)
+		if (result.length === 0)
+			if (result.length === 0) {
+				notificationStore.addSuccessNotification(
+					'Вы успешно удалили пользователя!'
+				)
+				fetchUsers()
+			} else {
+				result.forEach(err => notificationStore.addErrorNotification(err))
+			}
+	}
+
 	useEffect(() => {
 		setCurrentPage(1)
 		fetchUsers()
@@ -46,17 +59,6 @@ const AdminDashboardUsersGrid = observer(() => {
 		fetchUsers()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentPage, order])
-
-	const deleteUser = async (id: string) => {
-		adminDashboardUsersStore.deleteUser(id).then(result => {
-			notificationStore.addNotification({
-				id: self.crypto.randomUUID(),
-				text: result.message,
-				isError: !result.status,
-			})
-			fetchUsers()
-		})
-	}
 
 	return (
 		<div className='flex flex-col h-screen' id='admin-users'>

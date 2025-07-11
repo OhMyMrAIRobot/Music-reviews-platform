@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
 import { AuthorAPI } from '../../../api/author-api'
 import {
@@ -37,6 +38,17 @@ class AdminDashboardAuthorsStore {
 			this.setAuthors(data)
 		} catch (e) {
 			console.log(e)
+		}
+	}
+
+	deleteAuthor = async (id: string): Promise<string[]> => {
+		try {
+			await AuthorAPI.deleteAuthor(id)
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
 		}
 	}
 }

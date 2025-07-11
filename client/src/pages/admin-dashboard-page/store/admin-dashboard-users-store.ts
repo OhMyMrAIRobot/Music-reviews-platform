@@ -8,7 +8,6 @@ import { IUser } from '../../../models/user/user'
 import { IUserInfo } from '../../../models/user/user-info'
 import { IUsersResponse } from '../../../models/user/users-response'
 import { SortOrder } from '../../../types/sort-order-type'
-import { TogglePromiseResult } from '../../../types/toggle-promise-result'
 
 class AdminDashboardUsersStore {
 	constructor() {
@@ -46,13 +45,14 @@ class AdminDashboardUsersStore {
 		}
 	}
 
-	deleteUser = async (id: string): Promise<TogglePromiseResult> => {
+	deleteUser = async (id: string): Promise<string[]> => {
 		try {
 			await UserAPI.deleteUser(id)
-			return { status: true, message: 'Пользователь успешно удалён!' }
-		} catch (e) {
-			console.log(e)
-			return { status: false, message: 'Не удалось удалить пользователя!' }
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
 		}
 	}
 
