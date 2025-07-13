@@ -41,6 +41,17 @@ class AdminDashboardAuthorsStore {
 		}
 	}
 
+	createAuthor = async (formData: FormData): Promise<string[]> => {
+		try {
+			await AuthorAPI.createAuthor(formData)
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
+		}
+	}
+
 	deleteAuthor = async (id: string): Promise<string[]> => {
 		try {
 			await AuthorAPI.deleteAuthor(id)

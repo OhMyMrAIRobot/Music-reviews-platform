@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import AdminHeader from '../../../../components/admin-header/Admin-header'
+import AuthorTypeSvg from '../../../../components/author/author-types/Author-type-svg'
 import Pagination from '../../../../components/pagination/Pagination'
 import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
 import { AuthorTypesFilterEnum } from '../../../../models/author/author-types-filter-enum'
 import AdminFilterButton from '../../buttons/Admin-filter-button'
+import AdminDashboardAddAuthorModal from './Admin-dashboard-add-author-modal/Admin-dashboard-add-author-modal'
 import AdminDashboardAuthorsGridItem from './Admin-dashboard-authors-grid-item'
 
 const AdminDashboardAuthorsGrid = () => {
@@ -18,6 +20,7 @@ const AdminDashboardAuthorsGrid = () => {
 	const [activeType, setActiveType] = useState<string>(
 		AuthorTypesFilterEnum.ALL
 	)
+	const [addModalOpen, setAddModelOpen] = useState<boolean>(false)
 
 	const { execute: fetch, isLoading } = useLoading(
 		adminDashboardAuthorsStore.fetchAuthors
@@ -68,6 +71,14 @@ const AdminDashboardAuthorsGrid = () => {
 		<div className='flex flex-col h-screen' id='admin-authors'>
 			<AdminHeader title={'Авторы'} setText={setSearchText} />
 
+			{!isTypesLoading && (
+				<AdminDashboardAddAuthorModal
+					isOpen={addModalOpen}
+					onClose={() => setAddModelOpen(false)}
+					refetchAuthors={fetchAuthors}
+				/>
+			)}
+
 			<div id='admin-users-grid' className='flex flex-col overflow-hidden p-5'>
 				<div className='flex mb-5 text-white/80 border-b border-white/10'>
 					{isTypesLoading
@@ -80,11 +91,26 @@ const AdminDashboardAuthorsGrid = () => {
 						: Object.values(AuthorTypesFilterEnum).map(option => (
 								<AdminFilterButton
 									key={option}
-									title={option}
+									title={
+										<span className={`flex items-center px-2`}>
+											<AuthorTypeSvg
+												type={{ id: '0', type: option }}
+												className={'size-5 mr-1'}
+											/>
+											{option}
+										</span>
+									}
 									isActive={activeType === option}
 									onClick={() => setActiveType(option)}
 								/>
 						  ))}
+					<div className='ml-auto'>
+						<AdminFilterButton
+							title={'Добавить автора'}
+							isActive={false}
+							onClick={() => setAddModelOpen(true)}
+						/>
+					</div>
 				</div>
 
 				<AdminDashboardAuthorsGridItem

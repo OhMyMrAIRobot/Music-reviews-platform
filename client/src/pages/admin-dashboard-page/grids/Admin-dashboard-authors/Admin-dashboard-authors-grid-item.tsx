@@ -1,4 +1,5 @@
 import { FC, useState } from 'react'
+import AuthorTypeSvg from '../../../../components/author/author-types/Author-type-svg'
 import ConfirmationModal from '../../../../components/modals/Confirmation-modal'
 import { IAdminAuthor } from '../../../../models/author/admin-authors-response'
 import { getAuthorTypeColor } from '../../../../utils/get-author-type-color'
@@ -59,7 +60,7 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 									import.meta.env.VITE_SERVER_URL
 								}/public/authors/avatars/${author.avatarImg}`}
 								alt={author.name}
-								className='size-9 aspect-square rounded-full select-none'
+								className='size-9 object-cover aspect-square rounded-full select-none'
 							/>
 							<span className='font-medium'>{author.name}</span>
 						</>
@@ -68,16 +69,21 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='col-span-5 text-ellipsis line-clamp-1'>
+				<div className='col-span-5 flex'>
 					{author
 						? author.types.map((type, idx) => (
-								<span key={type.id}>
+								<span key={type.id} className='flex'>
 									<span
-										className={`font-medium ${getAuthorTypeColor(type.type)}`}
+										className={`font-medium flex items-center ${getAuthorTypeColor(
+											type.type
+										)}`}
 									>
+										<AuthorTypeSvg type={type} className={'size-5 mr-0.5'} />
 										{type.type}
 									</span>
-									{idx < author.types.length - 1 && ', '}
+									{idx < author.types.length - 1 && (
+										<span className='mr-1 select-none'>,</span>
+									)}
 								</span>
 						  ))
 						: 'Тип автора'}

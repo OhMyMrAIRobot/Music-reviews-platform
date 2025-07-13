@@ -47,7 +47,7 @@ class AdminDashboardUsersStore {
 
 	deleteUser = async (id: string): Promise<string[]> => {
 		try {
-			await UserAPI.deleteUser(id)
+			await UserAPI.adminDeleteUser(id)
 			return []
 		} catch (e: any) {
 			return Array.isArray(e.response?.data?.message)

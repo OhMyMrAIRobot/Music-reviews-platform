@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useState } from 'react'
-import AuthorTypes from '../../../components/author/Author-types'
+import AuthorTypes from '../../../components/author/author-types/Author-types'
 import ToggleFavButton from '../../../components/buttons/Toggle-fav-button'
 import LikesCount from '../../../components/utils/Likes-count'
 import { useAuth } from '../../../hooks/use-auth'

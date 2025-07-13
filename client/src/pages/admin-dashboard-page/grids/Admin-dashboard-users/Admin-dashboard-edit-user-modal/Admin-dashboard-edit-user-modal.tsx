@@ -95,7 +95,6 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 
 		const update = async () => {
 			const isActive = status === UserStatusesEnum.ACTIVE ? true : false
-			console.log(isActive)
 			const roleId = metaStore.roles.find(el => el.role === role)
 			const updResult = await updateUserData(
 				nickname,

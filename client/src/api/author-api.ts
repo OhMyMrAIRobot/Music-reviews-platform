@@ -1,5 +1,8 @@
 import axios from 'axios'
-import { IAdminAuthorsResponse } from '../models/author/admin-authors-response'
+import {
+	IAdminAuthor,
+	IAdminAuthorsResponse,
+} from '../models/author/admin-authors-response'
 import { IAuthor } from '../models/author/author'
 import { IAuthorType } from '../models/author/author-type'
 import { IAuthorsResponse } from '../models/author/authors-response'
@@ -17,6 +20,15 @@ const _api = axios.create({
 })
 
 export const AuthorAPI = {
+	async createAuthor(formData: FormData): Promise<IAdminAuthor> {
+		const { data } = await api.post<IAdminAuthor>('/authors', formData, {
+			headers: {
+				'Content-Type': 'multipart/form-data',
+			},
+		})
+		return data
+	},
+
 	async fetchAuthors(
 		typeId: string | null,
 		query: string | null,

@@ -69,7 +69,7 @@ const AdminDashboardUsersGrid = observer(() => {
 					{Object.values(RolesFilterOptions).map(option => (
 						<AdminFilterButton
 							key={option}
-							title={option}
+							title={<span className='px-2'>{option}</span>}
 							isActive={activeOption === option}
 							onClick={() => setActiveOption(option)}
 						/>

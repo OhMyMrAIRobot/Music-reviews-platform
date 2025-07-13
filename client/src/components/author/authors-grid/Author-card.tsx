@@ -4,7 +4,7 @@ import { IAuthorData } from '../../../models/author/authors-response'
 import { ReleaseTypesEnum } from '../../../models/release/release-types'
 import LikesCount from '../../utils/Likes-count'
 import AuthorReleaseTypesRatings from '../author-ratings/Author-release-types-ratings'
-import AuthorTypes from '../Author-types'
+import AuthorTypes from '../author-types/Author-types'
 
 interface IProps {
 	author?: IAuthorData
