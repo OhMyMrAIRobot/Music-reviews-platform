@@ -7,8 +7,11 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
@@ -23,11 +26,28 @@ import { UpdateAuthorDto } from './dto/update-author.dto';
 export class AuthorsController {
   constructor(private readonly authorsService: AuthorsService) {}
 
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @Post()
-  create(@Body() createAuthorDto: CreateAuthorDto) {
-    return this.authorsService.create(createAuthorDto);
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'avatarImg', maxCount: 1 },
+      { name: 'coverImg', maxCount: 1 },
+    ]),
+  )
+  async create(
+    @UploadedFiles()
+    files: {
+      avatarImg?: Express.Multer.File[];
+      coverImg?: Express.Multer.File[];
+    },
+    @Body() createAuthorDto: CreateAuthorDto,
+  ) {
+    return this.authorsService.create(
+      createAuthorDto,
+      files?.avatarImg?.[0],
+      files?.coverImg?.[0],
+    );
   }
 
   @Get('one/:id')
