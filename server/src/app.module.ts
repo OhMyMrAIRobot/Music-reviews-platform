@@ -6,6 +6,8 @@ import { AuthorsOnTypesModule } from './authors-on-types/authors-on-types.module
 import { AuthorsModule } from './authors/authors.module';
 import { FeedbackStatusesModule } from './feedback-statuses/feedback-statuses.module';
 import { FeedbacksModule } from './feedbacks/feedbacks.module';
+import { FileModule } from './file/files.module';
+import { LeaderboardModule } from './leaderboard/leaderboard.module';
 import { MailsModule } from './mails/mails.module';
 import { ProfilesModule } from './profiles/profiles.module';
 import { ReleaseArtistsModule } from './release-artists/release-artists.module';
@@ -17,12 +19,11 @@ import { ReleasesModule } from './releases/releases.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { RolesModule } from './roles/roles.module';
 import { SocialMediaModule } from './social-media/social-media.module';
+import { UploadsModule } from './uploads/uploads.module';
 import { UserFavAuthorsModule } from './user-fav-authors/user-fav-authors.module';
 import { UserFavReleasesModule } from './user-fav-releases/user-fav-releases.module';
 import { UserFavReviewsModule } from './user-fav-reviews/user-fav-reviews.module';
 import { UsersModule } from './users/users.module';
-import { LeaderboardModule } from './leaderboard/leaderboard.module';
-import { UploadsModule } from './uploads/uploads.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { UploadsModule } from './uploads/uploads.module';
     PrismaModule,
     LeaderboardModule,
     UploadsModule,
+    FileModule,
   ],
   controllers: [],
   providers: [],
