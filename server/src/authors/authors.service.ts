@@ -134,15 +134,7 @@ export class AuthorsService {
       }),
     ]);
 
-    const result = {
-      total: count,
-      authors: authors.map((author) => ({
-        ...author,
-        types: author.types.map((t) => t.authorType),
-      })),
-    };
-
-    return plainToInstance(FindAuthorsResponseDto, result);
+    return plainToInstance(FindAuthorsResponseDto, { count, authors });
   }
 
   async findOne(id: string): Promise<Author> {

@@ -1,4 +1,15 @@
-import { Exclude, Expose, Type } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
+
+class AuthorType {
+  id: string;
+  type: string;
+}
+
+class AuthorTypes {
+  authorType: AuthorType;
+  authorTypeId: string;
+  authorId: string;
+}
 
 export class FindAuthorsResponseDto {
   @Expose()
@@ -19,10 +30,14 @@ export class AuthorDto {
   @Expose()
   avatarImg: string;
 
-  @Exclude()
+  @Expose()
   coverImg: string;
 
   @Expose()
+  @Transform(
+    ({ value }: { value: AuthorTypes[] }) =>
+      value?.map((item) => item.authorType) || [],
+  )
   @Type(() => AuthorTypeDto)
   types: AuthorTypeDto[];
 }
