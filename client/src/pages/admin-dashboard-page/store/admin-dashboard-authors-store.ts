@@ -52,6 +52,26 @@ class AdminDashboardAuthorsStore {
 		}
 	}
 
+	updateAuthor = async (id: string, formData: FormData): Promise<string[]> => {
+		try {
+			const author = await AuthorAPI.updateAuthor(id, formData)
+
+			const idx = this.authors.findIndex(entry => entry.id === id)
+
+			if (idx !== -1) {
+				runInAction(() => {
+					this.authors[idx] = author
+				})
+			}
+
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
+		}
+	}
+
 	deleteAuthor = async (id: string): Promise<string[]> => {
 		try {
 			await AuthorAPI.deleteAuthor(id)

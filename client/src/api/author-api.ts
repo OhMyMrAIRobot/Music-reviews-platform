@@ -29,6 +29,15 @@ export const AuthorAPI = {
 		return data
 	},
 
+	async updateAuthor(id: string, formData: FormData): Promise<IAdminAuthor> {
+		const { data } = await api.patch<IAdminAuthor>(`/authors/${id}`, formData, {
+			headers: {
+				'Content-Type': 'multipart/form-data',
+			},
+		})
+		return data
+	},
+
 	async fetchAuthors(
 		typeId: string | null,
 		query: string | null,

@@ -1,10 +1,13 @@
 import { FC, useState } from 'react'
 import AuthorTypeSvg from '../../../../components/author/author-types/Author-type-svg'
 import ConfirmationModal from '../../../../components/modals/Confirmation-modal'
+import useCustomNavigate from '../../../../hooks/use-custom-navigate'
 import { IAdminAuthor } from '../../../../models/author/admin-authors-response'
 import { getAuthorTypeColor } from '../../../../utils/get-author-type-color'
 import AdminDeleteButton from '../../buttons/Admin-delete-button'
 import AdminEditButton from '../../buttons/Admin-edit-button'
+import AdminNavigateButton from '../../buttons/Admin-navigate-button'
+import AuthorFormModal from './Author-form-modal'
 
 interface IProps {
 	className?: string
@@ -21,7 +24,10 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 	position,
 	deleteAuthor,
 }) => {
+	const { navigateToAuthor } = useCustomNavigate()
+
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
+	const [editModalOpen, setEditModelOpen] = useState<boolean>(false)
 
 	const handleDelete = () => {
 		if (deleteAuthor) {
@@ -40,6 +46,13 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 						isOpen={confModalOpen}
 						onConfirm={handleDelete}
 						onCancel={() => setConfModalOpen(false)}
+					/>
+
+					<AuthorFormModal
+						isOpen={editModalOpen}
+						onClose={() => setEditModelOpen(false)}
+						refetchAuthors={() => {}}
+						author={author}
 					/>
 				</>
 			)}
@@ -69,7 +82,7 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='col-span-5 flex'>
+				<div className='col-span-4 flex'>
 					{author
 						? author.types.map((type, idx) => (
 								<span key={type.id} className='flex'>
@@ -89,14 +102,17 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 						: 'Тип автора'}
 				</div>
 
-				<div className='col-span-1'>
+				<div className='col-span-2 text-center'>
 					{author ? (
 						<div className='flex gap-x-3 justify-end'>
-							<AdminEditButton onClick={() => {}} />
+							<AdminNavigateButton
+								onClick={() => navigateToAuthor(author.id)}
+							/>
+							<AdminEditButton onClick={() => setEditModelOpen(true)} />
 							<AdminDeleteButton onClick={() => setConfModalOpen(true)} />
 						</div>
 					) : (
-						'Действие'
+						<span className='text-center'>Действие</span>
 					)}
 				</div>
 			</div>

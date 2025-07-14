@@ -1,3 +1,4 @@
+import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
 import AdminHeader from '../../../../components/admin-header/Admin-header'
 import AuthorTypeSvg from '../../../../components/author/author-types/Author-type-svg'
@@ -6,10 +7,10 @@ import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
 import { AuthorTypesFilterEnum } from '../../../../models/author/author-types-filter-enum'
 import AdminFilterButton from '../../buttons/Admin-filter-button'
-import AdminDashboardAddAuthorModal from './Admin-dashboard-add-author-modal/Admin-dashboard-add-author-modal'
 import AdminDashboardAuthorsGridItem from './Admin-dashboard-authors-grid-item'
+import AuthorFormModal from './Author-form-modal'
 
-const AdminDashboardAuthorsGrid = () => {
+const AdminDashboardAuthorsGrid = observer(() => {
 	const perPage = 10
 
 	const { adminDashboardAuthorsStore, metaStore, notificationStore } =
@@ -72,7 +73,7 @@ const AdminDashboardAuthorsGrid = () => {
 			<AdminHeader title={'Авторы'} setText={setSearchText} />
 
 			{!isTypesLoading && (
-				<AdminDashboardAddAuthorModal
+				<AuthorFormModal
 					isOpen={addModalOpen}
 					onClose={() => setAddModelOpen(false)}
 					refetchAuthors={fetchAuthors}
@@ -159,6 +160,6 @@ const AdminDashboardAuthorsGrid = () => {
 			</div>
 		</div>
 	)
-}
+})
 
 export default AdminDashboardAuthorsGrid

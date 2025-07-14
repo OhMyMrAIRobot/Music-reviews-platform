@@ -1,24 +1,28 @@
-import { FC, useEffect, useState } from 'react'
-import FormButton from '../../../../../components/form-elements/Form-button'
-import FormInput from '../../../../../components/form-elements/Form-input'
-import FormLabel from '../../../../../components/form-elements/Form-label'
-import FormMultiSelect from '../../../../../components/form-elements/Form-multi-select'
-import ModalOverlay from '../../../../../components/modals/Modal-overlay'
-import { useLoading } from '../../../../../hooks/use-loading'
-import { useStore } from '../../../../../hooks/use-store'
-import SelectImageLabel from '../../../../edit-profile-page/ui/labels/Select-image-label'
-import SelectedImageLabel from '../../../../edit-profile-page/ui/labels/Selected-image-label'
+import { FC, useEffect, useMemo, useState } from 'react'
+import FormButton from '../../../../components/form-elements/Form-button'
+import FormInput from '../../../../components/form-elements/Form-input'
+import FormLabel from '../../../../components/form-elements/Form-label'
+import FormMultiSelect from '../../../../components/form-elements/Form-multi-select'
+import ModalOverlay from '../../../../components/modals/Modal-overlay'
+import { useLoading } from '../../../../hooks/use-loading'
+import { useStore } from '../../../../hooks/use-store'
+import { IAdminAuthor } from '../../../../models/author/admin-authors-response'
+import { arraysEqual } from '../../../../utils/arrays-equal'
+import SelectImageLabel from '../../../edit-profile-page/ui/labels/Select-image-label'
+import SelectedImageLabel from '../../../edit-profile-page/ui/labels/Selected-image-label'
 
 interface IProps {
 	isOpen: boolean
 	onClose: () => void
 	refetchAuthors: () => void
+	author?: IAdminAuthor
 }
 
-const AdminDashboardAddAuthorModal: FC<IProps> = ({
+const AuthorFormModal: FC<IProps> = ({
 	isOpen,
 	onClose,
 	refetchAuthors,
+	author,
 }) => {
 	const { metaStore, notificationStore, adminDashboardAuthorsStore } =
 		useStore()
@@ -52,32 +56,66 @@ const AdminDashboardAddAuthorModal: FC<IProps> = ({
 	}
 
 	const handleSubmit = async () => {
-		if (selectedTypes.length === 0) return
+		if (!isFormValid) return
 
 		const formData = new FormData()
 
-		formData.append('name', name)
-		selectedTypes.forEach(selectedType => {
-			const type = metaStore.authorTypes.find(el => el.type === selectedType)
-			if (type) {
-				formData.append('types[]', type.id)
-			}
-		})
+		if (!author || author.name !== name) {
+			formData.append('name', name)
+		}
+
+		if (
+			!author ||
+			!arraysEqual(author.types.map(t => t.type).sort(), selectedTypes.sort())
+		) {
+			selectedTypes.forEach(selectedType => {
+				const type = metaStore.authorTypes.find(el => el.type === selectedType)
+				if (type) {
+					formData.append('types[]', type.id)
+				}
+			})
+		}
 
 		if (avatar) formData.append('avatarImg', avatar)
 		if (cover) formData.append('coverImg', cover)
 
-		const errors = await adminDashboardAuthorsStore.createAuthor(formData)
+		let errors: string[] = []
+
+		if (author) {
+			errors = await adminDashboardAuthorsStore.updateAuthor(
+				author.id,
+				formData
+			)
+		} else {
+			errors = await adminDashboardAuthorsStore.createAuthor(formData)
+		}
 
 		if (errors.length > 0) {
 			errors.forEach(err => notificationStore.addErrorNotification(err))
 		} else {
-			notificationStore.addSuccessNotification('Автор успешно добавлен!')
+			const message = author
+				? 'Автор успешно обновлен!'
+				: 'Автор успешно добавлен!'
+
+			notificationStore.addSuccessNotification(message)
 			resetForm()
 			onClose()
 			refetchAuthors()
 		}
 	}
+
+	const hasChanges = useMemo(() => {
+		if (!author) return true
+
+		if (author.name !== name) return true
+
+		const originalTypes = author.types.map(t => t.type)
+		if (!arraysEqual(originalTypes.sort(), selectedTypes.sort())) return true
+
+		if (avatar || cover) return true
+
+		return false
+	}, [author, name, selectedTypes, avatar, cover])
 
 	const resetForm = () => {
 		setName('')
@@ -99,6 +137,35 @@ const AdminDashboardAddAuthorModal: FC<IProps> = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
+	useEffect(() => {
+		if (author && isOpen) {
+			setName(author.name)
+			setSelectedTypes(author.types.map(t => t.type))
+
+			if (author.avatarImg) {
+				setAvatarPreviewUrl(
+					`${import.meta.env.VITE_SERVER_URL}/public/authors/avatars/${
+						author.avatarImg
+					}`
+				)
+			}
+
+			if (author.coverImg) {
+				setCoverPreviewUrl(
+					`${import.meta.env.VITE_SERVER_URL}/public/authors/covers/${
+						author.coverImg
+					}`
+				)
+			}
+		} else {
+			resetForm()
+		}
+	}, [isOpen, author])
+
+	const title = author ? 'Редактирование автора' : 'Добавление автора'
+	const buttonText = author ? 'Сохранить' : 'Добавить'
+	const isFormValid = name.length > 0 && selectedTypes.length > 0
+
 	if (!isOpen) return null
 
 	return (
@@ -110,7 +177,7 @@ const AdminDashboardAddAuthorModal: FC<IProps> = ({
 					className={`relative rounded-xl w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6`}
 				>
 					<h1 className='border-b border-white/10 text-3xl font-bold py-4 text-center'>
-						Добавление автора
+						{title}
 					</h1>
 					<div className='border-b border-white/10 p-6 flex gap-10 w-full'>
 						<div className='grid gap-2 max-w-[30%] overflow-hidden w-full'>
@@ -212,10 +279,10 @@ const AdminDashboardAddAuthorModal: FC<IProps> = ({
 					<div className='pt-6 px-6 flex gap-3 justify-start'>
 						<div className='w-30'>
 							<FormButton
-								title={'Добавить'}
+								title={buttonText}
 								isInvert={true}
 								onClick={handleSubmit}
-								disabled={name.length === 0 || selectedTypes.length === 0}
+								disabled={!isFormValid || (!!author && !hasChanges)}
 							/>
 						</div>
 
@@ -234,4 +301,4 @@ const AdminDashboardAddAuthorModal: FC<IProps> = ({
 	)
 }
 
-export default AdminDashboardAddAuthorModal
+export default AuthorFormModal
