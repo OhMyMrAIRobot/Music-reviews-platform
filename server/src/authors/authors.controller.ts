@@ -72,11 +72,30 @@ export class AuthorsController {
     return this.authorsService.findAll(query);
   }
 
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthorDto: UpdateAuthorDto) {
-    return this.authorsService.update(id, updateAuthorDto);
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'avatarImg', maxCount: 1 },
+      { name: 'coverImg', maxCount: 1 },
+    ]),
+  )
+  update(
+    @Param('id') id: string,
+    @UploadedFiles()
+    files: {
+      avatarImg?: Express.Multer.File[];
+      coverImg?: Express.Multer.File[];
+    },
+    @Body() updateAuthorDto: UpdateAuthorDto,
+  ) {
+    return this.authorsService.update(
+      id,
+      updateAuthorDto,
+      files?.avatarImg?.[0],
+      files?.coverImg?.[0],
+    );
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

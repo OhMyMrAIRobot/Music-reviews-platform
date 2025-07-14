@@ -157,12 +157,33 @@ export class AuthorsService {
     return existingAuthor;
   }
 
-  async update(id: string, updateAuthorDto: UpdateAuthorDto): Promise<Author> {
-    if (!updateAuthorDto || Object.keys(updateAuthorDto).length === 0) {
+  async update(
+    id: string,
+    updateAuthorDto: UpdateAuthorDto,
+    avatar?: Express.Multer.File,
+    cover?: Express.Multer.File,
+  ): Promise<Author> {
+    if (
+      !updateAuthorDto ||
+      (Object.keys(updateAuthorDto).length === 0 && !avatar && !cover)
+    ) {
       throw new NoDataProvidedException();
     }
 
-    await this.findOne(id);
+    const author = await this.findOne(id);
+
+    if (updateAuthorDto.types) {
+      const typesExist = await this.authorTypesService.checkTypesExist(
+        updateAuthorDto.types,
+      );
+
+      if (!typesExist) {
+        throw new BadRequestException(
+          'Один или несколько указанных типов не существуют',
+        );
+      }
+    }
+
     if (updateAuthorDto.name) {
       const existingAuthor = await this.findByName(updateAuthorDto.name);
 
@@ -175,10 +196,55 @@ export class AuthorsService {
       }
     }
 
-    return this.prisma.author.update({
+    let avatarImg = author.avatarImg;
+    if (avatar) {
+      if (avatarImg) {
+        await this.fileService.deleteFile(
+          'authors/avatars/' + author.avatarImg,
+        );
+      }
+      avatarImg = await this.fileService.saveFile(avatar, 'authors', 'avatars');
+    }
+
+    let coverImg = author.coverImg;
+    if (cover) {
+      if (coverImg) {
+        await this.fileService.deleteFile('authors/covers/' + author.coverImg);
+      }
+      coverImg = await this.fileService.saveFile(cover, 'authors', 'covers');
+    }
+
+    const data: Prisma.AuthorUpdateInput = {
+      name: updateAuthorDto.name,
+      avatarImg,
+      coverImg,
+    };
+
+    if (updateAuthorDto.types) {
+      await this.prisma.authorOnType.deleteMany({
+        where: { authorId: id },
+      });
+
+      data.types = {
+        create: updateAuthorDto.types.map((typeId) => ({
+          authorType: { connect: { id: typeId } },
+        })),
+      };
+    }
+
+    const updated = await this.prisma.author.update({
       where: { id },
-      data: { name: updateAuthorDto.name },
+      data,
+      include: {
+        types: {
+          include: {
+            authorType: true,
+          },
+        },
+      },
     });
+
+    return plainToInstance(AuthorDto, updated);
   }
 
   async remove(id: string): Promise<Author> {
