@@ -2,6 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
 import AdminHeader from '../../../../components/admin-header/Admin-header'
 import Pagination from '../../../../components/pagination/Pagination'
+import UserRoleSvg from '../../../../components/user/User-role-svg'
 import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
 import { RolesFilterOptions } from '../../../../models/role/roles-filter-options'
@@ -69,7 +70,15 @@ const AdminDashboardUsersGrid = observer(() => {
 					{Object.values(RolesFilterOptions).map(option => (
 						<AdminFilterButton
 							key={option}
-							title={<span className='px-2'>{option}</span>}
+							title={
+								<span className={`flex items-center px-2`}>
+									<UserRoleSvg
+										role={{ id: '0', role: option }}
+										className={'size-5 mr-1'}
+									/>
+									{option}
+								</span>
+							}
 							isActive={activeOption === option}
 							onClick={() => setActiveOption(option)}
 						/>

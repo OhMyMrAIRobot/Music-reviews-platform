@@ -4,8 +4,9 @@ import { useNavigate } from 'react-router'
 import useCustomNavigate from '../../../hooks/use-custom-navigate'
 import { useLoading } from '../../../hooks/use-loading'
 import { useStore } from '../../../hooks/use-store'
-import PixelHeartSvg from '../../svg/Pixel-heart-svg'
+import { RolesEnum } from '../../../models/role/roles-enum'
 import SettingsSvg from '../../svg/Settings-svg'
+import ShieldSvg from '../../svg/Shield-svg'
 import LogoutSvg from '../svg/Logout-svg'
 import ProfileSvg from '../svg/Profile-svg'
 import PopupProfileButton from './Popup-profile-button'
@@ -105,13 +106,6 @@ const ProfileButton = observer(() => {
 					}}
 				/>
 				<PopupProfileButton
-					text='Мне понравилось'
-					icon={<PixelHeartSvg className={'size-[19px]'} />}
-					onClick={() => {
-						if (authStore.user?.id) navigate('/admin')
-					}}
-				/>
-				<PopupProfileButton
 					text='Настройки профиля'
 					icon={<SettingsSvg className={'size-7'} />}
 					onClick={() => {
@@ -119,7 +113,18 @@ const ProfileButton = observer(() => {
 					}}
 				/>
 
-				<div className='border-t border-white/10 pb-1'></div>
+				{(authStore.user?.role.role === RolesEnum.ADMIN ||
+					authStore.user?.role.role === RolesEnum.ROOT_ADMIN) && (
+					<PopupProfileButton
+						text='Админ. панель'
+						icon={<ShieldSvg className='size-6.5' />}
+						onClick={() => {
+							if (authStore.user?.id) navigate('/admin')
+						}}
+					/>
+				)}
+
+				<div className='border-t border-white/10 pb-1' />
 
 				<PopupProfileButton
 					text='Выйти из профиля'

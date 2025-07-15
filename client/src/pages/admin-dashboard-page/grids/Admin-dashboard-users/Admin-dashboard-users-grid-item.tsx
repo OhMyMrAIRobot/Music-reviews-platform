@@ -1,6 +1,7 @@
 import { FC, useState } from 'react'
 import ArrowBottomSvg from '../../../../components/header/svg/Arrow-bottom-svg'
 import ConfirmationModal from '../../../../components/modals/Confirmation-modal'
+import UserRoleSvg from '../../../../components/user/User-role-svg'
 import { SortOrderEnum } from '../../../../models/sort/sort-order-enum'
 import { IUser } from '../../../../models/user/user'
 import { UserStatusesEnum } from '../../../../models/user/user-statuses-enum'
@@ -114,10 +115,20 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='col-span-1 text-ellipsis line-clamp-1'>
-					<span className={`font-medium ${getRoleColor(user?.role ?? '')}`}>
-						{user?.role ?? 'Роль'}
-					</span>
+				<div className='col-span-1 text-ellipsis line-clamp-1 font-medium'>
+					{user?.role ? (
+						<div
+							className={`flex gap-x-1 items-center ${getRoleColor(user.role)}`}
+						>
+							<UserRoleSvg
+								role={{ role: user.role, id: '0' }}
+								className={'size-5'}
+							/>
+							<span>{user.role}</span>
+						</div>
+					) : (
+						<span>Роль</span>
+					)}
 				</div>
 
 				<div className='col-span-2 text-ellipsis line-clamp-1 flex items-center h-full'>
