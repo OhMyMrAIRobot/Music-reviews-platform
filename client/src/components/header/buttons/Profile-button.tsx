@@ -83,7 +83,7 @@ const ProfileButton = observer(() => {
 								? import.meta.env.VITE_DEFAULT_AVATAR
 								: profileStore.profile?.avatar
 						}`}
-						className='size-full aspect-square'
+						className='size-full aspect-square object-cover'
 					/>
 				</button>
 			)}

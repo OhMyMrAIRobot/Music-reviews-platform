@@ -52,7 +52,7 @@ const UploadCoverForm = observer(() => {
 		}
 
 		const formData = new FormData()
-		formData.append('file', file)
+		formData.append('coverImg', file)
 
 		updateCover(formData).then(result => {
 			notificationStore.addNotification({
@@ -60,7 +60,9 @@ const UploadCoverForm = observer(() => {
 				text: result.message,
 				isError: !result.status,
 			})
-			setFile(null)
+			if (result.status) {
+				setFile(null)
+			}
 			if (previewUrl) {
 				URL.revokeObjectURL(previewUrl)
 				setPreviewUrl(null)

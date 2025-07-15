@@ -50,7 +50,7 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 								loading='lazy'
 								decoding='async'
 								alt={item.nickname}
-								className='aspect-square h-full w-full'
+								className='aspect-square h-full w-full object-cover'
 								src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
 									item.avatar === ''
 										? import.meta.env.VITE_DEFAULT_AVATAR

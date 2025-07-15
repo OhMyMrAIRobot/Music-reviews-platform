@@ -83,7 +83,7 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 										? import.meta.env.VITE_DEFAULT_AVATAR
 										: user.avatar
 								}`}
-								className='size-9 aspect-square rounded-full select-none'
+								className='size-9 aspect-square rounded-full select-none object-cover'
 							/>
 							<span className='font-medium'>{user.nickname}</span>
 						</>

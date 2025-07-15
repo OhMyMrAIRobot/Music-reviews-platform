@@ -29,7 +29,7 @@ class ProfileStore {
 		formData: FormData
 	): Promise<TogglePromiseResult> => {
 		try {
-			const data = await ProfileAPI.uploadProfileAvatar(formData)
+			const data = await ProfileAPI.uploadProfileImages(formData)
 			runInAction(() => {
 				if (this.profile) this.profile.avatar = data.avatar
 			})
@@ -60,7 +60,7 @@ class ProfileStore {
 		formData: FormData
 	): Promise<TogglePromiseResult> => {
 		try {
-			const data = await ProfileAPI.uploadProfileCover(formData)
+			const data = await ProfileAPI.uploadProfileImages(formData)
 			runInAction(() => {
 				if (this.profile) this.profile.cover = data.coverImage
 			})

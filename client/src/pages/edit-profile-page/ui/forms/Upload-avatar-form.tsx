@@ -43,7 +43,7 @@ const UploadAvatarForm = observer(() => {
 		}
 		const formData = new FormData()
 
-		formData.append('file', file)
+		formData.append('avatarImg', file)
 
 		updateAvatar(formData).then(result => {
 			notificationStore.addNotification({
@@ -51,7 +51,9 @@ const UploadAvatarForm = observer(() => {
 				text: result.message,
 				isError: !result.status,
 			})
-			setFile(null)
+			if (result.status) {
+				setFile(null)
+			}
 			if (previewUrl) {
 				URL.revokeObjectURL(previewUrl)
 				setPreviewUrl(null)
@@ -95,7 +97,7 @@ const UploadAvatarForm = observer(() => {
 								: profileStore.profile?.avatar
 						}`
 					}
-					className='aspect-square size-full'
+					className='aspect-square object-cover size-full'
 				/>
 			</div>
 
