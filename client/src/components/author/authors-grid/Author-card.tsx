@@ -28,7 +28,9 @@ const AuthorCard: FC<IProps> = ({ author, isLoading }) => {
 						decoding='async'
 						loading='lazy'
 						src={`${import.meta.env.VITE_SERVER_URL}/public/authors/avatars/${
-							author.img
+							author.img === ''
+								? import.meta.env.VITE_DEFAULT_AVATAR
+								: author.img
 						}`}
 						className='size-full object-cover object-center'
 					/>

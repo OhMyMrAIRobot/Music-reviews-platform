@@ -29,7 +29,7 @@ const ReleaseDetailsAuthorsItem: FC<IProps> = ({ author, type }) => {
 					decoding='async'
 					alt={author.name}
 					src={`${import.meta.env.VITE_SERVER_URL}/public/authors/avatars/${
-						author.img
+						author.img === '' ? import.meta.env.VITE_DEFAULT_AVATAR : author.img
 					}`}
 					className='size-full object-cover aspect-square'
 				/>

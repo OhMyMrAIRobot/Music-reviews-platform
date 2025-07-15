@@ -71,7 +71,11 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 								decoding='async'
 								src={`${
 									import.meta.env.VITE_SERVER_URL
-								}/public/authors/avatars/${author.avatarImg}`}
+								}/public/authors/avatars/${
+									author.avatarImg === ''
+										? import.meta.env.VITE_DEFAULT_AVATAR
+										: author.avatarImg
+								}`}
 								alt={author.name}
 								className='size-9 object-cover aspect-square rounded-full select-none'
 							/>
