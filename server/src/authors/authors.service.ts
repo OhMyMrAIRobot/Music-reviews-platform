@@ -155,10 +155,7 @@ export class AuthorsService {
     avatar?: Express.Multer.File,
     cover?: Express.Multer.File,
   ): Promise<Author> {
-    if (
-      !updateAuthorDto ||
-      (Object.keys(updateAuthorDto).length === 0 && !avatar && !cover)
-    ) {
+    if (Object.keys(updateAuthorDto).length === 0 && !avatar && !cover) {
       throw new NoDataProvidedException();
     }
 
@@ -190,7 +187,7 @@ export class AuthorsService {
 
     let avatarImg = author.avatarImg;
     if (avatar) {
-      if (avatarImg) {
+      if (avatarImg !== '') {
         await this.fileService.deleteFile(
           'authors/avatars/' + author.avatarImg,
         );
@@ -200,7 +197,7 @@ export class AuthorsService {
 
     let coverImg = author.coverImg;
     if (cover) {
-      if (coverImg) {
+      if (coverImg !== '') {
         await this.fileService.deleteFile('authors/covers/' + author.coverImg);
       }
       coverImg = await this.fileService.saveFile(cover, 'authors', 'covers');

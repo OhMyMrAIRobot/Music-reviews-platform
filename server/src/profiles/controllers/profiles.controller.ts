@@ -6,8 +6,11 @@ import {
   Param,
   Patch,
   Request,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { UserProfile } from '@prisma/client';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
@@ -39,11 +42,28 @@ export class ProfilesController {
 
   @UseGuards(JwtAuthGuard)
   @Patch()
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'avatarImg', maxCount: 1 },
+      { name: 'coverImg', maxCount: 1 },
+    ]),
+  )
   update(
     @Request() req: IAuthenticatedRequest,
     @Body() updateProfileDto: UpdateProfileDto,
+    @UploadedFiles()
+    files: {
+      avatarImg?: Express.Multer.File[];
+      coverImg?: Express.Multer.File[];
+    },
   ): Promise<UserProfile> {
-    return this.profilesService.updateByUserId(req.user.id, updateProfileDto);
+    return this.profilesService.updateByUserId(
+      req.user.id,
+      updateProfileDto,
+      {},
+      files?.avatarImg?.[0],
+      files?.coverImg?.[0],
+    );
   }
 
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
@@ -67,17 +87,25 @@ export class ProfilesController {
   @Delete('avatar')
   @UseGuards(JwtAuthGuard)
   deleteAvatar(@Request() req: IAuthenticatedRequest) {
-    return this.profilesService.updateByUserId(req.user.id, {
-      avatar: '',
-    });
+    return this.profilesService.updateByUserId(
+      req.user.id,
+      {},
+      {
+        avatar: '',
+      },
+    );
   }
 
   @Delete('cover')
   @UseGuards(JwtAuthGuard)
   deleteCover(@Request() req: IAuthenticatedRequest) {
-    return this.profilesService.updateByUserId(req.user.id, {
-      coverImage: '',
-    });
+    return this.profilesService.updateByUserId(
+      req.user.id,
+      {},
+      {
+        coverImage: '',
+      },
+    );
   }
 
   @Delete(':userId/avatar')
@@ -87,9 +115,14 @@ export class ProfilesController {
     @Request() req: IAuthenticatedRequest,
     @Param('userId') userId: string,
   ) {
-    return this.profilesService.adminUpdate(req, userId, {
-      avatar: '',
-    });
+    return this.profilesService.adminUpdate(
+      req,
+      userId,
+      {},
+      {
+        avatar: '',
+      },
+    );
   }
 
   @Delete(':userId/cover')
@@ -99,8 +132,13 @@ export class ProfilesController {
     @Request() req: IAuthenticatedRequest,
     @Param('userId') userId: string,
   ) {
-    return this.profilesService.adminUpdate(req, userId, {
-      coverImage: '',
-    });
+    return this.profilesService.adminUpdate(
+      req,
+      userId,
+      {},
+      {
+        coverImage: '',
+      },
+    );
   }
 }

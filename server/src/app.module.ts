@@ -19,7 +19,6 @@ import { ReleasesModule } from './releases/releases.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { RolesModule } from './roles/roles.module';
 import { SocialMediaModule } from './social-media/social-media.module';
-import { UploadsModule } from './uploads/uploads.module';
 import { UserFavAuthorsModule } from './user-fav-authors/user-fav-authors.module';
 import { UserFavReleasesModule } from './user-fav-releases/user-fav-releases.module';
 import { UserFavReviewsModule } from './user-fav-reviews/user-fav-reviews.module';
@@ -28,9 +27,9 @@ import { UsersModule } from './users/users.module';
 @Module({
   imports: [
     UsersModule,
+    ProfilesModule,
     AuthModule,
     RolesModule,
-    ProfilesModule,
     MailsModule,
     SocialMediaModule,
     AuthorsModule,
@@ -50,7 +49,6 @@ import { UsersModule } from './users/users.module';
     UserFavAuthorsModule,
     PrismaModule,
     LeaderboardModule,
-    UploadsModule,
     FileModule,
   ],
   controllers: [],
