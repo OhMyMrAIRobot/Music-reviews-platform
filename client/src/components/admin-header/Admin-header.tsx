@@ -51,7 +51,7 @@ const AdminHeader: FC<IProps> = observer(({ title, setText }) => {
 									? import.meta.env.VITE_DEFAULT_AVATAR
 									: profileStore.profile?.avatar
 							}`}
-							className='aspect-square rounded-full size-10 select-none'
+							className='aspect-square rounded-full size-10 select-none object-cover'
 						/>
 
 						<span>{profileStore.profile?.nickname}</span>

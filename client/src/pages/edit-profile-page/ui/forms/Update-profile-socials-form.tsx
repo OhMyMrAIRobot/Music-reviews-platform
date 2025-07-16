@@ -7,10 +7,10 @@ import { useStore } from '../../../../hooks/use-store'
 import EditProfilePageSection from '../Edit-profile-page-section'
 
 const UpdateProfileSocialsForm = () => {
-	const { profileStore, authStore, notificationStore } = useStore()
+	const { profileStore, authStore, notificationStore, metaStore } = useStore()
 
 	const { execute: fetchSocials, isLoading } = useLoading(
-		profileStore.fetchSocials
+		metaStore.fetchSocials
 	)
 
 	const [errors, setErrors] = useState<string[]>([])
@@ -20,7 +20,7 @@ const UpdateProfileSocialsForm = () => {
 	)
 
 	useEffect(() => {
-		if (profileStore.socials.length === 0) {
+		if (metaStore.socials.length === 0) {
 			fetchSocials()
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -39,7 +39,7 @@ const UpdateProfileSocialsForm = () => {
 								className='bg-gray-400 w-full h-10 animate-pulse opacity-40 rounded-md'
 							/>
 					  ))
-					: profileStore.socials.map(social => {
+					: metaStore.socials.map(social => {
 							const initialValue =
 								profileStore.profile?.social.find(el => el.id === social.id)
 									?.url ?? ''

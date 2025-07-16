@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useState } from 'react'
-import AuthorTypes from '../../../components/author/Author-types'
+import AuthorTypes from '../../../components/author/author-types/Author-types'
 import ToggleFavButton from '../../../components/buttons/Toggle-fav-button'
 import LikesCount from '../../../components/utils/Likes-count'
 import { useAuth } from '../../../hooks/use-auth'
@@ -54,21 +54,27 @@ const AuthorDetailsHeader: FC<IProps> = observer(({ author, isLoading }) => {
 							loading='lazy'
 							decoding='async'
 							src={`${import.meta.env.VITE_SERVER_URL}/public/authors/covers/${
-								author.cover
+								author.cover === ''
+									? import.meta.env.VITE_DEFAULT_COVER
+									: author.cover
 							}`}
 							alt={author.name}
 						/>
 						<div className='absolute inset-2 bg-black/20 rounded-md z-200 pointer-events-none'></div>
 
-						{author.cover === '1.png' && (
+						{author.cover === '' && (
 							<div className='size-25 lg:size-50 overflow-hidden absolute left-3 top-3 lg:left-5 lg:top-5 rounded-full border border-zinc-700 z-100'>
 								<img
 									loading='lazy'
 									decoding='async'
 									src={`${
 										import.meta.env.VITE_SERVER_URL
-									}/public/authors/avatars/${author.img}`}
-									className='size-full object-cover object-center'
+									}/public/authors/avatars/${
+										author.img === ''
+											? import.meta.env.VITE_DEFAULT_AVATAR
+											: author.img
+									}`}
+									className='size-full object-cover object-center select-none'
 								/>
 							</div>
 						)}

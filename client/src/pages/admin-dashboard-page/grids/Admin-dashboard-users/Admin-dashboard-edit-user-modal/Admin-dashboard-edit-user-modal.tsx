@@ -30,8 +30,12 @@ interface IProps {
 
 const AdminDashboardEditUserModal: FC<IProps> = observer(
 	({ userId, isOpen, onClose }) => {
-		const { adminDashboardUsersStore, authStore, notificationStore } =
-			useStore()
+		const {
+			adminDashboardUsersStore,
+			authStore,
+			notificationStore,
+			metaStore,
+		} = useStore()
 
 		const { navigatoToProfile } = useCustomNavigate()
 
@@ -40,7 +44,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 		)
 
 		const { execute: fetchRoles, isLoading: isRolesLoading } = useLoading(
-			adminDashboardUsersStore.fetchRoles
+			metaStore.fetchRoles
 		)
 
 		const { execute: updateUserData, isLoading: isUpdateUserDataLoading } =
@@ -74,7 +78,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 					if (authStore.user?.role.role === RolesEnum.ROOT_ADMIN)
 						setAvailableRoles(RootAdminAvalaibleRolesEnum)
 				})
-				if (adminDashboardUsersStore.roles.length === 0) {
+				if (metaStore.roles.length === 0) {
 					fetchRoles()
 				}
 			}
@@ -91,8 +95,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 
 		const update = async () => {
 			const isActive = status === UserStatusesEnum.ACTIVE ? true : false
-			console.log(isActive)
-			const roleId = adminDashboardUsersStore.roles.find(el => el.role === role)
+			const roleId = metaStore.roles.find(el => el.role === role)
 			const updResult = await updateUserData(
 				nickname,
 				email,

@@ -1,16 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
 import { ProfileAPI } from '../../../api/profile-api'
-import { RolesAPI } from '../../../api/role-api'
 import { SocialMediaAPI } from '../../../api/social-media-api'
 import { UserAPI } from '../../../api/user-api'
-import { IRole } from '../../../models/role/role'
 import { IUpdateUserData } from '../../../models/user/update-user-data'
 import { IUser } from '../../../models/user/user'
 import { IUserInfo } from '../../../models/user/user-info'
 import { IUsersResponse } from '../../../models/user/users-response'
 import { SortOrder } from '../../../types/sort-order-type'
-import { TogglePromiseResult } from '../../../types/toggle-promise-result'
 
 class AdminDashboardUsersStore {
 	constructor() {
@@ -20,8 +17,6 @@ class AdminDashboardUsersStore {
 	count: number = 0
 	users: IUser[] = []
 
-	roles: IRole[] = []
-
 	user: IUserInfo | null = null
 
 	setUsers(data: IUsersResponse) {
@@ -29,10 +24,6 @@ class AdminDashboardUsersStore {
 			this.count = data.total
 			this.users = data.users
 		})
-	}
-
-	setRoles(data: IRole[]) {
-		this.roles = data
 	}
 
 	setUser(data: IUserInfo | null) {
@@ -54,13 +45,14 @@ class AdminDashboardUsersStore {
 		}
 	}
 
-	deleteUser = async (id: string): Promise<TogglePromiseResult> => {
+	deleteUser = async (id: string): Promise<string[]> => {
 		try {
-			await UserAPI.deleteUser(id)
-			return { status: true, message: 'Пользователь успешно удалён!' }
-		} catch (e) {
-			console.log(e)
-			return { status: false, message: 'Не удалось удалить пользователя!' }
+			await UserAPI.adminDeleteUser(id)
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
 		}
 	}
 
@@ -68,16 +60,6 @@ class AdminDashboardUsersStore {
 		try {
 			const data = await UserAPI.fetchUserInfo(id)
 			this.setUser(data)
-		} catch (e) {
-			console.log(e)
-		}
-	}
-
-	fetchRoles = async () => {
-		try {
-			const data = await RolesAPI.fetchRoles()
-
-			this.setRoles(data)
 		} catch (e) {
 			console.log(e)
 		}

@@ -23,16 +23,12 @@ export const ProfileAPI = {
 		return data
 	},
 
-	async uploadProfileAvatar(formData: FormData): Promise<IUpdatedProfile> {
-		const { data } = await api.post<IUpdatedProfile>(
-			'/uploads/avatar',
-			formData,
-			{
-				headers: {
-					'Content-Type': 'multipart/form-data',
-				},
-			}
-		)
+	async uploadProfileImages(formData: FormData): Promise<IUpdatedProfile> {
+		const { data } = await api.patch<IUpdatedProfile>('/profiles', formData, {
+			headers: {
+				'Content-Type': 'multipart/form-data',
+			},
+		})
 		return data
 	},
 
@@ -44,19 +40,6 @@ export const ProfileAPI = {
 	async adminDeleteProfileAvatar(userId: string): Promise<IUpdatedProfile> {
 		const { data } = await api.delete<IUpdatedProfile>(
 			`profiles/${userId}/avatar`
-		)
-		return data
-	},
-
-	async uploadProfileCover(formData: FormData): Promise<IUpdatedProfile> {
-		const { data } = await api.post<IUpdatedProfile>(
-			'/uploads/cover',
-			formData,
-			{
-				headers: {
-					'Content-Type': 'multipart/form-data',
-				},
-			}
 		)
 		return data
 	},

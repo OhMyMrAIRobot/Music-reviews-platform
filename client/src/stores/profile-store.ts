@@ -3,7 +3,6 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { ProfileAPI } from '../api/profile-api'
 import { SocialMediaAPI } from '../api/social-media-api'
 import { IProfile } from '../models/profile/profile'
-import { ISocialMedia } from '../models/social-media/social-media'
 import { TogglePromiseResult } from '../types/toggle-promise-result'
 
 class ProfileStore {
@@ -12,14 +11,9 @@ class ProfileStore {
 	}
 
 	profile: IProfile | null = null
-	socials: ISocialMedia[] = []
 
 	setProfile(data: IProfile) {
 		this.profile = data
-	}
-
-	setSocials(data: ISocialMedia[]) {
-		this.socials = data
 	}
 
 	fetchProfile = async (userId: string) => {
@@ -31,20 +25,11 @@ class ProfileStore {
 		}
 	}
 
-	fetchSocials = async () => {
-		try {
-			const data = await SocialMediaAPI.fetchSocials()
-			this.setSocials(data)
-		} catch (e) {
-			console.log(e)
-		}
-	}
-
 	uploadProfileAvatar = async (
 		formData: FormData
 	): Promise<TogglePromiseResult> => {
 		try {
-			const data = await ProfileAPI.uploadProfileAvatar(formData)
+			const data = await ProfileAPI.uploadProfileImages(formData)
 			runInAction(() => {
 				if (this.profile) this.profile.avatar = data.avatar
 			})
@@ -75,7 +60,7 @@ class ProfileStore {
 		formData: FormData
 	): Promise<TogglePromiseResult> => {
 		try {
-			const data = await ProfileAPI.uploadProfileCover(formData)
+			const data = await ProfileAPI.uploadProfileImages(formData)
 			runInAction(() => {
 				if (this.profile) this.profile.cover = data.coverImage
 			})

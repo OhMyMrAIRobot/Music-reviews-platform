@@ -4,7 +4,7 @@ import { IAuthorData } from '../../../models/author/authors-response'
 import { ReleaseTypesEnum } from '../../../models/release/release-types'
 import LikesCount from '../../utils/Likes-count'
 import AuthorReleaseTypesRatings from '../author-ratings/Author-release-types-ratings'
-import AuthorTypes from '../Author-types'
+import AuthorTypes from '../author-types/Author-types'
 
 interface IProps {
 	author?: IAuthorData
@@ -28,7 +28,9 @@ const AuthorCard: FC<IProps> = ({ author, isLoading }) => {
 						decoding='async'
 						loading='lazy'
 						src={`${import.meta.env.VITE_SERVER_URL}/public/authors/avatars/${
-							author.img
+							author.img === ''
+								? import.meta.env.VITE_DEFAULT_AVATAR
+								: author.img
 						}`}
 						className='size-full object-cover object-center'
 					/>

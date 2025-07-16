@@ -1,13 +1,14 @@
 import { FC, useState } from 'react'
 import ArrowBottomSvg from '../../../../components/header/svg/Arrow-bottom-svg'
 import ConfirmationModal from '../../../../components/modals/Confirmation-modal'
-import EditSvg from '../../../../components/svg/Edit-svg'
-import TrashSvg from '../../../../components/svg/Trash-svg'
+import UserRoleSvg from '../../../../components/user/User-role-svg'
 import { SortOrderEnum } from '../../../../models/sort/sort-order-enum'
 import { IUser } from '../../../../models/user/user'
 import { UserStatusesEnum } from '../../../../models/user/user-statuses-enum'
 import { SortOrder } from '../../../../types/sort-order-type'
 import { getRoleColor } from '../../../../utils/get-role-color'
+import AdminDeleteButton from '../../buttons/Admin-delete-button'
+import AdminEditButton from '../../buttons/Admin-edit-button'
 import AdminDashboardEditUserModal from './Admin-dashboard-edit-user-modal/Admin-dashboard-edit-user-modal'
 
 interface IProps {
@@ -83,9 +84,9 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 										? import.meta.env.VITE_DEFAULT_AVATAR
 										: user.avatar
 								}`}
-								className='size-9 aspect-square rounded-full select-none'
+								className='size-9 aspect-square rounded-full select-none object-cover'
 							/>
-							<span>{user.nickname}</span>
+							<span className='font-medium'>{user.nickname}</span>
 						</>
 					) : (
 						'Никнейм'
@@ -114,10 +115,20 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='col-span-1 text-ellipsis line-clamp-1'>
-					<span className={`font-medium ${getRoleColor(user?.role ?? '')}`}>
-						{user?.role ?? 'Роль'}
-					</span>
+				<div className='col-span-1 text-ellipsis line-clamp-1 font-medium'>
+					{user?.role ? (
+						<div
+							className={`flex gap-x-1 items-center ${getRoleColor(user.role)}`}
+						>
+							<UserRoleSvg
+								role={{ role: user.role, id: '0' }}
+								className={'size-5'}
+							/>
+							<span>{user.role}</span>
+						</div>
+					) : (
+						<span>Роль</span>
+					)}
 				</div>
 
 				<div className='col-span-2 text-ellipsis line-clamp-1 flex items-center h-full'>
@@ -137,22 +148,12 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 						'Статус аккаунта'
 					)}
 				</div>
+
 				<div className='col-span-1'>
 					{user ? (
 						<div className='flex gap-x-3 justify-end'>
-							<button
-								onClick={() => setEditModalOpen(true)}
-								className='border border-white/15 size-8 flex items-center justify-center rounded-lg cursor-pointer text-white/70 hover:text-white hover:border-white/70 transition-colors duration-200'
-							>
-								<EditSvg className={'size-4'} />
-							</button>
-
-							<button
-								onClick={() => setConfModalOpen(true)}
-								className='border border-white/15 size-8 flex items-center justify-center rounded-lg cursor-pointer text-white/70 hover:text-red-500 hover:border-red-500 transition-colors duration-200'
-							>
-								<TrashSvg className={'size-4'} />
-							</button>
+							<AdminEditButton onClick={() => setEditModalOpen(true)} />
+							<AdminDeleteButton onClick={() => setConfModalOpen(true)} />
 						</div>
 					) : (
 						'Действие'

@@ -29,7 +29,7 @@ export const UserAPI = {
 		return data
 	},
 
-	async deleteUser(id: string) {
+	async adminDeleteUser(id: string) {
 		return await api.delete(`/users/${id}`)
 	},
 

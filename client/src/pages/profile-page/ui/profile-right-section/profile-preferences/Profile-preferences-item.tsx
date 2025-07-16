@@ -28,7 +28,9 @@ const ProfilePreferencesItem: FC<IProps> = ({ item, isAuthor, isLoading }) => {
 					decoding='async'
 					src={`${import.meta.env.VITE_SERVER_URL}/public/${
 						isAuthor ? 'authors/avatars' : 'releases'
-					}/${item.image}`}
+					}/${
+						item.image === '' ? import.meta.env.VITE_DEFAULT_AVATAR : item.image
+					}`}
 					className={`size-full object-cover object-center hover:ring-4 ring-white/20 transition-all duration-300 ${
 						isAuthor ? 'rounded-full' : 'rounded-lg'
 					}`}

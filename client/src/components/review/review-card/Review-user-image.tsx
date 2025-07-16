@@ -19,7 +19,7 @@ const ReviewUserImage: FC<IProps> = ({ nickname, img, points }) => {
 				src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
 					img === '' ? import.meta.env.VITE_DEFAULT_AVATAR : img
 				}`}
-				className='rounded-full border border-white/10 min-w-10 size-10 lg:size-11 cursor-pointer aspect-square'
+				className='rounded-full border border-white/10 min-w-10 size-10 lg:size-11 cursor-pointer aspect-square object-cover'
 			/>
 			{level && (
 				<img

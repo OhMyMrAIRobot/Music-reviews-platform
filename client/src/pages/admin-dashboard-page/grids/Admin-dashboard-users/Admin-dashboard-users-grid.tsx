@@ -1,13 +1,14 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
 import AdminHeader from '../../../../components/admin-header/Admin-header'
-import AdminFilterButton from '../../../../components/buttons/Admin-filter-button'
 import Pagination from '../../../../components/pagination/Pagination'
+import UserRoleSvg from '../../../../components/user/User-role-svg'
 import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
 import { RolesFilterOptions } from '../../../../models/role/roles-filter-options'
 import { SortOrderEnum } from '../../../../models/sort/sort-order-enum'
 import { SortOrder } from '../../../../types/sort-order-type'
+import AdminFilterButton from '../../buttons/Admin-filter-button'
 import AdminDashboardUsersGridItem from './Admin-dashboard-users-grid-item'
 
 const AdminDashboardUsersGrid = observer(() => {
@@ -36,6 +37,19 @@ const AdminDashboardUsersGrid = observer(() => {
 		)
 	}
 
+	const deleteUser = async (id: string) => {
+		const result = await adminDashboardUsersStore.deleteUser(id)
+		if (result.length === 0)
+			if (result.length === 0) {
+				notificationStore.addSuccessNotification(
+					'Вы успешно удалили пользователя!'
+				)
+				fetchUsers()
+			} else {
+				result.forEach(err => notificationStore.addErrorNotification(err))
+			}
+	}
+
 	useEffect(() => {
 		setCurrentPage(1)
 		fetchUsers()
@@ -47,17 +61,6 @@ const AdminDashboardUsersGrid = observer(() => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentPage, order])
 
-	const deleteUser = async (id: string) => {
-		adminDashboardUsersStore.deleteUser(id).then(result => {
-			notificationStore.addNotification({
-				id: self.crypto.randomUUID(),
-				text: result.message,
-				isError: !result.status,
-			})
-			fetchUsers()
-		})
-	}
-
 	return (
 		<div className='flex flex-col h-screen' id='admin-users'>
 			<AdminHeader title={'Пользователи'} setText={setSearchText} />
@@ -67,7 +70,15 @@ const AdminDashboardUsersGrid = observer(() => {
 					{Object.values(RolesFilterOptions).map(option => (
 						<AdminFilterButton
 							key={option}
-							title={option}
+							title={
+								<span className={`flex items-center px-2`}>
+									<UserRoleSvg
+										role={{ id: '0', role: option }}
+										className={'size-5 mr-1'}
+									/>
+									{option}
+								</span>
+							}
 							isActive={activeOption === option}
 							onClick={() => setActiveOption(option)}
 						/>

@@ -24,6 +24,7 @@ export const ROUTES = {
 	ADMIN: {
 		PREFIX: 'admin',
 		USERS: 'users',
+		AUTHORS: 'authors',
 		NOT_DEFINED: '*',
 	},
 	NOT_DEFINED: '*',

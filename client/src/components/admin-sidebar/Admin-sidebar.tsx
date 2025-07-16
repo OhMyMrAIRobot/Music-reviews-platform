@@ -12,7 +12,8 @@ import PencilSvg from '../svg/Pencil-svg'
 import AdminSidebarItem, { IAdminSidebarItemProps } from './Admin-sidebar-item'
 
 const AdminSidebar = () => {
-	const { navigateToMain, navigateToAdminUsers } = useCustomNavigate()
+	const { navigateToMain, navigateToAdminUsers, navigateToAdminAuthors } =
+		useCustomNavigate()
 
 	const { isActive } = useActivePath()
 
@@ -33,10 +34,8 @@ const AdminSidebar = () => {
 		},
 		{
 			title: 'Авторы',
-			isActive: false,
-			onClick: () => {
-				throw new Error('Function not implemented.')
-			},
+			isActive: isActive(`/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.AUTHORS}`),
+			onClick: navigateToAdminAuthors,
 			svgIcon: <AuthorSvg className={'size-5'} />,
 		},
 		{

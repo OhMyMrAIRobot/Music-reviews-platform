@@ -1,7 +1,7 @@
-import { FC } from 'react'
+import { FC, ReactNode } from 'react'
 
 interface IProps {
-	title: string
+	title: ReactNode
 	isActive: boolean
 	onClick: () => void
 }
@@ -14,7 +14,7 @@ const AdminFilterButton: FC<IProps> = ({ title, isActive, onClick }) => {
 			}`}
 			onClick={onClick}
 		>
-			<span className='px-2'>{title}</span>
+			{title}
 			<div
 				className={`absolute bottom-0 left-0 right-0 h-0.5 transition-all duration-200 ${
 					isActive ? 'bg-white' : 'bg-transparent'
