@@ -1,5 +1,6 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { PrismaModule } from 'prisma/prisma.module';
+import { FileModule } from 'src/file/files.module';
 import { UsersModule } from 'src/users/users.module';
 import { SocialMediaModule } from '../social-media/social-media.module';
 import { ProfileSocialMediaController } from './controllers/profile-social-media.controller';
@@ -8,7 +9,12 @@ import { ProfileSocialMediaService } from './services/profile-social-media.servi
 import { ProfilesService } from './services/profiles.service';
 
 @Module({
-  imports: [SocialMediaModule, PrismaModule, UsersModule],
+  imports: [
+    forwardRef(() => UsersModule),
+    SocialMediaModule,
+    PrismaModule,
+    FileModule,
+  ],
   controllers: [ProfilesController, ProfileSocialMediaController],
   providers: [ProfilesService, ProfileSocialMediaService],
   exports: [ProfilesService, ProfileSocialMediaService],

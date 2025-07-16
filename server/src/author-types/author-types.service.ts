@@ -79,6 +79,19 @@ export class AuthorTypesService {
     });
   }
 
+  async checkTypesExist(roleIds: string[]): Promise<boolean> {
+    if (roleIds.length === 0) return true;
+
+    const existingRoles = await this.prisma.authorType.findMany({
+      where: {
+        id: { in: roleIds },
+      },
+      select: { id: true },
+    });
+
+    return existingRoles.length === roleIds.length;
+  }
+
   private async findByType(type: string): Promise<AuthorType | null> {
     return this.prisma.authorType.findFirst({
       where: { type: { equals: type, mode: 'insensitive' } },

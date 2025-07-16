@@ -2,6 +2,8 @@
 import {
   BadRequestException,
   ConflictException,
+  forwardRef,
+  Inject,
   Injectable,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
@@ -11,6 +13,8 @@ import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.inte
 import { IJwtAuthPayload } from 'src/auth/types/jwt-auth-payload.interface';
 import { InsufficientPermissionsException } from 'src/exceptions/insufficient-permissions.exception';
 import { NoDataProvidedException } from 'src/exceptions/no-data.exception';
+import { FileService } from 'src/file/files.service';
+import { ProfilesService } from 'src/profiles/services/profiles.service';
 import { RolesService } from 'src/roles/roles.service';
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
 import { PrismaService } from '../../prisma/prisma.service';
@@ -31,8 +35,11 @@ import { UserWithPasswordResponseDto } from './dto/user-with-password-response.d
 @Injectable()
 export class UsersService {
   constructor(
-    private prisma: PrismaService,
-    private rolesService: RolesService,
+    @Inject(forwardRef(() => ProfilesService))
+    private profilesService: ProfilesService,
+    private readonly prisma: PrismaService,
+    private readonly rolesService: RolesService,
+    private readonly fileService: FileService,
   ) {}
 
   async isUserExists(email: string, nickname: string) {
@@ -246,6 +253,16 @@ export class UsersService {
 
   async delete(id: string): Promise<UserResponseDto> {
     await this.findOne(id);
+
+    const profile = await this.profilesService.findByUserId(id);
+
+    if (profile.avatar !== '') {
+      await this.fileService.deleteFile('avatars/' + profile.avatar);
+    }
+
+    if (profile.coverImage !== '') {
+      await this.fileService.deleteFile('covers/' + profile.coverImage);
+    }
 
     const deletedUser = await this.prisma.user.delete({
       where: { id },
