@@ -28,11 +28,6 @@ import { ReleasesService } from './releases.service';
 export class ReleasesController {
   constructor(private readonly releasesService: ReleasesService) {}
 
-  @Get()
-  findAll() {
-    return this.releasesService.findAll();
-  }
-
   @Get('list/most-commented')
   findMostCommented() {
     return this.releasesService.findMostCommentedReleasesLastDay();
@@ -80,6 +75,13 @@ export class ReleasesController {
     },
   ) {
     return this.releasesService.create(createReleaseDto, files?.coverImg?.[0]);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Get()
+  findAll(@Query() query: ReleasesQueryDto) {
+    return this.releasesService.findAll(query);
   }
 
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)

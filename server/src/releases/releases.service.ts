@@ -1,11 +1,16 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Release } from '@prisma/client';
+import { Prisma, Release } from '@prisma/client';
+import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
 import { AuthorsService } from 'src/authors/authors.service';
 import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
 import { NoDataProvidedException } from 'src/exceptions/no-data.exception';
 import { FileService } from 'src/file/files.service';
 import { ReleaseTypesService } from 'src/release-types/release-types.service';
+import {
+  AdminReleaseDto,
+  AdminReleasesResponseDto,
+} from './dto/admin-releases.response.dto';
 import { CreateReleaseDto } from './dto/create-release.dto';
 import {
   QueryReleaseDetailResponseDto,
@@ -96,8 +101,98 @@ export class ReleasesService {
     });
   }
 
-  async findAll(): Promise<Release[]> {
-    return this.prisma.release.findMany();
+  async findAll(query: ReleasesQueryDto): Promise<AdminReleasesResponseDto> {
+    const { limit = 10, offset = 0, typeId, query: searchQuery } = query;
+
+    if (typeId) {
+      await this.releaseTypesService.findOne(typeId);
+    }
+
+    const andConditions: Prisma.ReleaseWhereInput[] = [];
+
+    if (typeId) {
+      andConditions.push({ releaseTypeId: typeId });
+    }
+
+    if (searchQuery) {
+      const orConditions: Prisma.ReleaseWhereInput[] = [
+        { title: { contains: searchQuery, mode: 'insensitive' } },
+        {
+          ReleaseArtist: {
+            some: {
+              author: { name: { contains: searchQuery, mode: 'insensitive' } },
+            },
+          },
+        },
+        {
+          ReleaseProducer: {
+            some: {
+              author: { name: { contains: searchQuery, mode: 'insensitive' } },
+            },
+          },
+        },
+        {
+          ReleaseDesigner: {
+            some: {
+              author: { name: { contains: searchQuery, mode: 'insensitive' } },
+            },
+          },
+        },
+      ];
+      andConditions.push({ OR: orConditions });
+    }
+
+    const where: Prisma.ReleaseWhereInput =
+      andConditions.length > 0 ? { AND: andConditions } : {};
+
+    const [count, releases] = await Promise.all([
+      this.prisma.release.count({ where }),
+      this.prisma.release.findMany({
+        where,
+        take: limit,
+        skip: offset,
+        include: {
+          ReleaseType: true,
+          ReleaseArtist: {
+            include: {
+              author: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
+          ReleaseProducer: {
+            include: {
+              author: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
+          ReleaseDesigner: {
+            include: {
+              author: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+      }),
+    ]);
+
+    return {
+      count,
+      releases: plainToInstance(AdminReleaseDto, releases, {
+        excludeExtraneousValues: true,
+      }),
+    };
   }
 
   async findOne(id: string): Promise<Release> {
@@ -296,7 +391,7 @@ export class ReleasesService {
   }
 
   async findReleases(query: ReleasesQueryDto): Promise<ReleaseResponseDto> {
-    const type = query.type ? `'${query.type}'` : null;
+    const type = query.typeId ? `'${query.typeId}'` : null;
 
     const fieldMap: Record<string, string> = {
       noTextCount: 'no_text_count',
@@ -316,7 +411,7 @@ export class ReleasesService {
     const count = await this.prisma.release.count({
       where: {
         AND: [
-          { releaseTypeId: query.type ?? undefined },
+          { releaseTypeId: query.typeId ?? undefined },
           {
             title: {
               contains: title ?? '',
