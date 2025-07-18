@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Release } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
+import { AuthorsService } from 'src/authors/authors.service';
 import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
 import { NoDataProvidedException } from 'src/exceptions/no-data.exception';
+import { FileService } from 'src/file/files.service';
 import { ReleaseTypesService } from 'src/release-types/release-types.service';
 import { CreateReleaseDto } from './dto/create-release.dto';
 import {
@@ -23,12 +25,74 @@ export class ReleasesService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly releaseTypesService: ReleaseTypesService,
+    private readonly authorsService: AuthorsService,
+    private readonly fileService: FileService,
   ) {}
 
-  async create(createReleaseDto: CreateReleaseDto): Promise<Release> {
+  async create(
+    createReleaseDto: CreateReleaseDto,
+    cover?: Express.Multer.File,
+  ): Promise<Release> {
     await this.releaseTypesService.findOne(createReleaseDto.releaseTypeId);
+
+    const coverImg = cover
+      ? await this.fileService.saveFile(cover, 'releases')
+      : '';
+
+    const allAuthorIds = [
+      ...(createReleaseDto.releaseArtists ?? []),
+      ...(createReleaseDto.releaseProducers ?? []),
+      ...(createReleaseDto.releaseDesigners ?? []),
+    ];
+
+    const uniqueAuthorIds = [...new Set(allAuthorIds)];
+    const isAuthorsExist =
+      await this.authorsService.checkAuthorsExist(uniqueAuthorIds);
+
+    if (!isAuthorsExist) {
+      throw new BadRequestException(
+        'Один или несколько указанных авторов не существуют',
+      );
+    }
+
+    const artistConnections = createReleaseDto.releaseArtists?.map((id) => ({
+      author: {
+        connect: { id },
+      },
+    }));
+
+    const producerConnections = createReleaseDto.releaseProducers?.map(
+      (id) => ({
+        author: {
+          connect: { id },
+        },
+      }),
+    );
+
+    const designerConnections = createReleaseDto.releaseDesigners?.map(
+      (id) => ({
+        author: {
+          connect: { id },
+        },
+      }),
+    );
+
     return this.prisma.release.create({
-      data: createReleaseDto,
+      data: {
+        title: createReleaseDto.title,
+        publishDate: createReleaseDto.publishDate,
+        img: coverImg,
+        releaseTypeId: createReleaseDto.releaseTypeId,
+        ReleaseArtist: {
+          create: artistConnections,
+        },
+        ReleaseProducer: {
+          create: producerConnections,
+        },
+        ReleaseDesigner: {
+          create: designerConnections,
+        },
+      },
     });
   }
 

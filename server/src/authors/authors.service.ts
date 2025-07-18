@@ -137,6 +137,17 @@ export class AuthorsService {
     return plainToInstance(FindAuthorsResponseDto, { count, authors });
   }
 
+  async checkAuthorsExist(authorIds: string[]): Promise<boolean> {
+    if (authorIds.length === 0) return true;
+    const existingAuthors = await this.prisma.author.findMany({
+      where: {
+        id: { in: authorIds },
+      },
+      select: { id: true },
+    });
+    return existingAuthors.length === authorIds.length;
+  }
+
   async findOne(id: string): Promise<Author> {
     const existingAuthor = await this.prisma.author.findUnique({
       where: { id },
