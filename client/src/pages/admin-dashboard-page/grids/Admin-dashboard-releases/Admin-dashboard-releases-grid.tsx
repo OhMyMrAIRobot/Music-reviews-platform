@@ -8,17 +8,38 @@ import AdminDashboardReleasesGridItem from './Admin-dashboard-releases-grid-item
 const AdminDashboardReleasesGrid = () => {
 	const perPage = 10
 
-	const { adminDashboardReleasesStore } = useStore()
+	const { adminDashboardReleasesStore, notificationStore } = useStore()
 
 	const [searchText, setSearchText] = useState<string>('')
 	const [currentPage, setCurrentPage] = useState<number>(1)
 
-	const { execute: fetchReleases, isLoading: isReleasesLoading } = useLoading(
+	const { execute: fetch, isLoading: isReleasesLoading } = useLoading(
 		adminDashboardReleasesStore.fetchReleases
 	)
 
+	const fetchReleases = () => {
+		return fetch(null, searchText, perPage, (currentPage - 1) * perPage)
+	}
+
+	const handleDelete = async (id: string) => {
+		const errors = await adminDashboardReleasesStore.deleteRelease(id)
+		if (errors.length === 0) {
+			notificationStore.addSuccessNotification('Вы успешно удалили релиз!')
+			fetchReleases()
+		} else {
+			errors.forEach(err => notificationStore.addErrorNotification(err))
+		}
+	}
+
 	useEffect(() => {
-		fetchReleases(null, searchText, perPage, (currentPage - 1) * perPage)
+		setCurrentPage(1)
+		fetchReleases()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [searchText])
+
+	useEffect(() => {
+		fetchReleases()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentPage])
 
 	return (
@@ -46,13 +67,13 @@ const AdminDashboardReleasesGrid = () => {
 										isLoading={isReleasesLoading}
 									/>
 							  ))
-							: adminDashboardReleasesStore.releases.map((releases, idx) => (
+							: adminDashboardReleasesStore.releases.map((release, idx) => (
 									<AdminDashboardReleasesGridItem
-										key={releases.id}
-										release={releases}
+										key={release.id}
+										release={release}
 										isLoading={isReleasesLoading}
 										position={(currentPage - 1) * perPage + idx + 1}
-										deleteRelease={() => {}}
+										deleteRelease={() => handleDelete(release.id)}
 									/>
 							  ))}
 					</div>

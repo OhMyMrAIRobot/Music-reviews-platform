@@ -90,6 +90,10 @@ export const ReleaseAPI = {
 		return data
 	},
 
+	async deleteRelease(id: string) {
+		await api.delete(`/releases/${id}`)
+	},
+
 	async addReleaseToFav(releaseId: string): Promise<IFavRelease> {
 		const { data } = await api.post<IFavRelease>('/user-fav-releases', {
 			releaseId,

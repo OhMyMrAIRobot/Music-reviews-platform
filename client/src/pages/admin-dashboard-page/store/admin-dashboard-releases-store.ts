@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
 import { ReleaseAPI } from '../../../api/release-api'
 import {
@@ -36,6 +37,17 @@ class AdminDashboardReleasesStore {
 			this.setReleases(data)
 		} catch (e) {
 			console.log(e)
+		}
+	}
+
+	deleteRelease = async (id: string): Promise<string[]> => {
+		try {
+			await ReleaseAPI.deleteRelease(id)
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
 		}
 	}
 }
