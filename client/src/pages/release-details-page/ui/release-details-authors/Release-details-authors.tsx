@@ -10,6 +10,11 @@ interface IProps {
 const ReleaseDetailsAuthors: FC<IProps> = ({ release }) => {
 	return (
 		<div className='select-none mt-5 flex flex-wrap justify-center lg:justify-start gap-x-2 lg:gap-x-5 items-center lg:-ml-3'>
+			{!release.artists && !release.producers && !release.designers && (
+				<span className='text-sm opacity-50 font-medium ml-3'>
+					Автор не указан!
+				</span>
+			)}
 			{release.artists?.map(artist => (
 				<ReleaseDetailsAuthorsItem
 					author={artist}

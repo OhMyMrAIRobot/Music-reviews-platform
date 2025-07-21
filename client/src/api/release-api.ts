@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { IAdminReleasesResponse } from '../models/release/admin-releases-response'
 import { IFavRelease } from '../models/release/fav-release'
 import { IRelease, IReleaseResponse } from '../models/release/release'
 import { IReleaseDetails } from '../models/release/release-details'
@@ -30,7 +31,7 @@ export const ReleaseAPI = {
 	): Promise<IReleaseResponse> {
 		const { data } = await _api.get<IReleaseResponse>(
 			`list?
-			${typeId ? `type=${typeId}` : ''}
+			${typeId ? `typeId=${typeId}` : ''}
 			${query ? `&query=${query}` : ''}
 			&field=${field}
 			&order=${order}
@@ -38,6 +39,21 @@ export const ReleaseAPI = {
 			&offset=${offset}
 			`
 		)
+		return data
+	},
+
+	async adminFetchReleases(
+		typeId: string | null,
+		query: string | null,
+		limit: number,
+		offset: number
+	): Promise<IAdminReleasesResponse> {
+		const { data } = await api.get<IAdminReleasesResponse>(`/releases
+			?${typeId ? `typeId=${typeId}` : ''}
+			${query ? `&query=${query}` : ''}
+			&limit=${limit}
+			&offset=${offset}`)
+
 		return data
 	},
 

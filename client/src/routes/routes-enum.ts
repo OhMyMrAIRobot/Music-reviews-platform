@@ -25,6 +25,7 @@ export const ROUTES = {
 		PREFIX: 'admin',
 		USERS: 'users',
 		AUTHORS: 'authors',
+		RELEASES: 'releases',
 		NOT_DEFINED: '*',
 	},
 	NOT_DEFINED: '*',

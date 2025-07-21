@@ -148,7 +148,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 											? import.meta.env.VITE_DEFAULT_AVATAR
 											: user.profile?.avatar
 									}`}
-									className='aspect-square'
+									className='aspect-square object-cover'
 								/>
 							</div>
 

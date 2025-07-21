@@ -18,7 +18,9 @@ const MostReviewedCarouselItem: FC<IProps> = ({ release, onClick }) => {
 					loading='lazy'
 					decoding='async'
 					src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
-						release.img
+						release.img === ''
+							? import.meta.env.VITE_DEFAULT_COVER
+							: release.img
 					}`}
 					className='rounded-full w-12 h-12 lg:w-16 lg:h-16 border-2 border-blue-250 hover:scale-110 transition-all duration-500'
 				/>

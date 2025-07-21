@@ -12,18 +12,20 @@ import PencilSvg from '../svg/Pencil-svg'
 import AdminSidebarItem, { IAdminSidebarItemProps } from './Admin-sidebar-item'
 
 const AdminSidebar = () => {
-	const { navigateToMain, navigateToAdminUsers, navigateToAdminAuthors } =
-		useCustomNavigate()
+	const {
+		navigateToMain,
+		navigateToAdminUsers,
+		navigateToAdminAuthors,
+		navigateToAdminReleases,
+	} = useCustomNavigate()
 
 	const { isActive } = useActivePath()
 
 	const adminSidebarItems: IAdminSidebarItemProps[] = [
 		{
 			title: 'Релизы',
-			isActive: false,
-			onClick: () => {
-				throw new Error('Function not implemented.')
-			},
+			isActive: isActive(`/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.RELEASES}`),
+			onClick: navigateToAdminReleases,
 			svgIcon: <ReleaseSvg className={'size-5'} />,
 		},
 		{

@@ -34,7 +34,9 @@ const MostReviewedCarouselCard: FC<IProps> = ({ release, index }) => {
 						loading='lazy'
 						decoding='async'
 						src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
-							release.img
+							release.img === ''
+								? import.meta.env.VITE_DEFAULT_COVER
+								: release.img
 						}`}
 						className='rounded-[15px] lg:rounded-[25px] border border-white/10'
 					/>
