@@ -93,6 +93,14 @@ export const ReleaseAPI = {
 		return data
 	},
 
+	async createRelease(formData: FormData) {
+		return api.post('/releases', formData, {
+			headers: {
+				'Content-Type': 'multipart/form-data',
+			},
+		})
+	},
+
 	async deleteRelease(id: string) {
 		await api.delete(`/releases/${id}`)
 	},

@@ -78,7 +78,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 					{release ? (
 						<button
 							onClick={handleNavigate}
-							className='flex text-left gap-x-2 items-center cursor-pointer hover:bg-white/5 rounded-lg px-2 py-0.5'
+							className='flex text-left gap-x-1.5 items-center cursor-pointer hover:bg-white/5 rounded-lg px-1.5 py-0.5'
 						>
 							<img
 								loading='lazy'

@@ -89,15 +89,15 @@ export const AuthorAPI = {
 	async adminFetchAuthors(
 		typeId: string | null,
 		query: string | null,
-		limit: number,
-		offset: number
+		limit: number | null,
+		offset: number | null
 	): Promise<IAdminAuthorsResponse> {
 		const { data } = await api.get<IAdminAuthorsResponse>(
 			`/authors/?
 			${typeId ? `typeId=${typeId}&` : ''}
 			${query ? `&query=${query}&` : ''}
-			limit=${limit}
-			&offset=${offset}`
+			${limit ? `&limit=${limit}&` : ''}
+			${offset ? `&offset=${offset}&` : ''}`
 		)
 		return data
 	},

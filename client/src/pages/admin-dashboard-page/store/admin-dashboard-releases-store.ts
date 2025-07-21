@@ -43,6 +43,17 @@ class AdminDashboardReleasesStore {
 		}
 	}
 
+	createRelease = async (formData: FormData): Promise<string[]> => {
+		try {
+			await ReleaseAPI.createRelease(formData)
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
+		}
+	}
+
 	deleteRelease = async (id: string): Promise<string[]> => {
 		try {
 			await ReleaseAPI.deleteRelease(id)

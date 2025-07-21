@@ -24,8 +24,8 @@ class AdminDashboardAuthorsStore {
 	fetchAuthors = async (
 		typeId: string | null = null,
 		query: string | null = null,
-		limit: number = 20,
-		offset: number = 0
+		limit: number | null,
+		offset: number | null
 	) => {
 		try {
 			const data = await AuthorAPI.adminFetchAuthors(

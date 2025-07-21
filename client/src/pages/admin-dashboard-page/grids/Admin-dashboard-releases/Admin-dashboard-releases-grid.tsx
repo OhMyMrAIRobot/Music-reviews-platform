@@ -9,6 +9,7 @@ import { SortOrderEnum } from '../../../../models/sort/sort-order-enum'
 import { SortOrder } from '../../../../types/sort-order-type'
 import AdminFilterButton from '../../buttons/Admin-filter-button'
 import AdminDashboardReleasesGridItem from './Admin-dashboard-releases-grid-item'
+import ReleaseFormModal from './Release-form-modal'
 
 const AdminDashboardReleasesGrid = () => {
 	const perPage = 10
@@ -16,6 +17,7 @@ const AdminDashboardReleasesGrid = () => {
 	const { adminDashboardReleasesStore, notificationStore, metaStore } =
 		useStore()
 
+	const [addModalOpen, setAddModalOpen] = useState<boolean>(false)
 	const [searchText, setSearchText] = useState<string>('')
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [activeType, setActiveType] = useState<string>(
@@ -78,6 +80,14 @@ const AdminDashboardReleasesGrid = () => {
 		<div className='flex flex-col h-screen' id='admin-authors'>
 			<AdminHeader title={'Релизы'} setText={setSearchText} />
 
+			{!isTypesLoading && (
+				<ReleaseFormModal
+					isOpen={addModalOpen}
+					onClose={() => setAddModalOpen(false)}
+					refetchReleases={fetchReleases}
+				/>
+			)}
+
 			<div id='admin-users-grid' className='flex flex-col overflow-hidden p-5'>
 				<div className='flex mb-5 text-white/80 border-b border-white/10'>
 					{isTypesLoading
@@ -100,6 +110,14 @@ const AdminDashboardReleasesGrid = () => {
 									onClick={() => setActiveType(type)}
 								/>
 						  ))}
+
+					<div className='ml-auto'>
+						<AdminFilterButton
+							title={'Добавить релиз'}
+							isActive={false}
+							onClick={() => setAddModalOpen(true)}
+						/>
+					</div>
 				</div>
 
 				<AdminDashboardReleasesGridItem

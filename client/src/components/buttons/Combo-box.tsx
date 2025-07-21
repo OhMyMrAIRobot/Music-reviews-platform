@@ -50,7 +50,13 @@ const ComboBox: FC<ComboBoxProps> = ({
 				role='combobox'
 				className='flex w-full gap-x-1 h-full justify-between items-center px-3 text-sm font-medium text-white cursor-pointer py-2'
 			>
-				<span className={`${getRoleColor(selected)}`}>{selected}</span>
+				<span
+					className={`${getRoleColor(selected)} ${
+						selected === placeholder ? 'opacity-50' : ''
+					}`}
+				>
+					{selected}
+				</span>
 				<ArrowBottomSvg className='h-5 w-4 opacity-70' />
 			</button>
 

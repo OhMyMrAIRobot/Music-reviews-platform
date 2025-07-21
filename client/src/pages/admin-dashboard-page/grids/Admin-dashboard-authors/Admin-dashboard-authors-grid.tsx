@@ -21,7 +21,7 @@ const AdminDashboardAuthorsGrid = observer(() => {
 	const [activeType, setActiveType] = useState<string>(
 		AuthorTypesFilterEnum.ALL
 	)
-	const [addModalOpen, setAddModelOpen] = useState<boolean>(false)
+	const [addModalOpen, setAddModalOpen] = useState<boolean>(false)
 
 	const { execute: fetch, isLoading } = useLoading(
 		adminDashboardAuthorsStore.fetchAuthors
@@ -75,7 +75,7 @@ const AdminDashboardAuthorsGrid = observer(() => {
 			{!isTypesLoading && (
 				<AuthorFormModal
 					isOpen={addModalOpen}
-					onClose={() => setAddModelOpen(false)}
+					onClose={() => setAddModalOpen(false)}
 					refetchAuthors={fetchAuthors}
 				/>
 			)}
@@ -109,7 +109,7 @@ const AdminDashboardAuthorsGrid = observer(() => {
 						<AdminFilterButton
 							title={'Добавить автора'}
 							isActive={false}
-							onClick={() => setAddModelOpen(true)}
+							onClick={() => setAddModalOpen(true)}
 						/>
 					</div>
 				</div>
