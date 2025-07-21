@@ -5,6 +5,7 @@ import {
 	IAdminRelease,
 	IAdminReleasesResponse,
 } from '../../../models/release/admin-releases-response'
+import { SortOrder } from '../../../types/sort-order-type'
 
 class AdminDashboardReleasesStore {
 	constructor() {
@@ -24,6 +25,7 @@ class AdminDashboardReleasesStore {
 	fetchReleases = async (
 		typeId: string | null,
 		query: string | null,
+		order: SortOrder | null,
 		limit: number,
 		offset: number
 	) => {
@@ -31,6 +33,7 @@ class AdminDashboardReleasesStore {
 			const data = await ReleaseAPI.adminFetchReleases(
 				typeId,
 				query,
+				order,
 				limit,
 				offset
 			)

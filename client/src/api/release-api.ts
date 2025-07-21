@@ -5,6 +5,7 @@ import { IRelease, IReleaseResponse } from '../models/release/release'
 import { IReleaseDetails } from '../models/release/release-details'
 import { IReleaseType } from '../models/release/release-types'
 import { ITopRatingReleases } from '../models/release/top-rating-releases'
+import { SortOrder } from '../types/sort-order-type'
 import { api } from './api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
@@ -45,12 +46,14 @@ export const ReleaseAPI = {
 	async adminFetchReleases(
 		typeId: string | null,
 		query: string | null,
+		order: SortOrder | null,
 		limit: number,
 		offset: number
 	): Promise<IAdminReleasesResponse> {
 		const { data } = await api.get<IAdminReleasesResponse>(`/releases
 			?${typeId ? `typeId=${typeId}` : ''}
 			${query ? `&query=${query}` : ''}
+			${order ? `&order=${order}` : ''}
 			&limit=${limit}
 			&offset=${offset}`)
 

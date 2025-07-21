@@ -5,6 +5,8 @@ import ReleaseTypeIcon from '../../../../components/release/Release-type-icon'
 import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
 import { ReleaseTypesFilterEnum } from '../../../../models/release/release-types-filter-enum'
+import { SortOrderEnum } from '../../../../models/sort/sort-order-enum'
+import { SortOrder } from '../../../../types/sort-order-type'
 import AdminFilterButton from '../../buttons/Admin-filter-button'
 import AdminDashboardReleasesGridItem from './Admin-dashboard-releases-grid-item'
 
@@ -19,6 +21,7 @@ const AdminDashboardReleasesGrid = () => {
 	const [activeType, setActiveType] = useState<string>(
 		ReleaseTypesFilterEnum.ALL
 	)
+	const [order, setOrder] = useState<SortOrder>(SortOrderEnum.DESC)
 
 	const { execute: fetch, isLoading: isReleasesLoading } = useLoading(
 		adminDashboardReleasesStore.fetchReleases
@@ -34,7 +37,13 @@ const AdminDashboardReleasesGrid = () => {
 			const type = metaStore.releaseTypes.find(type => type.type === activeType)
 			typeId = type?.id ?? null
 		}
-		return fetch(typeId, searchText, perPage, (currentPage - 1) * perPage)
+		return fetch(
+			typeId,
+			searchText,
+			order,
+			perPage,
+			(currentPage - 1) * perPage
+		)
 	}
 
 	const handleDelete = async (id: string) => {
@@ -56,7 +65,7 @@ const AdminDashboardReleasesGrid = () => {
 	useEffect(() => {
 		fetchReleases()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentPage])
+	}, [currentPage, order])
 
 	useEffect(() => {
 		if (metaStore.releaseTypes.length === 0) {
@@ -96,6 +105,14 @@ const AdminDashboardReleasesGrid = () => {
 				<AdminDashboardReleasesGridItem
 					className='bg-white/5 font-medium'
 					isLoading={false}
+					order={order}
+					toggleOrder={() =>
+						setOrder(
+							order === SortOrderEnum.DESC
+								? SortOrderEnum.ASC
+								: SortOrderEnum.DESC
+						)
+					}
 				/>
 
 				{!isReleasesLoading && adminDashboardReleasesStore.count === 0 && (

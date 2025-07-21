@@ -1,9 +1,12 @@
 import { FC, useState } from 'react'
+import ArrowBottomSvg from '../../../../components/header/svg/Arrow-bottom-svg'
 import ConfirmationModal from '../../../../components/modals/Confirmation-modal'
 import ReleaseTypeIcon from '../../../../components/release/Release-type-icon'
 import useCustomNavigate from '../../../../hooks/use-custom-navigate'
 import { AuthorTypesEnum } from '../../../../models/author/author-type'
 import { IAdminRelease } from '../../../../models/release/admin-releases-response'
+import { SortOrderEnum } from '../../../../models/sort/sort-order-enum'
+import { SortOrder } from '../../../../types/sort-order-type'
 import { getAuthorTypeColor } from '../../../../utils/get-author-type-color'
 import { getReleaseTypeColor } from '../../../../utils/get-release-type-color'
 import AdminDeleteButton from '../../buttons/Admin-delete-button'
@@ -14,20 +17,30 @@ interface IProps {
 	release?: IAdminRelease
 	isLoading: boolean
 	position?: number
+	order?: SortOrder
+	toggleOrder?: () => void
 	deleteRelease?: () => void
 }
 
 const AdminDashboardReleasesGridItem: FC<IProps> = ({
 	className,
 	release,
+	order,
 	isLoading,
 	position,
+	toggleOrder,
 	deleteRelease,
 }) => {
 	const { navigateToRelease } = useCustomNavigate()
 
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
+
+	const toggle = () => {
+		if (toggleOrder) {
+			toggleOrder()
+		}
+	}
 
 	const handleDelete = () => {
 		if (deleteRelease) {
@@ -105,11 +118,21 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='col-span-1 text-ellipsis text-wrap font-medium'>
+				<div className='col-span-2 text-ellipsis text-wrap font-medium'>
 					{release ? (
 						<span>{release.publishDate}</span>
 					) : (
-						<span>Дата публикации</span>
+						<button
+							onClick={toggle}
+							className='cursor-pointer hover:text-white flex items-center gap-x-1.5'
+						>
+							<span>Дата создания</span>
+							<ArrowBottomSvg
+								className={`size-3 ${
+									order === SortOrderEnum.ASC ? 'rotate-180' : ''
+								}`}
+							/>
+						</button>
 					)}
 				</div>
 
@@ -159,7 +182,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='col-span-2 line-clamp-2 text-wrap text-ellipsis font-medium mr-2'>
+				<div className='col-span-1 line-clamp-2 text-wrap text-ellipsis font-medium mr-2'>
 					{release ? (
 						release.releaseDesigners.length === 0 ? (
 							<span className='opacity-50 font-medium'>Отсутствует</span>
