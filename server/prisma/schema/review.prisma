@@ -28,7 +28,7 @@ model ReleaseRating {
   releaseId           String @map("release_id")
   releaseRatingTypeId String @map("release_rating_type_id")
 
-  releaseRatingType ReleaseRatingType @relation(fields: [releaseRatingTypeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  releaseRatingType ReleaseRatingType @relation(fields: [releaseRatingTypeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
   release Release @relation(fields: [releaseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 

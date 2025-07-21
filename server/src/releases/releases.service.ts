@@ -227,9 +227,16 @@ export class ReleasesService {
 
   async remove(id: string): Promise<Release> {
     await this.findOne(id);
-    return this.prisma.release.delete({
+
+    const release = await this.prisma.release.delete({
       where: { id },
     });
+
+    if (release.img !== '') {
+      await this.fileService.deleteFile('releases/' + release.img);
+    }
+
+    return release;
   }
 
   async findMostCommentedReleasesLastDay(): Promise<ReleaseResponseData[]> {
@@ -352,11 +359,17 @@ export class ReleasesService {
               rt.type AS release_type,
               (count(DISTINCT rev.id) FILTER (WHERE rev.text IS NOT NULL))::int AS text_count,
               (count(DISTINCT rev.id) FILTER (WHERE rev.text IS NULL))::int AS no_text_count,
-              json_agg(DISTINCT jsonb_build_object('id', a.id,'name', a.name)) as author,
-              json_agg(DISTINCT jsonb_build_object(
-                      'total', rr.total,
-                      'type', rrt.type
-                                )) as ratings,
+              CASE
+                  WHEN count(a.id) = 0 THEN '[]'::json
+                  ELSE json_agg(DISTINCT jsonb_build_object('id', a.id, 'name', a.name))
+              END as author,
+              CASE
+                  WHEN count(rr.total) = 0 THEN '[]'::json
+                  ELSE json_agg(DISTINCT jsonb_build_object(
+                          'total', rr.total,
+                          'type', rrt.type
+              ))
+              END as ratings,
               (SELECT rr.total FROM "Release_ratings" rr
                                         JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
               WHERE rr.release_id = r.id AND rrt.type = 'super_user') AS super_user_rating,
@@ -431,11 +444,17 @@ export class ReleasesService {
           rt.type AS release_type,
           (count(DISTINCT rev.id) FILTER (WHERE rev.text IS NOT NULL))::int AS text_count,
           (count(DISTINCT rev.id) FILTER (WHERE rev.text IS NULL))::int AS no_text_count,
-          json_agg(DISTINCT jsonb_build_object('id', a.id, 'name', a.name)) as author,
-          json_agg(DISTINCT jsonb_build_object(
-                          'total', rr.total,
-                          'type', rrt.type
-          )) as ratings,
+          CASE
+              WHEN count(a.id) = 0 THEN '[]'::json
+              ELSE json_agg(DISTINCT jsonb_build_object('id', a.id, 'name', a.name))
+          END as author,
+          CASE
+              WHEN count(rr.total) = 0 THEN '[]'::json
+              ELSE json_agg(DISTINCT jsonb_build_object(
+                      'total', rr.total,
+                      'type', rrt.type
+          ))
+           END as ratings,
           (SELECT rr.total FROM "Release_ratings" rr
               JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
           WHERE rr.release_id = r.id AND rrt.type = 'super_user') AS super_user_rating,

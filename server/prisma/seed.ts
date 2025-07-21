@@ -453,7 +453,7 @@ async function main() {
         id: '1',
         publishDate: new Date('2024-09-27').toISOString(),
         title: 'всегда ненавидел быть слабым',
-        img: '1.png',
+        img: '0.png',
         releaseTypeId: '1',
       },
       {

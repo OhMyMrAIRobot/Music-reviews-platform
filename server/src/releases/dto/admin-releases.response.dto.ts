@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { Exclude, Expose, Transform, Type } from 'class-transformer';
-import { formatDateCreatedAt } from 'src/users/utils/format-date-created-at';
+import { formatPublishDate } from 'src/users/utils/format-publish-date';
 
 class AuthorDto {
   @Expose()
@@ -70,7 +70,7 @@ export class AdminReleaseDto {
   title: string;
 
   @Expose()
-  @Transform(({ value }) => formatDateCreatedAt(value as Date))
+  @Transform(({ value }) => formatPublishDate(value as Date))
   publishDate: string;
 
   @Expose()

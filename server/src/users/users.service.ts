@@ -256,6 +256,10 @@ export class UsersService {
 
     const profile = await this.profilesService.findByUserId(id);
 
+    const deletedUser = await this.prisma.user.delete({
+      where: { id },
+    });
+
     if (profile.avatar !== '') {
       await this.fileService.deleteFile('avatars/' + profile.avatar);
     }
@@ -263,10 +267,6 @@ export class UsersService {
     if (profile.coverImage !== '') {
       await this.fileService.deleteFile('covers/' + profile.coverImage);
     }
-
-    const deletedUser = await this.prisma.user.delete({
-      where: { id },
-    });
 
     return plainToClass(UserResponseDto, deletedUser);
   }

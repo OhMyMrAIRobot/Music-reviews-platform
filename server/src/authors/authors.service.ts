@@ -248,14 +248,20 @@ export class AuthorsService {
   }
 
   async remove(id: string): Promise<Author> {
-    const author = await this.findOne(id);
+    await this.findOne(id);
 
-    await this.fileService.deleteFile('authors/avatars/' + author.avatarImg);
-    await this.fileService.deleteFile('authors/covers/' + author.coverImg);
-
-    return this.prisma.author.delete({
+    const author = await this.prisma.author.delete({
       where: { id },
     });
+
+    if (author.avatarImg !== '') {
+      await this.fileService.deleteFile('authors/avatars/' + author.avatarImg);
+    }
+    if (author.coverImg !== '') {
+      await this.fileService.deleteFile('authors/covers/' + author.coverImg);
+    }
+
+    return author;
   }
 
   async findById(id: string): Promise<AuthorResponseDto> {

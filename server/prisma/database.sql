@@ -49,25 +49,33 @@ $$
 DECLARE
     rating_row RECORD;
     rating_type_row RECORD;
+    release_exists BOOLEAN;
+    release_id_val TEXT := COALESCE(OLD.release_id, NEW.release_id);
 BEGIN
+    SELECT EXISTS (SELECT 1 FROM "Releases" WHERE id = release_id_val) INTO release_exists;
+    
+    IF NOT release_exists THEN
+        RETURN COALESCE(NEW, OLD);
+    END IF;
+
     DELETE FROM "Release_rating_details"
     WHERE release_rating_id IN (
-        SELECT id FROM "Release_ratings" WHERE release_id = COALESCE(OLD.release_id, NEW.release_id)
+        SELECT id FROM "Release_ratings" WHERE release_id = release_id_val
     );
     
     DELETE FROM "Release_ratings"
-    WHERE release_id = COALESCE(OLD.release_id, NEW.release_id);
+    WHERE release_id = release_id_val;
 
     FOR rating_type_row IN SELECT * FROM "Release_rating_types" LOOP
         INSERT INTO "Release_ratings" (id, release_id, release_rating_type_id, total)
         VALUES (
             gen_random_uuid(),
-            COALESCE(OLD.release_id, NEW.release_id),
+            release_id_val,
             rating_type_row.id,
             CEIL((
                 SELECT COALESCE(AVG(total), 0)
                 FROM "Reviews" r
-                WHERE r.release_id = COALESCE(OLD.release_id, NEW.release_id)
+                WHERE r.release_id = release_id_val
                   AND (
                       (rating_type_row.type = 'super_user' AND EXISTS (
                           SELECT 1 FROM "Users" u WHERE u.id = r.user_id

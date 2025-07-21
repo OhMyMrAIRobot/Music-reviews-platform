@@ -91,8 +91,8 @@ export class ReleasesController {
     return this.releasesService.update(id, updateReleaseDto);
   }
 
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.releasesService.remove(id);
