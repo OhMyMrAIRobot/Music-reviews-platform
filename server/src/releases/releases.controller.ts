@@ -84,11 +84,23 @@ export class ReleasesController {
     return this.releasesService.findAll(query);
   }
 
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'coverImg', maxCount: 1 }]))
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReleaseDto: UpdateReleaseDto) {
-    return this.releasesService.update(id, updateReleaseDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateReleaseDto: UpdateReleaseDto,
+    @UploadedFiles()
+    files: {
+      coverImg?: Express.Multer.File[];
+    },
+  ) {
+    return this.releasesService.update(
+      id,
+      updateReleaseDto,
+      files?.coverImg?.[0],
+    );
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

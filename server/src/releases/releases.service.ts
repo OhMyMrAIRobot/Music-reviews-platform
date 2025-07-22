@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { Prisma, Release } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
@@ -37,7 +41,7 @@ export class ReleasesService {
   async create(
     createReleaseDto: CreateReleaseDto,
     cover?: Express.Multer.File,
-  ): Promise<Release> {
+  ): Promise<AdminReleaseDto> {
     await this.releaseTypesService.findOne(createReleaseDto.releaseTypeId);
 
     const coverImg = cover
@@ -82,7 +86,7 @@ export class ReleasesService {
       }),
     );
 
-    return this.prisma.release.create({
+    const created = await this.prisma.release.create({
       data: {
         title: createReleaseDto.title,
         publishDate: createReleaseDto.publishDate,
@@ -99,10 +103,12 @@ export class ReleasesService {
         },
       },
     });
+
+    return this.getAdminRelease(created.id);
   }
 
   async findAll(query: ReleasesQueryDto): Promise<AdminReleasesResponseDto> {
-    const { limit = 10, offset = 0, typeId, query: searchQuery } = query;
+    const { limit = 10, offset = 0, typeId, query: searchQuery, order } = query;
 
     if (typeId) {
       await this.releaseTypesService.findOne(typeId);
@@ -151,6 +157,7 @@ export class ReleasesService {
         where,
         take: limit,
         skip: offset,
+        orderBy: [{ publishDate: order ?? 'desc' }, { id: 'desc' }],
         include: {
           ReleaseType: true,
           ReleaseArtist: {
@@ -210,19 +217,112 @@ export class ReleasesService {
   async update(
     id: string,
     updateReleaseDto: UpdateReleaseDto,
-  ): Promise<Release> {
-    if (!updateReleaseDto || Object.keys(updateReleaseDto).length === 0) {
+    cover?: Express.Multer.File,
+  ): Promise<AdminReleaseDto> {
+    if (
+      (!updateReleaseDto || Object.keys(updateReleaseDto).length === 0) &&
+      !cover
+    ) {
       throw new NoDataProvidedException();
     }
+
+    const release = await this.findOne(id);
 
     if (updateReleaseDto.releaseTypeId) {
       await this.releaseTypesService.findOne(updateReleaseDto.releaseTypeId);
     }
 
-    return this.prisma.release.update({
-      where: { id },
-      data: updateReleaseDto,
-    });
+    const allAuthorIds = [
+      ...(updateReleaseDto.releaseArtists ?? []),
+      ...(updateReleaseDto.releaseProducers ?? []),
+      ...(updateReleaseDto.releaseDesigners ?? []),
+    ];
+
+    const uniqueAuthorIds = [...new Set(allAuthorIds)];
+    const isAuthorsExist =
+      await this.authorsService.checkAuthorsExist(uniqueAuthorIds);
+
+    if (!isAuthorsExist) {
+      throw new BadRequestException(
+        'Один или несколько указанных авторов не существуют',
+      );
+    }
+
+    let newImg: string | undefined;
+
+    try {
+      if (cover) {
+        newImg = await this.fileService.saveFile(cover, 'releases');
+      }
+
+      const updatedRelease = await this.prisma.$transaction(async (prisma) => {
+        const data: Prisma.ReleaseUpdateInput = {
+          ...(updateReleaseDto.title && { title: updateReleaseDto.title }),
+          ...(updateReleaseDto.publishDate && {
+            publishDate: updateReleaseDto.publishDate,
+          }),
+          ...(newImg && { img: newImg }),
+          ...(updateReleaseDto.releaseTypeId && {
+            ReleaseType: { connect: { id: updateReleaseDto.releaseTypeId } },
+          }),
+        };
+
+        if (updateReleaseDto.releaseArtists !== undefined) {
+          await prisma.releaseArtist.deleteMany({
+            where: { releaseId: id },
+          });
+
+          data.ReleaseArtist = {
+            create: updateReleaseDto.releaseArtists.map((authorId) => ({
+              author: { connect: { id: authorId } },
+            })),
+          };
+        }
+
+        if (updateReleaseDto.releaseProducers !== undefined) {
+          await prisma.releaseProducer.deleteMany({
+            where: { releaseId: id },
+          });
+
+          data.ReleaseProducer = {
+            create: updateReleaseDto.releaseProducers.map((authorId) => ({
+              author: { connect: { id: authorId } },
+            })),
+          };
+        }
+
+        if (updateReleaseDto.releaseDesigners !== undefined) {
+          await prisma.releaseDesigner.deleteMany({
+            where: { releaseId: id },
+          });
+
+          data.ReleaseDesigner = {
+            create: updateReleaseDto.releaseDesigners.map((authorId) => ({
+              author: { connect: { id: authorId } },
+            })),
+          };
+        }
+
+        const updated = await prisma.release.update({
+          where: { id },
+          data,
+        });
+
+        return updated;
+      });
+
+      if (cover && release.img !== '') {
+        await this.fileService.deleteFile('releases/' + release.img);
+      }
+
+      return this.getAdminRelease(updatedRelease.id);
+    } catch (e) {
+      if (newImg) {
+        await this.fileService.deleteFile('releases/' + newImg);
+      }
+      console.log(e);
+      throw new InternalServerErrorException();
+    }
   }
 
   async remove(id: string): Promise<Release> {
@@ -488,5 +588,52 @@ export class ReleasesService {
       await this.prisma.$queryRawUnsafe<ReleaseResponseData[]>(rawQuery);
 
     return { count, releases };
+  }
+
+  private async getAdminRelease(id: string): Promise<AdminReleaseDto> {
+    const release = await this.prisma.release.findUnique({
+      where: { id },
+      include: {
+        ReleaseType: true,
+        ReleaseArtist: {
+          include: {
+            author: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+        ReleaseProducer: {
+          include: {
+            author: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+        ReleaseDesigner: {
+          include: {
+            author: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!release) {
+      throw new EntityNotFoundException('Релиз', 'id', `${id}`);
+    }
+
+    return plainToInstance(AdminReleaseDto, release, {
+      excludeExtraneousValues: true,
+    });
   }
 }

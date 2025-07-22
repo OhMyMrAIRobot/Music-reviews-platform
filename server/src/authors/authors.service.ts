@@ -92,7 +92,7 @@ export class AuthorsService {
   }
 
   async findAll(query: AuthorsQueryDto): Promise<FindAuthorsResponseDto> {
-    const { limit = 10, offset = 0, query: name, typeId } = query;
+    const { limit, offset = 0, query: name, typeId } = query;
 
     if (typeId) {
       await this.authorTypesService.findOne(typeId);
@@ -196,21 +196,13 @@ export class AuthorsService {
       }
     }
 
-    let avatarImg = author.avatarImg;
+    let avatarImg: string | undefined = undefined;
     if (avatar) {
-      if (avatarImg !== '') {
-        await this.fileService.deleteFile(
-          'authors/avatars/' + author.avatarImg,
-        );
-      }
       avatarImg = await this.fileService.saveFile(avatar, 'authors', 'avatars');
     }
 
-    let coverImg = author.coverImg;
+    let coverImg: string | undefined = undefined;
     if (cover) {
-      if (coverImg !== '') {
-        await this.fileService.deleteFile('authors/covers/' + author.coverImg);
-      }
       coverImg = await this.fileService.saveFile(cover, 'authors', 'covers');
     }
 
@@ -243,6 +235,14 @@ export class AuthorsService {
         },
       },
     });
+
+    if (avatar && author.avatarImg !== '') {
+      await this.fileService.deleteFile('authors/avatars/' + author.avatarImg);
+    }
+
+    if (cover && author.coverImg !== '') {
+      await this.fileService.deleteFile('authors/covers/' + author.coverImg);
+    }
 
     return plainToInstance(AuthorDto, updated);
   }

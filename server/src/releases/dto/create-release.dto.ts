@@ -1,6 +1,5 @@
 import { Transform } from 'class-transformer';
 import {
-  ArrayMinSize,
   IsArray,
   IsDate,
   IsNotEmpty,
@@ -30,7 +29,10 @@ export class CreateReleaseDto {
 
   @IsOptional()
   @IsArray({ message: 'Поле releaseArtists должно быть массивом' })
-  @ArrayMinSize(1, { message: 'Должен быть указан хотя бы один автор' })
+  @Transform(({ value }: { value: string[] }) => {
+    if (value[0] === '[]') return [];
+    return value;
+  })
   @IsString({
     each: true,
     message: 'Каждый элемент должен быть строкой (идентификатором)',
@@ -39,7 +41,10 @@ export class CreateReleaseDto {
 
   @IsOptional()
   @IsArray({ message: 'Поле releaseProducers должно быть массивом' })
-  @ArrayMinSize(1, { message: 'Должен быть указан хотя бы один автор' })
+  @Transform(({ value }: { value: string[] }) => {
+    if (value[0] === '[]') return [];
+    return value;
+  })
   @IsString({
     each: true,
     message: 'Каждый элемент должен быть строкой (идентификатором)',
@@ -48,7 +53,10 @@ export class CreateReleaseDto {
 
   @IsOptional()
   @IsArray({ message: 'Поле releaseDesigners должно быть массивом' })
-  @ArrayMinSize(1, { message: 'Должен быть указан хотя бы один автор' })
+  @Transform(({ value }: { value: string[] }) => {
+    if (value[0] === '[]') return [];
+    return value;
+  })
   @IsString({
     each: true,
     message: 'Каждый элемент должен быть строкой (идентификатором)',
