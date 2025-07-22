@@ -1,5 +1,8 @@
 import axios from 'axios'
-import { IAdminReleasesResponse } from '../models/release/admin-releases-response'
+import {
+	IAdminRelease,
+	IAdminReleasesResponse,
+} from '../models/release/admin-releases-response'
 import { IFavRelease } from '../models/release/fav-release'
 import { IRelease, IReleaseResponse } from '../models/release/release'
 import { IReleaseDetails } from '../models/release/release-details'
@@ -93,12 +96,26 @@ export const ReleaseAPI = {
 		return data
 	},
 
-	async createRelease(formData: FormData) {
-		return api.post('/releases', formData, {
+	async createRelease(formData: FormData): Promise<IAdminRelease> {
+		const { data } = await api.post<IAdminRelease>('/releases', formData, {
 			headers: {
 				'Content-Type': 'multipart/form-data',
 			},
 		})
+		return data
+	},
+
+	async updateRelease(id: string, formData: FormData): Promise<IAdminRelease> {
+		const { data } = await api.patch<IAdminRelease>(
+			`/releases/${id}`,
+			formData,
+			{
+				headers: {
+					'Content-Type': 'multipart/form-data',
+				},
+			}
+		)
+		return data
 	},
 
 	async deleteRelease(id: string) {

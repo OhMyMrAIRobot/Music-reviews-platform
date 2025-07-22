@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useMemo, useState } from 'react'
 import ComboBox from '../../../../components/buttons/Combo-box'
 import FormButton from '../../../../components/form-elements/Form-button'
 import FormInput from '../../../../components/form-elements/Form-input'
@@ -7,16 +7,24 @@ import FormMultiSelect from '../../../../components/form-elements/Form-multi-sel
 import ModalOverlay from '../../../../components/modals/Modal-overlay'
 import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
+import { IAdminRelease } from '../../../../models/release/admin-releases-response'
+import { arraysEqual } from '../../../../utils/arrays-equal'
 import SelectImageLabel from '../../../edit-profile-page/ui/labels/Select-image-label'
 import SelectedImageLabel from '../../../edit-profile-page/ui/labels/Selected-image-label'
 
 interface IProps {
 	isOpen: boolean
 	onClose: () => void
+	release?: IAdminRelease
 	refetchReleases: () => void
 }
 
-const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, refetchReleases }) => {
+const ReleaseFormModal: FC<IProps> = ({
+	isOpen,
+	onClose,
+	refetchReleases,
+	release,
+}) => {
 	const {
 		metaStore,
 		adminDashboardAuthorsStore,
@@ -50,49 +58,101 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, refetchReleases }) => {
 			formData.append('coverImg', cover)
 		}
 
-		formData.append('title', title)
-		formData.append('publishDate', date)
+		if (!release || title !== release.title) {
+			formData.append('title', title)
+		}
+
+		if (!release || date !== release.publishDate) {
+			formData.append('publishDate', date)
+		}
 
 		const releaseType = metaStore.releaseTypes.find(
 			entry => entry.type === type
 		)
-		if (releaseType) {
+		if ((!release || release.releaseType.type !== type) && releaseType) {
 			formData.append('releaseTypeId', releaseType.id)
 		}
 
-		selectedArtists.forEach(val => {
-			const author = adminDashboardAuthorsStore.authors.find(
-				entry => entry.name === val
+		if (
+			!release ||
+			!arraysEqual(
+				release.releaseArtists.map(entry => entry.name).sort(),
+				selectedArtists.sort()
 			)
-			if (author) {
-				formData.append('releaseArtists[]', author.id)
+		) {
+			if (selectedArtists.length === 0) {
+				formData.append('releaseArtists[]', '[]')
+			} else {
+				selectedArtists.forEach(val => {
+					const author = adminDashboardAuthorsStore.authors.find(
+						entry => entry.name === val
+					)
+					if (author) {
+						formData.append('releaseArtists[]', author.id)
+					}
+				})
 			}
-		})
+		}
 
-		selectedProducers.forEach(val => {
-			const author = adminDashboardAuthorsStore.authors.find(
-				entry => entry.name === val
+		if (
+			!release ||
+			!arraysEqual(
+				release.releaseProducers.map(entry => entry.name).sort(),
+				selectedProducers.sort()
 			)
-			if (author) {
-				formData.append('releaseProducers[]', author.id)
+		) {
+			if (selectedProducers.length === 0) {
+				formData.append('releaseProducers[]', '[]')
+			} else {
+				selectedProducers.forEach(val => {
+					const author = adminDashboardAuthorsStore.authors.find(
+						entry => entry.name === val
+					)
+					if (author) {
+						formData.append('releaseProducers[]', author.id)
+					}
+				})
 			}
-		})
+		}
 
-		selectedDesigners.forEach(val => {
-			const author = adminDashboardAuthorsStore.authors.find(
-				entry => entry.name === val
+		if (
+			!release ||
+			!arraysEqual(
+				release.releaseDesigners.map(entry => entry.name).sort(),
+				selectedDesigners.sort()
 			)
-			if (author) {
-				formData.append('releaseDesigners[]', author.id)
+		) {
+			if (selectedDesigners.length === 0) {
+				formData.append('releaseDesigners[]', '[]')
+			} else {
+				selectedDesigners.forEach(val => {
+					const author = adminDashboardAuthorsStore.authors.find(
+						entry => entry.name === val
+					)
+					if (author) {
+						formData.append('releaseDesigners[]', author.id)
+					}
+				})
 			}
-		})
+		}
 
-		const errors = await adminDashboardReleasesStore.createRelease(formData)
+		let errors = []
+
+		if (release) {
+			errors = await adminDashboardReleasesStore.updateRelease(
+				release.id,
+				formData
+			)
+		} else {
+			errors = await adminDashboardReleasesStore.createRelease(formData)
+		}
 
 		if (errors.length > 0) {
 			errors.forEach(err => notificationStore.addErrorNotification(err))
 		} else {
-			const message = 'Релиз успешно добавлен!'
+			const message = release
+				? 'Релиз успешно обновлен'
+				: 'Релиз успешно добавлен!'
 
 			notificationStore.addSuccessNotification(message)
 			resetForm()
@@ -111,6 +171,37 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, refetchReleases }) => {
 		setSelectedDesigners([])
 		setSelectedProducers([])
 	}
+
+	const hasChanges = useMemo(() => {
+		if (!release) return true
+		if (cover) return true
+		if (release.title !== title) return true
+		if (release.releaseType.type !== type) return true
+		if (release.publishDate !== date) return true
+
+		const originalArtists = release.releaseArtists.map(entry => entry.name)
+		if (!arraysEqual(originalArtists.sort(), selectedArtists.sort()))
+			return true
+
+		const originalProducers = release.releaseProducers.map(entry => entry.name)
+		if (!arraysEqual(originalProducers.sort(), selectedProducers.sort()))
+			return true
+
+		const originalDesigners = release.releaseDesigners.map(entry => entry.name)
+		if (!arraysEqual(originalDesigners.sort(), selectedDesigners.sort()))
+			return true
+
+		return false
+	}, [
+		cover,
+		date,
+		release,
+		selectedArtists,
+		selectedDesigners,
+		selectedProducers,
+		title,
+		type,
+	])
 
 	const handleCoverChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (event.target.files && event.target.files[0]) {
@@ -131,8 +222,26 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, refetchReleases }) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
-	const formTitle = 'Добавление релиза'
-	const buttonText = 'Добавить'
+	useEffect(() => {
+		if (release && isOpen) {
+			setTitle(release.title)
+			setDate(release.publishDate)
+			setType(release.releaseType.type)
+			if (release.img) {
+				setCoverPreviewUrl(
+					`${import.meta.env.VITE_SERVER_URL}/public/releases/${release.img}`
+				)
+			}
+			setSelectedArtists(release.releaseArtists.map(entry => entry.name))
+			setSelectedProducers(release.releaseProducers.map(entry => entry.name))
+			setSelectedDesigners(release.releaseDesigners.map(entry => entry.name))
+		} else {
+			resetForm()
+		}
+	}, [isOpen, release])
+
+	const formTitle = release ? 'Редактирование релиза' : 'Добавление релиза'
+	const buttonText = release ? 'Сохранить' : 'Добавить'
 	const isFormValid = title.length > 0 && type !== '' && date !== ''
 
 	if (!isOpen) return null
@@ -291,7 +400,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, refetchReleases }) => {
 								title={buttonText}
 								isInvert={true}
 								onClick={handleSubmit}
-								disabled={!isFormValid}
+								disabled={!isFormValid || (!!release && !hasChanges)}
 							/>
 						</div>
 

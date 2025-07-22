@@ -11,6 +11,7 @@ import { getAuthorTypeColor } from '../../../../utils/get-author-type-color'
 import { getReleaseTypeColor } from '../../../../utils/get-release-type-color'
 import AdminDeleteButton from '../../buttons/Admin-delete-button'
 import AdminEditButton from '../../buttons/Admin-edit-button'
+import ReleaseFormModal from './Release-form-modal'
 
 interface IProps {
 	className?: string
@@ -59,12 +60,25 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 	) : (
 		<>
 			{release && (
-				<ConfirmationModal
-					title={'Вы действительно хотите удалить релиз?'}
-					isOpen={confModalOpen}
-					onConfirm={handleDelete}
-					onCancel={() => setConfModalOpen(false)}
-				/>
+				<>
+					{confModalOpen && (
+						<ConfirmationModal
+							title={'Вы действительно хотите удалить релиз?'}
+							isOpen={confModalOpen}
+							onConfirm={handleDelete}
+							onCancel={() => setConfModalOpen(false)}
+						/>
+					)}
+
+					{editModalOpen && (
+						<ReleaseFormModal
+							isOpen={editModalOpen}
+							onClose={() => setEditModalOpen(false)}
+							release={release}
+							refetchReleases={() => {}}
+						/>
+					)}
+				</>
 			)}
 
 			<div

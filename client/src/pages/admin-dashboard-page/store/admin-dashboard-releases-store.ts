@@ -54,6 +54,23 @@ class AdminDashboardReleasesStore {
 		}
 	}
 
+	updateRelease = async (id: string, formData: FormData): Promise<string[]> => {
+		try {
+			const updated = await ReleaseAPI.updateRelease(id, formData)
+			const idx = this.releases.findIndex(entry => entry.id === updated.id)
+			if (idx !== -1) {
+				runInAction(() => {
+					this.releases[idx] = updated
+				})
+			}
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
+		}
+	}
+
 	deleteRelease = async (id: string): Promise<string[]> => {
 		try {
 			await ReleaseAPI.deleteRelease(id)

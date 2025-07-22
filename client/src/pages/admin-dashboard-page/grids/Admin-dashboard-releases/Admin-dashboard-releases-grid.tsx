@@ -1,3 +1,4 @@
+import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
 import AdminHeader from '../../../../components/admin-header/Admin-header'
 import Pagination from '../../../../components/pagination/Pagination'
@@ -11,7 +12,7 @@ import AdminFilterButton from '../../buttons/Admin-filter-button'
 import AdminDashboardReleasesGridItem from './Admin-dashboard-releases-grid-item'
 import ReleaseFormModal from './Release-form-modal'
 
-const AdminDashboardReleasesGrid = () => {
+const AdminDashboardReleasesGrid = observer(() => {
 	const perPage = 10
 
 	const { adminDashboardReleasesStore, notificationStore, metaStore } =
@@ -174,6 +175,6 @@ const AdminDashboardReleasesGrid = () => {
 			</div>
 		</div>
 	)
-}
+})
 
 export default AdminDashboardReleasesGrid
