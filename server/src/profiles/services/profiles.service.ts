@@ -1,4 +1,9 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { UserProfile } from '@prisma/client';
 import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.interface';
 import { FileService } from 'src/file/files.service';
@@ -14,7 +19,6 @@ import {
   ProfileResponseDto,
   QueryProfileResponseDto,
 } from '../dto/profile.response.dto';
-import { UpdateProfileImagesDto } from '../dto/update-profile-images.dto';
 import { UpdateProfileDto } from '../dto/update-profile.dto';
 
 @Injectable()
@@ -45,62 +49,72 @@ export class ProfilesService {
   async updateByUserId(
     userId: string,
     updateProfileDto: UpdateProfileDto,
-    customImages?: UpdateProfileImagesDto,
     avatar?: Express.Multer.File,
     cover?: Express.Multer.File,
   ): Promise<UserProfile> {
-    if (
-      (!customImages || Object.keys(customImages).length === 0) &&
-      Object.keys(updateProfileDto).length === 0 &&
-      !avatar &&
-      !cover
-    ) {
+    if (Object.keys(updateProfileDto).length === 0 && !avatar && !cover) {
       throw new NoDataProvidedException();
     }
 
     const profile = await this.findByUserId(userId);
 
-    let avatarImg = customImages?.avatar ?? profile.avatar;
-    if (
-      (avatar || customImages?.avatar !== undefined) &&
-      profile.avatar !== ''
-    ) {
-      await this.fileService.deleteFile('avatars/' + profile.avatar);
-    }
-    if (avatar) {
-      avatarImg = await this.fileService.saveFile(avatar, 'avatars');
-    }
+    let newAvatarPath: string | undefined = undefined;
+    let newCoverPath: string | undefined = undefined;
 
-    let coverImg = customImages?.coverImage ?? profile.coverImage;
-    if (
-      (cover || customImages?.coverImage !== undefined) &&
-      profile.coverImage !== ''
-    ) {
-      await this.fileService.deleteFile('covers/' + profile.coverImage);
-    }
-    if (cover) {
-      coverImg = await this.fileService.saveFile(cover, 'covers');
-    }
+    try {
+      if (updateProfileDto.clearAvatar) {
+        newAvatarPath = '';
+      }
 
-    return this.prisma.userProfile.update({
-      where: { userId },
-      data: {
-        ...updateProfileDto,
-        coverImage: coverImg,
-        avatar: avatarImg,
-      },
-    });
+      if (updateProfileDto.clearCover) {
+        newCoverPath = '';
+      }
+
+      if (avatar && updateProfileDto.clearAvatar !== true) {
+        newAvatarPath = await this.fileService.saveFile(avatar, 'avatars');
+      }
+
+      if (cover && updateProfileDto.clearCover !== true) {
+        newCoverPath = await this.fileService.saveFile(cover, 'covers');
+      }
+
+      const updated = await this.prisma.userProfile.update({
+        where: { userId },
+        data: {
+          bio: updateProfileDto.bio,
+          avatar: newAvatarPath,
+          coverImage: newCoverPath,
+        },
+      });
+
+      if (updateProfileDto.clearAvatar || avatar) {
+        await this.fileService.deleteFile('avatars/' + profile.avatar);
+      }
+
+      if (updateProfileDto.clearCover || cover) {
+        await this.fileService.deleteFile('covers/' + profile.coverImage);
+      }
+      return updated;
+    } catch {
+      if (newAvatarPath) {
+        await this.fileService.deleteFile('avatars/' + newAvatarPath);
+      }
+      if (newCoverPath) {
+        await this.fileService.deleteFile('covers/' + newCoverPath);
+      }
+
+      throw new InternalServerErrorException();
+    }
   }
 
   async adminUpdate(
     req: IAuthenticatedRequest,
     userId: string,
     dto: UpdateProfileDto,
-    customImages?: UpdateProfileImagesDto,
   ) {
     await this.usersService.checkPermissions(req.user, userId);
 
-    return this.updateByUserId(userId, dto, customImages);
+    return this.updateByUserId(userId, dto);
   }
 
   async findByUserIdExtended(userId: string): Promise<ProfileResponseDto> {

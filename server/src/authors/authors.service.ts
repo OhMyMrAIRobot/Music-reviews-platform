@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { Author, Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
@@ -56,39 +60,51 @@ export class AuthorsService {
       );
     }
 
-    const avatarImg = avatar
-      ? await this.fileService.saveFile(avatar, 'authors', 'avatars')
-      : '';
-
-    const coverImg = cover
-      ? await this.fileService.saveFile(cover, 'authors', 'covers')
-      : '';
-
     const authorTypeConnections = createAuthorDto.types.map((typeId) => ({
       authorType: {
         connect: { id: typeId },
       },
     }));
 
-    const created = await this.prisma.author.create({
-      data: {
-        name: createAuthorDto.name,
-        types: {
-          create: authorTypeConnections,
+    let avatarImg = '';
+    let coverImg = '';
+
+    try {
+      avatarImg = avatar
+        ? await this.fileService.saveFile(avatar, 'authors', 'avatars')
+        : '';
+
+      coverImg = cover
+        ? await this.fileService.saveFile(cover, 'authors', 'covers')
+        : '';
+
+      const created = await this.prisma.author.create({
+        data: {
+          name: createAuthorDto.name,
+          types: {
+            create: authorTypeConnections,
+          },
+          avatarImg,
+          coverImg,
         },
-        avatarImg,
-        coverImg,
-      },
-      include: {
-        types: {
-          include: {
-            authorType: true,
+        include: {
+          types: {
+            include: {
+              authorType: true,
+            },
           },
         },
-      },
-    });
+      });
 
-    return plainToInstance(AuthorDto, created);
+      return plainToInstance(AuthorDto, created);
+    } catch {
+      if (avatarImg !== '')
+        await this.fileService.deleteFile(`authors/avatars/${avatarImg}`);
+
+      if (coverImg !== '')
+        await this.fileService.deleteFile(`authors/covers/${coverImg}`);
+      throw new InternalServerErrorException();
+    }
   }
 
   async findAll(query: AuthorsQueryDto): Promise<FindAuthorsResponseDto> {
@@ -196,55 +212,85 @@ export class AuthorsService {
       }
     }
 
-    let avatarImg: string | undefined = undefined;
-    if (avatar) {
-      avatarImg = await this.fileService.saveFile(avatar, 'authors', 'avatars');
-    }
+    let newAvatarPath: string | undefined = undefined;
+    let newCoverPath: string | undefined = undefined;
 
-    let coverImg: string | undefined = undefined;
-    if (cover) {
-      coverImg = await this.fileService.saveFile(cover, 'authors', 'covers');
-    }
+    try {
+      if (avatar && updateAuthorDto.clearAvatar !== true) {
+        newAvatarPath = await this.fileService.saveFile(
+          avatar,
+          'authors',
+          'avatars',
+        );
+      }
 
-    const data: Prisma.AuthorUpdateInput = {
-      name: updateAuthorDto.name,
-      avatarImg,
-      coverImg,
-    };
+      if (cover && updateAuthorDto.clearCover !== true) {
+        newCoverPath = await this.fileService.saveFile(
+          cover,
+          'authors',
+          'covers',
+        );
+      }
 
-    if (updateAuthorDto.types) {
-      await this.prisma.authorOnType.deleteMany({
-        where: { authorId: id },
+      const updated = await this.prisma.$transaction(async (prisma) => {
+        const data: Prisma.AuthorUpdateInput = {
+          name: updateAuthorDto.name,
+          avatarImg: updateAuthorDto.clearAvatar === true ? '' : newAvatarPath,
+          coverImg: updateAuthorDto.clearCover === true ? '' : newCoverPath,
+        };
+
+        if (updateAuthorDto.types) {
+          await prisma.authorOnType.deleteMany({
+            where: { authorId: id },
+          });
+
+          data.types = {
+            create: updateAuthorDto.types.map((typeId) => ({
+              authorType: { connect: { id: typeId } },
+            })),
+          };
+        }
+
+        return prisma.author.update({
+          where: { id },
+          data,
+          include: {
+            types: {
+              include: {
+                authorType: true,
+              },
+            },
+          },
+        });
       });
 
-      data.types = {
-        create: updateAuthorDto.types.map((typeId) => ({
-          authorType: { connect: { id: typeId } },
-        })),
-      };
+      if (
+        (newAvatarPath || updateAuthorDto.clearAvatar) &&
+        author.avatarImg !== ''
+      ) {
+        await this.fileService.deleteFile(
+          `authors/avatars/${author.avatarImg}`,
+        );
+      }
+
+      if (
+        (newCoverPath || updateAuthorDto.clearCover) &&
+        author.coverImg !== ''
+      ) {
+        await this.fileService.deleteFile(`authors/covers/${author.coverImg}`);
+      }
+
+      return plainToInstance(AuthorDto, updated);
+    } catch {
+      if (newAvatarPath) {
+        await this.fileService.deleteFile(`authors/avatars/${newAvatarPath}`);
+      }
+      if (newCoverPath) {
+        await this.fileService.deleteFile(`authors/covers/${newCoverPath}`);
+      }
+
+      throw new InternalServerErrorException();
     }
-
-    const updated = await this.prisma.author.update({
-      where: { id },
-      data,
-      include: {
-        types: {
-          include: {
-            authorType: true,
-          },
-        },
-      },
-    });
-
-    if (avatar && author.avatarImg !== '') {
-      await this.fileService.deleteFile('authors/avatars/' + author.avatarImg);
-    }
-
-    if (cover && author.coverImg !== '') {
-      await this.fileService.deleteFile('authors/covers/' + author.coverImg);
-    }
-
-    return plainToInstance(AuthorDto, updated);
   }
 
   async remove(id: string): Promise<Author> {

@@ -1,4 +1,4 @@
-import { IsOptional, IsString, Length } from 'class-validator';
+import { IsBoolean, IsOptional, IsString, Length } from 'class-validator';
 
 export class UpdateProfileDto {
   @IsOptional()
@@ -7,4 +7,12 @@ export class UpdateProfileDto {
     message: 'Описание профиля не должно превышать 255 символов',
   })
   bio?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  clearAvatar?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  clearCover?: boolean;
 }

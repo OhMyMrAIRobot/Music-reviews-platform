@@ -251,7 +251,7 @@ export class ReleasesService {
     let newImg: string | undefined;
 
     try {
-      if (cover) {
+      if (cover && updateReleaseDto.clearCover !== true) {
         newImg = await this.fileService.saveFile(cover, 'releases');
       }
 
@@ -261,7 +261,7 @@ export class ReleasesService {
           ...(updateReleaseDto.publishDate && {
             publishDate: updateReleaseDto.publishDate,
           }),
-          ...(newImg && { img: newImg }),
+          img: updateReleaseDto.clearCover ? '' : newImg,
           ...(updateReleaseDto.releaseTypeId && {
             ReleaseType: { connect: { id: updateReleaseDto.releaseTypeId } },
           }),
@@ -311,16 +311,15 @@ export class ReleasesService {
         return updated;
       });
 
-      if (cover && release.img !== '') {
+      if ((cover || updateReleaseDto.clearCover) && release.img !== '') {
         await this.fileService.deleteFile('releases/' + release.img);
       }
 
       return this.getAdminRelease(updatedRelease.id);
-    } catch (e) {
+    } catch {
       if (newImg) {
         await this.fileService.deleteFile('releases/' + newImg);
       }
-      console.log(e);
       throw new InternalServerErrorException();
     }
   }
