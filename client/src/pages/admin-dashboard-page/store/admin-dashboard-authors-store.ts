@@ -11,19 +11,19 @@ class AdminDashboardAuthorsStore {
 		makeAutoObservable(this)
 	}
 
-	total: number = 0
+	count: number = 0
 	authors: IAdminAuthor[] = []
 
 	setAuthors(data: IAdminAuthorsResponse) {
 		runInAction(() => {
-			this.total = data.total
+			this.count = data.count
 			this.authors = data.authors
 		})
 	}
 
 	fetchAuthors = async (
-		typeId: string | null = null,
-		query: string | null = null,
+		typeId: string | null,
+		query: string | null,
 		limit: number | null,
 		offset: number | null
 	) => {
@@ -34,7 +34,6 @@ class AdminDashboardAuthorsStore {
 				limit,
 				offset
 			)
-
 			this.setAuthors(data)
 		} catch (e) {
 			console.log(e)

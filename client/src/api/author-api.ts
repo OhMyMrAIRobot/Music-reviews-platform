@@ -94,10 +94,10 @@ export const AuthorAPI = {
 	): Promise<IAdminAuthorsResponse> {
 		const { data } = await api.get<IAdminAuthorsResponse>(
 			`/authors/?
-			${typeId ? `typeId=${typeId}&` : ''}
-			${query ? `&query=${query}&` : ''}
-			${limit ? `&limit=${limit}&` : ''}
-			${offset ? `&offset=${offset}&` : ''}`
+			${typeId !== null ? `typeId=${typeId}&` : ''}
+			${query !== null ? `query=${query}&` : ''}
+			${limit !== null ? `limit=${limit}&` : ''}
+			${offset !== null ? `offset=${offset}&` : ''}`
 		)
 		return data
 	},

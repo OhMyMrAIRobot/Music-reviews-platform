@@ -37,7 +37,14 @@ const AdminDashboardAuthorsGrid = observer(() => {
 			const type = metaStore.authorTypes.find(type => type.type === activeType)
 			typeId = type?.id ?? null
 		}
-		return fetch(typeId, searchText, perPage, (currentPage - 1) * perPage)
+		return fetch(
+			typeId,
+			searchText.trim() ? searchText.trim() : null,
+			perPage,
+			(currentPage - 1) * perPage
+		).then(() => {
+			console.log(adminDashboardAuthorsStore.count)
+		})
 	}
 
 	const deleteAuthor = async (id: string) => {
@@ -119,7 +126,7 @@ const AdminDashboardAuthorsGrid = observer(() => {
 					isLoading={false}
 				/>
 
-				{!isLoading && adminDashboardAuthorsStore.total === 0 && (
+				{!isLoading && adminDashboardAuthorsStore.count === 0 && (
 					<span className='font-medium mx-auto mt-5 text-lg'>
 						Авторы не найдены!
 					</span>
@@ -146,11 +153,11 @@ const AdminDashboardAuthorsGrid = observer(() => {
 					</div>
 				</div>
 
-				{!isLoading && adminDashboardAuthorsStore.total > 0 && (
+				{!isLoading && adminDashboardAuthorsStore.count > 0 && (
 					<div className='mt-5'>
 						<Pagination
 							currentPage={currentPage}
-							totalItems={adminDashboardAuthorsStore.total}
+							totalItems={adminDashboardAuthorsStore.count}
 							itemsPerPage={perPage}
 							setCurrentPage={setCurrentPage}
 							idToScroll={'admin-authors-grid'}

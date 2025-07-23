@@ -1,7 +1,7 @@
 import { IAuthorType } from './author-type'
 
 export interface IAdminAuthorsResponse {
-	total: number
+	count: number
 	authors: IAdminAuthor[]
 }
 

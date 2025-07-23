@@ -41,19 +41,23 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 		<>
 			{author && (
 				<>
-					<ConfirmationModal
-						title={'Вы действительно хотите удалить автора?'}
-						isOpen={confModalOpen}
-						onConfirm={handleDelete}
-						onCancel={() => setConfModalOpen(false)}
-					/>
+					{confModalOpen && (
+						<ConfirmationModal
+							title={'Вы действительно хотите удалить автора?'}
+							isOpen={confModalOpen}
+							onConfirm={handleDelete}
+							onCancel={() => setConfModalOpen(false)}
+						/>
+					)}
 
-					<AuthorFormModal
-						isOpen={editModalOpen}
-						onClose={() => setEditModelOpen(false)}
-						refetchAuthors={() => {}}
-						author={author}
-					/>
+					{editModalOpen && (
+						<AuthorFormModal
+							isOpen={editModalOpen}
+							onClose={() => setEditModelOpen(false)}
+							refetchAuthors={() => {}}
+							author={author}
+						/>
+					)}
 				</>
 			)}
 			<div

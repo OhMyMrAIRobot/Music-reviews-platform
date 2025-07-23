@@ -13,7 +13,7 @@ export interface IUserInfo {
 interface IUserInfoProfile {
 	avatar: string
 	coverImage: string
-	bio?: string
+	bio: string | null
 	socialMedia: IUserInfoProfileSocial[]
 }
 

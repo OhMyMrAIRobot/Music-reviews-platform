@@ -3,6 +3,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { ProfileAPI } from '../../../api/profile-api'
 import { SocialMediaAPI } from '../../../api/social-media-api'
 import { UserAPI } from '../../../api/user-api'
+import { IUpdateProfileData } from '../../../models/profile/update-profile-data'
 import { IUpdateUserData } from '../../../models/user/update-user-data'
 import { IUser } from '../../../models/user/user'
 import { IUserInfo } from '../../../models/user/user-info'
@@ -121,13 +122,22 @@ class AdminDashboardUsersStore {
 		}
 	}
 
-	updateBio = async (userId: string, bio: string): Promise<string[]> => {
+	updateProfile = async (
+		userId: string,
+		data: IUpdateProfileData
+	): Promise<string[]> => {
 		try {
-			await ProfileAPI.adminUpdateProfileBio(userId, bio)
+			const result = await ProfileAPI.adminUpdateProfile(userId, data)
 
+			const idx = this.users.findIndex(usr => usr.id === this.user?.id)
 			runInAction(() => {
 				if (this.user && this.user.profile) {
-					this.user.profile.bio = bio
+					this.user.profile.avatar = result.avatar
+					this.user.profile.coverImage = result.coverImage
+					this.user.profile.bio = result.bio
+					if (idx !== -1) {
+						this.users[idx].avatar = result.avatar
+					}
 				}
 			})
 
@@ -154,41 +164,6 @@ class AdminDashboardUsersStore {
 				await SocialMediaAPI.adminDeleteSocial(userId, socialId)
 			}
 			await this.fetchUser(userId)
-			return []
-		} catch (e: any) {
-			return Array.isArray(e.response?.data?.message)
-				? e.response?.data?.message
-				: [e.response?.data?.message]
-		}
-	}
-
-	deleteAvatar = async (userId: string): Promise<string[]> => {
-		try {
-			const result = await ProfileAPI.adminDeleteProfileAvatar(userId)
-
-			const idx = this.users.findIndex(usr => usr.id === this.user?.id)
-			runInAction(() => {
-				if (this.user && this.user.profile) {
-					this.user.profile.avatar = result.avatar
-					if (idx !== -1) {
-						this.users[idx].avatar = result.avatar
-					}
-				}
-			})
-			return []
-		} catch (e: any) {
-			return Array.isArray(e.response?.data?.message)
-				? e.response?.data?.message
-				: [e.response?.data?.message]
-		}
-	}
-
-	deleteCover = async (userId: string): Promise<string[]> => {
-		try {
-			const result = await ProfileAPI.adminDeleteProfileCover(userId)
-			if (this.user && this.user.profile) {
-				this.user.profile.coverImage = result.coverImage
-			}
 			return []
 		} catch (e: any) {
 			return Array.isArray(e.response?.data?.message)

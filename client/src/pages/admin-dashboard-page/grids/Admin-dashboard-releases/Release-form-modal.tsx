@@ -1,6 +1,7 @@
 import { FC, useEffect, useMemo, useState } from 'react'
 import ComboBox from '../../../../components/buttons/Combo-box'
 import FormButton from '../../../../components/form-elements/Form-button'
+import FormCheckbox from '../../../../components/form-elements/Form-checkbox'
 import FormInput from '../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../components/form-elements/Form-label'
 import FormMultiSelect from '../../../../components/form-elements/Form-multi-select'
@@ -40,6 +41,7 @@ const ReleaseFormModal: FC<IProps> = ({
 	const [selectedArtists, setSelectedArtists] = useState<string[]>([])
 	const [selectedProducers, setSelectedProducers] = useState<string[]>([])
 	const [selectedDesigners, setSelectedDesigners] = useState<string[]>([])
+	const [deleteCover, setDeleteCover] = useState<boolean>(false)
 
 	const { execute: fetchReleaseTypes, isLoading: isTypesLoading } = useLoading(
 		metaStore.fetchReleaseTypes
@@ -57,6 +59,9 @@ const ReleaseFormModal: FC<IProps> = ({
 		if (cover) {
 			formData.append('coverImg', cover)
 		}
+
+		if (deleteCover && !cover)
+			formData.append('clearCover', JSON.stringify(true))
 
 		if (!release || title !== release.title) {
 			formData.append('title', title)
@@ -178,6 +183,7 @@ const ReleaseFormModal: FC<IProps> = ({
 		if (release.title !== title) return true
 		if (release.releaseType.type !== type) return true
 		if (release.publishDate !== date) return true
+		if (deleteCover) return true
 
 		const originalArtists = release.releaseArtists.map(entry => entry.name)
 		if (!arraysEqual(originalArtists.sort(), selectedArtists.sort()))
@@ -195,6 +201,7 @@ const ReleaseFormModal: FC<IProps> = ({
 	}, [
 		cover,
 		date,
+		deleteCover,
 		release,
 		selectedArtists,
 		selectedDesigners,
@@ -218,7 +225,7 @@ const ReleaseFormModal: FC<IProps> = ({
 		if (metaStore.releaseTypes.length === 0) {
 			promises.push(fetchReleaseTypes())
 		}
-		Promise.all([...promises, fetchAuthors()])
+		Promise.all([...promises, fetchAuthors(null, null, null, null)])
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
@@ -264,7 +271,10 @@ const ReleaseFormModal: FC<IProps> = ({
 								Обложка релиза
 							</h3>
 
-							<SelectImageLabel htmlfor='cover' />
+							<div className='w-[250px]'>
+								<SelectImageLabel htmlfor='cover' />
+							</div>
+
 							<input
 								onChange={handleCoverChange}
 								className='hidden'
@@ -288,6 +298,27 @@ const ReleaseFormModal: FC<IProps> = ({
 									className='object-cover size-full'
 								/>
 							</div>
+
+							{release && (
+								<div
+									className={`flex gap-2 items-center mt-2 ${
+										release.img === '' || cover
+											? 'opacity-50 pointer-events-none'
+											: ''
+									}`}
+								>
+									<FormCheckbox
+										id={'cover-checkbox'}
+										checked={deleteCover}
+										setChecked={setDeleteCover}
+									/>
+									<FormLabel
+										name={'Удалить обложку'}
+										htmlFor={'cover-checkbox'}
+										isRequired={false}
+									/>
+								</div>
+							)}
 						</div>
 					</div>
 
