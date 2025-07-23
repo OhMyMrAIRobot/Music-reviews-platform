@@ -1,9 +1,20 @@
-import { Injectable } from '@nestjs/common';
-import { Release } from '@prisma/client';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
+import { Prisma, Release } from '@prisma/client';
+import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
+import { AuthorsService } from 'src/authors/authors.service';
 import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
 import { NoDataProvidedException } from 'src/exceptions/no-data.exception';
+import { FileService } from 'src/file/files.service';
 import { ReleaseTypesService } from 'src/release-types/release-types.service';
+import {
+  AdminReleaseDto,
+  AdminReleasesResponseDto,
+} from './dto/admin-releases.response.dto';
 import { CreateReleaseDto } from './dto/create-release.dto';
 import {
   QueryReleaseDetailResponseDto,
@@ -23,17 +34,172 @@ export class ReleasesService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly releaseTypesService: ReleaseTypesService,
+    private readonly authorsService: AuthorsService,
+    private readonly fileService: FileService,
   ) {}
 
-  async create(createReleaseDto: CreateReleaseDto): Promise<Release> {
+  async create(
+    createReleaseDto: CreateReleaseDto,
+    cover?: Express.Multer.File,
+  ): Promise<AdminReleaseDto> {
     await this.releaseTypesService.findOne(createReleaseDto.releaseTypeId);
-    return this.prisma.release.create({
-      data: createReleaseDto,
+
+    const coverImg = cover
+      ? await this.fileService.saveFile(cover, 'releases')
+      : '';
+
+    const allAuthorIds = [
+      ...(createReleaseDto.releaseArtists ?? []),
+      ...(createReleaseDto.releaseProducers ?? []),
+      ...(createReleaseDto.releaseDesigners ?? []),
+    ];
+
+    const uniqueAuthorIds = [...new Set(allAuthorIds)];
+    const isAuthorsExist =
+      await this.authorsService.checkAuthorsExist(uniqueAuthorIds);
+
+    if (!isAuthorsExist) {
+      throw new BadRequestException(
+        'Один или несколько указанных авторов не существуют',
+      );
+    }
+
+    const artistConnections = createReleaseDto.releaseArtists?.map((id) => ({
+      author: {
+        connect: { id },
+      },
+    }));
+
+    const producerConnections = createReleaseDto.releaseProducers?.map(
+      (id) => ({
+        author: {
+          connect: { id },
+        },
+      }),
+    );
+
+    const designerConnections = createReleaseDto.releaseDesigners?.map(
+      (id) => ({
+        author: {
+          connect: { id },
+        },
+      }),
+    );
+
+    const created = await this.prisma.release.create({
+      data: {
+        title: createReleaseDto.title,
+        publishDate: createReleaseDto.publishDate,
+        img: coverImg,
+        releaseTypeId: createReleaseDto.releaseTypeId,
+        ReleaseArtist: {
+          create: artistConnections,
+        },
+        ReleaseProducer: {
+          create: producerConnections,
+        },
+        ReleaseDesigner: {
+          create: designerConnections,
+        },
+      },
     });
+
+    return this.getAdminRelease(created.id);
   }
 
-  async findAll(): Promise<Release[]> {
-    return this.prisma.release.findMany();
+  async findAll(query: ReleasesQueryDto): Promise<AdminReleasesResponseDto> {
+    const { limit = 10, offset = 0, typeId, query: searchQuery, order } = query;
+
+    if (typeId) {
+      await this.releaseTypesService.findOne(typeId);
+    }
+
+    const andConditions: Prisma.ReleaseWhereInput[] = [];
+
+    if (typeId) {
+      andConditions.push({ releaseTypeId: typeId });
+    }
+
+    if (searchQuery) {
+      const orConditions: Prisma.ReleaseWhereInput[] = [
+        { title: { contains: searchQuery, mode: 'insensitive' } },
+        {
+          ReleaseArtist: {
+            some: {
+              author: { name: { contains: searchQuery, mode: 'insensitive' } },
+            },
+          },
+        },
+        {
+          ReleaseProducer: {
+            some: {
+              author: { name: { contains: searchQuery, mode: 'insensitive' } },
+            },
+          },
+        },
+        {
+          ReleaseDesigner: {
+            some: {
+              author: { name: { contains: searchQuery, mode: 'insensitive' } },
+            },
+          },
+        },
+      ];
+      andConditions.push({ OR: orConditions });
+    }
+
+    const where: Prisma.ReleaseWhereInput =
+      andConditions.length > 0 ? { AND: andConditions } : {};
+
+    const [count, releases] = await Promise.all([
+      this.prisma.release.count({ where }),
+      this.prisma.release.findMany({
+        where,
+        take: limit,
+        skip: offset,
+        orderBy: [{ publishDate: order ?? 'desc' }, { id: 'desc' }],
+        include: {
+          ReleaseType: true,
+          ReleaseArtist: {
+            include: {
+              author: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
+          ReleaseProducer: {
+            include: {
+              author: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
+          ReleaseDesigner: {
+            include: {
+              author: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+      }),
+    ]);
+
+    return {
+      count,
+      releases: plainToInstance(AdminReleaseDto, releases, {
+        excludeExtraneousValues: true,
+      }),
+    };
   }
 
   async findOne(id: string): Promise<Release> {
@@ -51,26 +217,125 @@ export class ReleasesService {
   async update(
     id: string,
     updateReleaseDto: UpdateReleaseDto,
-  ): Promise<Release> {
-    if (!updateReleaseDto || Object.keys(updateReleaseDto).length === 0) {
+    cover?: Express.Multer.File,
+  ): Promise<AdminReleaseDto> {
+    if (
+      (!updateReleaseDto || Object.keys(updateReleaseDto).length === 0) &&
+      !cover
+    ) {
       throw new NoDataProvidedException();
     }
+
+    const release = await this.findOne(id);
 
     if (updateReleaseDto.releaseTypeId) {
       await this.releaseTypesService.findOne(updateReleaseDto.releaseTypeId);
     }
 
-    return this.prisma.release.update({
-      where: { id },
-      data: updateReleaseDto,
-    });
+    const allAuthorIds = [
+      ...(updateReleaseDto.releaseArtists ?? []),
+      ...(updateReleaseDto.releaseProducers ?? []),
+      ...(updateReleaseDto.releaseDesigners ?? []),
+    ];
+
+    const uniqueAuthorIds = [...new Set(allAuthorIds)];
+    const isAuthorsExist =
+      await this.authorsService.checkAuthorsExist(uniqueAuthorIds);
+
+    if (!isAuthorsExist) {
+      throw new BadRequestException(
+        'Один или несколько указанных авторов не существуют',
+      );
+    }
+
+    let newImg: string | undefined;
+
+    try {
+      if (cover && updateReleaseDto.clearCover !== true) {
+        newImg = await this.fileService.saveFile(cover, 'releases');
+      }
+
+      const updatedRelease = await this.prisma.$transaction(async (prisma) => {
+        const data: Prisma.ReleaseUpdateInput = {
+          ...(updateReleaseDto.title && { title: updateReleaseDto.title }),
+          ...(updateReleaseDto.publishDate && {
+            publishDate: updateReleaseDto.publishDate,
+          }),
+          img: updateReleaseDto.clearCover ? '' : newImg,
+          ...(updateReleaseDto.releaseTypeId && {
+            ReleaseType: { connect: { id: updateReleaseDto.releaseTypeId } },
+          }),
+        };
+
+        if (updateReleaseDto.releaseArtists !== undefined) {
+          await prisma.releaseArtist.deleteMany({
+            where: { releaseId: id },
+          });
+
+          data.ReleaseArtist = {
+            create: updateReleaseDto.releaseArtists.map((authorId) => ({
+              author: { connect: { id: authorId } },
+            })),
+          };
+        }
+
+        if (updateReleaseDto.releaseProducers !== undefined) {
+          await prisma.releaseProducer.deleteMany({
+            where: { releaseId: id },
+          });
+
+          data.ReleaseProducer = {
+            create: updateReleaseDto.releaseProducers.map((authorId) => ({
+              author: { connect: { id: authorId } },
+            })),
+          };
+        }
+
+        if (updateReleaseDto.releaseDesigners !== undefined) {
+          await prisma.releaseDesigner.deleteMany({
+            where: { releaseId: id },
+          });
+
+          data.ReleaseDesigner = {
+            create: updateReleaseDto.releaseDesigners.map((authorId) => ({
+              author: { connect: { id: authorId } },
+            })),
+          };
+        }
+
+        const updated = await prisma.release.update({
+          where: { id },
+          data,
+        });
+
+        return updated;
+      });
+
+      if ((cover || updateReleaseDto.clearCover) && release.img !== '') {
+        await this.fileService.deleteFile('releases/' + release.img);
+      }
+
+      return this.getAdminRelease(updatedRelease.id);
+    } catch {
+      if (newImg) {
+        await this.fileService.deleteFile('releases/' + newImg);
+      }
+      throw new InternalServerErrorException();
+    }
   }
 
   async remove(id: string): Promise<Release> {
     await this.findOne(id);
-    return this.prisma.release.delete({
+
+    const release = await this.prisma.release.delete({
       where: { id },
     });
+
+    if (release.img !== '') {
+      await this.fileService.deleteFile('releases/' + release.img);
+    }
+
+    return release;
   }
 
   async findMostCommentedReleasesLastDay(): Promise<ReleaseResponseData[]> {
@@ -193,11 +458,17 @@ export class ReleasesService {
               rt.type AS release_type,
               (count(DISTINCT rev.id) FILTER (WHERE rev.text IS NOT NULL))::int AS text_count,
               (count(DISTINCT rev.id) FILTER (WHERE rev.text IS NULL))::int AS no_text_count,
-              json_agg(DISTINCT jsonb_build_object('id', a.id,'name', a.name)) as author,
-              json_agg(DISTINCT jsonb_build_object(
-                      'total', rr.total,
-                      'type', rrt.type
-                                )) as ratings,
+              CASE
+                  WHEN count(a.id) = 0 THEN '[]'::json
+                  ELSE json_agg(DISTINCT jsonb_build_object('id', a.id, 'name', a.name))
+              END as author,
+              CASE
+                  WHEN count(rr.total) = 0 THEN '[]'::json
+                  ELSE json_agg(DISTINCT jsonb_build_object(
+                          'total', rr.total,
+                          'type', rrt.type
+              ))
+              END as ratings,
               (SELECT rr.total FROM "Release_ratings" rr
                                         JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
               WHERE rr.release_id = r.id AND rrt.type = 'super_user') AS super_user_rating,
@@ -232,7 +503,7 @@ export class ReleasesService {
   }
 
   async findReleases(query: ReleasesQueryDto): Promise<ReleaseResponseDto> {
-    const type = query.type ? `'${query.type}'` : null;
+    const type = query.typeId ? `'${query.typeId}'` : null;
 
     const fieldMap: Record<string, string> = {
       noTextCount: 'no_text_count',
@@ -252,7 +523,7 @@ export class ReleasesService {
     const count = await this.prisma.release.count({
       where: {
         AND: [
-          { releaseTypeId: query.type ?? undefined },
+          { releaseTypeId: query.typeId ?? undefined },
           {
             title: {
               contains: title ?? '',
@@ -272,11 +543,17 @@ export class ReleasesService {
           rt.type AS release_type,
           (count(DISTINCT rev.id) FILTER (WHERE rev.text IS NOT NULL))::int AS text_count,
           (count(DISTINCT rev.id) FILTER (WHERE rev.text IS NULL))::int AS no_text_count,
-          json_agg(DISTINCT jsonb_build_object('id', a.id, 'name', a.name)) as author,
-          json_agg(DISTINCT jsonb_build_object(
-                          'total', rr.total,
-                          'type', rrt.type
-          )) as ratings,
+          CASE
+              WHEN count(a.id) = 0 THEN '[]'::json
+              ELSE json_agg(DISTINCT jsonb_build_object('id', a.id, 'name', a.name))
+          END as author,
+          CASE
+              WHEN count(rr.total) = 0 THEN '[]'::json
+              ELSE json_agg(DISTINCT jsonb_build_object(
+                      'total', rr.total,
+                      'type', rrt.type
+          ))
+           END as ratings,
           (SELECT rr.total FROM "Release_ratings" rr
               JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
           WHERE rr.release_id = r.id AND rrt.type = 'super_user') AS super_user_rating,
@@ -310,5 +587,52 @@ export class ReleasesService {
       await this.prisma.$queryRawUnsafe<ReleaseResponseData[]>(rawQuery);
 
     return { count, releases };
+  }
+
+  private async getAdminRelease(id: string): Promise<AdminReleaseDto> {
+    const release = await this.prisma.release.findUnique({
+      where: { id },
+      include: {
+        ReleaseType: true,
+        ReleaseArtist: {
+          include: {
+            author: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+        ReleaseProducer: {
+          include: {
+            author: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+        ReleaseDesigner: {
+          include: {
+            author: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!release) {
+      throw new EntityNotFoundException('Релиз', 'id', `${id}`);
+    }
+
+    return plainToInstance(AdminReleaseDto, release, {
+      excludeExtraneousValues: true,
+    });
   }
 }

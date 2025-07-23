@@ -1,4 +1,4 @@
-export function formatUserCreatedAt(date: Date): string {
+export function formatDateCreatedAt(date: Date): string {
   if (!date) return '';
 
   const pad = (n: number) => n.toString().padStart(2, '0');

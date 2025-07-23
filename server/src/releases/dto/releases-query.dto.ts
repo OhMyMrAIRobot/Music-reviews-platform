@@ -8,7 +8,7 @@ import { SortOrder } from 'src/types/sort-order.type';
 export class ReleasesQueryDto {
   @IsOptional()
   @IsEntityId()
-  type?: string;
+  typeId?: string;
 
   @IsOptional()
   @IsIn([

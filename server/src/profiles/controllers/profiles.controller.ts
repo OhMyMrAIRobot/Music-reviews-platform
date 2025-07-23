@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   Patch,
@@ -60,7 +59,6 @@ export class ProfilesController {
     return this.profilesService.updateByUserId(
       req.user.id,
       updateProfileDto,
-      {},
       files?.avatarImg?.[0],
       files?.coverImg?.[0],
     );
@@ -82,63 +80,5 @@ export class ProfilesController {
     @Body() updateProfileDto: UpdateProfileDto,
   ): Promise<UserProfile> {
     return this.profilesService.adminUpdate(req, userId, updateProfileDto);
-  }
-
-  @Delete('avatar')
-  @UseGuards(JwtAuthGuard)
-  deleteAvatar(@Request() req: IAuthenticatedRequest) {
-    return this.profilesService.updateByUserId(
-      req.user.id,
-      {},
-      {
-        avatar: '',
-      },
-    );
-  }
-
-  @Delete('cover')
-  @UseGuards(JwtAuthGuard)
-  deleteCover(@Request() req: IAuthenticatedRequest) {
-    return this.profilesService.updateByUserId(
-      req.user.id,
-      {},
-      {
-        coverImage: '',
-      },
-    );
-  }
-
-  @Delete(':userId/avatar')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
-  adminDeleteAvatar(
-    @Request() req: IAuthenticatedRequest,
-    @Param('userId') userId: string,
-  ) {
-    return this.profilesService.adminUpdate(
-      req,
-      userId,
-      {},
-      {
-        avatar: '',
-      },
-    );
-  }
-
-  @Delete(':userId/cover')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
-  adminDeleteCover(
-    @Request() req: IAuthenticatedRequest,
-    @Param('userId') userId: string,
-  ) {
-    return this.profilesService.adminUpdate(
-      req,
-      userId,
-      {},
-      {
-        coverImage: '',
-      },
-    );
   }
 }

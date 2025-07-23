@@ -7,8 +7,11 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
@@ -24,11 +27,6 @@ import { ReleasesService } from './releases.service';
 @Controller('releases')
 export class ReleasesController {
   constructor(private readonly releasesService: ReleasesService) {}
-
-  @Get()
-  findAll() {
-    return this.releasesService.findAll();
-  }
 
   @Get('list/most-commented')
   findMostCommented() {
@@ -65,22 +63,48 @@ export class ReleasesController {
     return this.releasesService.findOne(id);
   }
 
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'coverImg', maxCount: 1 }]))
   @Post()
-  create(@Body() createReleaseDto: CreateReleaseDto) {
-    return this.releasesService.create(createReleaseDto);
+  create(
+    @Body() createReleaseDto: CreateReleaseDto,
+    @UploadedFiles()
+    files: {
+      coverImg?: Express.Multer.File[];
+    },
+  ) {
+    return this.releasesService.create(createReleaseDto, files?.coverImg?.[0]);
   }
 
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Get()
+  findAll(@Query() query: ReleasesQueryDto) {
+    return this.releasesService.findAll(query);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'coverImg', maxCount: 1 }]))
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReleaseDto: UpdateReleaseDto) {
-    return this.releasesService.update(id, updateReleaseDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateReleaseDto: UpdateReleaseDto,
+    @UploadedFiles()
+    files: {
+      coverImg?: Express.Multer.File[];
+    },
+  ) {
+    return this.releasesService.update(
+      id,
+      updateReleaseDto,
+      files?.coverImg?.[0],
+    );
   }
 
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.releasesService.remove(id);

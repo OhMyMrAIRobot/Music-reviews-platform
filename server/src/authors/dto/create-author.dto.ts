@@ -6,7 +6,7 @@ export class CreateAuthorDto {
   name: string;
 
   @IsArray({ message: 'Поле types должно быть массивом' })
-  @ArrayMinSize(1, { message: 'Должна быть хотя бы один тип' })
+  @ArrayMinSize(1, { message: 'Должен быть хотя бы один тип' })
   @IsString({
     each: true,
     message: 'Каждый тип должен быть строкой (идентификатором)',

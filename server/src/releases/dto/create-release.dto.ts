@@ -1,8 +1,10 @@
+import { Transform } from 'class-transformer';
 import {
+  IsArray,
   IsDate,
   IsNotEmpty,
+  IsOptional,
   IsString,
-  IsUrl,
   Length,
   MaxDate,
   MinDate,
@@ -13,20 +15,51 @@ export class CreateReleaseDto {
   @Length(1, 50, { message: 'Длина названия должна быть от 1 до 50 символов' })
   title: string;
 
-  @IsDate({ message: 'Дата публикации должна быть корректной датой' })
-  @MinDate(new Date('1400-01-01'), {
-    message: 'Дата публикации не может быть раньше 1400 года',
+  @IsDate({ message: 'Дата должна быть валидной датой' })
+  @MaxDate(new Date(), { message: 'Дата не может быть позже текущего дня' })
+  @MinDate(new Date(1600, 0, 1), {
+    message: 'Дата не может быть раньше 1600 года',
   })
-  @MaxDate(new Date(new Date().setFullYear(new Date().getFullYear() + 3)), {
-    message: `Дата публикации не может быть позже ${new Date().getFullYear() + 3} года`,
-  })
+  @Transform(({ value }: { value: Date }) => new Date(value))
   publishDate: Date;
-
-  @Length(1, 255, { message: 'Длина обложки должна быть от 1 до 255 символов' })
-  @IsUrl({}, { message: 'Обложка должна быть корректным URL-адресом' })
-  img: string;
 
   @IsString({ message: 'Поле releaseTypeId должно быть строкой' })
   @IsNotEmpty({ message: 'Поле releaseTypeId не должно быть пустым' })
   releaseTypeId: string;
+
+  @IsOptional()
+  @IsArray({ message: 'Поле releaseArtists должно быть массивом' })
+  @Transform(({ value }: { value: string[] }) => {
+    if (value[0] === '[]') return [];
+    return value;
+  })
+  @IsString({
+    each: true,
+    message: 'Каждый элемент должен быть строкой (идентификатором)',
+  })
+  releaseArtists?: string[];
+
+  @IsOptional()
+  @IsArray({ message: 'Поле releaseProducers должно быть массивом' })
+  @Transform(({ value }: { value: string[] }) => {
+    if (value[0] === '[]') return [];
+    return value;
+  })
+  @IsString({
+    each: true,
+    message: 'Каждый элемент должен быть строкой (идентификатором)',
+  })
+  releaseProducers?: string[];
+
+  @IsOptional()
+  @IsArray({ message: 'Поле releaseDesigners должно быть массивом' })
+  @Transform(({ value }: { value: string[] }) => {
+    if (value[0] === '[]') return [];
+    return value;
+  })
+  @IsString({
+    each: true,
+    message: 'Каждый элемент должен быть строкой (идентификатором)',
+  })
+  releaseDesigners?: string[];
 }
