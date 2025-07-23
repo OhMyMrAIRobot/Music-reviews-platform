@@ -1,6 +1,5 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router'
 import useCustomNavigate from '../../../hooks/use-custom-navigate'
 import { useLoading } from '../../../hooks/use-loading'
 import { useStore } from '../../../hooks/use-store'
@@ -14,10 +13,12 @@ import PopupProfileButton from './Popup-profile-button'
 const ProfileButton = observer(() => {
 	const { authStore, profileStore, notificationStore } = useStore()
 
-	const { navigateToMain, navigatoToProfile, navigateToEditProfile } =
-		useCustomNavigate()
-
-	const navigate = useNavigate()
+	const {
+		navigateToMain,
+		navigatoToProfile,
+		navigateToEditProfile,
+		navigateToAdminReleases,
+	} = useCustomNavigate()
 
 	const { execute: fetchProfile, isLoading } = useLoading(
 		profileStore.fetchProfile
@@ -119,7 +120,7 @@ const ProfileButton = observer(() => {
 						text='Админ. панель'
 						icon={<ShieldSvg className='size-6.5' />}
 						onClick={() => {
-							if (authStore.user?.id) navigate('/admin')
+							if (authStore.user?.id) navigateToAdminReleases()
 						}}
 					/>
 				)}

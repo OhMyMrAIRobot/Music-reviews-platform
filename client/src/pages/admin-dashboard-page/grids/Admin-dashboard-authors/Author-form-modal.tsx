@@ -1,5 +1,6 @@
 import { FC, useEffect, useMemo, useState } from 'react'
 import FormButton from '../../../../components/form-elements/Form-button'
+import FormCheckbox from '../../../../components/form-elements/Form-checkbox'
 import FormInput from '../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../components/form-elements/Form-label'
 import FormMultiSelect from '../../../../components/form-elements/Form-multi-select'
@@ -31,6 +32,8 @@ const AuthorFormModal: FC<IProps> = ({
 	const [cover, setCover] = useState<File | null>(null)
 	const [name, setName] = useState<string>('')
 	const [selectedTypes, setSelectedTypes] = useState<string[]>([])
+	const [deleteAvatar, setDeleteAvatar] = useState<boolean>(false)
+	const [deleteCover, setDeleteCover] = useState<boolean>(false)
 
 	const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string | null>(null)
 	const [coverPreviewUrl, setCoverPreviewUrl] = useState<string | null>(null)
@@ -79,6 +82,11 @@ const AuthorFormModal: FC<IProps> = ({
 		if (avatar) formData.append('avatarImg', avatar)
 		if (cover) formData.append('coverImg', cover)
 
+		if (deleteAvatar && !avatar)
+			formData.append('clearAvatar', JSON.stringify(true))
+		if (deleteCover && !cover)
+			formData.append('clearCover', JSON.stringify(true))
+
 		let errors: string[] = []
 
 		if (author) {
@@ -114,8 +122,10 @@ const AuthorFormModal: FC<IProps> = ({
 
 		if (avatar || cover) return true
 
+		if (deleteAvatar || deleteCover) return true
+
 		return false
-	}, [author, name, selectedTypes, avatar, cover])
+	}, [author, name, selectedTypes, avatar, cover, deleteAvatar, deleteCover])
 
 	const resetForm = () => {
 		setName('')
@@ -124,6 +134,8 @@ const AuthorFormModal: FC<IProps> = ({
 		setCover(null)
 		setAvatarPreviewUrl(null)
 		setCoverPreviewUrl(null)
+		setDeleteAvatar(false)
+		setDeleteCover(false)
 	}
 
 	const { execute: fetchTypes, isLoading: isTypesLoading } = useLoading(
@@ -185,7 +197,10 @@ const AuthorFormModal: FC<IProps> = ({
 								Аватар
 							</h3>
 
-							<SelectImageLabel htmlfor='avatar' />
+							<div className='w-[250px]'>
+								<SelectImageLabel htmlfor='avatar' />
+							</div>
+
 							<input
 								onChange={handleAvatarChange}
 								className='hidden'
@@ -211,13 +226,38 @@ const AuthorFormModal: FC<IProps> = ({
 									className='object-cover size-full'
 								/>
 							</div>
+
+							{author && (
+								<div
+									className={`flex gap-2 items-center mt-2 ${
+										author.avatarImg === '' || avatar
+											? 'opacity-50 pointer-events-none'
+											: ''
+									}`}
+								>
+									<FormCheckbox
+										id={'avatar-checkbox'}
+										checked={deleteAvatar}
+										setChecked={setDeleteAvatar}
+									/>
+									<FormLabel
+										name={'Удалить аватар'}
+										htmlFor={'avatar-checkbox'}
+										isRequired={false}
+									/>
+								</div>
+							)}
 						</div>
 
 						<div className='grid gap-2 max-w-[70%] w-full overflow-hidden'>
 							<h3 className='text-2xl font-semibold leading-none tracking-tight'>
 								Обложка
 							</h3>
-							<SelectImageLabel htmlfor='cover' />
+
+							<div className='w-[250px]'>
+								<SelectImageLabel htmlfor='cover' />
+							</div>
+
 							<input
 								onChange={handleCoverChange}
 								className='hidden'
@@ -241,6 +281,27 @@ const AuthorFormModal: FC<IProps> = ({
 									className='aspect-video size-full'
 								/>
 							</div>
+
+							{author && (
+								<div
+									className={`flex gap-2 items-center mt-2 ${
+										author.coverImg === '' || cover
+											? 'opacity-50 pointer-events-none'
+											: ''
+									}`}
+								>
+									<FormCheckbox
+										id={'cover-checkbox'}
+										checked={deleteCover}
+										setChecked={setDeleteCover}
+									/>
+									<FormLabel
+										name={'Удалить обложку'}
+										htmlFor={'cover-checkbox'}
+										isRequired={false}
+									/>
+								</div>
+							)}
 						</div>
 					</div>
 

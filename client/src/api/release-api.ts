@@ -1,9 +1,14 @@
 import axios from 'axios'
+import {
+	IAdminRelease,
+	IAdminReleasesResponse,
+} from '../models/release/admin-releases-response'
 import { IFavRelease } from '../models/release/fav-release'
 import { IRelease, IReleaseResponse } from '../models/release/release'
 import { IReleaseDetails } from '../models/release/release-details'
 import { IReleaseType } from '../models/release/release-types'
 import { ITopRatingReleases } from '../models/release/top-rating-releases'
+import { SortOrder } from '../types/sort-order-type'
 import { api } from './api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
@@ -30,7 +35,7 @@ export const ReleaseAPI = {
 	): Promise<IReleaseResponse> {
 		const { data } = await _api.get<IReleaseResponse>(
 			`list?
-			${typeId ? `type=${typeId}` : ''}
+			${typeId ? `typeId=${typeId}` : ''}
 			${query ? `&query=${query}` : ''}
 			&field=${field}
 			&order=${order}
@@ -38,6 +43,23 @@ export const ReleaseAPI = {
 			&offset=${offset}
 			`
 		)
+		return data
+	},
+
+	async adminFetchReleases(
+		typeId: string | null,
+		query: string | null,
+		order: SortOrder | null,
+		limit: number,
+		offset: number
+	): Promise<IAdminReleasesResponse> {
+		const { data } = await api.get<IAdminReleasesResponse>(`/releases
+			?${typeId ? `typeId=${typeId}` : ''}
+			${query ? `&query=${query}` : ''}
+			${order ? `&order=${order}` : ''}
+			&limit=${limit}
+			&offset=${offset}`)
+
 		return data
 	},
 
@@ -72,6 +94,32 @@ export const ReleaseAPI = {
 			`${SERVER_URL}/user-fav-releases/release/${releaseId}`
 		)
 		return data
+	},
+
+	async createRelease(formData: FormData): Promise<IAdminRelease> {
+		const { data } = await api.post<IAdminRelease>('/releases', formData, {
+			headers: {
+				'Content-Type': 'multipart/form-data',
+			},
+		})
+		return data
+	},
+
+	async updateRelease(id: string, formData: FormData): Promise<IAdminRelease> {
+		const { data } = await api.patch<IAdminRelease>(
+			`/releases/${id}`,
+			formData,
+			{
+				headers: {
+					'Content-Type': 'multipart/form-data',
+				},
+			}
+		)
+		return data
+	},
+
+	async deleteRelease(id: string) {
+		await api.delete(`/releases/${id}`)
 	},
 
 	async addReleaseToFav(releaseId: string): Promise<IFavRelease> {

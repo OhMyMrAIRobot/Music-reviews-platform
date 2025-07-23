@@ -73,7 +73,10 @@ const UploadCoverForm = observer(() => {
 	return (
 		<EditProfilePageSection title='Обложка профиля'>
 			<div className='w-[144px] shrink-0'>
-				<SelectImageLabel htmlfor='cover' />
+				<div className='w-[250px]'>
+					<SelectImageLabel htmlfor='cover' />
+				</div>
+
 				<input
 					onChange={handleFileChange}
 					className='h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium hidden'

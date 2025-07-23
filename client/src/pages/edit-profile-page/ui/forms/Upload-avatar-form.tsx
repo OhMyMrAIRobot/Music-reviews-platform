@@ -73,7 +73,10 @@ const UploadAvatarForm = observer(() => {
 	return (
 		<EditProfilePageSection title='Аватар'>
 			<div className='w-[144px]'>
-				<SelectImageLabel htmlfor='avatar' />
+				<div className='w-[250px]'>
+					<SelectImageLabel htmlfor='avatar' />
+				</div>
+
 				<input
 					onChange={handleFileChange}
 					className='hidden'

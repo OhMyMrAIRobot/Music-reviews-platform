@@ -15,7 +15,7 @@ const ReleaseTypeIcon: FC<IProps> = ({ type, className }) => {
 		case ReleaseTypesEnum.SINGLE:
 			return <SingleSvg className={className} />
 		default:
-			return <SingleSvg className={className} />
+			return null
 	}
 }
 

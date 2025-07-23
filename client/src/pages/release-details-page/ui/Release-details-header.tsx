@@ -49,7 +49,9 @@ const ReleaseDetailsHeader: FC<IProps> = observer(({ release }) => {
 				decoding='async'
 				alt={release.title}
 				src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
-					release.release_img
+					release.release_img === ''
+						? import.meta.env.VITE_DEFAULT_COVER
+						: release.release_img
 				}`}
 				className='size-62 rounded-[10px] max-h-62 aspect-square select-none'
 			/>
@@ -59,7 +61,9 @@ const ReleaseDetailsHeader: FC<IProps> = observer(({ release }) => {
 					decoding='async'
 					alt={release.title}
 					src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
-						release.release_img
+						release.release_img === ''
+							? import.meta.env.VITE_DEFAULT_COVER
+							: release.release_img
 					}`}
 					className='size-62 rounded-[10px] max-h-62 aspect-square select-none'
 				/>

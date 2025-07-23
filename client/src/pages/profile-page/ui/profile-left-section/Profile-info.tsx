@@ -18,7 +18,7 @@ const ProfileInfo: FC<IProps> = ({ profile }) => {
 							? import.meta.env.VITE_DEFAULT_AVATAR
 							: profile.avatar
 					}`}
-					className='rounded-full size-[100px] lg:size-[130px] block aspect-square'
+					className='rounded-full size-[100px] lg:size-[130px] block aspect-square object-cover'
 				/>
 			</div>
 

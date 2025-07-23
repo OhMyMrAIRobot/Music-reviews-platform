@@ -42,7 +42,7 @@ class ProfileStore {
 
 	deleteProfileAvatar = async (): Promise<string[]> => {
 		try {
-			const result = await ProfileAPI.deleteProfileAvatar()
+			const result = await ProfileAPI.updateProfile({ clearAvatar: true })
 			runInAction(() => {
 				if (this.profile) {
 					this.profile.avatar = result.avatar
@@ -73,7 +73,7 @@ class ProfileStore {
 
 	deleteProfileCover = async (): Promise<string[]> => {
 		try {
-			const result = await ProfileAPI.deleteProfileCover()
+			const result = await ProfileAPI.updateProfile({ clearCover: true })
 			runInAction(() => {
 				if (this.profile) {
 					this.profile.cover = result.coverImage
@@ -89,7 +89,7 @@ class ProfileStore {
 
 	updateProfileBio = async (bio: string): Promise<string[]> => {
 		try {
-			const result = await ProfileAPI.updateProfileBio(bio)
+			const result = await ProfileAPI.updateProfile({ bio })
 			runInAction(() => {
 				if (this.profile) {
 					this.profile.bio = result.bio

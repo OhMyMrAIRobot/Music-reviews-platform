@@ -50,17 +50,8 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 		const { execute: updateUserData, isLoading: isUpdateUserDataLoading } =
 			useLoading(adminDashboardUsersStore.updateUser)
 
-		const { execute: updateBio, isLoading: isUpdateBioLoading } = useLoading(
-			adminDashboardUsersStore.updateBio
-		)
-
-		const { execute: deleteAvatar, isLoading: isAvatarLoading } = useLoading(
-			adminDashboardUsersStore.deleteAvatar
-		)
-
-		const { execute: deleteCover, isLoading: isCoverLoading } = useLoading(
-			adminDashboardUsersStore.deleteCover
-		)
+		const { execute: updateProfile, isLoading: isUpdateProfileLoading } =
+			useLoading(adminDashboardUsersStore.updateProfile)
 
 		useEffect(() => {
 			if (isOpen) {
@@ -148,7 +139,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 											? import.meta.env.VITE_DEFAULT_AVATAR
 											: user.profile?.avatar
 									}`}
-									className='aspect-square'
+									className='aspect-square object-cover'
 								/>
 							</div>
 
@@ -161,39 +152,47 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 								/>
 
 								<EditUserModalButton
-									disabled={user.profile?.avatar === '' || isAvatarLoading}
+									disabled={
+										user.profile?.avatar === '' || isUpdateProfileLoading
+									}
 									title={'Удалить аватар'}
 									onClick={() =>
-										deleteAvatar(user.id).then(errors => {
-											if (errors.length === 0) {
-												notificationStore.addSuccessNotification(
-													'Вы успешно удалили аватар профиля!'
-												)
-											} else {
-												errors.forEach(err => {
-													notificationStore.addErrorNotification(err)
-												})
+										updateProfile(user.id, { clearAvatar: true }).then(
+											errors => {
+												if (errors.length === 0) {
+													notificationStore.addSuccessNotification(
+														'Вы успешно удалили аватар профиля!'
+													)
+												} else {
+													errors.forEach(err => {
+														notificationStore.addErrorNotification(err)
+													})
+												}
 											}
-										})
+										)
 									}
 									svg={<TrashSvg className={'size-4'} />}
 								/>
 
 								<EditUserModalButton
-									disabled={user.profile?.coverImage === '' || isCoverLoading}
+									disabled={
+										user.profile?.coverImage === '' || isUpdateProfileLoading
+									}
 									title={'Удалить обложку'}
 									onClick={() =>
-										deleteCover(user.id).then(errors => {
-											if (errors.length === 0) {
-												notificationStore.addSuccessNotification(
-													'Вы успешно удалили обложку профиля!'
-												)
-											} else {
-												errors.forEach(err => {
-													notificationStore.addErrorNotification(err)
-												})
+										updateProfile(user.id, { clearCover: true }).then(
+											errors => {
+												if (errors.length === 0) {
+													notificationStore.addSuccessNotification(
+														'Вы успешно удалили обложку профиля!'
+													)
+												} else {
+													errors.forEach(err => {
+														notificationStore.addErrorNotification(err)
+													})
+												}
 											}
-										})
+										)
 									}
 									svg={<TrashSvg className={'size-4'} />}
 								/>
@@ -253,7 +252,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 										label={'Описание'}
 										initialValue={user.profile?.bio ?? ''}
 										onClick={val => {
-											updateBio(user.id, val).then(errors => {
+											updateProfile(user.id, { bio: val }).then(errors => {
 												if (errors.length === 0) {
 													notificationStore.addSuccessNotification(
 														'Вы успешно обновили описание профиля!'
@@ -265,7 +264,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 												}
 											})
 										}}
-										isLoading={isUpdateBioLoading}
+										isLoading={isUpdateProfileLoading}
 									/>
 								</div>
 							</div>

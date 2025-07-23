@@ -69,6 +69,7 @@ const RegistrationForm = observer(() => {
 			<FormCheckbox
 				checked={formData[id] as boolean}
 				setChecked={value => handleChange(id, value)}
+				id={''}
 			/>
 
 			<span className='text-sm font-medium'>

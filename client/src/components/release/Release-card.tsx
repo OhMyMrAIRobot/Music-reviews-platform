@@ -30,7 +30,9 @@ const ReleaseCard: FC<IProps> = ({ release, isLoading }) => {
 							decoding='async'
 							className='rounded-lg'
 							src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
-								release.img
+								release.img === ''
+									? import.meta.env.VITE_DEFAULT_COVER
+									: release.img
 							}`}
 						/>
 					</div>

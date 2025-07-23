@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { IPreferred } from '../models/profile/preferred'
 import { IProfile } from '../models/profile/profile'
+import { IUpdateProfileData } from '../models/profile/update-profile-data'
 import { IUpdatedProfile } from '../models/profile/updated-profile'
 import { api } from './api-instance'
 
@@ -32,41 +33,21 @@ export const ProfileAPI = {
 		return data
 	},
 
-	async deleteProfileAvatar(): Promise<IUpdatedProfile> {
-		const { data } = await api.delete<IUpdatedProfile>('profiles/avatar')
+	async updateProfile(
+		profileData: IUpdateProfileData
+	): Promise<IUpdatedProfile> {
+		const { data } = await api.patch<IUpdatedProfile>('/profiles', {
+			...profileData,
+		})
 		return data
 	},
 
-	async adminDeleteProfileAvatar(userId: string): Promise<IUpdatedProfile> {
-		const { data } = await api.delete<IUpdatedProfile>(
-			`profiles/${userId}/avatar`
-		)
-		return data
-	},
-
-	async deleteProfileCover(): Promise<IUpdatedProfile> {
-		const { data } = await api.delete<IUpdatedProfile>('profiles/cover')
-		return data
-	},
-
-	async adminDeleteProfileCover(userId: string): Promise<IUpdatedProfile> {
-		const { data } = await api.delete<IUpdatedProfile>(
-			`profiles/${userId}/cover`
-		)
-		return data
-	},
-
-	async updateProfileBio(bio: string): Promise<IUpdatedProfile> {
-		const { data } = await api.patch<IUpdatedProfile>('/profiles', { bio })
-		return data
-	},
-
-	async adminUpdateProfileBio(
+	async adminUpdateProfile(
 		userId: string,
-		bio: string
+		profileData: IUpdateProfileData
 	): Promise<IUpdatedProfile> {
 		const { data } = await api.patch<IUpdatedProfile>(`/profiles/${userId}`, {
-			bio,
+			...profileData,
 		})
 		return data
 	},

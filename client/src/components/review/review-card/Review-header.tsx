@@ -43,7 +43,9 @@ const ReviewHeader: FC<IProps> = ({ review }) => {
 					onClick={() => navigateToRelease(review.release_id)}
 					alt={review.release_title}
 					src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
-						review.release_img
+						review.release_img === ''
+							? import.meta.env.VITE_DEFAULT_COVER
+							: review.release_img
 					}`}
 					className='rounded size-10 lg:size-11 cursor-pointer aspect-square'
 				/>

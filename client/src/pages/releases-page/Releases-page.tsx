@@ -9,7 +9,7 @@ import { SortOrder } from '../../types/sort-order-type'
 const ReleasesPage = () => {
 	const perPage = 12
 
-	const { releasesPageStore } = useStore()
+	const { releasesPageStore, metaStore } = useStore()
 
 	const [currentPage, setCurrentPage] = useState<number>(1)
 
@@ -23,15 +23,18 @@ const ReleasesPage = () => {
 	)
 
 	const { execute: fetchReleaseTypes, isLoading: isTypesLoading } = useLoading(
-		releasesPageStore.fetchReleaseTypes
+		metaStore.fetchReleaseTypes
 	)
 
 	useEffect(() => {
-		fetchReleaseTypes()
-	}, [fetchReleaseTypes])
+		if (metaStore.releaseTypes.length === 0) {
+			fetchReleaseTypes()
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
 	useEffect(() => {
-		const type = releasesPageStore.releaseTypes.find(
+		const type = metaStore.releaseTypes.find(
 			entry => entry.type === selectedType
 		)
 
@@ -80,7 +83,7 @@ const ReleasesPage = () => {
 		selectedType,
 		selectedSort,
 		currentPage,
-		releasesPageStore.releaseTypes,
+		metaStore.releaseTypes,
 		fetchReleases,
 	])
 
@@ -98,11 +101,11 @@ const ReleasesPage = () => {
 					Тип релизов:
 				</span>
 				<div className='w-full sm:w-55 h-10'>
-					{!isTypesLoading && releasesPageStore.releaseTypes.length > 0 ? (
+					{!isTypesLoading && metaStore.releaseTypes.length > 0 ? (
 						<ComboBox
 							options={[
 								'Все',
-								...releasesPageStore.releaseTypes.map(entry => entry.type),
+								...metaStore.releaseTypes.map(entry => entry.type),
 							]}
 							onChange={setSelectedType}
 							className='border border-white/10'

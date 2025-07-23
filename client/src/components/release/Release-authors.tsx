@@ -34,6 +34,9 @@ const ReleaseAuthors: FC<IProps> = ({ authors, className }) => {
 					</span>
 				</div>
 			))}
+			{authors.length === 0 && (
+				<span className='opacity-50'>Автор не указан!</span>
+			)}
 		</div>
 	)
 }

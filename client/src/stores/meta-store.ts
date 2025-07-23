@@ -1,8 +1,10 @@
 import { makeAutoObservable } from 'mobx'
 import { AuthorAPI } from '../api/author-api'
+import { ReleaseAPI } from '../api/release-api'
 import { RolesAPI } from '../api/role-api'
 import { SocialMediaAPI } from '../api/social-media-api'
 import { IAuthorType } from '../models/author/author-type'
+import { IReleaseType } from '../models/release/release-types'
 import { IRole } from '../models/role/role'
 import { ISocialMedia } from '../models/social-media/social-media'
 
@@ -14,6 +16,7 @@ class MetaStore {
 	authorTypes: IAuthorType[] = []
 	socials: ISocialMedia[] = []
 	roles: IRole[] = []
+	releaseTypes: IReleaseType[] = []
 
 	setAuthorTypes(data: IAuthorType[]) {
 		this.authorTypes = data
@@ -25,6 +28,10 @@ class MetaStore {
 
 	setRoles(data: IRole[]) {
 		this.roles = data
+	}
+
+	setReleaseTypes(data: IReleaseType[]) {
+		this.releaseTypes = data
 	}
 
 	fetchAuthorTypes = async () => {
@@ -50,6 +57,15 @@ class MetaStore {
 			const data = await RolesAPI.fetchRoles()
 
 			this.setRoles(data)
+		} catch (e) {
+			console.log(e)
+		}
+	}
+
+	fetchReleaseTypes = async () => {
+		try {
+			const data = await ReleaseAPI.fetchReleaseTypes()
+			this.setReleaseTypes(data)
 		} catch (e) {
 			console.log(e)
 		}

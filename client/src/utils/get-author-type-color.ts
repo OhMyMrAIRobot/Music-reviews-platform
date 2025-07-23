@@ -1,7 +1,7 @@
 import { AuthorTypesEnum } from '../models/author/author-type'
 
-export const getAuthorTypeColor = (role: string): string => {
-	switch (role) {
+export const getAuthorTypeColor = (type: string): string => {
+	switch (type) {
 		case AuthorTypesEnum.ARTIST:
 			return 'text-purple-400'
 		case AuthorTypesEnum.PRODUCER:

@@ -23,7 +23,9 @@ const ReleasesColumnItem: FC<IProps> = ({ release, isLoading }) => {
 					decoding='async'
 					onClick={() => navigateToRelease(release.id)}
 					src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
-						release.img
+						release.img === ''
+							? import.meta.env.VITE_DEFAULT_COVER
+							: release.img
 					}`}
 					className='h-[60px] lg:h-[72px] rounded-[5px] transition-all duration-300 group-hover:scale-[1.25] group-hover:rounded-[8px] cursor-pointer aspect-square'
 				/>
