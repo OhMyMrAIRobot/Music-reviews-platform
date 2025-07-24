@@ -1,26 +1,26 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useEffect, useState } from 'react'
-import ComboBox from '../../../../../components/buttons/Combo-box'
-import FormButton from '../../../../../components/form-elements/Form-button'
-import FormDelimiter from '../../../../../components/form-elements/Form-delimiter'
-import FormInput from '../../../../../components/form-elements/Form-input'
-import FormLabel from '../../../../../components/form-elements/Form-label'
-import FormTextboxWithConfirmation from '../../../../../components/form-elements/Form-textbox-with-confirmation'
-import ModalOverlay from '../../../../../components/modals/Modal-overlay'
-import MoveToSvg from '../../../../../components/svg/Move-to-svg'
-import TrashSvg from '../../../../../components/svg/Trash-svg'
-import useCustomNavigate from '../../../../../hooks/use-custom-navigate'
-import { useLoading } from '../../../../../hooks/use-loading'
-import { useStore } from '../../../../../hooks/use-store'
+import ComboBox from '../../../../../../components/buttons/Combo-box.tsx'
+import FormButton from '../../../../../../components/form-elements/Form-button.tsx'
+import FormDelimiter from '../../../../../../components/form-elements/Form-delimiter.tsx'
+import FormInput from '../../../../../../components/form-elements/Form-input.tsx'
+import FormLabel from '../../../../../../components/form-elements/Form-label.tsx'
+import FormTextboxWithConfirmation from '../../../../../../components/form-elements/Form-textbox-with-confirmation.tsx'
+import ModalOverlay from '../../../../../../components/modals/Modal-overlay.tsx'
+import MoveToSvg from '../../../../../../components/svg/Move-to-svg.tsx'
+import TrashSvg from '../../../../../../components/svg/Trash-svg.tsx'
+import useCustomNavigate from '../../../../../../hooks/use-custom-navigate.ts'
+import { useLoading } from '../../../../../../hooks/use-loading.ts'
+import { useStore } from '../../../../../../hooks/use-store.ts'
 import {
 	AdminAvailableRolesEnum,
 	RolesEnum,
 	RootAdminAvalaibleRolesEnum,
-} from '../../../../../models/role/roles-enum'
-import { UserStatusesEnum } from '../../../../../models/user/user-statuses-enum'
-import { getRoleColor } from '../../../../../utils/get-role-color'
-import EditUserModalButton from './Edit-user-modal-button'
-import EditUserModalInputs from './Edit-user-social-inputs'
+} from '../../../../../../models/role/roles-enum.ts'
+import { UserStatusesEnum } from '../../../../../../models/user/user-statuses-enum.ts'
+import { getRoleColor } from '../../../../../../utils/get-role-color.ts'
+import EditUserModalButton from './Edit-user-modal-button.tsx'
+import EditUserModalInputs from './Edit-user-social-inputs.tsx'
 
 interface IProps {
 	userId: string

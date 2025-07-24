@@ -1,9 +1,9 @@
 import { FC, useEffect } from 'react'
-import FormInputWithConfirmation from '../../../../../components/form-elements/Form-input-with-confirmation'
-import { useLoading } from '../../../../../hooks/use-loading'
-import { useStore } from '../../../../../hooks/use-store'
-import { IUserInfo } from '../../../../../models/user/user-info'
-import adminDashboardUsersStore from '../../../store/admin-dashboard-users-store'
+import FormInputWithConfirmation from '../../../../../../components/form-elements/Form-input-with-confirmation.tsx'
+import { useLoading } from '../../../../../../hooks/use-loading.ts'
+import { useStore } from '../../../../../../hooks/use-store.ts'
+import { IUserInfo } from '../../../../../../models/user/user-info.ts'
+import adminDashboardUsersStore from '../../../../store/admin-dashboard-users-store.ts'
 
 interface IProps {
 	user: IUserInfo

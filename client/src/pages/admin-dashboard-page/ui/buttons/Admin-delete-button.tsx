@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import TrashSvg from '../../../components/svg/Trash-svg'
+import TrashSvg from '../../../../components/svg/Trash-svg.tsx'
 
 interface IProps {
 	onClick: () => void
