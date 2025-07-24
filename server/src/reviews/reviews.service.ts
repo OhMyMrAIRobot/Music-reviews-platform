@@ -99,8 +99,14 @@ export class ReviewsService {
         skip: offset,
         orderBy: [{ createdAt: order ?? 'desc' }, { id: 'desc' }],
         include: {
-          release: { select: { id: true, title: true } },
-          user: { select: { id: true, nickname: true } },
+          release: { select: { id: true, title: true, img: true } },
+          user: {
+            select: {
+              id: true,
+              nickname: true,
+              profile: { select: { avatar: true } },
+            },
+          },
         },
       }),
     ]);
