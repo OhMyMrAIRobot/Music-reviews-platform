@@ -17,7 +17,6 @@ import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.inte
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
 import { AuthorReviewsParamsDto } from './dto/author-reviews-params.dto';
 import { CreateReviewDto } from './dto/create-review.dto';
-import { DeleteReviewDto } from './dto/delete-review.dto';
 import { ReleaseReviewParamsDto } from './dto/release-review-params.dto';
 import { ReleaseReviewQueryDto } from './dto/release-review-query.dto';
 import { ReviewsQueryDto } from './dto/reviews-query.dto';
@@ -70,12 +69,9 @@ export class ReviewsController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete()
-  remove(
-    @Request() req: IAuthenticatedRequest,
-    @Body() deleteReviewDto: DeleteReviewDto,
-  ) {
-    return this.reviewsService.remove(deleteReviewDto, req.user.id);
+  @Delete(':id')
+  remove(@Request() req: IAuthenticatedRequest, @Param('id') id: string) {
+    return this.reviewsService.remove(id, req.user.id);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -95,13 +91,10 @@ export class ReviewsController {
     return this.reviewsService.update(updateReviewDto, userId);
   }
 
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Delete(':userId')
-  removeById(
-    @Param('userId') userId: string,
-    @Body() deleteReviewDto: DeleteReviewDto,
-  ) {
-    return this.reviewsService.remove(deleteReviewDto, userId);
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Delete(':userId/:id')
+  adminDelete(@Param('id') id: string, @Param('userId') userId: string) {
+    return this.reviewsService.remove(id, userId);
   }
 }

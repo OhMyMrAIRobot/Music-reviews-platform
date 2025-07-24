@@ -4,6 +4,7 @@ import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
 import { DuplicateFieldException } from 'src/exceptions/duplicate-field.exception';
 import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
+import { InsufficientPermissionsException } from 'src/exceptions/insufficient-permissions.exception';
 import { ReleasesService } from 'src/releases/releases.service';
 import { UsersService } from 'src/users/users.service';
 import {
@@ -11,7 +12,6 @@ import {
   AdminReview,
 } from './dto/admin-find-reviews.response.dto';
 import { CreateReviewDto } from './dto/create-review.dto';
-import { DeleteReviewDto } from './dto/delete-review.dto';
 import { ReleaseReviewQueryDto } from './dto/release-review-query.dto';
 import {
   ReleaseReview,
@@ -241,22 +241,11 @@ export class ReviewsService {
     });
   }
 
-  async remove(
-    deleteReviewDto: DeleteReviewDto,
-    userId: string,
-  ): Promise<Review> {
-    const { releaseId } = deleteReviewDto;
-    const existing = await this.findByUserIdReleaseId(userId, releaseId);
-    if (!existing) {
-      throw new EntityNotFoundException(
-        `Рецензия с id пользователя '${userId}' и`,
-        'id релиза',
-        `${releaseId}`,
-      );
-    }
+  async remove(id: string, userId: string): Promise<Review> {
+    const review = await this.checkBelongsToUser(id, userId);
 
     return this.prisma.review.delete({
-      where: { userId_releaseId: { userId, releaseId } },
+      where: { id: review.id },
     });
   }
 
@@ -408,5 +397,18 @@ export class ReviewsService {
     return this.prisma.review.findUnique({
       where: { userId_releaseId: { userId, releaseId } },
     });
+  }
+
+  private async checkBelongsToUser(
+    reviewId: string,
+    userId: string,
+  ): Promise<Review> {
+    const review = await this.findOne(reviewId);
+
+    if (review.userId !== userId) {
+      throw new InsufficientPermissionsException();
+    }
+
+    return review;
   }
 }
