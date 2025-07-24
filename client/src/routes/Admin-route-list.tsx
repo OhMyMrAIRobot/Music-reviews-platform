@@ -1,6 +1,7 @@
 import { Route } from 'react-router'
 import AdminDashboardAuthorsGrid from '../pages/admin-dashboard-page/ui/grids/admin-dashboard-authors/Admin-dashboard-authors-grid'
 import AdminDashboardReleasesGrid from '../pages/admin-dashboard-page/ui/grids/admin-dashboard-releases/Admin-dashboard-releases-grid'
+import AdminDashboardReviewsGrid from '../pages/admin-dashboard-page/ui/grids/admin-dashboard-reviews/Admin-dashboard-reviews-grid'
 import AdminDashboardUsersGrid from '../pages/admin-dashboard-page/ui/grids/admin-dashboard-users/Admin-dashboard-users-grid'
 import { ROUTES } from './routes-enum'
 
@@ -16,6 +17,10 @@ const AdminRouteList = () => {
 			<Route
 				path={ROUTES.ADMIN.RELEASES}
 				element={<AdminDashboardReleasesGrid />}
+			/>
+			<Route
+				path={ROUTES.ADMIN.REVIEWS}
+				element={<AdminDashboardReviewsGrid />}
 			/>
 			,
 			<Route path={ROUTES.ADMIN.NOT_DEFINED} element={<>not defined</>} />,

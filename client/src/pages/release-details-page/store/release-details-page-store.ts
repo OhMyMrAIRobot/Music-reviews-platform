@@ -90,10 +90,10 @@ class ReleaseDetailsPageStore {
 	}
 
 	deleteReview = async (
-		releaseId: string
+		id: string
 	): Promise<{ status: boolean; message: string }> => {
 		try {
-			await ReviewAPI.deleteReview(releaseId)
+			await ReviewAPI.deleteReview(id)
 			return {
 				status: true,
 				message: 'Вы успешно удалили рецензию!',

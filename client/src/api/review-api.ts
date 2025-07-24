@@ -1,8 +1,10 @@
 import axios from 'axios'
+import { IAdminReviewsResponse } from '../models/review/admin-reviews-response'
 import { IFavReview } from '../models/review/fav-review'
 import { IReleaseReviewResponse } from '../models/review/release-review'
 import { IReview, IReviewsResponse } from '../models/review/review'
 import { IReviewData } from '../models/review/review-data'
+import { SortOrder } from '../types/sort-order-type'
 import { api } from './api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
@@ -14,6 +16,21 @@ const _api = axios.create({
 })
 
 export const ReviewAPI = {
+	async adminFetchReviews(
+		query: string | null,
+		order: SortOrder | null,
+		limit: number | null,
+		offset: number | null
+	): Promise<IAdminReviewsResponse> {
+		const { data } = await api.get<IAdminReviewsResponse>(`/reviews?
+			${order !== null ? `order=${order}&` : ''}
+			${query !== null ? `query=${query}&` : ''}
+			${limit !== null ? `limit=${limit}&` : ''}
+			${offset !== null ? `offset=${offset}` : ''}
+			`)
+		return data
+	},
+
 	async postReview(releaseId: string, reviewData: IReviewData) {
 		return api.post('/reviews', {
 			...reviewData,
@@ -28,10 +45,12 @@ export const ReviewAPI = {
 		})
 	},
 
-	async deleteReview(releaseId: string) {
-		return api.delete('/reviews', {
-			data: { releaseId },
-		})
+	async deleteReview(id: string) {
+		return api.delete(`/reviews/${id}`)
+	},
+
+	async adminDeleteReview(userId: string, reviewId: string) {
+		return api.delete(`/reviews/${userId}/${reviewId}`)
 	},
 
 	async fetchReviews(

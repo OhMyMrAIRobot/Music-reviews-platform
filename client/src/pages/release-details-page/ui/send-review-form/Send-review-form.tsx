@@ -106,8 +106,8 @@ const SendReviewForm: FC<IProps> = ({ id, fetchReviews }) => {
 	}
 
 	const deleteReview = () => {
-		if (id) {
-			releaseDetailsPageStore.deleteReview(id).then(result => {
+		if (userRelease) {
+			releaseDetailsPageStore.deleteReview(userRelease.id).then(result => {
 				notificationStore.addSuccessNotification(result.message)
 				if (result.status === true) {
 					setDefaultValues()
