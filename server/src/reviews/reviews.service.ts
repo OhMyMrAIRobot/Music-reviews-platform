@@ -1,10 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { Review } from '@prisma/client';
+import { Prisma, Review } from '@prisma/client';
+import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
 import { DuplicateFieldException } from 'src/exceptions/duplicate-field.exception';
 import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
 import { ReleasesService } from 'src/releases/releases.service';
 import { UsersService } from 'src/users/users.service';
+import {
+  AdminFindReviewsResponseDto,
+  AdminReview,
+} from './dto/admin-find-reviews.response.dto';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { DeleteReviewDto } from './dto/delete-review.dto';
 import { ReleaseReviewQueryDto } from './dto/release-review-query.dto';
@@ -57,8 +62,55 @@ export class ReviewsService {
     });
   }
 
-  async findAll(): Promise<Review[]> {
-    return this.prisma.review.findMany();
+  async findAll(query: ReviewsQueryDto): Promise<AdminFindReviewsResponseDto> {
+    const { limit = 10, offset = 0, order, query: searchTerm } = query;
+
+    const where: Prisma.ReviewWhereInput = {
+      title: { not: null },
+      text: { not: null },
+    };
+
+    if (searchTerm) {
+      where.AND = [
+        {
+          OR: [
+            { title: { contains: searchTerm, mode: 'insensitive' } },
+            { text: { contains: searchTerm, mode: 'insensitive' } },
+            {
+              release: {
+                title: { contains: searchTerm, mode: 'insensitive' },
+              },
+            },
+            {
+              user: {
+                nickname: { contains: searchTerm, mode: 'insensitive' },
+              },
+            },
+          ],
+        },
+      ];
+    }
+
+    const [count, reviews] = await Promise.all([
+      this.prisma.review.count({ where }),
+      this.prisma.review.findMany({
+        where,
+        take: limit,
+        skip: offset,
+        orderBy: [{ createdAt: order ?? 'desc' }, { id: 'desc' }],
+        include: {
+          release: { select: { id: true, title: true } },
+          user: { select: { id: true, nickname: true } },
+        },
+      }),
+    ]);
+
+    return {
+      count,
+      reviews: plainToInstance(AdminReview, reviews, {
+        excludeExtraneousValues: true,
+      }),
+    };
   }
 
   async findOne(id: string): Promise<Review> {

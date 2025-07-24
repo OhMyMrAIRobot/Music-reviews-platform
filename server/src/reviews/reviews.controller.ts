@@ -28,11 +28,6 @@ import { ReviewsService } from './reviews.service';
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
-  @Get()
-  findAll() {
-    return this.reviewsService.findAll();
-  }
-
   @Get('release/:id')
   findByReleaseId(
     @Param() params: ReleaseReviewParamsDto,
@@ -81,6 +76,13 @@ export class ReviewsController {
     @Body() deleteReviewDto: DeleteReviewDto,
   ) {
     return this.reviewsService.remove(deleteReviewDto, req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Get()
+  findAll(@Query() query: ReviewsQueryDto) {
+    return this.reviewsService.findAll(query);
   }
 
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
