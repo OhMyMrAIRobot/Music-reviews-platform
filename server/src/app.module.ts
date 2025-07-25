@@ -5,7 +5,7 @@ import { AuthorTypesModule } from './author-types/author-types.module';
 import { AuthorsOnTypesModule } from './authors-on-types/authors-on-types.module';
 import { AuthorsModule } from './authors/authors.module';
 import { FeedbackStatusesModule } from './feedback-statuses/feedback-statuses.module';
-import { FeedbacksModule } from './feedbacks/feedbacks.module';
+import { FeedbackModule } from './feedback/feedback.module';
 import { FileModule } from './file/files.module';
 import { LeaderboardModule } from './leaderboard/leaderboard.module';
 import { MailsModule } from './mails/mails.module';
@@ -41,7 +41,7 @@ import { UsersModule } from './users/users.module';
     ReleaseArtistsModule,
     ReleaseDesignersModule,
     FeedbackStatusesModule,
-    FeedbacksModule,
+    FeedbackModule,
     ReviewsModule,
     ReleaseRatingTypesModule,
     UserFavReleasesModule,

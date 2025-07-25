@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { AuthorTypesEnum } from '../src/author-types/entities/author-types.enum';
+import { FeedbackStatusesEnum } from '../src/feedback-statuses/types/feedback-statuses.enum';
 import { ReleaseRatingTypesEnum } from '../src/release-rating-types/entities/release-rating-types.enum';
 import { ReleaseTypesEnum } from '../src/release-types/entities/release-types.enum';
 import { UserRoleEnum } from '../src/roles/types/user-role.enum';
@@ -152,6 +153,20 @@ async function main() {
           '$2b$10$0bD/1z03VDQP3ko9BJ/2U.FGCyjcyY7sSXaf5.psHwB012H0xBswe',
         isActive: true,
         roleId: '1',
+      },
+    ],
+  });
+
+  await prisma.feedbackStatus.createMany({
+    data: [
+      {
+        status: FeedbackStatusesEnum.NEW,
+      },
+      {
+        status: FeedbackStatusesEnum.ANSWERED,
+      },
+      {
+        status: FeedbackStatusesEnum.READ,
       },
     ],
   });

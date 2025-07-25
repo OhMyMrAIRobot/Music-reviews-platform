@@ -1,3 +1,5 @@
 export enum FeedbackStatusesEnum {
-  New = 'Новое',
+  NEW = 'Новое',
+  READ = 'Прочитано',
+  ANSWERED = 'Отвечено',
 }
