@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import {
   IsInt,
   IsNotEmpty,
@@ -7,35 +8,8 @@ import {
   MaxLength,
   Min,
   MinLength,
-  registerDecorator,
-  ValidationArguments,
-  ValidationOptions,
 } from 'class-validator';
-
-function TitleAndTextTogether(validationOptions?: ValidationOptions) {
-  return function (object: object, propertyName: string) {
-    registerDecorator({
-      name: 'TitleAndTextTogether',
-      target: object.constructor,
-      propertyName: propertyName,
-      constraints: [],
-      options: validationOptions,
-      validator: {
-        validate(value: any, args: ValidationArguments) {
-          const obj = args.object as any;
-          const hasTitle =
-            obj.title !== undefined && obj.title !== null && obj.title !== '';
-          const hasText =
-            obj.text !== undefined && obj.text !== null && obj.text !== '';
-          return (hasTitle && hasText) || (!hasTitle && !hasText);
-        },
-        defaultMessage(args: ValidationArguments) {
-          return 'Либо укажите и заголовок, и текст, либо не указывайте ни одно из них';
-        },
-      },
-    });
-  };
-}
+import { TitleAndTextTogether } from '../decorators/title-and-text-together.decorator';
 
 export class CreateReviewDto {
   @IsInt({ message: 'Оценка "Рифмы / образы" должны быть целым числом' })
@@ -69,19 +43,25 @@ export class CreateReviewDto {
 
   @IsOptional()
   @IsString({ message: 'Заголовок должен быть строкой' })
-  @MaxLength(100, { message: 'Заголовок не должен превышать 100 символов' })
+  @MaxLength(100, {
+    message: 'Длина заголовок не должна превышать 100 символов',
+  })
+  @MinLength(10, { message: 'Длина заголовока должна превышать 10 символов' })
   title?: string;
 
   @IsOptional()
   @IsString({ message: 'Текст должен быть строкой' })
-  @MaxLength(8500, { message: 'Текст не должен превышать 8500 символов' })
-  @MinLength(300, { message: 'Текст должен превышать 300 символов' })
+  @MaxLength(8500, {
+    message: 'Длина текста не должна превышать 8500 символов',
+  })
+  @MinLength(300, { message: 'Длина текста должена превышать 300 символов' })
   text?: string;
-
-  @TitleAndTextTogether()
-  titleAndTextValidation?: boolean;
 
   @IsString({ message: 'Поле releaseId должно быть строкой' })
   @IsNotEmpty({ message: 'Поле releaseId не должно быть пустым' })
   releaseId: string;
+
+  @Exclude()
+  @TitleAndTextTogether()
+  create_titleAndTextValidation?: boolean;
 }

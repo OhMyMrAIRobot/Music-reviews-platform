@@ -60,12 +60,13 @@ export class ReviewsController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Patch()
+  @Patch(':id')
   update(
     @Request() req: IAuthenticatedRequest,
     @Body() updateReviewDto: UpdateReviewDto,
+    @Param('id') id: string,
   ) {
-    return this.reviewsService.update(updateReviewDto, req.user.id);
+    return this.reviewsService.update(id, updateReviewDto, req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -83,12 +84,13 @@ export class ReviewsController {
 
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Patch(':userId')
+  @Patch(':userId/:id')
   updateById(
     @Param('userId') userId: string,
+    @Param('id') id: string,
     @Body() updateReviewDto: UpdateReviewDto,
   ) {
-    return this.reviewsService.update(updateReviewDto, userId);
+    return this.reviewsService.update(id, updateReviewDto, userId);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

@@ -41,7 +41,10 @@ export class ReviewsService {
     await this.usersService.findOne(userId);
     await this.releasesService.findOne(releaseId);
 
-    const existing = await this.findByUserIdReleaseId(userId, releaseId);
+    const existing = await this.prisma.review.findUnique({
+      where: { userId_releaseId: { userId, releaseId } },
+    });
+
     if (existing) {
       throw new DuplicateFieldException(
         `Рецензия с id пользователя '${userId}' и`,
@@ -206,37 +209,30 @@ export class ReviewsService {
   }
 
   async update(
+    id: string,
     updateReviewDto: UpdateReviewDto,
     userId: string,
   ): Promise<Review> {
-    const { releaseId } = updateReviewDto;
+    const review = await this.checkBelongsToUser(id, userId);
 
     await this.usersService.findOne(userId);
-    await this.releasesService.findOne(releaseId);
+    await this.releasesService.findOne(review.releaseId);
 
-    const existing = await this.findByUserIdReleaseId(userId, releaseId);
-    if (!existing) {
-      throw new EntityNotFoundException(
-        `Рецензия с id пользователя '${userId}' и`,
-        'id релиза',
-        `${releaseId}`,
-      );
-    }
     const total = this.calculateTotalScore(
-      updateReviewDto.rhymes,
-      updateReviewDto.structure,
-      updateReviewDto.realization,
-      updateReviewDto.individuality,
-      updateReviewDto.atmosphere,
+      updateReviewDto.rhymes ?? review.rhymes,
+      updateReviewDto.structure ?? review.structure,
+      updateReviewDto.realization ?? review.realization,
+      updateReviewDto.individuality ?? review.individuality,
+      updateReviewDto.atmosphere ?? review.atmosphere,
     );
 
     return this.prisma.review.update({
-      where: { userId_releaseId: { userId, releaseId } },
+      where: { id: review.id },
       data: {
         ...updateReviewDto,
         total,
-        text: updateReviewDto.text ?? null,
         title: updateReviewDto.title ?? null,
+        text: updateReviewDto.text ?? null,
       },
     });
   }
@@ -388,15 +384,6 @@ export class ReviewsService {
     const atmosphereMultiplier = 1 + (atmosphere - 1) * 0.06747;
 
     return Math.round(multipliedBaseScore * atmosphereMultiplier);
-  }
-
-  private async findByUserIdReleaseId(
-    userId: string,
-    releaseId: string,
-  ): Promise<Review | null> {
-    return this.prisma.review.findUnique({
-      where: { userId_releaseId: { userId, releaseId } },
-    });
   }
 
   private async checkBelongsToUser(
