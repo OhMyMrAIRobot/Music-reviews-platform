@@ -1,12 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { Review } from '@prisma/client';
+import { Prisma, Review } from '@prisma/client';
+import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
 import { DuplicateFieldException } from 'src/exceptions/duplicate-field.exception';
 import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
+import { InsufficientPermissionsException } from 'src/exceptions/insufficient-permissions.exception';
 import { ReleasesService } from 'src/releases/releases.service';
 import { UsersService } from 'src/users/users.service';
+import {
+  AdminFindReviewsResponseDto,
+  AdminReview,
+} from './dto/admin-find-reviews.response.dto';
 import { CreateReviewDto } from './dto/create-review.dto';
-import { DeleteReviewDto } from './dto/delete-review.dto';
 import { ReleaseReviewQueryDto } from './dto/release-review-query.dto';
 import {
   ReleaseReview,
@@ -36,7 +41,10 @@ export class ReviewsService {
     await this.usersService.findOne(userId);
     await this.releasesService.findOne(releaseId);
 
-    const existing = await this.findByUserIdReleaseId(userId, releaseId);
+    const existing = await this.prisma.review.findUnique({
+      where: { userId_releaseId: { userId, releaseId } },
+    });
+
     if (existing) {
       throw new DuplicateFieldException(
         `Рецензия с id пользователя '${userId}' и`,
@@ -57,8 +65,61 @@ export class ReviewsService {
     });
   }
 
-  async findAll(): Promise<Review[]> {
-    return this.prisma.review.findMany();
+  async findAll(query: ReviewsQueryDto): Promise<AdminFindReviewsResponseDto> {
+    const { limit = 10, offset = 0, order, query: searchTerm } = query;
+
+    const where: Prisma.ReviewWhereInput = {
+      title: { not: null },
+      text: { not: null },
+    };
+
+    if (searchTerm) {
+      where.AND = [
+        {
+          OR: [
+            { title: { contains: searchTerm, mode: 'insensitive' } },
+            { text: { contains: searchTerm, mode: 'insensitive' } },
+            {
+              release: {
+                title: { contains: searchTerm, mode: 'insensitive' },
+              },
+            },
+            {
+              user: {
+                nickname: { contains: searchTerm, mode: 'insensitive' },
+              },
+            },
+          ],
+        },
+      ];
+    }
+
+    const [count, reviews] = await Promise.all([
+      this.prisma.review.count({ where }),
+      this.prisma.review.findMany({
+        where,
+        take: limit,
+        skip: offset,
+        orderBy: [{ createdAt: order ?? 'desc' }, { id: 'desc' }],
+        include: {
+          release: { select: { id: true, title: true, img: true } },
+          user: {
+            select: {
+              id: true,
+              nickname: true,
+              profile: { select: { avatar: true } },
+            },
+          },
+        },
+      }),
+    ]);
+
+    return {
+      count,
+      reviews: plainToInstance(AdminReview, reviews, {
+        excludeExtraneousValues: true,
+      }),
+    };
   }
 
   async findOne(id: string): Promise<Review> {
@@ -148,57 +209,39 @@ export class ReviewsService {
   }
 
   async update(
+    id: string,
     updateReviewDto: UpdateReviewDto,
     userId: string,
   ): Promise<Review> {
-    const { releaseId } = updateReviewDto;
+    const review = await this.checkBelongsToUser(id, userId);
 
     await this.usersService.findOne(userId);
-    await this.releasesService.findOne(releaseId);
+    await this.releasesService.findOne(review.releaseId);
 
-    const existing = await this.findByUserIdReleaseId(userId, releaseId);
-    if (!existing) {
-      throw new EntityNotFoundException(
-        `Рецензия с id пользователя '${userId}' и`,
-        'id релиза',
-        `${releaseId}`,
-      );
-    }
     const total = this.calculateTotalScore(
-      updateReviewDto.rhymes,
-      updateReviewDto.structure,
-      updateReviewDto.realization,
-      updateReviewDto.individuality,
-      updateReviewDto.atmosphere,
+      updateReviewDto.rhymes ?? review.rhymes,
+      updateReviewDto.structure ?? review.structure,
+      updateReviewDto.realization ?? review.realization,
+      updateReviewDto.individuality ?? review.individuality,
+      updateReviewDto.atmosphere ?? review.atmosphere,
     );
 
     return this.prisma.review.update({
-      where: { userId_releaseId: { userId, releaseId } },
+      where: { id: review.id },
       data: {
         ...updateReviewDto,
         total,
-        text: updateReviewDto.text ?? null,
         title: updateReviewDto.title ?? null,
+        text: updateReviewDto.text ?? null,
       },
     });
   }
 
-  async remove(
-    deleteReviewDto: DeleteReviewDto,
-    userId: string,
-  ): Promise<Review> {
-    const { releaseId } = deleteReviewDto;
-    const existing = await this.findByUserIdReleaseId(userId, releaseId);
-    if (!existing) {
-      throw new EntityNotFoundException(
-        `Рецензия с id пользователя '${userId}' и`,
-        'id релиза',
-        `${releaseId}`,
-      );
-    }
+  async remove(id: string, userId: string): Promise<Review> {
+    const review = await this.checkBelongsToUser(id, userId);
 
     return this.prisma.review.delete({
-      where: { userId_releaseId: { userId, releaseId } },
+      where: { id: review.id },
     });
   }
 
@@ -343,12 +386,16 @@ export class ReviewsService {
     return Math.round(multipliedBaseScore * atmosphereMultiplier);
   }
 
-  private async findByUserIdReleaseId(
+  private async checkBelongsToUser(
+    reviewId: string,
     userId: string,
-    releaseId: string,
-  ): Promise<Review | null> {
-    return this.prisma.review.findUnique({
-      where: { userId_releaseId: { userId, releaseId } },
-    });
+  ): Promise<Review> {
+    const review = await this.findOne(reviewId);
+
+    if (review.userId !== userId) {
+      throw new InsufficientPermissionsException();
+    }
+
+    return review;
   }
 }

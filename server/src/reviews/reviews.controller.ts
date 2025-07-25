@@ -17,7 +17,6 @@ import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.inte
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
 import { AuthorReviewsParamsDto } from './dto/author-reviews-params.dto';
 import { CreateReviewDto } from './dto/create-review.dto';
-import { DeleteReviewDto } from './dto/delete-review.dto';
 import { ReleaseReviewParamsDto } from './dto/release-review-params.dto';
 import { ReleaseReviewQueryDto } from './dto/release-review-query.dto';
 import { ReviewsQueryDto } from './dto/reviews-query.dto';
@@ -27,11 +26,6 @@ import { ReviewsService } from './reviews.service';
 @Controller('reviews')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
-
-  @Get()
-  findAll() {
-    return this.reviewsService.findAll();
-  }
 
   @Get('release/:id')
   findByReleaseId(
@@ -66,40 +60,43 @@ export class ReviewsController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Patch()
+  @Patch(':id')
   update(
     @Request() req: IAuthenticatedRequest,
     @Body() updateReviewDto: UpdateReviewDto,
+    @Param('id') id: string,
   ) {
-    return this.reviewsService.update(updateReviewDto, req.user.id);
+    return this.reviewsService.update(id, updateReviewDto, req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete()
-  remove(
-    @Request() req: IAuthenticatedRequest,
-    @Body() deleteReviewDto: DeleteReviewDto,
-  ) {
-    return this.reviewsService.remove(deleteReviewDto, req.user.id);
+  @Delete(':id')
+  remove(@Request() req: IAuthenticatedRequest, @Param('id') id: string) {
+    return this.reviewsService.remove(id, req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Get()
+  findAll(@Query() query: ReviewsQueryDto) {
+    return this.reviewsService.findAll(query);
   }
 
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Patch(':userId')
+  @Patch(':userId/:id')
   updateById(
     @Param('userId') userId: string,
+    @Param('id') id: string,
     @Body() updateReviewDto: UpdateReviewDto,
   ) {
-    return this.reviewsService.update(updateReviewDto, userId);
+    return this.reviewsService.update(id, updateReviewDto, userId);
   }
 
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Delete(':userId')
-  removeById(
-    @Param('userId') userId: string,
-    @Body() deleteReviewDto: DeleteReviewDto,
-  ) {
-    return this.reviewsService.remove(deleteReviewDto, userId);
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Delete(':userId/:id')
+  adminDelete(@Param('id') id: string, @Param('userId') userId: string) {
+    return this.reviewsService.remove(id, userId);
   }
 }
