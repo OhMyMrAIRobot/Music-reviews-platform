@@ -1,0 +1,123 @@
+import { FC, useEffect, useMemo, useState } from 'react'
+import FormButton from '../../../../../components/form-elements/Form-button'
+import FormInput from '../../../../../components/form-elements/Form-input'
+import FormLabel from '../../../../../components/form-elements/Form-label'
+import FormTextbox from '../../../../../components/form-elements/Form-textbox'
+import ModalOverlay from '../../../../../components/modals/Modal-overlay'
+import { useLoading } from '../../../../../hooks/use-loading'
+import { useStore } from '../../../../../hooks/use-store'
+import { IAdminReview } from '../../../../../models/review/admin-reviews-response'
+
+interface IProps {
+	isOpen: boolean
+	onClose: () => void
+	review: IAdminReview
+}
+
+const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
+	const { adminDashboardReviewsStore, notificationStore } = useStore()
+
+	const { execute: updateReview, isLoading } = useLoading(
+		adminDashboardReviewsStore.updateReview
+	)
+
+	const [title, setTitle] = useState<string>(review.title)
+	const [text, setText] = useState<string>(review.text)
+
+	useEffect(() => {
+		setTitle(review.title)
+		setText(review.text)
+	}, [review])
+
+	const hasChanges = useMemo(() => {
+		return title !== review.title || text !== review.text
+	}, [title, text, review.title, review.text])
+
+	const textAndTitleTogether = useMemo(() => {
+		return (
+			(text.trim() !== '' && title.trim() !== '') ||
+			(text.trim() === '' && title.trim() === '')
+		)
+	}, [text, title])
+
+	const handleSubmit = async () => {
+		const errors = await updateReview(review.user.id, review.id, {
+			title: title.trim() !== '' ? title : undefined,
+			text: text.trim() !== '' ? text : undefined,
+		})
+		if (errors.length === 0) {
+			notificationStore.addSuccessNotification('Рецензия успешно обновлена!')
+			onClose()
+		} else {
+			errors.forEach(error => {
+				notificationStore.addErrorNotification(error)
+			})
+		}
+	}
+
+	return (
+		<ModalOverlay isOpen={isOpen} onCancel={onClose}>
+			<div
+				className={`relative rounded-xl w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 p-6`}
+			>
+				<div className='grid gap-6'>
+					<h1 className='border-b border-white/10 text-3xl font-bold py-4 text-center'>
+						Редактирование отзыва
+					</h1>
+
+					<div className='grid gap-2'>
+						<FormLabel
+							name={'Заголовок'}
+							htmlFor={'review-title-input'}
+							isRequired={false}
+						/>
+						<FormInput
+							id={'review-title-input'}
+							placeholder={'Заголовок отзыва...'}
+							type={'text'}
+							value={title}
+							setValue={setTitle}
+						/>
+					</div>
+
+					<div className='grid gap-2'>
+						<FormLabel
+							name={'Текст отзыва'}
+							htmlFor={'review-text-input'}
+							isRequired={false}
+						/>
+						<FormTextbox
+							id={'review-text-input'}
+							placeholder={'Текст отзыва...'}
+							value={text}
+							setValue={setText}
+							className='h-60'
+						/>
+					</div>
+
+					<div className='flex gap-3 justify-start'>
+						<div className='w-30'>
+							<FormButton
+								title={'Сохранить'}
+								isInvert={true}
+								onClick={handleSubmit}
+								disabled={!hasChanges || !textAndTitleTogether || isLoading}
+							/>
+						</div>
+
+						<div className='w-25'>
+							<FormButton
+								title={'Назад'}
+								isInvert={false}
+								onClick={onClose}
+								disabled={false}
+							/>
+						</div>
+					</div>
+				</div>
+			</div>
+		</ModalOverlay>
+	)
+}
+
+export default ReviewFormModal

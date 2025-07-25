@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import EditSvg from '../../../components/svg/Edit-svg'
+import EditSvg from '../../../../components/svg/Edit-svg.tsx'
 
 interface IProps {
 	onClick: () => void

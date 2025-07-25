@@ -1,14 +1,14 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
-import AdminHeader from '../../../../components/admin-header/Admin-header'
-import AuthorTypeSvg from '../../../../components/author/author-types/Author-type-svg'
-import Pagination from '../../../../components/pagination/Pagination'
-import { useLoading } from '../../../../hooks/use-loading'
-import { useStore } from '../../../../hooks/use-store'
-import { AuthorTypesFilterEnum } from '../../../../models/author/author-types-filter-enum'
-import AdminFilterButton from '../../buttons/Admin-filter-button'
-import AdminDashboardAuthorsGridItem from './Admin-dashboard-authors-grid-item'
-import AuthorFormModal from './Author-form-modal'
+import AdminHeader from '../../../../../components/admin-header/Admin-header.tsx'
+import AuthorTypeSvg from '../../../../../components/author/author-types/Author-type-svg.tsx'
+import Pagination from '../../../../../components/pagination/Pagination.tsx'
+import { useLoading } from '../../../../../hooks/use-loading.ts'
+import { useStore } from '../../../../../hooks/use-store.ts'
+import { AuthorTypesFilterEnum } from '../../../../../models/author/author-types-filter-enum.ts'
+import AdminFilterButton from '../../buttons/Admin-filter-button.tsx'
+import AdminDashboardAuthorsGridItem from './Admin-dashboard-authors-grid-item.tsx'
+import AuthorFormModal from './Author-form-modal.tsx'
 
 const AdminDashboardAuthorsGrid = observer(() => {
 	const perPage = 10

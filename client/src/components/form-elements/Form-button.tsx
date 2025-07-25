@@ -8,9 +8,15 @@ interface IProps {
 }
 
 const FormButton: FC<IProps> = ({ title, isInvert, onClick, disabled }) => {
+	const handleClick = () => {
+		if (!disabled) {
+			onClick()
+		}
+	}
+
 	return (
 		<button
-			onClick={onClick}
+			onClick={handleClick}
 			disabled={disabled}
 			className={`border border-white/10 rounded-md text-sm px-4 py-2 h-10 font-medium transition-colors duration-200 select-none w-full ${
 				disabled

@@ -1,7 +1,5 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useMemo, useState } from 'react'
 import SwitchButton from '../../../../components/buttons/Switch-button'
-import FormInfoContainer from '../../../../components/form-elements/Form-info-container'
-import FormInfoField from '../../../../components/form-elements/Form-info-field'
 import TickSvg from '../../../../components/svg/Tick-svg'
 import TrashSvg from '../../../../components/svg/Trash-svg'
 import useCustomNavigate from '../../../../hooks/use-custom-navigate'
@@ -23,7 +21,6 @@ const SendReviewForm: FC<IProps> = ({ id, fetchReviews }) => {
 	const { navigateToLogin } = useCustomNavigate()
 
 	const [isLoading, setIsLoading] = useState<boolean>(false)
-	const [errors, setErrors] = useState<string[]>()
 	const [isReview, setIsReview] = useState<boolean>(true)
 	const [title, setTitle] = useState<string>('')
 	const [text, setText] = useState<string>('')
@@ -33,7 +30,7 @@ const SendReviewForm: FC<IProps> = ({ id, fetchReviews }) => {
 	const [individuality, setIndividuality] = useState<number>(5)
 	const [atmosphere, setAtmosphere] = useState<number>(1)
 	const [total, setTotal] = useState<number>(28)
-	const [userRelease, setUserRelease] = useState<IReleaseReview | undefined>(
+	const [userReview, setUserReview] = useState<IReleaseReview | undefined>(
 		undefined
 	)
 
@@ -60,22 +57,21 @@ const SendReviewForm: FC<IProps> = ({ id, fetchReviews }) => {
 	}, [rhymes, structure, realization, individuality, atmosphere])
 
 	useEffect(() => {
-		setUserRelease(
+		setUserReview(
 			releaseDetailsPageStore.releaseReviews?.find(
 				entry => entry.user_id === authStore.user?.id
 			)
 		)
-		setDefaultValues(userRelease)
-	}, [authStore.user?.id, releaseDetailsPageStore.releaseReviews, userRelease])
+		setDefaultValues(userReview)
+	}, [authStore.user?.id, releaseDetailsPageStore.releaseReviews, userReview])
 
-	const postReview = () => {
+	const postReview = async () => {
 		if (id) {
-			setErrors([])
 			setIsLoading(true)
-			const promise = userRelease
-				? releaseDetailsPageStore.updateReview(id, {
-						title: isReview ? title : undefined,
-						text: isReview ? text : undefined,
+			const promise = userReview
+				? releaseDetailsPageStore.updateReview(id, userReview.id, {
+						title: isReview ? title.trim() || undefined : undefined,
+						text: isReview ? text.trim() || undefined : undefined,
 						rhymes,
 						structure,
 						realization,
@@ -83,31 +79,33 @@ const SendReviewForm: FC<IProps> = ({ id, fetchReviews }) => {
 						atmosphere,
 				  })
 				: releaseDetailsPageStore.postReview(id, {
-						title: isReview ? title : undefined,
-						text: isReview ? text : undefined,
+						title: isReview ? title.trim() || undefined : undefined,
+						text: isReview ? text.trim() || undefined : undefined,
 						rhymes,
 						structure,
 						realization,
 						individuality,
 						atmosphere,
 				  })
-			promise.then(result => {
-				setErrors(result)
-				setIsLoading(false)
-				if (result.length === 0) {
-					notificationStore.addSuccessNotification(
-						`Вы успешно ${userRelease ? 'обновили' : 'добавили'} рецензию!`
-					)
-					releaseDetailsPageStore.fetchReleaseDetails(id)
-					fetchReviews()
-				}
-			})
+			const errors = await promise
+
+			if (errors.length === 0) {
+				notificationStore.addSuccessNotification(
+					`Вы успешно ${userReview ? 'обновили' : 'добавили'} рецензию!`
+				)
+			} else {
+				errors.forEach(error => {
+					notificationStore.addErrorNotification(error)
+				})
+			}
+			setIsLoading(false)
+			fetchReviews()
 		}
 	}
 
 	const deleteReview = () => {
-		if (id) {
-			releaseDetailsPageStore.deleteReview(id).then(result => {
+		if (userReview) {
+			releaseDetailsPageStore.deleteReview(userReview.id).then(result => {
 				notificationStore.addSuccessNotification(result.message)
 				if (result.status === true) {
 					setDefaultValues()
@@ -117,6 +115,37 @@ const SendReviewForm: FC<IProps> = ({ id, fetchReviews }) => {
 			})
 		}
 	}
+
+	const hasChanges = useMemo(() => {
+		if (userReview) {
+			return (
+				title !== userReview.title ||
+				text !== userReview.text ||
+				rhymes !== userReview.rhymes ||
+				structure !== userReview.structure ||
+				realization !== userReview.realization ||
+				individuality !== userReview.individuality ||
+				atmosphere !== userReview.atmosphere
+			)
+		}
+		return false
+	}, [
+		atmosphere,
+		individuality,
+		realization,
+		rhymes,
+		structure,
+		text,
+		title,
+		userReview,
+	])
+
+	const textAndTitleTogether = useMemo(() => {
+		return (
+			(text.trim() !== '' && title.trim() !== '') ||
+			(text.trim() === '' && title.trim() === '')
+		)
+	}, [text, title])
 
 	return authStore.isAuth ? (
 		<div className='mt-10 mx-auto'>
@@ -142,18 +171,16 @@ const SendReviewForm: FC<IProps> = ({ id, fetchReviews }) => {
 				</div>
 
 				<div className='lg:col-span-6'>
-					{userRelease && (
+					{userReview && (
 						<div className='bg-gradient-to-br from-white/20 border border-white/5 rounded-lg text-sm lg:text-base text-center px-3 py-3 lg:py-5 mb-4 font-medium'>
 							Вы уже оставляли
-							{userRelease.title && userRelease.text
-								? ' рецензию'
-								: ' оценку'}{' '}
-							к данной работе. Вы можете изменить ее, заполнив форму ниже!
+							{userReview.title && userReview.text ? ' рецензию' : ' оценку'} к
+							данной работе. Вы можете изменить ее, заполнив форму ниже!
 						</div>
 					)}
 
 					<div className='border bg-zinc-900 rounded-xl p-2 border-white/10'>
-						{userRelease && (
+						{userReview && (
 							<div className='flex justify-end mb-4'>
 								<button
 									onClick={deleteReview}
@@ -162,7 +189,7 @@ const SendReviewForm: FC<IProps> = ({ id, fetchReviews }) => {
 									<TrashSvg className='size-4' />
 									<span>
 										Удалить
-										{userRelease.title && userRelease.text
+										{userReview.title && userReview.text
 											? ' рецензию'
 											: ' оценку'}
 									</span>
@@ -199,26 +226,16 @@ const SendReviewForm: FC<IProps> = ({ id, fetchReviews }) => {
 							</div>
 
 							<button
-								disabled={isLoading}
+								disabled={isLoading || !hasChanges || !textAndTitleTogether}
 								onClick={postReview}
 								className={`inline-flex items-center justify-center whitespace-nowrap text-sm font-medium rounded-full size-16 text-black transition-colors duration-200 ${
-									isLoading
+									isLoading || !hasChanges || !textAndTitleTogether
 										? 'bg-white/40 cursor-not-allowed'
 										: 'cursor-pointer hover:bg-white/70 bg-white'
 								}`}
 							>
 								<TickSvg className='size-8' />
 							</button>
-						</div>
-
-						<div className='w-1/2'>
-							{errors && (
-								<FormInfoContainer>
-									{errors.map(error => (
-										<FormInfoField key={error} text={error} isError={true} />
-									))}
-								</FormInfoContainer>
-							)}
 						</div>
 					</div>
 				</div>

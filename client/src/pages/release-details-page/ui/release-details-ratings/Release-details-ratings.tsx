@@ -1,3 +1,4 @@
+import { observer } from 'mobx-react-lite'
 import { FC } from 'react'
 import TooltipSpan from '../../../../components/tooltip/Tooltip-span'
 import { IReleaseDetails } from '../../../../models/release/release-details'
@@ -8,7 +9,7 @@ interface IProps {
 	release: IReleaseDetails
 }
 
-const ReleaseDetailsRatings: FC<IProps> = ({ release }) => {
+const ReleaseDetailsRatings: FC<IProps> = observer(({ release }) => {
 	const ratingOrder = [
 		ReleaseRatingTypesEnum.SUPER_USER,
 		ReleaseRatingTypesEnum.WITH_TEXT,
@@ -57,6 +58,6 @@ const ReleaseDetailsRatings: FC<IProps> = ({ release }) => {
 			})}
 		</div>
 	)
-}
+})
 
 export default ReleaseDetailsRatings

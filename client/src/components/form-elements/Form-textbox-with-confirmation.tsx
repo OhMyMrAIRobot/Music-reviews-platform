@@ -43,6 +43,7 @@ const FormTextboxWithConfirmation: FC<IProps> = ({
 					placeholder={label}
 					value={value}
 					setValue={setValue}
+					className='h-30'
 				/>
 			</div>
 

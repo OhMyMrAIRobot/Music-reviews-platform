@@ -17,6 +17,7 @@ const AdminSidebar = () => {
 		navigateToAdminUsers,
 		navigateToAdminAuthors,
 		navigateToAdminReleases,
+		navigateToAdminReviews,
 	} = useCustomNavigate()
 
 	const { isActive } = useActivePath()
@@ -42,10 +43,8 @@ const AdminSidebar = () => {
 		},
 		{
 			title: 'Рецензии',
-			isActive: false,
-			onClick: () => {
-				throw new Error('Function not implemented.')
-			},
+			isActive: isActive(`/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.REVIEWS}`),
+			onClick: navigateToAdminReviews,
 			svgIcon: <TextReviewSvg className={'size-5'} />,
 		},
 		{

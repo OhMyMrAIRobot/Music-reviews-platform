@@ -87,7 +87,9 @@ const ReleaseDetailsReviewsItem: FC<IProps> = observer(
 						<h5 className='text-base lg:text-lg mt-3 font-semibold'>
 							{review.title}
 						</h5>
-						<p className='text-sm lg:text-lg font-light mt-2'>{review.text}</p>
+						<p className='text-sm lg:text-lg font-light mt-2 break-words'>
+							{review.text}
+						</p>
 						<div className='text-xs opacity-60 mt-1'>{review.created_at}</div>
 						<div className='mt-3 mb-2'>
 							<ReviewLikes

@@ -1,13 +1,13 @@
 import { FC, useState } from 'react'
-import AuthorTypeSvg from '../../../../components/author/author-types/Author-type-svg'
-import ConfirmationModal from '../../../../components/modals/Confirmation-modal'
-import useCustomNavigate from '../../../../hooks/use-custom-navigate'
-import { IAdminAuthor } from '../../../../models/author/admin-authors-response'
-import { getAuthorTypeColor } from '../../../../utils/get-author-type-color'
-import AdminDeleteButton from '../../buttons/Admin-delete-button'
-import AdminEditButton from '../../buttons/Admin-edit-button'
-import AdminNavigateButton from '../../buttons/Admin-navigate-button'
-import AuthorFormModal from './Author-form-modal'
+import AuthorTypeSvg from '../../../../../components/author/author-types/Author-type-svg.tsx'
+import ConfirmationModal from '../../../../../components/modals/Confirmation-modal.tsx'
+import useCustomNavigate from '../../../../../hooks/use-custom-navigate.ts'
+import { IAdminAuthor } from '../../../../../models/author/admin-authors-response.ts'
+import { getAuthorTypeColor } from '../../../../../utils/get-author-type-color.ts'
+import AdminDeleteButton from '../../buttons/Admin-delete-button.tsx'
+import AdminEditButton from '../../buttons/Admin-edit-button.tsx'
+import AdminNavigateButton from '../../buttons/Admin-navigate-button.tsx'
+import AuthorFormModal from './Author-form-modal.tsx'
 
 interface IProps {
 	className?: string

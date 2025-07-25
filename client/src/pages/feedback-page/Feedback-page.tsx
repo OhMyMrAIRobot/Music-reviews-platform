@@ -84,6 +84,7 @@ const FeedbackPage = () => {
 					placeholder={'Текст...'}
 					value={feedbackData.message}
 					setValue={value => handleChange('message', value)}
+					className='h-30'
 				/>
 			</div>
 

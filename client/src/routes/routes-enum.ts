@@ -26,6 +26,7 @@ export const ROUTES = {
 		USERS: 'users',
 		AUTHORS: 'authors',
 		RELEASES: 'releases',
+		REVIEWS: 'reviews',
 		NOT_DEFINED: '*',
 	},
 	NOT_DEFINED: '*',
