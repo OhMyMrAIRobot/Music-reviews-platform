@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable, runInAction } from 'mobx'
 import { ReleaseAPI } from '../../../api/release-api'
 import { ReviewAPI } from '../../../api/review-api'
 import { IReleaseDetails } from '../../../models/release/release-details'
@@ -67,6 +67,14 @@ class ReleaseDetailsPageStore {
 	): Promise<string[]> => {
 		try {
 			await ReviewAPI.postReview(releaseId, reviewData)
+			const data = await ReleaseAPI.fetchReleaseDetails(releaseId)
+
+			runInAction(() => {
+				if (this.releaseDetails) {
+					this.releaseDetails.ratings = data.ratings
+					this.releaseDetails.rating_details = data.rating_details
+				}
+			})
 			return []
 		} catch (e: any) {
 			return Array.isArray(e.response?.data?.message)
@@ -77,10 +85,19 @@ class ReleaseDetailsPageStore {
 
 	updateReview = async (
 		releaseId: string,
+		id: string,
 		reviewData: IReviewData
 	): Promise<string[]> => {
 		try {
-			await ReviewAPI.updateReview(releaseId, reviewData)
+			await ReviewAPI.updateReview(id, reviewData)
+			const data = await ReleaseAPI.fetchReleaseDetails(releaseId)
+
+			runInAction(() => {
+				if (this.releaseDetails) {
+					this.releaseDetails.ratings = data.ratings
+					this.releaseDetails.rating_details = data.rating_details
+				}
+			})
 			return []
 		} catch (e: any) {
 			return Array.isArray(e.response?.data?.message)

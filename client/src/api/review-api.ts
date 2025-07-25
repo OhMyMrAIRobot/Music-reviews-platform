@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { IAdminReviewsResponse } from '../models/review/admin-reviews-response'
+import { IAdminUpdateReviewData } from '../models/review/admin-update-review-data'
 import { IFavReview } from '../models/review/fav-review'
 import { IReleaseReviewResponse } from '../models/review/release-review'
 import { IReview, IReviewsResponse } from '../models/review/review'
@@ -38,10 +39,19 @@ export const ReviewAPI = {
 		})
 	},
 
-	async updateReview(releaseId: string, reviewData: IReviewData) {
-		return api.patch('/reviews', {
+	async updateReview(id: string, reviewData: IReviewData) {
+		return api.patch(`/reviews/${id}`, {
 			...reviewData,
-			releaseId,
+		})
+	},
+
+	async adminUpdateReview(
+		userId: string,
+		reviewId: string,
+		reviewData: IAdminUpdateReviewData
+	) {
+		return api.patch(`/reviews/${userId}/${reviewId}`, {
+			...reviewData,
 		})
 	},
 

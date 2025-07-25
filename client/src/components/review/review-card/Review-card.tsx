@@ -75,7 +75,9 @@ const ReviewCard: FC<IProps> = observer(
 						<h6 className='text-base lg:text-lg mt-3 pb-3 font-semibold overflow-hidden text-ellipsis w-full max-w-full whitespace-nowrap'>
 							{review.title}
 						</h6>
-						<p className='text-[15px] lg:text-base'>{review.text}</p>
+						<p className='text-[15px] lg:text-base line-clamp-3 break-words overflow-hidden text-ellipsis text-wrap'>
+							{review.text}
+						</p>
 					</div>
 
 					<div className='mt-5 flex justify-between items-center pr-2.5'>

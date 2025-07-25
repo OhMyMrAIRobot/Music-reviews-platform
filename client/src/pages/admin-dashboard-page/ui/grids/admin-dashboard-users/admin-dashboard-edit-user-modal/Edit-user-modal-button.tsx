@@ -8,10 +8,16 @@ interface IProps {
 }
 
 const EditUserModalButton: FC<IProps> = ({ title, onClick, svg, disabled }) => {
+	const handleClick = () => {
+		if (!disabled) {
+			onClick()
+		}
+	}
+
 	return (
 		<button
 			disabled={disabled}
-			onClick={onClick}
+			onClick={handleClick}
 			className={`h-8 px-3 text-sm font-medium border border-white/10 rounded-lg flex items-center justify-center gap-1 text-white/90  transition-all duration-200 ${
 				disabled
 					? 'cursor-not-allowed opacity-70'

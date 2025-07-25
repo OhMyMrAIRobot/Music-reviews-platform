@@ -56,6 +56,7 @@ const UpdateProfileInfoForm = observer(() => {
 						placeholder={'Описание профиля'}
 						value={bio}
 						setValue={setBio}
+						className='h-30'
 					/>
 				</div>
 

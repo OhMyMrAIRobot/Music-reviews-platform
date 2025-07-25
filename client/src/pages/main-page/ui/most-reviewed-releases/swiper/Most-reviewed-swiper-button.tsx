@@ -11,10 +11,16 @@ const MostReviewedSwiperButton: FC<IProps> = ({
 	onClick,
 	children,
 }) => {
+	const handleClick = () => {
+		if (!disabled) {
+			onClick()
+		}
+	}
+
 	return (
 		<button
 			disabled={disabled}
-			onClick={onClick}
+			onClick={handleClick}
 			className={`relative rounded-full h-10 w-10 bg-zinc-950 flex items-center justify-center cursor-pointer transition-colors ${
 				disabled ? 'opacity-30' : 'opacity-100 hover:bg-zinc-900 cursor-default'
 			}`}

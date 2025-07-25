@@ -21,8 +21,10 @@ const ReleaseDetailsPage = observer(() => {
 		releaseDetailsPageStore.fetchReleaseReviews
 	)
 
+	const { execute: fetchReleaseDetails, isLoading: isReleaseLoading } =
+		useLoading(releaseDetailsPageStore.fetchReleaseDetails)
+
 	const [totalItems, setTotalItems] = useState(0)
-	const [isReleaseLoading, setIsReleaseLoading] = useState<boolean>(false)
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [selectedSort, setSelectedSort] = useState<string>(
 		ReleaseReviewSortField.NEW
@@ -30,15 +32,6 @@ const ReleaseDetailsPage = observer(() => {
 
 	const release = releaseDetailsPageStore.releaseDetails
 	const reviews = releaseDetailsPageStore.releaseReviews
-
-	useEffect(() => {
-		if (id) {
-			setIsReleaseLoading(true)
-			releaseDetailsPageStore
-				.fetchReleaseDetails(id)
-				.finally(() => setIsReleaseLoading(false))
-		}
-	}, [id, releaseDetailsPageStore])
 
 	const fetchReviews = async (): Promise<void> => {
 		let field = 'created'
@@ -53,6 +46,13 @@ const ReleaseDetailsPage = observer(() => {
 			() => setTotalItems(releaseDetailsPageStore.reviewsCount)
 		)
 	}
+
+	useEffect(() => {
+		if (id) {
+			fetchReleaseDetails(id)
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [id])
 
 	useEffect(() => {
 		fetchReviews()
