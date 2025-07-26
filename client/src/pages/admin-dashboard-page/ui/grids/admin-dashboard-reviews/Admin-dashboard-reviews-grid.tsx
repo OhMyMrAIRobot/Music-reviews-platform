@@ -61,7 +61,7 @@ const AdminDashboardReviewsGrid = observer(() => {
 			>
 				<AdminDashboardReviewsGridItem
 					className='bg-white/5 font-medium'
-					isLoading={isLoading}
+					isLoading={false}
 					order={order}
 					toggleOrder={() =>
 						setOrder(
@@ -78,7 +78,7 @@ const AdminDashboardReviewsGrid = observer(() => {
 							? Array.from({ length: perPage }).map((_, idx) => (
 									<AdminDashboardReviewsGridItem
 										key={`Review-skeleton-${idx}`}
-										isLoading={false}
+										isLoading={true}
 									/>
 							  ))
 							: adminDashboardReviewsStore.reviews.map((review, idx) => (

@@ -18,6 +18,7 @@ const AdminSidebar = () => {
 		navigateToAdminAuthors,
 		navigateToAdminReleases,
 		navigateToAdminReviews,
+		navigateToAdminFeedback,
 	} = useCustomNavigate()
 
 	const { isActive } = useActivePath()
@@ -49,10 +50,8 @@ const AdminSidebar = () => {
 		},
 		{
 			title: 'Сообщения',
-			isActive: false,
-			onClick: () => {
-				throw new Error('Function not implemented.')
-			},
+			isActive: isActive(`/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.FEEDBACK}`),
+			onClick: navigateToAdminFeedback,
 			svgIcon: <PencilSvg className={'size-3.5'} />,
 		},
 	]

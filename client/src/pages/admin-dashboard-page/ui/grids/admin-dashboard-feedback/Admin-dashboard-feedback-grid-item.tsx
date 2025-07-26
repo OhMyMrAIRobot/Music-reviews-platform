@@ -1,0 +1,141 @@
+import { FC } from 'react'
+import FeedbackStatusIcon from '../../../../../components/feedback/Feedback-status-icon'
+import ArrowBottomSvg from '../../../../../components/header/svg/Arrow-bottom-svg'
+import { useLoading } from '../../../../../hooks/use-loading'
+import { useStore } from '../../../../../hooks/use-store'
+import { IFeedback } from '../../../../../models/feedback/feedback'
+import { SortOrderEnum } from '../../../../../models/sort/sort-order-enum'
+import { SortOrder } from '../../../../../types/sort-order-type'
+import { getFeedbackStatusColor } from '../../../../../utils/get-feedback-status-color'
+import AdminDeleteButton from '../../buttons/Admin-delete-button'
+import AdminOpenButton from '../../buttons/Admin-open-button'
+
+interface IProps {
+	className?: string
+	feedback?: IFeedback
+	position?: number
+	isLoading: boolean
+	order?: SortOrder
+	toggleOrder?: () => void
+	deleteFeedback?: () => void
+	isDeleteLoading?: boolean
+	refetchFeedbacks?: () => void
+}
+
+const AdminDashboardFeedbackGridItem: FC<IProps> = ({
+	className,
+	feedback,
+	position,
+	isLoading,
+	order,
+	toggleOrder,
+	refetchFeedbacks,
+}) => {
+	const { adminDashboardFeedbackStore, notificationStore } = useStore()
+
+	const toggle = () => {
+		if (toggleOrder) {
+			toggleOrder()
+		}
+	}
+
+	const handleRefetch = () => {
+		if (refetchFeedbacks) {
+			refetchFeedbacks()
+		}
+	}
+
+	const { execute: deleteFeedback, isLoading: isDeletingFeedback } = useLoading(
+		adminDashboardFeedbackStore.deleteFeedback
+	)
+
+	const handleDelete = async (feedbackId: string) => {
+		if (isDeletingFeedback) return
+
+		const errors = await deleteFeedback(feedbackId)
+		if (errors.length === 0) {
+			notificationStore.addSuccessNotification('Сообщение успешно удалено!')
+		} else {
+			errors.forEach(error => {
+				notificationStore.addErrorNotification(error)
+			})
+		}
+		handleRefetch()
+	}
+
+	return isLoading ? (
+		<div className='bg-gray-400 w-full h-12 rounded-lg animate-pulse opacity-40' />
+	) : (
+		<div
+			className={`${className} text-[10px] md:text-sm h-10 md:h-12 w-full rounded-lg grid grid-cols-10 lg:grid-cols-12 items-center px-3 border border-white/10 text-nowrap`}
+		>
+			<div className='col-span-1 text-ellipsis line-clamp-1'>
+				{position ?? '#'}
+			</div>
+
+			<div className='col-span-2 text-ellipsis line-clamp-1 mr-2'>
+				{feedback?.email ?? 'Email'}
+			</div>
+
+			<div className='col-span-2 text-ellipsis text-wrap font-medium'>
+				{feedback ? (
+					<span>{feedback.createdAt}</span>
+				) : (
+					<button
+						onClick={toggle}
+						className='cursor-pointer hover:text-white flex items-center gap-x-1.5'
+					>
+						<span>Дата отправки</span>
+						<ArrowBottomSvg
+							className={`size-3 ${
+								order === SortOrderEnum.ASC ? 'rotate-180' : ''
+							}`}
+						/>
+					</button>
+				)}
+			</div>
+
+			<div className='col-span-2 text-ellipsis line-clamp-1 font-medium'>
+				{feedback ? (
+					<div
+						className={`flex gap-x-1 items-center ${getFeedbackStatusColor(
+							feedback.feedbackStatus.status
+						)}`}
+					>
+						<FeedbackStatusIcon
+							status={feedback.feedbackStatus.status}
+							className='size-5'
+						/>
+						<span>{feedback.feedbackStatus.status}</span>
+					</div>
+				) : (
+					<span>Статус</span>
+				)}
+			</div>
+
+			<div className='col-span-2 font-medium line-clamp-2 overflow-hidden text-ellipsis text-wrap mr-2'>
+				{feedback ? <span>{feedback.title}</span> : <span>Заголовок</span>}
+			</div>
+
+			<div className='col-span-2 font-medium line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
+				{feedback ? <span>{feedback.message}</span> : <span>Текст</span>}
+			</div>
+
+			<div className='col-span-1'>
+				{feedback ? (
+					<div className='flex gap-x-3 justify-end'>
+						<AdminOpenButton onClick={() => {}} />
+						<AdminDeleteButton
+							onClick={() => handleDelete(feedback.id)}
+							isLoading={isDeletingFeedback}
+						/>
+					</div>
+				) : (
+					'Действие'
+				)}
+			</div>
+		</div>
+	)
+}
+
+export default AdminDashboardFeedbackGridItem

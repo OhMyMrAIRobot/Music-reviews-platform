@@ -27,6 +27,7 @@ export const ROUTES = {
 		AUTHORS: 'authors',
 		RELEASES: 'releases',
 		REVIEWS: 'reviews',
+		FEEDBACK: 'feedback',
 		NOT_DEFINED: '*',
 	},
 	NOT_DEFINED: '*',
