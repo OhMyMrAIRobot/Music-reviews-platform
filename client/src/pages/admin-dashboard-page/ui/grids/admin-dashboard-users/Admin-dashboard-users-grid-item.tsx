@@ -2,9 +2,11 @@ import { FC, useState } from 'react'
 import ArrowBottomSvg from '../../../../../components/header/svg/Arrow-bottom-svg.tsx'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal.tsx'
 import UserRoleSvg from '../../../../../components/user/User-role-svg.tsx'
+import { useLoading } from '../../../../../hooks/use-loading.ts'
+import { useStore } from '../../../../../hooks/use-store.ts'
 import { SortOrderEnum } from '../../../../../models/sort/sort-order-enum.ts'
-import { IUser } from '../../../../../models/user/user.ts'
 import { UserStatusesEnum } from '../../../../../models/user/user-statuses-enum.ts'
+import { IUser } from '../../../../../models/user/user.ts'
 import { SortOrder } from '../../../../../types/sort-order-type.ts'
 import { getRoleColor } from '../../../../../utils/get-role-color.ts'
 import AdminDeleteButton from '../../buttons/Admin-delete-button.tsx'
@@ -18,7 +20,7 @@ interface IProps {
 	position?: number
 	order?: SortOrder
 	toggleOrder?: () => void
-	deleteUser?: () => void
+	refetchUsers?: () => void
 }
 
 const AdminDashboardUsersGridItem: FC<IProps> = ({
@@ -28,8 +30,14 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 	position,
 	order,
 	toggleOrder,
-	deleteUser,
+	refetchUsers,
 }) => {
+	const { adminDashboardUsersStore, notificationStore } = useStore()
+
+	const { execute: deleteUser, isLoading: isDeleting } = useLoading(
+		adminDashboardUsersStore.deleteUser
+	)
+
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [editModelOpen, setEditModalOpen] = useState<boolean>(false)
 
@@ -39,9 +47,22 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 		}
 	}
 
-	const handleDelete = () => {
-		if (deleteUser) {
-			deleteUser()
+	const handleRefetch = () => {
+		if (refetchUsers) {
+			refetchUsers()
+		}
+	}
+
+	const handleDelete = async (id: string) => {
+		if (isDeleting) return
+		const errors = await deleteUser(id)
+		if (errors.length === 0) {
+			notificationStore.addSuccessNotification(
+				'Вы успешно удалили пользователя!'
+			)
+			handleRefetch()
+		} else {
+			errors.forEach(error => notificationStore.addErrorNotification(error))
 		}
 	}
 
@@ -54,8 +75,9 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 					<ConfirmationModal
 						title={'Вы действительно хотите удалить пользователя?'}
 						isOpen={confModalOpen}
-						onConfirm={handleDelete}
+						onConfirm={() => handleDelete(user.id)}
 						onCancel={() => setConfModalOpen(false)}
+						isLoading={isDeleting}
 					/>
 
 					<AdminDashboardEditUserModal

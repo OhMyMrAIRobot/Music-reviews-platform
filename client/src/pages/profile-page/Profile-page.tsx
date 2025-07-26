@@ -24,7 +24,7 @@ const ProfilePage = () => {
 	const profile = profilePageStore.profile
 
 	return isLoading ? (
-		<Loader className={'size-20'} />
+		<Loader className={'mx-auto size-20 border-white'} />
 	) : (
 		profile && (
 			<div className='grid grid-cols-1 xl:grid-cols-10 gap-5'>

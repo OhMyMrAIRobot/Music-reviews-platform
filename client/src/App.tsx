@@ -30,7 +30,7 @@ export function App() {
 
 	return isLoading ? (
 		<div className='min-w-screen min-h-screen flex items-center justify-center'>
-			<Loader className={'size-20'} />
+			<Loader className={'mx-auto size-20 border-white'} />
 		</div>
 	) : (
 		<>

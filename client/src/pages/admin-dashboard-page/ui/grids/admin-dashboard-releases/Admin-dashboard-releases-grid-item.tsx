@@ -3,6 +3,8 @@ import ArrowBottomSvg from '../../../../../components/header/svg/Arrow-bottom-sv
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal.tsx'
 import ReleaseTypeIcon from '../../../../../components/release/Release-type-icon.tsx'
 import useCustomNavigate from '../../../../../hooks/use-custom-navigate.ts'
+import { useLoading } from '../../../../../hooks/use-loading.ts'
+import { useStore } from '../../../../../hooks/use-store.ts'
 import { AuthorTypesEnum } from '../../../../../models/author/author-type.ts'
 import { IAdminRelease } from '../../../../../models/release/admin-releases-response.ts'
 import { SortOrderEnum } from '../../../../../models/sort/sort-order-enum.ts'
@@ -20,7 +22,7 @@ interface IProps {
 	position?: number
 	order?: SortOrder
 	toggleOrder?: () => void
-	deleteRelease?: () => void
+	refetchReleases?: () => void
 }
 
 const AdminDashboardReleasesGridItem: FC<IProps> = ({
@@ -30,9 +32,15 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 	isLoading,
 	position,
 	toggleOrder,
-	deleteRelease,
+	refetchReleases,
 }) => {
+	const { adminDashboardReleasesStore, notificationStore } = useStore()
+
 	const { navigateToRelease } = useCustomNavigate()
+
+	const { execute: deleteRelease, isLoading: isDeleting } = useLoading(
+		adminDashboardReleasesStore.deleteRelease
+	)
 
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
@@ -43,15 +51,30 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 		}
 	}
 
-	const handleDelete = () => {
-		if (deleteRelease) {
-			deleteRelease()
+	const handleRefetch = () => {
+		if (refetchReleases) {
+			refetchReleases()
 		}
 	}
 
 	const handleNavigate = () => {
 		if (release) {
 			navigateToRelease(release.id)
+		}
+	}
+
+	const handleDelete = async (id: string) => {
+		if (isDeleting) return
+
+		const errors = await deleteRelease(id)
+
+		if (errors.length === 0) {
+			notificationStore.addSuccessNotification('Вы успешно удалили релиз!')
+			handleRefetch()
+		} else {
+			errors.forEach(err => {
+				notificationStore.addErrorNotification(err)
+			})
 		}
 	}
 
@@ -65,8 +88,9 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 						<ConfirmationModal
 							title={'Вы действительно хотите удалить релиз?'}
 							isOpen={confModalOpen}
-							onConfirm={handleDelete}
+							onConfirm={() => handleDelete(release.id)}
 							onCancel={() => setConfModalOpen(false)}
+							isLoading={isDeleting}
 						/>
 					)}
 

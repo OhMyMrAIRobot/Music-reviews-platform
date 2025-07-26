@@ -14,7 +14,7 @@ import AdminDashboardUsersGridItem from './Admin-dashboard-users-grid-item.tsx'
 const AdminDashboardUsersGrid = observer(() => {
 	const perPage = 10
 
-	const { adminDashboardUsersStore, notificationStore } = useStore()
+	const { adminDashboardUsersStore } = useStore()
 
 	const [searchText, setSearchText] = useState<string>('')
 	const [activeOption, setActiveOption] = useState<string>(
@@ -35,19 +35,6 @@ const AdminDashboardUsersGrid = observer(() => {
 			perPage,
 			(currentPage - 1) * perPage
 		)
-	}
-
-	const deleteUser = async (id: string) => {
-		const result = await adminDashboardUsersStore.deleteUser(id)
-		if (result.length === 0)
-			if (result.length === 0) {
-				notificationStore.addSuccessNotification(
-					'Вы успешно удалили пользователя!'
-				)
-				fetchUsers()
-			} else {
-				result.forEach(err => notificationStore.addErrorNotification(err))
-			}
 	}
 
 	useEffect(() => {
@@ -113,7 +100,7 @@ const AdminDashboardUsersGrid = observer(() => {
 										user={user}
 										isLoading={isLoading}
 										position={(currentPage - 1) * perPage + idx + 1}
-										deleteUser={() => deleteUser(user.id)}
+										refetchUsers={fetchUsers}
 									/>
 							  ))}
 					</div>

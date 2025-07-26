@@ -5,14 +5,20 @@ interface IProps {
 	isOpen: boolean
 	children: ReactNode
 	onCancel: () => void
+	isLoading?: boolean
 }
 
-const ModalOverlay: FC<IProps> = ({ isOpen, onCancel, children }) => {
+const ModalOverlay: FC<IProps> = ({
+	isOpen,
+	onCancel,
+	children,
+	isLoading = false,
+}) => {
 	const [isVisible, setIsVisible] = useState(false)
 	const [shouldRender, setShouldRender] = useState(false)
 
 	const handleOverlayClick = (e: React.MouseEvent) => {
-		if (e.target === e.currentTarget) {
+		if (e.target === e.currentTarget && !isLoading) {
 			onCancel()
 		}
 	}
