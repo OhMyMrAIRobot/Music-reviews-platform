@@ -1,8 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  forwardRef,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { Feedback, Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
 import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
+import { FeedbackResponsesService } from 'src/feedback-responses/feedback-responses.service';
 import { FeedbackStatusesService } from 'src/feedback-statuses/feedback-statuses.service';
 import { FeedbackStatusesEnum } from 'src/feedback-statuses/types/feedback-statuses.enum';
 import { CreateFeedbackDto } from './dto/create-feedback.dto';
@@ -16,6 +22,8 @@ import { UpdateFeedbackDto } from './dto/update-feedback.dto';
 @Injectable()
 export class FeedbackService {
   constructor(
+    @Inject(forwardRef(() => FeedbackResponsesService))
+    private readonly feedbackResponsesService: FeedbackResponsesService,
     private readonly prisma: PrismaService,
     private readonly statusesService: FeedbackStatusesService,
   ) {}
@@ -103,7 +111,21 @@ export class FeedbackService {
     updateFeedbackDto: UpdateFeedbackDto,
   ): Promise<FeedbackResponseItem> {
     await this.findById(id);
-    await this.statusesService.findOne(updateFeedbackDto.feedbackStatusId);
+    const status = await this.statusesService.findOne(
+      updateFeedbackDto.feedbackStatusId,
+    );
+
+    if (
+      (status.status as FeedbackStatusesEnum) === FeedbackStatusesEnum.ANSWERED
+    ) {
+      const response = await this.feedbackResponsesService.findByFeedbackId(id);
+
+      if (!response) {
+        throw new ConflictException(
+          'Данный статус не может быть установлен без отправки сообщения!',
+        );
+      }
+    }
 
     const updated = await this.prisma.feedback.update({
       where: { id },
