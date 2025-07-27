@@ -23,6 +23,7 @@ import { UserFavAuthorsModule } from './user-fav-authors/user-fav-authors.module
 import { UserFavReleasesModule } from './user-fav-releases/user-fav-releases.module';
 import { UserFavReviewsModule } from './user-fav-reviews/user-fav-reviews.module';
 import { UsersModule } from './users/users.module';
+import { FeedbackResponsesModule } from './feedback-responses/feedback-responses.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { UsersModule } from './users/users.module';
     PrismaModule,
     LeaderboardModule,
     FileModule,
+    FeedbackResponsesModule,
   ],
   controllers: [],
   providers: [],

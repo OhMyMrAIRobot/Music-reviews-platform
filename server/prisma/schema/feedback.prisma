@@ -1,0 +1,36 @@
+model Feedback {
+  id               String   @id @default(cuid())
+  email            String   @db.VarChar(100)
+  title            String   @db.VarChar(50)
+  message          String
+  createdAt        DateTime @default(now()) @map("created_at")
+  feedbackStatusId String   @map("feedback_status_id")
+
+  feedbackStatus FeedbackStatus @relation(fields: [feedbackStatusId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  feedbackResponse FeedbackResponse?
+
+  @@map("Feedbacks")
+}
+
+model FeedbackStatus {
+  id       String     @id @default(cuid())
+  status   String     @unique @db.VarChar(30)
+  Feedback Feedback[]
+
+  @@map("Feedback_statuses")
+}
+
+model FeedbackResponse {
+  id        String   @id @default(cuid())
+  message   String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  feedbackId String   @unique @map("feedback_id")
+  feedback   Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  userId String? @map("user_id")
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@map("Feedback_responses")
+}

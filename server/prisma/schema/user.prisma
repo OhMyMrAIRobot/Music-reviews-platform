@@ -16,6 +16,7 @@ model User {
   UserFavReviews      UserFavReview[]
   UserFavAuthor       UserFavAuthor[]
   TopUsersLeaderboard TopUsersLeaderboard?
+  FeedbackResponse    FeedbackResponse[]
 
   @@map("Users")
 }

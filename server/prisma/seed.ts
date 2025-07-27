@@ -160,13 +160,126 @@ async function main() {
   await prisma.feedbackStatus.createMany({
     data: [
       {
+        id: '0',
         status: FeedbackStatusesEnum.NEW,
       },
       {
+        id: '1',
         status: FeedbackStatusesEnum.ANSWERED,
       },
       {
+        id: '2',
         status: FeedbackStatusesEnum.READ,
+      },
+    ],
+  });
+
+  await prisma.feedback.createMany({
+    data: [
+      {
+        email: 'user1@example.com',
+        title: 'Проблема с авторизацией',
+        message: 'Не могу войти в аккаунт, пишет "Неверный пароль"',
+        feedbackStatusId: '0',
+        createdAt: new Date(Date.now() - 1 * 3600 * 1000),
+      },
+      {
+        email: 'user2@example.com',
+        title: 'Вопрос по оплате',
+        message: 'Как отменить подписку?',
+        feedbackStatusId: '1',
+        createdAt: new Date(Date.now() - 2 * 3600 * 1000),
+      },
+      {
+        email: 'support@company.com',
+        title: 'Предложение сотрудничества',
+        message: 'Хотим предложить партнерство вашей платформе',
+        feedbackStatusId: '2',
+        createdAt: new Date(Date.now() - 3 * 3600 * 1000),
+      },
+      {
+        email: 'customer3@mail.ru',
+        title: 'Баги в мобильном приложении',
+        message: 'Приложение вылетает при открытии профиля',
+        feedbackStatusId: '0',
+        createdAt: new Date(Date.now() - 4 * 3600 * 1000),
+      },
+      {
+        email: 'webmaster@gmail.com',
+        title: 'Не работает форма',
+        message: 'Форма обратной связи не отправляет данные',
+        feedbackStatusId: '1',
+        createdAt: new Date(Date.now() - 5 * 3600 * 1000),
+      },
+      {
+        email: 'john.doe@yahoo.com',
+        title: 'Срочный вопрос',
+        message: 'Мой заказ не отображается в истории',
+        feedbackStatusId: '0',
+        createdAt: new Date(Date.now() - 6 * 3600 * 1000),
+      },
+      {
+        email: 'alice.smith@proton.me',
+        title: 'Жалоба на сервис',
+        message: 'Очень долгая загрузка страниц',
+        feedbackStatusId: '2',
+        createdAt: new Date(Date.now() - 7 * 3600 * 1000),
+      },
+      {
+        email: 'feedback@site.org',
+        title: 'Отзыв о продукте',
+        message: 'Отличный сервис, но нужно добавить темную тему',
+        feedbackStatusId: '1',
+        createdAt: new Date(Date.now() - 8 * 3600 * 1000),
+      },
+      {
+        email: 'random_user@temp-mail.com',
+        title: 'Техническая проблема',
+        message: 'Не приходит письмо подтверждения',
+        feedbackStatusId: '0',
+        createdAt: new Date(Date.now() - 9 * 3600 * 1000),
+      },
+      {
+        email: 'manager@business.com',
+        title: 'Корпоративный запрос',
+        message: 'Нужен доступ для 10 сотрудников',
+        feedbackStatusId: '1',
+        createdAt: new Date(Date.now() - 10 * 3600 * 1000),
+      },
+      {
+        email: 'test_account@test.com',
+        title: 'Тестовое сообщение',
+        message: 'Это тестовое сообщение для проверки работы формы',
+        feedbackStatusId: '2',
+        createdAt: new Date(Date.now() - 11 * 3600 * 1000),
+      },
+      {
+        email: 'webdev@agency.net',
+        title: 'Вопрос по API',
+        message: 'Где найти документацию по вашем API?',
+        feedbackStatusId: '0',
+        createdAt: new Date(Date.now() - 12 * 3600 * 1000),
+      },
+      {
+        email: 'newsletter@subscriber.co',
+        title: 'Отписаться от рассылки',
+        message: 'Пожалуйста, удалите меня из вашей рассылки',
+        feedbackStatusId: '1',
+        createdAt: new Date(Date.now() - 13 * 3600 * 1000),
+      },
+      {
+        email: 'mobile_user@android.com',
+        title: 'Проблема с уведомлениями',
+        message: 'Не приходят push-уведомления на Android',
+        feedbackStatusId: '2',
+        createdAt: new Date(Date.now() - 14 * 3600 * 1000),
+      },
+      {
+        email: 'last_user@example.org',
+        title: 'Благодарность',
+        message: 'Спасибо за быстрый ответ на мой предыдущий запрос!',
+        feedbackStatusId: '1',
+        createdAt: new Date(Date.now() - 15 * 3600 * 1000),
       },
     ],
   });
