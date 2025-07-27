@@ -40,6 +40,13 @@ export class MailsService {
     });
   }
 
+  async sendResponseEmail(email: string, sender: string, message: string) {
+    await this.sendEmail(email, 'Ответ на ваше сообщение', 'response', {
+      sender: sender,
+      message: message,
+    });
+  }
+
   private async sendEmail(
     to: string,
     subject: string,

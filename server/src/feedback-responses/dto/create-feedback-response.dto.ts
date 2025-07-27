@@ -7,7 +7,4 @@ export class CreateFeedbackResponseDto {
 
   @IsEntityId()
   feedbackId: string;
-
-  @IsEntityId()
-  userId: string;
 }
