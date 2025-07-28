@@ -1,5 +1,5 @@
 import { Exclude, Expose, Transform, Type } from 'class-transformer';
-import { formatDateCreatedAt } from 'src/users/utils/format-date-created-at';
+import { formatFullDate } from 'src/utils/format-full-date';
 
 type AdminUserWithProfile = {
   profile: { avatar?: string };
@@ -52,7 +52,7 @@ export class AdminReview {
   text: string;
 
   @Expose()
-  @Transform(({ value }) => formatDateCreatedAt(value as Date))
+  @Transform(({ value }) => formatFullDate(value as Date))
   createdAt: string;
 
   @Expose()
