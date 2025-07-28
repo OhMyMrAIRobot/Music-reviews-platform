@@ -1,8 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
 import FormButton from '../../../../components/form-elements/Form-button'
-import FormInfoContainer from '../../../../components/form-elements/Form-info-container'
-import FormInfoField from '../../../../components/form-elements/Form-info-field'
 import FormInput from '../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../components/form-elements/Form-label'
 import FormSubTitle from '../../../../components/form-elements/Form-subtitle'
@@ -14,26 +12,28 @@ const ReqResetPasswordForm = observer(() => {
 	const { authStore, notificationStore } = useStore()
 
 	const [email, setEmail] = useState<string>('')
-	const [errors, setErrors] = useState<string[]>([])
 
 	const { execute: sendRequest, isLoading } = useLoading(
 		authStore.sendReqResetPassword
 	)
 
-	const onSubmit = () => {
-		sendRequest(email).then(result => {
-			if (Array.isArray(result)) {
-				setErrors(result)
-			} else {
-				notificationStore.addNotification({
-					id: self.crypto.randomUUID(),
-					text: result
-						? 'Письмо с инструкциями по восстановлению пароля отправлено на вашу почту!'
-						: 'Ошибка при отправке письма. Повторите попытку позже!',
-					isError: !result,
-				})
+	const onSubmit = async () => {
+		if (isLoading || !email.trim()) return
+		const result = await sendRequest(email)
+		if (Array.isArray(result)) {
+			result.forEach(err => notificationStore.addErrorNotification(err))
+		} else {
+			notificationStore.addNotification({
+				id: self.crypto.randomUUID(),
+				text: result
+					? 'Письмо с инструкциями по восстановлению пароля отправлено на вашу почту!'
+					: 'Ошибка при отправке письма. Повторите попытку позже!',
+				isError: !result,
+			})
+			if (result) {
+				setEmail('')
 			}
-		})
+		}
 	}
 
 	return (
@@ -56,20 +56,14 @@ const ReqResetPasswordForm = observer(() => {
 					setValue={setEmail}
 				/>
 			</div>
+
 			<FormButton
 				title={isLoading ? 'Отправка...' : 'Отправить письмо для сброса'}
 				onClick={onSubmit}
 				isInvert={true}
-				disabled={isLoading}
+				disabled={isLoading || !email.trim()}
+				isLoading={isLoading}
 			/>
-
-			{errors && (
-				<FormInfoContainer>
-					{errors.map(error => (
-						<FormInfoField key={error} text={error} isError={true} />
-					))}
-				</FormInfoContainer>
-			)}
 		</div>
 	)
 })

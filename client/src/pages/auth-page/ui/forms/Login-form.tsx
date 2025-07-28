@@ -1,8 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
 import FormButton from '../../../../components/form-elements/Form-button'
-import FormInfoContainer from '../../../../components/form-elements/Form-info-container'
-import FormInfoField from '../../../../components/form-elements/Form-info-field'
 import FormInput from '../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../components/form-elements/Form-label'
 import FormSubTitle from '../../../../components/form-elements/Form-subtitle'
@@ -12,7 +10,6 @@ import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
 
 const LoginForm = observer(() => {
-	const [errors, setErrors] = useState<string[]>([])
 	const [email, setEmail] = useState<string>('')
 	const [password, setPassword] = useState<string>('')
 
@@ -22,16 +19,15 @@ const LoginForm = observer(() => {
 
 	const { execute: login, isLoading } = useLoading(authStore.login)
 
-	const handleLogin = () => {
-		login(email, password).then(errors => {
-			setErrors(errors)
-			if (authStore.isAuth)
-				notificationStore.addNotification({
-					id: self.crypto.randomUUID(),
-					text: 'Вы успешно вошли!',
-					isError: false,
-				})
-		})
+	const handleLogin = async () => {
+		if (!email.trim() || !password || isLoading) return
+
+		const errors = await login(email, password)
+		if (errors.length === 0) {
+			notificationStore.addSuccessNotification('Вы успешно вошли!')
+		} else {
+			errors.forEach(err => notificationStore.addErrorNotification(err))
+		}
 	}
 
 	return (
@@ -59,8 +55,11 @@ const LoginForm = observer(() => {
 						<FormLabel name={'Пароль'} htmlFor={'AuthPassword'} />
 
 						<button
+							disabled={isLoading}
 							onClick={navigateToRequestReset}
-							className='text-sm cursor-pointer font-bold hover:underline underline-offset-4'
+							className={`text-sm cursor-pointer font-bold hover:underline underline-offset-4 ${
+								isLoading ? 'opacity-50' : ''
+							}`}
 						>
 							Забыли пароль?
 						</button>
@@ -80,24 +79,17 @@ const LoginForm = observer(() => {
 						title={isLoading ? 'Загрузка...' : 'Войти'}
 						onClick={handleLogin}
 						isInvert={true}
-						disabled={isLoading}
+						disabled={isLoading || !email.trim() || !password}
+						isLoading={isLoading}
 					/>
 
 					<FormButton
 						title={'Зарегистрироваться'}
 						onClick={navigateToRegistration}
 						isInvert={false}
-						disabled={false}
+						disabled={isLoading}
 					/>
 				</div>
-
-				{errors && (
-					<FormInfoContainer>
-						{errors.map(error => (
-							<FormInfoField key={error} text={error} isError={true} />
-						))}
-					</FormInfoContainer>
-				)}
 			</div>
 		</div>
 	)

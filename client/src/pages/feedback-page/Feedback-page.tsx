@@ -24,6 +24,7 @@ const FeedbackPage = () => {
 	}
 
 	const sendFeedback = async () => {
+		if (!isFormValid) return
 		try {
 			await FeedbackAPI.sendFeedback(feedbackData)
 			notificationStore.addSuccessNotification('Отзыв успешно отправлен!')
@@ -98,6 +99,7 @@ const FeedbackPage = () => {
 				isInvert={true}
 				onClick={send}
 				disabled={isLoading || !isFormValid}
+				isLoading={isLoading}
 			/>
 		</div>
 	)

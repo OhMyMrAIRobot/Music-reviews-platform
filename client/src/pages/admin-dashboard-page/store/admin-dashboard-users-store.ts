@@ -105,12 +105,19 @@ class AdminDashboardUsersStore {
 
 			const idx = this.users.findIndex(usr => usr.id === this.user?.id)
 
-			if (idx !== -1 && this.user) {
+			if (idx !== -1) {
 				runInAction(() => {
 					this.users[idx].email = user.email
 					this.users[idx].nickname = user.nickname
 					this.users[idx].role = user.role.role
 					this.users[idx].isActive = user.isActive
+
+					if (this.user && this.user.id === user.id) {
+						this.user.email = user.email
+						this.user.nickname = user.nickname
+						this.user.role = user.role
+						this.user.isActive = user.isActive
+					}
 				})
 			}
 
