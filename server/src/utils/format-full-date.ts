@@ -1,4 +1,4 @@
-export function formatDateCreatedAt(date: Date): string {
+export function formatFullDate(date: Date): string {
   if (!date) return '';
 
   const pad = (n: number) => n.toString().padStart(2, '0');

@@ -8,7 +8,7 @@ import { Feedback, Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
 import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
-import { FeedbackResponsesService } from 'src/feedback-responses/feedback-responses.service';
+import { FeedbackRepliesService } from 'src/feedback-replies/feedback-replies.service';
 import { FeedbackStatusesService } from 'src/feedback-statuses/feedback-statuses.service';
 import { FeedbackStatusesEnum } from 'src/feedback-statuses/types/feedback-statuses.enum';
 import { CreateFeedbackDto } from './dto/create-feedback.dto';
@@ -22,8 +22,8 @@ import { UpdateFeedbackDto } from './dto/update-feedback.dto';
 @Injectable()
 export class FeedbackService {
   constructor(
-    @Inject(forwardRef(() => FeedbackResponsesService))
-    private readonly feedbackResponsesService: FeedbackResponsesService,
+    @Inject(forwardRef(() => FeedbackRepliesService))
+    private readonly feedbackResponsesService: FeedbackRepliesService,
     private readonly prisma: PrismaService,
     private readonly statusesService: FeedbackStatusesService,
   ) {}

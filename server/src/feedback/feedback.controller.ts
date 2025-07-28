@@ -52,7 +52,7 @@ export class FeedbackController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ROOT_ADMIN)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.feedbacksService.remove(id);

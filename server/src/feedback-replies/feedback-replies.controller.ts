@@ -13,20 +13,20 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.interface';
 import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
-import { CreateFeedbackResponseDto } from './dto/create-feedback-response.dto';
-import { FeedbackResponsesService } from './feedback-responses.service';
+import { CreateFeedbackReplyDto } from './dto/create-feedback-reply.dto';
+import { FeedbackRepliesService } from './feedback-replies.service';
 
-@Controller('feedback-responses')
-export class FeedbackResponsesController {
+@Controller('feedback-replies')
+export class FeedbackRepliesController {
   constructor(
-    private readonly feedbackResponsesService: FeedbackResponsesService,
+    private readonly feedbackResponsesService: FeedbackRepliesService,
   ) {}
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @Post()
   async create(
-    @Body() createFeedbackResponseDto: CreateFeedbackResponseDto,
+    @Body() createFeedbackResponseDto: CreateFeedbackReplyDto,
     @Request() req: IAuthenticatedRequest,
   ) {
     return this.feedbackResponsesService.create(

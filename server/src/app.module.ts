@@ -4,6 +4,7 @@ import { AuthModule } from './auth/auth.module';
 import { AuthorTypesModule } from './author-types/author-types.module';
 import { AuthorsOnTypesModule } from './authors-on-types/authors-on-types.module';
 import { AuthorsModule } from './authors/authors.module';
+import { FeedbackRepliesModule } from './feedback-replies/feedback-replies.module';
 import { FeedbackStatusesModule } from './feedback-statuses/feedback-statuses.module';
 import { FeedbackModule } from './feedback/feedback.module';
 import { FileModule } from './file/files.module';
@@ -23,7 +24,6 @@ import { UserFavAuthorsModule } from './user-fav-authors/user-fav-authors.module
 import { UserFavReleasesModule } from './user-fav-releases/user-fav-releases.module';
 import { UserFavReviewsModule } from './user-fav-reviews/user-fav-reviews.module';
 import { UsersModule } from './users/users.module';
-import { FeedbackResponsesModule } from './feedback-responses/feedback-responses.module';
 
 @Module({
   imports: [
@@ -51,7 +51,7 @@ import { FeedbackResponsesModule } from './feedback-responses/feedback-responses
     PrismaModule,
     LeaderboardModule,
     FileModule,
-    FeedbackResponsesModule,
+    FeedbackRepliesModule,
   ],
   controllers: [],
   providers: [],

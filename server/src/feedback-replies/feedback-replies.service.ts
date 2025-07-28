@@ -4,7 +4,8 @@ import {
   Inject,
   Injectable,
 } from '@nestjs/common';
-import { FeedbackResponse } from '@prisma/client';
+import { FeedbackResponse, FeedbackStatus } from '@prisma/client';
+import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
 import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
 import { FeedbackStatusesService } from 'src/feedback-statuses/feedback-statuses.service';
@@ -12,10 +13,12 @@ import { FeedbackStatusesEnum } from 'src/feedback-statuses/types/feedback-statu
 import { FeedbackService } from 'src/feedback/feedback.service';
 import { MailsService } from 'src/mails/mails.service';
 import { UsersService } from 'src/users/users.service';
-import { CreateFeedbackResponseDto } from './dto/create-feedback-response.dto';
+import { CreateFeedbackReplyDto } from './dto/create-feedback-reply.dto';
+import { CreateFeedbackReplyResponseDto } from './dto/create-feedback-reply.response.dto';
+import { FeedbackReplyDto } from './dto/feedback-reply.dto';
 
 @Injectable()
-export class FeedbackResponsesService {
+export class FeedbackRepliesService {
   constructor(
     @Inject(forwardRef(() => FeedbackService))
     private readonly feedbackService: FeedbackService,
@@ -26,15 +29,15 @@ export class FeedbackResponsesService {
   ) {}
 
   async create(
-    createFeedbackResponseDto: CreateFeedbackResponseDto,
+    createFeedbackReplyDto: CreateFeedbackReplyDto,
     userId: string,
-  ) {
+  ): Promise<CreateFeedbackReplyResponseDto> {
     const feedback = await this.feedbackService.findById(
-      createFeedbackResponseDto.feedbackId,
+      createFeedbackReplyDto.feedbackId,
     );
 
     const exist = await this.findByFeedbackId(
-      createFeedbackResponseDto.feedbackId,
+      createFeedbackReplyDto.feedbackId,
     );
 
     if (exist) {
@@ -48,20 +51,24 @@ export class FeedbackResponsesService {
       await this.mailsService.sendResponseEmail(
         feedback.email,
         user.nickname,
-        createFeedbackResponseDto.message,
+        createFeedbackReplyDto.message,
       );
       isSent = true;
     } catch {
       isSent = false;
     }
 
-    let feedbackResponse: FeedbackResponse | null = null;
+    let feedbackReply: FeedbackResponse | null = null;
+    let feedbackStatus: FeedbackStatus | null = null;
     try {
       if (isSent) {
-        feedbackResponse = await this.prisma.feedbackResponse.create({
+        feedbackReply = await this.prisma.feedbackResponse.create({
           data: {
-            ...createFeedbackResponseDto,
+            ...createFeedbackReplyDto,
             userId,
+          },
+          include: {
+            user: { select: { nickname: true } },
           },
         });
 
@@ -77,25 +84,42 @@ export class FeedbackResponsesService {
           );
         }
 
-        await this.feedbackService.update(
-          createFeedbackResponseDto.feedbackId,
+        const updated = await this.feedbackService.update(
+          createFeedbackReplyDto.feedbackId,
           {
             feedbackStatusId: newStatus.id,
           },
         );
+        feedbackStatus = updated.feedbackStatus;
       }
     } catch {
-      feedbackResponse = null;
+      feedbackReply = null;
+      feedbackStatus = null;
     }
 
-    return { isSent, feedbackResponse };
+    return plainToInstance(
+      CreateFeedbackReplyResponseDto,
+      {
+        isSent,
+        feedbackReply,
+        feedbackStatus,
+      },
+      { excludeExtraneousValues: true },
+    );
   }
 
-  async findByFeedbackId(feedbackId: string): Promise<FeedbackResponse | null> {
+  async findByFeedbackId(feedbackId: string): Promise<FeedbackReplyDto | null> {
     await this.feedbackService.findById(feedbackId);
 
-    return this.prisma.feedbackResponse.findUnique({
+    const response = await this.prisma.feedbackResponse.findUnique({
       where: { feedbackId },
+      include: {
+        user: { select: { nickname: true } },
+      },
+    });
+
+    return plainToInstance(FeedbackReplyDto, response, {
+      excludeExtraneousValues: true,
     });
   }
 }

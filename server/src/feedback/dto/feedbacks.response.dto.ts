@@ -1,5 +1,5 @@
 import { Exclude, Expose, Transform, Type } from 'class-transformer';
-import { formatDateCreatedAt } from 'src/users/utils/format-date-created-at';
+import { formatFullDate } from 'src/utils/format-full-date';
 
 class FeedbackStatus {
   @Expose()
@@ -28,7 +28,7 @@ export class FeedbackResponseItem {
   message: string;
 
   @Expose()
-  @Transform(({ value }) => formatDateCreatedAt(value as Date))
+  @Transform(({ value }) => formatFullDate(value as Date))
   createdAt: string;
 
   @Expose()

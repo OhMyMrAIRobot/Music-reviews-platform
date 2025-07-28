@@ -1,5 +1,5 @@
 import { Exclude, Expose, Transform, Type } from 'class-transformer';
-import { formatDateCreatedAt } from '../utils/format-date-created-at';
+import { formatFullDate } from '../../utils/format-full-date';
 
 export class UserFullInfo {
   @Expose()
@@ -15,7 +15,7 @@ export class UserFullInfo {
   isActive: boolean;
 
   @Expose()
-  @Transform(({ value }) => formatDateCreatedAt(value as Date))
+  @Transform(({ value }) => formatFullDate(value as Date))
   createdAt: string;
 
   @Expose()

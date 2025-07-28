@@ -4,8 +4,8 @@ import { FeedbackStatusesModule } from 'src/feedback-statuses/feedback-statuses.
 import { FeedbackModule } from 'src/feedback/feedback.module';
 import { MailsModule } from 'src/mails/mails.module';
 import { UsersModule } from 'src/users/users.module';
-import { FeedbackResponsesController } from './feedback-responses.controller';
-import { FeedbackResponsesService } from './feedback-responses.service';
+import { FeedbackRepliesController } from './feedback-replies.controller';
+import { FeedbackRepliesService } from './feedback-replies.service';
 
 @Module({
   imports: [
@@ -15,8 +15,8 @@ import { FeedbackResponsesService } from './feedback-responses.service';
     MailsModule,
     FeedbackStatusesModule,
   ],
-  controllers: [FeedbackResponsesController],
-  providers: [FeedbackResponsesService],
-  exports: [FeedbackResponsesService],
+  controllers: [FeedbackRepliesController],
+  providers: [FeedbackRepliesService],
+  exports: [FeedbackRepliesService],
 })
-export class FeedbackResponsesModule {}
+export class FeedbackRepliesModule {}

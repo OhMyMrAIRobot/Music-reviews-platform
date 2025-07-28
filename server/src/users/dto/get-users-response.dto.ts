@@ -1,5 +1,5 @@
 import { Exclude, Expose, Transform } from 'class-transformer';
-import { formatDateCreatedAt } from '../utils/format-date-created-at';
+import { formatFullDate } from '../../utils/format-full-date';
 
 interface UserProfileResponseObject {
   profile?: { avatar: string };
@@ -32,7 +32,7 @@ export class GetUsersPrismaResponseDto {
   isActive: boolean;
 
   @Expose()
-  @Transform(({ value }) => formatDateCreatedAt(value as Date))
+  @Transform(({ value }) => formatFullDate(value as Date))
   createdAt: string;
 
   @Expose()
