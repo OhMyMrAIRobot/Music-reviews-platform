@@ -36,7 +36,12 @@ const FormButton: FC<IProps> = ({
 					: 'bg-zinc-950 text-white hover:bg-white/10'
 			}`}
 		>
-			{isLoading && <Loader className='size-4 border-black' />} {title}
+			{isLoading && (
+				<Loader
+					className={`size-4 ${isInvert ? 'border-black' : 'border-white'}`}
+				/>
+			)}
+			{title}
 		</button>
 	)
 }

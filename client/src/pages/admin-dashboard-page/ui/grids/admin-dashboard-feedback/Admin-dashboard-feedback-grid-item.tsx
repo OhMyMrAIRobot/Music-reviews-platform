@@ -10,6 +10,7 @@ import { SortOrder } from '../../../../../types/sort-order-type'
 import { getFeedbackStatusColor } from '../../../../../utils/get-feedback-status-color'
 import AdminDeleteButton from '../../buttons/Admin-delete-button'
 import AdminOpenButton from '../../buttons/Admin-open-button'
+import FeedbackFormModal from './Feedback-form-modal'
 
 interface IProps {
 	className?: string
@@ -35,6 +36,7 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
 	const { adminDashboardFeedbackStore, notificationStore } = useStore()
 
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
+	const [detailsModalOpen, setDetailsModalOpen] = useState<boolean>(false)
 
 	const { execute: deleteFeedback, isLoading: isDeletingFeedback } = useLoading(
 		adminDashboardFeedbackStore.deleteFeedback
@@ -79,6 +81,14 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
 							onConfirm={() => handleDelete(feedback.id)}
 							onCancel={() => setConfModalOpen(false)}
 							isLoading={isDeletingFeedback}
+						/>
+					)}
+
+					{detailsModalOpen && (
+						<FeedbackFormModal
+							isOpen={detailsModalOpen}
+							onClose={() => setDetailsModalOpen(false)}
+							feedback={feedback}
 						/>
 					)}
 				</>
@@ -142,7 +152,7 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
 				<div className='col-span-1'>
 					{feedback ? (
 						<div className='flex gap-x-3 justify-end'>
-							<AdminOpenButton onClick={() => {}} />
+							<AdminOpenButton onClick={() => setDetailsModalOpen(true)} />
 							<AdminDeleteButton onClick={() => setConfModalOpen(true)} />
 						</div>
 					) : (

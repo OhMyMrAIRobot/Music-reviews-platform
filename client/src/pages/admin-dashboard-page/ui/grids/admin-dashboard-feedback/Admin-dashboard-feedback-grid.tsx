@@ -1,3 +1,4 @@
+import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
 import AdminHeader from '../../../../../components/admin-header/Admin-header'
 import FeedbackStatusIcon from '../../../../../components/feedback/Feedback-status-icon'
@@ -10,7 +11,7 @@ import { SortOrder } from '../../../../../types/sort-order-type'
 import AdminFilterButton from '../../buttons/Admin-filter-button'
 import AdminDashboardFeedbackGridItem from './Admin-dashboard-feedback-grid-item'
 
-const AdminDashboardFeedbackGrid = () => {
+const AdminDashboardFeedbackGrid = observer(() => {
 	const perPage = 10
 
 	const { adminDashboardFeedbackStore, metaStore } = useStore()
@@ -150,6 +151,6 @@ const AdminDashboardFeedbackGrid = () => {
 			</div>
 		</div>
 	)
-}
+})
 
 export default AdminDashboardFeedbackGrid

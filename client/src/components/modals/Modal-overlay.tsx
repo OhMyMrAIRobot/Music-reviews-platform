@@ -25,14 +25,27 @@ const ModalOverlay: FC<IProps> = ({
 
 	useEffect(() => {
 		if (isOpen) {
+			document.body.style.overflow = 'hidden'
 			setShouldRender(true)
 			setTimeout(() => setIsVisible(true), 20)
 		} else {
 			setIsVisible(false)
-			const timer = setTimeout(() => setShouldRender(false), 300)
-			return () => clearTimeout(timer)
+			const timer = setTimeout(() => {
+				setShouldRender(false)
+				document.body.style.overflow = ''
+			}, 300)
+			return () => {
+				clearTimeout(timer)
+				document.body.style.overflow = ''
+			}
 		}
 	}, [isOpen])
+
+	useEffect(() => {
+		return () => {
+			document.body.style.overflow = ''
+		}
+	}, [])
 
 	if (!shouldRender) return null
 

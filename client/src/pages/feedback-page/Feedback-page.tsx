@@ -45,8 +45,6 @@ const FeedbackPage = () => {
 		return (
 			feedbackData.email !== '' &&
 			feedbackData.message.length >= 100 &&
-			feedbackData.message.length <= 4000 &&
-			feedbackData.title.length <= 50 &&
 			feedbackData.title.length >= 5
 		)
 	}, [feedbackData])

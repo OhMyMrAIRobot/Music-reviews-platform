@@ -7,8 +7,8 @@ interface IProps {
 const Loader: FC<IProps> = ({ className }) => {
 	return (
 		<div
-			className={`border-t-4 border-b-1 rounded-full animate-spin ${className}`}
-		></div>
+			className={`${className} border-t-4 border-b-1 rounded-full animate-spin`}
+		/>
 	)
 }
 

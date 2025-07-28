@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
 import { FeedbackAPI } from '../../../api/feedback-api'
+import { ICreateFeedbackReplyData } from '../../../models/feedback-reply/create-feedback-reply-data'
+import { IFeedbackReply } from '../../../models/feedback-reply/feedback-reply'
 import { IFeedback } from '../../../models/feedback/feedback'
 import { IFeedbacksResponse } from '../../../models/feedback/feedbacks-response'
 import { SortOrder } from '../../../types/sort-order-type'
@@ -12,12 +14,17 @@ class AdminDashboardFeedbackStore {
 
 	count: number = 0
 	feedbacks: IFeedback[] = []
+	feedbackReply: IFeedbackReply | null = null
 
 	setFeedbacks(data: IFeedbacksResponse) {
 		runInAction(() => {
 			this.count = data.count
 			this.feedbacks = data.feedbacks
 		})
+	}
+
+	setFeedbackReply(data: IFeedbackReply | null) {
+		this.feedbackReply = data
 	}
 
 	fetchFeedbacks = async (
@@ -62,6 +69,45 @@ class AdminDashboardFeedbackStore {
 		try {
 			await FeedbackAPI.deleteFeedback(id)
 			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
+		}
+	}
+
+	fetchFeedbackReply = async (feedbackId: string) => {
+		try {
+			const data = await FeedbackAPI.fetchFeedbackReply(feedbackId)
+			this.setFeedbackReply(data)
+		} catch {
+			this.setFeedbackReply(null)
+		}
+	}
+
+	createFeedbackReply = async (
+		replyData: ICreateFeedbackReplyData
+	): Promise<boolean | string[]> => {
+		try {
+			const { feedbackReply, isSent, feedbackStatus } =
+				await FeedbackAPI.createFeedbackReply(replyData)
+
+			if (feedbackReply) {
+				this.setFeedbackReply(feedbackReply)
+			}
+
+			if (feedbackStatus) {
+				const idx = this.feedbacks.findIndex(
+					entry => entry.id === replyData.feedbackId
+				)
+				if (idx !== -1) {
+					runInAction(() => {
+						this.feedbacks[idx].feedbackStatus = feedbackStatus
+					})
+				}
+			}
+
+			return isSent
 		} catch (e: any) {
 			return Array.isArray(e.response?.data?.message)
 				? e.response?.data?.message
