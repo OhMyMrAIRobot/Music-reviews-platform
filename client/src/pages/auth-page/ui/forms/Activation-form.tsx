@@ -66,6 +66,7 @@ const ActivationForm = () => {
 					isInvert={true}
 					onClick={handleResend}
 					disabled={isLoading}
+					isLoading={isLoading}
 				/>
 			)}
 			{errors && (

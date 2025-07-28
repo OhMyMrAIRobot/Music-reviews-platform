@@ -15,8 +15,7 @@ import ReleaseFormModal from './Release-form-modal.tsx'
 const AdminDashboardReleasesGrid = observer(() => {
 	const perPage = 10
 
-	const { adminDashboardReleasesStore, notificationStore, metaStore } =
-		useStore()
+	const { adminDashboardReleasesStore, metaStore } = useStore()
 
 	const [addModalOpen, setAddModalOpen] = useState<boolean>(false)
 	const [searchText, setSearchText] = useState<string>('')
@@ -47,16 +46,6 @@ const AdminDashboardReleasesGrid = observer(() => {
 			perPage,
 			(currentPage - 1) * perPage
 		)
-	}
-
-	const handleDelete = async (id: string) => {
-		const errors = await adminDashboardReleasesStore.deleteRelease(id)
-		if (errors.length === 0) {
-			notificationStore.addSuccessNotification('Вы успешно удалили релиз!')
-			fetchReleases()
-		} else {
-			errors.forEach(err => notificationStore.addErrorNotification(err))
-		}
 	}
 
 	useEffect(() => {
@@ -155,7 +144,7 @@ const AdminDashboardReleasesGrid = observer(() => {
 										release={release}
 										isLoading={isReleasesLoading}
 										position={(currentPage - 1) * perPage + idx + 1}
-										deleteRelease={() => handleDelete(release.id)}
+										refetchReleases={fetchReleases}
 									/>
 							  ))}
 					</div>

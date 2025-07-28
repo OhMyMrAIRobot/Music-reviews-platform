@@ -51,8 +51,16 @@ const ReleaseFormModal: FC<IProps> = ({
 		adminDashboardAuthorsStore.fetchAuthors
 	)
 
+	const { execute: createRelease, isLoading: isCreatingRelease } = useLoading(
+		adminDashboardReleasesStore.createRelease
+	)
+
+	const { execute: updateRelease, isLoading: isUpdatingRelease } = useLoading(
+		adminDashboardReleasesStore.updateRelease
+	)
+
 	const handleSubmit = async () => {
-		if (!isFormValid) return
+		if (!isFormValid || isCreatingRelease || isUpdatingRelease) return
 
 		const formData = new FormData()
 
@@ -144,12 +152,9 @@ const ReleaseFormModal: FC<IProps> = ({
 		let errors = []
 
 		if (release) {
-			errors = await adminDashboardReleasesStore.updateRelease(
-				release.id,
-				formData
-			)
+			errors = await updateRelease(release.id, formData)
 		} else {
-			errors = await adminDashboardReleasesStore.createRelease(formData)
+			errors = await createRelease(formData)
 		}
 
 		if (errors.length > 0) {
@@ -254,7 +259,11 @@ const ReleaseFormModal: FC<IProps> = ({
 	if (!isOpen) return null
 
 	return (
-		<ModalOverlay isOpen={isOpen} onCancel={onClose}>
+		<ModalOverlay
+			isOpen={isOpen}
+			onCancel={onClose}
+			isLoading={isCreatingRelease || isUpdatingRelease}
+		>
 			{isTypesLoading || isAuthorsLoading ? (
 				<div className='bg-gray-400 w-240 h-140 animate-pulse opacity-40 rounded-xl' />
 			) : (
@@ -431,7 +440,13 @@ const ReleaseFormModal: FC<IProps> = ({
 								title={buttonText}
 								isInvert={true}
 								onClick={handleSubmit}
-								disabled={!isFormValid || (!!release && !hasChanges)}
+								disabled={
+									!isFormValid ||
+									(!!release && !hasChanges) ||
+									isCreatingRelease ||
+									isUpdatingRelease
+								}
+								isLoading={isCreatingRelease || isUpdatingRelease}
 							/>
 						</div>
 
@@ -440,7 +455,7 @@ const ReleaseFormModal: FC<IProps> = ({
 								title={'Назад'}
 								isInvert={false}
 								onClick={onClose}
-								disabled={false}
+								disabled={isCreatingRelease || isUpdatingRelease}
 							/>
 						</div>
 					</div>

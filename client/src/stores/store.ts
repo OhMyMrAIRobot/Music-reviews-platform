@@ -1,4 +1,5 @@
 import AdminDashboardAuthorsStore from '../pages/admin-dashboard-page/store/admin-dashboard-authors-store'
+import AdminDashboardFeedbackStore from '../pages/admin-dashboard-page/store/admin-dashboard-feedback-store'
 import AdminDashboardReleasesStore from '../pages/admin-dashboard-page/store/admin-dashboard-releases-store'
 import AdminDashboardReviewsStore from '../pages/admin-dashboard-page/store/admin-dashboard-reviews-store'
 import AdminDashboardUsersStore from '../pages/admin-dashboard-page/store/admin-dashboard-users-store'
@@ -36,6 +37,7 @@ class Store {
 	adminDashboardAuthorsStore = AdminDashboardAuthorsStore
 	adminDashboardReleasesStore = AdminDashboardReleasesStore
 	adminDashboardReviewsStore = AdminDashboardReviewsStore
+	adminDashboardFeedbackStore = AdminDashboardFeedbackStore
 }
 
 export default Store

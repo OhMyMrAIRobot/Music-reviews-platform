@@ -61,7 +61,7 @@ const ReleaseDetailsPage = observer(() => {
 
 	return isReleaseLoading ? (
 		<div className='w-full'>
-			<Loader className={'size-20'} />
+			<Loader className={'mx-auto size-20 border-white'} />
 		</div>
 	) : release ? (
 		<>

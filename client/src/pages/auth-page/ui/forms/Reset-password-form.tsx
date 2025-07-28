@@ -1,8 +1,6 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useParams } from 'react-router'
 import FormButton from '../../../../components/form-elements/Form-button'
-import FormInfoContainer from '../../../../components/form-elements/Form-info-container'
-import FormInfoField from '../../../../components/form-elements/Form-info-field'
 import FormInput from '../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../components/form-elements/Form-label'
 import FormSubTitle from '../../../../components/form-elements/Form-subtitle'
@@ -23,20 +21,29 @@ const ResetPasswordForm = () => {
 		password: '',
 		passwordConfirm: '',
 	})
-	const [errors, setErrors] = useState<string[]>([])
+
+	const isFormValid = useMemo(() => {
+		return (
+			formData.password &&
+			formData.passwordConfirm &&
+			formData.password === formData.passwordConfirm
+		)
+	}, [formData])
 
 	const { execute: reset, isLoading } = useLoading(authStore.resetPassword)
 
-	const onSubmit = () => {
-		reset(formData, token).then(errors => {
-			setErrors(errors)
-			if (errors.length === 0) {
-				notificationStore.addSuccessNotification(
-					'Ваш пароль был успешно сброшен!'
-				)
-				navigateToMain()
-			}
-		})
+	const onSubmit = async () => {
+		if (!isFormValid || isLoading) return
+
+		const errors = await reset(formData, token)
+		if (errors.length === 0) {
+			notificationStore.addSuccessNotification(
+				'Ваш пароль был успешно сброшен!'
+			)
+			navigateToMain()
+		} else {
+			errors.forEach(err => notificationStore.addErrorNotification(err))
+		}
 	}
 
 	const handleChange = (
@@ -84,16 +91,9 @@ const ResetPasswordForm = () => {
 				title={isLoading ? 'Сброс пароля...' : 'Сбросить пароль'}
 				onClick={onSubmit}
 				isInvert={true}
-				disabled={isLoading}
+				disabled={isLoading || !isFormValid}
+				isLoading={isLoading}
 			/>
-
-			{errors && (
-				<FormInfoContainer>
-					{errors.map(error => (
-						<FormInfoField key={error} text={error} isError={true} />
-					))}
-				</FormInfoContainer>
-			)}
 		</div>
 	)
 }

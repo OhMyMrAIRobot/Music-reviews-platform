@@ -38,6 +38,14 @@ const AuthorFormModal: FC<IProps> = ({
 	const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string | null>(null)
 	const [coverPreviewUrl, setCoverPreviewUrl] = useState<string | null>(null)
 
+	const { execute: createAuthor, isLoading: isCreatingAuthor } = useLoading(
+		adminDashboardAuthorsStore.createAuthor
+	)
+
+	const { execute: updateAuthor, isLoading: isUpdatingAuthor } = useLoading(
+		adminDashboardAuthorsStore.updateAuthor
+	)
+
 	const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (event.target.files && event.target.files[0]) {
 			const selectedFile = event.target.files[0]
@@ -59,7 +67,7 @@ const AuthorFormModal: FC<IProps> = ({
 	}
 
 	const handleSubmit = async () => {
-		if (!isFormValid) return
+		if (!isFormValid || isUpdatingAuthor || isCreatingAuthor) return
 
 		const formData = new FormData()
 
@@ -90,12 +98,9 @@ const AuthorFormModal: FC<IProps> = ({
 		let errors: string[] = []
 
 		if (author) {
-			errors = await adminDashboardAuthorsStore.updateAuthor(
-				author.id,
-				formData
-			)
+			errors = await updateAuthor(author.id, formData)
 		} else {
-			errors = await adminDashboardAuthorsStore.createAuthor(formData)
+			errors = await createAuthor(formData)
 		}
 
 		if (errors.length > 0) {
@@ -181,7 +186,11 @@ const AuthorFormModal: FC<IProps> = ({
 	if (!isOpen) return null
 
 	return (
-		<ModalOverlay isOpen={isOpen} onCancel={onClose}>
+		<ModalOverlay
+			isOpen={isOpen}
+			onCancel={onClose}
+			isLoading={isUpdatingAuthor || isCreatingAuthor}
+		>
 			{isTypesLoading ? (
 				<div className='bg-gray-400 w-240 h-140 animate-pulse opacity-40 rounded-xl' />
 			) : (
@@ -343,7 +352,13 @@ const AuthorFormModal: FC<IProps> = ({
 								title={buttonText}
 								isInvert={true}
 								onClick={handleSubmit}
-								disabled={!isFormValid || (!!author && !hasChanges)}
+								disabled={
+									!isFormValid ||
+									(!!author && !hasChanges) ||
+									isUpdatingAuthor ||
+									isCreatingAuthor
+								}
+								isLoading={isUpdatingAuthor || isCreatingAuthor}
 							/>
 						</div>
 
@@ -352,7 +367,7 @@ const AuthorFormModal: FC<IProps> = ({
 								title={'Назад'}
 								isInvert={false}
 								onClick={onClose}
-								disabled={false}
+								disabled={isUpdatingAuthor || isCreatingAuthor}
 							/>
 						</div>
 					</div>

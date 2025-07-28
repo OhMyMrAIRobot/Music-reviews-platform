@@ -13,8 +13,7 @@ import AuthorFormModal from './Author-form-modal.tsx'
 const AdminDashboardAuthorsGrid = observer(() => {
 	const perPage = 10
 
-	const { adminDashboardAuthorsStore, metaStore, notificationStore } =
-		useStore()
+	const { adminDashboardAuthorsStore, metaStore } = useStore()
 
 	const [searchText, setSearchText] = useState<string>('')
 	const [currentPage, setCurrentPage] = useState<number>(1)
@@ -42,19 +41,7 @@ const AdminDashboardAuthorsGrid = observer(() => {
 			searchText.trim() ? searchText.trim() : null,
 			perPage,
 			(currentPage - 1) * perPage
-		).then(() => {
-			console.log(adminDashboardAuthorsStore.count)
-		})
-	}
-
-	const deleteAuthor = async (id: string) => {
-		const result = await adminDashboardAuthorsStore.deleteAuthor(id)
-		if (result.length === 0) {
-			notificationStore.addSuccessNotification('Вы успешно удалили автора!')
-			fetchAuthors()
-		} else {
-			result.forEach(err => notificationStore.addErrorNotification(err))
-		}
+		)
 	}
 
 	useEffect(() => {
@@ -147,7 +134,7 @@ const AdminDashboardAuthorsGrid = observer(() => {
 										author={author}
 										isLoading={isLoading}
 										position={(currentPage - 1) * perPage + idx + 1}
-										deleteAuthor={() => deleteAuthor(author.id)}
+										refetchAuthors={fetchAuthors}
 									/>
 							  ))}
 					</div>

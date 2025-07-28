@@ -1,9 +1,7 @@
 import { observer } from 'mobx-react-lite'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import FormButton from '../../../../components/form-elements/Form-button'
 import FormCheckbox from '../../../../components/form-elements/Form-checkbox'
-import FormInfoContainer from '../../../../components/form-elements/Form-info-container'
-import FormInfoField from '../../../../components/form-elements/Form-info-field'
 import FormInput from '../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../components/form-elements/Form-label'
 import FormTitle from '../../../../components/form-elements/Form-title'
@@ -25,7 +23,6 @@ const RegistrationForm = observer(() => {
 		agreementChecked: false,
 		policyChecked: false,
 	})
-	const [errors, setErrors] = useState<string[]>([])
 
 	const { execute: register, isLoading } = useLoading(authStore.register)
 
@@ -83,18 +80,27 @@ const RegistrationForm = observer(() => {
 		</div>
 	)
 
-	const handleRegistration = () => {
-		register(formData).then(result => {
-			if (Array.isArray(result)) {
-				setErrors(result)
-			} else {
-				notificationStore.addSuccessNotification(
-					'Вы успешно зарегистрировались!'
-				)
-				notificationStore.addEmailSentNotification(result)
-			}
-		})
+	const handleRegistration = async () => {
+		if (!isFormValid || isLoading) return
+		const result = await register(formData)
+		if (Array.isArray(result)) {
+			result.forEach(err => notificationStore.addErrorNotification(err))
+		} else {
+			notificationStore.addSuccessNotification('Вы успешно зарегистрировались!')
+			notificationStore.addEmailSentNotification(result)
+		}
 	}
+
+	const isFormValid = useMemo(() => {
+		return (
+			formData.agreementChecked &&
+			formData.policyChecked &&
+			formData.email.trim() &&
+			formData.nickname.trim() &&
+			formData.password &&
+			formData.passwordConfirm
+		)
+	}, [formData])
 
 	return (
 		<div className='grid w-[350px] gap-2 py-10'>
@@ -125,29 +131,25 @@ const RegistrationForm = observer(() => {
 				</div>
 
 				<FormButton
-					title={isLoading ? 'Загрузка...' : 'Создать аккаунт'}
+					title={isLoading ? 'Регистрация...' : 'Создать аккаунт'}
 					isInvert={true}
 					onClick={handleRegistration}
-					disabled={isLoading}
+					disabled={isLoading || !isFormValid}
+					isLoading={isLoading}
 				/>
 
 				<div className='flex justify-center items-center font-medium text-sm gap-1 mt-2 select-none'>
 					<h6 className=''>Уже есть аккаунт?</h6>
 					<button
+						disabled={isLoading}
 						onClick={navigateToLogin}
-						className='hover:underline cursor-pointer underline-offset-4'
+						className={`hover:underline cursor-pointer underline-offset-4 ${
+							isLoading ? 'opacity-50' : ''
+						}`}
 					>
 						Войти
 					</button>
 				</div>
-
-				{errors && (
-					<FormInfoContainer>
-						{errors.map(error => (
-							<FormInfoField key={error} text={error} isError={true} />
-						))}
-					</FormInfoContainer>
-				)}
 			</div>
 		</div>
 	)

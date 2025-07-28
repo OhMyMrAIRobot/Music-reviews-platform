@@ -1,7 +1,5 @@
 import { useState } from 'react'
 import FormButton from '../../../../components/form-elements/Form-button'
-import FormInfoContainer from '../../../../components/form-elements/Form-info-container'
-import FormInfoField from '../../../../components/form-elements/Form-info-field'
 import FormInput from '../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../components/form-elements/Form-label'
 import { useLoading } from '../../../../hooks/use-loading'
@@ -19,30 +17,30 @@ const UpdateUserInfoForm = () => {
 	const [newPasswordConfirm, setNewPasswordConfirm] = useState<string>('')
 	const [password, setPassword] = useState<string>('')
 
-	const [errors, setErrors] = useState<string[]>([])
-
 	const { execute: update, isLoading } = useLoading(authStore.updateUserData)
 
-	const handleSubmit = () => {
-		setErrors([])
-
-		update(email, nickname, newPassword, newPasswordConfirm, password).then(
-			result => {
-				if (Array.isArray(result)) {
-					setErrors(result)
-				} else {
-					notificationStore.addSuccessNotification(
-						'Вы успешно обновили данные об аккаунте!'
-					)
-					if (result) {
-						notificationStore.addEmailSentNotification(result)
-					}
-					setPassword('')
-					setNewPassword('')
-					setNewPasswordConfirm('')
-				}
-			}
+	const handleSubmit = async () => {
+		const result = await update(
+			email,
+			nickname,
+			newPassword,
+			newPasswordConfirm,
+			password
 		)
+
+		if (Array.isArray(result)) {
+			result.forEach(err => notificationStore.addErrorNotification(err))
+		} else {
+			notificationStore.addSuccessNotification(
+				'Вы успешно обновили данные об аккаунте!'
+			)
+			if (result) {
+				notificationStore.addEmailSentNotification(result)
+			}
+			setPassword('')
+			setNewPassword('')
+			setNewPasswordConfirm('')
+		}
 	}
 
 	return (
@@ -142,19 +140,10 @@ const UpdateUserInfoForm = () => {
 								nickname.length === 0 ||
 								newPassword !== newPasswordConfirm
 							}
+							isLoading={isLoading}
 						/>
 					</div>
 				</div>
-			</div>
-
-			<div className='w-full lg:w-1/2'>
-				{errors && (
-					<FormInfoContainer>
-						{errors.map(error => (
-							<FormInfoField key={error} text={error} isError={true} />
-						))}
-					</FormInfoContainer>
-				)}
 			</div>
 		</EditProfilePageSection>
 	)

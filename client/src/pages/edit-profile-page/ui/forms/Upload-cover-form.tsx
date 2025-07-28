@@ -25,6 +25,8 @@ const UploadCoverForm = observer(() => {
 	)
 
 	const handleDelete = async () => {
+		if (!checkAuth() || isDeleting || isLoading) return
+
 		const errors = await deleteCover()
 		if (errors.length === 0) {
 			notificationStore.addSuccessNotification('Вы успешно удалили обложку!')
@@ -43,8 +45,8 @@ const UploadCoverForm = observer(() => {
 		}
 	}
 
-	const handleSubmit = () => {
-		if (!checkAuth()) return
+	const handleSubmit = async () => {
+		if (!checkAuth() || isLoading || isDeleting) return
 
 		if (!file) {
 			notificationStore.addErrorNotification('Выберите изображение!')
@@ -54,20 +56,22 @@ const UploadCoverForm = observer(() => {
 		const formData = new FormData()
 		formData.append('coverImg', file)
 
-		updateCover(formData).then(result => {
-			notificationStore.addNotification({
-				id: self.crypto.randomUUID(),
-				text: result.message,
-				isError: !result.status,
-			})
-			if (result.status) {
-				setFile(null)
-			}
-			if (previewUrl) {
-				URL.revokeObjectURL(previewUrl)
-				setPreviewUrl(null)
-			}
+		const result = await updateCover(formData)
+
+		notificationStore.addNotification({
+			id: self.crypto.randomUUID(),
+			text: result.message,
+			isError: !result.status,
 		})
+
+		if (result.status) {
+			setFile(null)
+		}
+
+		if (previewUrl) {
+			URL.revokeObjectURL(previewUrl)
+			setPreviewUrl(null)
+		}
 	}
 
 	return (
@@ -111,7 +115,8 @@ const UploadCoverForm = observer(() => {
 							title={isLoading ? 'Сохранение...' : 'Сохранить'}
 							isInvert={true}
 							onClick={handleSubmit}
-							disabled={!file || isLoading}
+							disabled={!file || isLoading || isDeleting}
+							isLoading={isLoading}
 						/>
 					</div>
 
@@ -120,7 +125,10 @@ const UploadCoverForm = observer(() => {
 							title={isDeleting ? 'Удаление...' : 'Удалить обложку'}
 							isInvert={false}
 							onClick={handleDelete}
-							disabled={profileStore.profile?.cover === '' || isDeleting}
+							disabled={
+								profileStore.profile?.cover === '' || isDeleting || isLoading
+							}
+							isLoading={isDeleting}
 						/>
 					</div>
 				</div>

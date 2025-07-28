@@ -1,8 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
 import FormButton from '../../../../components/form-elements/Form-button'
-import FormInfoContainer from '../../../../components/form-elements/Form-info-container'
-import FormInfoField from '../../../../components/form-elements/Form-info-field'
 import FormLabel from '../../../../components/form-elements/Form-label'
 import FormTextbox from '../../../../components/form-elements/Form-textbox'
 import { useAuth } from '../../../../hooks/use-auth'
@@ -17,26 +15,22 @@ const UpdateProfileInfoForm = observer(() => {
 	const { checkAuth } = useAuth()
 
 	const [bio, setBio] = useState<string>(profileStore.profile?.bio ?? '')
-	const [errors, setErrors] = useState<string[]>([])
 
 	const { execute: updateBio, isLoading } = useLoading(
 		profileStore.updateProfileBio
 	)
 
-	const handleSubmit = () => {
-		setErrors([])
-		if (!checkAuth()) return
+	const handleSubmit = async () => {
+		if (!checkAuth() || isLoading) return
 
-		updateBio(bio).then(errors => {
-			setErrors(errors)
-			if (errors.length === 0) {
-				notificationStore.addNotification({
-					id: self.crypto.randomUUID(),
-					text: 'Описание профиля успешно обновлено!',
-					isError: false,
-				})
-			}
-		})
+		const errors = await updateBio(bio)
+		if (errors.length === 0) {
+			notificationStore.addSuccessNotification(
+				'Описание профиля успешно обновлено!'
+			)
+		} else {
+			errors.forEach(err => notificationStore.addErrorNotification(err))
+		}
 	}
 
 	return (
@@ -59,16 +53,6 @@ const UpdateProfileInfoForm = observer(() => {
 						className='h-30'
 					/>
 				</div>
-
-				<div className='w-full lg:w-1/2'>
-					{errors && (
-						<FormInfoContainer>
-							{errors.map(error => (
-								<FormInfoField key={error} text={error} isError={true} />
-							))}
-						</FormInfoContainer>
-					)}
-				</div>
 			</div>
 
 			<div className='pt-6 border-t border-white/5 w-full'>
@@ -78,6 +62,7 @@ const UpdateProfileInfoForm = observer(() => {
 						isInvert={true}
 						onClick={handleSubmit}
 						disabled={bio === profileStore.profile?.bio || isLoading}
+						isLoading={isLoading}
 					/>
 				</div>
 			</div>

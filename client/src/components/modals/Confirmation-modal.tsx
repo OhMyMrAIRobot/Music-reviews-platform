@@ -9,6 +9,7 @@ interface IProps {
 	isOpen: boolean
 	onConfirm: () => void
 	onCancel: () => void
+	isLoading?: boolean
 }
 
 const ConfirmationModal: FC<IProps> = ({
@@ -16,15 +17,19 @@ const ConfirmationModal: FC<IProps> = ({
 	isOpen,
 	onConfirm,
 	onCancel,
+	isLoading = false,
 }) => {
 	return createPortal(
-		<ModalOverlay isOpen={isOpen} onCancel={onCancel}>
+		<ModalOverlay isOpen={isOpen} onCancel={onCancel} isLoading={isLoading}>
 			<div
 				className={`relative rounded-lg px-6 pb-6 pt-8 w-80 border border-white/10 bg-zinc-950 grid gap-6 transition-transform duration-300`}
 			>
 				<button
 					onClick={onCancel}
-					className='absolute p-1 top-3 right-3 bg-zinc-900 rounded-full cursor-pointer text-white/60 hover:text-white transition-colors duration-200'
+					disabled={isLoading}
+					className={`absolute p-1 top-3 right-3 bg-zinc-900 rounded-full cursor-pointer text-white/60  transition-colors duration-200 ${
+						isLoading ? 'opacity-50 pointer-events-none' : 'hover:text-white'
+					}`}
 				>
 					<CloseSvg className={'size-4'} />
 				</button>
@@ -36,12 +41,13 @@ const ConfirmationModal: FC<IProps> = ({
 						isInvert={true}
 						onClick={onConfirm}
 						disabled={false}
+						isLoading={isLoading}
 					/>
 					<FormButton
 						title={'Отменить'}
 						isInvert={false}
 						onClick={onCancel}
-						disabled={false}
+						disabled={isLoading}
 					/>
 				</div>
 			</div>

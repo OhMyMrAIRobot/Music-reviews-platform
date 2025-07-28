@@ -11,7 +11,7 @@ import AdminDashboardReviewsGridItem from './Admin-dashboard-reviews-grid-item'
 const AdminDashboardReviewsGrid = observer(() => {
 	const perPage = 10
 
-	const { adminDashboardReviewsStore, notificationStore } = useStore()
+	const { adminDashboardReviewsStore } = useStore()
 
 	const [searchText, setSearchText] = useState<string>('')
 	const [currentPage, setCurrentPage] = useState<number>(1)
@@ -28,16 +28,6 @@ const AdminDashboardReviewsGrid = observer(() => {
 			perPage,
 			(currentPage - 1) * perPage
 		)
-	}
-
-	const handleDelete = async (id: string, userId: string) => {
-		const errors = await adminDashboardReviewsStore.deleteReview(id, userId)
-		if (errors.length === 0) {
-			notificationStore.addSuccessNotification('Вы успешно удалили рецензию!')
-			fetchReviews()
-		} else {
-			errors.forEach(err => notificationStore.addErrorNotification(err))
-		}
 	}
 
 	useEffect(() => {
@@ -61,7 +51,7 @@ const AdminDashboardReviewsGrid = observer(() => {
 			>
 				<AdminDashboardReviewsGridItem
 					className='bg-white/5 font-medium'
-					isLoading={isLoading}
+					isLoading={false}
 					order={order}
 					toggleOrder={() =>
 						setOrder(
@@ -78,7 +68,7 @@ const AdminDashboardReviewsGrid = observer(() => {
 							? Array.from({ length: perPage }).map((_, idx) => (
 									<AdminDashboardReviewsGridItem
 										key={`Review-skeleton-${idx}`}
-										isLoading={false}
+										isLoading={true}
 									/>
 							  ))
 							: adminDashboardReviewsStore.reviews.map((review, idx) => (
@@ -87,7 +77,7 @@ const AdminDashboardReviewsGrid = observer(() => {
 										review={review}
 										isLoading={isLoading}
 										position={(currentPage - 1) * perPage + idx + 1}
-										deleteReview={() => handleDelete(review.id, review.user.id)}
+										refetchReviews={fetchReviews}
 									/>
 							  ))}
 					</div>

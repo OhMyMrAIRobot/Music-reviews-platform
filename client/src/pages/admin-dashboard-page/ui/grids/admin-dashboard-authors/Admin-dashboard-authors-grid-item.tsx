@@ -2,6 +2,8 @@ import { FC, useState } from 'react'
 import AuthorTypeSvg from '../../../../../components/author/author-types/Author-type-svg.tsx'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal.tsx'
 import useCustomNavigate from '../../../../../hooks/use-custom-navigate.ts'
+import { useLoading } from '../../../../../hooks/use-loading.ts'
+import { useStore } from '../../../../../hooks/use-store.ts'
 import { IAdminAuthor } from '../../../../../models/author/admin-authors-response.ts'
 import { getAuthorTypeColor } from '../../../../../utils/get-author-type-color.ts'
 import AdminDeleteButton from '../../buttons/Admin-delete-button.tsx'
@@ -14,7 +16,7 @@ interface IProps {
 	author?: IAdminAuthor
 	isLoading: boolean
 	position?: number
-	deleteAuthor?: () => void
+	refetchAuthors?: () => void
 }
 
 const AdminDashboardAuthorsGridItem: FC<IProps> = ({
@@ -22,16 +24,34 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 	author,
 	isLoading,
 	position,
-	deleteAuthor,
+	refetchAuthors,
 }) => {
+	const { adminDashboardAuthorsStore, notificationStore } = useStore()
+
 	const { navigateToAuthor } = useCustomNavigate()
 
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [editModalOpen, setEditModelOpen] = useState<boolean>(false)
 
-	const handleDelete = () => {
-		if (deleteAuthor) {
-			deleteAuthor()
+	const handleRefetch = () => {
+		if (refetchAuthors) {
+			refetchAuthors()
+		}
+	}
+
+	const { execute: deleteAuthor, isLoading: isDeleting } = useLoading(
+		adminDashboardAuthorsStore.deleteAuthor
+	)
+
+	const handleDelete = async (id: string) => {
+		if (isDeleting) return
+
+		const result = await deleteAuthor(id)
+		if (result.length === 0) {
+			notificationStore.addSuccessNotification('Вы успешно удалили автора!')
+			handleRefetch()
+		} else {
+			result.forEach(err => notificationStore.addErrorNotification(err))
 		}
 	}
 
@@ -45,8 +65,9 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 						<ConfirmationModal
 							title={'Вы действительно хотите удалить автора?'}
 							isOpen={confModalOpen}
-							onConfirm={handleDelete}
+							onConfirm={() => handleDelete(author.id)}
 							onCancel={() => setConfModalOpen(false)}
+							isLoading={isDeleting}
 						/>
 					)}
 

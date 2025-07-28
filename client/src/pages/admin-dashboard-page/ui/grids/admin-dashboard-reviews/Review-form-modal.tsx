@@ -56,13 +56,13 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
 	}
 
 	return (
-		<ModalOverlay isOpen={isOpen} onCancel={onClose}>
+		<ModalOverlay isOpen={isOpen} onCancel={onClose} isLoading={isLoading}>
 			<div
 				className={`relative rounded-xl w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 p-6`}
 			>
 				<div className='grid gap-6'>
 					<h1 className='border-b border-white/10 text-3xl font-bold py-4 text-center'>
-						Редактирование отзыва
+						Редактирование рецензии
 					</h1>
 
 					<div className='grid gap-2'>
@@ -73,7 +73,7 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
 						/>
 						<FormInput
 							id={'review-title-input'}
-							placeholder={'Заголовок отзыва...'}
+							placeholder={'Заголовок рецензии...'}
 							type={'text'}
 							value={title}
 							setValue={setTitle}
@@ -82,13 +82,13 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
 
 					<div className='grid gap-2'>
 						<FormLabel
-							name={'Текст отзыва'}
+							name={'Текст рецензии'}
 							htmlFor={'review-text-input'}
 							isRequired={false}
 						/>
 						<FormTextbox
 							id={'review-text-input'}
-							placeholder={'Текст отзыва...'}
+							placeholder={'Текст рецензии...'}
 							value={text}
 							setValue={setText}
 							className='h-60'
@@ -102,6 +102,7 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
 								isInvert={true}
 								onClick={handleSubmit}
 								disabled={!hasChanges || !textAndTitleTogether || isLoading}
+								isLoading={isLoading}
 							/>
 						</div>
 
@@ -110,7 +111,7 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
 								title={'Назад'}
 								isInvert={false}
 								onClick={onClose}
-								disabled={false}
+								disabled={isLoading}
 							/>
 						</div>
 					</div>

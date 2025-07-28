@@ -34,8 +34,8 @@ const UploadAvatarForm = observer(() => {
 		}
 	}
 
-	const handleSubmit = () => {
-		if (!checkAuth()) return
+	const handleSubmit = async () => {
+		if (!checkAuth() || isLoading || isDeleting) return
 
 		if (!file) {
 			notificationStore.addErrorNotification('Выберите изображение!')
@@ -45,23 +45,27 @@ const UploadAvatarForm = observer(() => {
 
 		formData.append('avatarImg', file)
 
-		updateAvatar(formData).then(result => {
-			notificationStore.addNotification({
-				id: self.crypto.randomUUID(),
-				text: result.message,
-				isError: !result.status,
-			})
-			if (result.status) {
-				setFile(null)
-			}
-			if (previewUrl) {
-				URL.revokeObjectURL(previewUrl)
-				setPreviewUrl(null)
-			}
+		const result = await updateAvatar(formData)
+
+		notificationStore.addNotification({
+			id: self.crypto.randomUUID(),
+			text: result.message,
+			isError: !result.status,
 		})
+
+		if (result.status) {
+			setFile(null)
+		}
+
+		if (previewUrl) {
+			URL.revokeObjectURL(previewUrl)
+			setPreviewUrl(null)
+		}
 	}
 
 	const handleDelete = async () => {
+		if (!checkAuth() || isLoading || isDeleting) return
+
 		const errors = await deleteAvatar()
 		if (errors.length === 0) {
 			notificationStore.addSuccessNotification('Вы успешно удалили аватар!')
@@ -111,7 +115,8 @@ const UploadAvatarForm = observer(() => {
 							title={isLoading ? 'Сохранение...' : 'Сохранить'}
 							isInvert={true}
 							onClick={handleSubmit}
-							disabled={!file || isLoading}
+							disabled={!file || isLoading || isDeleting}
+							isLoading={isLoading}
 						/>
 					</div>
 
@@ -120,7 +125,10 @@ const UploadAvatarForm = observer(() => {
 							title={isDeleting ? 'Удаление...' : 'Удалить аватар'}
 							isInvert={false}
 							onClick={handleDelete}
-							disabled={profileStore.profile?.avatar === '' || isDeleting}
+							disabled={
+								profileStore.profile?.avatar === '' || isDeleting || isLoading
+							}
+							isLoading={isDeleting}
 						/>
 					</div>
 				</div>

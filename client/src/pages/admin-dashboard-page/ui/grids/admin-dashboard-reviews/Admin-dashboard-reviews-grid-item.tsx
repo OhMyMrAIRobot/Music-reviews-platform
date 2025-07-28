@@ -3,6 +3,8 @@ import { FC, useState } from 'react'
 import ArrowBottomSvg from '../../../../../components/header/svg/Arrow-bottom-svg'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal'
 import useCustomNavigate from '../../../../../hooks/use-custom-navigate'
+import { useLoading } from '../../../../../hooks/use-loading'
+import { useStore } from '../../../../../hooks/use-store'
 import { IAdminReview } from '../../../../../models/review/admin-reviews-response'
 import { SortOrderEnum } from '../../../../../models/sort/sort-order-enum'
 import { SortOrder } from '../../../../../types/sort-order-type'
@@ -15,9 +17,9 @@ interface IProps {
 	review?: IAdminReview
 	isLoading: boolean
 	position?: number
-	deleteReview?: () => void
 	order?: SortOrder
 	toggleOrder?: () => void
+	refetchReviews?: () => void
 }
 
 const AdminDashboardReviewsGridItem: FC<IProps> = observer(
@@ -26,11 +28,17 @@ const AdminDashboardReviewsGridItem: FC<IProps> = observer(
 		review,
 		isLoading,
 		position,
-		deleteReview,
 		order,
 		toggleOrder,
+		refetchReviews,
 	}) => {
+		const { adminDashboardReviewsStore, notificationStore } = useStore()
+
 		const { navigateToRelease, navigatoToProfile } = useCustomNavigate()
+
+		const { execute: deleteReview, isLoading: isDeleting } = useLoading(
+			adminDashboardReviewsStore.deleteReview
+		)
 
 		const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 		const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
@@ -53,9 +61,24 @@ const AdminDashboardReviewsGridItem: FC<IProps> = observer(
 			}
 		}
 
-		const handleDelete = () => {
-			if (deleteReview) {
-				deleteReview()
+		const handleRefetch = () => {
+			if (refetchReviews) {
+				refetchReviews()
+			}
+		}
+
+		const handleDelete = async (id: string, userId: string) => {
+			if (isDeleting) return
+
+			const errors = await deleteReview(id, userId)
+
+			if (errors.length === 0) {
+				notificationStore.addSuccessNotification('Вы успешно удалили рецензию!')
+				handleRefetch()
+			} else {
+				errors.forEach(err => {
+					notificationStore.addErrorNotification(err)
+				})
 			}
 		}
 
@@ -69,8 +92,9 @@ const AdminDashboardReviewsGridItem: FC<IProps> = observer(
 							<ConfirmationModal
 								title={'Вы действительно хотите удалить рецензию?'}
 								isOpen={confModalOpen}
-								onConfirm={handleDelete}
+								onConfirm={() => handleDelete(review.id, review.user.id)}
 								onCancel={() => setConfModalOpen(false)}
+								isLoading={isDeleting}
 							/>
 						)}
 
