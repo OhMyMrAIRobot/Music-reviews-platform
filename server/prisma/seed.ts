@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { ReleaseMediaStatusesEnum } from 'src/release-media-statuses/entities/release-media-statuses.enum';
 import { AuthorTypesEnum } from '../src/author-types/entities/author-types.enum';
 import { FeedbackStatusesEnum } from '../src/feedback-statuses/types/feedback-statuses.enum';
 import { ReleaseRatingTypesEnum } from '../src/release-rating-types/entities/release-rating-types.enum';
@@ -31,6 +32,7 @@ async function main() {
   await prisma.userFavRelease.deleteMany();
   await prisma.userFavReview.deleteMany();
   await prisma.topUsersLeaderboard.deleteMany();
+  await prisma.releaseMediaStatus.deleteMany();
 
   await prisma.role.createMany({
     data: [
@@ -170,6 +172,23 @@ async function main() {
       {
         id: '2',
         status: FeedbackStatusesEnum.READ,
+      },
+    ],
+  });
+
+  await prisma.releaseMediaStatus.createMany({
+    data: [
+      {
+        id: '0',
+        status: ReleaseMediaStatusesEnum.PENDING,
+      },
+      {
+        id: '1',
+        status: ReleaseMediaStatusesEnum.APPROVED,
+      },
+      {
+        id: '2',
+        status: ReleaseMediaStatusesEnum.REJECTED,
       },
     ],
   });
