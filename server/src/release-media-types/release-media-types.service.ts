@@ -11,7 +11,7 @@ export class ReleaseMediaTypesService {
     return this.prisma.releaseMediaType.findMany();
   }
 
-  async findOne(id: string): Promise<ReleaseMediaType> {
+  async findById(id: string): Promise<ReleaseMediaType> {
     const type = await this.prisma.releaseMediaType.findUnique({
       where: { id },
     });
@@ -21,5 +21,17 @@ export class ReleaseMediaTypesService {
     }
 
     return type;
+  }
+
+  async findByType(type: string): Promise<ReleaseMediaType> {
+    const exist = await this.prisma.releaseMediaType.findFirst({
+      where: { type: { contains: type, mode: 'insensitive' } },
+    });
+
+    if (!exist) {
+      throw new EntityNotFoundException('Тип медиа', 'названием', type);
+    }
+
+    return exist;
   }
 }

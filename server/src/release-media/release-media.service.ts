@@ -1,0 +1,281 @@
+import { ConflictException, Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
+import { plainToInstance } from 'class-transformer';
+import { PrismaService } from 'prisma/prisma.service';
+import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
+import { InsufficientPermissionsException } from 'src/exceptions/insufficient-permissions.exception';
+import { NoDataProvidedException } from 'src/exceptions/no-data.exception';
+import { ReleaseMediaStatusesEnum } from 'src/release-media-statuses/entities/release-media-statuses.enum';
+import { ReleasesService } from 'src/releases/releases.service';
+import { UsersService } from 'src/users/users.service';
+import { ReleaseMediaStatusesService } from '../../src/release-media-statuses/release-media-statuses.service';
+import { ReleaseMediaTypesService } from '../../src/release-media-types/release-media-types.service';
+import { CreateReleaseMediaDto } from './dto/create-release-media.dto';
+import { ReleaseMediaRequestQueryDto } from './dto/request/release-media.request.query.dto';
+import { ReleaseMediaListResponseDto } from './dto/response/release-media-list.response.dto';
+import { ReleaseMediaResponseDto } from './dto/response/release-media.response.dto';
+import { UpdateReleaseMediaDto } from './dto/update-release-media.dto';
+
+@Injectable()
+export class ReleaseMediaService {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly releaseMediaStatusesService: ReleaseMediaStatusesService,
+    private readonly releaseMediaTypesService: ReleaseMediaTypesService,
+    private readonly releasesService: ReleasesService,
+    private readonly usersService: UsersService,
+  ) {}
+
+  async create(dto: CreateReleaseMediaDto): Promise<ReleaseMediaResponseDto> {
+    await this.releasesService.findOne(dto.releaseId);
+
+    if (dto.userId) {
+      await this.usersService.findOne(dto.userId);
+
+      const existByUserRelease = await this.prisma.releaseMedia.count({
+        where: {
+          AND: [{ releaseId: dto.releaseId }, { userId: dto.userId }],
+        },
+      });
+
+      if (existByUserRelease) {
+        throw new ConflictException(
+          'Вы уже оставляли медиа отзыв на данный релиз!',
+        );
+      }
+    }
+
+    if (await this.checkExistenceByUrl(dto.url)) {
+      throw new ConflictException('Медиа отзыв с таким URL уже существует!');
+    }
+
+    const created = await this.prisma.releaseMedia.create({
+      data: dto,
+      include: {
+        releaseMediaStatus: true,
+        releaseMediaType: true,
+        user: {
+          select: { id: true, nickname: true },
+        },
+        release: {
+          select: { id: true, title: true },
+        },
+      },
+    });
+
+    return plainToInstance(ReleaseMediaResponseDto, created, {
+      excludeExtraneousValues: true,
+    });
+  }
+
+  async findAll(
+    query: ReleaseMediaRequestQueryDto,
+  ): Promise<ReleaseMediaListResponseDto> {
+    const {
+      limit,
+      offset,
+      statusId,
+      typeId,
+      releaseId,
+      userId,
+      order,
+      query: searchTerm,
+    } = query;
+
+    const where: Prisma.ReleaseMediaWhereInput = {};
+
+    if (statusId) {
+      await this.releaseMediaStatusesService.findById(statusId);
+      where.releaseMediaStatusId = statusId;
+    }
+
+    if (typeId) {
+      await this.releaseMediaTypesService.findById(typeId);
+      where.releaseMediaTypeId = typeId;
+    }
+
+    if (releaseId) {
+      await this.releasesService.findOne(releaseId);
+      where.releaseId = releaseId;
+    }
+
+    if (userId) {
+      await this.usersService.findOne(userId);
+      where.userId = userId;
+    }
+
+    if (searchTerm) {
+      where.OR = [
+        {
+          title: {
+            contains: searchTerm,
+            mode: 'insensitive',
+          },
+        },
+        {
+          url: {
+            contains: searchTerm,
+            mode: 'insensitive',
+          },
+        },
+        {
+          user: {
+            nickname: {
+              contains: searchTerm,
+              mode: 'insensitive',
+            },
+          },
+        },
+        {
+          release: {
+            title: {
+              contains: searchTerm,
+              mode: 'insensitive',
+            },
+          },
+        },
+      ];
+    }
+
+    const [count, items] = await Promise.all([
+      this.prisma.releaseMedia.count({ where }),
+      this.prisma.releaseMedia.findMany({
+        where,
+        orderBy: [
+          {
+            createdAt: order ?? 'desc',
+          },
+          { id: 'desc' },
+        ],
+        take: limit,
+        skip: offset,
+        include: {
+          releaseMediaStatus: true,
+          releaseMediaType: true,
+          user: {
+            select: { id: true, nickname: true },
+          },
+          release: {
+            select: { id: true, title: true },
+          },
+        },
+      }),
+    ]);
+    return {
+      count,
+      releaseMedia: plainToInstance(ReleaseMediaResponseDto, items, {
+        excludeExtraneousValues: true,
+      }),
+    };
+  }
+
+  async findOne(id: string): Promise<ReleaseMediaResponseDto> {
+    const releaseMedia = await this.prisma.releaseMedia.findUnique({
+      where: { id },
+      include: {
+        releaseMediaStatus: true,
+        releaseMediaType: true,
+        user: {
+          select: { id: true, nickname: true },
+        },
+        release: {
+          select: { id: true, title: true },
+        },
+      },
+    });
+
+    if (!releaseMedia) {
+      throw new EntityNotFoundException('Медиа', 'id', id);
+    }
+
+    return plainToInstance(ReleaseMediaResponseDto, releaseMedia, {
+      excludeExtraneousValues: true,
+    });
+  }
+
+  async update(
+    id: string,
+    dto: UpdateReleaseMediaDto,
+    userId?: string,
+  ): Promise<ReleaseMediaResponseDto> {
+    if (!dto || Object.keys(dto).length === 0) {
+      throw new NoDataProvidedException();
+    }
+    const releaseMedia = await this.findOne(id);
+
+    if (dto.releaseId) {
+      await this.releasesService.findOne(dto.releaseId);
+    }
+
+    if (dto.releaseMediaTypeId) {
+      await this.releaseMediaTypesService.findById(dto.releaseMediaTypeId);
+    }
+
+    let newStatusId: string | undefined = dto.releaseMediaStatusId;
+
+    if (newStatusId) {
+      await this.releaseMediaStatusesService.findById(newStatusId);
+    }
+
+    if (userId) {
+      if (releaseMedia.userId !== userId) {
+        throw new InsufficientPermissionsException();
+      }
+
+      const newStatus = await this.releaseMediaStatusesService.findByStatus(
+        ReleaseMediaStatusesEnum.PENDING,
+      );
+
+      newStatusId = newStatus.id;
+    }
+
+    if (dto.url) {
+      if (await this.checkExistenceByUrl(dto.url)) {
+        throw new ConflictException('Медиа отзыв с таким URL уже существует!');
+      }
+    }
+
+    const updated = await this.prisma.releaseMedia.update({
+      where: { id },
+      data: {
+        ...dto,
+        releaseMediaStatusId: newStatusId,
+      },
+      include: {
+        releaseMediaStatus: true,
+        releaseMediaType: true,
+        user: {
+          select: { id: true, nickname: true },
+        },
+        release: {
+          select: { id: true, title: true },
+        },
+      },
+    });
+
+    return plainToInstance(ReleaseMediaResponseDto, updated, {
+      excludeExtraneousValues: true,
+    });
+  }
+
+  async remove(id: string, userId?: string) {
+    const releaseMedia = await this.findOne(id);
+
+    if (userId) {
+      if (releaseMedia.userId !== userId) {
+        throw new InsufficientPermissionsException();
+      }
+    }
+
+    return this.prisma.releaseMedia.delete({ where: { id } });
+  }
+
+  private async checkExistenceByUrl(url: string): Promise<boolean> {
+    const count = await this.prisma.releaseMedia.count({
+      where: {
+        url: { equals: url, mode: 'insensitive' },
+      },
+    });
+    return count > 0;
+  }
+}

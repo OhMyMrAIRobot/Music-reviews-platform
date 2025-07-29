@@ -64,13 +64,14 @@ model ReleaseDesigner {
 }
 
 model ReleaseMedia {
-  id                   String  @id @default(cuid())
-  title                String  @db.VarChar(100)
-  url                  String  @db.VarChar(255)
-  releaseId            String  @map("release_id")
-  userId               String? @map("user_id")
-  releaseMediaTypeId   String  @map("release_media_type_id")
-  releaseMediaStatusId String  @map("release_media_status_id")
+  id                   String   @id @default(cuid())
+  title                String   @db.VarChar(100)
+  url                  String   @unique @db.VarChar(255)
+  releaseId            String   @map("release_id")
+  userId               String?  @map("user_id")
+  releaseMediaTypeId   String   @map("release_media_type_id")
+  releaseMediaStatusId String   @map("release_media_status_id")
+  createdAt            DateTime @default(now()) @map("created_at")
 
   release            Release            @relation(fields: [releaseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   user               User?              @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)

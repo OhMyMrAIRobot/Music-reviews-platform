@@ -11,7 +11,7 @@ export class ReleaseMediaStatusesService {
     return this.prisma.releaseMediaStatus.findMany();
   }
 
-  async findOne(id: string): Promise<ReleaseMediaStatus> {
+  async findById(id: string): Promise<ReleaseMediaStatus> {
     const status = await this.prisma.releaseMediaStatus.findUnique({
       where: { id },
     });
@@ -21,5 +21,17 @@ export class ReleaseMediaStatusesService {
     }
 
     return status;
+  }
+
+  async findByStatus(status: string): Promise<ReleaseMediaStatus> {
+    const exist = await this.prisma.releaseMediaStatus.findFirst({
+      where: { status: { contains: status, mode: 'insensitive' } },
+    });
+
+    if (!exist) {
+      throw new EntityNotFoundException('Статус медиа', 'названием', status);
+    }
+
+    return exist;
   }
 }

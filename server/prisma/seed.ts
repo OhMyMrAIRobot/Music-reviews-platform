@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client';
-import { ReleaseMediaStatusesEnum } from 'src/release-media-statuses/entities/release-media-statuses.enum';
-import { ReleaseMediaTypesEnum } from 'src/release-media-types/entities/release-media-types.enum';
 import { AuthorTypesEnum } from '../src/author-types/entities/author-types.enum';
 import { FeedbackStatusesEnum } from '../src/feedback-statuses/types/feedback-statuses.enum';
+import { ReleaseMediaStatusesEnum } from '../src/release-media-statuses/entities/release-media-statuses.enum';
+import { ReleaseMediaTypesEnum } from '../src/release-media-types/entities/release-media-types.enum';
 import { ReleaseRatingTypesEnum } from '../src/release-rating-types/entities/release-rating-types.enum';
 import { ReleaseTypesEnum } from '../src/release-types/entities/release-types.enum';
 import { UserRoleEnum } from '../src/roles/types/user-role.enum';

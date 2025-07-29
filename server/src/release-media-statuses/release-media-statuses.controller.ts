@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { ReleaseMediaStatusesService } from './release-media-statuses.service';
 
 @Controller('release-media-statuses')
@@ -10,10 +10,5 @@ export class ReleaseMediaStatusesController {
   @Get()
   findAll() {
     return this.releaseMediaStatusesService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.releaseMediaStatusesService.findOne(id);
   }
 }
