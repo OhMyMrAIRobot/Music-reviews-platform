@@ -17,6 +17,7 @@ model User {
   UserFavAuthor       UserFavAuthor[]
   TopUsersLeaderboard TopUsersLeaderboard?
   FeedbackResponse    FeedbackResponse[]
+  ReleaseMedia        ReleaseMedia[]
 
   @@map("Users")
 }

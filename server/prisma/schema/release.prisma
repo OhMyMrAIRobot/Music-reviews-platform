@@ -14,6 +14,7 @@ model Release {
   Review          Review[]
   ReleaseRating   ReleaseRating[]
   UserFavRelease  UserFavRelease[]
+  ReleaseMedia    ReleaseMedia[]
 
   @@map("Releases")
 }
@@ -60,4 +61,37 @@ model ReleaseDesigner {
 
   @@unique([releaseId, authorId])
   @@map("Release_designers")
+}
+
+model ReleaseMedia {
+  id                   String  @id @default(cuid())
+  title                String  @db.VarChar(100)
+  url                  String  @db.VarChar(255)
+  releaseId            String  @map("release_id")
+  userId               String? @map("user_id")
+  releaseMediaTypeId   String  @map("release_media_type_id")
+  releaseMediaStatusId String  @map("release_media_status_id")
+
+  release            Release            @relation(fields: [releaseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user               User?              @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  releaseMediaType   ReleaseMediaType   @relation(fields: [releaseMediaTypeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  releaseMediaStatus ReleaseMediaStatus @relation(fields: [releaseMediaStatusId], references: [id])
+
+  @@map("Release_media")
+}
+
+model ReleaseMediaType {
+  id           String         @id @default(cuid())
+  type         String         @db.VarChar(30)
+  ReleaseMedia ReleaseMedia[]
+
+  @@map("Release_media_types")
+}
+
+model ReleaseMediaStatus {
+  id           String         @id @default(cuid())
+  status       String         @db.VarChar(30)
+  ReleaseMedia ReleaseMedia[]
+
+  @@map("Release_media_statuses")
 }
