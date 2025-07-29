@@ -25,6 +25,7 @@ import { UserFavReleasesModule } from './user-fav-releases/user-fav-releases.mod
 import { UserFavReviewsModule } from './user-fav-reviews/user-fav-reviews.module';
 import { UsersModule } from './users/users.module';
 import { ReleaseMediaStatusesModule } from './release-media-statuses/release-media-statuses.module';
+import { ReleaseMediaTypesModule } from './release-media-types/release-media-types.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { ReleaseMediaStatusesModule } from './release-media-statuses/release-med
     FileModule,
     FeedbackRepliesModule,
     ReleaseMediaStatusesModule,
+    ReleaseMediaTypesModule,
   ],
   controllers: [],
   providers: [],

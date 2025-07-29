@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { ReleaseMediaStatusesEnum } from 'src/release-media-statuses/entities/release-media-statuses.enum';
+import { ReleaseMediaTypesEnum } from 'src/release-media-types/entities/release-media-types.enum';
 import { AuthorTypesEnum } from '../src/author-types/entities/author-types.enum';
 import { FeedbackStatusesEnum } from '../src/feedback-statuses/types/feedback-statuses.enum';
 import { ReleaseRatingTypesEnum } from '../src/release-rating-types/entities/release-rating-types.enum';
@@ -33,6 +34,7 @@ async function main() {
   await prisma.userFavReview.deleteMany();
   await prisma.topUsersLeaderboard.deleteMany();
   await prisma.releaseMediaStatus.deleteMany();
+  await prisma.releaseMediaType.deleteMany();
 
   await prisma.role.createMany({
     data: [
@@ -189,6 +191,19 @@ async function main() {
       {
         id: '2',
         status: ReleaseMediaStatusesEnum.REJECTED,
+      },
+    ],
+  });
+
+  await prisma.releaseMediaType.createMany({
+    data: [
+      {
+        id: '0',
+        type: ReleaseMediaTypesEnum.REVIEW,
+      },
+      {
+        id: '1',
+        type: ReleaseMediaTypesEnum.MUSIC_VIDEO,
       },
     ],
   });
