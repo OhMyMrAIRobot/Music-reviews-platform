@@ -2,6 +2,7 @@ import { FC, useState } from 'react'
 import ArrowBottomSvg from '../../../../../components/header/svg/Arrow-bottom-svg.tsx'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal.tsx'
 import UserRoleSvg from '../../../../../components/user/User-role-svg.tsx'
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
 import { useLoading } from '../../../../../hooks/use-loading.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
 import { SortOrderEnum } from '../../../../../models/sort/sort-order-enum.ts'
@@ -67,7 +68,7 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 	}
 
 	return isLoading ? (
-		<div className='bg-gray-400 w-full h-12 rounded-lg animate-pulse opacity-40' />
+		<SkeletonLoader className='w-full h-12 rounded-lg' />
 	) : (
 		<>
 			{user && (

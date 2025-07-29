@@ -1,5 +1,6 @@
 import { FC, useEffect } from 'react'
 import FormInputWithConfirmation from '../../../../../../components/form-elements/Form-input-with-confirmation.tsx'
+import SkeletonLoader from '../../../../../../components/utils/Skeleton-loader.tsx'
 import { useLoading } from '../../../../../../hooks/use-loading.ts'
 import { useStore } from '../../../../../../hooks/use-store.ts'
 import { IUserInfo } from '../../../../../../models/user/user-info.ts'
@@ -32,9 +33,9 @@ const EditUserModalInputs: FC<IProps> = ({ user }) => {
 			<div className='grid grid-cols-2 gap-x-5 gap-y-4'>
 				{isSocialsLoading
 					? Array.from({ length: 4 }).map((_, idx) => (
-							<div
+							<SkeletonLoader
 								key={`Social-inputs-skeleton-${idx}`}
-								className='bg-gray-400 w-full h-10 animate-pulse opacity-40 rounded-md'
+								className='w-full h-10 rounded-md'
 							/>
 					  ))
 					: metaStore.socials.map(social => {

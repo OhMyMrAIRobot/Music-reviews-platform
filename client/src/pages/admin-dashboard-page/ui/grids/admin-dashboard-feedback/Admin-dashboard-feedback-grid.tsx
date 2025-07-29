@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import AdminHeader from '../../../../../components/admin-header/Admin-header'
 import FeedbackStatusIcon from '../../../../../components/feedback/Feedback-status-icon'
 import Pagination from '../../../../../components/pagination/Pagination'
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import { useLoading } from '../../../../../hooks/use-loading'
 import { useStore } from '../../../../../hooks/use-store'
 import { FeedbackStatusesFilterEnum } from '../../../../../models/feedback/feedback-statuses-filter-enum'
@@ -77,9 +78,9 @@ const AdminDashboardFeedbackGrid = observer(() => {
 				<div className='flex mb-5 text-white/80 border-b border-white/10'>
 					{isFeedbackStatusesLoading
 						? Array.from({ length: 5 }).map((_, idx) => (
-								<div
+								<SkeletonLoader
 									key={`skeleton-button-${idx}`}
-									className='bg-gray-400 w-20 h-4 rounded-lg animate-pulse opacity-40 mr-5 mb-1'
+									className='w-20 h-4 rounded-lg mr-5 mb-1'
 								/>
 						  ))
 						: Object.values(FeedbackStatusesFilterEnum).map(option => (

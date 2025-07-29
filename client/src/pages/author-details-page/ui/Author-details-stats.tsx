@@ -1,5 +1,6 @@
 import { FC } from 'react'
 import AuthorReleaseTypesRatings from '../../../components/author/author-ratings/Author-release-types-ratings'
+import SkeletonLoader from '../../../components/utils/Skeleton-loader'
 import { IAuthor } from '../../../models/author/author'
 import { ReleaseTypesEnum } from '../../../models/release/release-types'
 
@@ -12,7 +13,7 @@ const AuthorDetailsStats: FC<IProps> = ({ author, isLoading }) => {
 	return (
 		<section>
 			{isLoading ? (
-				<div className='bg-gray-400 animate-pulse opacity-40 w-80 rounded-2xl h-34 lg:43' />
+				<SkeletonLoader className='w-80 h-34 lg:43 rounded-2xl' />
 			) : (
 				author && (
 					<div className='bg-zinc-900 px-5 py-3 lg:p-5 rounded-2xl border border-white/20 w-80 select-none grid gap-3'>

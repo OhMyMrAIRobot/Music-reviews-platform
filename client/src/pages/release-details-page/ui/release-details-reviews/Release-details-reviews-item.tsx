@@ -4,6 +4,7 @@ import ReviewAuthor from '../../../../components/review/review-card/Review-autho
 import ReviewLikes from '../../../../components/review/review-card/Review-likes'
 import ReviewMarks from '../../../../components/review/review-card/Review-marks'
 import ReviewUserImage from '../../../../components/review/review-card/Review-user-image'
+import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
 import { useAuth } from '../../../../hooks/use-auth'
 import useCustomNavigate from '../../../../hooks/use-custom-navigate'
 import { useStore } from '../../../../hooks/use-store'
@@ -55,7 +56,7 @@ const ReleaseDetailsReviewsItem: FC<IProps> = observer(
 		}
 
 		return isLoading ? (
-			<div className='bg-gray-400 animate-pulse opacity-40 rounded-[15px] lg:rounded-[20px] w-full h-70' />
+			<SkeletonLoader className='w-full h-70 rounded-[15px] lg:rounded-[20px]' />
 		) : (
 			review && (
 				<div className='w-full bg-zinc-900 p-1.5 lg:p-[5px] flex flex-col border border-zinc-800 rounded-[15px] lg:rounded-[20px]'>

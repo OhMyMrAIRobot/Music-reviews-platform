@@ -3,6 +3,7 @@ import useCustomNavigate from '../../../hooks/use-custom-navigate'
 import { IAuthorData } from '../../../models/author/authors-response'
 import { ReleaseTypesEnum } from '../../../models/release/release-types'
 import LikesCount from '../../utils/Likes-count'
+import SkeletonLoader from '../../utils/Skeleton-loader'
 import AuthorReleaseTypesRatings from '../author-ratings/Author-release-types-ratings'
 import AuthorTypes from '../author-types/Author-types'
 
@@ -15,7 +16,7 @@ const AuthorCard: FC<IProps> = ({ author, isLoading }) => {
 	const { navigateToAuthor } = useCustomNavigate()
 
 	return isLoading ? (
-		<div className='bg-gray-400 w-full h-76 md:h-91 animate-pulse opacity-40 rounded-2xl' />
+		<SkeletonLoader className={'w-full h-76 md:h-91 rounded-2xl'} />
 	) : (
 		author && (
 			<button

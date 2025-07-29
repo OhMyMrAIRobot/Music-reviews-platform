@@ -1,6 +1,7 @@
 import { FC } from 'react'
 import useCustomNavigate from '../../hooks/use-custom-navigate'
 import { IRelease } from '../../models/release/release'
+import SkeletonLoader from '../utils/Skeleton-loader'
 import ReleaseAuthors from './Release-authors'
 import ReleaseRatings from './Release-ratings'
 import ReleaseReviewsCount from './Release-reviews-count'
@@ -15,7 +16,7 @@ const ReleaseCard: FC<IProps> = ({ release, isLoading }) => {
 	const { navigateToRelease } = useCustomNavigate()
 
 	return isLoading ? (
-		<div className='bg-gray-400 w-full h-full animate-pulse opacity-40 rounded-xl' />
+		<SkeletonLoader className='w-full h-full rounded-xl' />
 	) : (
 		release && (
 			<button

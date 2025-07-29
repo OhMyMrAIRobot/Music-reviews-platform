@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import AdminHeader from '../../../../../components/admin-header/Admin-header.tsx'
 import Pagination from '../../../../../components/pagination/Pagination.tsx'
 import ReleaseTypeIcon from '../../../../../components/release/Release-type-icon.tsx'
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
 import { useLoading } from '../../../../../hooks/use-loading.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
 import { ReleaseTypesFilterEnum } from '../../../../../models/release/release-types-filter-enum.ts'
@@ -82,9 +83,9 @@ const AdminDashboardReleasesGrid = observer(() => {
 				<div className='flex mb-5 text-white/80 border-b border-white/10'>
 					{isTypesLoading
 						? Array.from({ length: 5 }).map((_, idx) => (
-								<div
+								<SkeletonLoader
 									key={`skeleton-button-${idx}`}
-									className='bg-gray-400 w-20 h-4 rounded-lg animate-pulse opacity-40 mr-5 mb-1'
+									className='w-20 h-4 rounded-lg mr-5 mb-1'
 								/>
 						  ))
 						: Object.values(ReleaseTypesFilterEnum).map(type => (

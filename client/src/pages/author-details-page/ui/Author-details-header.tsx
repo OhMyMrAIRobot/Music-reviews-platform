@@ -3,6 +3,7 @@ import { FC, useState } from 'react'
 import AuthorTypes from '../../../components/author/author-types/Author-types'
 import ToggleFavButton from '../../../components/buttons/Toggle-fav-button'
 import LikesCount from '../../../components/utils/Likes-count'
+import SkeletonLoader from '../../../components/utils/Skeleton-loader'
 import { useAuth } from '../../../hooks/use-auth'
 import { useStore } from '../../../hooks/use-store'
 import { IAuthor } from '../../../models/author/author'
@@ -43,7 +44,7 @@ const AuthorDetailsHeader: FC<IProps> = observer(({ author, isLoading }) => {
 	}
 
 	return isLoading ? (
-		<div className='bg-gray-400 animate-pulse opacity-40 relative w-full h-45 md:h-62 lg:h-125 rounded-2xl overflow-hidden' />
+		<SkeletonLoader className='relative w-full h-45 md:h-62 lg:h-125 rounded-2xl overflow-hidden' />
 	) : (
 		author && (
 			<section className='relative w-full h-45 md:h-62 lg:h-125 rounded-2xl overflow-hidden'>

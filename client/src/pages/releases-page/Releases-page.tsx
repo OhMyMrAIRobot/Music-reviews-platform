@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import ComboBox from '../../components/buttons/Combo-box'
 import ReleasesGrid from '../../components/release/Releases-grid'
+import SkeletonLoader from '../../components/utils/Skeleton-loader'
 import { useLoading } from '../../hooks/use-loading'
 import { useStore } from '../../hooks/use-store'
 import { ReleaseSortFields } from '../../models/release/release-sort-fields'
@@ -112,7 +113,7 @@ const ReleasesPage = () => {
 							value={selectedType}
 						/>
 					) : (
-						<div className='bg-gray-400 animate-pulse opacity-40 w-full h-full rounded-md' />
+						<SkeletonLoader className='size-full rounded-md' />
 					)}
 				</div>
 

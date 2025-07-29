@@ -6,6 +6,7 @@ import { useStore } from '../../../hooks/use-store'
 import { RolesEnum } from '../../../models/role/roles-enum'
 import SettingsSvg from '../../svg/Settings-svg'
 import ShieldSvg from '../../svg/Shield-svg'
+import SkeletonLoader from '../../utils/Skeleton-loader'
 import LogoutSvg from '../svg/Logout-svg'
 import ProfileSvg from '../svg/Profile-svg'
 import PopupProfileButton from './Popup-profile-button'
@@ -71,7 +72,7 @@ const ProfileButton = observer(() => {
 			className='relative flex rounded-md items-center select-none'
 		>
 			{isLoading ? (
-				<div className='size-10 bg-gray-400 animate-pulse opacity-40 rounded-full' />
+				<SkeletonLoader className='size-10 rounded-full' />
 			) : (
 				<button
 					onClick={() => setIsOpen(!isOpen)}

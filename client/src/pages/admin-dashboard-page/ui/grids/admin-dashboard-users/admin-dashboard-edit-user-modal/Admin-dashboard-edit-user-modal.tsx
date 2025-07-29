@@ -9,6 +9,7 @@ import FormTextboxWithConfirmation from '../../../../../../components/form-eleme
 import ModalOverlay from '../../../../../../components/modals/Modal-overlay.tsx'
 import MoveToSvg from '../../../../../../components/svg/Move-to-svg.tsx'
 import TrashSvg from '../../../../../../components/svg/Trash-svg.tsx'
+import SkeletonLoader from '../../../../../../components/utils/Skeleton-loader.tsx'
 import useCustomNavigate from '../../../../../../hooks/use-custom-navigate.ts'
 import { useLoading } from '../../../../../../hooks/use-loading.ts'
 import { useStore } from '../../../../../../hooks/use-store.ts'
@@ -154,7 +155,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 				}
 			>
 				{isUserLoading || isRolesLoading ? (
-					<div className='bg-gray-400 w-180 h-190 rounded-lg animate-pulse opacity-40' />
+					<SkeletonLoader className='w-180 h-190 rounded-lg' />
 				) : (
 					user && (
 						<div

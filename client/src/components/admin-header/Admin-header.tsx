@@ -2,6 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { FC, useEffect, useState } from 'react'
 import { useLoading } from '../../hooks/use-loading'
 import { useStore } from '../../hooks/use-store'
+import SkeletonLoader from '../utils/Skeleton-loader'
 import AdminSearchBar from './Admin-search-bar'
 
 interface IProps {
@@ -38,8 +39,8 @@ const AdminHeader: FC<IProps> = observer(({ title, setText }) => {
 
 				{isLoading ? (
 					<>
-						<div className='bg-gray-400 size-10 animate-pulse opacity-40 rounded-full' />
-						<div className='bg-gray-400 w-25 h-6 animate-pulse opacity-40 rounded-lg' />
+						<SkeletonLoader className={'size-10 rounded-full'} />
+						<SkeletonLoader className={'w-25 h-6 rounded-lg'} />
 					</>
 				) : (
 					<>

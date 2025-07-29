@@ -6,6 +6,7 @@ import PixelHeartFillSvg from '../../../components/svg/Pixel-heart-fill-svg'
 import PixelHeartSvg from '../../../components/svg/Pixel-heart-svg'
 import Tooltip from '../../../components/tooltip/Tooltip'
 import TooltipSpan from '../../../components/tooltip/Tooltip-span'
+import SkeletonLoader from '../../../components/utils/Skeleton-loader'
 import useCustomNavigate from '../../../hooks/use-custom-navigate'
 import { ILeaderboardItem } from '../../../models/leaderboard/leaderboard-item'
 import { formatNumber } from '../../../utils/format-number'
@@ -22,7 +23,7 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 	const level = getUserLevel(item?.points ?? 0)
 
 	return isLoading ? (
-		<div className='bg-gray-400 w-full h-25 lg:h-31 xl:h-19 animate-pulse opacity-40 rounded-lg' />
+		<SkeletonLoader className='w-full h-25 lg:h-31 xl:h-19 rounded-lg' />
 	) : (
 		item && (
 			<div className='bg-zinc-900 border border-white/10 flex max-xl:flex-wrap p-[3px] xl:pr-2 xl:h-[75px] max-xl:gap-y-2 rounded-lg items-stretch relative group xl:hover:bg-zinc-800 transition-all select-none'>

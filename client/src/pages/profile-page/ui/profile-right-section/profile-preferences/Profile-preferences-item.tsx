@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import useCustomNavigate from '../../../../../hooks/use-custom-navigate'
 import { IPreferredItem } from '../../../../../models/profile/preferred-item'
 
@@ -13,7 +14,7 @@ const ProfilePreferencesItem: FC<IProps> = ({ item, isAuthor, isLoading }) => {
 
 	return isLoading ? (
 		<div className='p-1'>
-			<div className='bg-gray-400 animate-pulse opacity-40 w-full rounded-[25px] lg:rounded-[30px] aspect-square' />
+			<SkeletonLoader className='w-full rounded-[25px] lg:rounded-[30px] aspect-square' />
 		</div>
 	) : (
 		item && (

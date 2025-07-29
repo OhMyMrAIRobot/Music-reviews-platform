@@ -2,6 +2,7 @@ import { EmblaOptionsType } from 'embla-carousel'
 import useEmblaCarousel from 'embla-carousel-react'
 import { observer } from 'mobx-react-lite'
 import { FC, useEffect } from 'react'
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import { useLoading } from '../../../../../hooks/use-loading'
 import { useStore } from '../../../../../hooks/use-store'
 import MostReviewedCarouselItem from './Most-reviewed-carousel-item'
@@ -32,12 +33,12 @@ const MostReviewedCarousel: FC<IProps> = observer(({ setShow, setIndex }) => {
 					{isLoading
 						? // SCELETON VIEW
 						  Array.from({ length: 15 }).map((_, index) => (
-								<div
+								<SkeletonLoader
 									key={`skeleton-${index}`}
-									className='bg-gray-400 rounded-full embla__slide flex-[0_0_64px] animate-pulse aspect-square'
+									className='rounded-full embla__slide flex-[0_0_64px] aspect-square'
 								>
 									<div className='opacity-0 w-13 lg:w-17'>_</div>
-								</div>
+								</SkeletonLoader>
 						  ))
 						: // ITEM VIEW
 						  mainPageStore.mostReviewedReleases.map((release, index) => (

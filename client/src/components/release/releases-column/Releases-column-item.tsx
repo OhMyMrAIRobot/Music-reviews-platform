@@ -1,6 +1,7 @@
 import { FC } from 'react'
 import useCustomNavigate from '../../../hooks/use-custom-navigate'
 import { IRelease } from '../../../models/release/release'
+import SkeletonLoader from '../../utils/Skeleton-loader'
 import ReleaseAuthors from '../Release-authors'
 import ReleaseRatings from '../Release-ratings'
 import ReleaseReviewsCount from '../Release-reviews-count'
@@ -14,7 +15,7 @@ const ReleasesColumnItem: FC<IProps> = ({ release, isLoading }) => {
 	const { navigateToRelease } = useCustomNavigate()
 
 	return isLoading ? (
-		<div className='bg-gray-400 w-full h-[78px] lg:h-[92px] animate-pulse opacity-40 rounded-xl' />
+		<SkeletonLoader className='w-full h-[78px] lg:h-[92px] rounded-xl' />
 	) : (
 		release && (
 			<div className='flex items-center bg-white/[3%] border border-white/10 rounded-[10px] p-2 lg:p-[9px] group gap-4 select-none'>

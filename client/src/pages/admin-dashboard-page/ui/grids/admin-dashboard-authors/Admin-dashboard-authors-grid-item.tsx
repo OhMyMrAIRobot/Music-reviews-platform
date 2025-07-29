@@ -1,6 +1,7 @@
 import { FC, useState } from 'react'
 import AuthorTypeSvg from '../../../../../components/author/author-types/Author-type-svg.tsx'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal.tsx'
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
 import useCustomNavigate from '../../../../../hooks/use-custom-navigate.ts'
 import { useLoading } from '../../../../../hooks/use-loading.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
@@ -56,7 +57,7 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 	}
 
 	return isLoading ? (
-		<div className='bg-gray-400 w-full h-12 rounded-lg animate-pulse opacity-40' />
+		<SkeletonLoader className='w-full h-12 rounded-lg' />
 	) : (
 		<>
 			{author && (
