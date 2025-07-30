@@ -2,7 +2,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
 import { ReleaseAPI } from '../../../api/release-api'
+import { ReleaseMediaAPI } from '../../../api/release-media-api'
 import { ReviewAPI } from '../../../api/review-api'
+import { IReleaseMedia } from '../../../models/release-media/release-media'
+import { IReleaseMediaList } from '../../../models/release-media/release-media-list'
 import { IReleaseDetails } from '../../../models/release/release-details'
 import { IReleaseReview } from '../../../models/review/release-review'
 import { IReviewData } from '../../../models/review/review-data'
@@ -18,6 +21,11 @@ class ReleaseDetailsPageStore {
 	releaseReviews: IReleaseReview[] | null = null
 	reviewsCount: number = 0
 
+	releaseMedia: IReleaseMedia[] = []
+	releaseMediaCount: number = 0
+
+	userReleaseMedia: IReleaseMedia[] = []
+
 	setReviewDetails(data: IReleaseDetails | null) {
 		this.releaseDetails = data
 	}
@@ -30,12 +38,59 @@ class ReleaseDetailsPageStore {
 		this.reviewsCount = data
 	}
 
+	setReleaseMedia(data: IReleaseMediaList) {
+		runInAction(() => {
+			this.releaseMedia = data.releaseMedia
+			this.releaseMediaCount = data.count
+		})
+	}
+
+	setUserReleaseMedia(data: IReleaseMediaList) {
+		this.userReleaseMedia = data.releaseMedia
+	}
+
 	fetchReleaseDetails = async (id: string) => {
 		try {
 			const data = await ReleaseAPI.fetchReleaseDetails(id)
 			this.setReviewDetails(data)
 		} catch (e) {
 			console.log(e)
+		}
+	}
+
+	fetchReleaseMedia = async (statusId: string, releaseId: string) => {
+		try {
+			const data = await ReleaseMediaAPI.fetchReleaseMedia(
+				null,
+				null,
+				statusId,
+				null,
+				releaseId,
+				null,
+				null,
+				'desc'
+			)
+			this.setReleaseMedia(data)
+		} catch {
+			this.setReleaseMedia({ count: 0, releaseMedia: [] })
+		}
+	}
+
+	fetchUserReleaseMedia = async (releaseId: string, userId: string) => {
+		try {
+			const data = await ReleaseMediaAPI.fetchReleaseMedia(
+				null,
+				null,
+				null,
+				releaseId,
+				userId,
+				null,
+				null,
+				'desc'
+			)
+			this.setUserReleaseMedia(data)
+		} catch {
+			this.setUserReleaseMedia({ count: 0, releaseMedia: [] })
 		}
 	}
 

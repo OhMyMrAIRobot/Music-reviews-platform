@@ -1,0 +1,93 @@
+import { FC, useEffect, useRef, useState } from 'react'
+import CarouselNavButton from '../../../../components/carousel/Carousel-nav-button'
+import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
+import { useLoading } from '../../../../hooks/use-loading'
+import { useStore } from '../../../../hooks/use-store'
+import { ReleaseMediaStatusesEnum } from '../../../../models/release-media-status/release-media-statuses-enum'
+import { CarouselRef } from '../../../../types/carousel-ref'
+import ReleaseDetailsMediaCarousel from './Release-details-media-carousel'
+
+interface IProps {
+	releaseId: string
+}
+
+const ReleaseDetailsMedia: FC<IProps> = ({ releaseId }) => {
+	const { releaseDetailsPageStore, metaStore } = useStore()
+
+	const { execute: fetchStatuses, isLoading: isStatusesLoading } = useLoading(
+		metaStore.fetchReleaseMediaStatuses
+	)
+
+	const { execute: _fetchReleaseMedia, isLoading: isReleaseMediaLoading } =
+		useLoading(releaseDetailsPageStore.fetchReleaseMedia)
+
+	useEffect(() => {
+		if (metaStore.releaseMediaStatuses.length === 0) {
+			fetchStatuses().then(() => {
+				fetchReleaseMedia()
+			})
+		} else {
+			fetchReleaseMedia()
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
+
+	const fetchReleaseMedia = async () => {
+		const status = metaStore.releaseMediaStatuses.find(
+			el => el.status === ReleaseMediaStatusesEnum.APPROVED
+		)
+		if (!status) return
+
+		_fetchReleaseMedia(status.id, releaseId)
+	}
+
+	const carouselRef = useRef<CarouselRef>(null)
+
+	const [canScrollPrev, setCanScrollPrev] = useState(false)
+	const [canScrollNext, setCanScrollNext] = useState(false)
+
+	return (
+		<section className='gap-3 grid mt-5 w-full'>
+			<div className='flex'>
+				<div className='font-bold shrink-0 flex items-center justify-between lg:space-x-5 col-span-2'>
+					<div className='text-xl xl:text-2xl font-semibold flex items-center gap-2.5'>
+						Медиа материалы
+					</div>
+
+					{!isReleaseMediaLoading || !isStatusesLoading ? (
+						<div className='inline-flex items-center justify-center rounded-full size-10 lg:size-12 bg-white/5 select-none'>
+							{releaseDetailsPageStore.releaseMediaCount}
+						</div>
+					) : (
+						<SkeletonLoader className={'rounded-full size-10 lg:size-12'} />
+					)}
+				</div>
+
+				<div className='flex gap-3 items-center ml-auto'>
+					<CarouselNavButton
+						isNext={false}
+						handlePrev={() => carouselRef.current?.scrollPrev()}
+						handleNext={() => carouselRef.current?.scrollNext()}
+						disabled={!canScrollPrev}
+					/>
+					<CarouselNavButton
+						isNext={true}
+						handlePrev={() => carouselRef.current?.scrollPrev()}
+						handleNext={() => carouselRef.current?.scrollNext()}
+						disabled={!canScrollNext}
+					/>
+				</div>
+			</div>
+
+			<ReleaseDetailsMediaCarousel
+				ref={carouselRef}
+				onCanScrollPrevChange={setCanScrollPrev}
+				onCanScrollNextChange={setCanScrollNext}
+				isLoading={isReleaseMediaLoading || isStatusesLoading}
+				items={releaseDetailsPageStore.releaseMedia}
+			/>
+		</section>
+	)
+}
+
+export default ReleaseDetailsMedia

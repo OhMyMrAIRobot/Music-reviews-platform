@@ -2,10 +2,13 @@ import { makeAutoObservable } from 'mobx'
 import { AuthorAPI } from '../api/author-api'
 import { FeedbackAPI } from '../api/feedback-api'
 import { ReleaseAPI } from '../api/release-api'
+import { ReleaseMediaAPI } from '../api/release-media-api'
 import { RolesAPI } from '../api/role-api'
 import { SocialMediaAPI } from '../api/social-media-api'
 import { IAuthorType } from '../models/author/author-type'
 import { IFeedbackStatus } from '../models/feedback/feedback-status'
+import { IReleaseMediaStatus } from '../models/release-media-status/release-media-status'
+import { IReleaseMediaType } from '../models/release-media-type/release-media-type'
 import { IReleaseType } from '../models/release/release-types'
 import { IRole } from '../models/role/role'
 import { ISocialMedia } from '../models/social-media/social-media'
@@ -20,6 +23,8 @@ class MetaStore {
 	roles: IRole[] = []
 	releaseTypes: IReleaseType[] = []
 	feedbackStatuses: IFeedbackStatus[] = []
+	releaseMediaStatuses: IReleaseMediaStatus[] = []
+	releaseMediaTypes: IReleaseMediaType[] = []
 
 	setAuthorTypes(data: IAuthorType[]) {
 		this.authorTypes = data
@@ -39,6 +44,14 @@ class MetaStore {
 
 	setFeedbackStatuses(data: IFeedbackStatus[]) {
 		this.feedbackStatuses = data
+	}
+
+	setReleaseMediaStatuses(data: IReleaseMediaStatus[]) {
+		this.releaseMediaStatuses = data
+	}
+
+	setReleaseMediaTypes(data: IReleaseMediaType[]) {
+		this.releaseMediaTypes = data
 	}
 
 	fetchAuthorTypes = async () => {
@@ -82,6 +95,24 @@ class MetaStore {
 		try {
 			const data = await FeedbackAPI.fetchFeedbackStatuses()
 			this.setFeedbackStatuses(data)
+		} catch (e) {
+			console.log(e)
+		}
+	}
+
+	fetchReleaseMediaStatuses = async () => {
+		try {
+			const data = await ReleaseMediaAPI.fetchReleaseMediaStatuses()
+			this.setReleaseMediaStatuses(data)
+		} catch (e) {
+			console.log(e)
+		}
+	}
+
+	fetchReleaseMediaTypes = async () => {
+		try {
+			const data = await ReleaseMediaAPI.fetchReleaseMediaTypes()
+			this.setReleaseMediaTypes(data)
 		} catch (e) {
 			console.log(e)
 		}
