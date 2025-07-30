@@ -34,6 +34,7 @@ export const ReleaseMediaAPI = {
 		query: string | null,
 		order: SortOrder | null
 	): Promise<IReleaseMediaList> {
+		console.log('fetch')
 		const { data } = await _api.get<IReleaseMediaList>(
 			`/release-media?
 			${limit ? `limit=${limit}&` : ''}

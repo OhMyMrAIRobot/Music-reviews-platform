@@ -12,7 +12,7 @@ interface IProps {
 }
 
 const ReleaseDetailsMedia: FC<IProps> = ({ releaseId }) => {
-	const { releaseDetailsPageStore, metaStore } = useStore()
+	const { releaseDetailsPageStore, metaStore, authStore } = useStore()
 
 	const { execute: fetchStatuses, isLoading: isStatusesLoading } = useLoading(
 		metaStore.fetchReleaseMediaStatuses
@@ -21,16 +21,21 @@ const ReleaseDetailsMedia: FC<IProps> = ({ releaseId }) => {
 	const { execute: _fetchReleaseMedia, isLoading: isReleaseMediaLoading } =
 		useLoading(releaseDetailsPageStore.fetchReleaseMedia)
 
+	const {
+		execute: _fetchUserReleaseMedia,
+		isLoading: isUserReleaseMediaLoading,
+	} = useLoading(releaseDetailsPageStore.fetchUserReleaseMedia)
+
 	useEffect(() => {
 		if (metaStore.releaseMediaStatuses.length === 0) {
 			fetchStatuses().then(() => {
-				fetchReleaseMedia()
+				Promise.all([fetchReleaseMedia(), fetchUserReleaseMedia()])
 			})
 		} else {
-			fetchReleaseMedia()
+			Promise.all([fetchReleaseMedia(), fetchUserReleaseMedia()])
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	}, [releaseId, authStore.isAuth, authStore.user])
 
 	const fetchReleaseMedia = async () => {
 		const status = metaStore.releaseMediaStatuses.find(
@@ -39,6 +44,12 @@ const ReleaseDetailsMedia: FC<IProps> = ({ releaseId }) => {
 		if (!status) return
 
 		_fetchReleaseMedia(status.id, releaseId)
+	}
+
+	const fetchUserReleaseMedia = async () => {
+		if (authStore.isAuth && authStore.user) {
+			_fetchUserReleaseMedia(releaseId, authStore.user.id)
+		}
 	}
 
 	const carouselRef = useRef<CarouselRef>(null)
@@ -54,7 +65,9 @@ const ReleaseDetailsMedia: FC<IProps> = ({ releaseId }) => {
 						Медиа материалы
 					</div>
 
-					{!isReleaseMediaLoading || !isStatusesLoading ? (
+					{!isReleaseMediaLoading ||
+					!isStatusesLoading ||
+					isUserReleaseMediaLoading ? (
 						<div className='inline-flex items-center justify-center rounded-full size-10 lg:size-12 bg-white/5 select-none'>
 							{releaseDetailsPageStore.releaseMediaCount}
 						</div>
@@ -83,8 +96,18 @@ const ReleaseDetailsMedia: FC<IProps> = ({ releaseId }) => {
 				ref={carouselRef}
 				onCanScrollPrevChange={setCanScrollPrev}
 				onCanScrollNextChange={setCanScrollNext}
-				isLoading={isReleaseMediaLoading || isStatusesLoading}
-				items={releaseDetailsPageStore.releaseMedia}
+				isLoading={
+					isReleaseMediaLoading ||
+					isStatusesLoading ||
+					isUserReleaseMediaLoading
+				}
+				items={[
+					...releaseDetailsPageStore.userReleaseMedia.filter(
+						el =>
+							el.releaseMediaStatus.status !== ReleaseMediaStatusesEnum.APPROVED
+					),
+					...releaseDetailsPageStore.releaseMedia,
+				]}
 			/>
 		</section>
 	)

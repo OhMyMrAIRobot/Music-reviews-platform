@@ -27,7 +27,7 @@ class AuthStore {
 		})
 	}
 
-	chechAuth = async () => {
+	checkAuth = async () => {
 		try {
 			const { user, accessToken } = await AuthAPI.checkAuth()
 			this.setAuthorization(user, accessToken)

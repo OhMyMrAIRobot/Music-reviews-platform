@@ -82,9 +82,9 @@ class ReleaseDetailsPageStore {
 				null,
 				null,
 				null,
+				null,
 				releaseId,
 				userId,
-				null,
 				null,
 				'desc'
 			)
