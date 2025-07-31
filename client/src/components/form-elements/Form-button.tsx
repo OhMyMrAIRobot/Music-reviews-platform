@@ -33,7 +33,7 @@ const FormButton: FC<IProps> = ({
 			} ${
 				isInvert
 					? 'bg-white text-black hover:bg-white/80 '
-					: 'bg-zinc-950 text-white hover:bg-white/10'
+					: 'text-white hover:bg-white/10'
 			}`}
 		>
 			{isLoading && (

@@ -26,7 +26,7 @@ const ReleaseDetailsMediaItem: FC<IProps> = ({ releaseMedia }) => {
 					alt={releaseMedia.title}
 					loading='lazy'
 					decoding='async'
-					className={`block aspect-video rounded-md overflow-hidden select-none ${
+					className={`block aspect-video w-full rounded-md overflow-hidden select-none ${
 						isApproved ? '' : 'opacity-35'
 					}`}
 					src={`https://img.youtube.com/vi/${parseYoutubeId(

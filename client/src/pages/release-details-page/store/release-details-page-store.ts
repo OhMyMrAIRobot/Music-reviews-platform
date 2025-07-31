@@ -24,7 +24,7 @@ class ReleaseDetailsPageStore {
 	releaseMedia: IReleaseMedia[] = []
 	releaseMediaCount: number = 0
 
-	userReleaseMedia: IReleaseMedia[] = []
+	userReleaseMedia: IReleaseMedia | null = null
 
 	setReviewDetails(data: IReleaseDetails | null) {
 		this.releaseDetails = data
@@ -45,8 +45,8 @@ class ReleaseDetailsPageStore {
 		})
 	}
 
-	setUserReleaseMedia(data: IReleaseMediaList) {
-		this.userReleaseMedia = data.releaseMedia
+	setUserReleaseMedia(data: IReleaseMedia | null) {
+		this.userReleaseMedia = data
 	}
 
 	fetchReleaseDetails = async (id: string) => {
@@ -78,19 +78,13 @@ class ReleaseDetailsPageStore {
 
 	fetchUserReleaseMedia = async (releaseId: string, userId: string) => {
 		try {
-			const data = await ReleaseMediaAPI.fetchReleaseMedia(
-				null,
-				null,
-				null,
-				null,
+			const data = await ReleaseMediaAPI.fetchUserReleaseMedia(
 				releaseId,
-				userId,
-				null,
-				'desc'
+				userId
 			)
 			this.setUserReleaseMedia(data)
 		} catch {
-			this.setUserReleaseMedia({ count: 0, releaseMedia: [] })
+			this.setUserReleaseMedia(null)
 		}
 	}
 
@@ -138,6 +132,22 @@ class ReleaseDetailsPageStore {
 		}
 	}
 
+	postMediaReview = async (
+		releaseId: string,
+		title: string,
+		url: string
+	): Promise<string[]> => {
+		try {
+			const data = await ReleaseMediaAPI.postReleaseMedia(title, url, releaseId)
+			this.setUserReleaseMedia(data)
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
+		}
+	}
+
 	updateReview = async (
 		releaseId: string,
 		id: string,
@@ -175,6 +185,18 @@ class ReleaseDetailsPageStore {
 				status: false,
 				message: 'Не удалось удалить рецензию!',
 			}
+		}
+	}
+
+	deleteReleaseMedia = async (id: string): Promise<string[]> => {
+		try {
+			await ReleaseMediaAPI.deleteReleaseMedia(id)
+			this.setUserReleaseMedia(null)
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
 		}
 	}
 

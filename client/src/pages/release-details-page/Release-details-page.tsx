@@ -77,7 +77,7 @@ const ReleaseDetailsPage = observer(() => {
 
 				<ReleaseDetailsMedia releaseId={release.id} />
 
-				<SendReviewForm fetchReviews={fetchReviews} id={id ?? '0'} />
+				<SendReviewForm fetchReviews={fetchReviews} releaseId={release.id} />
 
 				<ReleaseDetailsReviews
 					reviews={reviews}
