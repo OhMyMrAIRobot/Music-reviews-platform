@@ -72,9 +72,12 @@ export class ReleaseMediaController {
     return this.releaseMediaService.findAll(query);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.releaseMediaService.findOne(id);
+  @Get(':releaseId/:userId')
+  findOne(
+    @Param('releaseId') releaseId: string,
+    @Param('userId') userId: string,
+  ) {
+    return this.releaseMediaService.findOne(releaseId, userId);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

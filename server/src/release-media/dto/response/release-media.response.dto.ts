@@ -30,6 +30,9 @@ class ReleaseMediaRelease {
 
   @Expose()
   title: string;
+
+  @Expose()
+  img: string;
 }
 
 export class ReleaseMediaResponseDto {

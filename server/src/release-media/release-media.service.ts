@@ -1,5 +1,5 @@
 import { ConflictException, Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Prisma, ReleaseMedia } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
 import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
@@ -40,13 +40,13 @@ export class ReleaseMediaService {
 
       if (existByUserRelease) {
         throw new ConflictException(
-          'Вы уже оставляли медиа отзыв на данный релиз!',
+          'Вы уже оставляли медиарецензию на данный релиз!',
         );
       }
     }
 
     if (await this.checkExistenceByUrl(dto.url)) {
-      throw new ConflictException('Медиа отзыв с таким URL уже существует!');
+      throw new ConflictException('Медиарецензия с таким URL уже существует!');
     }
 
     const created = await this.prisma.releaseMedia.create({
@@ -58,7 +58,7 @@ export class ReleaseMediaService {
           select: { id: true, nickname: true },
         },
         release: {
-          select: { id: true, title: true },
+          select: { id: true, title: true, img: true },
         },
       },
     });
@@ -156,7 +156,7 @@ export class ReleaseMediaService {
             select: { id: true, nickname: true },
           },
           release: {
-            select: { id: true, title: true },
+            select: { id: true, title: true, img: true },
           },
         },
       }),
@@ -169,9 +169,12 @@ export class ReleaseMediaService {
     };
   }
 
-  async findOne(id: string): Promise<ReleaseMediaResponseDto> {
+  async findOne(
+    releaseId: string,
+    userId: string,
+  ): Promise<ReleaseMediaResponseDto> {
     const releaseMedia = await this.prisma.releaseMedia.findUnique({
-      where: { id },
+      where: { releaseId_userId: { releaseId, userId } },
       include: {
         releaseMediaStatus: true,
         releaseMediaType: true,
@@ -179,13 +182,17 @@ export class ReleaseMediaService {
           select: { id: true, nickname: true },
         },
         release: {
-          select: { id: true, title: true },
+          select: { id: true, title: true, img: true },
         },
       },
     });
 
     if (!releaseMedia) {
-      throw new EntityNotFoundException('Медиа', 'id', id);
+      throw new EntityNotFoundException(
+        'Медиа',
+        'releaseId_userId',
+        `${releaseId}_${userId}`,
+      );
     }
 
     return plainToInstance(ReleaseMediaResponseDto, releaseMedia, {
@@ -201,7 +208,7 @@ export class ReleaseMediaService {
     if (!dto || Object.keys(dto).length === 0) {
       throw new NoDataProvidedException();
     }
-    const releaseMedia = await this.findOne(id);
+    const releaseMedia = await this.findById(id);
 
     if (dto.releaseId) {
       await this.releasesService.findOne(dto.releaseId);
@@ -231,7 +238,9 @@ export class ReleaseMediaService {
 
     if (dto.url) {
       if (await this.checkExistenceByUrl(dto.url)) {
-        throw new ConflictException('Медиа отзыв с таким URL уже существует!');
+        throw new ConflictException(
+          'Медиарецензия с таким URL уже существует!',
+        );
       }
     }
 
@@ -248,7 +257,7 @@ export class ReleaseMediaService {
           select: { id: true, nickname: true },
         },
         release: {
-          select: { id: true, title: true },
+          select: { id: true, title: true, img: true },
         },
       },
     });
@@ -259,7 +268,7 @@ export class ReleaseMediaService {
   }
 
   async remove(id: string, userId?: string) {
-    const releaseMedia = await this.findOne(id);
+    const releaseMedia = await this.findById(id);
 
     if (userId) {
       if (releaseMedia.userId !== userId) {
@@ -277,5 +286,17 @@ export class ReleaseMediaService {
       },
     });
     return count > 0;
+  }
+
+  private async findById(id: string): Promise<ReleaseMedia> {
+    const result = await this.prisma.releaseMedia.findUnique({
+      where: { id },
+    });
+
+    if (!result) {
+      throw new EntityNotFoundException('Медиа', 'id', id);
+    }
+
+    return result;
   }
 }
