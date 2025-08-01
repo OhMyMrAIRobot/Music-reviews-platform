@@ -8,6 +8,7 @@ import AuthorSvg from '../sidebar/svg/Author-svg'
 import ReleaseSvg from '../sidebar/svg/Release-svg'
 import LogoFullSvg from '../svg/Logo-full-svg'
 import LogoSmallSvg from '../svg/Logo-small-svg'
+import MediaPlayerSvg from '../svg/Media-player-svg'
 import PencilSvg from '../svg/Pencil-svg'
 import AdminSidebarItem, { IAdminSidebarItemProps } from './Admin-sidebar-item'
 
@@ -19,6 +20,7 @@ const AdminSidebar = () => {
 		navigateToAdminReleases,
 		navigateToAdminReviews,
 		navigateToAdminFeedback,
+		navigateToAdminMedia,
 	} = useCustomNavigate()
 
 	const { isActive } = useActivePath()
@@ -47,6 +49,12 @@ const AdminSidebar = () => {
 			isActive: isActive(`/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.REVIEWS}`),
 			onClick: navigateToAdminReviews,
 			svgIcon: <TextReviewSvg className={'size-5'} />,
+		},
+		{
+			title: 'Медиа',
+			isActive: isActive(`/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.MEDIA}`),
+			onClick: navigateToAdminMedia,
+			svgIcon: <MediaPlayerSvg className={'size-5'} />,
 		},
 		{
 			title: 'Сообщения',

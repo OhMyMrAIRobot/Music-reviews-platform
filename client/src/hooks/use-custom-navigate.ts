@@ -89,6 +89,10 @@ const useCustomNavigate = () => {
 		navigate(`/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.FEEDBACK}`)
 	}
 
+	const navigateToAdminMedia = () => {
+		navigate(`/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.MEDIA}`)
+	}
+
 	return {
 		navigateToLogin,
 		navigateToRegistration,
@@ -111,6 +115,7 @@ const useCustomNavigate = () => {
 		navigateToAdminReleases,
 		navigateToAdminReviews,
 		navigateToAdminFeedback,
+		navigateToAdminMedia,
 	}
 }
 

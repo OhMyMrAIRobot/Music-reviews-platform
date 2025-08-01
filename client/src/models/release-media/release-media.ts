@@ -5,6 +5,7 @@ export interface IReleaseMedia {
 	id: string
 	title: string
 	url: string
+	createdAt: string
 	releaseMediaStatus: IReleaseMediaStatus
 	releaseMediaType: IReleaseMediaType
 	user: IReleaseMediaUser | null
@@ -19,4 +20,5 @@ interface IReleaseMediaUser {
 interface IReleaseMediaRelease {
 	id: string
 	title: string
+	img: string
 }

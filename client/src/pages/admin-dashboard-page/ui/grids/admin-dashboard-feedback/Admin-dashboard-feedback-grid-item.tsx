@@ -20,7 +20,6 @@ interface IProps {
 	isLoading: boolean
 	order?: SortOrder
 	toggleOrder?: () => void
-	deleteFeedback?: () => void
 	isDeleteLoading?: boolean
 	refetchFeedbacks?: () => void
 }
