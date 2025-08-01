@@ -1,14 +1,17 @@
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import ArrowBottomSvg from '../../../../../components/header/svg/Arrow-bottom-svg'
+import ConfirmationModal from '../../../../../components/modals/Confirmation-modal'
 import ReleaseMediaStatusIcon from '../../../../../components/release-media/Release-media-status-icon'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import useCustomNavigate from '../../../../../hooks/use-custom-navigate'
+import { useLoading } from '../../../../../hooks/use-loading'
+import { useStore } from '../../../../../hooks/use-store'
 import { IReleaseMedia } from '../../../../../models/release-media/release-media'
 import { SortOrderEnum } from '../../../../../models/sort/sort-order-enum'
 import { SortOrder } from '../../../../../types/sort-order-type'
 import { getReleaseMediaStatusColor } from '../../../../../utils/get-release-media-status-color'
 import AdminDeleteButton from '../../buttons/Admin-delete-button'
-import AdminOpenButton from '../../buttons/Admin-open-button'
+import AdminEditButton from '../../buttons/Admin-edit-button'
 
 interface IProps {
 	className?: string
@@ -27,8 +30,16 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 	media,
 	order,
 	toggleOrder,
+	refetch,
 }) => {
+	const { adminDashboardMediaStore, notificationStore } = useStore()
 	const { navigateToRelease } = useCustomNavigate()
+
+	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
+
+	const { execute: deleteMedia, isLoading: isDeleting } = useLoading(
+		adminDashboardMediaStore.deleteReleaseMedia
+	)
 
 	const handleNavigateRelease = () => {
 		if (media) {
@@ -42,10 +53,46 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 		}
 	}
 
+	const handleRefetch = () => {
+		if (refetch) {
+			refetch()
+		}
+	}
+
+	const handleDelete = async (id: string) => {
+		if (isDeleting) return
+
+		const errors = await deleteMedia(id)
+
+		if (errors.length === 0) {
+			notificationStore.addSuccessNotification(
+				'Вы успешно удалили медиаматериал!'
+			)
+			handleRefetch()
+		} else {
+			errors.forEach(err => {
+				notificationStore.addErrorNotification(err)
+			})
+		}
+	}
+
 	return isLoading ? (
 		<SkeletonLoader className='w-full h-12 rounded-lg' />
 	) : (
 		<>
+			{media && (
+				<>
+					{confModalOpen && (
+						<ConfirmationModal
+							title={'Вы действительно хотите удалить медиаматериал?'}
+							isOpen={confModalOpen}
+							onConfirm={() => handleDelete(media.id)}
+							onCancel={() => setConfModalOpen(false)}
+							isLoading={isDeleting}
+						/>
+					)}
+				</>
+			)}
 			<div
 				className={`${className} text-[10px] md:text-sm h-10 md:h-12 w-full rounded-lg grid grid-cols-10 lg:grid-cols-12 items-center px-3 border border-white/10 text-nowrap`}
 			>
@@ -136,8 +183,12 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 				<div className='col-span-1'>
 					{media ? (
 						<div className='flex gap-x-3 justify-end'>
-							<AdminOpenButton onClick={() => {}} />
-							<AdminDeleteButton onClick={() => {}} />
+							<AdminEditButton onClick={() => {}} />
+							<AdminDeleteButton
+								onClick={() => {
+									setConfModalOpen(true)
+								}}
+							/>
 						</div>
 					) : (
 						'Действие'

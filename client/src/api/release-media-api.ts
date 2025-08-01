@@ -86,4 +86,8 @@ export const ReleaseMediaAPI = {
 	async deleteReleaseMedia(id: string) {
 		return api.delete<IReleaseMedia>(`/release-media/${id}`)
 	},
+
+	async adminDeleteReleaseMedia(id: string) {
+		return api.delete<IReleaseMedia>(`/release-media/admin/${id}`)
+	},
 }

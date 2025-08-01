@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
 import { ReleaseMediaAPI } from '../../../api/release-media-api'
 import { IReleaseMedia } from '../../../models/release-media/release-media'
@@ -41,6 +42,17 @@ class AdminDashboardMediaStore {
 			this.setReleaseMedia(data)
 		} catch {
 			this.setReleaseMedia({ count: 0, releaseMedia: [] })
+		}
+	}
+
+	deleteReleaseMedia = async (id: string): Promise<string[]> => {
+		try {
+			await ReleaseMediaAPI.adminDeleteReleaseMedia(id)
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
 		}
 	}
 }
