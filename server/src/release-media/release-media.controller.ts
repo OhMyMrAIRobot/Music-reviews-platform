@@ -42,7 +42,7 @@ export class ReleaseMediaController {
     @Request() req: IAuthenticatedRequest,
   ) {
     const type = await this.releaseMediaTypesService.findByType(
-      ReleaseMediaTypesEnum.REVIEW,
+      ReleaseMediaTypesEnum.MEDIA_REVIEW,
     );
 
     const status = await this.releaseMediaStatusesService.findByStatus(

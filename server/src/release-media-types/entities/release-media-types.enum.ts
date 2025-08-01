@@ -1,4 +1,5 @@
 export enum ReleaseMediaTypesEnum {
   MUSIC_VIDEO = 'Клип',
-  REVIEW = 'Рецензия',
+  MEDIA_REVIEW = 'Медиарецензия',
+  MEDIA_MATERIAL = 'Медиаматериал',
 }

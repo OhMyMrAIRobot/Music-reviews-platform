@@ -199,11 +199,15 @@ async function main() {
     data: [
       {
         id: '0',
-        type: ReleaseMediaTypesEnum.REVIEW,
+        type: ReleaseMediaTypesEnum.MEDIA_REVIEW,
       },
       {
         id: '1',
         type: ReleaseMediaTypesEnum.MUSIC_VIDEO,
+      },
+      {
+        id: '2',
+        type: ReleaseMediaTypesEnum.MEDIA_MATERIAL,
       },
     ],
   });
@@ -715,6 +719,28 @@ async function main() {
         title: 'Zima Blue',
         img: '15.png',
         releaseTypeId: '3',
+      },
+    ],
+  });
+
+  await prisma.releaseMedia.createMany({
+    data: [
+      {
+        id: '0',
+        title: 'MARKUL — Sense Of Human | Реакция и разбор альбома',
+        url: 'https://www.youtube.com/watch?v=4X2mUK96Ho4',
+        releaseId: '6',
+        releaseMediaTypeId: '0',
+        releaseMediaStatusId: '1',
+        userId: '1',
+      },
+      {
+        id: '1',
+        title: 'MAKING OF SENSE OF HUMAN (2021)',
+        url: 'https://www.youtube.com/watch?v=6lb1yEBz3PM',
+        releaseId: '6',
+        releaseMediaTypeId: '2',
+        releaseMediaStatusId: '1',
       },
     ],
   });

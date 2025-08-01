@@ -1,4 +1,5 @@
-import { Exclude, Expose, Type } from 'class-transformer';
+import { Exclude, Expose, Transform, Type } from 'class-transformer';
+import { formatFullDate } from 'src/utils/format-full-date';
 
 class ReleaseMediaStatus {
   @Expose()
@@ -60,6 +61,10 @@ export class ReleaseMediaResponseDto {
   @Expose()
   @Type(() => ReleaseMediaRelease)
   release: ReleaseMediaRelease;
+
+  @Expose()
+  @Transform(({ value }) => formatFullDate(value as Date))
+  createdAt: string;
 
   @Exclude()
   releaseId: string;
