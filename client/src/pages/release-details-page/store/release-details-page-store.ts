@@ -171,6 +171,23 @@ class ReleaseDetailsPageStore {
 		}
 	}
 
+	updateReleaseMedia = async (
+		id: string,
+		title?: string,
+		url?: string
+	): Promise<string[]> => {
+		try {
+			const data = await ReleaseMediaAPI.updateReleaseMedia(id, { title, url })
+
+			this.setUserReleaseMedia(data)
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
+		}
+	}
+
 	deleteReview = async (
 		id: string
 	): Promise<{ status: boolean; message: string }> => {

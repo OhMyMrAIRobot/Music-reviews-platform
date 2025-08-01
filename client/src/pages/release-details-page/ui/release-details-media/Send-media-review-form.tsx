@@ -22,18 +22,37 @@ const SendMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
 		releaseDetailsPageStore.postMediaReview
 	)
 
+	const { execute: updateReleaseMedia, isLoading: isUpdating } = useLoading(
+		releaseDetailsPageStore.updateReleaseMedia
+	)
+
 	const { execute: deleteReleaseMedia, isLoading: isDeleting } = useLoading(
 		releaseDetailsPageStore.deleteReleaseMedia
 	)
 
-	const handlePost = async () => {
-		if (isPosting || !isValid || isDeleting) return
+	const handleSubmit = async () => {
+		if (isPosting || !isValid || isDeleting || isUpdating) return
 
-		const errors = await postReleaseMedia(releaseId, title, url)
+		let errors: string[] = []
+		if (userReleaseMedia) {
+			if (hasChanges) {
+				errors = await updateReleaseMedia(
+					userReleaseMedia.id,
+					title !== userReleaseMedia.title ? title.trim() : undefined,
+					url !== userReleaseMedia.url ? url.trim() : undefined
+				)
+			} else {
+				return
+			}
+		} else {
+			errors = await postReleaseMedia(releaseId, title, url)
+		}
 
 		if (errors.length === 0) {
 			notificationStore.addSuccessNotification(
-				'Вы успешно добавили медиарецензию. Ожидайте подтверждения!'
+				`Вы успешно ${
+					userReleaseMedia ? 'обновили' : 'добавили'
+				} медиарецензию. Ожидайте подтверждения!`
 			)
 		} else {
 			errors.forEach(err => notificationStore.addErrorNotification(err))
@@ -41,7 +60,7 @@ const SendMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
 	}
 
 	const handleDelete = async () => {
-		if (isPosting || isDeleting || !userReleaseMedia) return
+		if (isPosting || isDeleting || isUpdating || !userReleaseMedia) return
 
 		const errors = await deleteReleaseMedia(userReleaseMedia.id)
 
@@ -66,6 +85,14 @@ const SendMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
 	const isValid = useMemo(() => {
 		return url.trim() && title.trim()
 	}, [title, url])
+
+	const hasChanges = useMemo(() => {
+		if (!userReleaseMedia) return true
+		return (
+			userReleaseMedia.title.trim() !== title.trim() ||
+			userReleaseMedia.url.trim() !== url.trim()
+		)
+	}, [title, url, userReleaseMedia])
 
 	return (
 		<div className='border bg-zinc-900 rounded-xl p-4 border-white/10'>
@@ -104,10 +131,10 @@ const SendMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
 			<div className='flex items-center justify-between mt-4'>
 				<div className='w-40'>
 					<FormButton
-						title={'Отправить'}
+						title={userReleaseMedia ? 'Обновить' : 'Отправить'}
 						isInvert={true}
-						onClick={handlePost}
-						disabled={!isValid || isPosting}
+						onClick={handleSubmit}
+						disabled={!isValid || isPosting || !hasChanges}
 						isLoading={isPosting}
 					/>
 				</div>

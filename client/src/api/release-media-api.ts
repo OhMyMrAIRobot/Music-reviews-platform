@@ -72,6 +72,17 @@ export const ReleaseMediaAPI = {
 		return data
 	},
 
+	async updateReleaseMedia(
+		id: string,
+		updateData: { title?: string; url?: string }
+	): Promise<IReleaseMedia> {
+		const { data } = await api.patch<IReleaseMedia>(`/release-media/${id}`, {
+			...updateData,
+		})
+
+		return data
+	},
+
 	async deleteReleaseMedia(id: string) {
 		return api.delete<IReleaseMedia>(`/release-media/${id}`)
 	},
