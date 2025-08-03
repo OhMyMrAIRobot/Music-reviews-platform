@@ -33,7 +33,7 @@ const Header = observer(() => {
 					to={navigateToMain}
 					className='w-[150px] h-[50px] mr-10 shrink-0 flex items-center justify-center cursor-pointer'
 				>
-					<LogoFullSvg className={''} />
+					<LogoFullSvg />
 				</Link>
 
 				<SearchBar className={'hidden lg:flex lg:w-[400px]'} />

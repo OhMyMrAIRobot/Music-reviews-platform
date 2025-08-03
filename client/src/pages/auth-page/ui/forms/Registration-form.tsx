@@ -140,7 +140,7 @@ const RegistrationForm = observer(() => {
 				/>
 
 				<div className='flex justify-center items-center font-medium text-sm gap-1 mt-2 select-none'>
-					<h6 className=''>Уже есть аккаунт?</h6>
+					<h6>Уже есть аккаунт?</h6>
 					<PreventableLink to={navigateToLogin} prevent={isLoading}>
 						<button
 							disabled={isLoading}

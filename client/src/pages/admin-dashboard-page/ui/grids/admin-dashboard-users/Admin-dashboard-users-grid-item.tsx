@@ -1,9 +1,11 @@
 import { FC, useState } from 'react'
+import { Link } from 'react-router'
 import ArrowBottomSvg from '../../../../../components/header/svg/Arrow-bottom-svg.tsx'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal.tsx'
 import UserRoleSvg from '../../../../../components/user/User-role-svg.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
 import { useLoading } from '../../../../../hooks/use-loading.ts'
+import useNavigationPath from '../../../../../hooks/use-navigation-path.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
 import { SortOrderEnum } from '../../../../../models/sort/sort-order-enum.ts'
 import { UserStatusesEnum } from '../../../../../models/user/user-statuses-enum.ts'
@@ -34,6 +36,8 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 	refetchUsers,
 }) => {
 	const { adminDashboardUsersStore, notificationStore } = useStore()
+
+	const { navigatoToProfile } = useNavigationPath()
 
 	const { execute: deleteUser, isLoading: isDeleting } = useLoading(
 		adminDashboardUsersStore.deleteUser
@@ -96,9 +100,12 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 					{position ?? '#'}
 				</div>
 
-				<div className='col-span-2 text-ellipsis line-clamp-1 h-full flex items-center gap-x-2'>
+				<div className='col-span-2 text-ellipsis line-clamp-1 h-full flex items-center gap-x-2 mr-2'>
 					{user ? (
-						<>
+						<Link
+							to={navigatoToProfile(user.id)}
+							className='flex text-left gap-x-1.5 items-center cursor-pointer hover:bg-white/5 rounded-lg px-1.5 py-0.5 w-full'
+						>
 							<img
 								loading='lazy'
 								decoding='async'
@@ -109,10 +116,12 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 								}`}
 								className='size-9 aspect-square rounded-full select-none object-cover'
 							/>
-							<span className='font-medium'>{user.nickname}</span>
-						</>
+							<span className='font-medium line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
+								{user.nickname}
+							</span>
+						</Link>
 					) : (
-						'Никнейм'
+						<span className='px-2'>Никнейм</span>
 					)}
 				</div>
 

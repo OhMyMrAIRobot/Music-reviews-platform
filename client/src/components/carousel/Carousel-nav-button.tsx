@@ -28,7 +28,7 @@ const CarouselNavButton: FC<IProps> = ({
 				disabled ? 'opacity-50 pointer-events-none' : ''
 			} relative rounded-full h-10 w-10 bg-zinc-900 hover:bg-zinc-800 flex items-center justify-center cursor-pointer transition-colors`}
 		>
-			{isNext ? <NextSvg className={''} /> : <PrevSvg className={''} />}
+			{isNext ? <NextSvg /> : <PrevSvg />}
 		</button>
 	)
 }

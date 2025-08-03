@@ -54,7 +54,7 @@ const MostReviewedSwiper: FC<IProps> = ({ show, setShow, index, setIndex }) => {
 				disabled={index === 0}
 				onClick={() => setIndex(index - 1)}
 			>
-				<PrevSvg className={''} />
+				<PrevSvg />
 			</MostReviewedSwiperButton>
 
 			<div
@@ -71,7 +71,7 @@ const MostReviewedSwiper: FC<IProps> = ({ show, setShow, index, setIndex }) => {
 				disabled={index === mainPageStore.mostReviewedReleases.length - 1}
 				onClick={() => setIndex(index + 1)}
 			>
-				<NextSvg className={''} />
+				<NextSvg />
 			</MostReviewedSwiperButton>
 
 			{index + 1 < mainPageStore.mostReviewedReleases.length && (
