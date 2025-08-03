@@ -1,5 +1,6 @@
 import { FC, useState } from 'react'
-import useCustomNavigate from '../../hooks/use-custom-navigate'
+import { useNavigate } from 'react-router'
+import useNavigationPath from '../../hooks/use-navigation-path'
 import { SearchBarOptions } from '../../models/search/search-bar-options'
 import { SearchTypesEnum } from '../../models/search/search-types-enum'
 import ComboBox from '../buttons/Combo-box'
@@ -12,7 +13,9 @@ interface IProps {
 }
 
 const SearchBar: FC<IProps> = ({ className, comboboxClassname, onSubmit }) => {
-	const { navigateToSearch } = useCustomNavigate()
+	const navigate = useNavigate()
+
+	const { navigateToSearch } = useNavigationPath()
 
 	const [searchText, setSearchText] = useState<string>('')
 	const [selectedType, setSelectedType] = useState<string>(
@@ -21,11 +24,13 @@ const SearchBar: FC<IProps> = ({ className, comboboxClassname, onSubmit }) => {
 
 	const handleKeyPress = (e: React.KeyboardEvent) => {
 		if (e.key === 'Enter') {
-			handleSearchClick()
+			handleNavigate()
 		}
 	}
 
-	const handleSearchClick = () => {
+	const handleNavigate = () => {
+		if (!searchText.trim()) return
+
 		let typeKey: SearchTypesEnum
 
 		switch (selectedType) {
@@ -42,7 +47,7 @@ const SearchBar: FC<IProps> = ({ className, comboboxClassname, onSubmit }) => {
 			onSubmit()
 		}
 
-		navigateToSearch(typeKey, searchText)
+		navigate(navigateToSearch(typeKey, searchText))
 	}
 
 	return (
@@ -50,7 +55,7 @@ const SearchBar: FC<IProps> = ({ className, comboboxClassname, onSubmit }) => {
 			className={`${className} h-10 rounded-md border border-white/10 select-none bg-[#242527]/75 focus-within:border-white/70`}
 		>
 			<button
-				onClick={handleSearchClick}
+				onClick={handleNavigate}
 				className='w-10 h-full px-3 text-sm rounded-md cursor-pointer font-medium text-gray-500 transition-colors hover:bg-white/15 hover:text-white duration-200'
 			>
 				<SearchSvg className={'size-4'} />

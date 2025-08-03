@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import { Link } from 'react-router'
 import NoTextReviewSvg from '../../../components/review/svg/No-text-review-svg'
 import TextReviewSvg from '../../../components/review/svg/Text-review-svg'
 import LogoSmallSvg from '../../../components/svg/Logo-small-svg'
@@ -7,7 +8,7 @@ import PixelHeartSvg from '../../../components/svg/Pixel-heart-svg'
 import Tooltip from '../../../components/tooltip/Tooltip'
 import TooltipSpan from '../../../components/tooltip/Tooltip-span'
 import SkeletonLoader from '../../../components/utils/Skeleton-loader'
-import useCustomNavigate from '../../../hooks/use-custom-navigate'
+import useNavigationPath from '../../../hooks/use-navigation-path'
 import { ILeaderboardItem } from '../../../models/leaderboard/leaderboard-item'
 import { formatNumber } from '../../../utils/format-number'
 import { getLevelConfig, getUserLevel } from '../../../utils/user-level'
@@ -18,7 +19,7 @@ interface IProps {
 }
 
 const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
-	const { navigatoToProfile } = useCustomNavigate()
+	const { navigatoToProfile } = useNavigationPath()
 
 	const level = getUserLevel(item?.points ?? 0)
 
@@ -41,9 +42,9 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 					</div>
 				</div>
 
-				<div
-					onClick={() => navigatoToProfile(item.user_id)}
-					className='flex shrink-0 space-x-4 items-center relative max-xl:w-1/2 max-xl:order-1 cursor-pointer'
+				<Link
+					to={navigatoToProfile(item.user_id)}
+					className='flex shrink-0 space-x-4 items-center relative max-xl:w-1/2 max-xl:order-1'
 				>
 					<div className='relative z-20'>
 						<span className='relative flex shrink-0 overflow-hidden rounded-full size-[40px] lg:size-[60px] border border-white/10'>
@@ -82,7 +83,7 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 							{item.nickname}
 						</div>
 					</div>
-				</div>
+				</Link>
 
 				<div className='h-14 sm:h-20 xl:h-auto relative xl:w-[260px] rounded-r-lg xl:rounded-r-2xl overflow-hidden xl:mr-5 max-xl:order-2 max-xl:w-1/2 xl:block shrink-0'>
 					<div className='bg-gradient-to-r from-zinc-900 h-full w-full absolute top-0 left-[-1px] z-10'></div>

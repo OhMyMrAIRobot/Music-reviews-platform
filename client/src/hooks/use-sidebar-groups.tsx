@@ -10,7 +10,7 @@ import ReleaseSvg from '../components/sidebar/svg/Release-svg'
 import PencilSvg from '../components/svg/Pencil-svg'
 import { ROUTES } from '../routes/routes-enum'
 import { useActivePath } from './use-active-path'
-import useCustomNavigate from './use-custom-navigate'
+import useNavigationPath from './use-navigation-path'
 
 export const useSidebarGroups = () => {
 	const {
@@ -21,25 +21,25 @@ export const useSidebarGroups = () => {
 		navigateToReleases,
 		navigateToLeaderboard,
 		navigateToRatings,
-	} = useCustomNavigate()
+	} = useNavigationPath()
 
 	const { isActive } = useActivePath()
 
 	const sidebarFirstGroup: ISidebarItemProps[] = [
 		{
-			onClick: navigateToMain,
+			href: navigateToMain,
 			icon: <HomeSvg className='size-5' />,
 			label: 'Главная',
 			active: isActive(ROUTES.MAIN),
 		},
 		{
-			onClick: navigateToMain,
+			href: navigateToMain,
 			icon: <QuestionSvg className='size-5 fill-white' />,
 			label: 'Часто задаваемые вопросы',
 			active: isActive('/main'),
 		},
 		{
-			onClick: navigateToMain,
+			href: navigateToMain,
 			icon: <AboutSvg className='size-6 fill-white' />,
 			label: 'О нас',
 			active: isActive('/main'),
@@ -48,13 +48,13 @@ export const useSidebarGroups = () => {
 
 	const sidebarSecondGroup: ISidebarItemProps[] = [
 		{
-			onClick: navigateToLeaderboard,
+			href: navigateToLeaderboard,
 			icon: <LeaderboardSvg className='size-5 fill-white' />,
 			label: 'ТОП-90 пользователей',
 			active: isActive(ROUTES.LEADERBOARD),
 		},
 		{
-			onClick: navigateToRatings,
+			href: navigateToRatings,
 			icon: <RatingsSvg className='size-5' />,
 			label: 'Рейтинг',
 			active: isActive(ROUTES.RATINGS),
@@ -63,19 +63,19 @@ export const useSidebarGroups = () => {
 
 	const sidebarThirdGroup: ISidebarItemProps[] = [
 		{
-			onClick: navigateToAuthors,
+			href: navigateToAuthors,
 			icon: <AuthorSvg className='size-5 fill-white' />,
 			label: 'Авторы',
 			active: isActive(ROUTES.AUTHORS),
 		},
 		{
-			onClick: navigateToReviews,
+			href: navigateToReviews,
 			icon: <TextReviewSvg className='size-5 fill-white' />,
 			label: 'Рецензии',
 			active: isActive(ROUTES.REVIEWS),
 		},
 		{
-			onClick: navigateToReleases,
+			href: navigateToReleases,
 			icon: <ReleaseSvg className='size-5' />,
 			label: 'Релизы',
 			active: isActive(ROUTES.RELEASES),
@@ -84,7 +84,7 @@ export const useSidebarGroups = () => {
 
 	const sidebarFourthGroup: ISidebarItemProps[] = [
 		{
-			onClick: navigateToFeedback,
+			href: navigateToFeedback,
 			icon: <PencilSvg className='size-3' />,
 			label: 'Обратная связь',
 			active: isActive(ROUTES.FEEDBACK),

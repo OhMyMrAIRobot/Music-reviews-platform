@@ -1,9 +1,9 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 import Loader from '../../components/utils/Loader.tsx'
-import useCustomNavigate from '../../hooks/use-custom-navigate.ts'
 import { useLoading } from '../../hooks/use-loading.ts'
+import useNavigationPath from '../../hooks/use-navigation-path'
 import { useStore } from '../../hooks/use-store.ts'
 import { ReleaseReviewSortField } from '../../models/review/release-review-sort-fields.ts'
 import { SortOrder } from '../../types/sort-order-type.ts'
@@ -21,7 +21,9 @@ const ReleaseDetailsPage = observer(() => {
 
 	const { id } = useParams()
 
-	const { navigateToMain } = useCustomNavigate()
+	const navigate = useNavigate()
+
+	const { navigateToMain } = useNavigationPath()
 
 	const { execute: _fetchReviews, isLoading: isReviewLoading } = useLoading(
 		releaseDetailsPageStore.fetchReleaseReviews
@@ -54,7 +56,7 @@ const ReleaseDetailsPage = observer(() => {
 		if (id) {
 			fetchReleaseDetails(id).then(() => {
 				if (!releaseDetailsPageStore.releaseDetails) {
-					navigateToMain()
+					navigate(navigateToMain)
 				}
 			})
 		}

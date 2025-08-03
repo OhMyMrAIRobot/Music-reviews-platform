@@ -5,15 +5,16 @@ import FormCheckbox from '../../../../components/form-elements/Form-checkbox'
 import FormInput from '../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../components/form-elements/Form-label'
 import FormTitle from '../../../../components/form-elements/Form-title'
-import useCustomNavigate from '../../../../hooks/use-custom-navigate'
+import PreventableLink from '../../../../components/Preventable-link'
 import { useLoading } from '../../../../hooks/use-loading'
+import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
 import { IRegistrationRequest } from '../../../../models/auth/request/registration-request'
 
 const RegistrationForm = observer(() => {
 	const { authStore, notificationStore } = useStore()
 
-	const { navigateToLogin } = useCustomNavigate()
+	const { navigateToLogin } = useNavigationPath()
 
 	const [formData, setFormData] = useState<IRegistrationRequest>({
 		email: '',
@@ -140,15 +141,16 @@ const RegistrationForm = observer(() => {
 
 				<div className='flex justify-center items-center font-medium text-sm gap-1 mt-2 select-none'>
 					<h6 className=''>Уже есть аккаунт?</h6>
-					<button
-						disabled={isLoading}
-						onClick={navigateToLogin}
-						className={`hover:underline cursor-pointer underline-offset-4 ${
-							isLoading ? 'opacity-50' : ''
-						}`}
-					>
-						Войти
-					</button>
+					<PreventableLink to={navigateToLogin} prevent={isLoading}>
+						<button
+							disabled={isLoading}
+							className={`hover:underline cursor-pointer underline-offset-4 ${
+								isLoading ? 'opacity-50 pointer-events-none' : ''
+							}`}
+						>
+							Войти
+						</button>
+					</PreventableLink>
 				</div>
 			</div>
 		</div>

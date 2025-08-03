@@ -1,7 +1,8 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useState } from 'react'
+import { Link } from 'react-router'
 import { useAuth } from '../../../hooks/use-auth'
-import useCustomNavigate from '../../../hooks/use-custom-navigate'
+import useNavigationPath from '../../../hooks/use-navigation-path.ts'
 import { useStore } from '../../../hooks/use-store'
 import { IReview } from '../../../models/review/review.ts'
 import { TogglePromiseResult } from '../../../types/toggle-promise-result'
@@ -25,7 +26,7 @@ const ReviewCard: FC<IProps> = observer(
 
 		const { checkAuth } = useAuth()
 
-		const { navigateToRelease } = useCustomNavigate()
+		const { navigateToReleaseDetails } = useNavigationPath()
 
 		const [toggling, setToggling] = useState<boolean>(false)
 		const [show, setShow] = useState<boolean>(false)
@@ -88,8 +89,9 @@ const ReviewCard: FC<IProps> = observer(
 							likesCount={review.likes_count}
 							toggleFavReview={toggleFavReview}
 						/>
-						<button
-							onClick={() => navigateToRelease(review.release_id)}
+
+						<Link
+							to={navigateToReleaseDetails(review.release_id)}
 							className='cursor-pointer hover:bg-white/10 size-8 lg:size-10 rounded-md flex items-center justify-center transition-all duration-200 relative'
 							onMouseEnter={() => setShow(true)}
 							onMouseLeave={() => setShow(false)}
@@ -102,7 +104,7 @@ const ReviewCard: FC<IProps> = observer(
 							>
 								Перейти к релизу
 							</div>
-						</button>
+						</Link>
 					</div>
 				</div>
 			)

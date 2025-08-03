@@ -1,11 +1,12 @@
 import { FC, ReactNode } from 'react'
+import { Link } from 'react-router'
 import CarouselNavButton from './Carousel-nav-button'
 
 interface IProps {
 	title: string
 	buttonTitle: string
 	showButton: boolean
-	onButtonClick: () => void
+	href: string
 	handlePrev: () => void
 	handleNext: () => void
 	Carousel: ReactNode
@@ -15,7 +16,7 @@ const CarouselContainer: FC<IProps> = ({
 	title,
 	buttonTitle,
 	showButton,
-	onButtonClick,
+	href,
 	handlePrev,
 	handleNext,
 	Carousel,
@@ -26,12 +27,12 @@ const CarouselContainer: FC<IProps> = ({
 				<h3 className='text-lg lg:text-2xl font-semibold'>{title}</h3>
 				<div className='flex flex-col-reverse sm:flex-row sm:gap-5 gap-2 select-none items-center'>
 					{showButton && (
-						<button
-							onClick={onButtonClick}
-							className='inline-flex items-center justify-center whitespace-nowrap text-sm font-bold rounded-full px-4 h-10 bg-zinc-800 hover:bg-zinc-800/80 transition-all duration-200 cursor-pointer'
+						<Link
+							to={href}
+							className='inline-flex items-center justify-center whitespace-nowrap text-sm font-bold rounded-full px-4 h-10 bg-zinc-800 hover:bg-zinc-800/80 transition-all duration-200'
 						>
 							{buttonTitle}
-						</button>
+						</Link>
 					)}
 					<div className='flex gap-3 items-center'>
 						<CarouselNavButton

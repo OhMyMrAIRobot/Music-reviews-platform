@@ -1,9 +1,10 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router'
 import SwitchButton from '../../../../components/buttons/Switch-button'
 import TickSvg from '../../../../components/svg/Tick-svg'
 import TrashSvg from '../../../../components/svg/Trash-svg'
-import useCustomNavigate from '../../../../hooks/use-custom-navigate'
+import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
 import { IReleaseReview } from '../../../../models/review/release-review'
 import { RolesEnum } from '../../../../models/role/roles-enum'
@@ -22,7 +23,7 @@ const SendReviewForm: FC<IProps> = observer(
 	({ releaseId: id, fetchReviews }) => {
 		const { authStore, releaseDetailsPageStore, notificationStore } = useStore()
 
-		const { navigateToLogin } = useCustomNavigate()
+		const { navigateToLogin } = useNavigationPath()
 
 		const [isLoading, setIsLoading] = useState<boolean>(false)
 		const [isReview, setIsReview] = useState<boolean>(true)
@@ -285,12 +286,12 @@ const SendReviewForm: FC<IProps> = observer(
 		) : (
 			<div className='text-center text-white/90 border font-medium border-white/15 bg-gradient-to-br from-white/10 rounded-2xl text-sm lg:text-base w-full lg:max-w-[800px] sm:max-w-[600px] px-5 py-5 mx-auto mt-7'>
 				<span className='mr-1'>Для отправки рецензии вам необходимо</span>
-				<button
-					onClick={navigateToLogin}
+				<Link
+					to={navigateToLogin}
 					className='underline underline-offset-4 cursor-pointer hover:text-white transition-colors duration-200'
 				>
 					войти в свой аккаунт!
-				</button>
+				</Link>
 			</div>
 		)
 	}

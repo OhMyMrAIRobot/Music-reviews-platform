@@ -1,19 +1,22 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 import FormButton from '../../../../components/form-elements/Form-button'
 import FormInfoContainer from '../../../../components/form-elements/Form-info-container'
 import FormInfoField from '../../../../components/form-elements/Form-info-field'
 import FormSubTitle from '../../../../components/form-elements/Form-subtitle'
 import FormTitle from '../../../../components/form-elements/Form-title'
-import useCustomNavigate from '../../../../hooks/use-custom-navigate'
 import { useLoading } from '../../../../hooks/use-loading'
+import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
 
 const ActivationForm = () => {
 	const { token } = useParams()
 
 	const { notificationStore, authStore } = useStore()
-	const { navigateToMain } = useCustomNavigate()
+
+	const navigate = useNavigate()
+
+	const { navigateToMain } = useNavigationPath()
 
 	const [errors, setErrors] = useState<string[]>([])
 
@@ -26,7 +29,7 @@ const ActivationForm = () => {
 					notificationStore.addSuccessNotification(
 						'Аккаунт успешно активирован!'
 					)
-					navigateToMain()
+					navigate(navigateToMain)
 				} else {
 					setErrors(errors)
 				}

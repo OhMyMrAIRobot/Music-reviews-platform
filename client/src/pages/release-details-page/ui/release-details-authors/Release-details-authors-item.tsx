@@ -1,5 +1,6 @@
 import { FC } from 'react'
-import useCustomNavigate from '../../../../hooks/use-custom-navigate'
+import { Link } from 'react-router'
+import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { AuthorTypesEnum } from '../../../../models/author/author-type'
 import { IReleaseDetailsAuthor } from '../../../../models/release/release-details-author'
 
@@ -9,12 +10,12 @@ interface IProps {
 }
 
 const ReleaseDetailsAuthorsItem: FC<IProps> = ({ author, type }) => {
-	const { navigateToAuthor } = useCustomNavigate()
+	const { navigateToAuthorDetails } = useNavigationPath()
 
 	return (
-		<button
-			onClick={() => navigateToAuthor(author.id)}
-			className={`flex items-center justify-center text-sm font-medium h-10 gap-x-1.5 lg:gap-x-2 hover:bg-white/10 transition-colors duration-200 cursor-pointer px-1 py-2 
+		<Link
+			to={navigateToAuthorDetails(author.id)}
+			className={`flex items-center justify-center text-sm font-medium h-10 gap-x-1.5 lg:gap-x-2 hover:bg-white/10 transition-colors duration-200 px-1 py-2 
 				${type === AuthorTypesEnum.ARTIST ? 'rounded-full lg:px-3' : ''}
 				${
 					type === AuthorTypesEnum.PRODUCER
@@ -35,7 +36,7 @@ const ReleaseDetailsAuthorsItem: FC<IProps> = ({ author, type }) => {
 				/>
 			</div>
 			<span className='font-bold'>{author.name}</span>
-		</button>
+		</Link>
 	)
 }
 

@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react'
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
 import LastReviewsCarousel from '../../../../components/carousel/Last-reviews-carousel'
-import useCustomNavigate from '../../../../hooks/use-custom-navigate'
 import { useLoading } from '../../../../hooks/use-loading'
+import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
 import { CarouselRef } from '../../../../types/carousel-ref'
 
@@ -11,7 +11,7 @@ const LastReviews = () => {
 
 	const { mainPageStore } = useStore()
 
-	const { navigateToReviews } = useCustomNavigate()
+	const { navigateToReviews } = useNavigationPath()
 
 	const { execute: fetch, isLoading } = useLoading(
 		mainPageStore.fetchLastReviews
@@ -26,7 +26,7 @@ const LastReviews = () => {
 			title={'Новые рецензии'}
 			buttonTitle={'Все рецензии'}
 			showButton={true}
-			onButtonClick={navigateToReviews}
+			href={navigateToReviews}
 			handlePrev={() => {
 				carouselRef.current?.scrollPrev()
 			}}

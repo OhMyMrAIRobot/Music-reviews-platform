@@ -1,9 +1,10 @@
 import { FC } from 'react'
+import { Link } from 'react-router'
 import ReleaseAuthors from '../../../../../components/release/Release-authors'
 import ReleaseRatings from '../../../../../components/release/Release-ratings'
 import ReleaseTypeIcon from '../../../../../components/release/Release-type-icon'
 import TextReviewSvg from '../../../../../components/review/svg/Text-review-svg'
-import useCustomNavigate from '../../../../../hooks/use-custom-navigate'
+import useNavigationPath from '../../../../../hooks/use-navigation-path'
 import { IRelease } from '../../../../../models/release/release'
 
 interface IProps {
@@ -12,7 +13,7 @@ interface IProps {
 }
 
 const MostReviewedCarouselCard: FC<IProps> = ({ release, index }) => {
-	const { navigateToRelease } = useCustomNavigate()
+	const { navigateToReleaseDetails } = useNavigationPath()
 
 	return (
 		release && (
@@ -65,24 +66,20 @@ const MostReviewedCarouselCard: FC<IProps> = ({ release, index }) => {
 				</div>
 
 				<div className='mt-auto flex items-center justify-between w-full h-10 2xl:h-11'>
-					<button
-						onClick={() => {
-							navigateToRelease(release.id)
-						}}
-						className='h-full text-white flex items-center justify-center border border-white bg-black hover:text-black hover:bg-white cursor-pointer transition-colors duration-200 rounded-full w-[65%] text-xs 2xl:text-base font-semibold'
+					<Link
+						to={navigateToReleaseDetails(release.id)}
+						className='h-full text-white flex items-center justify-center border border-white bg-black hover:text-black hover:bg-white transition-colors duration-200 rounded-full w-[65%] text-xs 2xl:text-base font-semibold'
 					>
 						Написать рецензию...
-					</button>
+					</Link>
 
-					<button
-						onClick={() => {
-							navigateToRelease(release.id)
-						}}
-						className='border border-white/0 px-3 h-full bg-white/10 flex items-center rounded-full min-w-20 lg:min-w-25 justify-center text-center gap-1 hover:bg-white/15 hover:border-white/10 cursor-pointer transition-colors duration-200'
+					<Link
+						to={navigateToReleaseDetails(release.id)}
+						className='border border-white/0 px-3 h-full bg-white/10 flex items-center rounded-full min-w-20 lg:min-w-25 justify-center text-center gap-1 hover:bg-white/15 hover:border-white/10 transition-colors duration-200'
 					>
 						<TextReviewSvg className={'size-5 mr-1'} />
 						<span>{release.text_count + release.no_text_count}</span>
-					</button>
+					</Link>
 				</div>
 			</div>
 		)

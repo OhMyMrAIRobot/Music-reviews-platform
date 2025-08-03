@@ -1,4 +1,4 @@
-import useCustomNavigate from '../../hooks/use-custom-navigate'
+import useNavigationPath from '../../hooks/use-navigation-path'
 import TelegramSvg from '../svg/Telegram-svg'
 import TwitchSvg from '../svg/Twitch-svg'
 import VkSvg from '../svg/Vk-svg'
@@ -28,7 +28,7 @@ const footerSocials: IFooterSocialItemProps[] = [
 ]
 
 const Footer = () => {
-	const { navigateToFeedback } = useCustomNavigate()
+	const { navigateToFeedback } = useNavigationPath()
 
 	return (
 		<footer className='2xl:container p-5 lg:py-10 mt-auto lg:w-full lg:mr-0 mr-auto'>
@@ -39,12 +39,12 @@ const Footer = () => {
 					<h6 className='opacity-50'>«Some application title» © 2025</h6>
 
 					<div className='flex flex-col gap-y-0.5 opacity-80 items-start lg:items-end mt-2'>
-						<FooterLink text='Обратная связь' onClick={navigateToFeedback} />
+						<FooterLink text='Обратная связь' href={navigateToFeedback} />
 						<FooterLink
 							text='Политика обработки персональных данных'
-							onClick={() => {}}
+							href={'#'}
 						/>
-						<FooterLink text='Пользовательское соглашение' onClick={() => {}} />
+						<FooterLink text='Пользовательское соглашение' href={'#'} />
 					</div>
 
 					<div className='flex flex-col gap-y-0.5 opacity-80 mt-2'>

@@ -5,15 +5,16 @@ import FormInput from '../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../components/form-elements/Form-label'
 import FormSubTitle from '../../../../components/form-elements/Form-subtitle'
 import FormTitle from '../../../../components/form-elements/Form-title'
-import useCustomNavigate from '../../../../hooks/use-custom-navigate'
+import PreventableLink from '../../../../components/Preventable-link'
 import { useLoading } from '../../../../hooks/use-loading'
+import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
 
 const LoginForm = observer(() => {
 	const [email, setEmail] = useState<string>('')
 	const [password, setPassword] = useState<string>('')
 
-	const { navigateToRegistration, navigateToRequestReset } = useCustomNavigate()
+	const { navigateToRegistration, navigateToRequestReset } = useNavigationPath()
 
 	const { authStore, notificationStore } = useStore()
 
@@ -54,15 +55,15 @@ const LoginForm = observer(() => {
 					<div className='flex justify-between items-center select-none'>
 						<FormLabel name={'Пароль'} htmlFor={'AuthPassword'} />
 
-						<button
-							disabled={isLoading}
-							onClick={navigateToRequestReset}
+						<PreventableLink
+							to={navigateToRequestReset}
+							prevent={isLoading}
 							className={`text-sm cursor-pointer font-bold hover:underline underline-offset-4 ${
 								isLoading ? 'opacity-50' : ''
 							}`}
 						>
 							Забыли пароль?
-						</button>
+						</PreventableLink>
 					</div>
 
 					<FormInput
@@ -83,12 +84,13 @@ const LoginForm = observer(() => {
 						isLoading={isLoading}
 					/>
 
-					<FormButton
-						title={'Зарегистрироваться'}
-						onClick={navigateToRegistration}
-						isInvert={false}
-						disabled={isLoading}
-					/>
+					<PreventableLink to={navigateToRegistration} prevent={isLoading}>
+						<FormButton
+							title={'Зарегистрироваться'}
+							isInvert={false}
+							disabled={isLoading}
+						/>
+					</PreventableLink>
 				</div>
 			</div>
 		</div>

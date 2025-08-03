@@ -1,12 +1,12 @@
 import { useMemo, useState } from 'react'
-import { useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 import FormButton from '../../../../components/form-elements/Form-button'
 import FormInput from '../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../components/form-elements/Form-label'
 import FormSubTitle from '../../../../components/form-elements/Form-subtitle'
 import FormTitle from '../../../../components/form-elements/Form-title'
-import useCustomNavigate from '../../../../hooks/use-custom-navigate'
 import { useLoading } from '../../../../hooks/use-loading'
+import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
 import { IResetPasswordRequest } from '../../../../models/auth/request/reset-password-request'
 
@@ -15,7 +15,9 @@ const ResetPasswordForm = () => {
 
 	const { authStore, notificationStore } = useStore()
 
-	const { navigateToMain } = useCustomNavigate()
+	const navigate = useNavigate()
+
+	const { navigateToMain } = useNavigationPath()
 
 	const [formData, setFormData] = useState<IResetPasswordRequest>({
 		password: '',
@@ -40,7 +42,7 @@ const ResetPasswordForm = () => {
 			notificationStore.addSuccessNotification(
 				'Ваш пароль был успешно сброшен!'
 			)
-			navigateToMain()
+			navigate(navigateToMain)
 		} else {
 			errors.forEach(err => notificationStore.addErrorNotification(err))
 		}

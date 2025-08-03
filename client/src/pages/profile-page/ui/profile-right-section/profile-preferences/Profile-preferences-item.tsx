@@ -1,6 +1,7 @@
 import { FC } from 'react'
+import { Link } from 'react-router'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
-import useCustomNavigate from '../../../../../hooks/use-custom-navigate'
+import useNavigationPath from '../../../../../hooks/use-navigation-path'
 import { IPreferredItem } from '../../../../../models/profile/preferred-item'
 
 interface IProps {
@@ -10,7 +11,8 @@ interface IProps {
 }
 
 const ProfilePreferencesItem: FC<IProps> = ({ item, isAuthor, isLoading }) => {
-	const { navigateToAuthor, navigateToRelease } = useCustomNavigate()
+	const { navigateToAuthorDetails, navigateToReleaseDetails } =
+		useNavigationPath()
 
 	return isLoading ? (
 		<div className='p-1'>
@@ -18,9 +20,11 @@ const ProfilePreferencesItem: FC<IProps> = ({ item, isAuthor, isLoading }) => {
 		</div>
 	) : (
 		item && (
-			<button
-				onClick={() =>
-					isAuthor ? navigateToAuthor(item.id) : navigateToRelease(item.id)
+			<Link
+				to={
+					isAuthor
+						? navigateToAuthorDetails(item.id)
+						: navigateToReleaseDetails(item.id)
 				}
 				className='flex flex-col justify-start rounded-[25px] lg:rounded-[30px] hover:bg-opacity-[0.08] duration-300 cursor-pointer w-full p-1 aspect-square'
 			>
@@ -39,7 +43,7 @@ const ProfilePreferencesItem: FC<IProps> = ({ item, isAuthor, isLoading }) => {
 				<span className='text-xs md:text-sm text-center w-full font-semibold antialiased leading-5 mt-2 block text-nowrap text-ellipsis overflow-hidden'>
 					{item.name}
 				</span>
-			</button>
+			</Link>
 		)
 	)
 }

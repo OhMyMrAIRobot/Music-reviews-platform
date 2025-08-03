@@ -4,8 +4,8 @@ import ArrowBottomSvg from '../../../../../components/header/svg/Arrow-bottom-sv
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal'
 import ReleaseMediaStatusIcon from '../../../../../components/release-media/Release-media-status-icon'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
-import useCustomNavigate from '../../../../../hooks/use-custom-navigate'
 import { useLoading } from '../../../../../hooks/use-loading'
+import useNavigationPath from '../../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../../hooks/use-store'
 import { IReleaseMedia } from '../../../../../models/release-media/release-media'
 import { SortOrderEnum } from '../../../../../models/sort/sort-order-enum'
@@ -37,7 +37,7 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 }) => {
 	const { adminDashboardMediaStore, notificationStore } = useStore()
 
-	const { navigateToRelease } = useCustomNavigate()
+	const { navigateToReleaseDetails } = useNavigationPath()
 
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
@@ -45,12 +45,6 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 	const { execute: deleteMedia, isLoading: isDeleting } = useLoading(
 		adminDashboardMediaStore.deleteReleaseMedia
 	)
-
-	const handleNavigateRelease = () => {
-		if (media) {
-			navigateToRelease(media.release.id)
-		}
-	}
 
 	const toggle = () => {
 		if (toggleOrder) {
@@ -115,9 +109,9 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 
 				<div className='col-span-2 h-full flex items-center mr-2'>
 					{media ? (
-						<button
-							onClick={handleNavigateRelease}
-							className='flex text-left gap-x-1.5 items-center cursor-pointer hover:bg-white/5 rounded-lg px-1.5 py-0.5 w-full'
+						<Link
+							to={navigateToReleaseDetails(media.release.id)}
+							className='flex text-left gap-x-1.5 items-center hover:bg-white/5 rounded-lg px-1.5 py-0.5 w-full'
 						>
 							<img
 								loading='lazy'
@@ -133,7 +127,7 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 							<span className='font-medium line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
 								{media.release.title}
 							</span>
-						</button>
+						</Link>
 					) : (
 						<span className='px-2'>Название релиза</span>
 					)}

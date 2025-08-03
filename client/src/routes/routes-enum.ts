@@ -1,5 +1,20 @@
-// routes.constants.ts
 export const ROUTES = {
+	MAIN: '/',
+	RELEASE_DETAILS_PREFIX: 'release',
+	RELEASE_DETAILS: 'release/:id',
+	RELEASES: 'releases',
+	AUTHOR_DETAILS_PREFIX: 'author',
+	AUTHOR_DETAILS: 'author/:id',
+	AUTHORS: 'authors',
+	FEEDBACK: 'feedback',
+	REVIEWS: 'reviews',
+	LEADERBOARD: 'leaderboard',
+	RATINGS: 'ratings',
+	SEARCH_PREFIX: 'search',
+	SEARCH: 'search/:type',
+	PROFILE_PREFIX: 'profile',
+	PROFILE: 'profile/:id',
+	EDIT_PROFILE: 'profile/edit',
 	AUTH: {
 		PREFIX: 'auth',
 		LOGIN: 'login',
@@ -8,19 +23,8 @@ export const ROUTES = {
 		RESET_PASSWORD: 'reset-password/:token',
 		ACTIVATE: 'activate',
 		ACTIVATE_WITH_TOKEN: 'activate/:token',
+		NOT_DEFINED: '*',
 	},
-	MAIN: '/',
-	RELEASE_DETAILS: '/release/:id',
-	RELEASES: '/releases',
-	AUTHOR_DETAILS: '/author/:id',
-	AUTHORS: '/authors',
-	FEEDBACK: '/feedback',
-	REVIEWS: '/reviews',
-	LEADERBOARD: '/leaderboard',
-	RATINGS: '/ratings',
-	SEARCH: '/search/:type',
-	PROFILE: '/profile/:id',
-	EDIT_PROFILE: 'profile/edit',
 	ADMIN: {
 		PREFIX: 'admin',
 		USERS: 'users',
@@ -34,4 +38,7 @@ export const ROUTES = {
 	NOT_DEFINED: '*',
 } as const
 
-export type AppRoutes = keyof typeof ROUTES | keyof typeof ROUTES.AUTH
+export type AppRoutes =
+	| keyof typeof ROUTES
+	| keyof typeof ROUTES.AUTH
+	| keyof typeof ROUTES.ADMIN

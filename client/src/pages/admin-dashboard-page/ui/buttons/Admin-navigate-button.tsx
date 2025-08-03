@@ -2,7 +2,7 @@ import { FC } from 'react'
 import MoveToSvg from '../../../../components/svg/Move-to-svg.tsx'
 
 interface IProps {
-	onClick: () => void
+	onClick?: () => void
 }
 
 const AdminNavigateButton: FC<IProps> = ({ onClick }) => {

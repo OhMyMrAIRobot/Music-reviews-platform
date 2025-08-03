@@ -2,7 +2,6 @@ import { useEffect, useRef } from 'react'
 import { useParams } from 'react-router'
 import CarouselContainer from '../../../components/carousel/Carousel-container'
 import LastReviewsCarousel from '../../../components/carousel/Last-reviews-carousel'
-import useCustomNavigate from '../../../hooks/use-custom-navigate'
 import { useLoading } from '../../../hooks/use-loading'
 import { useStore } from '../../../hooks/use-store'
 import { CarouselRef } from '../../../types/carousel-ref'
@@ -11,8 +10,6 @@ const AuthorDetailsReviewsCarousel = () => {
 	const { id } = useParams()
 
 	const { authorDetailsPageStore } = useStore()
-
-	const { navigateToReviews } = useCustomNavigate()
 
 	const carouselRef = useRef<CarouselRef>(null)
 	const handlePrev = () => {
@@ -38,7 +35,7 @@ const AuthorDetailsReviewsCarousel = () => {
 			title={'Последние рецензии'}
 			buttonTitle={''}
 			showButton={false}
-			onButtonClick={navigateToReviews}
+			href={'#'}
 			handlePrev={handlePrev}
 			handleNext={handleNext}
 			Carousel={

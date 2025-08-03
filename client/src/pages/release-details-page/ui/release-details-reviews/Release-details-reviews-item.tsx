@@ -1,12 +1,13 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useState } from 'react'
+import { Link } from 'react-router'
 import ReviewAuthor from '../../../../components/review/review-card/Review-author'
 import ReviewLikes from '../../../../components/review/review-card/Review-likes'
 import ReviewMarks from '../../../../components/review/review-card/Review-marks'
 import ReviewUserImage from '../../../../components/review/review-card/Review-user-image'
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
 import { useAuth } from '../../../../hooks/use-auth'
-import useCustomNavigate from '../../../../hooks/use-custom-navigate'
+import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
 import { IReleaseReview } from '../../../../models/review/release-review'
 
@@ -19,7 +20,7 @@ const ReleaseDetailsReviewsItem: FC<IProps> = observer(
 	({ review, isLoading }) => {
 		const { checkAuth } = useAuth()
 
-		const { navigatoToProfile } = useCustomNavigate()
+		const { navigatoToProfile } = useNavigationPath()
 
 		const { authStore, releaseDetailsPageStore, notificationStore } = useStore()
 		const isLiked =
@@ -61,9 +62,9 @@ const ReleaseDetailsReviewsItem: FC<IProps> = observer(
 			review && (
 				<div className='w-full bg-zinc-900 p-1.5 lg:p-[5px] flex flex-col border border-zinc-800 rounded-[15px] lg:rounded-[20px]'>
 					<div className='bg-zinc-950/70 px-2 py-2 rounded-[12px] flex gap-3 justify-between items-center select-none'>
-						<div
-							onClick={() => navigatoToProfile(review.user_id)}
-							className='flex items-center space-x-2 lg:space-x-3 cursor-pointer'
+						<Link
+							to={navigatoToProfile(review.user_id)}
+							className='flex items-center space-x-2 lg:space-x-3'
 						>
 							<ReviewUserImage
 								nickname={review.nickname}
@@ -74,7 +75,7 @@ const ReleaseDetailsReviewsItem: FC<IProps> = observer(
 								nickname={review.nickname}
 								position={review.position}
 							/>
-						</div>
+						</Link>
 						<ReviewMarks
 							total={review.total}
 							rhymes={review.rhymes}

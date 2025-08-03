@@ -1,10 +1,10 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
-import { useParams, useSearchParams } from 'react-router'
+import { useNavigate, useParams, useSearchParams } from 'react-router'
 import AuthorsGrid from '../../components/author/authors-grid/Authors-grid'
 import ReleasesGrid from '../../components/release/Releases-grid'
-import useCustomNavigate from '../../hooks/use-custom-navigate'
 import { useLoading } from '../../hooks/use-loading'
+import useNavigationPath from '../../hooks/use-navigation-path'
 import { useStore } from '../../hooks/use-store'
 import { SearchTypesEnum } from '../../models/search/search-types-enum'
 
@@ -15,7 +15,9 @@ const SearchPage = observer(() => {
 
 	const { searchPageStore } = useStore()
 
-	const { navigateToMain } = useCustomNavigate()
+	const navigate = useNavigate()
+
+	const { navigateToMain } = useNavigationPath()
 
 	const [isLoading, setIsloading] = useState<boolean>(true)
 	const [currentPage, setCurrentPage] = useState<number>(1)
@@ -51,7 +53,7 @@ const SearchPage = observer(() => {
 			!type ||
 			!Object.values(SearchTypesEnum).includes(type as SearchTypesEnum)
 		) {
-			navigateToMain()
+			navigate(navigateToMain)
 		}
 		setIsloading(false)
 		// eslint-disable-next-line react-hooks/exhaustive-deps

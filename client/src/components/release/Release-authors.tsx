@@ -1,5 +1,6 @@
 import { FC } from 'react'
-import useCustomNavigate from '../../hooks/use-custom-navigate'
+import { Link } from 'react-router'
+import useNavigationPath from '../../hooks/use-navigation-path'
 import { IReleaseAuthor } from '../../models/release/release-author'
 
 interface IProps {
@@ -8,21 +9,13 @@ interface IProps {
 }
 
 const ReleaseAuthors: FC<IProps> = ({ authors, className }) => {
-	const { navigateToAuthor } = useCustomNavigate()
-
-	const navigateToAuthorPage = (
-		id: string,
-		e: React.MouseEvent<HTMLDivElement>
-	) => {
-		e.stopPropagation()
-		navigateToAuthor(id)
-	}
+	const { navigateToAuthorDetails } = useNavigationPath()
 
 	return (
 		<div className={`flex flex-wrap gap-1 items-center ${className}`}>
 			{authors.map((author, index) => (
-				<div
-					onClick={e => navigateToAuthorPage(author.id, e)}
+				<Link
+					to={navigateToAuthorDetails(author.id)}
 					key={author.name}
 					className='flex'
 				>
@@ -32,7 +25,7 @@ const ReleaseAuthors: FC<IProps> = ({ authors, className }) => {
 					<span className='ml-[1px] pr-[3px] opacity-50'>
 						{index < authors.length - 1 && ','}
 					</span>
-				</div>
+				</Link>
 			))}
 			{authors.length === 0 && (
 				<span className='opacity-50'>Автор не указан!</span>

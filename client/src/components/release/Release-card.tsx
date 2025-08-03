@@ -1,5 +1,6 @@
 import { FC } from 'react'
-import useCustomNavigate from '../../hooks/use-custom-navigate'
+import { Link } from 'react-router'
+import useNavigationPath from '../../hooks/use-navigation-path'
 import { IRelease } from '../../models/release/release'
 import SkeletonLoader from '../utils/Skeleton-loader'
 import ReleaseAuthors from './Release-authors'
@@ -13,14 +14,14 @@ interface IProps {
 }
 
 const ReleaseCard: FC<IProps> = ({ release, isLoading }) => {
-	const { navigateToRelease } = useCustomNavigate()
+	const { navigateToReleaseDetails } = useNavigationPath()
 
 	return isLoading ? (
 		<SkeletonLoader className='w-full h-full rounded-xl' />
 	) : (
 		release && (
-			<button
-				onClick={() => navigateToRelease(release.id)}
+			<Link
+				to={navigateToReleaseDetails(release.id)}
 				className='bg-zinc-900 hover:scale-105 p-1 overflow-hidden flex flex-col justify-start relative w-full h-full rounded-xl border border-zinc-800 duration-300 cursor-pointer'
 			>
 				<div className='relative block aspect-square'>
@@ -69,7 +70,7 @@ const ReleaseCard: FC<IProps> = ({ release, isLoading }) => {
 						showHint={false}
 					/>
 				</div>
-			</button>
+			</Link>
 		)
 	)
 }

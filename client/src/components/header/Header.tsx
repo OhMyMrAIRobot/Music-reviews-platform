@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
-import useCustomNavigate from '../../hooks/use-custom-navigate'
+import { Link } from 'react-router'
+import useNavigationPath from '../../hooks/use-navigation-path'
 import { useSidebarOverlay } from '../../hooks/use-sidebar-overlay'
 import { useStore } from '../../hooks/use-store'
 import AboutSvg from '../sidebar/svg/About-svg'
@@ -23,49 +24,43 @@ const Header = observer(() => {
 		navigateToMain,
 		navigateToFeedback,
 		navigateToActivation,
-	} = useCustomNavigate()
+	} = useNavigationPath()
 
 	return (
 		<header className='sticky top-0 z-1000 w-full bg-[#09090B]/60 border-b border-[#27272A]/40 backdrop-blur-3xl'>
 			<div className='2xl:container flex mx-auto h-16 rounded-xl items-center p-5'>
-				<button
-					onClick={navigateToMain}
+				<Link
+					to={navigateToMain}
 					className='w-[150px] h-[50px] mr-10 shrink-0 flex items-center justify-center cursor-pointer'
 				>
 					<LogoFullSvg className={''} />
-				</button>
+				</Link>
 
 				<SearchBar className={'hidden lg:flex lg:w-[400px]'} />
 
 				<div className='ml-auto hidden lg:flex items-center gap-8'>
 					{authStore.user?.isActive === false && (
-						<HeaderSvgButton
-							title={'Активация аккаунта'}
-							onClick={navigateToActivation}
-						>
-							<AboutSvg className={'size-5'} />
-						</HeaderSvgButton>
+						<Link to={navigateToActivation}>
+							<HeaderSvgButton title={'Активация аккаунта'}>
+								<AboutSvg className={'size-5'} />
+							</HeaderSvgButton>
+						</Link>
 					)}
 
-					<HeaderSvgButton
-						title={'Обратная связь'}
-						onClick={navigateToFeedback}
-					>
-						<PencilSvg className='size-3' />
-					</HeaderSvgButton>
+					<Link to={navigateToFeedback}>
+						<HeaderSvgButton title={'Обратная связь'}>
+							<PencilSvg className='size-3' />
+						</HeaderSvgButton>
+					</Link>
 
 					{!authStore.isAuth && (
 						<div className='flex gap-3'>
-							<HeaderButton
-								onClick={navigateToLogin}
-								isInvert={false}
-								title={'Войти'}
-							/>
-							<HeaderButton
-								onClick={navigateToRegistration}
-								isInvert={true}
-								title={'Регистрация'}
-							/>
+							<Link to={navigateToLogin}>
+								<HeaderButton isInvert={false} title={'Войти'} />
+							</Link>
+							<Link to={navigateToRegistration}>
+								<HeaderButton isInvert={true} title={'Регистрация'} />
+							</Link>
 						</div>
 					)}
 
@@ -76,7 +71,9 @@ const Header = observer(() => {
 					{authStore.isAuth ? (
 						<ProfileButton />
 					) : (
-						<LoginIconButton onClick={navigateToLogin} />
+						<Link to={navigateToLogin}>
+							<LoginIconButton />
+						</Link>
 					)}
 					<BurgerMenuButton onClick={openSidebarOverlay} />
 				</div>

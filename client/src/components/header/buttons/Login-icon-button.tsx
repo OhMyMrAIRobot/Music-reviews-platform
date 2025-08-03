@@ -2,7 +2,7 @@ import { FC } from 'react'
 import LoginSvg from '../svg/Login-svg'
 
 interface IProps {
-	onClick: () => void
+	onClick?: () => void
 }
 
 const LoginIconButton: FC<IProps> = ({ onClick }) => {

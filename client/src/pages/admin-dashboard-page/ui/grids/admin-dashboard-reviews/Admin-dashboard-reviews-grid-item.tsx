@@ -1,10 +1,11 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useState } from 'react'
+import { Link } from 'react-router'
 import ArrowBottomSvg from '../../../../../components/header/svg/Arrow-bottom-svg'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
-import useCustomNavigate from '../../../../../hooks/use-custom-navigate'
 import { useLoading } from '../../../../../hooks/use-loading'
+import useNavigationPath from '../../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../../hooks/use-store'
 import { IAdminReview } from '../../../../../models/review/admin-reviews-response'
 import { SortOrderEnum } from '../../../../../models/sort/sort-order-enum'
@@ -35,7 +36,7 @@ const AdminDashboardReviewsGridItem: FC<IProps> = observer(
 	}) => {
 		const { adminDashboardReviewsStore, notificationStore } = useStore()
 
-		const { navigateToRelease, navigatoToProfile } = useCustomNavigate()
+		const { navigateToReleaseDetails, navigatoToProfile } = useNavigationPath()
 
 		const { execute: deleteReview, isLoading: isDeleting } = useLoading(
 			adminDashboardReviewsStore.deleteReview
@@ -43,18 +44,6 @@ const AdminDashboardReviewsGridItem: FC<IProps> = observer(
 
 		const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 		const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
-
-		const handleNavigateRelease = () => {
-			if (review) {
-				navigateToRelease(review.release.id)
-			}
-		}
-
-		const handleNavigateProfile = () => {
-			if (review) {
-				navigatoToProfile(review.user.id)
-			}
-		}
 
 		const toggle = () => {
 			if (toggleOrder) {
@@ -117,9 +106,9 @@ const AdminDashboardReviewsGridItem: FC<IProps> = observer(
 
 					<div className='col-span-2 h-full flex items-center mr-2'>
 						{review ? (
-							<button
-								onClick={handleNavigateProfile}
-								className='flex text-left gap-x-1.5 items-center cursor-pointer hover:bg-white/5 rounded-lg px-1.5 py-0.5'
+							<Link
+								to={navigatoToProfile(review.user.id)}
+								className='flex text-left gap-x-1.5 items-center cursor-pointer hover:bg-white/5 rounded-lg px-1.5 py-0.5 w-full'
 							>
 								<img
 									loading='lazy'
@@ -135,7 +124,7 @@ const AdminDashboardReviewsGridItem: FC<IProps> = observer(
 								<span className='font-medium line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
 									{review.user.nickname}
 								</span>
-							</button>
+							</Link>
 						) : (
 							<span className='px-2'>Пользователь</span>
 						)}
@@ -143,9 +132,9 @@ const AdminDashboardReviewsGridItem: FC<IProps> = observer(
 
 					<div className='col-span-2 h-full flex items-center mr-2'>
 						{review ? (
-							<button
-								onClick={handleNavigateRelease}
-								className='flex text-left gap-x-1.5 items-center cursor-pointer hover:bg-white/5 rounded-lg px-1.5 py-0.5'
+							<Link
+								to={navigateToReleaseDetails(review.release.id)}
+								className='flex text-left gap-x-1.5 items-center cursor-pointer hover:bg-white/5 rounded-lg px-1.5 py-0.5 w-full'
 							>
 								<img
 									loading='lazy'
@@ -161,7 +150,7 @@ const AdminDashboardReviewsGridItem: FC<IProps> = observer(
 								<span className='font-medium line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
 									{review.release.title}
 								</span>
-							</button>
+							</Link>
 						) : (
 							<span className='px-2'>Название релиза</span>
 						)}
