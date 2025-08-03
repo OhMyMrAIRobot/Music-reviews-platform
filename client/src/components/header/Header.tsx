@@ -3,7 +3,7 @@ import { Link } from 'react-router'
 import useNavigationPath from '../../hooks/use-navigation-path'
 import { useSidebarOverlay } from '../../hooks/use-sidebar-overlay'
 import { useStore } from '../../hooks/use-store'
-import AboutSvg from '../sidebar/svg/About-svg'
+import ActivationSvg from '../svg/Activation-svg'
 import LogoFullSvg from '../svg/Logo-full-svg'
 import PencilSvg from '../svg/Pencil-svg'
 import BurgerMenuButton from './buttons/Burger-menu-button'
@@ -42,7 +42,7 @@ const Header = observer(() => {
 					{authStore.user?.isActive === false && (
 						<Link to={navigateToActivation}>
 							<HeaderSvgButton title={'Активация аккаунта'}>
-								<AboutSvg className={'size-5'} />
+								<ActivationSvg className={'size-5'} />
 							</HeaderSvgButton>
 						</Link>
 					)}
