@@ -1,4 +1,5 @@
 import { FC, useState } from 'react'
+import { Link } from 'react-router'
 import ArrowBottomSvg from '../../../../../components/header/svg/Arrow-bottom-svg'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal'
 import ReleaseMediaStatusIcon from '../../../../../components/release-media/Release-media-status-icon'
@@ -12,6 +13,8 @@ import { SortOrder } from '../../../../../types/sort-order-type'
 import { getReleaseMediaStatusColor } from '../../../../../utils/get-release-media-status-color'
 import AdminDeleteButton from '../../buttons/Admin-delete-button'
 import AdminEditButton from '../../buttons/Admin-edit-button'
+import AdminNavigateButton from '../../buttons/Admin-navigate-button'
+import MediaFormModal from './Media-form-modal'
 
 interface IProps {
 	className?: string
@@ -33,9 +36,11 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 	refetch,
 }) => {
 	const { adminDashboardMediaStore, notificationStore } = useStore()
+
 	const { navigateToRelease } = useCustomNavigate()
 
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
+	const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
 
 	const { execute: deleteMedia, isLoading: isDeleting } = useLoading(
 		adminDashboardMediaStore.deleteReleaseMedia
@@ -89,6 +94,14 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 							onConfirm={() => handleDelete(media.id)}
 							onCancel={() => setConfModalOpen(false)}
 							isLoading={isDeleting}
+						/>
+					)}
+
+					{editModalOpen && (
+						<MediaFormModal
+							isOpen={editModalOpen}
+							onClose={() => setEditModalOpen(false)}
+							media={media}
 						/>
 					)}
 				</>
@@ -162,7 +175,7 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='col-span-2 text-ellipsis line-clamp-1 font-medium'>
+				<div className='col-span-1 text-ellipsis line-clamp-1 font-medium'>
 					{media ? (
 						<div
 							className={`flex gap-x-1 items-center ${getReleaseMediaStatusColor(
@@ -180,10 +193,13 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='col-span-1'>
+				<div className='col-span-2 text-center'>
 					{media ? (
 						<div className='flex gap-x-3 justify-end'>
-							<AdminEditButton onClick={() => {}} />
+							<Link to={media.url} target='_blank'>
+								<AdminNavigateButton onClick={() => {}} />
+							</Link>
+							<AdminEditButton onClick={() => setEditModalOpen(true)} />
 							<AdminDeleteButton
 								onClick={() => {
 									setConfModalOpen(true)

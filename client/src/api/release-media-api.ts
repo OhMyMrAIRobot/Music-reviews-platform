@@ -72,6 +72,24 @@ export const ReleaseMediaAPI = {
 		return data
 	},
 
+	async adminPostReleaseMedia(
+		title: string,
+		url: string,
+		releaseId: string,
+		releaseMediaTypeId: string,
+		releaseMediaStatusId: string
+	): Promise<IReleaseMedia> {
+		const { data } = await api.post<IReleaseMedia>(`/release-media/admin`, {
+			title,
+			url,
+			releaseId,
+			releaseMediaTypeId,
+			releaseMediaStatusId,
+		})
+
+		return data
+	},
+
 	async updateReleaseMedia(
 		id: string,
 		updateData: { title?: string; url?: string }
@@ -79,6 +97,28 @@ export const ReleaseMediaAPI = {
 		const { data } = await api.patch<IReleaseMedia>(`/release-media/${id}`, {
 			...updateData,
 		})
+
+		return data
+	},
+
+	async adminUpdateReleaseMedia(
+		id: string,
+		title?: string,
+		url?: string,
+		releaseId?: string,
+		releaseMediaTypeId?: string,
+		releaseMediaStatusId?: string
+	): Promise<IReleaseMedia> {
+		const { data } = await api.patch<IReleaseMedia>(
+			`/release-media/admin/${id}`,
+			{
+				title,
+				url,
+				releaseId,
+				releaseMediaStatusId,
+				releaseMediaTypeId,
+			}
+		)
 
 		return data
 	},

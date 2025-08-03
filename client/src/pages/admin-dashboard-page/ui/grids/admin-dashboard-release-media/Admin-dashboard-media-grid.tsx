@@ -1,3 +1,4 @@
+import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
 import AdminHeader from '../../../../../components/admin-header/Admin-header'
 import Pagination from '../../../../../components/pagination/Pagination'
@@ -10,13 +11,15 @@ import { ReleaseMediaTypesFilterOptions } from '../../../../../models/release-me
 import { SortOrderEnum } from '../../../../../models/sort/sort-order-enum'
 import { SortOrder } from '../../../../../types/sort-order-type'
 import AdminFilterButton from '../../buttons/Admin-filter-button'
-import AdminDashboardMediaGridItem from './admin-dashboard-media-grid-item'
+import AdminDashboardMediaGridItem from './Admin-dashboard-media-grid-item'
+import MediaFormModal from './Media-form-modal'
 
-const AdminDashboardMediaGrid = () => {
+const AdminDashboardMediaGrid = observer(() => {
 	const perPage = 10
 
 	const { metaStore, adminDashboardMediaStore } = useStore()
 
+	const [addModalOpen, setAddModalOpen] = useState<boolean>(false)
 	const [searchText, setSearchText] = useState<string>('')
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [activeStatus, setActiveStatus] = useState<string>(
@@ -70,7 +73,6 @@ const AdminDashboardMediaGrid = () => {
 		if (metaStore.releaseMediaTypes.length === 0) {
 			fetchTypes()
 		}
-
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
@@ -88,6 +90,14 @@ const AdminDashboardMediaGrid = () => {
 	return (
 		<div className='flex flex-col h-screen' id='admin-media'>
 			<AdminHeader title={'Медиаматериалы'} setText={setSearchText} />
+
+			{!isTypesLoading && !isStatusesLoading && (
+				<MediaFormModal
+					isOpen={addModalOpen}
+					onClose={() => setAddModalOpen(false)}
+					refetch={fetchMedia}
+				/>
+			)}
 
 			<div id='admin-media-grid' className='flex flex-col overflow-hidden p-5'>
 				<div className='flex mb-2 text-white/80 border-b border-white/10'>
@@ -114,6 +124,14 @@ const AdminDashboardMediaGrid = () => {
 									onClick={() => setActiveStatus(option)}
 								/>
 						  ))}
+
+					<div className='ml-auto'>
+						<AdminFilterButton
+							title={'Добавить медиа'}
+							isActive={false}
+							onClick={() => setAddModalOpen(true)}
+						/>
+					</div>
 				</div>
 
 				<div className='flex mb-5 text-white/80 border-b border-white/10'>
@@ -193,6 +211,6 @@ const AdminDashboardMediaGrid = () => {
 			</div>
 		</div>
 	)
-}
+})
 
 export default AdminDashboardMediaGrid
