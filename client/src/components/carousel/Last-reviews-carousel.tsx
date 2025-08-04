@@ -93,7 +93,7 @@ const LastReviewsCarousel = observer(
 								),
 							}).map((_, idx) => (
 								<div
-									className='flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_33%]  px-1'
+									className='flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_33%] px-1'
 									key={idx}
 								>
 									<div className={`grid grid-rows-${rowCount} gap-4`}>

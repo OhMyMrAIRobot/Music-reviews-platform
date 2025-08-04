@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { runInAction } from 'mobx'
 
 export const toggleFav = async (

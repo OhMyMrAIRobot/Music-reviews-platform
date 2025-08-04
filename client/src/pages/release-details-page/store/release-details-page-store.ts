@@ -4,6 +4,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { ReleaseAPI } from '../../../api/release-api'
 import { ReleaseMediaAPI } from '../../../api/release-media-api'
 import { ReviewAPI } from '../../../api/review-api'
+import { UserFavMediaAPI } from '../../../api/user-fav-media-api'
 import { IReleaseMedia } from '../../../models/release-media/release-media'
 import { IReleaseMediaList } from '../../../models/release-media/release-media-list'
 import { IReleaseDetails } from '../../../models/release/release-details'
@@ -268,6 +269,35 @@ class ReleaseDetailsPageStore {
 					? 'Не удалось убрать рецензию из списка понравившихся!'
 					: 'Не удалось отметить рецензию как понравившеюся!',
 			}
+		}
+	}
+
+	toggleFavMedia = async (
+		mediaId: string,
+		isFav: boolean
+	): Promise<string[]> => {
+		try {
+			if (!isFav) {
+				await UserFavMediaAPI.addToFav(mediaId)
+			} else {
+				await UserFavMediaAPI.deleteFromFav(mediaId)
+			}
+
+			const newLikes = await UserFavMediaAPI.fetchMediaUserIds(mediaId)
+
+			const idx = await this.releaseMedia.findIndex(rm => rm.id === mediaId)
+
+			if (idx !== -1) {
+				runInAction(() => {
+					this.releaseMedia[idx].userFavMedia = newLikes
+				})
+			}
+
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
 		}
 	}
 }

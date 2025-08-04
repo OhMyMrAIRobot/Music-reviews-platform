@@ -1,7 +1,9 @@
-import { makeAutoObservable } from 'mobx'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { makeAutoObservable, runInAction } from 'mobx'
 import { ReleaseAPI } from '../../../api/release-api'
 import { ReleaseMediaAPI } from '../../../api/release-media-api.ts'
 import { ReviewAPI } from '../../../api/review-api'
+import { UserFavMediaAPI } from '../../../api/user-fav-media-api.ts'
 import { IReleaseMedia } from '../../../models/release-media/release-media.ts'
 import { IRelease } from '../../../models/release/release'
 import { IReview } from '../../../models/review/review.ts'
@@ -110,6 +112,35 @@ class MainPageStore {
 			this.setReleaseMedia(data.releaseMedia)
 		} catch {
 			this.setReleaseMedia([])
+		}
+	}
+
+	toggleFavMedia = async (
+		mediaId: string,
+		isFav: boolean
+	): Promise<string[]> => {
+		try {
+			if (!isFav) {
+				await UserFavMediaAPI.addToFav(mediaId)
+			} else {
+				await UserFavMediaAPI.deleteFromFav(mediaId)
+			}
+
+			const newLikes = await UserFavMediaAPI.fetchMediaUserIds(mediaId)
+
+			const idx = await this.releaseMedia.findIndex(rm => rm.id === mediaId)
+
+			if (idx !== -1) {
+				runInAction(() => {
+					this.releaseMedia[idx].userFavMedia = newLikes
+				})
+			}
+
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
 		}
 	}
 }

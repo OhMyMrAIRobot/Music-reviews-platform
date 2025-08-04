@@ -12,6 +12,7 @@ import ReleaseMediaReview from '../../../../../components/release-media/Release-
 import { IReleaseMedia } from '../../../../../models/release-media/release-media'
 import { CarouselRef } from '../../../../../types/carousel-ref'
 import { CarouselStateCallbacks } from '../../../../../types/carousel-state-callbacks'
+import mainPageStore from '../../../store/main-page-store'
 
 interface IProps extends CarouselStateCallbacks {
 	items: IReleaseMedia[]
@@ -87,6 +88,7 @@ const ReleaseMediaReviewsCarousel = observer(
 												isLoading={isLoading}
 												media={item}
 												key={item.id}
+												toggleFav={mainPageStore.toggleFavMedia}
 											/>
 									  ))}
 							</div>

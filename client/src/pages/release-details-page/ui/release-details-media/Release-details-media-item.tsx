@@ -1,7 +1,11 @@
-import { FC } from 'react'
+import { observer } from 'mobx-react-lite'
+import { FC, useState } from 'react'
 import HourglassSvg from '../../../../components/svg/Hourglass-svg'
 import RejectSvg from '../../../../components/svg/Reject-svg'
+import { useAuth } from '../../../../hooks/use-auth'
+import { useStore } from '../../../../hooks/use-store'
 import { ReleaseMediaStatusesEnum } from '../../../../models/release-media-status/release-media-statuses-enum'
+import { ReleaseMediaTypesEnum } from '../../../../models/release-media-type/release-media-types-enum'
 import { IReleaseMedia } from '../../../../models/release-media/release-media'
 import { parseYoutubeId } from '../../../../utils/parse-youtube-id'
 
@@ -9,9 +13,55 @@ interface IProps {
 	releaseMedia: IReleaseMedia
 }
 
-const ReleaseDetailsMediaItem: FC<IProps> = ({ releaseMedia }) => {
+const ReleaseDetailsMediaItem: FC<IProps> = observer(({ releaseMedia }) => {
+	const { authStore, notificationStore, releaseDetailsPageStore } = useStore()
+
+	const { checkAuth } = useAuth()
+
 	const isApproved =
 		releaseMedia.releaseMediaStatus.status === ReleaseMediaStatusesEnum.APPROVED
+
+	const isFav =
+		releaseMedia.userFavMedia.some(
+			item => item.userId === authStore.user?.id
+		) ?? false
+
+	const [toggling, setToggling] = useState<boolean>(false)
+	const [show, setShow] = useState<boolean>(false)
+
+	const handleClickFav = async (e: React.MouseEvent) => {
+		e.preventDefault()
+		setToggling(true)
+
+		if (!checkAuth()) {
+			setToggling(false)
+			return
+		}
+
+		if (authStore.user?.id === releaseMedia.user?.id) {
+			notificationStore.addErrorNotification(
+				'Вы не можете отметить свою медиарецензию как понравившеюся!'
+			)
+			setToggling(false)
+			return
+		}
+
+		const errors = await releaseDetailsPageStore.toggleFavMedia(
+			releaseMedia.id,
+			isFav
+		)
+
+		if (errors.length === 0) {
+			notificationStore.addSuccessNotification(
+				isFav
+					? 'Вы успешно убрали медиарецензию из списка понравившихся!'
+					: 'Вы успешно отметили медиарецензию как понравившеюся!'
+			)
+		} else {
+			errors.forEach(err => notificationStore.addErrorNotification(err))
+		}
+		setToggling(false)
+	}
 
 	return (
 		<div className={`w-[230px]`}>
@@ -21,7 +71,44 @@ const ReleaseDetailsMediaItem: FC<IProps> = ({ releaseMedia }) => {
 				className={`block p-1.5 rounded-lg bg-zinc-900 border  relative ${
 					isApproved ? 'border-white/10' : 'border-white/1'
 				}`}
+				onMouseEnter={() => setShow(true)}
+				onMouseLeave={() => setShow(false)}
 			>
+				{releaseMedia.releaseMediaStatus.status ===
+					ReleaseMediaStatusesEnum.APPROVED &&
+					releaseMedia.releaseMediaType.type ===
+						ReleaseMediaTypesEnum.MEDIA_REVIEW && (
+						<button
+							onClick={handleClickFav}
+							disabled={toggling}
+							className={`${
+								show ? 'opacity-100' : 'xl:pointer-events-none xl:opacity-0'
+							} ${
+								toggling ? 'pointer-events-none opacity-50' : ''
+							} absolute right-2 top-2 rounded-full bg-gray-600/50 px-2 py-1 cursor-pointer z-10 transition-all duration-200 flex gap-x-0.5 items-center group`}
+						>
+							<img
+								loading='lazy'
+								decoding='async'
+								alt={'heart'}
+								src={`${
+									import.meta.env.VITE_SERVER_URL
+								}/public/assets/heart.png`}
+								className={`w-5 lg:w-7 transition-opacity duration-300 ${
+									isFav ? 'opacity-100' : 'opacity-50'
+								} ${
+									toggling ? '' : 'hover:opacity-100 group-hover:opacity-100'
+								}`}
+							/>
+
+							{releaseMedia.userFavMedia.length > 0 && (
+								<span className='font-bold text-sm'>
+									{releaseMedia.userFavMedia.length}
+								</span>
+							)}
+						</button>
+					)}
+
 				<img
 					alt={releaseMedia.title}
 					loading='lazy'
@@ -60,8 +147,12 @@ const ReleaseDetailsMediaItem: FC<IProps> = ({ releaseMedia }) => {
 					{releaseMedia.title}
 				</span>
 			</a>
+
+			<span className='text-sm font-medium text-white/50'>
+				{releaseMedia.releaseMediaType.type}
+			</span>
 		</div>
 	)
-}
+})
 
 export default ReleaseDetailsMediaItem
