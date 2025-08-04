@@ -9,7 +9,9 @@ interface IProps {
 	href: string
 	handlePrev: () => void
 	handleNext: () => void
-	Carousel: ReactNode
+	canScrollNext: boolean
+	canScrollPrev: boolean
+	carousel: ReactNode
 }
 
 const CarouselContainer: FC<IProps> = ({
@@ -19,7 +21,9 @@ const CarouselContainer: FC<IProps> = ({
 	href,
 	handlePrev,
 	handleNext,
-	Carousel,
+	canScrollNext,
+	canScrollPrev,
+	carousel,
 }) => {
 	return (
 		<section className='2xl:container w-full flex flex-col items-center gap-y-2 select-none'>
@@ -39,16 +43,18 @@ const CarouselContainer: FC<IProps> = ({
 							isNext={false}
 							handlePrev={handlePrev}
 							handleNext={handleNext}
+							disabled={!canScrollPrev}
 						/>
 						<CarouselNavButton
 							isNext={true}
 							handlePrev={handlePrev}
 							handleNext={handleNext}
+							disabled={!canScrollNext}
 						/>
 					</div>
 				</div>
 			</div>
-			{Carousel}
+			{carousel}
 		</section>
 	)
 }

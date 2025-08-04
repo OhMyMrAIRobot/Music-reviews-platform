@@ -33,7 +33,7 @@ const LastReleases = () => {
 			handleNext={() => {
 				carouselRef.current?.scrollNext()
 			}}
-			Carousel={
+			carousel={
 				<LastReleasesCarousel
 					items={mainPageStore.lastReleases}
 					isLoading={isLoading}

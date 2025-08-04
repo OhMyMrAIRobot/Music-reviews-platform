@@ -36,7 +36,7 @@ const AuthorDetailsReleasesCarousel = observer(() => {
 			handleNext={() => {
 				carouselRef.current?.scrollNext()
 			}}
-			Carousel={
+			carousel={
 				<LastReleasesCarousel
 					items={authorDetailsPageStore.topReleases}
 					isLoading={isLoading}

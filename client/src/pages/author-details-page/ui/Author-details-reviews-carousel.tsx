@@ -38,7 +38,7 @@ const AuthorDetailsReviewsCarousel = () => {
 			href={'#'}
 			handlePrev={handlePrev}
 			handleNext={handleNext}
-			Carousel={
+			carousel={
 				<LastReviewsCarousel
 					ref={carouselRef}
 					isLoading={isLoading}

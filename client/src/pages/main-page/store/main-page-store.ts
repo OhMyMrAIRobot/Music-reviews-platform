@@ -1,6 +1,8 @@
 import { makeAutoObservable } from 'mobx'
 import { ReleaseAPI } from '../../../api/release-api'
+import { ReleaseMediaAPI } from '../../../api/release-media-api.ts'
 import { ReviewAPI } from '../../../api/review-api'
+import { IReleaseMedia } from '../../../models/release-media/release-media.ts'
 import { IRelease } from '../../../models/release/release'
 import { IReview } from '../../../models/review/review.ts'
 import { TogglePromiseResult } from '../../../types/toggle-promise-result'
@@ -14,6 +16,7 @@ class MainPageStore {
 	mostReviewedReleases: IRelease[] = []
 	lastReleases: IRelease[] = []
 	lastReviews: IReview[] = []
+	releaseMedia: IReleaseMedia[] = []
 
 	setMostReviewedReleases(data: IRelease[]) {
 		this.mostReviewedReleases = data
@@ -27,12 +30,16 @@ class MainPageStore {
 		this.lastReviews = data
 	}
 
+	setReleaseMedia(data: IReleaseMedia[]) {
+		this.releaseMedia = data
+	}
+
 	fetchTopReleases = async () => {
 		try {
 			const data = await ReleaseAPI.fetchMostReviewed()
 			this.setMostReviewedReleases(data)
-		} catch (e) {
-			console.log(e)
+		} catch {
+			this.setMostReviewedReleases([])
 		}
 	}
 
@@ -47,8 +54,8 @@ class MainPageStore {
 				0
 			)
 			this.setLastReleases(data.releases)
-		} catch (e) {
-			console.log(e)
+		} catch {
+			this.setLastReleases([])
 		}
 	}
 
@@ -56,8 +63,8 @@ class MainPageStore {
 		try {
 			const data = await ReviewAPI.fetchReviews('asc', 45, 0, null, null)
 			this.setLastReviews(data.reviews)
-		} catch (e) {
-			console.log(e)
+		} catch {
+			this.setLastReviews([])
 		}
 	}
 
@@ -85,6 +92,24 @@ class MainPageStore {
 					? 'Не удалось убрать рецензию из списка понравившихся!'
 					: 'Не удалось отметь рецензию как понравившеюся!',
 			}
+		}
+	}
+
+	fetchReleaseMedia = async (statusId: string, typeId: string) => {
+		try {
+			const data = await ReleaseMediaAPI.fetchReleaseMedia(
+				15,
+				0,
+				statusId,
+				typeId,
+				null,
+				null,
+				null,
+				'desc'
+			)
+			this.setReleaseMedia(data.releaseMedia)
+		} catch {
+			this.setReleaseMedia([])
 		}
 	}
 }

@@ -35,19 +35,19 @@ export const useSidebarGroups = () => {
 			href: navigateToMain,
 			icon: <HomeSvg className='size-5' />,
 			label: 'Главная',
-			active: isActive(`/${ROUTES.MAIN}`),
+			active: isActive(ROUTES.MAIN),
 		},
 		{
 			href: navigateToMain,
 			icon: <QuestionSvg className='size-5 fill-white' />,
 			label: 'Часто задаваемые вопросы',
-			active: isActive(`/${ROUTES.MAIN}`),
+			active: isActive('123'),
 		},
 		{
 			href: navigateToMain,
 			icon: <AboutSvg className='size-6 fill-white' />,
 			label: 'О нас',
-			active: isActive(`/${ROUTES.MAIN}`),
+			active: isActive('456'),
 		},
 	]
 
@@ -101,7 +101,7 @@ export const useSidebarGroups = () => {
 			href: navigateToActivation,
 			icon: <ActivationSvg className='size-5' />,
 			label: 'Активация',
-			active: isActive(`/${ROUTES.AUTH.ACTIVATE}`),
+			active: isActive(`/${ROUTES.AUTH.PREFIX}/${ROUTES.AUTH.ACTIVATE}`),
 		})
 	}
 
