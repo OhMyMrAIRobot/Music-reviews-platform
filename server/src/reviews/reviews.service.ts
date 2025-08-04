@@ -252,7 +252,7 @@ export class ReviewsService {
           { text: { not: null } },
           { userId: { equals: query.userId } },
           {
-            UserFavReviews: query.favUserId
+            userFavReviews: query.favUserId
               ? { some: { userId: query.favUserId } }
               : undefined,
           },

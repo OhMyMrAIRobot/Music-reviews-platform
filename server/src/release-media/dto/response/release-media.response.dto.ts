@@ -1,6 +1,16 @@
 import { Exclude, Expose, Transform, Type } from 'class-transformer';
 import { formatFullDate } from 'src/utils/format-full-date';
 
+type UserWithProfileAndRank = {
+  profile: {
+    points: number;
+    avatar: string;
+  } | null;
+  topUsersLeaderboard: {
+    rank: number;
+  } | null;
+};
+
 class ReleaseMediaStatus {
   @Expose()
   id: string;
@@ -23,6 +33,21 @@ class ReleaseMediaUser {
 
   @Expose()
   nickname: string;
+
+  @Expose()
+  @Transform(({ obj }: { obj: UserWithProfileAndRank }) => obj.profile?.avatar)
+  avatar: string;
+
+  @Expose()
+  @Transform(({ obj }: { obj: UserWithProfileAndRank }) => obj.profile?.points)
+  points: number;
+
+  @Expose()
+  @Transform(
+    ({ obj }: { obj: UserWithProfileAndRank }) =>
+      obj.topUsersLeaderboard?.rank ?? null,
+  )
+  position: number | null;
 }
 
 class ReleaseMediaRelease {
@@ -34,6 +59,14 @@ class ReleaseMediaRelease {
 
   @Expose()
   img: string;
+}
+
+class UserFavMedia {
+  @Expose()
+  mediaId: string;
+
+  @Expose()
+  userId: string;
 }
 
 export class ReleaseMediaResponseDto {
@@ -56,11 +89,15 @@ export class ReleaseMediaResponseDto {
 
   @Expose()
   @Type(() => ReleaseMediaUser)
-  user: ReleaseMediaUser | null;
+  user: ReleaseMediaUser | null = null;
 
   @Expose()
   @Type(() => ReleaseMediaRelease)
   release: ReleaseMediaRelease;
+
+  @Expose()
+  @Type(() => UserFavMedia)
+  userFavMedia: UserFavMedia[] = [];
 
   @Expose()
   @Transform(({ value }) => formatFullDate(value as Date))

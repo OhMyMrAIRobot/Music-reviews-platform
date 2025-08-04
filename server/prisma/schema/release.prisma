@@ -6,15 +6,15 @@ model Release {
   releaseTypeId String   @map("release_type_id")
   createdAt     DateTime @default(now()) @map("created_at")
 
-  ReleaseType ReleaseType @relation(fields: [releaseTypeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  releaseType ReleaseType @relation(fields: [releaseTypeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-  ReleaseProducer ReleaseProducer[]
-  ReleaseArtist   ReleaseArtist[]
-  ReleaseDesigner ReleaseDesigner[]
-  Review          Review[]
-  ReleaseRating   ReleaseRating[]
-  UserFavRelease  UserFavRelease[]
-  ReleaseMedia    ReleaseMedia[]
+  releaseProducer ReleaseProducer[]
+  releaseArtist   ReleaseArtist[]
+  releaseDesigner ReleaseDesigner[]
+  review          Review[]
+  releaseRating   ReleaseRating[]
+  userFavRelease  UserFavRelease[]
+  releaseMedia    ReleaseMedia[]
 
   @@map("Releases")
 }
@@ -22,7 +22,7 @@ model Release {
 model ReleaseType {
   id      String    @id @default(cuid())
   type    String    @unique @db.VarChar(30)
-  Release Release[]
+  release Release[]
 
   @@map("Release_types")
 }
@@ -77,6 +77,7 @@ model ReleaseMedia {
   user               User?              @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   releaseMediaType   ReleaseMediaType   @relation(fields: [releaseMediaTypeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   releaseMediaStatus ReleaseMediaStatus @relation(fields: [releaseMediaStatusId], references: [id])
+  userFavMedia       UserFavMedia[]
 
   @@unique([releaseId, userId])
   @@map("Release_media")
@@ -85,7 +86,7 @@ model ReleaseMedia {
 model ReleaseMediaType {
   id           String         @id @default(cuid())
   type         String         @db.VarChar(30)
-  ReleaseMedia ReleaseMedia[]
+  releaseMedia ReleaseMedia[]
 
   @@map("Release_media_types")
 }
@@ -93,7 +94,7 @@ model ReleaseMediaType {
 model ReleaseMediaStatus {
   id           String         @id @default(cuid())
   status       String         @db.VarChar(30)
-  ReleaseMedia ReleaseMedia[]
+  releaseMedia ReleaseMedia[]
 
   @@map("Release_media_statuses")
 }

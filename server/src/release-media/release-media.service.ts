@@ -1,5 +1,5 @@
 import { ConflictException, Injectable } from '@nestjs/common';
-import { Prisma, ReleaseMedia } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
 import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
@@ -60,6 +60,7 @@ export class ReleaseMediaService {
         release: {
           select: { id: true, title: true, img: true },
         },
+        userFavMedia: true,
       },
     });
 
@@ -153,14 +154,21 @@ export class ReleaseMediaService {
           releaseMediaStatus: true,
           releaseMediaType: true,
           user: {
-            select: { id: true, nickname: true },
+            select: {
+              id: true,
+              nickname: true,
+              profile: { select: { avatar: true, points: true } },
+              topUsersLeaderboard: { select: { rank: true } },
+            },
           },
           release: {
             select: { id: true, title: true, img: true },
           },
+          userFavMedia: true,
         },
       }),
     ]);
+
     return {
       count,
       releaseMedia: plainToInstance(ReleaseMediaResponseDto, items, {
@@ -184,6 +192,7 @@ export class ReleaseMediaService {
         release: {
           select: { id: true, title: true, img: true },
         },
+        userFavMedia: true,
       },
     });
 
@@ -259,6 +268,7 @@ export class ReleaseMediaService {
         release: {
           select: { id: true, title: true, img: true },
         },
+        userFavMedia: true,
       },
     });
 
@@ -288,9 +298,13 @@ export class ReleaseMediaService {
     return count > 0;
   }
 
-  private async findById(id: string): Promise<ReleaseMedia> {
+  async findById(id: string) {
     const result = await this.prisma.releaseMedia.findUnique({
       where: { id },
+      include: {
+        releaseMediaStatus: true,
+        releaseMediaType: true,
+      },
     });
 
     if (!result) {

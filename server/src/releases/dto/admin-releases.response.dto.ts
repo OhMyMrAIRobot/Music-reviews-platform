@@ -28,8 +28,8 @@ class ReleaseTypeDto {
 
 type ReleaseWithRelations = Prisma.ReleaseGetPayload<{
   include: {
-    ReleaseType: true;
-    ReleaseArtist: {
+    releaseType: true;
+    releaseArtist: {
       include: {
         author: {
           select: {
@@ -39,7 +39,7 @@ type ReleaseWithRelations = Prisma.ReleaseGetPayload<{
         };
       };
     };
-    ReleaseProducer: {
+    releaseProducer: {
       include: {
         author: {
           select: {
@@ -49,7 +49,7 @@ type ReleaseWithRelations = Prisma.ReleaseGetPayload<{
         };
       };
     };
-    ReleaseDesigner: {
+    releaseDesigner: {
       include: {
         author: {
           select: {
@@ -83,7 +83,7 @@ export class AdminReleaseDto {
   @Type(() => ReleaseTypeDto)
   @Transform(
     ({ obj }: { obj: ReleaseWithRelations }) =>
-      new ReleaseTypeDto(obj.ReleaseType),
+      new ReleaseTypeDto(obj.releaseType),
   )
   releaseType: ReleaseTypeDto;
 
@@ -93,21 +93,21 @@ export class AdminReleaseDto {
   @Expose()
   @Type(() => AuthorDto)
   @Transform(({ obj }: { obj: ReleaseWithRelations }) =>
-    obj.ReleaseArtist.map((ra) => new AuthorDto(ra.author)),
+    obj.releaseArtist.map((ra) => new AuthorDto(ra.author)),
   )
   releaseArtists: AuthorDto[];
 
   @Expose()
   @Type(() => AuthorDto)
   @Transform(({ obj }: { obj: ReleaseWithRelations }) =>
-    obj.ReleaseProducer.map((rp) => new AuthorDto(rp.author)),
+    obj.releaseProducer.map((rp) => new AuthorDto(rp.author)),
   )
   releaseProducers: AuthorDto[];
 
   @Expose()
   @Type(() => AuthorDto)
   @Transform(({ obj }: { obj: ReleaseWithRelations }) =>
-    obj.ReleaseDesigner.map((rd) => new AuthorDto(rd.author)),
+    obj.releaseDesigner.map((rd) => new AuthorDto(rd.author)),
   )
   releaseDesigners: AuthorDto[];
 

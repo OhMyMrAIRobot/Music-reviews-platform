@@ -27,6 +27,7 @@ import { UsersModule } from './users/users.module';
 import { ReleaseMediaStatusesModule } from './release-media-statuses/release-media-statuses.module';
 import { ReleaseMediaTypesModule } from './release-media-types/release-media-types.module';
 import { ReleaseMediaModule } from './release-media/release-media.module';
+import { UserFavMediaModule } from './user-fav-media/user-fav-media.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { ReleaseMediaModule } from './release-media/release-media.module';
     ReleaseMediaStatusesModule,
     ReleaseMediaTypesModule,
     ReleaseMediaModule,
+    UserFavMediaModule,
   ],
   controllers: [],
   providers: [],

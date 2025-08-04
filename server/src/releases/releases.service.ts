@@ -92,13 +92,13 @@ export class ReleasesService {
         publishDate: createReleaseDto.publishDate,
         img: coverImg,
         releaseTypeId: createReleaseDto.releaseTypeId,
-        ReleaseArtist: {
+        releaseArtist: {
           create: artistConnections,
         },
-        ReleaseProducer: {
+        releaseProducer: {
           create: producerConnections,
         },
-        ReleaseDesigner: {
+        releaseDesigner: {
           create: designerConnections,
         },
       },
@@ -108,7 +108,7 @@ export class ReleasesService {
   }
 
   async findAll(query: ReleasesQueryDto): Promise<AdminReleasesResponseDto> {
-    const { limit = 10, offset = 0, typeId, query: searchQuery, order } = query;
+    const { limit, offset, typeId, query: searchQuery, order } = query;
 
     if (typeId) {
       await this.releaseTypesService.findOne(typeId);
@@ -124,21 +124,21 @@ export class ReleasesService {
       const orConditions: Prisma.ReleaseWhereInput[] = [
         { title: { contains: searchQuery, mode: 'insensitive' } },
         {
-          ReleaseArtist: {
+          releaseArtist: {
             some: {
               author: { name: { contains: searchQuery, mode: 'insensitive' } },
             },
           },
         },
         {
-          ReleaseProducer: {
+          releaseProducer: {
             some: {
               author: { name: { contains: searchQuery, mode: 'insensitive' } },
             },
           },
         },
         {
-          ReleaseDesigner: {
+          releaseDesigner: {
             some: {
               author: { name: { contains: searchQuery, mode: 'insensitive' } },
             },
@@ -159,8 +159,8 @@ export class ReleasesService {
         skip: offset,
         orderBy: [{ publishDate: order ?? 'desc' }, { id: 'desc' }],
         include: {
-          ReleaseType: true,
-          ReleaseArtist: {
+          releaseType: true,
+          releaseArtist: {
             include: {
               author: {
                 select: {
@@ -170,7 +170,7 @@ export class ReleasesService {
               },
             },
           },
-          ReleaseProducer: {
+          releaseProducer: {
             include: {
               author: {
                 select: {
@@ -180,7 +180,7 @@ export class ReleasesService {
               },
             },
           },
-          ReleaseDesigner: {
+          releaseDesigner: {
             include: {
               author: {
                 select: {
@@ -272,7 +272,7 @@ export class ReleasesService {
             where: { releaseId: id },
           });
 
-          data.ReleaseArtist = {
+          data.releaseArtist = {
             create: updateReleaseDto.releaseArtists.map((authorId) => ({
               author: { connect: { id: authorId } },
             })),
@@ -284,7 +284,7 @@ export class ReleasesService {
             where: { releaseId: id },
           });
 
-          data.ReleaseProducer = {
+          data.releaseProducer = {
             create: updateReleaseDto.releaseProducers.map((authorId) => ({
               author: { connect: { id: authorId } },
             })),
@@ -296,7 +296,7 @@ export class ReleasesService {
             where: { releaseId: id },
           });
 
-          data.ReleaseDesigner = {
+          data.releaseDesigner = {
             create: updateReleaseDto.releaseDesigners.map((authorId) => ({
               author: { connect: { id: authorId } },
             })),
@@ -516,9 +516,10 @@ export class ReleasesService {
 
     const field = query.field ? fieldMap[query.field] : fieldMap['published'];
     const order = query.order ? query.order : 'desc';
-    const limit = query.limit ? query.limit : 20;
-    const offset = query.offset ? query.offset : 0;
+    // const limit = query.limit ? query.limit : 20;
+    // const offset = query.offset ? query.offset : 0;
     const title = query.query ?? null;
+    const { limit, offset } = query;
 
     const count = await this.prisma.release.count({
       where: {
@@ -580,7 +581,7 @@ export class ReleasesService {
       SELECT id, title, img, release_type, text_count, no_text_count, author, ratings
       FROM release_data rd
       ORDER BY ${field} ${order}, id ASC
-      LIMIT ${limit} OFFSET ${offset}
+      ${limit !== undefined ? `LIMIT ${limit}` : ''} ${offset !== undefined ? `OFFSET ${offset}` : ''}
     `;
 
     const releases =
@@ -593,8 +594,8 @@ export class ReleasesService {
     const release = await this.prisma.release.findUnique({
       where: { id },
       include: {
-        ReleaseType: true,
-        ReleaseArtist: {
+        releaseType: true,
+        releaseArtist: {
           include: {
             author: {
               select: {
@@ -604,7 +605,7 @@ export class ReleasesService {
             },
           },
         },
-        ReleaseProducer: {
+        releaseProducer: {
           include: {
             author: {
               select: {
@@ -614,7 +615,7 @@ export class ReleasesService {
             },
           },
         },
-        ReleaseDesigner: {
+        releaseDesigner: {
           include: {
             author: {
               select: {

@@ -11,13 +11,14 @@ model User {
 
   profile             UserProfile?
   refreshToken        RefreshToken?
-  Review              Review[]
-  UserFavRelease      UserFavRelease[]
-  UserFavReviews      UserFavReview[]
-  UserFavAuthor       UserFavAuthor[]
-  TopUsersLeaderboard TopUsersLeaderboard?
-  FeedbackResponse    FeedbackResponse[]
-  ReleaseMedia        ReleaseMedia[]
+  review              Review[]
+  userFavRelease      UserFavRelease[]
+  userFavReviews      UserFavReview[]
+  userFavAuthor       UserFavAuthor[]
+  topUsersLeaderboard TopUsersLeaderboard?
+  feedbackResponse    FeedbackResponse[]
+  releaseMedia        ReleaseMedia[]
+  userFavMedia        UserFavMedia[]
 
   @@map("Users")
 }
@@ -73,6 +74,17 @@ model UserFavAuthor {
 
   @@unique([userId, authorId])
   @@map("User_fav_authors")
+}
+
+model UserFavMedia {
+  userId  String @map("user_id")
+  mediaId String @map("media_id")
+
+  user  User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  media ReleaseMedia @relation(fields: [mediaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([userId, mediaId])
+  @@map("User_fav_media")
 }
 
 model TopUsersLeaderboard {
