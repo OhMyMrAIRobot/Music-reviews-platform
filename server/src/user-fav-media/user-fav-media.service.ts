@@ -18,9 +18,15 @@ export class UserFavMediaService {
     await this.usersService.findOne(userId);
     const media = await this.releaseMediaService.findById(mediaId);
 
+    if (media.userId === userId) {
+      throw new ConflictException(
+        'Вы не можете отметить свою медиарецензию как понравившеюся!',
+      );
+    }
+
     if (
       media.releaseMediaStatus.status !==
-        (ReleaseMediaStatusesEnum.APPROVED as string) &&
+        (ReleaseMediaStatusesEnum.APPROVED as string) ||
       media.releaseMediaType.type !==
         (ReleaseMediaTypesEnum.MEDIA_REVIEW as string)
     ) {

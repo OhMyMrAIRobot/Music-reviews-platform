@@ -178,40 +178,6 @@ async function main() {
     ],
   });
 
-  await prisma.releaseMediaStatus.createMany({
-    data: [
-      {
-        id: '0',
-        status: ReleaseMediaStatusesEnum.PENDING,
-      },
-      {
-        id: '1',
-        status: ReleaseMediaStatusesEnum.APPROVED,
-      },
-      {
-        id: '2',
-        status: ReleaseMediaStatusesEnum.REJECTED,
-      },
-    ],
-  });
-
-  await prisma.releaseMediaType.createMany({
-    data: [
-      {
-        id: '0',
-        type: ReleaseMediaTypesEnum.MEDIA_REVIEW,
-      },
-      {
-        id: '1',
-        type: ReleaseMediaTypesEnum.MUSIC_VIDEO,
-      },
-      {
-        id: '2',
-        type: ReleaseMediaTypesEnum.MEDIA_MATERIAL,
-      },
-    ],
-  });
-
   await prisma.feedback.createMany({
     data: [
       {
@@ -723,6 +689,44 @@ async function main() {
     ],
   });
 
+  await prisma.releaseMediaStatus.createMany({
+    data: [
+      {
+        id: '0',
+        status: ReleaseMediaStatusesEnum.PENDING,
+      },
+      {
+        id: '1',
+        status: ReleaseMediaStatusesEnum.APPROVED,
+      },
+      {
+        id: '2',
+        status: ReleaseMediaStatusesEnum.REJECTED,
+      },
+    ],
+  });
+
+  await prisma.releaseMediaType.createMany({
+    data: [
+      {
+        id: '0',
+        type: ReleaseMediaTypesEnum.MEDIA_REVIEW,
+      },
+      {
+        id: '1',
+        type: ReleaseMediaTypesEnum.MUSIC_VIDEO,
+      },
+      {
+        id: '2',
+        type: ReleaseMediaTypesEnum.MEDIA_MATERIAL,
+      },
+      {
+        id: '3',
+        type: ReleaseMediaTypesEnum.SNIPPET,
+      },
+    ],
+  });
+
   await prisma.releaseMedia.createMany({
     data: [
       {
@@ -741,6 +745,42 @@ async function main() {
         releaseId: '6',
         releaseMediaTypeId: '2',
         releaseMediaStatusId: '1',
+      },
+      {
+        id: '2',
+        title: 'Markul — MAKE DEPRESSION GREAT AGAIN | Реакция и разбор',
+        url: 'https://www.youtube.com/watch?v=NoJiiOIU2us',
+        releaseId: '5',
+        releaseMediaTypeId: '0',
+        releaseMediaStatusId: '1',
+        userId: '1',
+      },
+      {
+        id: '3',
+        title: 'PHARAOH — 10:13 | Разбор альбома',
+        url: 'https://www.youtube.com/watch?v=1AcqGB6edo8',
+        releaseId: '3',
+        releaseMediaTypeId: '0',
+        releaseMediaStatusId: '1',
+        userId: '1',
+      },
+      {
+        id: '4',
+        title: 'SALUKI — BOLSHIE KURTKI | Реакция и разбор',
+        url: 'https://www.youtube.com/watch?v=MIr5VWegwcY&t=12703s',
+        releaseId: '10',
+        releaseMediaTypeId: '0',
+        releaseMediaStatusId: '1',
+        userId: '1',
+      },
+      {
+        id: '5',
+        title: 'Heronwater — 1ST DAY SMOKE | Разбор трека',
+        url: 'https://www.youtube.com/watch?v=jZmJBTlAg4U',
+        releaseId: '11',
+        releaseMediaTypeId: '0',
+        releaseMediaStatusId: '1',
+        userId: '1',
       },
     ],
   });
