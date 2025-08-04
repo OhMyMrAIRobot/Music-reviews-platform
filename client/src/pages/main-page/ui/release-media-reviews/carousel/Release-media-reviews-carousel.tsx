@@ -27,7 +27,6 @@ const ReleaseMediaReviewsCarousel = observer(
 			const options: EmblaOptionsType = {
 				align: 'start',
 				slidesToScroll: 1,
-				dragFree: true,
 			}
 			const [emblaRef, emblaApi] = useEmblaCarousel(options)
 			const [, setCanScrollPrev] = useState(false)
@@ -75,7 +74,7 @@ const ReleaseMediaReviewsCarousel = observer(
 				<div className='embla w-full'>
 					<div ref={emblaRef} className='embla__viewport pt-2'>
 						<div className='embla__container gap-1 touch-pan-y touch-pinch-zoom gap-x-3'>
-							<div className='flex-[0_0_auto] md:flex-[0_0_450px] md:max-w-[450px]'>
+							<div className='flex-[0_0_100%] md:flex-[0_0_450px] md:max-w-[450px]'>
 								{isLoading
 									? Array.from({ length: 10 }).map((_, idx) => (
 											<ReleaseMediaReview
@@ -84,7 +83,11 @@ const ReleaseMediaReviewsCarousel = observer(
 											/>
 									  ))
 									: items.map(item => (
-											<ReleaseMediaReview isLoading={isLoading} media={item} />
+											<ReleaseMediaReview
+												isLoading={isLoading}
+												media={item}
+												key={item.id}
+											/>
 									  ))}
 							</div>
 						</div>

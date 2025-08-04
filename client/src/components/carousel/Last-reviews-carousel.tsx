@@ -1,13 +1,20 @@
 import { EmblaOptionsType } from 'embla-carousel'
 import useEmblaCarousel from 'embla-carousel-react'
 import { observer } from 'mobx-react-lite'
-import { forwardRef, useImperativeHandle } from 'react'
+import {
+	forwardRef,
+	useCallback,
+	useEffect,
+	useImperativeHandle,
+	useState,
+} from 'react'
 import { IReview } from '../../models/review/review.ts'
 import { CarouselRef } from '../../types/carousel-ref'
+import { CarouselStateCallbacks } from '../../types/carousel-state-callbacks.ts'
 import { TogglePromiseResult } from '../../types/toggle-promise-result'
 import ReviewCard from '../review/review-card/Review-card'
 
-interface IProps {
+interface IProps extends CarouselStateCallbacks {
 	items: IReview[]
 	rowCount: number
 	isLoading: boolean
@@ -19,12 +26,53 @@ interface IProps {
 
 const LastReviewsCarousel = observer(
 	forwardRef<CarouselRef, IProps>(
-		({ items, rowCount, isLoading, storeToggle }, ref) => {
+		(
+			{
+				items,
+				rowCount,
+				isLoading,
+				storeToggle,
+				onCanScrollPrevChange,
+				onCanScrollNextChange,
+			},
+			ref
+		) => {
 			const options: EmblaOptionsType = {
 				align: 'start',
 				slidesToScroll: 'auto',
 			}
 			const [emblaRef, emblaApi] = useEmblaCarousel(options)
+			const [, setCanScrollPrev] = useState(false)
+			const [, setCanScrollNext] = useState(false)
+
+			const updateScrollState = useCallback(() => {
+				if (!emblaApi) return
+
+				const newCanScrollPrev = emblaApi.canScrollPrev()
+				const newCanScrollNext = emblaApi.canScrollNext()
+
+				setCanScrollPrev(newCanScrollPrev)
+				setCanScrollNext(newCanScrollNext)
+
+				onCanScrollPrevChange(newCanScrollPrev)
+				onCanScrollNextChange(newCanScrollNext)
+			}, [emblaApi, onCanScrollPrevChange, onCanScrollNextChange])
+
+			useEffect(() => {
+				if (!emblaApi) return
+
+				updateScrollState()
+
+				emblaApi.on('select', updateScrollState)
+				emblaApi.on('reInit', updateScrollState)
+				emblaApi.on('resize', updateScrollState)
+
+				return () => {
+					emblaApi.off('select', updateScrollState)
+					emblaApi.off('reInit', updateScrollState)
+					emblaApi.off('resize', updateScrollState)
+				}
+			}, [emblaApi, updateScrollState])
 
 			useImperativeHandle(
 				ref,

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router'
 import CarouselContainer from '../../../components/carousel/Carousel-container'
 import LastReviewsCarousel from '../../../components/carousel/Last-reviews-carousel'
@@ -11,15 +11,6 @@ const AuthorDetailsReviewsCarousel = () => {
 
 	const { authorDetailsPageStore } = useStore()
 
-	const carouselRef = useRef<CarouselRef>(null)
-	const handlePrev = () => {
-		carouselRef.current?.scrollPrev()
-	}
-
-	const handleNext = () => {
-		carouselRef.current?.scrollNext()
-	}
-
 	const { execute: fetch, isLoading } = useLoading(
 		authorDetailsPageStore.fetchLastReviews
 	)
@@ -30,14 +21,19 @@ const AuthorDetailsReviewsCarousel = () => {
 		}
 	}, [fetch, id])
 
+	const carouselRef = useRef<CarouselRef>(null)
+
+	const [canScrollPrev, setCanScrollPrev] = useState(false)
+	const [canScrollNext, setCanScrollNext] = useState(false)
+
 	return (
 		<CarouselContainer
 			title={'Последние рецензии'}
 			buttonTitle={''}
 			showButton={false}
 			href={'#'}
-			handlePrev={handlePrev}
-			handleNext={handleNext}
+			handlePrev={() => carouselRef.current?.scrollPrev()}
+			handleNext={() => carouselRef.current?.scrollNext()}
 			carousel={
 				<LastReviewsCarousel
 					ref={carouselRef}
@@ -45,8 +41,12 @@ const AuthorDetailsReviewsCarousel = () => {
 					items={authorDetailsPageStore.lastReviews}
 					rowCount={1}
 					storeToggle={authorDetailsPageStore.toggleFavReview}
+					onCanScrollPrevChange={setCanScrollPrev}
+					onCanScrollNextChange={setCanScrollNext}
 				/>
 			}
+			canScrollNext={canScrollNext}
+			canScrollPrev={canScrollPrev}
 		/>
 	)
 }

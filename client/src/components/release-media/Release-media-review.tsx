@@ -76,7 +76,7 @@ const ReleaseMediaReview: FC<IProps> = ({ media, isLoading }) => {
 					/>
 				</div>
 
-				<div className='flex size-full py-2 overflow-hidden min-w-0'>
+				<div className='flex size-full py-2 overflow-hidden'>
 					<span className='text-sm lg:text-base font-semibold overflow-hidden break-words'>
 						{media.title}
 					</span>
