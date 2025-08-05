@@ -38,14 +38,14 @@ export const ReleaseMediaAPI = {
 	): Promise<IReleaseMediaList> {
 		const { data } = await _api.get<IReleaseMediaList>(
 			`/release-media?
-			${limit ? `limit=${limit}&` : ''}
-			${offset ? `offset=${offset}&` : ''}
-			${statusId ? `statusId=${statusId}&` : ''}
-			${typeId ? `typeId=${typeId}&` : ''}
-			${releaseId ? `releaseId=${releaseId}&` : ''}
-			${userId ? `userId=${userId}&` : ''}
-			${query ? `query=${query}&` : ''}
-			${order ? `order=${order}` : ''}
+			${limit !== null ? `limit=${limit}&` : ''}
+			${offset !== null ? `offset=${offset}&` : ''}
+			${statusId !== null ? `statusId=${statusId}&` : ''}
+			${typeId !== null ? `typeId=${typeId}&` : ''}
+			${releaseId !== null ? `releaseId=${releaseId}&` : ''}
+			${userId !== null ? `userId=${userId}&` : ''}
+			${query !== null ? `query=${query}&` : ''}
+			${order !== null ? `order=${order}` : ''}
 			`
 		)
 		return data

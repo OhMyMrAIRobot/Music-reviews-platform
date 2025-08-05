@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
 import { useLoading } from '../../../../hooks/use-loading'
+import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
 import { ReleaseMediaStatusesEnum } from '../../../../models/release-media-status/release-media-statuses-enum'
 import { ReleaseMediaTypesEnum } from '../../../../models/release-media-type/release-media-types-enum'
@@ -9,6 +10,8 @@ import ReleaseMediaReviewsCarousel from './carousel/Release-media-reviews-carous
 
 const ReleaseMediaReviews = () => {
 	const { metaStore, mainPageStore } = useStore()
+
+	const { navigateToMediaReviews } = useNavigationPath()
 
 	const { execute: fetchStatuses, isLoading: isStatusesLoading } = useLoading(
 		metaStore.fetchReleaseMediaStatuses
@@ -66,7 +69,7 @@ const ReleaseMediaReviews = () => {
 			title={'Рецензии Медиа'}
 			buttonTitle={'Все рецензии Медиа'}
 			showButton={true}
-			href={'#'}
+			href={navigateToMediaReviews}
 			handlePrev={() => carouselRef.current?.scrollPrev()}
 			handleNext={() => carouselRef.current?.scrollNext()}
 			carousel={

@@ -33,6 +33,7 @@ class AuthStore {
 			this.setAuthorization(user, accessToken)
 		} catch (e) {
 			this.setAuth(false)
+			localStorage.removeItem('token')
 			console.log(e)
 		}
 	}

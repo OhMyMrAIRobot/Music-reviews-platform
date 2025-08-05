@@ -74,24 +74,28 @@ const ReleaseMediaReviewsCarousel = observer(
 			return (
 				<div className='embla w-full'>
 					<div ref={emblaRef} className='embla__viewport pt-2'>
-						<div className='embla__container gap-1 touch-pan-y touch-pinch-zoom gap-x-3'>
-							<div className='flex-[0_0_100%] md:flex-[0_0_450px] md:max-w-[450px]'>
-								{isLoading
-									? Array.from({ length: 10 }).map((_, idx) => (
-											<ReleaseMediaReview
-												key={`skeleton-release-media-${idx}`}
-												isLoading={isLoading}
-											/>
-									  ))
-									: items.map(item => (
+						<div className='embla__container gap-3 touch-pan-y touch-pinch-zoom'>
+							{isLoading
+								? Array.from({ length: 10 }).map((_, idx) => (
+										<div
+											className='flex-[0_0_100%] md:flex-[0_0_450px] md:max-w-[450px]'
+											key={`skeleton-release-media-${idx}`}
+										>
+											<ReleaseMediaReview isLoading={isLoading} />
+										</div>
+								  ))
+								: items.map(item => (
+										<div
+											className='flex-[0_0_100%] md:flex-[0_0_450px] md:max-w-[450px]'
+											key={item.id}
+										>
 											<ReleaseMediaReview
 												isLoading={isLoading}
 												media={item}
-												key={item.id}
 												toggleFav={mainPageStore.toggleFavMedia}
 											/>
-									  ))}
-							</div>
+										</div>
+								  ))}
 						</div>
 					</div>
 				</div>

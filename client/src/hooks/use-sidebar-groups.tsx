@@ -8,6 +8,7 @@ import QuestionSvg from '../components/sidebar/svg/Question-svg'
 import RatingsSvg from '../components/sidebar/svg/Ratings-svg'
 import ReleaseSvg from '../components/sidebar/svg/Release-svg'
 import ActivationSvg from '../components/svg/Activation-svg'
+import MediaPlayerSvg from '../components/svg/Media-player-svg'
 import PencilSvg from '../components/svg/Pencil-svg'
 import { ROUTES } from '../routes/routes-enum'
 import { useActivePath } from './use-active-path'
@@ -26,6 +27,7 @@ export const useSidebarGroups = () => {
 		navigateToLeaderboard,
 		navigateToRatings,
 		navigateToActivation,
+		navigateToMediaReviews,
 	} = useNavigationPath()
 
 	const { isActive } = useActivePath()
@@ -74,16 +76,22 @@ export const useSidebarGroups = () => {
 			active: isActive(`/${ROUTES.AUTHORS}`),
 		},
 		{
+			href: navigateToReleases,
+			icon: <ReleaseSvg className='size-5' />,
+			label: 'Релизы',
+			active: isActive(`/${ROUTES.RELEASES}`),
+		},
+		{
 			href: navigateToReviews,
 			icon: <TextReviewSvg className='size-5 fill-white' />,
 			label: 'Рецензии',
 			active: isActive(`/${ROUTES.REVIEWS}`),
 		},
 		{
-			href: navigateToReleases,
-			icon: <ReleaseSvg className='size-5' />,
-			label: 'Релизы',
-			active: isActive(`/${ROUTES.RELEASES}`),
+			href: navigateToMediaReviews,
+			icon: <MediaPlayerSvg className='size-5' />,
+			label: 'Медиарецензии',
+			active: isActive(`/${ROUTES.MEDIA_REVIEWS}`),
 		},
 	]
 

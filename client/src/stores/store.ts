@@ -7,7 +7,8 @@ import AdminDashboardUsersStore from '../pages/admin-dashboard-page/store/admin-
 import AuthorDetailsPageStore from '../pages/author-details-page/store/author-details-page-store'
 import AuthorsPageStore from '../pages/authors-page/store/authors-page-store'
 import LeaderboardStore from '../pages/leaderboard-page/store/leaderboard-store'
-import mainPageStore from '../pages/main-page/store/main-page-store'
+import MainPageStore from '../pages/main-page/store/main-page-store'
+import MediaReviewsPageStore from '../pages/media-reviews-page/store/media-reviews-page-store'
 import ProfilePageStore from '../pages/profile-page/store/profile-page-store'
 import ReleaseDetailsPageStore from '../pages/release-details-page/store/release-details-page-store'
 import ReleasesPageStore from '../pages/releases-page/store/releases-page-store'
@@ -23,7 +24,7 @@ class Store {
 	metaStore = MetaStore
 	authStore = AuthStore
 	profileStore = ProfileStore
-	mainPageStore = mainPageStore
+	mainPageStore = MainPageStore
 	notificationStore = NotificationStore
 	releasesPageStore = ReleasesPageStore
 	reviewsPageStore = ReviewsPageStore
@@ -34,6 +35,7 @@ class Store {
 	releasesRatingPageStore = ReleasesRatingPageStore
 	searchPageStore = SearchPageStore
 	profilePageStore = ProfilePageStore
+	mediaReviewPageStore = MediaReviewsPageStore
 	adminDashboardUsersStore = AdminDashboardUsersStore
 	adminDashboardAuthorsStore = AdminDashboardAuthorsStore
 	adminDashboardReleasesStore = AdminDashboardReleasesStore
