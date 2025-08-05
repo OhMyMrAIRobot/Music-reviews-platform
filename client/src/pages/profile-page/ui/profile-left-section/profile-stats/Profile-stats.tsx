@@ -81,12 +81,12 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
 			<div>
 				<ProfileStatsRow
 					title={'Рецензий'}
-					value={profile.text_count}
+					value={profile.textCount}
 					icon={<TextReviewSvg className={'size-5'} />}
 				/>
 				<ProfileStatsRow
 					title={'Оценок без рецензий'}
-					value={profile.no_text_count}
+					value={profile.noTextCount}
 					icon={<NoTextReviewSvg className={'size-5'} />}
 				/>
 			</div>
@@ -99,12 +99,12 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
 			<div>
 				<ProfileStatsRow
 					title={'Получено лайков'}
-					value={profile.received_likes}
+					value={profile.receivedLikes}
 					icon={<PixelHeartSvg className={'size-[19px]'} />}
 				/>
 				<ProfileStatsRow
 					title={'Поставлено лайков'}
-					value={profile.given_likes}
+					value={profile.givenLikes}
 					icon={<PixelHeartFillSvg className={'size-[19px]'} />}
 				/>
 			</div>

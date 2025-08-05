@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
 import { ReleaseMediaAPI } from '../../../api/release-media-api'
-import { UserFavMediaAPI } from '../../../api/user-fav-media-api'
 import { IReleaseMedia } from '../../../models/release-media/release-media'
 import { IReleaseMediaList } from '../../../models/release-media/release-media-list'
 import { SortOrder } from '../../../types/sort-order-type'
+import { toggleFavMedia } from '../../../utils/toggle-fav-media'
 
 class MediaReviewsPageStore {
 	constructor() {
@@ -49,29 +48,7 @@ class MediaReviewsPageStore {
 		mediaId: string,
 		isFav: boolean
 	): Promise<string[]> => {
-		try {
-			if (!isFav) {
-				await UserFavMediaAPI.addToFav(mediaId)
-			} else {
-				await UserFavMediaAPI.deleteFromFav(mediaId)
-			}
-
-			const newLikes = await UserFavMediaAPI.fetchMediaUserIds(mediaId)
-
-			const idx = await this.media.findIndex(rm => rm.id === mediaId)
-
-			if (idx !== -1) {
-				runInAction(() => {
-					this.media[idx].userFavMedia = newLikes
-				})
-			}
-
-			return []
-		} catch (e: any) {
-			return Array.isArray(e.response?.data?.message)
-				? e.response?.data?.message
-				: [e.response?.data?.message]
-		}
+		return toggleFavMedia(this.media, mediaId, isFav)
 	}
 }
 

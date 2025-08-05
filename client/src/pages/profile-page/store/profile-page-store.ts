@@ -1,11 +1,14 @@
 import { makeAutoObservable } from 'mobx'
 import { ProfileAPI } from '../../../api/profile-api'
+import { ReleaseMediaAPI } from '../../../api/release-media-api.ts'
 import { ReviewAPI } from '../../../api/review-api'
 import { IPreferred } from '../../../models/profile/preferred'
 import { IProfile } from '../../../models/profile/profile'
+import { IReleaseMedia } from '../../../models/release-media/release-media.ts'
 import { IReview } from '../../../models/review/review.ts'
 import { TogglePromiseResult } from '../../../types/toggle-promise-result'
 import { toggleFav } from '../../../utils/toggle-fav'
+import { toggleFavMedia } from '../../../utils/toggle-fav-media.ts'
 
 export class ProfilePageStore {
 	constructor() {
@@ -18,12 +21,14 @@ export class ProfilePageStore {
 	reviewsCount: number = 0
 	favReviews: IReview[] = []
 	favReviewsCount: number = 0
+	media: IReleaseMedia[] = []
+	mediaCount: number = 0
 
-	setProfile(data: IProfile) {
+	setProfile(data: IProfile | null) {
 		this.profile = data
 	}
 
-	setPreferred(data: IPreferred) {
+	setPreferred(data: IPreferred | null) {
 		this.preferred = data
 	}
 
@@ -43,12 +48,20 @@ export class ProfilePageStore {
 		this.favReviewsCount = data
 	}
 
+	setMedia(data: IReleaseMedia[]) {
+		this.media = data
+	}
+
+	setMediaCount(data: number) {
+		this.mediaCount = data
+	}
+
 	fetchProfile = async (id: string) => {
 		try {
 			const data = await ProfileAPI.fetchProfile(id)
 			this.setProfile(data)
-		} catch (e) {
-			console.log(e)
+		} catch {
+			this.setProfile(null)
 		}
 	}
 
@@ -56,8 +69,8 @@ export class ProfilePageStore {
 		try {
 			const data = await ProfileAPI.fetchPreferred(id)
 			this.setPreferred(data)
-		} catch (e) {
-			console.log(e)
+		} catch {
+			this.setPreferred(null)
 		}
 	}
 
@@ -72,8 +85,9 @@ export class ProfilePageStore {
 			)
 			this.setReviews(data.reviews)
 			this.setReviewsCount(data.count)
-		} catch (e) {
-			console.log(e)
+		} catch {
+			this.setReviews([])
+			this.setReviewsCount(0)
 		}
 	}
 
@@ -92,9 +106,43 @@ export class ProfilePageStore {
 			)
 			this.setFavReviews(data.reviews)
 			this.setFavReviewsCount(data.count)
-		} catch (e) {
-			console.log(e)
+		} catch {
+			this.setFavReviews([])
+			this.setFavReviewsCount(0)
 		}
+	}
+
+	fetchMedia = async (
+		userId: string,
+		statusId: string,
+		typeId: string,
+		limit: number,
+		offset: number
+	) => {
+		try {
+			const data = await ReleaseMediaAPI.fetchReleaseMedia(
+				limit,
+				offset,
+				statusId,
+				typeId,
+				null,
+				userId,
+				null,
+				null
+			)
+			this.setMedia(data.releaseMedia)
+			this.setMediaCount(data.count)
+		} catch {
+			this.setMedia([])
+			this.setMediaCount(0)
+		}
+	}
+
+	toggleFavMedia = async (
+		mediaId: string,
+		isFav: boolean
+	): Promise<string[]> => {
+		return toggleFavMedia(this.media, mediaId, isFav)
 	}
 
 	toggleReview = async (

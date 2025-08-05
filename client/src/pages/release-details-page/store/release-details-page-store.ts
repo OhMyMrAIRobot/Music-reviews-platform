@@ -4,7 +4,6 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { ReleaseAPI } from '../../../api/release-api'
 import { ReleaseMediaAPI } from '../../../api/release-media-api'
 import { ReviewAPI } from '../../../api/review-api'
-import { UserFavMediaAPI } from '../../../api/user-fav-media-api'
 import { IReleaseMedia } from '../../../models/release-media/release-media'
 import { IReleaseMediaList } from '../../../models/release-media/release-media-list'
 import { IReleaseDetails } from '../../../models/release/release-details'
@@ -12,6 +11,7 @@ import { IReleaseReview } from '../../../models/review/release-review'
 import { IReviewData } from '../../../models/review/review-data'
 import { TogglePromiseResult } from '../../../types/toggle-promise-result'
 import { toggleFav } from '../../../utils/toggle-fav'
+import { toggleFavMedia } from '../../../utils/toggle-fav-media'
 
 class ReleaseDetailsPageStore {
 	constructor() {
@@ -276,29 +276,7 @@ class ReleaseDetailsPageStore {
 		mediaId: string,
 		isFav: boolean
 	): Promise<string[]> => {
-		try {
-			if (!isFav) {
-				await UserFavMediaAPI.addToFav(mediaId)
-			} else {
-				await UserFavMediaAPI.deleteFromFav(mediaId)
-			}
-
-			const newLikes = await UserFavMediaAPI.fetchMediaUserIds(mediaId)
-
-			const idx = await this.releaseMedia.findIndex(rm => rm.id === mediaId)
-
-			if (idx !== -1) {
-				runInAction(() => {
-					this.releaseMedia[idx].userFavMedia = newLikes
-				})
-			}
-
-			return []
-		} catch (e: any) {
-			return Array.isArray(e.response?.data?.message)
-				? e.response?.data?.message
-				: [e.response?.data?.message]
-		}
+		return toggleFavMedia(this.releaseMedia, mediaId, isFav)
 	}
 }
 
