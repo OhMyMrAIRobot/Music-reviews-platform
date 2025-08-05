@@ -66,7 +66,7 @@ export class ReviewsService {
   }
 
   async findAll(query: ReviewsQueryDto): Promise<AdminFindReviewsResponseDto> {
-    const { limit = 10, offset = 0, order, query: searchTerm } = query;
+    const { limit, offset, order, query: searchTerm } = query;
 
     const where: Prisma.ReviewWhereInput = {
       title: { not: null },
@@ -252,7 +252,7 @@ export class ReviewsService {
           { text: { not: null } },
           { userId: { equals: query.userId } },
           {
-            UserFavReviews: query.favUserId
+            userFavReviews: query.favUserId
               ? { some: { userId: query.favUserId } }
               : undefined,
           },

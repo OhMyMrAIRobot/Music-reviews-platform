@@ -3,9 +3,9 @@ import { IsString, Matches } from 'class-validator';
 
 export function IsEntityId() {
   return applyDecorators(
-    IsString(),
+    IsString({ message: 'Идентификатор должен быть строкой!' }),
     Matches(/^[a-zA-Z0-9]+$/, {
-      message: 'Id может содержать только цифры и буквы',
+      message: 'Идентификатор может содержать только цифры и буквы!',
     }),
   );
 }

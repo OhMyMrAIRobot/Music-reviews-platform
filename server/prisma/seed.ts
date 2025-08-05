@@ -1,6 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 import { AuthorTypesEnum } from '../src/author-types/entities/author-types.enum';
 import { FeedbackStatusesEnum } from '../src/feedback-statuses/types/feedback-statuses.enum';
+import { ReleaseMediaStatusesEnum } from '../src/release-media-statuses/entities/release-media-statuses.enum';
+import { ReleaseMediaTypesEnum } from '../src/release-media-types/entities/release-media-types.enum';
 import { ReleaseRatingTypesEnum } from '../src/release-rating-types/entities/release-rating-types.enum';
 import { ReleaseTypesEnum } from '../src/release-types/entities/release-types.enum';
 import { UserRoleEnum } from '../src/roles/types/user-role.enum';
@@ -31,6 +33,8 @@ async function main() {
   await prisma.userFavRelease.deleteMany();
   await prisma.userFavReview.deleteMany();
   await prisma.topUsersLeaderboard.deleteMany();
+  await prisma.releaseMediaStatus.deleteMany();
+  await prisma.releaseMediaType.deleteMany();
 
   await prisma.role.createMany({
     data: [
@@ -681,6 +685,108 @@ async function main() {
         title: 'Zima Blue',
         img: '15.png',
         releaseTypeId: '3',
+      },
+    ],
+  });
+
+  await prisma.releaseMediaStatus.createMany({
+    data: [
+      {
+        id: '0',
+        status: ReleaseMediaStatusesEnum.PENDING,
+      },
+      {
+        id: '1',
+        status: ReleaseMediaStatusesEnum.APPROVED,
+      },
+      {
+        id: '2',
+        status: ReleaseMediaStatusesEnum.REJECTED,
+      },
+    ],
+  });
+
+  await prisma.releaseMediaType.createMany({
+    data: [
+      {
+        id: '0',
+        type: ReleaseMediaTypesEnum.MEDIA_REVIEW,
+      },
+      {
+        id: '1',
+        type: ReleaseMediaTypesEnum.MUSIC_VIDEO,
+      },
+      {
+        id: '2',
+        type: ReleaseMediaTypesEnum.MEDIA_MATERIAL,
+      },
+      {
+        id: '3',
+        type: ReleaseMediaTypesEnum.SNIPPET,
+      },
+    ],
+  });
+
+  await prisma.releaseMedia.createMany({
+    data: [
+      {
+        id: '0',
+        title: 'MARKUL — Sense Of Human | Реакция и разбор альбома',
+        url: 'https://www.youtube.com/watch?v=4X2mUK96Ho4',
+        releaseId: '6',
+        releaseMediaTypeId: '0',
+        releaseMediaStatusId: '1',
+        userId: '1',
+        createdAt: new Date(Date.now() - 1 * 3600 * 1000),
+      },
+      {
+        id: '1',
+        title: 'MAKING OF SENSE OF HUMAN (2021)',
+        url: 'https://www.youtube.com/watch?v=6lb1yEBz3PM',
+        releaseId: '6',
+        releaseMediaTypeId: '2',
+        releaseMediaStatusId: '1',
+        createdAt: new Date(Date.now() - 2 * 3600 * 1000),
+      },
+      {
+        id: '2',
+        title: 'Markul — MAKE DEPRESSION GREAT AGAIN | Реакция и разбор',
+        url: 'https://www.youtube.com/watch?v=NoJiiOIU2us',
+        releaseId: '5',
+        releaseMediaTypeId: '0',
+        releaseMediaStatusId: '1',
+        userId: '1',
+        createdAt: new Date(Date.now() - 3 * 3600 * 1000),
+      },
+      {
+        id: '3',
+        title: 'PHARAOH — 10:13 | Разбор альбома',
+        url: 'https://www.youtube.com/watch?v=1AcqGB6edo8',
+        releaseId: '3',
+        releaseMediaTypeId: '0',
+        releaseMediaStatusId: '1',
+        userId: '1',
+        createdAt: new Date(Date.now() - 4 * 3600 * 1000),
+      },
+      {
+        id: '4',
+        title: 'SALUKI — BOLSHIE KURTKI | Реакция и разбор',
+        url: 'https://www.youtube.com/watch?v=MIr5VWegwcY&t=12703s',
+        releaseId: '10',
+        releaseMediaTypeId: '0',
+        releaseMediaStatusId: '1',
+        userId: '1',
+        createdAt: new Date(Date.now() - 5 * 3600 * 1000),
+      },
+      {
+        id: '5',
+        title: 'Heronwater — 1ST DAY SMOKE | Разбор трека',
+        url: 'https://www.youtube.com/watch?v=jZmJBTlAg4U',
+        releaseId: '11',
+        releaseMediaTypeId: '0',
+        releaseMediaStatusId: '1',
+        userId: '1',
+        createdAt: new Date(Date.now() - 6 * 3600 * 1000),
       },
     ],
   });

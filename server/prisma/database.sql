@@ -465,34 +465,39 @@ CREATE OR REPLACE VIEW user_profile_summary AS
 SELECT
     u.id,
     u.nickname,
-    TO_CHAR(u.created_at, 'DD.MM.YYYY') AS created_at,
+    TO_CHAR(u.created_at, 'DD.MM.YYYY') AS "createdAt",
     up.bio,
     up.avatar,
     up.cover_image AS cover,
     up.points,
     tul.rank AS position,
-    (COUNT(DISTINCT r.id) FILTER (WHERE r.text IS NOT NULL))::int AS text_count,
-    (COUNT(DISTINCT r.id) FILTER (WHERE r.text IS NULL))::int AS no_text_count,
+    rol.role,
+    (COUNT(DISTINCT r.id) FILTER (WHERE r.text IS NOT NULL))::int AS "textCount",
+    (COUNT(DISTINCT r.id) FILTER (WHERE r.text IS NULL))::int AS "noTextCount",
     (
         SELECT COUNT(*)
         FROM "User_fav_reviews" ufr
                  JOIN "Reviews" rev ON ufr.review_id = rev.id
         WHERE rev.user_id = u.id
-    )::int AS received_likes,
+    )::int AS "receivedLikes",
     (
         SELECT COUNT(*)
         FROM "User_fav_reviews" ufr
                  JOIN "Reviews" rev ON ufr.review_id = rev.id
         WHERE ufr.user_id = u.id AND rev.user_id != u.id
-    )::int AS given_likes,
-    JSON_AGG(DISTINCT JSONB_BUILD_OBJECT('id', sm.id, 'name', sm.name, 'url', psm.url)) AS social
+    )::int AS "givenLikes",
+    CASE
+        WHEN count(sm.id) = 0 THEN '[]'::json
+        ELSE JSON_AGG(DISTINCT JSONB_BUILD_OBJECT('id', sm.id, 'name', sm.name, 'url', psm.url))
+    END AS social
 FROM "User_profiles" up
          JOIN "Users" u ON up.user_id = u.id
          LEFT JOIN "Top_users_leaderboard" tul ON up.user_id = tul.user_id
          LEFT JOIN "Reviews" r ON u.id = r.user_id
          LEFT JOIN "Profile_social_media" psm ON up.id = psm.profile_id
          LEFT JOIN "Social_media" sm ON psm.social_id = sm.id
-GROUP BY u.id, u.nickname, u.created_at, up.bio, up.avatar, up.cover_image, up.points, tul.rank;
+         LEFT JOIN "Roles" rol ON u.role_id = rol.id
+GROUP BY u.id, u.nickname, u.created_at, up.bio, up.avatar, up.cover_image, up.points, tul.rank, rol.role;
 
 -------------------------------------------------------------------------
 -------------------------------------------------------------------------

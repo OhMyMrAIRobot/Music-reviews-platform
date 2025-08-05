@@ -16,7 +16,7 @@ model Review {
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   release Release @relation(fields: [releaseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  UserFavReviews UserFavReview[]
+  userFavReviews UserFavReview[]
 
   @@unique([userId, releaseId])
   @@map("Reviews")
@@ -32,7 +32,7 @@ model ReleaseRating {
 
   release Release @relation(fields: [releaseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  ReleaseRatingDetails ReleaseRatingDetails[]
+  releaseRatingDetails ReleaseRatingDetails[]
 
   @@unique([releaseId, releaseRatingTypeId])
   @@map("Release_ratings")
@@ -55,7 +55,7 @@ model ReleaseRatingType {
   id   String @id @default(cuid())
   type String @unique @db.VarChar(40)
 
-  ReleaseRating ReleaseRating[]
+  releaseRating ReleaseRating[]
 
   @@map("Release_rating_types")
 }

@@ -108,7 +108,7 @@ export class AuthorsService {
   }
 
   async findAll(query: AuthorsQueryDto): Promise<FindAuthorsResponseDto> {
-    const { limit, offset = 0, query: name, typeId } = query;
+    const { limit, offset, query: name, typeId } = query;
 
     if (typeId) {
       await this.authorTypesService.findOne(typeId);

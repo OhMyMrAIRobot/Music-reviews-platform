@@ -5,10 +5,10 @@ model Author {
   coverImg  String @default("") @map("cover_img") @db.VarChar(255)
 
   types           AuthorOnType[]
-  ReleaseProducer ReleaseProducer[]
-  ReleaseArtist   ReleaseArtist[]
-  ReleaseDesigner ReleaseDesigner[]
-  UserFavAuthor   UserFavAuthor[]
+  releaseProducer ReleaseProducer[]
+  releaseArtist   ReleaseArtist[]
+  releaseDesigner ReleaseDesigner[]
+  userFavAuthor   UserFavAuthor[]
 
   @@map("Authors")
 }

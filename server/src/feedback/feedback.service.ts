@@ -47,13 +47,7 @@ export class FeedbackService {
   }
 
   async findAll(query: FeedbackQueryDto): Promise<FeedbacksResponseDto> {
-    const {
-      limit = 10,
-      offset = 0,
-      order,
-      query: searchTerm,
-      statusId,
-    } = query;
+    const { limit, offset, order, query: searchTerm, statusId } = query;
 
     if (statusId) {
       await this.statusesService.findOne(statusId);

@@ -16,7 +16,7 @@ model Feedback {
 model FeedbackStatus {
   id       String     @id @default(cuid())
   status   String     @unique @db.VarChar(30)
-  Feedback Feedback[]
+  feedback Feedback[]
 
   @@map("Feedback_statuses")
 }

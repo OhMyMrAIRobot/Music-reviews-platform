@@ -5,30 +5,38 @@ import { IsSearchQuery } from 'src/decorators/is-search-query.decorator';
 import { IsSortOrder } from 'src/decorators/is-sort-order.decorator';
 import { SortOrder } from 'src/types/sort-order.type';
 
-export class ReviewsQueryDto {
-  @IsOptional()
-  @IsSortOrder()
-  order?: SortOrder;
-
+export class ReleaseMediaRequestQueryDto {
   @IsOptional()
   @Type(() => Number)
-  @IsInt()
+  @IsInt({ message: 'Лимит должен быть целым числом' })
   limit?: number;
 
   @IsOptional()
   @Type(() => Number)
-  @IsInt()
+  @IsInt({ message: 'Смещение должно быть целым числом' })
   offset?: number;
+
+  @IsOptional()
+  @IsEntityId()
+  statusId?: string;
+
+  @IsOptional()
+  @IsEntityId()
+  typeId?: string;
+
+  @IsOptional()
+  @IsEntityId()
+  releaseId?: string;
 
   @IsOptional()
   @IsEntityId()
   userId?: string;
 
   @IsOptional()
-  @IsEntityId()
-  favUserId?: string;
-
-  @IsOptional()
   @IsSearchQuery()
   query?: string;
+
+  @IsOptional()
+  @IsSortOrder()
+  order?: SortOrder;
 }

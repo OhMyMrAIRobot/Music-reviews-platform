@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsInt, IsOptional, Length, Max, Min } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, Length } from 'class-validator';
 import { IsSearchQuery } from 'src/decorators/is-search-query.decorator';
 import { IsSortOrder } from 'src/decorators/is-sort-order.decorator';
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
@@ -16,14 +16,11 @@ export class GetUsersQueryDto {
   @IsOptional()
   @Type(() => Number)
   @IsInt()
-  @Min(1)
-  @Max(100)
   limit?: number;
 
   @IsOptional()
   @Type(() => Number)
   @IsInt()
-  @Min(0)
   offset?: number;
 
   @IsOptional()
