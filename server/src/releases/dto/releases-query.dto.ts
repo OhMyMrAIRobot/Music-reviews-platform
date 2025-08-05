@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsIn, IsInt, IsOptional, Length, Max, Min } from 'class-validator';
+import { IsIn, IsInt, IsOptional, Length } from 'class-validator';
 import { IsEntityId } from 'src/decorators/is-entity-id.decorator';
 import { IsSearchQuery } from 'src/decorators/is-search-query.decorator';
 import { IsSortOrder } from 'src/decorators/is-sort-order.decorator';
@@ -35,13 +35,10 @@ export class ReleasesQueryDto {
   @IsOptional()
   @Type(() => Number)
   @IsInt()
-  @Min(1)
-  @Max(100)
   limit?: number;
 
   @IsOptional()
   @Type(() => Number)
   @IsInt()
-  @Min(0)
   offset?: number;
 }

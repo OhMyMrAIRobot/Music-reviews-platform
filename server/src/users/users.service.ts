@@ -68,7 +68,7 @@ export class UsersService {
   }
 
   async findAll(query: GetUsersQueryDto): Promise<GetUsersResponseDto> {
-    const { limit = 10, offset = 0, query: searchTerm, role, order } = query;
+    const { limit, offset, query: searchTerm, role, order } = query;
 
     const where: Prisma.UserWhereInput = searchTerm
       ? {

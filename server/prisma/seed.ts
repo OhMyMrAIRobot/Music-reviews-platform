@@ -737,6 +737,7 @@ async function main() {
         releaseMediaTypeId: '0',
         releaseMediaStatusId: '1',
         userId: '1',
+        createdAt: new Date(Date.now() - 1 * 3600 * 1000),
       },
       {
         id: '1',
@@ -745,6 +746,7 @@ async function main() {
         releaseId: '6',
         releaseMediaTypeId: '2',
         releaseMediaStatusId: '1',
+        createdAt: new Date(Date.now() - 2 * 3600 * 1000),
       },
       {
         id: '2',
@@ -754,6 +756,7 @@ async function main() {
         releaseMediaTypeId: '0',
         releaseMediaStatusId: '1',
         userId: '1',
+        createdAt: new Date(Date.now() - 3 * 3600 * 1000),
       },
       {
         id: '3',
@@ -763,6 +766,7 @@ async function main() {
         releaseMediaTypeId: '0',
         releaseMediaStatusId: '1',
         userId: '1',
+        createdAt: new Date(Date.now() - 4 * 3600 * 1000),
       },
       {
         id: '4',
@@ -772,6 +776,7 @@ async function main() {
         releaseMediaTypeId: '0',
         releaseMediaStatusId: '1',
         userId: '1',
+        createdAt: new Date(Date.now() - 5 * 3600 * 1000),
       },
       {
         id: '5',
@@ -781,6 +786,7 @@ async function main() {
         releaseMediaTypeId: '0',
         releaseMediaStatusId: '1',
         userId: '1',
+        createdAt: new Date(Date.now() - 6 * 3600 * 1000),
       },
     ],
   });

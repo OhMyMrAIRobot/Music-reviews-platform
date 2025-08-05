@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsInt, IsOptional, Length, Max, Min } from 'class-validator';
+import { IsInt, IsOptional, Length } from 'class-validator';
 import { IsEntityId } from 'src/decorators/is-entity-id.decorator';
 import { IsSearchQuery } from 'src/decorators/is-search-query.decorator';
 
@@ -18,13 +18,10 @@ export class AuthorsQueryDto {
   @IsOptional()
   @Type(() => Number)
   @IsInt()
-  @Min(1)
-  @Max(100)
   limit?: number;
 
   @IsOptional()
   @Type(() => Number)
   @IsInt()
-  @Min(0)
   offset?: number;
 }
