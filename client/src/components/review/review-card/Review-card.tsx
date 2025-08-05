@@ -1,11 +1,13 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useState } from 'react'
+import { Link } from 'react-router'
 import { useAuth } from '../../../hooks/use-auth'
-import useCustomNavigate from '../../../hooks/use-custom-navigate'
+import useNavigationPath from '../../../hooks/use-navigation-path.ts'
 import { useStore } from '../../../hooks/use-store'
 import { IReview } from '../../../models/review/review.ts'
 import { TogglePromiseResult } from '../../../types/toggle-promise-result'
 import MoveToSvg from '../../svg/Move-to-svg.tsx'
+import SkeletonLoader from '../../utils/Skeleton-loader.tsx'
 import ReviewHeader from './Review-header'
 import ReviewLikes from './Review-likes'
 
@@ -24,7 +26,7 @@ const ReviewCard: FC<IProps> = observer(
 
 		const { checkAuth } = useAuth()
 
-		const { navigateToRelease } = useCustomNavigate()
+		const { navigateToReleaseDetails } = useNavigationPath()
 
 		const [toggling, setToggling] = useState<boolean>(false)
 		const [show, setShow] = useState<boolean>(false)
@@ -65,7 +67,7 @@ const ReviewCard: FC<IProps> = observer(
 		}
 
 		return isLoading ? (
-			<div className='bg-gray-400 animate-pulse opacity-40 h-64 rounded-[15px] lg:rounded-[20px]' />
+			<SkeletonLoader className='h-64 rounded-[15px] lg:rounded-[20px]' />
 		) : (
 			review && (
 				<div className='bg-zinc-900 relative p-1.5 flex flex-col mx-auto border border-zinc-800 rounded-[15px] lg:rounded-[20px] w-full max-w-full min-w-0'>
@@ -87,8 +89,9 @@ const ReviewCard: FC<IProps> = observer(
 							likesCount={review.likes_count}
 							toggleFavReview={toggleFavReview}
 						/>
-						<button
-							onClick={() => navigateToRelease(review.release_id)}
+
+						<Link
+							to={navigateToReleaseDetails(review.release_id)}
 							className='cursor-pointer hover:bg-white/10 size-8 lg:size-10 rounded-md flex items-center justify-center transition-all duration-200 relative'
 							onMouseEnter={() => setShow(true)}
 							onMouseLeave={() => setShow(false)}
@@ -101,7 +104,7 @@ const ReviewCard: FC<IProps> = observer(
 							>
 								Перейти к релизу
 							</div>
-						</button>
+						</Link>
 					</div>
 				</div>
 			)

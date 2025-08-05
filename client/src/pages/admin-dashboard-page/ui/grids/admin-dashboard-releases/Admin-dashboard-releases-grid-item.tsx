@@ -1,9 +1,11 @@
 import { FC, useState } from 'react'
+import { Link } from 'react-router'
 import ArrowBottomSvg from '../../../../../components/header/svg/Arrow-bottom-svg.tsx'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal.tsx'
 import ReleaseTypeIcon from '../../../../../components/release/Release-type-icon.tsx'
-import useCustomNavigate from '../../../../../hooks/use-custom-navigate.ts'
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
 import { useLoading } from '../../../../../hooks/use-loading.ts'
+import useNavigationPath from '../../../../../hooks/use-navigation-path.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
 import { AuthorTypesEnum } from '../../../../../models/author/author-type.ts'
 import { IAdminRelease } from '../../../../../models/release/admin-releases-response.ts'
@@ -36,7 +38,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 }) => {
 	const { adminDashboardReleasesStore, notificationStore } = useStore()
 
-	const { navigateToRelease } = useCustomNavigate()
+	const { navigateToReleaseDetails } = useNavigationPath()
 
 	const { execute: deleteRelease, isLoading: isDeleting } = useLoading(
 		adminDashboardReleasesStore.deleteRelease
@@ -57,12 +59,6 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 		}
 	}
 
-	const handleNavigate = () => {
-		if (release) {
-			navigateToRelease(release.id)
-		}
-	}
-
 	const handleDelete = async (id: string) => {
 		if (isDeleting) return
 
@@ -79,7 +75,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 	}
 
 	return isLoading ? (
-		<div className='bg-gray-400 w-full h-12 rounded-lg animate-pulse opacity-40' />
+		<SkeletonLoader className='w-full h-12 rounded-lg' />
 	) : (
 		<>
 			{release && (
@@ -114,9 +110,9 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 
 				<div className='col-span-2 h-full flex items-center mr-2'>
 					{release ? (
-						<button
-							onClick={handleNavigate}
-							className='flex text-left gap-x-1.5 items-center cursor-pointer hover:bg-white/5 rounded-lg px-1.5 py-0.5'
+						<Link
+							to={navigateToReleaseDetails(release.id)}
+							className='flex text-left gap-x-1.5 items-center hover:bg-white/5 rounded-lg px-1.5 py-0.5 w-full'
 						>
 							<img
 								loading='lazy'
@@ -132,7 +128,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 							<span className='font-medium line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
 								{release.title}
 							</span>
-						</button>
+						</Link>
 					) : (
 						<span className='px-4'>Название релиза</span>
 					)}

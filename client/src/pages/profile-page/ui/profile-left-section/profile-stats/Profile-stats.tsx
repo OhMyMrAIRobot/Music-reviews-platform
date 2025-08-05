@@ -1,9 +1,10 @@
 import { FC } from 'react'
+import { Link } from 'react-router'
 import NoTextReviewSvg from '../../../../../components/review/svg/No-text-review-svg'
 import TextReviewSvg from '../../../../../components/review/svg/Text-review-svg'
 import PixelHeartFillSvg from '../../../../../components/svg/Pixel-heart-fill-svg'
 import PixelHeartSvg from '../../../../../components/svg/Pixel-heart-svg'
-import useCustomNavigate from '../../../../../hooks/use-custom-navigate'
+import useNavigationPath from '../../../../../hooks/use-navigation-path'
 import { IProfile } from '../../../../../models/profile/profile'
 import { getLevelConfig, getUserLevel } from '../../../../../utils/user-level'
 import ProfileStatsRow from './Profile-stats-row'
@@ -15,7 +16,7 @@ interface IProps {
 const ProfileStats: FC<IProps> = ({ profile }) => {
 	const level = getUserLevel(profile.points)
 
-	const { navigateToLeaderboard } = useCustomNavigate()
+	const { navigateToLeaderboard } = useNavigationPath()
 
 	return (
 		<div className='border border-white/10 shadow-sm p-5 bg-zinc-900 flex flex-col rounded-2xl gap-2'>
@@ -65,14 +66,14 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
 							</div>
 
 							<p className='text-[13px] text-white/90 hover:text-white transition-all duration-200 underline underline-offset-4 hover:border-white cursor-pointer font-medium'>
-								<span onClick={navigateToLeaderboard}>в ТОП-90</span>
+								<Link to={navigateToLeaderboard}>в ТОП-90</Link>
 							</p>
 						</div>
 					) : (
 						<div className='text-[13px] underline underline-offset-4 text-white/90 hover:text-white duration-200 transition-all cursor-pointer'>
-							<span onClick={navigateToLeaderboard}>
+							<Link to={navigateToLeaderboard}>
 								Таблица ТОП-90 по баллам сообщества
-							</span>
+							</Link>
 						</div>
 					)}
 				</div>
@@ -80,12 +81,12 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
 			<div>
 				<ProfileStatsRow
 					title={'Рецензий'}
-					value={profile.text_count}
+					value={profile.textCount}
 					icon={<TextReviewSvg className={'size-5'} />}
 				/>
 				<ProfileStatsRow
 					title={'Оценок без рецензий'}
-					value={profile.no_text_count}
+					value={profile.noTextCount}
 					icon={<NoTextReviewSvg className={'size-5'} />}
 				/>
 			</div>
@@ -98,12 +99,12 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
 			<div>
 				<ProfileStatsRow
 					title={'Получено лайков'}
-					value={profile.received_likes}
+					value={profile.receivedLikes}
 					icon={<PixelHeartSvg className={'size-[19px]'} />}
 				/>
 				<ProfileStatsRow
 					title={'Поставлено лайков'}
-					value={profile.given_likes}
+					value={profile.givenLikes}
 					icon={<PixelHeartFillSvg className={'size-[19px]'} />}
 				/>
 			</div>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import FormInfoContainer from '../../../../components/form-elements/Form-info-container'
 import FormInfoField from '../../../../components/form-elements/Form-info-field'
 import FormInputWithConfirmation from '../../../../components/form-elements/Form-input-with-confirmation'
+import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
 import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
 import EditProfilePageSection from '../Edit-profile-page-section'
@@ -34,9 +35,9 @@ const UpdateProfileSocialsForm = () => {
 			<div className='grid gap-3'>
 				{isLoading
 					? Array.from({ length: 4 }).map((_, idx) => (
-							<div
+							<SkeletonLoader
 								key={`Social-inputs-skeleton-${idx}`}
-								className='bg-gray-400 w-full h-10 animate-pulse opacity-40 rounded-md'
+								className='w-full h-10 rounded-md'
 							/>
 					  ))
 					: metaStore.socials.map(social => {

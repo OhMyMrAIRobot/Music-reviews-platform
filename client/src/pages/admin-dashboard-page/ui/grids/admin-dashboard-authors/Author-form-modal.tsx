@@ -5,6 +5,7 @@ import FormInput from '../../../../../components/form-elements/Form-input.tsx'
 import FormLabel from '../../../../../components/form-elements/Form-label.tsx'
 import FormMultiSelect from '../../../../../components/form-elements/Form-multi-select.tsx'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay.tsx'
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
 import { useLoading } from '../../../../../hooks/use-loading.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
 import { IAdminAuthor } from '../../../../../models/author/admin-authors-response.ts'
@@ -192,7 +193,7 @@ const AuthorFormModal: FC<IProps> = ({
 			isLoading={isUpdatingAuthor || isCreatingAuthor}
 		>
 			{isTypesLoading ? (
-				<div className='bg-gray-400 w-240 h-140 animate-pulse opacity-40 rounded-xl' />
+				<SkeletonLoader className='w-240 h-140 rounded-xl' />
 			) : (
 				<div
 					className={`relative rounded-xl w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6`}

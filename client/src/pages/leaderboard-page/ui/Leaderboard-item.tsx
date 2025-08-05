@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import { Link } from 'react-router'
 import NoTextReviewSvg from '../../../components/review/svg/No-text-review-svg'
 import TextReviewSvg from '../../../components/review/svg/Text-review-svg'
 import LogoSmallSvg from '../../../components/svg/Logo-small-svg'
@@ -6,7 +7,8 @@ import PixelHeartFillSvg from '../../../components/svg/Pixel-heart-fill-svg'
 import PixelHeartSvg from '../../../components/svg/Pixel-heart-svg'
 import Tooltip from '../../../components/tooltip/Tooltip'
 import TooltipSpan from '../../../components/tooltip/Tooltip-span'
-import useCustomNavigate from '../../../hooks/use-custom-navigate'
+import SkeletonLoader from '../../../components/utils/Skeleton-loader'
+import useNavigationPath from '../../../hooks/use-navigation-path'
 import { ILeaderboardItem } from '../../../models/leaderboard/leaderboard-item'
 import { formatNumber } from '../../../utils/format-number'
 import { getLevelConfig, getUserLevel } from '../../../utils/user-level'
@@ -17,12 +19,12 @@ interface IProps {
 }
 
 const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
-	const { navigatoToProfile } = useCustomNavigate()
+	const { navigatoToProfile } = useNavigationPath()
 
 	const level = getUserLevel(item?.points ?? 0)
 
 	return isLoading ? (
-		<div className='bg-gray-400 w-full h-25 lg:h-31 xl:h-19 animate-pulse opacity-40 rounded-lg' />
+		<SkeletonLoader className='w-full h-25 lg:h-31 xl:h-19 rounded-lg' />
 	) : (
 		item && (
 			<div className='bg-zinc-900 border border-white/10 flex max-xl:flex-wrap p-[3px] xl:pr-2 xl:h-[75px] max-xl:gap-y-2 rounded-lg items-stretch relative group xl:hover:bg-zinc-800 transition-all select-none'>
@@ -40,9 +42,9 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 					</div>
 				</div>
 
-				<div
-					onClick={() => navigatoToProfile(item.user_id)}
-					className='flex shrink-0 space-x-4 items-center relative max-xl:w-1/2 max-xl:order-1 cursor-pointer'
+				<Link
+					to={navigatoToProfile(item.user_id)}
+					className='flex shrink-0 space-x-4 items-center relative max-xl:w-1/2 max-xl:order-1'
 				>
 					<div className='relative z-20'>
 						<span className='relative flex shrink-0 overflow-hidden rounded-full size-[40px] lg:size-[60px] border border-white/10'>
@@ -81,7 +83,7 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 							{item.nickname}
 						</div>
 					</div>
-				</div>
+				</Link>
 
 				<div className='h-14 sm:h-20 xl:h-auto relative xl:w-[260px] rounded-r-lg xl:rounded-r-2xl overflow-hidden xl:mr-5 max-xl:order-2 max-xl:w-1/2 xl:block shrink-0'>
 					<div className='bg-gradient-to-r from-zinc-900 h-full w-full absolute top-0 left-[-1px] z-10'></div>

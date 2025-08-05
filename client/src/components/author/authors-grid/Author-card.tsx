@@ -1,8 +1,10 @@
 import { FC } from 'react'
-import useCustomNavigate from '../../../hooks/use-custom-navigate'
+import { Link } from 'react-router'
+import useNavigationPath from '../../../hooks/use-navigation-path'
 import { IAuthorData } from '../../../models/author/authors-response'
 import { ReleaseTypesEnum } from '../../../models/release/release-types'
 import LikesCount from '../../utils/Likes-count'
+import SkeletonLoader from '../../utils/Skeleton-loader'
 import AuthorReleaseTypesRatings from '../author-ratings/Author-release-types-ratings'
 import AuthorTypes from '../author-types/Author-types'
 
@@ -12,15 +14,15 @@ interface IProps {
 }
 
 const AuthorCard: FC<IProps> = ({ author, isLoading }) => {
-	const { navigateToAuthor } = useCustomNavigate()
+	const { navigateToAuthorDetails } = useNavigationPath()
 
 	return isLoading ? (
-		<div className='bg-gray-400 w-full h-76 md:h-91 animate-pulse opacity-40 rounded-2xl' />
+		<SkeletonLoader className={'w-full h-76 md:h-91 rounded-2xl'} />
 	) : (
 		author && (
-			<button
-				onClick={() => navigateToAuthor(author.id)}
-				className='border border-white/10 bg-zinc-900 shadow-sm p-3 rounded-2xl text-center cursor-pointer select-none flex flex-col gap-y-2'
+			<Link
+				to={navigateToAuthorDetails(author.id)}
+				className='border border-white/10 bg-zinc-900 shadow-sm p-3 rounded-2xl text-center select-none flex flex-col gap-y-2'
 			>
 				<div className='aspect-square max-w-30 md:max-w-45 w-full mx-auto relative rounded-full overflow-hidden'>
 					<img
@@ -52,7 +54,7 @@ const AuthorCard: FC<IProps> = ({ author, isLoading }) => {
 					releaseType={ReleaseTypesEnum.ALBUM}
 					stats={author.release_type_stats}
 				/>
-			</button>
+			</Link>
 		)
 	)
 }

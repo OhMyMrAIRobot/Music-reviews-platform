@@ -2,6 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
 import AuthorsGrid from '../../components/author/authors-grid/Authors-grid'
 import ComboBox from '../../components/buttons/Combo-box'
+import SkeletonLoader from '../../components/utils/Skeleton-loader'
 import { useLoading } from '../../hooks/use-loading'
 import { useStore } from '../../hooks/use-store'
 
@@ -50,7 +51,7 @@ const AuthorsPage = observer(() => {
 							value={selectedAuthorType}
 						/>
 					) : (
-						<div className='bg-gray-400 animate-pulse opacity-40 w-full h-full rounded-md' />
+						<SkeletonLoader className='size-full rounded-md' />
 					)}
 				</div>
 			</div>

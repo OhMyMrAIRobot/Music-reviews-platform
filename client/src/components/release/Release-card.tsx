@@ -1,6 +1,8 @@
 import { FC } from 'react'
-import useCustomNavigate from '../../hooks/use-custom-navigate'
+import { Link } from 'react-router'
+import useNavigationPath from '../../hooks/use-navigation-path'
 import { IRelease } from '../../models/release/release'
+import SkeletonLoader from '../utils/Skeleton-loader'
 import ReleaseAuthors from './Release-authors'
 import ReleaseRatings from './Release-ratings'
 import ReleaseReviewsCount from './Release-reviews-count'
@@ -12,17 +14,17 @@ interface IProps {
 }
 
 const ReleaseCard: FC<IProps> = ({ release, isLoading }) => {
-	const { navigateToRelease } = useCustomNavigate()
+	const { navigateToReleaseDetails } = useNavigationPath()
 
 	return isLoading ? (
-		<div className='bg-gray-400 w-full h-full animate-pulse opacity-40 rounded-xl' />
+		<SkeletonLoader className='w-full h-full rounded-xl' />
 	) : (
 		release && (
-			<button
-				onClick={() => navigateToRelease(release.id)}
-				className='bg-zinc-900 hover:scale-105 p-1 overflow-hidden flex flex-col justify-start relative w-full h-full rounded-xl border border-zinc-800 duration-300 cursor-pointer'
-			>
-				<div className='relative block aspect-square'>
+			<div className='bg-zinc-900 hover:bg-white/10 p-1 overflow-hidden flex flex-col justify-start relative w-full h-full rounded-xl border border-zinc-800 duration-300'>
+				<Link
+					to={navigateToReleaseDetails(release.id)}
+					className='relative block aspect-square'
+				>
 					<div className='rounded-lg size-full min-h-35'>
 						<img
 							alt={release.title}
@@ -49,7 +51,7 @@ const ReleaseCard: FC<IProps> = ({ release, isLoading }) => {
 							className={'relative size-4'}
 						/>
 					</div>
-				</div>
+				</Link>
 				<div className='mt-1.5 relative'>
 					<p className='text-sm font-bold text-white leading-4 block antialiased text-left'>
 						{release.title}
@@ -68,7 +70,7 @@ const ReleaseCard: FC<IProps> = ({ release, isLoading }) => {
 						showHint={false}
 					/>
 				</div>
-			</button>
+			</div>
 		)
 	)
 }

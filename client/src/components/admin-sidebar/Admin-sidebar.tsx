@@ -1,5 +1,5 @@
 import { useActivePath } from '../../hooks/use-active-path'
-import useCustomNavigate from '../../hooks/use-custom-navigate'
+import useNavigationPath from '../../hooks/use-navigation-path'
 import { ROUTES } from '../../routes/routes-enum'
 import LogoutSvg from '../header/svg/Logout-svg'
 import ProfileSvg from '../header/svg/Profile-svg'
@@ -8,6 +8,7 @@ import AuthorSvg from '../sidebar/svg/Author-svg'
 import ReleaseSvg from '../sidebar/svg/Release-svg'
 import LogoFullSvg from '../svg/Logo-full-svg'
 import LogoSmallSvg from '../svg/Logo-small-svg'
+import MediaPlayerSvg from '../svg/Media-player-svg'
 import PencilSvg from '../svg/Pencil-svg'
 import AdminSidebarItem, { IAdminSidebarItemProps } from './Admin-sidebar-item'
 
@@ -19,7 +20,8 @@ const AdminSidebar = () => {
 		navigateToAdminReleases,
 		navigateToAdminReviews,
 		navigateToAdminFeedback,
-	} = useCustomNavigate()
+		navigateToAdminMedia,
+	} = useNavigationPath()
 
 	const { isActive } = useActivePath()
 
@@ -27,31 +29,37 @@ const AdminSidebar = () => {
 		{
 			title: 'Релизы',
 			isActive: isActive(`/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.RELEASES}`),
-			onClick: navigateToAdminReleases,
+			href: navigateToAdminReleases,
 			svgIcon: <ReleaseSvg className={'size-5'} />,
 		},
 		{
 			title: 'Пользователи',
 			isActive: isActive(`/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.USERS}`),
-			onClick: navigateToAdminUsers,
+			href: navigateToAdminUsers,
 			svgIcon: <ProfileSvg className={'size-5'} />,
 		},
 		{
 			title: 'Авторы',
 			isActive: isActive(`/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.AUTHORS}`),
-			onClick: navigateToAdminAuthors,
+			href: navigateToAdminAuthors,
 			svgIcon: <AuthorSvg className={'size-5'} />,
 		},
 		{
 			title: 'Рецензии',
 			isActive: isActive(`/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.REVIEWS}`),
-			onClick: navigateToAdminReviews,
+			href: navigateToAdminReviews,
 			svgIcon: <TextReviewSvg className={'size-5'} />,
+		},
+		{
+			title: 'Медиа',
+			isActive: isActive(`/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.MEDIA}`),
+			href: navigateToAdminMedia,
+			svgIcon: <MediaPlayerSvg className={'size-5'} />,
 		},
 		{
 			title: 'Сообщения',
 			isActive: isActive(`/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.FEEDBACK}`),
-			onClick: navigateToAdminFeedback,
+			href: navigateToAdminFeedback,
 			svgIcon: <PencilSvg className={'size-3.5'} />,
 		},
 	]
@@ -71,7 +79,7 @@ const AdminSidebar = () => {
 				<AdminSidebarItem
 					title={'Выйти из панели'}
 					isActive={false}
-					onClick={navigateToMain}
+					href={navigateToMain}
 					svgIcon={<LogoutSvg className={'size-4'} />}
 				/>
 			</div>

@@ -3,7 +3,7 @@ import Loader from '../../../../../../components/utils/Loader'
 
 interface IProps {
 	title: string
-	onClick: () => void
+	onClick?: () => void
 	svg: ReactNode
 	disabled: boolean
 	isLoading?: boolean
@@ -17,7 +17,7 @@ const EditUserModalButton: FC<IProps> = ({
 	isLoading = false,
 }) => {
 	const handleClick = () => {
-		if (!disabled) {
+		if (!disabled && onClick) {
 			onClick()
 		}
 	}

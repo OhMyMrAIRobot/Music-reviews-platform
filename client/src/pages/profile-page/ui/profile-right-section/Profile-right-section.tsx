@@ -4,6 +4,8 @@ import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
 import { IProfile } from '../../../../models/profile/profile'
 import { ProfileSections } from '../../../../models/profile/profile-sections'
+import { RolesEnum } from '../../../../models/role/roles-enum'
+import ProfileMediaReviewsGrid from './Profile-media-reviews-grid'
 import ProfilePreferencesGrid from './profile-preferences/Profile-preferences-grid'
 import ProfileReviewsGrid from './Profile-reviews-grid'
 import ProfileSectionButton from './Profile-section-button'
@@ -83,6 +85,14 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 					onClick={() => setSelectedSection(ProfileSections.REVIEWS)}
 				/>
 
+				{profile.role === RolesEnum.SUPER_USER && (
+					<ProfileSectionButton
+						title={ProfileSections.MEDIA_REVIEWS}
+						isActive={selectedSection === ProfileSections.MEDIA_REVIEWS}
+						onClick={() => setSelectedSection(ProfileSections.MEDIA_REVIEWS)}
+					/>
+				)}
+
 				<ProfileSectionButton
 					title={ProfileSections.LIKES}
 					isActive={selectedSection === ProfileSections.LIKES}
@@ -103,6 +113,11 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 					storeToggle={profilePageStore.toggleReview}
 				/>
 			)}
+
+			{profile.role === RolesEnum.SUPER_USER &&
+				selectedSection === ProfileSections.MEDIA_REVIEWS && (
+					<ProfileMediaReviewsGrid profile={profile} />
+				)}
 
 			{selectedSection === ProfileSections.LIKES && (
 				<ProfileReviewsGrid

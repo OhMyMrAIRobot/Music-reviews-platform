@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import UserRoleSpan from '../../../../components/user/User-role-span'
 import { IProfile } from '../../../../models/profile/profile'
 import ProfileSocialItem from './profile-social-item/Profile-social-item'
 
@@ -22,12 +23,14 @@ const ProfileInfo: FC<IProps> = ({ profile }) => {
 				/>
 			</div>
 
-			<h1 className='text-xl text-center lg:text-[24px] font-bold mt-2.5 flex items-center gap-1.5'>
+			<h1 className='text-xl text-center lg:text-[24px] font-bold mt-2.5 flex items-center gap-2'>
 				<div>{profile.nickname}</div>
+
+				<UserRoleSpan role={profile.role} />
 			</h1>
 
 			<div className='text-sm text-zinc-400 font-medium'>
-				Дата регистрации: {profile.created_at}
+				Дата регистрации: {profile.createdAt}
 			</div>
 
 			{profile.bio && (

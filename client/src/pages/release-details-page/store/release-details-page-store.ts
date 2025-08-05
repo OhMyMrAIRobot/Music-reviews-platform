@@ -2,12 +2,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
 import { ReleaseAPI } from '../../../api/release-api'
+import { ReleaseMediaAPI } from '../../../api/release-media-api'
 import { ReviewAPI } from '../../../api/review-api'
+import { IReleaseMedia } from '../../../models/release-media/release-media'
+import { IReleaseMediaList } from '../../../models/release-media/release-media-list'
 import { IReleaseDetails } from '../../../models/release/release-details'
 import { IReleaseReview } from '../../../models/review/release-review'
 import { IReviewData } from '../../../models/review/review-data'
 import { TogglePromiseResult } from '../../../types/toggle-promise-result'
 import { toggleFav } from '../../../utils/toggle-fav'
+import { toggleFavMedia } from '../../../utils/toggle-fav-media'
 
 class ReleaseDetailsPageStore {
 	constructor() {
@@ -17,6 +21,11 @@ class ReleaseDetailsPageStore {
 	releaseDetails: IReleaseDetails | null = null
 	releaseReviews: IReleaseReview[] | null = null
 	reviewsCount: number = 0
+
+	releaseMedia: IReleaseMedia[] = []
+	releaseMediaCount: number = 0
+
+	userReleaseMedia: IReleaseMedia | null = null
 
 	setReviewDetails(data: IReleaseDetails | null) {
 		this.releaseDetails = data
@@ -30,12 +39,53 @@ class ReleaseDetailsPageStore {
 		this.reviewsCount = data
 	}
 
+	setReleaseMedia(data: IReleaseMediaList) {
+		runInAction(() => {
+			this.releaseMedia = data.releaseMedia
+			this.releaseMediaCount = data.count
+		})
+	}
+
+	setUserReleaseMedia(data: IReleaseMedia | null) {
+		this.userReleaseMedia = data
+	}
+
 	fetchReleaseDetails = async (id: string) => {
 		try {
 			const data = await ReleaseAPI.fetchReleaseDetails(id)
 			this.setReviewDetails(data)
 		} catch (e) {
 			console.log(e)
+		}
+	}
+
+	fetchReleaseMedia = async (statusId: string, releaseId: string) => {
+		try {
+			const data = await ReleaseMediaAPI.fetchReleaseMedia(
+				null,
+				null,
+				statusId,
+				null,
+				releaseId,
+				null,
+				null,
+				'desc'
+			)
+			this.setReleaseMedia(data)
+		} catch {
+			this.setReleaseMedia({ count: 0, releaseMedia: [] })
+		}
+	}
+
+	fetchUserReleaseMedia = async (releaseId: string, userId: string) => {
+		try {
+			const data = await ReleaseMediaAPI.fetchUserReleaseMedia(
+				releaseId,
+				userId
+			)
+			this.setUserReleaseMedia(data)
+		} catch {
+			this.setUserReleaseMedia(null)
 		}
 	}
 
@@ -83,6 +133,22 @@ class ReleaseDetailsPageStore {
 		}
 	}
 
+	postMediaReview = async (
+		releaseId: string,
+		title: string,
+		url: string
+	): Promise<string[]> => {
+		try {
+			const data = await ReleaseMediaAPI.postReleaseMedia(title, url, releaseId)
+			this.setUserReleaseMedia(data)
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
+		}
+	}
+
 	updateReview = async (
 		releaseId: string,
 		id: string,
@@ -106,6 +172,23 @@ class ReleaseDetailsPageStore {
 		}
 	}
 
+	updateReleaseMedia = async (
+		id: string,
+		title?: string,
+		url?: string
+	): Promise<string[]> => {
+		try {
+			const data = await ReleaseMediaAPI.updateReleaseMedia(id, { title, url })
+
+			this.setUserReleaseMedia(data)
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
+		}
+	}
+
 	deleteReview = async (
 		id: string
 	): Promise<{ status: boolean; message: string }> => {
@@ -120,6 +203,18 @@ class ReleaseDetailsPageStore {
 				status: false,
 				message: 'Не удалось удалить рецензию!',
 			}
+		}
+	}
+
+	deleteReleaseMedia = async (id: string): Promise<string[]> => {
+		try {
+			await ReleaseMediaAPI.deleteReleaseMedia(id)
+			this.setUserReleaseMedia(null)
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
 		}
 	}
 
@@ -175,6 +270,13 @@ class ReleaseDetailsPageStore {
 					: 'Не удалось отметить рецензию как понравившеюся!',
 			}
 		}
+	}
+
+	toggleFavMedia = async (
+		mediaId: string,
+		isFav: boolean
+	): Promise<string[]> => {
+		return toggleFavMedia(this.releaseMedia, mediaId, isFav)
 	}
 }
 

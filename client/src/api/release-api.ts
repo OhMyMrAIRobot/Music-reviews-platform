@@ -28,19 +28,19 @@ export const ReleaseAPI = {
 	async fetchReleases(
 		typeId: string | null,
 		query: string | null,
-		field: string,
-		order: string,
-		limit: number,
-		offset: number
+		field: string | null,
+		order: string | null,
+		limit: number | null,
+		offset: number | null
 	): Promise<IReleaseResponse> {
 		const { data } = await _api.get<IReleaseResponse>(
 			`list?
-			${typeId ? `typeId=${typeId}` : ''}
-			${query ? `&query=${query}` : ''}
-			&field=${field}
-			&order=${order}
-			&limit=${limit}
-			&offset=${offset}
+			${typeId ? `typeId=${typeId}&` : ''}
+			${query ? `query=${query}&` : ''}
+			${field ? `field=${field}&` : ''}
+			${order ? `order=${order}&` : ''}
+			${limit ? `limit=${limit}&` : ''}
+			${offset ? `offset=${offset}&` : ''}
 			`
 		)
 		return data
@@ -50,15 +50,15 @@ export const ReleaseAPI = {
 		typeId: string | null,
 		query: string | null,
 		order: SortOrder | null,
-		limit: number,
-		offset: number
+		limit: number | null,
+		offset: number | null
 	): Promise<IAdminReleasesResponse> {
 		const { data } = await api.get<IAdminReleasesResponse>(`/releases
-			?${typeId ? `typeId=${typeId}` : ''}
-			${query ? `&query=${query}` : ''}
-			${order ? `&order=${order}` : ''}
-			&limit=${limit}
-			&offset=${offset}`)
+			?${typeId ? `typeId=${typeId}&` : ''}
+			${query ? `query=${query}&` : ''}
+			${order ? `order=${order}&` : ''}
+			${limit ? `limit=${limit}&` : ''}
+			${offset ? `offset=${offset}&` : ''}`)
 
 		return data
 	},

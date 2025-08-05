@@ -1,6 +1,7 @@
 import { Route } from 'react-router'
 import AdminDashboardAuthorsGrid from '../pages/admin-dashboard-page/ui/grids/admin-dashboard-authors/Admin-dashboard-authors-grid'
 import AdminDashboardFeedbackGrid from '../pages/admin-dashboard-page/ui/grids/admin-dashboard-feedback/Admin-dashboard-feedback-grid'
+import AdminDashboardMediaGrid from '../pages/admin-dashboard-page/ui/grids/admin-dashboard-release-media/Admin-dashboard-media-grid.tsx'
 import AdminDashboardReleasesGrid from '../pages/admin-dashboard-page/ui/grids/admin-dashboard-releases/Admin-dashboard-releases-grid'
 import AdminDashboardReviewsGrid from '../pages/admin-dashboard-page/ui/grids/admin-dashboard-reviews/Admin-dashboard-reviews-grid'
 import AdminDashboardUsersGrid from '../pages/admin-dashboard-page/ui/grids/admin-dashboard-users/Admin-dashboard-users-grid'
@@ -29,6 +30,7 @@ const AdminRouteList = () => {
 				element={<AdminDashboardFeedbackGrid />}
 			/>
 			,
+			<Route path={ROUTES.ADMIN.MEDIA} element={<AdminDashboardMediaGrid />} />
 			<Route path={ROUTES.ADMIN.NOT_DEFINED} element={<>not defined</>} />,
 		</>
 	)

@@ -1,5 +1,6 @@
 import { FC } from 'react'
-import useCustomNavigate from '../../../hooks/use-custom-navigate'
+import { Link } from 'react-router'
+import useNavigationPath from '../../../hooks/use-navigation-path.ts'
 import { IReview } from '../../../models/review/review.ts'
 import ReviewAuthor from './Review-author'
 import ReviewMarks from './Review-marks'
@@ -10,12 +11,12 @@ interface IProps {
 }
 
 const ReviewHeader: FC<IProps> = ({ review }) => {
-	const { navigatoToProfile, navigateToRelease } = useCustomNavigate()
+	const { navigatoToProfile, navigateToReleaseDetails } = useNavigationPath()
 
 	return (
 		<div className='bg-zinc-950/70 p-2 rounded-[12px] flex gap-3'>
-			<div
-				onClick={() => navigatoToProfile(review.user_id)}
+			<Link
+				to={navigatoToProfile(review.user_id)}
 				className='flex items-center space-x-2 lg:space-x-3 w-full cursor-pointer'
 			>
 				<ReviewUserImage
@@ -25,7 +26,7 @@ const ReviewHeader: FC<IProps> = ({ review }) => {
 				/>
 
 				<ReviewAuthor nickname={review.nickname} position={review.position} />
-			</div>
+			</Link>
 
 			<div className='flex items-center justify-end gap-2 lg:gap-4 select-none'>
 				<ReviewMarks
@@ -37,18 +38,22 @@ const ReviewHeader: FC<IProps> = ({ review }) => {
 					atmosphere={review.atmosphere}
 				/>
 
-				<img
-					loading='lazy'
-					decoding='async'
-					onClick={() => navigateToRelease(review.release_id)}
-					alt={review.release_title}
-					src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
-						review.release_img === ''
-							? import.meta.env.VITE_DEFAULT_COVER
-							: review.release_img
-					}`}
-					className='rounded size-10 lg:size-11 cursor-pointer aspect-square'
-				/>
+				<Link
+					to={navigateToReleaseDetails(review.release_id)}
+					className='size-10 lg:size-11 rounded overflow-hidden aspect-square'
+				>
+					<img
+						loading='lazy'
+						decoding='async'
+						alt={review.release_title}
+						src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
+							review.release_img === ''
+								? import.meta.env.VITE_DEFAULT_COVER
+								: review.release_img
+						}`}
+						className='size-full aspect-square'
+					/>
+				</Link>
 			</div>
 		</div>
 	)

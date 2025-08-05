@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router'
 import CarouselContainer from '../../../components/carousel/Carousel-container'
 import { useLoading } from '../../../hooks/use-loading'
@@ -12,8 +12,6 @@ const AuthorDetailsReleasesCarousel = observer(() => {
 
 	const { authorDetailsPageStore } = useStore()
 
-	const carouselRef = useRef<CarouselRef>(null)
-
 	const { execute: fetch, isLoading } = useLoading(
 		authorDetailsPageStore.fetchTopReleases
 	)
@@ -24,25 +22,29 @@ const AuthorDetailsReleasesCarousel = observer(() => {
 		}
 	}, [fetch, id])
 
+	const carouselRef = useRef<CarouselRef>(null)
+	const [canScrollPrev, setCanScrollPrev] = useState(false)
+	const [canScrollNext, setCanScrollNext] = useState(false)
+
 	return (
 		<CarouselContainer
 			title={'Лучшие работы'}
 			buttonTitle={''}
 			showButton={false}
-			onButtonClick={() => {}}
-			handlePrev={() => {
-				carouselRef.current?.scrollPrev()
-			}}
-			handleNext={() => {
-				carouselRef.current?.scrollNext()
-			}}
-			Carousel={
+			handlePrev={() => carouselRef.current?.scrollPrev()}
+			handleNext={() => carouselRef.current?.scrollNext()}
+			href='#'
+			carousel={
 				<LastReleasesCarousel
 					items={authorDetailsPageStore.topReleases}
 					isLoading={isLoading}
 					ref={carouselRef}
+					onCanScrollPrevChange={setCanScrollPrev}
+					onCanScrollNextChange={setCanScrollNext}
 				/>
 			}
+			canScrollNext={canScrollNext}
+			canScrollPrev={canScrollPrev}
 		/>
 	)
 })

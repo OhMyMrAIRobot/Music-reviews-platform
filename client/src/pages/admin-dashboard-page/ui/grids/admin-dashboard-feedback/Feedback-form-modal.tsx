@@ -4,6 +4,7 @@ import FormButton from '../../../../../components/form-elements/Form-button'
 import FormLabel from '../../../../../components/form-elements/Form-label'
 import FormTextbox from '../../../../../components/form-elements/Form-textbox'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay'
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import { useLoading } from '../../../../../hooks/use-loading'
 import { useStore } from '../../../../../hooks/use-store'
 import { IFeedbackReply } from '../../../../../models/feedback-reply/feedback-reply'
@@ -114,7 +115,7 @@ const FeedbackFormModal: FC<IProps> = observer(
 				isLoading={isReplyPosting || isUpdatingStatus}
 			>
 				{isReplyLoading ? (
-					<div className='bg-gray-400 w-240 h-148 animate-pulse opacity-40 rounded-xl' />
+					<SkeletonLoader className='w-240 h-148 rounded-xl' />
 				) : (
 					<div
 						className={`relative rounded-xl w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6`}
@@ -190,7 +191,7 @@ const FeedbackFormModal: FC<IProps> = observer(
 
 						<div className='pt-6 px-6 flex gap-3 justify-start border-t-1 border-white/10'>
 							{isStatusesLoading ? (
-								<div className='bg-gray-400 w-35 h-10 animate-pulse opacity-40 rounded-md' />
+								<SkeletonLoader className='w-35 h-10 rounded-md' />
 							) : (
 								<>
 									{showReply && !reply ? (

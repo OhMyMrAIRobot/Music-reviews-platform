@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useEffect, useState } from 'react'
+import { Link } from 'react-router'
 import ComboBox from '../../../../../../components/buttons/Combo-box.tsx'
 import FormButton from '../../../../../../components/form-elements/Form-button.tsx'
 import FormDelimiter from '../../../../../../components/form-elements/Form-delimiter.tsx'
@@ -9,8 +10,9 @@ import FormTextboxWithConfirmation from '../../../../../../components/form-eleme
 import ModalOverlay from '../../../../../../components/modals/Modal-overlay.tsx'
 import MoveToSvg from '../../../../../../components/svg/Move-to-svg.tsx'
 import TrashSvg from '../../../../../../components/svg/Trash-svg.tsx'
-import useCustomNavigate from '../../../../../../hooks/use-custom-navigate.ts'
+import SkeletonLoader from '../../../../../../components/utils/Skeleton-loader.tsx'
 import { useLoading } from '../../../../../../hooks/use-loading.ts'
+import useNavigationPath from '../../../../../../hooks/use-navigation-path.ts'
 import { useStore } from '../../../../../../hooks/use-store.ts'
 import {
 	AdminAvailableRolesEnum,
@@ -39,7 +41,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 
 		const user = adminDashboardUsersStore.user
 
-		const { navigatoToProfile } = useCustomNavigate()
+		const { navigatoToProfile } = useNavigationPath()
 
 		const { execute: fetchUser, isLoading: isUserLoading } = useLoading(
 			adminDashboardUsersStore.fetchUser
@@ -154,7 +156,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 				}
 			>
 				{isUserLoading || isRolesLoading ? (
-					<div className='bg-gray-400 w-180 h-190 rounded-lg animate-pulse opacity-40' />
+					<SkeletonLoader className='w-180 h-190 rounded-lg' />
 				) : (
 					user && (
 						<div
@@ -188,12 +190,13 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 								</div>
 
 								<div className='absolute right-3 top-3 flex gap-3'>
-									<EditUserModalButton
-										title={'Профиль'}
-										onClick={() => navigatoToProfile(userId)}
-										svg={<MoveToSvg className={'size-4'} />}
-										disabled={false}
-									/>
+									<Link to={navigatoToProfile(userId)}>
+										<EditUserModalButton
+											title={'Профиль'}
+											svg={<MoveToSvg className={'size-4'} />}
+											disabled={false}
+										/>
+									</Link>
 
 									<EditUserModalButton
 										disabled={user.profile?.avatar === '' || isDeletingAvatar}

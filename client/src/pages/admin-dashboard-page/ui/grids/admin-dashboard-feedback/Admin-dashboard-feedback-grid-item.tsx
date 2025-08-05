@@ -2,6 +2,7 @@ import { FC, useState } from 'react'
 import FeedbackStatusIcon from '../../../../../components/feedback/Feedback-status-icon'
 import ArrowBottomSvg from '../../../../../components/header/svg/Arrow-bottom-svg'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal'
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import { useLoading } from '../../../../../hooks/use-loading'
 import { useStore } from '../../../../../hooks/use-store'
 import { IFeedback } from '../../../../../models/feedback/feedback'
@@ -19,7 +20,6 @@ interface IProps {
 	isLoading: boolean
 	order?: SortOrder
 	toggleOrder?: () => void
-	deleteFeedback?: () => void
 	isDeleteLoading?: boolean
 	refetchFeedbacks?: () => void
 }
@@ -69,7 +69,7 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
 	}
 
 	return isLoading ? (
-		<div className='bg-gray-400 w-full h-12 rounded-lg animate-pulse opacity-40' />
+		<SkeletonLoader className='w-full h-12 rounded-lg' />
 	) : (
 		<>
 			{feedback && (

@@ -4,7 +4,7 @@ import Loader from '../utils/Loader'
 interface IProps {
 	title: string
 	isInvert: boolean
-	onClick: () => void
+	onClick?: () => void
 	disabled: boolean
 	isLoading?: boolean
 }
@@ -17,7 +17,7 @@ const FormButton: FC<IProps> = ({
 	isLoading = false,
 }) => {
 	const handleClick = () => {
-		if (!disabled) {
+		if (!disabled && onClick) {
 			onClick()
 		}
 	}
@@ -33,7 +33,7 @@ const FormButton: FC<IProps> = ({
 			} ${
 				isInvert
 					? 'bg-white text-black hover:bg-white/80 '
-					: 'bg-zinc-950 text-white hover:bg-white/10'
+					: 'text-white hover:bg-white/10'
 			}`}
 		>
 			{isLoading && (

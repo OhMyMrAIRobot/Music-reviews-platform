@@ -2,7 +2,7 @@ import { FC, ReactNode } from 'react'
 
 interface IProps {
 	title: string
-	onClick: () => void
+	onClick?: () => void
 	children?: ReactNode
 }
 

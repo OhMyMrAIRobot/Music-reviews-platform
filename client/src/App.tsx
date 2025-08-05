@@ -21,7 +21,7 @@ export function App() {
 
 	useEffect(() => {
 		if (localStorage.getItem('token')) {
-			authStore.chechAuth().then(() => setIsLoading(false))
+			authStore.checkAuth().then(() => setIsLoading(false))
 		} else {
 			setIsLoading(false)
 		}

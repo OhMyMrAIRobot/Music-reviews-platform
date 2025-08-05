@@ -1,8 +1,10 @@
 import { FC, useState } from 'react'
+import { Link } from 'react-router'
 import AuthorTypeSvg from '../../../../../components/author/author-types/Author-type-svg.tsx'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal.tsx'
-import useCustomNavigate from '../../../../../hooks/use-custom-navigate.ts'
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
 import { useLoading } from '../../../../../hooks/use-loading.ts'
+import useNavigationPath from '../../../../../hooks/use-navigation-path.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
 import { IAdminAuthor } from '../../../../../models/author/admin-authors-response.ts'
 import { getAuthorTypeColor } from '../../../../../utils/get-author-type-color.ts'
@@ -28,7 +30,7 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 }) => {
 	const { adminDashboardAuthorsStore, notificationStore } = useStore()
 
-	const { navigateToAuthor } = useCustomNavigate()
+	const { navigateToAuthorDetails } = useNavigationPath()
 
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [editModalOpen, setEditModelOpen] = useState<boolean>(false)
@@ -56,7 +58,7 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 	}
 
 	return isLoading ? (
-		<div className='bg-gray-400 w-full h-12 rounded-lg animate-pulse opacity-40' />
+		<SkeletonLoader className='w-full h-12 rounded-lg' />
 	) : (
 		<>
 			{author && (
@@ -134,9 +136,9 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 				<div className='col-span-2 text-center'>
 					{author ? (
 						<div className='flex gap-x-3 justify-end'>
-							<AdminNavigateButton
-								onClick={() => navigateToAuthor(author.id)}
-							/>
+							<Link to={navigateToAuthorDetails(author.id)}>
+								<AdminNavigateButton />
+							</Link>
 							<AdminEditButton onClick={() => setEditModelOpen(true)} />
 							<AdminDeleteButton onClick={() => setConfModalOpen(true)} />
 						</div>

@@ -1,5 +1,6 @@
 import { FC } from 'react'
 import ComboBox from '../../../components/buttons/Combo-box'
+import SkeletonLoader from '../../../components/utils/Skeleton-loader'
 import { MonthEnum, MonthEnumType } from '../../../types/month-enum-type'
 
 interface IProps {
@@ -55,7 +56,7 @@ const ReleasesRatingPageHeader: FC<IProps> = ({
 				<div className='flex flex-col gap-y-2 md:flex-row md:gap-x-5'>
 					<div className='w-50 h-10'>
 						{!minYear ? (
-							<div className='bg-gray-400 animate-pulse opacity-40 w-full h-full rounded-md' />
+							<SkeletonLoader className='size-full rounded-md' />
 						) : (
 							<ComboBox
 								options={yearOptions}
@@ -72,7 +73,7 @@ const ReleasesRatingPageHeader: FC<IProps> = ({
 					{selectedYear !== null && (
 						<div className='w-50 h-10'>
 							{!minYear ? (
-								<div className='bg-gray-400 animate-pulse opacity-40 w-full h-full rounded-md' />
+								<SkeletonLoader className='size-full rounded-md' />
 							) : (
 								<ComboBox
 									options={Object.values(MonthEnum)}

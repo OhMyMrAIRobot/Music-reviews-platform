@@ -1,11 +1,13 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useRef, useState } from 'react'
-import useCustomNavigate from '../../../hooks/use-custom-navigate'
+import { Link, useNavigate } from 'react-router'
 import { useLoading } from '../../../hooks/use-loading'
+import useNavigationPath from '../../../hooks/use-navigation-path'
 import { useStore } from '../../../hooks/use-store'
 import { RolesEnum } from '../../../models/role/roles-enum'
 import SettingsSvg from '../../svg/Settings-svg'
 import ShieldSvg from '../../svg/Shield-svg'
+import SkeletonLoader from '../../utils/Skeleton-loader'
 import LogoutSvg from '../svg/Logout-svg'
 import ProfileSvg from '../svg/Profile-svg'
 import PopupProfileButton from './Popup-profile-button'
@@ -13,12 +15,14 @@ import PopupProfileButton from './Popup-profile-button'
 const ProfileButton = observer(() => {
 	const { authStore, profileStore, notificationStore } = useStore()
 
+	const navigate = useNavigate()
+
 	const {
 		navigateToMain,
 		navigatoToProfile,
 		navigateToEditProfile,
 		navigateToAdminReleases,
-	} = useCustomNavigate()
+	} = useNavigationPath()
 
 	const { execute: fetchProfile, isLoading } = useLoading(
 		profileStore.fetchProfile
@@ -53,7 +57,7 @@ const ProfileButton = observer(() => {
 	const logOut = () => {
 		authStore.logOut().then(() => {
 			if (!authStore.isAuth) {
-				navigateToMain()
+				navigate(navigateToMain)
 			}
 			notificationStore.addNotification({
 				id: self.crypto.randomUUID(),
@@ -71,7 +75,7 @@ const ProfileButton = observer(() => {
 			className='relative flex rounded-md items-center select-none'
 		>
 			{isLoading ? (
-				<div className='size-10 bg-gray-400 animate-pulse opacity-40 rounded-full' />
+				<SkeletonLoader className='size-10 rounded-full' />
 			) : (
 				<button
 					onClick={() => setIsOpen(!isOpen)}
@@ -99,30 +103,30 @@ const ProfileButton = observer(() => {
 			>
 				<h3 className='px-5 pb-1 truncate'>{authStore.user?.nickname}</h3>
 
-				<PopupProfileButton
-					text='Моя страница'
-					icon={<ProfileSvg className={'size-5.5'} />}
-					onClick={() => {
-						if (authStore.user?.id) navigatoToProfile(authStore.user.id)
-					}}
-				/>
-				<PopupProfileButton
-					text='Настройки профиля'
-					icon={<SettingsSvg className={'size-7'} />}
-					onClick={() => {
-						if (authStore.user?.id) navigateToEditProfile()
-					}}
-				/>
+				<Link
+					to={authStore.user?.id ? navigatoToProfile(authStore.user.id) : '#'}
+				>
+					<PopupProfileButton
+						text='Моя страница'
+						icon={<ProfileSvg className={'size-5.5'} />}
+					/>
+				</Link>
+
+				<Link to={authStore.user?.id ? navigateToEditProfile : '#'}>
+					<PopupProfileButton
+						text='Настройки профиля'
+						icon={<SettingsSvg className={'size-7'} />}
+					/>
+				</Link>
 
 				{(authStore.user?.role.role === RolesEnum.ADMIN ||
 					authStore.user?.role.role === RolesEnum.ROOT_ADMIN) && (
-					<PopupProfileButton
-						text='Админ. панель'
-						icon={<ShieldSvg className='size-6.5' />}
-						onClick={() => {
-							if (authStore.user?.id) navigateToAdminReleases()
-						}}
-					/>
+					<Link to={authStore.user?.id ? navigateToAdminReleases : '#'}>
+						<PopupProfileButton
+							text='Админ. панель'
+							icon={<ShieldSvg className='size-6.5' />}
+						/>
+					</Link>
 				)}
 
 				<div className='border-t border-white/10 pb-1' />

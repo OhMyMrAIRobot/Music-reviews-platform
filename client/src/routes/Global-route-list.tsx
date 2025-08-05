@@ -4,6 +4,7 @@ import AuthorsPage from '../pages/authors-page/Authors-page'
 import FeedbackPage from '../pages/feedback-page/Feedback-page'
 import LeaderboardPage from '../pages/leaderboard-page/Leaderboard-page'
 import MainPage from '../pages/main-page/Main-page'
+import MediaReviewsPage from '../pages/media-reviews-page/Media-reviews-page'
 import ProfilePage from '../pages/profile-page/Profile-page'
 import ReleaseDetailsPage from '../pages/release-details-page/Release-details-page'
 import ReleasesPage from '../pages/releases-page/Releases-page'
@@ -26,6 +27,7 @@ const GlobalRouteList = () => {
 			<Route path={ROUTES.PROFILE} element={<ProfilePage />} />,
 			<Route path={ROUTES.LEADERBOARD} element={<LeaderboardPage />} />,
 			<Route path={ROUTES.RATINGS} element={<ReleasesRatingPage />} />,
+			<Route path={ROUTES.MEDIA_REVIEWS} element={<MediaReviewsPage />} />,
 			<Route path={ROUTES.NOT_DEFINED} element={<MainPage />} />,
 		</>
 	)

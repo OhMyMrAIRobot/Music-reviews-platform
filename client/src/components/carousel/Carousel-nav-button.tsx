@@ -6,15 +6,29 @@ interface IProps {
 	isNext: boolean
 	handlePrev: () => void
 	handleNext: () => void
+	disabled?: boolean
 }
 
-const CarouselNavButton: FC<IProps> = ({ isNext, handleNext, handlePrev }) => {
+const CarouselNavButton: FC<IProps> = ({
+	isNext,
+	handleNext,
+	handlePrev,
+	disabled = false,
+}) => {
+	const handleClick = () => {
+		if (!disabled) {
+			return isNext ? handleNext() : handlePrev()
+		}
+	}
+
 	return (
 		<button
-			onClick={isNext ? handleNext : handlePrev}
-			className='relative rounded-full h-10 w-10 bg-zinc-900 hover:bg-zinc-800 flex items-center justify-center cursor-pointer transition-colors'
+			onClick={handleClick}
+			className={`${
+				disabled ? 'opacity-50 pointer-events-none' : ''
+			} relative rounded-full h-10 w-10 bg-zinc-900 hover:bg-zinc-800 flex items-center justify-center cursor-pointer transition-colors`}
 		>
-			{isNext ? <NextSvg className={''} /> : <PrevSvg className={''} />}
+			{isNext ? <NextSvg /> : <PrevSvg />}
 		</button>
 	)
 }
