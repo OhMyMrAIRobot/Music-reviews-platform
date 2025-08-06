@@ -43,7 +43,7 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 				</div>
 
 				<Link
-					to={navigatoToProfile(item.user_id)}
+					to={navigatoToProfile(item.userId)}
 					className='flex shrink-0 space-x-4 items-center relative max-xl:w-1/2 max-xl:order-1'
 				>
 					<div className='relative z-20'>
@@ -124,11 +124,11 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 				>
 					<div className='flex items-center gap-1.5'>
 						<TextReviewSvg className='size-4 xl:size-5' />
-						<span className='font-semibold'>{item.text_count}</span>
+						<span className='font-semibold'>{item.textCount}</span>
 					</div>
 					<div className='flex items-center gap-1.5'>
 						<NoTextReviewSvg className='size-4 xl:size-5' />
-						<span className='font-semibold'>{item.no_text_count}</span>
+						<span className='font-semibold'>{item.withoutTextCount}</span>
 					</div>
 				</TooltipSpan>
 
@@ -156,14 +156,14 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 						<PixelHeartFillSvg className={'size-[19px]'} />
 
 						<span className='font-semibold'>
-							{formatNumber(item.received_likes)}
+							{formatNumber(item.receivedLikes)}
 						</span>
 					</div>
 					<div className='flex items-center gap-1.5'>
 						<PixelHeartSvg className={'size-[19px]'} />
 
 						<span className='font-semibold'>
-							{formatNumber(item.given_likes)}
+							{formatNumber(item.givenLikes)}
 						</span>
 					</div>
 				</TooltipSpan>

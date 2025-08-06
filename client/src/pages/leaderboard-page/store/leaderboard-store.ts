@@ -17,8 +17,8 @@ class LeaderboardStore {
 		try {
 			const data = await LeaderboardAPI.fetchLeaderboard()
 			this.setItems(data)
-		} catch (e) {
-			console.log(e)
+		} catch {
+			this.setItems([])
 		}
 	}
 }
