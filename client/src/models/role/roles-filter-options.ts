@@ -1,7 +1,7 @@
 export const RolesFilterOptions = Object.freeze({
 	ALL: 'Все',
-	USER: 'User',
-	SUPER_USER: 'SuperUser',
-	ADMIN: 'Admin',
-	ROOT_ADMIN: 'RootAdmin',
+	USER: 'Пользователь',
+	MEDIA: 'Медиа',
+	ADMIN: 'Администратор',
+	ROOT_ADMIN: 'Гл. Администратор',
 })

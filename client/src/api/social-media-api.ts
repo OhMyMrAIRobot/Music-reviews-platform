@@ -19,8 +19,8 @@ export const SocialMediaAPI = {
 
 	async addSocial(socialId: string, url: string): Promise<IProfileSocialMedia> {
 		const { data } = await api.post<IProfileSocialMedia>(
-			`/profile-social-media`,
-			{ socialId, url }
+			`/profile-social-media/${socialId}`,
+			{ url }
 		)
 		return data
 	},

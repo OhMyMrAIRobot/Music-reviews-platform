@@ -125,7 +125,7 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='col-span-2 lg:col-span-3 text-ellipsis line-clamp-1'>
+				<div className='col-span-2 text-ellipsis line-clamp-1'>
 					{user?.email ?? 'Email'}
 				</div>
 
@@ -147,7 +147,7 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='col-span-1 text-ellipsis line-clamp-1 font-medium'>
+				<div className='col-span-2 text-ellipsis line-clamp-1 font-medium'>
 					{user?.role ? (
 						<div
 							className={`flex gap-x-1 items-center ${getRoleColor(user.role)}`}

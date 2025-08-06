@@ -2,8 +2,8 @@ import { makeAutoObservable } from 'mobx'
 import { ProfileAPI } from '../../../api/profile-api'
 import { ReleaseMediaAPI } from '../../../api/release-media-api.ts'
 import { ReviewAPI } from '../../../api/review-api'
-import { IPreferred } from '../../../models/profile/preferred'
 import { IProfile } from '../../../models/profile/profile'
+import { IProfilePreferences } from '../../../models/profile/profile-preferences.ts'
 import { IReleaseMedia } from '../../../models/release-media/release-media.ts'
 import { IReview } from '../../../models/review/review.ts'
 import { TogglePromiseResult } from '../../../types/toggle-promise-result'
@@ -16,7 +16,7 @@ export class ProfilePageStore {
 	}
 
 	profile: IProfile | null = null
-	preferred: IPreferred | null = null
+	preferred: IProfilePreferences | null = null
 	reviews: IReview[] = []
 	reviewsCount: number = 0
 	favReviews: IReview[] = []
@@ -28,7 +28,7 @@ export class ProfilePageStore {
 		this.profile = data
 	}
 
-	setPreferred(data: IPreferred | null) {
+	setPreferred(data: IProfilePreferences | null) {
 		this.preferred = data
 	}
 
@@ -67,7 +67,7 @@ export class ProfilePageStore {
 
 	fetchPreferred = async (id: string) => {
 		try {
-			const data = await ProfileAPI.fetchPreferred(id)
+			const data = await ProfileAPI.fetchProfilePreferences(id)
 			this.setPreferred(data)
 		} catch {
 			this.setPreferred(null)

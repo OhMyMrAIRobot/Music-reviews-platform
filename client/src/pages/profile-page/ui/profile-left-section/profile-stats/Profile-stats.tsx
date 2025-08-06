@@ -86,7 +86,7 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
 				/>
 				<ProfileStatsRow
 					title={'Оценок без рецензий'}
-					value={profile.noTextCount}
+					value={profile.withoutTextCount}
 					icon={<NoTextReviewSvg className={'size-5'} />}
 				/>
 			</div>

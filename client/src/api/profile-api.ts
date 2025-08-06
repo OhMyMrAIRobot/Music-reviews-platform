@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { IPreferred } from '../models/profile/preferred'
 import { IProfile } from '../models/profile/profile'
+import { IProfilePreferences } from '../models/profile/profile-preferences'
 import { IUpdateProfileData } from '../models/profile/update-profile-data'
 import { IUpdatedProfile } from '../models/profile/updated-profile'
 import { api } from './api-instance'
@@ -15,12 +15,14 @@ const _api = axios.create({
 
 export const ProfileAPI = {
 	async fetchProfile(userId: string): Promise<IProfile> {
-		const { data } = await _api.get<IProfile>(`user/${userId}`)
+		const { data } = await _api.get<IProfile>(`/${userId}`)
 		return data
 	},
 
-	async fetchPreferred(id: string): Promise<IPreferred> {
-		const { data } = await _api.get<IPreferred>(`preferred/${id}`)
+	async fetchProfilePreferences(userId: string): Promise<IProfilePreferences> {
+		const { data } = await _api.get<IProfilePreferences>(
+			`preferences/${userId}`
+		)
 		return data
 	},
 

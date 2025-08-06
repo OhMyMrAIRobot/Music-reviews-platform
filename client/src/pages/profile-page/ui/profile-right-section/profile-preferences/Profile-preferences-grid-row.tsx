@@ -1,12 +1,12 @@
 import { EmblaOptionsType } from 'embla-carousel'
 import useEmblaCarousel from 'embla-carousel-react'
 import { FC } from 'react'
-import { IPreferredItem } from '../../../../../models/profile/preferred-item'
+import { IProfilePreferenceItem } from '../../../../../models/profile/profile-preference-item'
 import ProfilePreferencesItem from './Profile-preferences-item'
 
 interface IProps {
 	title: string
-	items: IPreferredItem[]
+	items: IProfilePreferenceItem[]
 	isAuthor: boolean
 	isLoading: boolean
 }
