@@ -326,26 +326,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 
---------------------------------------------
--- FUNCTION TO EXECUTE UPDATE LEADERBOARD --
-CREATE OR REPLACE FUNCTION update_leaderboard_on_change()
-    RETURNS TRIGGER AS $$
-BEGIN
-    IF (SELECT MAX(updated_at) FROM "Top_users_leaderboard") < NOW() - INTERVAL '30 minutes' THEN
-        PERFORM refresh_top_users();
-    END IF;
-    RETURN NULL;
-END;
-$$ LANGUAGE plpgsql;
-
-------------------------------------
--- TRIGGER FOR UPDATE LEADERBOARD --
-CREATE TRIGGER trigger_leaderboard_update
-    AFTER INSERT OR UPDATE OF points ON "User_profiles"
-    FOR EACH STATEMENT
-EXECUTE FUNCTION update_leaderboard_on_change();
-
-
 -------------------------------------------------------------------------
 -------------------------------------------------------------------------
 -------------------------------------------------------------------------
@@ -501,22 +481,22 @@ GROUP BY u.id, u.nickname, u.created_at, up.bio, up.avatar, up.cover_image, up.p
 
 CREATE OR REPLACE VIEW leaderboard_summary AS
 SELECT
-    tul.user_id,
+    tul.user_id as "userId",
     tul.rank,
     up.points,
     u.nickname,
     up.avatar,
     up.cover_image as cover,
-    (count(DISTINCT r.id) FILTER (WHERE r.text IS NOT NULL))::int AS text_count,
-    (count(DISTINCT r.id) FILTER (WHERE r.text IS NULL))::int AS no_text_count,
+    (count(DISTINCT r.id) FILTER (WHERE r.text IS NOT NULL))::int AS "textCount",
+    (count(DISTINCT r.id) FILTER (WHERE r.text IS NULL))::int AS "withoutTextCount",
     (SELECT COUNT(*)
      FROM "User_fav_reviews" ufr
               JOIN "Reviews" rev ON ufr.review_id = rev.id
-     WHERE rev.user_id = tul.user_id)::int AS received_likes,
+     WHERE rev.user_id = tul.user_id)::int AS "receivedLikes",
     (SELECT COUNT(*)
      FROM "User_fav_reviews" ufr
               JOIN "Reviews" rev ON ufr.review_id = rev.id
-     WHERE ufr.user_id = tul.user_id AND rev.user_id != tul.user_id)::int AS given_likes
+     WHERE ufr.user_id = tul.user_id AND rev.user_id != tul.user_id)::int AS "givenLikes"
 FROM "Top_users_leaderboard" tul
          JOIN "User_profiles" up on up.user_id = tul.user_id
          JOIN "Users" u on u.id = up.user_id

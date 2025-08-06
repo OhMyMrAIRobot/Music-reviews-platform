@@ -5,7 +5,7 @@ import { LeaderboardService } from './leaderboard.service';
 export class LeaderboardController {
   constructor(private readonly leaderboardService: LeaderboardService) {}
 
-  @Get('')
+  @Get()
   getLeaderboard() {
     return this.leaderboardService.getLeaderboard();
   }

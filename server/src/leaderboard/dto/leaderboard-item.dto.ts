@@ -1,12 +1,12 @@
 export class LeaderboardItemDto {
-  user_id: string;
+  userId: string;
   rank: number;
   points: number;
   nickname: string;
   avatar: string;
   cover: string;
-  text_count: number;
-  no_text_count: number;
-  received_likes: number;
-  given_likes: number;
+  textCount: number;
+  withoutTextCount: number;
+  receivedLikes: number;
+  givenLikes: number;
 }
