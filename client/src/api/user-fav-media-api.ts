@@ -16,7 +16,7 @@ export const UserFavMediaAPI = {
 		return data
 	},
 
-	async fetchMediaUserIds(mediaId: string): Promise<IUserFavMedia[]> {
+	async fetchFavByMediaId(mediaId: string): Promise<IUserFavMedia[]> {
 		const { data } = await api.get<IUserFavMedia[]>(
 			`/user-fav-media/media/${mediaId}`
 		)

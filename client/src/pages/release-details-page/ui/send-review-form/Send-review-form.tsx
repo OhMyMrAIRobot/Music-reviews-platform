@@ -180,7 +180,7 @@ const SendReviewForm: FC<IProps> = observer(
 								}}
 							/>
 
-							{authStore.user?.role.role === RolesEnum.SUPER_USER && (
+							{authStore.user?.role.role === RolesEnum.MEDIA && (
 								<SwitchButton
 									title='Медиарецензия'
 									isActive={isMediaReview && !isReview}
@@ -276,7 +276,7 @@ const SendReviewForm: FC<IProps> = observer(
 								</div>
 							</div>
 						) : (
-							authStore.user?.role.role === RolesEnum.SUPER_USER && (
+							authStore.user?.role.role === RolesEnum.MEDIA && (
 								<SendMediaReviewForm releaseId={id} />
 							)
 						)}

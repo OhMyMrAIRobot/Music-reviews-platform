@@ -20,11 +20,11 @@ const AuthorDetailsStats: FC<IProps> = ({ author, isLoading }) => {
 						<p className='lg:text-xl font-bold lg:mb-4'>Средняя оценка</p>
 						<AuthorReleaseTypesRatings
 							releaseType={ReleaseTypesEnum.SINGLE}
-							stats={author.release_type_stats}
+							stats={author.releaseTypeRatings}
 						/>
 						<AuthorReleaseTypesRatings
 							releaseType={ReleaseTypesEnum.ALBUM}
-							stats={author.release_type_stats}
+							stats={author.releaseTypeRatings}
 						/>
 					</div>
 				)

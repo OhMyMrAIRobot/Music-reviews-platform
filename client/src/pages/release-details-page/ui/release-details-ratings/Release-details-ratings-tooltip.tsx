@@ -23,11 +23,11 @@ interface IProps {
 
 const getTitle = (type: string) => {
 	switch (type) {
-		case ReleaseRatingTypesEnum.SUPER_USER:
-			return 'Средняя оценка супер-пользователей'
+		case ReleaseRatingTypesEnum.MEDIA:
+			return 'Средняя оценка Медиа'
 		case ReleaseRatingTypesEnum.WITH_TEXT:
 			return 'Средняя оценка рецензий пользователей'
-		case ReleaseRatingTypesEnum.NO_TEXT:
+		case ReleaseRatingTypesEnum.WITHOUT_TEXT:
 			return 'Средняя оценка без рецензий пользователей'
 	}
 }

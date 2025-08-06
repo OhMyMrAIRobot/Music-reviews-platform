@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { IReleaseTypeStats } from '../../../models/author/authors-response'
+import { IReleaseTypeRatings } from '../../../models/author/authors-response'
 import { ReleaseRatingTypesEnum } from '../../../models/release/release-rating-types-enum'
 import { ReleaseTypesEnum } from '../../../models/release/release-types'
 import AlbumSvg from '../../release/svg/Album-svg'
@@ -8,7 +8,7 @@ import AuthorRatingsItem from './Author-ratings-item'
 
 interface IProps {
 	releaseType: ReleaseTypesEnum
-	stats: IReleaseTypeStats[]
+	stats: IReleaseTypeRatings[]
 }
 
 const AuthorReleaseTypesRatings: FC<IProps> = ({ releaseType, stats }) => {
@@ -22,18 +22,18 @@ const AuthorReleaseTypesRatings: FC<IProps> = ({ releaseType, stats }) => {
 					<AlbumSvg className={'size-5'} />
 				)}
 				<AuthorRatingsItem
-					rating={ratings.ratings.super_user}
-					ratingType={ReleaseRatingTypesEnum.SUPER_USER}
+					rating={ratings.ratings.media}
+					ratingType={ReleaseRatingTypesEnum.MEDIA}
 					releaseType={releaseType}
 				/>
 				<AuthorRatingsItem
-					rating={ratings.ratings.with_text}
+					rating={ratings.ratings.withText}
 					ratingType={ReleaseRatingTypesEnum.WITH_TEXT}
 					releaseType={releaseType}
 				/>
 				<AuthorRatingsItem
-					rating={ratings.ratings.no_text}
-					ratingType={ReleaseRatingTypesEnum.NO_TEXT}
+					rating={ratings.ratings.withoutText}
+					ratingType={ReleaseRatingTypesEnum.WITHOUT_TEXT}
 					releaseType={releaseType}
 				/>
 			</div>

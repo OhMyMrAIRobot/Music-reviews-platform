@@ -16,19 +16,7 @@ const AuthorTypes: FC<IProps> = ({ types }) => {
 			key={type.type}
 			centered={false}
 		>
-			{(() => (
-				// switch (type.type) {
-				// 	case AuthorTypesEnum.ARTIST:
-				// 		return <ArtistSvg className={'size-7'} />
-				// 	case AuthorTypesEnum.PRODUCER:
-				// 		return <ProducerSvg className={'size-7'} />
-				// 	case AuthorTypesEnum.DESIGNER:
-				// 		return <DesignerSvg className={'size-7'} />
-				// 	default:
-				// 		return null
-				// }
-				<AuthorTypeSvg type={type} className={'size-7'} />
-			))()}
+			<AuthorTypeSvg type={type} className={'size-7'} />
 		</TooltipSpan>
 	))
 }

@@ -9,16 +9,16 @@ export interface IAuthorData {
 	id: string
 	img: string
 	name: string
-	likes_count: number
-	author_types: IAuthorType[]
-	release_type_stats: IReleaseTypeStats[]
+	favCount: number
+	authorTypes: IAuthorType[]
+	releaseTypeRatings: IReleaseTypeRatings[]
 }
 
-export interface IReleaseTypeStats {
+export interface IReleaseTypeRatings {
 	type: string
 	ratings: {
-		no_text: number | null
-		with_text: number | null
-		super_user: number | null
+		withoutText: number | null
+		withText: number | null
+		media: number | null
 	}
 }

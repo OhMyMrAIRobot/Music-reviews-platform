@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { AuthorTypesEnum } from '../../../../models/author/author-type'
+import { AuthorTypesEnum } from '../../../../models/author/author-types-enum'
 import { IReleaseDetails } from '../../../../models/release/release-details'
 import ReleaseDetailsAuthorsItem from './Release-details-authors-item'
 

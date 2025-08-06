@@ -52,7 +52,7 @@ const ReleaseDetailsMedia: FC<IProps> = observer(({ releaseId }) => {
 		if (
 			authStore.isAuth &&
 			authStore.user &&
-			authStore.user.role.role === RolesEnum.SUPER_USER
+			authStore.user.role.role === RolesEnum.MEDIA
 		) {
 			_fetchUserReleaseMedia(releaseId, authStore.user.id)
 		}

@@ -1,17 +1,17 @@
 export enum RolesEnum {
-	USER = 'User',
-	SUPER_USER = 'SuperUser',
-	ADMIN = 'Admin',
-	ROOT_ADMIN = 'RootAdmin',
+	USER = 'Пользователь',
+	MEDIA = 'Медиа',
+	ADMIN = 'Администратор',
+	ROOT_ADMIN = 'Гл. Администратор',
 }
 
 export enum AdminAvailableRolesEnum {
-	USER = 'User',
-	SUPER_USER = 'SuperUser',
+	USER = 'Пользователь',
+	MEDIA = 'Медиа',
 }
 
 export enum RootAdminAvalaibleRolesEnum {
-	USER = 'User',
-	SUPER_USER = 'SuperUser',
-	ADMIN = 'Admin',
+	USER = 'Пользователь',
+	MEDIA = 'Медиа',
+	ADMIN = 'Администратор',
 }

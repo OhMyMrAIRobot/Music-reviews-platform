@@ -40,19 +40,19 @@ const AuthorCard: FC<IProps> = ({ author, isLoading }) => {
 
 				<div className='text-sm md:text-xl font-semibold flex items-center justify-center gap-x-1'>
 					<span>{author.name}</span>
-					<AuthorTypes types={author.author_types} />
+					<AuthorTypes types={author.authorTypes} />
 				</div>
 
-				<LikesCount count={author.likes_count} />
+				<LikesCount count={author.favCount} />
 
 				<AuthorReleaseTypesRatings
 					releaseType={ReleaseTypesEnum.SINGLE}
-					stats={author.release_type_stats}
+					stats={author.releaseTypeRatings}
 				/>
 
 				<AuthorReleaseTypesRatings
 					releaseType={ReleaseTypesEnum.ALBUM}
-					stats={author.release_type_stats}
+					stats={author.releaseTypeRatings}
 				/>
 			</Link>
 		)

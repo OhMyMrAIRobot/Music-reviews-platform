@@ -1,8 +1,6 @@
 import { FC } from 'react'
-import {
-	AuthorTypesEnum,
-	IAuthorType,
-} from '../../../models/author/author-type'
+import { IAuthorType } from '../../../models/author/author-type'
+import { AuthorTypesEnum } from '../../../models/author/author-types-enum'
 import ArtistSvg from '../svg/Artist-svg'
 import DesignerSvg from '../svg/Designer-svg'
 import ProducerSvg from '../svg/Producer-svg'

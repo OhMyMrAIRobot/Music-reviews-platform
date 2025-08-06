@@ -15,7 +15,7 @@ export const toggleFavMedia = async (
 			await UserFavMediaAPI.deleteFromFav(mediaId)
 		}
 
-		const newLikes = await UserFavMediaAPI.fetchMediaUserIds(mediaId)
+		const newLikes = await UserFavMediaAPI.fetchFavByMediaId(mediaId)
 
 		const idx = items.findIndex(rm => rm.id === mediaId)
 

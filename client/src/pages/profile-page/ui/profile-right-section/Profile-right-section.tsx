@@ -85,7 +85,7 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 					onClick={() => setSelectedSection(ProfileSections.REVIEWS)}
 				/>
 
-				{profile.role === RolesEnum.SUPER_USER && (
+				{profile.role === RolesEnum.MEDIA && (
 					<ProfileSectionButton
 						title={ProfileSections.MEDIA_REVIEWS}
 						isActive={selectedSection === ProfileSections.MEDIA_REVIEWS}
@@ -114,7 +114,7 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 				/>
 			)}
 
-			{profile.role === RolesEnum.SUPER_USER &&
+			{profile.role === RolesEnum.MEDIA &&
 				selectedSection === ProfileSections.MEDIA_REVIEWS && (
 					<ProfileMediaReviewsGrid profile={profile} />
 				)}

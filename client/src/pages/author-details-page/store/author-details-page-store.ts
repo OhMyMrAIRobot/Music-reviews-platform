@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable } from 'mobx'
 import { AuthorAPI } from '../../../api/author-api'
 import { ReleaseAPI } from '../../../api/release-api'
 import { ReviewAPI } from '../../../api/review-api'
+import { UserFavAuthorAPI } from '../../../api/user-fav-author-api.ts'
 import { IAuthor } from '../../../models/author/author'
 import { IRelease } from '../../../models/release/release'
 import { IReview } from '../../../models/review/review.ts'
@@ -73,28 +75,48 @@ class AuthorDetailsPageStore {
 	toggleFavAuthor = async (
 		authorId: string,
 		isFav: boolean
-	): Promise<TogglePromiseResult> => {
-		const result = await toggleFav(this.author, authorId, isFav, {
-			add: AuthorAPI.addFavAuthor,
-			delete: AuthorAPI.deleteFavAuthor,
-			fetch: AuthorAPI.fetchFavAuthorUsersIds,
-		})
+	): Promise<string[]> => {
+		try {
+			if (!isFav) {
+				await UserFavAuthorAPI.addToFav(authorId)
+			} else {
+				await UserFavAuthorAPI.deleteFromFav(authorId)
+			}
 
-		if (result) {
-			return {
-				status: true,
-				message: isFav
-					? 'Вы убрали автора из списка понравившихся'
-					: 'Вы отметили автора как понравившегося!',
+			const newFav = await UserFavAuthorAPI.fetchFavByAuthorId(authorId)
+
+			if (this.author) {
+				this.author.userFavAuthors = newFav
+				this.author.favCount = newFav.length
 			}
-		} else {
-			return {
-				status: false,
-				message: isFav
-					? 'Не удалось убрать автора из списка понравившихся!'
-					: 'Не удалось отметить автора как понравившегося!',
-			}
+
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
 		}
+		// const result = await toggleFav(this.author, authorId, isFav, {
+		// 	add: AuthorAPI.addFavAuthor,
+		// 	delete: AuthorAPI.deleteFavAuthor,
+		// 	fetch: AuthorAPI.fetchFavAuthorUsersIds,
+		// })
+
+		// if (result) {
+		// 	return {
+		// 		status: true,
+		// 		message: isFav
+		// 			? 'Вы убрали автора из списка понравившихся'
+		// 			: 'Вы отметили автора как понравившегося!',
+		// 	}
+		// } else {
+		// 	return {
+		// 		status: false,
+		// 		message: isFav
+		// 			? 'Не удалось убрать автора из списка понравившихся!'
+		// 			: 'Не удалось отметить автора как понравившегося!',
+		// 	}
+		// }
 	}
 
 	toggleFavReview = async (
