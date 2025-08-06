@@ -392,13 +392,13 @@ export class ReleasesService {
                 )) as ratings,
                 (SELECT rr.total FROM "Release_ratings" rr
                                           JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
-                WHERE rr.release_id = r.id AND rrt.type = 'super_user') AS super_user_rating,
+                WHERE rr.release_id = r.id AND rrt.type = 'Оценка медиа') AS super_user_rating,
                 (SELECT rr.total FROM "Release_ratings" rr
                                           JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
-                WHERE rr.release_id = r.id AND rrt.type = 'with_text') AS text_rating,
+                WHERE rr.release_id = r.id AND rrt.type = 'Оценка с рецензией') AS text_rating,
                 (SELECT rr.total FROM "Release_ratings" rr
                                           JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
-                WHERE rr.release_id = r.id AND rrt.type = 'no_text') AS no_text_rating
+                WHERE rr.release_id = r.id AND rrt.type = 'Оценка без рецензии') AS no_text_rating
 
             FROM "Releases" r
                     LEFT JOIN "Release_types" rt on r.release_type_id = rt.id
@@ -471,13 +471,13 @@ export class ReleasesService {
               END as ratings,
               (SELECT rr.total FROM "Release_ratings" rr
                                         JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
-              WHERE rr.release_id = r.id AND rrt.type = 'super_user') AS super_user_rating,
+              WHERE rr.release_id = r.id AND rrt.type = 'Оценка медиа') AS super_user_rating,
               (SELECT rr.total FROM "Release_ratings" rr
                                         JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
-              WHERE rr.release_id = r.id AND rrt.type = 'with_text') AS text_rating,
+              WHERE rr.release_id = r.id AND rrt.type = 'Оценка с рецензией') AS text_rating,
               (SELECT rr.total FROM "Release_ratings" rr
                                         JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
-              WHERE rr.release_id = r.id AND rrt.type = 'no_text') AS no_text_rating
+              WHERE rr.release_id = r.id AND rrt.type = 'Оценка без рецензии') AS no_text_rating
 
           FROM "Releases" r
                   LEFT JOIN "Release_types" rt on r.release_type_id = rt.id
@@ -557,15 +557,15 @@ export class ReleasesService {
            END as ratings,
           (SELECT rr.total FROM "Release_ratings" rr
               JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
-          WHERE rr.release_id = r.id AND rrt.type = 'super_user') AS super_user_rating,
+          WHERE rr.release_id = r.id AND rrt.type = 'Оценка медиа') AS super_user_rating,
 
           (SELECT rr.total FROM "Release_ratings" rr
               JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
-          WHERE rr.release_id = r.id AND rrt.type = 'with_text') AS text_rating,
+          WHERE rr.release_id = r.id AND rrt.type = 'Оценка с рецензией') AS text_rating,
 
           (SELECT rr.total FROM "Release_ratings" rr
               JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
-          WHERE rr.release_id = r.id AND rrt.type = 'no_text') AS no_text_rating
+          WHERE rr.release_id = r.id AND rrt.type = 'Оценка без рецензии') AS no_text_rating
 
           FROM "Releases" r
               LEFT JOIN "Release_types" rt on r.release_type_id = rt.id

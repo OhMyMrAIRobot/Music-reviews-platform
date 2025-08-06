@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { PrismaModule } from 'prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { AuthorTypesModule } from './author-types/author-types.module';
-import { AuthorsOnTypesModule } from './authors-on-types/authors-on-types.module';
 import { AuthorsModule } from './authors/authors.module';
 import { FeedbackRepliesModule } from './feedback-replies/feedback-replies.module';
 import { FeedbackStatusesModule } from './feedback-statuses/feedback-statuses.module';
@@ -13,6 +12,9 @@ import { MailsModule } from './mails/mails.module';
 import { ProfilesModule } from './profiles/profiles.module';
 import { ReleaseArtistsModule } from './release-artists/release-artists.module';
 import { ReleaseDesignersModule } from './release-designers/release-designers.module';
+import { ReleaseMediaStatusesModule } from './release-media-statuses/release-media-statuses.module';
+import { ReleaseMediaTypesModule } from './release-media-types/release-media-types.module';
+import { ReleaseMediaModule } from './release-media/release-media.module';
 import { ReleaseProducersModule } from './release-producers/release-producers.module';
 import { ReleaseRatingTypesModule } from './release-rating-types/release-rating-types.module';
 import { ReleaseTypesModule } from './release-types/release-types.module';
@@ -21,13 +23,10 @@ import { ReviewsModule } from './reviews/reviews.module';
 import { RolesModule } from './roles/roles.module';
 import { SocialMediaModule } from './social-media/social-media.module';
 import { UserFavAuthorsModule } from './user-fav-authors/user-fav-authors.module';
+import { UserFavMediaModule } from './user-fav-media/user-fav-media.module';
 import { UserFavReleasesModule } from './user-fav-releases/user-fav-releases.module';
 import { UserFavReviewsModule } from './user-fav-reviews/user-fav-reviews.module';
 import { UsersModule } from './users/users.module';
-import { ReleaseMediaStatusesModule } from './release-media-statuses/release-media-statuses.module';
-import { ReleaseMediaTypesModule } from './release-media-types/release-media-types.module';
-import { ReleaseMediaModule } from './release-media/release-media.module';
-import { UserFavMediaModule } from './user-fav-media/user-fav-media.module';
 
 @Module({
   imports: [
@@ -39,7 +38,6 @@ import { UserFavMediaModule } from './user-fav-media/user-fav-media.module';
     SocialMediaModule,
     AuthorsModule,
     AuthorTypesModule,
-    AuthorsOnTypesModule,
     ReleaseTypesModule,
     ReleasesModule,
     ReleaseProducersModule,

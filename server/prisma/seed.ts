@@ -48,7 +48,7 @@ async function main() {
       },
       {
         id: '2',
-        role: UserRoleEnum.SUPER_USER,
+        role: UserRoleEnum.MEDIA,
       },
       {
         id: '1',
@@ -66,7 +66,7 @@ async function main() {
         password:
           '$2b$10$0bD/1z03VDQP3ko9BJ/2U.FGCyjcyY7sSXaf5.psHwB012H0xBswe',
         isActive: true,
-        roleId: '3',
+        roleId: '2',
       },
       {
         id: '2',
@@ -129,7 +129,7 @@ async function main() {
         password:
           '$2b$10$0bD/1z03VDQP3ko9BJ/2U.FGCyjcyY7sSXaf5.psHwB012H0xBswe',
         isActive: true,
-        roleId: '1',
+        roleId: '3',
       },
       {
         id: '9',
@@ -921,7 +921,7 @@ async function main() {
     data: [
       {
         id: '1',
-        type: ReleaseRatingTypesEnum.NO_TEXT,
+        type: ReleaseRatingTypesEnum.WITHOUT_TEXT,
       },
       {
         id: '2',
@@ -929,7 +929,7 @@ async function main() {
       },
       {
         id: '3',
-        type: ReleaseRatingTypesEnum.SUPER_USER,
+        type: ReleaseRatingTypesEnum.MEDIA,
       },
     ],
   });

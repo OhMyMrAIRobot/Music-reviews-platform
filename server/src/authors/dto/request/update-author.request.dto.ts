@@ -1,9 +1,11 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { Transform } from 'class-transformer';
 import { IsOptional } from 'class-validator';
-import { CreateAuthorDto } from './create-author.dto';
+import { CreateAuthorRequestDto } from './create-author.request.dto';
 
-export class UpdateAuthorDto extends PartialType(CreateAuthorDto) {
+export class UpdateAuthorRequestDto extends PartialType(
+  CreateAuthorRequestDto,
+) {
   @IsOptional()
   @Transform(({ value }) => {
     if (value === 'true' || value === true) return true;

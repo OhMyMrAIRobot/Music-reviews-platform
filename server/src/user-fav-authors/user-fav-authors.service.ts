@@ -1,12 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { UserFavAuthor } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
 import { AuthorsService } from 'src/authors/authors.service';
-import { DuplicateFieldException } from 'src/exceptions/duplicate-field.exception';
-import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
 import { UsersService } from 'src/users/users.service';
-import { CreateUserFavAuthorDto } from './dto/create-user-fav-author.dto';
-import { DeleteUserFavAuthorDto } from './dto/delete-user-fav-author.dto';
 
 @Injectable()
 export class UserFavAuthorsService {
@@ -16,80 +12,51 @@ export class UserFavAuthorsService {
     private readonly authorsService: AuthorsService,
   ) {}
 
-  async create(
-    createUserFavAuthorDto: CreateUserFavAuthorDto,
-    userId: string,
-  ): Promise<UserFavAuthor> {
-    const { authorId } = createUserFavAuthorDto;
-
+  async create(authorId: string, userId: string): Promise<UserFavAuthor> {
     await this.usersService.findOne(userId);
     await this.authorsService.findOne(authorId);
 
-    const existing = await this.findOne(userId, authorId);
-    if (existing) {
-      throw new DuplicateFieldException(
-        `Пользователь с id '${userId}' и`,
-        'id автора',
-        `${authorId}`,
+    const exist = await this.findOne(userId, authorId);
+    if (exist) {
+      throw new ConflictException(
+        'Вы уже отметили данного автора как понравившегося!',
       );
     }
 
     return this.prisma.userFavAuthor.create({
-      data: { ...createUserFavAuthorDto, userId },
+      data: { authorId, userId },
     });
   }
 
-  async findAll(): Promise<UserFavAuthor[]> {
-    return this.prisma.userFavAuthor.findMany();
-  }
-
   async findByUserId(userId: string): Promise<UserFavAuthor[]> {
+    await this.usersService.findOne(userId);
     const result = await this.prisma.userFavAuthor.findMany({
       where: { userId },
     });
 
-    // if (result.length === 0) {
-    //   throw new EntityNotFoundException(
-    //     'Понравившиеся авторы',
-    //     'id пользователя',
-    //     `${userId}`,
-    //   );
-    // }
     return result;
   }
 
   async findByAuthorId(authorId: string): Promise<UserFavAuthor[]> {
+    await this.authorsService.findOne(authorId);
     const result = await this.prisma.userFavAuthor.findMany({
       where: { authorId },
     });
 
-    // if (result.length === 0) {
-    //   throw new EntityNotFoundException(
-    //     'Пользователи, которорым понравилcя автора',
-    //     'id',
-    //     `${authorId}`,
-    //   );
-    // }
     return result;
   }
 
-  async remove(
-    deleteUserFavAuthorDto: DeleteUserFavAuthorDto,
-    userId: string,
-  ): Promise<UserFavAuthor> {
-    const { authorId } = deleteUserFavAuthorDto;
+  async remove(authorId: string, userId: string): Promise<UserFavAuthor> {
+    const exist = await this.findOne(userId, authorId);
 
-    const existing = await this.findOne(userId, authorId);
-    if (!existing) {
-      throw new EntityNotFoundException(
-        `Пользователь с id '${userId}' и`,
-        'id автора',
-        `${authorId}`,
+    if (!exist) {
+      throw new ConflictException(
+        'Вы не отмечали данного автора как понравившегося!',
       );
     }
 
     return this.prisma.userFavAuthor.delete({
-      where: { userId_authorId: { ...deleteUserFavAuthorDto, userId } },
+      where: { userId_authorId: { userId, authorId } },
     });
   }
 

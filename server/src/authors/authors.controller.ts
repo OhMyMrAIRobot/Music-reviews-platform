@@ -17,14 +17,24 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
 import { AuthorsService } from './authors.service';
-import { AuthorsQueryDto } from './dto/authors-query.dto';
-import { CreateAuthorDto } from './dto/create-author.dto';
-import { GetAuthorParamsDto } from './dto/get-author-params.dto';
-import { UpdateAuthorDto } from './dto/update-author.dto';
+import { FindAuthorParamsDto } from './dto/find-author-params.dto';
+import { CreateAuthorRequestDto } from './dto/request/create-author.request.dto';
+import { FindAuthorsQueryDto } from './dto/request/find-authors.query.dto';
+import { UpdateAuthorRequestDto } from './dto/request/update-author.request.dto';
 
 @Controller('authors')
 export class AuthorsController {
   constructor(private readonly authorsService: AuthorsService) {}
+
+  @Get()
+  findAuthors(@Query() query: FindAuthorsQueryDto) {
+    return this.authorsService.findAuthors(query);
+  }
+
+  @Get(':id')
+  findById(@Param() params: FindAuthorParamsDto) {
+    return this.authorsService.findById(params.id);
+  }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
@@ -41,7 +51,7 @@ export class AuthorsController {
       avatarImg?: Express.Multer.File[];
       coverImg?: Express.Multer.File[];
     },
-    @Body() createAuthorDto: CreateAuthorDto,
+    @Body() createAuthorDto: CreateAuthorRequestDto,
   ) {
     return this.authorsService.create(
       createAuthorDto,
@@ -50,25 +60,10 @@ export class AuthorsController {
     );
   }
 
-  @Get('one/:id')
-  findOne(@Param('id') id: string) {
-    return this.authorsService.findOne(id);
-  }
-
-  @Get('id/:id')
-  findById(@Param() params: GetAuthorParamsDto) {
-    return this.authorsService.findById(params.id);
-  }
-
-  @Get('list')
-  findAuthors(@Query() query: AuthorsQueryDto) {
-    return this.authorsService.findAuthors(query);
-  }
-
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
-  @Get()
-  findAll(@Query() query: AuthorsQueryDto) {
+  @Get('admin')
+  findAll(@Query() query: FindAuthorsQueryDto) {
     return this.authorsService.findAll(query);
   }
 
@@ -88,7 +83,7 @@ export class AuthorsController {
       avatarImg?: Express.Multer.File[];
       coverImg?: Express.Multer.File[];
     },
-    @Body() updateAuthorDto: UpdateAuthorDto,
+    @Body() updateAuthorDto: UpdateAuthorRequestDto,
   ) {
     return this.authorsService.update(
       id,

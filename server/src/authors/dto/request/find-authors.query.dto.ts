@@ -3,7 +3,7 @@ import { IsInt, IsOptional, Length } from 'class-validator';
 import { IsEntityId } from 'src/decorators/is-entity-id.decorator';
 import { IsSearchQuery } from 'src/decorators/is-search-query.decorator';
 
-export class AuthorsQueryDto {
+export class FindAuthorsQueryDto {
   @IsOptional()
   @IsEntityId()
   typeId?: string;

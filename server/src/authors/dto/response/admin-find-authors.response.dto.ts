@@ -11,16 +11,16 @@ class AuthorTypes {
   authorId: string;
 }
 
-export class FindAuthorsResponseDto {
+export class AdminFindAuthorsResponseDto {
   @Expose()
   total: number;
 
   @Expose()
-  @Type(() => AuthorDto)
-  authors: AuthorDto[];
+  @Type(() => AdminAuthorDto)
+  authors: AdminAuthorDto[];
 }
 
-export class AuthorDto {
+export class AdminAuthorDto {
   @Expose()
   id: string;
 

@@ -35,7 +35,7 @@ export class ReleaseMediaController {
   ) {}
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.SUPER_USER)
+  @Roles(UserRoleEnum.MEDIA)
   @Post()
   async create(
     @Body() dto: CreateReleaseMediaRequestDto,
@@ -81,7 +81,7 @@ export class ReleaseMediaController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.SUPER_USER)
+  @Roles(UserRoleEnum.MEDIA)
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -102,7 +102,7 @@ export class ReleaseMediaController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.SUPER_USER)
+  @Roles(UserRoleEnum.MEDIA)
   @Delete(':id')
   remove(@Param('id') id: string, @Request() req: IAuthenticatedRequest) {
     return this.releaseMediaService.remove(id, req.user.id);
