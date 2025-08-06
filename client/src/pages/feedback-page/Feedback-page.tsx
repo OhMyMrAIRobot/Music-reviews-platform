@@ -44,9 +44,9 @@ const FeedbackPage = () => {
 
 	const isFormValid = useMemo(() => {
 		return (
-			feedbackData.email !== '' &&
-			feedbackData.message.length >= 100 &&
-			feedbackData.title.length >= 5
+			feedbackData.email.trim() !== '' &&
+			feedbackData.message.trim().length >= 100 &&
+			feedbackData.title.trim().length >= 5
 		)
 	}, [feedbackData])
 
@@ -68,7 +68,7 @@ const FeedbackPage = () => {
 					placeholder={'mail@example.com'}
 					type={'email'}
 					value={feedbackData.email}
-					setValue={value => handleChange('email', value.trim())}
+					setValue={value => handleChange('email', value)}
 				/>
 			</div>
 
@@ -79,7 +79,7 @@ const FeedbackPage = () => {
 					placeholder={'Краткий заголовок (до 50 символов)'}
 					type={'text'}
 					value={feedbackData.title}
-					setValue={value => handleChange('title', value.trim())}
+					setValue={value => handleChange('title', value)}
 				/>
 			</div>
 
@@ -87,9 +87,9 @@ const FeedbackPage = () => {
 				<FormLabel name={'Описание'} htmlFor={'message'} />
 				<FormTextbox
 					id={'message'}
-					placeholder={'Текст...'}
+					placeholder={'Текст (от 100 символов)'}
 					value={feedbackData.message}
-					setValue={value => handleChange('message', value.trim())}
+					setValue={value => handleChange('message', value)}
 					className='h-50'
 				/>
 			</div>
