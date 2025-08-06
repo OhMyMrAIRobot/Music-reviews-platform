@@ -3,7 +3,7 @@ import { IsEnum, IsInt, IsOptional, Length } from 'class-validator';
 import { IsSearchQuery } from 'src/decorators/is-search-query.decorator';
 import { IsSortOrder } from 'src/decorators/is-sort-order.decorator';
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
-import { SortOrder } from 'src/types/sort-order.type';
+import { SortOrder } from 'src/shared/types/sort-order.type';
 
 export class GetUsersQueryDto {
   @IsOptional()

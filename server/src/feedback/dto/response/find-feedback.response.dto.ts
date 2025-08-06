@@ -1,5 +1,5 @@
 import { Exclude, Expose, Transform, Type } from 'class-transformer';
-import { formatFullDate } from 'src/utils/format-full-date';
+import { formatFullDate } from 'src/shared/utils/format-full-date';
 
 class FeedbackStatus {
   @Expose()

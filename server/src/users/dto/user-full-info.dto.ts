@@ -1,5 +1,5 @@
 import { Exclude, Expose, Transform, Type } from 'class-transformer';
-import { formatFullDate } from '../../utils/format-full-date';
+import { formatFullDate } from '../../shared/utils/format-full-date';
 
 export class UserFullInfo {
   @Expose()

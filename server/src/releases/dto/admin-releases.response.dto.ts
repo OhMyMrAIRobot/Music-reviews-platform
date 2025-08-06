@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { Exclude, Expose, Transform, Type } from 'class-transformer';
-import { formatPublishDate } from 'src/utils/format-publish-date';
+import { formatPublishDate } from 'src/shared/utils/format-publish-date';
 
 class AuthorDto {
   @Expose()

@@ -5,7 +5,7 @@ import { PrismaService } from 'prisma/prisma.service';
 import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
 import { InsufficientPermissionsException } from 'src/exceptions/insufficient-permissions.exception';
 import { NoDataProvidedException } from 'src/exceptions/no-data.exception';
-import { ReleaseMediaStatusesEnum } from 'src/release-media-statuses/entities/release-media-statuses.enum';
+import { ReleaseMediaStatusesEnum } from 'src/release-media-statuses/types/release-media-statuses.enum';
 import { ReleasesService } from 'src/releases/releases.service';
 import { UsersService } from 'src/users/users.service';
 import { ReleaseMediaStatusesService } from '../../src/release-media-statuses/release-media-statuses.service';

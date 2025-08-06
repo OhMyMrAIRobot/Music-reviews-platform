@@ -2,7 +2,7 @@
 import { Type } from 'class-transformer';
 import { IsIn, IsInt, IsOptional } from 'class-validator';
 import { IsSortOrder } from 'src/decorators/is-sort-order.decorator';
-import { SortOrder } from 'src/types/sort-order.type';
+import { SortOrder } from 'src/shared/types/sort-order.type';
 
 export class ReleaseReviewQueryDto {
   @IsOptional()

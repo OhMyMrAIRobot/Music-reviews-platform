@@ -1,5 +1,5 @@
 import { Exclude, Expose, Transform } from 'class-transformer';
-import { formatFullDate } from '../../utils/format-full-date';
+import { formatFullDate } from '../../shared/utils/format-full-date';
 
 interface UserProfileResponseObject {
   profile?: { avatar: string };

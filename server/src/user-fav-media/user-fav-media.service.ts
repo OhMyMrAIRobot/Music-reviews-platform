@@ -1,8 +1,8 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { UserFavMedia } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
-import { ReleaseMediaStatusesEnum } from 'src/release-media-statuses/entities/release-media-statuses.enum';
-import { ReleaseMediaTypesEnum } from 'src/release-media-types/entities/release-media-types.enum';
+import { ReleaseMediaStatusesEnum } from 'src/release-media-statuses/types/release-media-statuses.enum';
+import { ReleaseMediaTypesEnum } from 'src/release-media-types/types/release-media-types.enum';
 import { ReleaseMediaService } from 'src/release-media/release-media.service';
 import { UsersService } from 'src/users/users.service';
 
