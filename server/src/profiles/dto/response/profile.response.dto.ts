@@ -9,7 +9,7 @@ export class ProfileResponseDto {
   position: number | null;
   role: string;
   textCount: number;
-  noTextCount: number;
+  withoutTextCount: number;
   receivedLikes: number;
   givenLikes: number;
   social: { id: string; url: string; name: string }[];

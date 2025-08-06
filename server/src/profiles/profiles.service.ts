@@ -8,18 +8,18 @@ import { UserProfile } from '@prisma/client';
 import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.interface';
 import { FileService } from 'src/file/files.service';
 import { UsersService } from 'src/users/users.service';
-import { PrismaService } from '../../../prisma/prisma.service';
-import { EntityNotFoundException } from '../../exceptions/entity-not-found.exception';
-import { NoDataProvidedException } from '../../exceptions/no-data.exception';
+import { PrismaService } from '../../prisma/prisma.service';
+import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
+import { NoDataProvidedException } from '../exceptions/no-data.exception';
+import { UpdateProfileDto } from './dto/request/update-profile.request.dto';
 import {
-  PreferredResponseDto,
-  QueryPreferredResponseDto,
-} from '../dto/preferred.response.dto';
+  ProfilePreferencesResponseDto,
+  QueryProfilePreferencesResponseDto,
+} from './dto/response/profile-preferences.response.dto';
 import {
   ProfileResponseDto,
   QueryProfileResponseDto,
-} from '../dto/profile.response.dto';
-import { UpdateProfileDto } from '../dto/update-profile.dto';
+} from './dto/response/profile.response.dto';
 
 @Injectable()
 export class ProfilesService {
@@ -29,10 +29,6 @@ export class ProfilesService {
     private readonly prisma: PrismaService,
     private readonly fileService: FileService,
   ) {}
-
-  async findAll(): Promise<UserProfile[]> {
-    return this.prisma.userProfile.findMany();
-  }
 
   async findByUserId(userId: string): Promise<UserProfile> {
     const profile = await this.prisma.userProfile.findUnique({
@@ -129,9 +125,11 @@ export class ProfilesService {
     return result[0];
   }
 
-  async findPreferred(userId: string): Promise<PreferredResponseDto> {
+  async findProfilePreferences(
+    userId: string,
+  ): Promise<ProfilePreferencesResponseDto> {
     const result = await this.prisma
-      .$queryRawUnsafe<QueryPreferredResponseDto>(`
+      .$queryRawUnsafe<QueryProfilePreferencesResponseDto>(`
         WITH
             user_fav_authors AS (
                 SELECT
@@ -154,7 +152,7 @@ export class ProfilesService {
             )
 
             SELECT
-                u.id AS user_id,
+                u.id AS "userId",
                 (
                     SELECT jsonb_agg(jsonb_build_object(
                             'id', a.id,

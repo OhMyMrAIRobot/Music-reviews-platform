@@ -1,16 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { ProfileSocialMedia } from '@prisma/client';
+import { PrismaService } from 'prisma/prisma.service';
 import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.interface';
+import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
+import { NoDataProvidedException } from 'src/exceptions/no-data.exception';
+import { UpdateProfileSocialMediaRequestDto } from 'src/profile-social-media/dto/request/update-profile-social-media.request.dto';
+import { ProfilesService } from 'src/profiles/profiles.service';
+import { SocialMediaService } from 'src/social-media/social-media.service';
 import { UsersService } from 'src/users/users.service';
-import { PrismaService } from '../../../prisma/prisma.service';
-import { DuplicateFieldException } from '../../exceptions/duplicate-field.exception';
-import { EntityNotFoundException } from '../../exceptions/entity-not-found.exception';
-import { NoDataProvidedException } from '../../exceptions/no-data.exception';
-import { SocialMediaService } from '../../social-media/social-media.service';
-import { AdminCreateSocialMediaDto } from '../dto/admin-create-social-media.dto';
-import { CreateProfileSocialMediaDto } from '../dto/create-profile-social-media.dto';
-import { UpdateProfileSocialMediaDto } from '../dto/update-profile-social-media.dto';
-import { ProfilesService } from './profiles.service';
+import { CreateProfileSocialMediaRequestDto } from './dto/request/create-profile-social-media.request.dto';
 
 @Injectable()
 export class ProfileSocialMediaService {
@@ -23,11 +21,11 @@ export class ProfileSocialMediaService {
 
   async create(
     userId: string,
-    createDto: CreateProfileSocialMediaDto,
+    socialId: string,
+    createDto: CreateProfileSocialMediaRequestDto,
   ): Promise<ProfileSocialMedia> {
     const profile = await this.profilesService.findByUserId(userId);
 
-    const { socialId } = createDto;
     const profileId = profile.id;
 
     await this.socialMediaService.findById(socialId);
@@ -40,17 +38,16 @@ export class ProfileSocialMediaService {
       });
 
     if (existingProfileSocial) {
-      throw new DuplicateFieldException(
-        'Profile social media',
-        'profileId - socialId',
-        `${profileId} - ${socialId}`,
+      throw new ConflictException(
+        'Даная социальная сеть уже указана для этого профиля!',
       );
     }
 
     return this.prisma.profileSocialMedia.create({
       data: {
-        ...createDto,
+        socialId,
         profileId,
+        ...createDto,
       },
     });
   }
@@ -68,7 +65,7 @@ export class ProfileSocialMediaService {
   async update(
     socialId: string,
     userId: string,
-    updateDto: UpdateProfileSocialMediaDto,
+    updateDto: UpdateProfileSocialMediaRequestDto,
   ): Promise<ProfileSocialMedia> {
     if (!updateDto || Object.keys(updateDto).length === 0) {
       throw new NoDataProvidedException();
@@ -98,18 +95,18 @@ export class ProfileSocialMediaService {
     req: IAuthenticatedRequest,
     userId: string,
     socialId: string,
-    dto: AdminCreateSocialMediaDto,
+    dto: CreateProfileSocialMediaRequestDto,
   ): Promise<ProfileSocialMedia> {
     await this.usersService.checkPermissions(req.user, userId);
 
-    return this.create(userId, { socialId, url: dto.url });
+    return this.create(userId, socialId, dto);
   }
 
   async adminUpdate(
     req: IAuthenticatedRequest,
     userId: string,
     socialId: string,
-    dto: UpdateProfileSocialMediaDto,
+    dto: UpdateProfileSocialMediaRequestDto,
   ) {
     await this.usersService.checkPermissions(req.user, userId);
 

@@ -449,7 +449,7 @@ SELECT
     tul.rank AS position,
     rol.role,
     (COUNT(DISTINCT r.id) FILTER (WHERE r.text IS NOT NULL))::int AS "textCount",
-    (COUNT(DISTINCT r.id) FILTER (WHERE r.text IS NULL))::int AS "noTextCount",
+    (COUNT(DISTINCT r.id) FILTER (WHERE r.text IS NULL))::int AS "withoutTextCount",
     (
         SELECT COUNT(*)
         FROM "User_fav_reviews" ufr
@@ -465,7 +465,7 @@ SELECT
     CASE
         WHEN count(sm.id) = 0 THEN '[]'::json
         ELSE JSON_AGG(DISTINCT JSONB_BUILD_OBJECT('id', sm.id, 'name', sm.name, 'url', psm.url))
-        END AS social
+    END AS social
 FROM "User_profiles" up
          JOIN "Users" u ON up.user_id = u.id
          LEFT JOIN "Top_users_leaderboard" tul ON up.user_id = tul.user_id

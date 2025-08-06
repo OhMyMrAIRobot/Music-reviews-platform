@@ -17,8 +17,8 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
 import { AuthorsService } from './authors.service';
-import { FindAuthorParamsDto } from './dto/find-author-params.dto';
 import { CreateAuthorRequestDto } from './dto/request/create-author.request.dto';
+import { FindAuthorParamsDto } from './dto/request/find-author-params.dto';
 import { FindAuthorsQueryDto } from './dto/request/find-authors.query.dto';
 import { UpdateAuthorRequestDto } from './dto/request/update-author.request.dto';
 

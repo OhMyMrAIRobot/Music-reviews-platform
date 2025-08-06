@@ -14,7 +14,7 @@ import { IJwtAuthPayload } from 'src/auth/types/jwt-auth-payload.interface';
 import { InsufficientPermissionsException } from 'src/exceptions/insufficient-permissions.exception';
 import { NoDataProvidedException } from 'src/exceptions/no-data.exception';
 import { FileService } from 'src/file/files.service';
-import { ProfilesService } from 'src/profiles/services/profiles.service';
+import { ProfilesService } from 'src/profiles/profiles.service';
 import { RolesService } from 'src/roles/roles.service';
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
 import { PrismaService } from '../../prisma/prisma.service';
