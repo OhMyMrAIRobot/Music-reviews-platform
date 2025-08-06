@@ -1,5 +1,5 @@
 import { Expose, Type } from 'class-transformer';
-import { FeedbackReplyDto } from './feedback-reply.dto';
+import { FeedbackReplyResponseDto } from './feedback-reply.response.dto';
 
 class FeedbackStatus {
   @Expose()
@@ -14,8 +14,8 @@ export class CreateFeedbackReplyResponseDto {
   isSent: boolean;
 
   @Expose()
-  @Type(() => FeedbackReplyDto)
-  feedbackReply: FeedbackReplyDto | null;
+  @Type(() => FeedbackReplyResponseDto)
+  feedbackReply: FeedbackReplyResponseDto | null;
 
   @Expose()
   @Type(() => FeedbackStatus)

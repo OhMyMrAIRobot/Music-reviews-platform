@@ -9,9 +9,9 @@ class FeedbackStatus {
   status: string;
 }
 
-export class FeedbacksResponseDto {
+export class FindFeedbackResponseDto {
   count: number;
-  feedbacks: FeedbackResponseItem[];
+  feedback: FeedbackResponseItem[];
 }
 
 export class FeedbackResponseItem {

@@ -6,7 +6,7 @@ class FeedbackReplyUser {
   nickname: string;
 }
 
-export class FeedbackReplyDto {
+export class FeedbackReplyResponseDto {
   @Expose()
   id: string;
 

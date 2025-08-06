@@ -5,7 +5,7 @@ import { IsSearchQuery } from 'src/decorators/is-search-query.decorator';
 import { IsSortOrder } from 'src/decorators/is-sort-order.decorator';
 import { SortOrder } from 'src/types/sort-order.type';
 
-export class FeedbackQueryDto {
+export class FindFeedbackQueryDto {
   @IsOptional()
   @IsSearchQuery()
   @Length(1, 50, {

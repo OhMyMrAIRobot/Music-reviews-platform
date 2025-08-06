@@ -13,9 +13,9 @@ import { FeedbackStatusesEnum } from 'src/feedback-statuses/types/feedback-statu
 import { FeedbackService } from 'src/feedback/feedback.service';
 import { MailsService } from 'src/mails/mails.service';
 import { UsersService } from 'src/users/users.service';
-import { CreateFeedbackReplyDto } from './dto/create-feedback-reply.dto';
-import { CreateFeedbackReplyResponseDto } from './dto/create-feedback-reply.response.dto';
-import { FeedbackReplyDto } from './dto/feedback-reply.dto';
+import { CreateFeedbackReplyRequestDto } from './dto/request/create-feedback-reply.request.dto';
+import { CreateFeedbackReplyResponseDto } from './dto/response/create-feedback-reply.response.dto';
+import { FeedbackReplyResponseDto } from './dto/response/feedback-reply.response.dto';
 
 @Injectable()
 export class FeedbackRepliesService {
@@ -29,16 +29,12 @@ export class FeedbackRepliesService {
   ) {}
 
   async create(
-    createFeedbackReplyDto: CreateFeedbackReplyDto,
+    dto: CreateFeedbackReplyRequestDto,
     userId: string,
   ): Promise<CreateFeedbackReplyResponseDto> {
-    const feedback = await this.feedbackService.findById(
-      createFeedbackReplyDto.feedbackId,
-    );
+    const feedback = await this.feedbackService.findById(dto.feedbackId);
 
-    const exist = await this.findByFeedbackId(
-      createFeedbackReplyDto.feedbackId,
-    );
+    const exist = await this.findByFeedbackId(dto.feedbackId);
 
     if (exist) {
       throw new ConflictException('Ответ на данное сообщение уже существует');
@@ -51,7 +47,7 @@ export class FeedbackRepliesService {
       await this.mailsService.sendResponseEmail(
         feedback.email,
         user.nickname,
-        createFeedbackReplyDto.message,
+        dto.message,
       );
       isSent = true;
     } catch {
@@ -64,7 +60,7 @@ export class FeedbackRepliesService {
       if (isSent) {
         feedbackReply = await this.prisma.feedbackResponse.create({
           data: {
-            ...createFeedbackReplyDto,
+            ...dto,
             userId,
           },
           include: {
@@ -84,12 +80,9 @@ export class FeedbackRepliesService {
           );
         }
 
-        const updated = await this.feedbackService.update(
-          createFeedbackReplyDto.feedbackId,
-          {
-            feedbackStatusId: newStatus.id,
-          },
-        );
+        const updated = await this.feedbackService.update(dto.feedbackId, {
+          feedbackStatusId: newStatus.id,
+        });
         feedbackStatus = updated.feedbackStatus;
       }
     } catch {
@@ -108,7 +101,9 @@ export class FeedbackRepliesService {
     );
   }
 
-  async findByFeedbackId(feedbackId: string): Promise<FeedbackReplyDto | null> {
+  async findByFeedbackId(
+    feedbackId: string,
+  ): Promise<FeedbackReplyResponseDto | null> {
     await this.feedbackService.findById(feedbackId);
 
     const response = await this.prisma.feedbackResponse.findUnique({
@@ -118,7 +113,7 @@ export class FeedbackRepliesService {
       },
     });
 
-    return plainToInstance(FeedbackReplyDto, response, {
+    return plainToInstance(FeedbackReplyResponseDto, response, {
       excludeExtraneousValues: true,
     });
   }
