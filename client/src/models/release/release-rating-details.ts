@@ -6,6 +6,5 @@ export interface IReleaseRatingDetails {
 		atmosphere: number
 		realization: number
 		individuality: number
-		release_rating_id: string
 	}
 }

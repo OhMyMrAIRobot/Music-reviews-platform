@@ -21,11 +21,11 @@ const AuthorDetailsReleases = () => {
 	}, [fetch, id])
 
 	const tracks = authorDetailsPageStore.allReleases.filter(
-		val => val.release_type === ReleaseTypesEnum.SINGLE
+		val => val.releaseType === ReleaseTypesEnum.SINGLE
 	)
 
 	const albums = authorDetailsPageStore.allReleases.filter(
-		val => val.release_type === ReleaseTypesEnum.ALBUM
+		val => val.releaseType === ReleaseTypesEnum.ALBUM
 	)
 
 	return (

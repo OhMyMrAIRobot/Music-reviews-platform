@@ -34,7 +34,7 @@ const ReleaseDetailsRatings: FC<IProps> = observer(({ release }) => {
 					className += 'border-2 border-[rgba(35,101,199)]'
 				}
 
-				const ratingDetails = release.rating_details.find(
+				const ratingDetails = release.ratingDetails.find(
 					rd => rd.type === rating?.type
 				)
 

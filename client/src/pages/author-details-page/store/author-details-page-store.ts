@@ -48,7 +48,7 @@ class AuthorDetailsPageStore {
 
 	fetchTopReleases = async (authorId: string) => {
 		try {
-			const data = await ReleaseAPI.fetchAuthorTopReleases(authorId)
+			const data = await ReleaseAPI.fetchByAuthorId(authorId, false)
 			this.setTopReleases(data)
 		} catch (e) {
 			console.log(e)
@@ -66,7 +66,7 @@ class AuthorDetailsPageStore {
 
 	fetchAllReleases = async (authorId: string) => {
 		try {
-			const data = await ReleaseAPI.fetchAuthorAllReleases(authorId)
+			const data = await ReleaseAPI.fetchByAuthorId(authorId, true)
 			this.setAllReleases(data)
 		} catch (e) {
 			console.log(e)

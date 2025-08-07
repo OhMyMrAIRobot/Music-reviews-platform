@@ -40,14 +40,14 @@ const ReleaseCard: FC<IProps> = ({ release, isLoading }) => {
 					</div>
 
 					<ReleaseReviewsCount
-						textCount={release.text_count}
-						noTextCount={release.no_text_count}
+						textCount={release.textCount}
+						noTextCount={release.withoutTextCount}
 						className='absolute bottom-1.5 left-1.5 bg-zinc-900 rounded-full px-1.5'
 					/>
 
 					<div className='absolute bottom-1.5 right-1.5 bg-zinc-900 size-6 rounded-full flex items-center justify-center'>
 						<ReleaseTypeIcon
-							type={release.release_type}
+							type={release.releaseType}
 							className={'relative size-4'}
 						/>
 					</div>
@@ -59,7 +59,7 @@ const ReleaseCard: FC<IProps> = ({ release, isLoading }) => {
 				</div>
 
 				<ReleaseAuthors
-					authors={release.author}
+					authors={release.authors}
 					className='text-[13px] font-medium mt-2 leading-3'
 				/>
 

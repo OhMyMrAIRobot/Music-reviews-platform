@@ -1,8 +1,9 @@
 import { observer } from 'mobx-react-lite'
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import ToggleFavButton from '../../../components/buttons/Toggle-fav-button'
 import LikesCount from '../../../components/utils/Likes-count'
 import { useAuth } from '../../../hooks/use-auth'
+import { useLoading } from '../../../hooks/use-loading'
 import { useStore } from '../../../hooks/use-store'
 import { IReleaseDetails } from '../../../models/release/release-details'
 import ReleaseDetailsAuthors from './release-details-authors/Release-details-authors'
@@ -17,29 +18,28 @@ const ReleaseDetailsHeader: FC<IProps> = observer(({ release }) => {
 
 	const { authStore, releaseDetailsPageStore, notificationStore } = useStore()
 
-	const [toggling, setToggling] = useState<boolean>(false)
+	const { execute: toggle, isLoading: isToggling } = useLoading(
+		releaseDetailsPageStore.toggleFavRelease
+	)
 
-	const isLiked = release.user_fav_ids?.some(
+	const isFav = release.userFavRelease?.some(
 		fav => fav.userId === authStore.user?.id
 	)
 
-	const toggleFavRelease = () => {
-		setToggling(true)
-		if (!checkAuth()) {
-			setToggling(false)
-			return
-		}
+	const toggleFavRelease = async () => {
+		if (!checkAuth()) return
 
-		releaseDetailsPageStore
-			.toggleFavRelease(release.id, isLiked)
-			.then(result => {
-				notificationStore.addNotification({
-					id: self.crypto.randomUUID(),
-					text: result.message,
-					isError: !result.status,
-				})
-			})
-			.finally(() => setToggling(false))
+		const errors = await toggle(release.id, isFav)
+
+		if (errors.length === 0) {
+			notificationStore.addSuccessNotification(
+				isFav
+					? 'Вы успешно убрали релиз из списка понравившихся!'
+					: 'Вы успешно добавили релиз в список понравившихся!'
+			)
+		} else {
+			errors.forEach(err => notificationStore.addErrorNotification(err))
+		}
 	}
 
 	return (
@@ -49,9 +49,7 @@ const ReleaseDetailsHeader: FC<IProps> = observer(({ release }) => {
 				decoding='async'
 				alt={release.title}
 				src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
-					release.release_img === ''
-						? import.meta.env.VITE_DEFAULT_COVER
-						: release.release_img
+					release.img === '' ? import.meta.env.VITE_DEFAULT_COVER : release.img
 				}`}
 				className='size-62 rounded-[10px] max-h-62 aspect-square select-none'
 			/>
@@ -61,9 +59,9 @@ const ReleaseDetailsHeader: FC<IProps> = observer(({ release }) => {
 					decoding='async'
 					alt={release.title}
 					src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
-						release.release_img === ''
+						release.img === ''
 							? import.meta.env.VITE_DEFAULT_COVER
-							: release.release_img
+							: release.img
 					}`}
 					className='size-62 rounded-[10px] max-h-62 aspect-square select-none'
 				/>
@@ -72,7 +70,7 @@ const ReleaseDetailsHeader: FC<IProps> = observer(({ release }) => {
 			<div className='lg:pl-8 gap-3 lg:h-62 flex justify-between lg:text-left flex-col text-center'>
 				<div>
 					<p className='text-white opacity-70 text-xs font-semibold'>
-						{release.release_type}
+						{release.releaseType}
 					</p>
 					<p className='text-2xl lg:text-3xl xl:text-5xl font-extrabold mt-2'>
 						{release.title}
@@ -84,17 +82,17 @@ const ReleaseDetailsHeader: FC<IProps> = observer(({ release }) => {
 			</div>
 
 			<div className='absolute right-1 top-0 lg:right-3 lg:top-3 z-20 flex items-center gap-x-3 '>
-				{release.likes_count > 0 && (
+				{release.favCount > 0 && (
 					<div className='bg-zinc-950 px-2 py-1 lg:px-3 lg:py-2 flex rounded-xl items-center select-none'>
-						<LikesCount count={release.likes_count} />
+						<LikesCount count={release.favCount} />
 					</div>
 				)}
 
 				<ToggleFavButton
 					onClick={toggleFavRelease}
-					isLiked={isLiked}
+					isLiked={isFav}
 					className='size-10 lg:size-12'
-					toggling={toggling}
+					toggling={isToggling}
 				/>
 			</div>
 		</div>

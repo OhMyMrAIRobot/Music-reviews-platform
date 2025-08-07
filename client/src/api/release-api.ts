@@ -19,8 +19,10 @@ const _api = axios.create({
 })
 
 export const ReleaseAPI = {
-	async fetchMostReviewed(): Promise<IRelease[]> {
-		const { data } = await _api.get<IRelease[]>('list/most-commented')
+	async fetchReleaseTypes(): Promise<IReleaseType[]> {
+		const { data } = await axios.get<IReleaseType[]>(
+			`${SERVER_URL}/release-types`
+		)
 		return data
 	},
 
@@ -33,7 +35,7 @@ export const ReleaseAPI = {
 		offset: number | null
 	): Promise<IReleaseResponse> {
 		const { data } = await _api.get<IReleaseResponse>(
-			`list?
+			`public?
 			${typeId ? `typeId=${typeId}&` : ''}
 			${query ? `query=${query}&` : ''}
 			${field ? `field=${field}&` : ''}
@@ -42,6 +44,37 @@ export const ReleaseAPI = {
 			${offset ? `offset=${offset}&` : ''}
 			`
 		)
+		return data
+	},
+
+	async fetchReleaseDetails(id: string): Promise<IReleaseDetails> {
+		const { data } = await _api.get<IReleaseDetails>(`/details/${id}`)
+		return data
+	},
+
+	async fetchMostReviewed(): Promise<IRelease[]> {
+		const { data } = await _api.get<IRelease[]>('public/most-commented')
+		return data
+	},
+
+	async fetchByAuthorId(
+		authorId: string,
+		findAll: boolean
+	): Promise<IRelease[]> {
+		const { data } = await _api.get<IRelease[]>(
+			`author/${authorId}?findAll=${findAll}`
+		)
+		return data
+	},
+
+	async fetchTopRatingReleases(
+		year: number | null,
+		month: number | null
+	): Promise<ITopRatingReleases> {
+		const { data } = await _api.get<ITopRatingReleases>(`top-rating?
+			${year ? `year=${year}` : ''}&
+			${month ? `month=${month}` : ''}
+			`)
 		return data
 	},
 
@@ -59,32 +92,6 @@ export const ReleaseAPI = {
 			${limit ? `limit=${limit}&` : ''}
 			${offset ? `offset=${offset}&` : ''}`)
 
-		return data
-	},
-
-	async fetchAuthorTopReleases(authorId: string): Promise<IRelease[]> {
-		const { data } = await _api.get<IRelease[]>(`author/top/${authorId}`)
-		return data
-	},
-
-	async fetchAuthorAllReleases(authorId: string): Promise<IRelease[]> {
-		const { data } = await _api.get<IRelease[]>(`author/all/${authorId}`)
-		return data
-	},
-
-	async fetchTopRatingReleases(
-		year: number | null,
-		month: number | null
-	): Promise<ITopRatingReleases> {
-		const { data } = await _api.get<ITopRatingReleases>(`top-rating?
-			${year ? `year=${year}` : ''}&
-			${month ? `month=${month}` : ''}
-			`)
-		return data
-	},
-
-	async fetchReleaseDetails(id: string): Promise<IReleaseDetails> {
-		const { data } = await _api.get<IReleaseDetails>(`/details/${id}`)
 		return data
 	},
 
@@ -112,12 +119,5 @@ export const ReleaseAPI = {
 
 	async deleteRelease(id: string) {
 		await api.delete(`/releases/${id}`)
-	},
-
-	async fetchReleaseTypes(): Promise<IReleaseType[]> {
-		const { data } = await axios.get<IReleaseType[]>(
-			`${SERVER_URL}/release-types`
-		)
-		return data
 	},
 }

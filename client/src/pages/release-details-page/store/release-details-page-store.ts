@@ -21,7 +21,7 @@ class ReleaseDetailsPageStore {
 	}
 
 	releaseDetails: IReleaseDetails | null = null
-	releaseReviews: IReleaseReview[] | null = null
+	releaseReviews: IReleaseReview[] = []
 	reviewsCount: number = 0
 
 	releaseMedia: IReleaseMedia[] = []
@@ -124,7 +124,7 @@ class ReleaseDetailsPageStore {
 			runInAction(() => {
 				if (this.releaseDetails) {
 					this.releaseDetails.ratings = data.ratings
-					this.releaseDetails.rating_details = data.rating_details
+					this.releaseDetails.ratingDetails = data.ratingDetails
 				}
 			})
 			return []
@@ -163,7 +163,7 @@ class ReleaseDetailsPageStore {
 			runInAction(() => {
 				if (this.releaseDetails) {
 					this.releaseDetails.ratings = data.ratings
-					this.releaseDetails.rating_details = data.rating_details
+					this.releaseDetails.ratingDetails = data.ratingDetails
 				}
 			})
 			return []
@@ -223,27 +223,28 @@ class ReleaseDetailsPageStore {
 	toggleFavRelease = async (
 		releaseId: string,
 		isFav: boolean
-	): Promise<TogglePromiseResult> => {
-		const result = await toggleFav(this.releaseDetails, releaseId, isFav, {
-			add: UserFavReleaseAPI.addToFav,
-			delete: UserFavReleaseAPI.deleteFromFav,
-			fetch: UserFavReleaseAPI.fetchFavByReleaseId,
-		})
+	): Promise<string[]> => {
+		try {
+			if (!isFav) {
+				await UserFavReleaseAPI.addToFav(releaseId)
+			} else {
+				await UserFavReleaseAPI.deleteFromFav(releaseId)
+			}
 
-		if (result) {
-			return {
-				status: true,
-				message: isFav
-					? 'Вы убрали релиз из списка понравившихся!'
-					: 'Вы отметили релиз как понравившийся!',
-			}
-		} else {
-			return {
-				status: false,
-				message: isFav
-					? 'Не удалось убрать релиз из списка понравившихся!'
-					: 'Не удалось отметить релиз как понравившийся!',
-			}
+			const newFav = await UserFavReleaseAPI.fetchFavByReleaseId(releaseId)
+
+			runInAction(() => {
+				if (this.releaseDetails) {
+					this.releaseDetails.favCount = newFav.length
+					this.releaseDetails.userFavRelease = newFav
+				}
+			})
+
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
 		}
 	}
 
