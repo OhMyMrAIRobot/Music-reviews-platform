@@ -51,6 +51,7 @@ export class UserFavMediaService {
 
   async findByMediaId(mediaId: string): Promise<UserFavMedia[]> {
     await this.releaseMediaService.findById(mediaId);
+
     return this.prisma.userFavMedia.findMany({
       where: { mediaId },
     });
@@ -58,12 +59,16 @@ export class UserFavMediaService {
 
   async findByUserId(userId: string): Promise<UserFavMedia[]> {
     await this.usersService.findOne(userId);
+
     return this.prisma.userFavMedia.findMany({
       where: { userId },
     });
   }
 
   async remove(mediaId: string, userId: string): Promise<UserFavMedia> {
+    await this.releaseMediaService.findById(mediaId);
+    await this.usersService.findOne(userId);
+
     const exist = await this.findByMediaUserIds(mediaId, userId);
 
     if (!exist) {

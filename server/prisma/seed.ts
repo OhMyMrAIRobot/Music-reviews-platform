@@ -6,6 +6,7 @@ import { ReleaseMediaTypesEnum } from '../src/release-media-types/types/release-
 import { ReleaseTypesEnum } from '../src/release-types/types/release-types.enum';
 import { UserRoleEnum } from '../src/roles/types/user-role.enum';
 import { ReleaseRatingTypesEnum } from '../src/shared/types/release-rating-types.enum';
+import { SocialMediaEnum } from '../src/social-media/types/social-media.enum';
 
 const prisma = new PrismaClient();
 
@@ -372,19 +373,19 @@ async function main() {
     data: [
       {
         id: '1',
-        name: 'Telegram',
+        name: SocialMediaEnum.TELEGRAM,
       },
       {
         id: '2',
-        name: 'YouTube',
+        name: SocialMediaEnum.YOUTUBE,
       },
       {
         id: '3',
-        name: 'Twitch',
+        name: SocialMediaEnum.TWITCH,
       },
       {
         id: '4',
-        name: 'VK',
+        name: SocialMediaEnum.VK,
       },
     ],
   });

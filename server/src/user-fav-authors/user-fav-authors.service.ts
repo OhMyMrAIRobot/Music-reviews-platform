@@ -30,23 +30,24 @@ export class UserFavAuthorsService {
 
   async findByUserId(userId: string): Promise<UserFavAuthor[]> {
     await this.usersService.findOne(userId);
-    const result = await this.prisma.userFavAuthor.findMany({
+
+    return this.prisma.userFavAuthor.findMany({
       where: { userId },
     });
-
-    return result;
   }
 
   async findByAuthorId(authorId: string): Promise<UserFavAuthor[]> {
     await this.authorsService.findOne(authorId);
-    const result = await this.prisma.userFavAuthor.findMany({
+
+    return this.prisma.userFavAuthor.findMany({
       where: { authorId },
     });
-
-    return result;
   }
 
   async remove(authorId: string, userId: string): Promise<UserFavAuthor> {
+    await this.authorsService.findOne(authorId);
+    await this.usersService.findOne(userId);
+
     const exist = await this.findOne(userId, authorId);
 
     if (!exist) {
@@ -60,7 +61,7 @@ export class UserFavAuthorsService {
     });
   }
 
-  private async findOne(
+  async findOne(
     userId: string,
     authorId: string,
   ): Promise<UserFavAuthor | null> {
