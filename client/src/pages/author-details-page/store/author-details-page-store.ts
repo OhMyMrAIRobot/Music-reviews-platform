@@ -4,6 +4,7 @@ import { AuthorAPI } from '../../../api/author-api'
 import { ReleaseAPI } from '../../../api/release-api'
 import { ReviewAPI } from '../../../api/review-api'
 import { UserFavAuthorAPI } from '../../../api/user-fav-author-api.ts'
+import { UserFavReviewAPI } from '../../../api/user-fav-review-api.ts'
 import { IAuthor } from '../../../models/author/author'
 import { IRelease } from '../../../models/release/release'
 import { IReview } from '../../../models/review/review.ts'
@@ -124,9 +125,9 @@ class AuthorDetailsPageStore {
 		isFav: boolean
 	): Promise<TogglePromiseResult> => {
 		const result = await toggleFav(this.lastReviews, reviewId, isFav, {
-			add: ReviewAPI.addReviewToFav,
-			delete: ReviewAPI.deleteReviewFromFav,
-			fetch: ReviewAPI.fetchFavReviewUsersIds,
+			add: UserFavReviewAPI.addToFav,
+			delete: UserFavReviewAPI.deleteFromFav,
+			fetch: UserFavReviewAPI.fetchFavByReviewId,
 		})
 
 		if (result) {

@@ -1,7 +1,6 @@
 import axios from 'axios'
 import { IAdminReviewsResponse } from '../models/review/admin-reviews-response'
 import { IAdminUpdateReviewData } from '../models/review/admin-update-review-data'
-import { IFavReview } from '../models/review/fav-review'
 import { IReleaseReviewResponse } from '../models/review/release-review'
 import { IReview, IReviewsResponse } from '../models/review/review'
 import { IReviewData } from '../models/review/review-data'
@@ -84,27 +83,6 @@ export const ReviewAPI = {
 
 	async fetchReviewsByAuthorId(authorId: string): Promise<IReview[]> {
 		const { data } = await _api.get<IReview[]>(`/author/${authorId}`)
-		return data
-	},
-
-	async fetchFavReviewUsersIds(reviewId: string): Promise<IFavReview[]> {
-		const { data } = await axios.get<IFavReview[]>(
-			`${SERVER_URL}/user-fav-reviews/review/${reviewId}`
-		)
-		return data
-	},
-
-	async addReviewToFav(reviewId: string): Promise<IFavReview> {
-		const { data } = await api.post<IFavReview>('/user-fav-reviews', {
-			reviewId,
-		})
-		return data
-	},
-
-	async deleteReviewFromFav(reviewId: string): Promise<IFavReview> {
-		const { data } = await api.delete<IFavReview>('/user-fav-reviews', {
-			data: { reviewId },
-		})
 		return data
 	},
 

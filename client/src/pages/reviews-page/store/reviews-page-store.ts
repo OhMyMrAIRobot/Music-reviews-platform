@@ -1,5 +1,6 @@
 import { makeAutoObservable } from 'mobx'
 import { ReviewAPI } from '../../../api/review-api'
+import { UserFavReviewAPI } from '../../../api/user-fav-review-api.ts'
 import { IReview } from '../../../models/review/review.ts'
 import { TogglePromiseResult } from '../../../types/toggle-promise-result'
 import { toggleFav } from '../../../utils/toggle-fav'
@@ -41,9 +42,9 @@ class ReviewsPageStore {
 		isFav: boolean
 	): Promise<TogglePromiseResult> => {
 		const result = await toggleFav(this.reviews, reviewId, isFav, {
-			add: ReviewAPI.addReviewToFav,
-			delete: ReviewAPI.deleteReviewFromFav,
-			fetch: ReviewAPI.fetchFavReviewUsersIds,
+			add: UserFavReviewAPI.addToFav,
+			delete: UserFavReviewAPI.deleteFromFav,
+			fetch: UserFavReviewAPI.fetchFavByReviewId,
 		})
 
 		if (result) {

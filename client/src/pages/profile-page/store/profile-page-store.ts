@@ -2,6 +2,7 @@ import { makeAutoObservable } from 'mobx'
 import { ProfileAPI } from '../../../api/profile-api'
 import { ReleaseMediaAPI } from '../../../api/release-media-api.ts'
 import { ReviewAPI } from '../../../api/review-api'
+import { UserFavReviewAPI } from '../../../api/user-fav-review-api.ts'
 import { IProfile } from '../../../models/profile/profile'
 import { IProfilePreferences } from '../../../models/profile/profile-preferences.ts'
 import { IReleaseMedia } from '../../../models/release-media/release-media.ts'
@@ -150,9 +151,9 @@ export class ProfilePageStore {
 		isFav: boolean
 	): Promise<TogglePromiseResult> => {
 		const result = await toggleFav(this.reviews, reviewId, isFav, {
-			add: ReviewAPI.addReviewToFav,
-			delete: ReviewAPI.deleteReviewFromFav,
-			fetch: ReviewAPI.fetchFavReviewUsersIds,
+			add: UserFavReviewAPI.addToFav,
+			delete: UserFavReviewAPI.deleteFromFav,
+			fetch: UserFavReviewAPI.fetchFavByReviewId,
 		})
 
 		if (result) {
@@ -177,9 +178,9 @@ export class ProfilePageStore {
 		isFav: boolean
 	): Promise<TogglePromiseResult> => {
 		const result = await toggleFav(this.favReviews, reviewId, isFav, {
-			add: ReviewAPI.addReviewToFav,
-			delete: ReviewAPI.deleteReviewFromFav,
-			fetch: ReviewAPI.fetchFavReviewUsersIds,
+			add: UserFavReviewAPI.addToFav,
+			delete: UserFavReviewAPI.deleteFromFav,
+			fetch: UserFavReviewAPI.fetchFavByReviewId,
 		})
 
 		if (result) {

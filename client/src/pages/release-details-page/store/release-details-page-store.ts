@@ -4,6 +4,8 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { ReleaseAPI } from '../../../api/release-api'
 import { ReleaseMediaAPI } from '../../../api/release-media-api'
 import { ReviewAPI } from '../../../api/review-api'
+import { UserFavReleaseAPI } from '../../../api/user-fav-release-api'
+import { UserFavReviewAPI } from '../../../api/user-fav-review-api'
 import { IReleaseMedia } from '../../../models/release-media/release-media'
 import { IReleaseMediaList } from '../../../models/release-media/release-media-list'
 import { IReleaseDetails } from '../../../models/release/release-details'
@@ -223,9 +225,9 @@ class ReleaseDetailsPageStore {
 		isFav: boolean
 	): Promise<TogglePromiseResult> => {
 		const result = await toggleFav(this.releaseDetails, releaseId, isFav, {
-			add: ReleaseAPI.addReleaseToFav,
-			delete: ReleaseAPI.deleteReleaseFromFav,
-			fetch: ReleaseAPI.fetchFavReleaseUsersIds,
+			add: UserFavReleaseAPI.addToFav,
+			delete: UserFavReleaseAPI.deleteFromFav,
+			fetch: UserFavReleaseAPI.fetchFavByReleaseId,
 		})
 
 		if (result) {
@@ -250,9 +252,9 @@ class ReleaseDetailsPageStore {
 		isFav: boolean
 	): Promise<TogglePromiseResult> => {
 		const result = await toggleFav(this.releaseReviews, reviewId, isFav, {
-			add: ReviewAPI.addReviewToFav,
-			delete: ReviewAPI.deleteReviewFromFav,
-			fetch: ReviewAPI.fetchFavReviewUsersIds,
+			add: UserFavReviewAPI.addToFav,
+			delete: UserFavReviewAPI.deleteFromFav,
+			fetch: UserFavReviewAPI.fetchFavByReviewId,
 		})
 
 		if (result) {

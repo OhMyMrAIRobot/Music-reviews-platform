@@ -3,7 +3,6 @@ import {
 	IAdminRelease,
 	IAdminReleasesResponse,
 } from '../models/release/admin-releases-response'
-import { IFavRelease } from '../models/release/fav-release'
 import { IRelease, IReleaseResponse } from '../models/release/release'
 import { IReleaseDetails } from '../models/release/release-details'
 import { IReleaseType } from '../models/release/release-types'
@@ -89,13 +88,6 @@ export const ReleaseAPI = {
 		return data
 	},
 
-	async fetchFavReleaseUsersIds(releaseId: string): Promise<IFavRelease[]> {
-		const { data } = await axios.get<IFavRelease[]>(
-			`${SERVER_URL}/user-fav-releases/release/${releaseId}`
-		)
-		return data
-	},
-
 	async createRelease(formData: FormData): Promise<IAdminRelease> {
 		const { data } = await api.post<IAdminRelease>('/releases', formData, {
 			headers: {
@@ -120,20 +112,6 @@ export const ReleaseAPI = {
 
 	async deleteRelease(id: string) {
 		await api.delete(`/releases/${id}`)
-	},
-
-	async addReleaseToFav(releaseId: string): Promise<IFavRelease> {
-		const { data } = await api.post<IFavRelease>('/user-fav-releases', {
-			releaseId,
-		})
-		return data
-	},
-
-	async deleteReleaseFromFav(releaseId: string): Promise<IFavRelease> {
-		const { data } = await api.delete<IFavRelease>('/user-fav-releases', {
-			data: { releaseId },
-		})
-		return data
 	},
 
 	async fetchReleaseTypes(): Promise<IReleaseType[]> {
