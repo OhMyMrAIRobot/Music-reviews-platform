@@ -10,7 +10,7 @@ import {
   MinDate,
 } from 'class-validator';
 
-export class CreateReleaseDto {
+export class CreateReleaseRequestDto {
   @IsString({ message: 'Поле title должно быть строкой' })
   @Length(1, 50, { message: 'Длина названия должна быть от 1 до 50 символов' })
   title: string;

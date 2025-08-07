@@ -1,9 +1,11 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { Transform } from 'class-transformer';
 import { IsOptional } from 'class-validator';
-import { CreateReleaseDto } from './create-release.dto';
+import { CreateReleaseRequestDto } from './create-release.response.dto';
 
-export class UpdateReleaseDto extends PartialType(CreateReleaseDto) {
+export class UpdateReleaseRequestDto extends PartialType(
+  CreateReleaseRequestDto,
+) {
   @IsOptional()
   @Transform(({ value }) => {
     if (value === 'true' || value === true) return true;

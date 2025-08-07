@@ -16,51 +16,45 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
-import { AuthorTopReleasesParamsDto } from './dto/author-top-releases-params.dto';
-import { CreateReleaseDto } from './dto/create-release.dto';
-import { ReleaseDetailsParamsDto } from './dto/release-details-params.dto';
-import { ReleasesQueryDto } from './dto/releases-query.dto';
-import { TopRatingReleasesQuery } from './dto/top-rating-releases-query.dto';
-import { UpdateReleaseDto } from './dto/update-release.dto';
+import { CreateReleaseRequestDto } from './dto/request/create-release.response.dto';
+import { FindReleaseDetailsParams } from './dto/request/params/find-release-details-params.dto';
+import { FindReleasesByAuthorIdParams } from './dto/request/params/find-releases-by-author-id.params.dto';
+import { FindReleasesByAuthorIdQuery } from './dto/request/query/find-releases-by-author-id.query.dto';
+import { FindReleasesQueryDto } from './dto/request/query/find-releases.query.dto';
+import { FindTopRatingReleasesQuery } from './dto/request/query/find-top-rating-releases.query.dto';
+import { UpdateReleaseRequestDto } from './dto/request/update-release.request.dto';
 import { ReleasesService } from './releases.service';
 
 @Controller('releases')
 export class ReleasesController {
   constructor(private readonly releasesService: ReleasesService) {}
 
-  @Get('list/most-commented')
+  @Get('public')
+  findReleases(@Query() query: FindReleasesQueryDto) {
+    return this.releasesService.findReleases(query);
+  }
+
+  @Get('details/:id')
+  findReleaseDetails(@Param() params: FindReleaseDetailsParams) {
+    return this.releasesService.findReleaseDetails(params.id);
+  }
+
+  @Get('public/most-commented')
   findMostCommented() {
     return this.releasesService.findMostCommentedReleasesLastDay();
   }
 
-  @Get('list')
-  findReleases(@Query() query: ReleasesQueryDto) {
-    return this.releasesService.findReleases(query);
-  }
-
-  @Get('author/top/:id')
-  findAuthorTopReleases(@Param() params: AuthorTopReleasesParamsDto) {
-    return this.releasesService.findAuthorReleases(params.id, false);
-  }
-
-  @Get('author/all/:id')
-  findAuthorAllReleases(@Param() params: AuthorTopReleasesParamsDto) {
-    return this.releasesService.findAuthorReleases(params.id, true);
-  }
-
   @Get('top-rating')
-  findTopRatingReleases(@Query() params: TopRatingReleasesQuery) {
+  findTopRatingReleases(@Query() params: FindTopRatingReleasesQuery) {
     return this.releasesService.findTopRatingReleases(params);
   }
 
-  @Get('details/:id')
-  findReleaseDetails(@Param() params: ReleaseDetailsParamsDto) {
-    return this.releasesService.findReleaseDetails(params.id);
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.releasesService.findOne(id);
+  @Get('author/:authorId')
+  findByAuthorId(
+    @Param() params: FindReleasesByAuthorIdParams,
+    @Query() query: FindReleasesByAuthorIdQuery,
+  ) {
+    return this.releasesService.findAuthorReleases(params.authorId, query);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -68,19 +62,19 @@ export class ReleasesController {
   @UseInterceptors(FileFieldsInterceptor([{ name: 'coverImg', maxCount: 1 }]))
   @Post()
   create(
-    @Body() createReleaseDto: CreateReleaseDto,
+    @Body() dto: CreateReleaseRequestDto,
     @UploadedFiles()
     files: {
       coverImg?: Express.Multer.File[];
     },
   ) {
-    return this.releasesService.create(createReleaseDto, files?.coverImg?.[0]);
+    return this.releasesService.create(dto, files?.coverImg?.[0]);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
-  @Get()
-  findAll(@Query() query: ReleasesQueryDto) {
+  @Get('admin')
+  findAll(@Query() query: FindReleasesQueryDto) {
     return this.releasesService.findAll(query);
   }
 
@@ -90,17 +84,13 @@ export class ReleasesController {
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() updateReleaseDto: UpdateReleaseDto,
+    @Body() dto: UpdateReleaseRequestDto,
     @UploadedFiles()
     files: {
       coverImg?: Express.Multer.File[];
     },
   ) {
-    return this.releasesService.update(
-      id,
-      updateReleaseDto,
-      files?.coverImg?.[0],
-    );
+    return this.releasesService.update(id, dto, files?.coverImg?.[0]);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

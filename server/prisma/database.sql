@@ -330,35 +330,41 @@ $$ LANGUAGE plpgsql;
 -------------------------------------------------------------------------
 -------------------------------------------------------------------------
 
-CREATE VIEW best_releases_last_24h AS
+CREATE OR REPLACE VIEW most_reviewed_releases_last_24h AS
 SELECT
     r.id,
     r.title,
     r.img,
-    rt.type AS release_type,
+    rt.type AS "releaseType",
 
     (
         SELECT COUNT(DISTINCT r_all.id)
         FROM "Reviews" r_all
         WHERE r_all.release_id = r.id AND r_all.text IS NOT NULL
-    )::int AS text_count,
+    )::int AS "textCount",
 
     (
         SELECT COUNT(DISTINCT r_all.id)
         FROM "Reviews" r_all
         WHERE r_all.release_id = r.id AND r_all.text IS NULL
-    )::int AS no_text_count,
+    )::int AS "withoutTextCount",
 
-    JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
+    CASE
+        WHEN count(a.id) = 0 THEN '[]'::json
+        ELSE JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
             'id', a.id,
             'name', a.name
-                      )) AS author,
+        ))
+    END AS authors,
 
-    JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
-            'total', rr.total,
-            'type', rrt.type
-                      )) AS ratings,
-    COUNT(rev.id) AS total_reviews
+    CASE
+        WHEN count(rr.total) = 0 THEN '[]'::json
+        ELSE json_agg(DISTINCT jsonb_build_object(
+                'total', rr.total,
+                'type', rrt.type
+    ))
+    END as ratings,
+    COUNT(rev.id) AS "totalCount"
 FROM "Releases" r
          LEFT JOIN "Release_artists" ra ON r.id = ra.release_id
          LEFT JOIN "Authors" a ON ra.author_id = a.id
@@ -369,7 +375,7 @@ FROM "Releases" r
          LEFT JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
 GROUP BY r.id, rt.type
 HAVING COUNT(rev.id) > 0
-ORDER BY total_reviews DESC;
+ORDER BY "totalCount" DESC;
 
 -------------------------------------------------------------------------
 -------------------------------------------------------------------------
@@ -380,51 +386,72 @@ SELECT
     r.id,
     r.title,
     EXTRACT(YEAR FROM r.publish_date) AS year,
-    r.img AS release_img,
-    rt.type AS release_type,
-    (
-        SELECT JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
-                'id', a.id,
-                'name', a.name,
-                'img', a.avatar_img
-                                 ))
-        FROM "Release_artists" ra
-                 JOIN "Authors" a ON ra.author_id = a.id
-        WHERE ra.release_id = r.id
+    r.img,
+    rt.type AS "releaseType",
+    COALESCE(
+            (
+                SELECT
+                    JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
+                            'id', a.id,
+                            'name', a.name,
+                            'img', a.avatar_img
+                                      ))
+                FROM "Release_artists" ra
+                         JOIN "Authors" a ON ra.author_id = a.id
+                WHERE ra.release_id = r.id
+            ),
+            '[]'::json
     ) AS artists,
-    (
-        SELECT JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
-                'id', a.id,
-                'name', a.name,
-                'img', a.avatar_img
-                                 ))
-        FROM "Release_producers" rp
-                 JOIN "Authors" a ON rp.author_id = a.id
-        WHERE rp.release_id = r.id
+    COALESCE(
+            (
+                SELECT
+                    JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
+                            'id', a.id,
+                            'name', a.name,
+                            'img', a.avatar_img
+                                      ))
+                FROM "Release_producers" rp
+                         JOIN "Authors" a ON rp.author_id = a.id
+                WHERE rp.release_id = r.id
+            ),
+            '[]'::json
     ) AS producers,
-    (
-        SELECT JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
-                'id', a.id,
-                'name', a.name,
-                'img', a.avatar_img
-                                 ))
-        FROM "Release_designers" rd
-                 JOIN "Authors" a ON rd.author_id = a.id
-        WHERE rd.release_id = r.id
+    COALESCE(
+            (
+                SELECT
+                    JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
+                            'id', a.id,
+                            'name', a.name,
+                            'img', a.avatar_img
+                                      ))
+                FROM "Release_designers" rd
+                         JOIN "Authors" a ON rd.author_id = a.id
+                WHERE rd.release_id = r.id
+            ),
+            '[]'::json
     ) AS designers,
-    COUNT(DISTINCT ufr.user_id)::int AS likes_count,
-    JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
-            'userId', ufr.user_id,
-            'releaseId', ufr.release_id
-                      )) AS user_fav_ids,
+    COUNT(DISTINCT ufr.user_id)::int AS "favCount",
+    CASE
+        WHEN count(ufr.user_id) = 0 THEN '[]'::json
+        ELSE JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
+                'userId', ufr.user_id,
+                'releaseId', ufr.release_id
+                               ))
+        END AS "userFavRelease",
     JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
             'type', rrt.type,
             'total', rr.total
                       )) AS ratings,
     JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
             'type', rrt.type,
-            'details', rrd
-                      )) AS rating_details
+            'details', JSONB_BUILD_OBJECT(
+                    'rhymes', rrd.rhymes,
+                    'structure', rrd.structure,
+                    'atmosphere', rrd.atmosphere,
+                    'realization', rrd.realization,
+                    'individuality', rrd.individuality
+            )
+    )) AS "ratingDetails"
 FROM "Releases" r
          LEFT JOIN "Release_types" rt ON r.release_type_id = rt.id
          LEFT JOIN "User_fav_releases" ufr ON r.id = ufr.release_id

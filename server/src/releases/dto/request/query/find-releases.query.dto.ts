@@ -3,22 +3,16 @@ import { IsIn, IsInt, IsOptional, Length } from 'class-validator';
 import { IsEntityId } from 'src/decorators/is-entity-id.decorator';
 import { IsSearchQuery } from 'src/decorators/is-search-query.decorator';
 import { IsSortOrder } from 'src/decorators/is-sort-order.decorator';
+import { ReleaseSortFieldsEnum } from 'src/releases/types/release-sort-fields.enum';
 import { SortOrder } from 'src/shared/types/sort-order.type';
 
-export class ReleasesQueryDto {
+export class FindReleasesQueryDto {
   @IsOptional()
   @IsEntityId()
   typeId?: string;
 
   @IsOptional()
-  @IsIn([
-    'published',
-    'noTextCount',
-    'textCount',
-    'superUserRating',
-    'noTextRating',
-    'withTextRating',
-  ])
+  @IsIn(Object.values(ReleaseSortFieldsEnum))
   field?: string;
 
   @IsOptional()

@@ -1,16 +1,12 @@
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, Max, Min } from 'class-validator';
 
-export class TopRatingReleasesQuery {
+export class FindTopRatingReleasesQuery {
   @IsOptional()
   @Type(() => Number)
   @IsInt()
-  @Min(1400)
-  @Max(
-    new Date(
-      new Date().setFullYear(new Date().getFullYear() + 3),
-    ).getFullYear(),
-  )
+  @Min(1600)
+  @Max(new Date().getFullYear())
   year?: number;
 
   @IsOptional()

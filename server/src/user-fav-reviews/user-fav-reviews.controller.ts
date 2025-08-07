@@ -35,7 +35,7 @@ export class UserFavReviewsController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete('reviewId')
+  @Delete(':reviewId')
   remove(
     @Request() req: IAuthenticatedRequest,
     @Param('reviewId') reviewId: string,

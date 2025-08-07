@@ -62,6 +62,20 @@ type ReleaseWithRelations = Prisma.ReleaseGetPayload<{
   };
 }>;
 
+export class FindAdminReleasesResponseDto {
+  @Expose()
+  count: number;
+
+  @Expose()
+  @Type(() => AdminReleaseDto)
+  releases: AdminReleaseDto[];
+
+  constructor(count: number, releases: AdminReleaseDto[]) {
+    this.count = count;
+    this.releases = releases;
+  }
+}
+
 export class AdminReleaseDto {
   @Expose()
   id: string;
@@ -113,19 +127,5 @@ export class AdminReleaseDto {
 
   constructor(partial: Partial<AdminReleaseDto>) {
     Object.assign(this, partial);
-  }
-}
-
-export class AdminReleasesResponseDto {
-  @Expose()
-  count: number;
-
-  @Expose()
-  @Type(() => AdminReleaseDto)
-  releases: AdminReleaseDto[];
-
-  constructor(count: number, releases: AdminReleaseDto[]) {
-    this.count = count;
-    this.releases = releases;
   }
 }
