@@ -17,6 +17,7 @@ model Review {
   release Release @relation(fields: [releaseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   userFavReviews UserFavReview[]
+  releaseMedia   ReleaseMedia?
 
   @@unique([userId, releaseId])
   @@map("Reviews")

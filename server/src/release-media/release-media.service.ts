@@ -1,9 +1,14 @@
-import { ConflictException, Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
+import { Prisma, Review } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
 import { ReleaseMediaStatusesEnum } from 'src/release-media-statuses/types/release-media-statuses.enum';
 import { ReleasesService } from 'src/releases/releases.service';
+import { ReviewsService } from 'src/reviews/reviews.service';
 import { EntityNotFoundException } from 'src/shared/exceptions/entity-not-found.exception';
 import { InsufficientPermissionsException } from 'src/shared/exceptions/insufficient-permissions.exception';
 import { NoDataProvidedException } from 'src/shared/exceptions/no-data.exception';
@@ -24,10 +29,13 @@ export class ReleaseMediaService {
     private readonly releaseMediaTypesService: ReleaseMediaTypesService,
     private readonly releasesService: ReleasesService,
     private readonly usersService: UsersService,
+    private readonly reviewsService: ReviewsService,
   ) {}
 
   async create(dto: CreateReleaseMediaDto): Promise<ReleaseMediaResponseDto> {
     await this.releasesService.findOne(dto.releaseId);
+
+    let review: Review | null = null;
 
     if (dto.userId) {
       await this.usersService.findOne(dto.userId);
@@ -43,6 +51,17 @@ export class ReleaseMediaService {
           'Вы уже оставляли медиарецензию на данный релиз!',
         );
       }
+
+      review = await this.reviewsService.findByReleaseUserIds(
+        dto.releaseId,
+        dto.userId,
+      );
+
+      if (!review) {
+        throw new BadRequestException(
+          'Чтобы добавить медиарецензию требуется оставить оценку/рецензию к релизу!',
+        );
+      }
     }
 
     if (await this.checkExistenceByUrl(dto.url)) {
@@ -50,7 +69,10 @@ export class ReleaseMediaService {
     }
 
     const created = await this.prisma.releaseMedia.create({
-      data: dto,
+      data: {
+        ...dto,
+        reviewId: review?.id,
+      },
       include: {
         releaseMediaStatus: true,
         releaseMediaType: true,
@@ -61,6 +83,16 @@ export class ReleaseMediaService {
           select: { id: true, title: true, img: true },
         },
         userFavMedia: true,
+        review: {
+          select: {
+            total: true,
+            rhymes: true,
+            structure: true,
+            realization: true,
+            individuality: true,
+            atmosphere: true,
+          },
+        },
       },
     });
 
@@ -165,6 +197,16 @@ export class ReleaseMediaService {
             select: { id: true, title: true, img: true },
           },
           userFavMedia: true,
+          review: {
+            select: {
+              total: true,
+              rhymes: true,
+              structure: true,
+              realization: true,
+              individuality: true,
+              atmosphere: true,
+            },
+          },
         },
       }),
     ]);
@@ -193,6 +235,16 @@ export class ReleaseMediaService {
           select: { id: true, title: true, img: true },
         },
         userFavMedia: true,
+        review: {
+          select: {
+            total: true,
+            rhymes: true,
+            structure: true,
+            realization: true,
+            individuality: true,
+            atmosphere: true,
+          },
+        },
       },
     });
 
@@ -269,6 +321,16 @@ export class ReleaseMediaService {
           select: { id: true, title: true, img: true },
         },
         userFavMedia: true,
+        review: {
+          select: {
+            total: true,
+            rhymes: true,
+            structure: true,
+            realization: true,
+            individuality: true,
+            atmosphere: true,
+          },
+        },
       },
     });
 

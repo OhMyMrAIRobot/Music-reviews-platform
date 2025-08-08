@@ -64,6 +64,15 @@ export class ReviewsService {
     });
   }
 
+  async findByReleaseUserIds(
+    releaseId: string,
+    userId: string,
+  ): Promise<Review | null> {
+    return this.prisma.review.findUnique({
+      where: { userId_releaseId: { userId, releaseId } },
+    });
+  }
+
   async findAll(query: FindReviewsQuery): Promise<AdminFindReviewsResponseDto> {
     const { limit, offset, order, query: searchTerm } = query;
 
