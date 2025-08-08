@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Delete,
   Get,
@@ -8,20 +7,13 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.interface';
-import { CreateUserFavAuthorDto } from './dto/create-user-fav-author.dto';
-import { DeleteUserFavAuthorDto } from './dto/delete-user-fav-author.dto';
+import { JwtAuthGuard } from 'src/shared/guards/jwt-auth.guard';
 import { UserFavAuthorsService } from './user-fav-authors.service';
 
 @Controller('user-fav-authors')
 export class UserFavAuthorsController {
   constructor(private readonly userFavAuthorsService: UserFavAuthorsService) {}
-
-  @Get()
-  findAll() {
-    return this.userFavAuthorsService.findAll();
-  }
 
   @Get('user/:id')
   findByUserId(@Param('id') id: string) {
@@ -34,26 +26,20 @@ export class UserFavAuthorsController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post()
+  @Post(':authorId')
   create(
+    @Param('authorId') authorId: string,
     @Request() req: IAuthenticatedRequest,
-    @Body() createUserFavAuthorDto: CreateUserFavAuthorDto,
   ) {
-    return this.userFavAuthorsService.create(
-      createUserFavAuthorDto,
-      req.user.id,
-    );
+    return this.userFavAuthorsService.create(authorId, req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete()
+  @Delete(':authorId')
   remove(
+    @Param('authorId') authorId: string,
     @Request() req: IAuthenticatedRequest,
-    @Body() deleteUserFavAuthorDto: DeleteUserFavAuthorDto,
   ) {
-    return this.userFavAuthorsService.remove(
-      deleteUserFavAuthorDto,
-      req.user.id,
-    );
+    return this.userFavAuthorsService.remove(authorId, req.user.id);
   }
 }

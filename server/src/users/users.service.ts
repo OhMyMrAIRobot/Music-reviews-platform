@@ -11,26 +11,26 @@ import * as bcrypt from 'bcrypt';
 import { plainToClass, plainToInstance } from 'class-transformer';
 import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.interface';
 import { IJwtAuthPayload } from 'src/auth/types/jwt-auth-payload.interface';
-import { InsufficientPermissionsException } from 'src/exceptions/insufficient-permissions.exception';
-import { NoDataProvidedException } from 'src/exceptions/no-data.exception';
 import { FileService } from 'src/file/files.service';
-import { ProfilesService } from 'src/profiles/services/profiles.service';
+import { ProfilesService } from 'src/profiles/profiles.service';
 import { RolesService } from 'src/roles/roles.service';
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
+import { InsufficientPermissionsException } from 'src/shared/exceptions/insufficient-permissions.exception';
+import { NoDataProvidedException } from 'src/shared/exceptions/no-data.exception';
 import { PrismaService } from '../../prisma/prisma.service';
-import { DuplicateFieldException } from '../exceptions/duplicate-field.exception';
-import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
-import { InvalidCredentialsException } from '../exceptions/invalid-credentials.exception';
-import { AdminUpdateUserDto } from './dto/admin-update-user.dto';
-import { GetUsersQueryDto } from './dto/get-users-query.dto';
+import { DuplicateFieldException } from '../shared/exceptions/duplicate-field.exception';
+import { EntityNotFoundException } from '../shared/exceptions/entity-not-found.exception';
+import { InvalidCredentialsException } from '../shared/exceptions/invalid-credentials.exception';
+import { AdminUpdateUserRequestDto } from './dto/request/admin-update-user.request.dto';
+import { FindUsersQuery } from './dto/request/query/find-users.query.dto';
+import { UpdateUserRequestDto } from './dto/request/update-user.request.dto';
+import { FindUserDetailsResponse } from './dto/response/find-user-details.response.dto';
 import {
-  GetUsersPrismaResponseDto,
-  GetUsersResponseDto,
-} from './dto/get-users-response.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { UserFullInfo } from './dto/user-full-info.dto';
-import { UserResponseDto } from './dto/user-response.dto';
-import { UserWithPasswordResponseDto } from './dto/user-with-password-response.dto';
+  FindUsersPrismaResponseDto,
+  FindUsersResponseDto,
+} from './dto/response/find-users.response.dto';
+import { UserWithPasswordResponseDto } from './dto/response/user-with-password.response.dto';
+import { UserResponseDto } from './dto/response/user.response.dto';
 
 @Injectable()
 export class UsersService {
@@ -67,7 +67,7 @@ export class UsersService {
     return;
   }
 
-  async findAll(query: GetUsersQueryDto): Promise<GetUsersResponseDto> {
+  async findAll(query: FindUsersQuery): Promise<FindUsersResponseDto> {
     const { limit, offset, query: searchTerm, role, order } = query;
 
     const where: Prisma.UserWhereInput = searchTerm
@@ -105,7 +105,7 @@ export class UsersService {
 
     return {
       total,
-      users: plainToInstance(GetUsersPrismaResponseDto, users),
+      users: plainToInstance(FindUsersPrismaResponseDto, users),
     };
   }
 
@@ -127,7 +127,7 @@ export class UsersService {
       : plainToInstance(UserResponseDto, user);
   }
 
-  async getFullUserInfoById(id: string) {
+  async findUserDetails(id: string) {
     const user = await this.prisma.user.findUnique({
       where: { id },
       include: {
@@ -148,7 +148,7 @@ export class UsersService {
       throw new EntityNotFoundException('Пользователь', 'id', `${id}`);
     }
 
-    return plainToInstance(UserFullInfo, user);
+    return plainToInstance(FindUserDetailsResponse, user);
   }
 
   async findByEmail(
@@ -171,36 +171,31 @@ export class UsersService {
 
   async update(
     id: string,
-    updateUserDto: UpdateUserDto,
+    dto: UpdateUserRequestDto,
   ): Promise<UserResponseDto> {
     const user: UserWithPasswordResponseDto = await this.findOne(id, true);
-    if (!(await this.verifyPassword(updateUserDto.password, user.password))) {
+    if (!(await this.verifyPassword(dto.password, user.password))) {
       throw new InvalidCredentialsException();
     }
 
-    await this.isUserExists(
-      updateUserDto.email ?? '',
-      updateUserDto.nickname ?? '',
-    );
+    await this.isUserExists(dto.email ?? '', dto.nickname ?? '');
 
-    if (updateUserDto.newPassword) {
-      updateUserDto.password = await this.createPasswordHash(
-        updateUserDto.newPassword,
-      );
-      updateUserDto.newPassword = undefined;
+    if (dto.newPassword) {
+      dto.password = await this.createPasswordHash(dto.newPassword);
+      dto.newPassword = undefined;
     } else {
-      updateUserDto.password = user.password;
+      dto.password = user.password;
     }
 
-    if (updateUserDto.email) {
-      updateUserDto.isActive = false;
+    if (dto.email) {
+      dto.isActive = false;
     } else {
-      updateUserDto.isActive = user.isActive;
+      dto.isActive = user.isActive;
     }
 
     const updatedUser = await this.prisma.user.update({
       where: { id },
-      data: updateUserDto,
+      data: dto,
       include: { role: true },
     });
 
@@ -209,7 +204,7 @@ export class UsersService {
 
   async adminUpdate(
     id: string,
-    dto: AdminUpdateUserDto,
+    dto: AdminUpdateUserRequestDto,
     req: IAuthenticatedRequest,
   ): Promise<UserResponseDto> {
     if (!dto || Object.keys(dto).length === 0) {

@@ -1,11 +1,12 @@
 import { PrismaClient } from '@prisma/client';
 import { AuthorTypesEnum } from '../src/author-types/entities/author-types.enum';
 import { FeedbackStatusesEnum } from '../src/feedback-statuses/types/feedback-statuses.enum';
-import { ReleaseMediaStatusesEnum } from '../src/release-media-statuses/entities/release-media-statuses.enum';
-import { ReleaseMediaTypesEnum } from '../src/release-media-types/entities/release-media-types.enum';
-import { ReleaseRatingTypesEnum } from '../src/release-rating-types/entities/release-rating-types.enum';
-import { ReleaseTypesEnum } from '../src/release-types/entities/release-types.enum';
+import { ReleaseMediaStatusesEnum } from '../src/release-media-statuses/types/release-media-statuses.enum';
+import { ReleaseMediaTypesEnum } from '../src/release-media-types/types/release-media-types.enum';
+import { ReleaseTypesEnum } from '../src/release-types/types/release-types.enum';
 import { UserRoleEnum } from '../src/roles/types/user-role.enum';
+import { ReleaseRatingTypesEnum } from '../src/shared/types/release-rating-types.enum';
+import { SocialMediaEnum } from '../src/social-media/types/social-media.enum';
 
 const prisma = new PrismaClient();
 
@@ -48,7 +49,7 @@ async function main() {
       },
       {
         id: '2',
-        role: UserRoleEnum.SUPER_USER,
+        role: UserRoleEnum.MEDIA,
       },
       {
         id: '1',
@@ -66,7 +67,7 @@ async function main() {
         password:
           '$2b$10$0bD/1z03VDQP3ko9BJ/2U.FGCyjcyY7sSXaf5.psHwB012H0xBswe',
         isActive: true,
-        roleId: '3',
+        roleId: '2',
       },
       {
         id: '2',
@@ -129,7 +130,7 @@ async function main() {
         password:
           '$2b$10$0bD/1z03VDQP3ko9BJ/2U.FGCyjcyY7sSXaf5.psHwB012H0xBswe',
         isActive: true,
-        roleId: '1',
+        roleId: '3',
       },
       {
         id: '9',
@@ -372,19 +373,19 @@ async function main() {
     data: [
       {
         id: '1',
-        name: 'Telegram',
+        name: SocialMediaEnum.TELEGRAM,
       },
       {
         id: '2',
-        name: 'YouTube',
+        name: SocialMediaEnum.YOUTUBE,
       },
       {
         id: '3',
-        name: 'Twitch',
+        name: SocialMediaEnum.TWITCH,
       },
       {
         id: '4',
-        name: 'VK',
+        name: SocialMediaEnum.VK,
       },
     ],
   });
@@ -921,7 +922,7 @@ async function main() {
     data: [
       {
         id: '1',
-        type: ReleaseRatingTypesEnum.NO_TEXT,
+        type: ReleaseRatingTypesEnum.WITHOUT_TEXT,
       },
       {
         id: '2',
@@ -929,7 +930,7 @@ async function main() {
       },
       {
         id: '3',
-        type: ReleaseRatingTypesEnum.SUPER_USER,
+        type: ReleaseRatingTypesEnum.MEDIA,
       },
     ],
   });

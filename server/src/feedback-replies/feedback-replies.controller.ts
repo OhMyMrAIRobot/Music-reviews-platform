@@ -7,13 +7,13 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.interface';
-import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
-import { CreateFeedbackReplyDto } from './dto/create-feedback-reply.dto';
+import { Roles } from 'src/shared/decorators/roles.decorator';
+import { EntityNotFoundException } from 'src/shared/exceptions/entity-not-found.exception';
+import { JwtAuthGuard } from 'src/shared/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/shared/guards/roles.guard';
+import { CreateFeedbackReplyRequestDto } from './dto/request/create-feedback-reply.request.dto';
 import { FeedbackRepliesService } from './feedback-replies.service';
 
 @Controller('feedback-replies')
@@ -26,13 +26,10 @@ export class FeedbackRepliesController {
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @Post()
   async create(
-    @Body() createFeedbackResponseDto: CreateFeedbackReplyDto,
+    @Body() dto: CreateFeedbackReplyRequestDto,
     @Request() req: IAuthenticatedRequest,
   ) {
-    return this.feedbackResponsesService.create(
-      createFeedbackResponseDto,
-      req.user.id,
-    );
+    return this.feedbackResponsesService.create(dto, req.user.id);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

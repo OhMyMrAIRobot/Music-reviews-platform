@@ -19,20 +19,20 @@ BEGIN
         FROM "Reviews" r
         WHERE r.release_id = _release_id
           AND (
-              (rating_type = 'super_user' AND EXISTS (
+              (rating_type = 'Оценка медиа' AND EXISTS (
                   SELECT 1 FROM "Users" u
                   WHERE u.id = r.user_id
-                    AND u.role_id = (SELECT id FROM "Roles" WHERE role = 'SuperUser')
+                    AND u.role_id = (SELECT id FROM "Roles" WHERE role = 'Медиа')
               )) OR
-              (rating_type = 'no_text' AND (r.text IS NULL OR r.text = '')
+              (rating_type = 'Оценка без рецензии' AND (r.text IS NULL OR r.text = '')
                   AND NOT EXISTS (
                       SELECT 1 FROM "Users" u WHERE u.id = r.user_id
-                        AND u.role_id = (SELECT id FROM "Roles" WHERE role = 'SuperUser')
+                        AND u.role_id = (SELECT id FROM "Roles" WHERE role = 'Медиа')
                   )) OR
-              (rating_type = 'with_text' AND r.text IS NOT NULL AND r.text != ''
+              (rating_type = 'Оценка с рецензией' AND (r.text IS NOT NULL AND r.text != '')
                   AND NOT EXISTS (
                       SELECT 1 FROM "Users" u WHERE u.id = r.user_id
-                        AND u.role_id = (SELECT id FROM "Roles" WHERE role = 'SuperUser')
+                        AND u.role_id = (SELECT id FROM "Roles" WHERE role = 'Медиа')
                   ))
           )
     );
@@ -53,7 +53,7 @@ DECLARE
     release_id_val TEXT := COALESCE(OLD.release_id, NEW.release_id);
 BEGIN
     SELECT EXISTS (SELECT 1 FROM "Releases" WHERE id = release_id_val) INTO release_exists;
-    
+
     IF NOT release_exists THEN
         RETURN COALESCE(NEW, OLD);
     END IF;
@@ -62,7 +62,7 @@ BEGIN
     WHERE release_rating_id IN (
         SELECT id FROM "Release_ratings" WHERE release_id = release_id_val
     );
-    
+
     DELETE FROM "Release_ratings"
     WHERE release_id = release_id_val;
 
@@ -77,24 +77,24 @@ BEGIN
                 FROM "Reviews" r
                 WHERE r.release_id = release_id_val
                   AND (
-                      (rating_type_row.type = 'super_user' AND EXISTS (
+                      (rating_type_row.type = 'Оценка медиа' AND EXISTS (
                           SELECT 1 FROM "Users" u WHERE u.id = r.user_id
-                            AND u.role_id = (SELECT id FROM "Roles" WHERE role = 'SuperUser')
+                            AND u.role_id = (SELECT id FROM "Roles" WHERE role = 'Медиа')
                       )) OR
-                      (rating_type_row.type = 'no_text' AND (r.text IS NULL OR r.text = '')
+                      (rating_type_row.type = 'Оценка без рецензии' AND (r.text IS NULL OR r.text = '')
                           AND NOT EXISTS (
                               SELECT 1 FROM "Users" u WHERE u.id = r.user_id
-                                AND u.role_id = (SELECT id FROM "Roles" WHERE role = 'SuperUser')
+                                AND u.role_id = (SELECT id FROM "Roles" WHERE role = 'Медиа')
                           )) OR
-                      (rating_type_row.type = 'with_text' AND r.text IS NOT NULL AND r.text != ''
+                      (rating_type_row.type = 'Оценка с рецензией' AND (r.text IS NOT NULL AND r.text != '')
                           AND NOT EXISTS (
                               SELECT 1 FROM "Users" u WHERE u.id = r.user_id
-                                AND u.role_id = (SELECT id FROM "Roles" WHERE role = 'SuperUser')
+                                AND u.role_id = (SELECT id FROM "Roles" WHERE role = 'Медиа')
                           ))
                   )
             ))
         ) RETURNING * INTO rating_row;
-        
+
         INSERT INTO "Release_rating_details" (rhymes, structure, realization, individuality, atmosphere, release_rating_id)
         VALUES (
             get_avg_review_score(rating_row.release_id, rating_type_row.type, 'rhymes'),
@@ -116,10 +116,6 @@ CREATE OR REPLACE TRIGGER trg_update_release_rating
 AFTER INSERT OR UPDATE OR DELETE ON "Reviews"
 FOR EACH ROW
 EXECUTE FUNCTION update_release_rating();
-
--------------------------------------------------------------------------
--------------------------------------------------------------------------
--------------------------------------------------------------------------
 
 ------------------------------------------
 -- FUNCTION TO UPDATE FAV REVIEW POINTS --
@@ -156,8 +152,8 @@ $$ LANGUAGE plpgsql;
 --------------------------------------------
 -- INSERT OR DELETE ON "User_fav_reviews" --
 CREATE TRIGGER fav_review_points_trigger
-AFTER INSERT OR DELETE ON "User_fav_reviews"
-FOR EACH ROW
+    AFTER INSERT OR DELETE ON "User_fav_reviews"
+    FOR EACH ROW
 EXECUTE FUNCTION handle_fav_review_points();
 
 -------------------------------------------------------------------------
@@ -330,59 +326,45 @@ END;
 $$ LANGUAGE plpgsql;
 
 
---------------------------------------------
--- FUNCTION TO EXECUTE UPDATE LEADERBOARD --
-CREATE OR REPLACE FUNCTION update_leaderboard_on_change()
-    RETURNS TRIGGER AS $$
-BEGIN
-    IF (SELECT MAX(updated_at) FROM "Top_users_leaderboard") < NOW() - INTERVAL '30 minutes' THEN
-        PERFORM refresh_top_users();
-    END IF;
-    RETURN NULL;
-END;
-$$ LANGUAGE plpgsql;
-
-------------------------------------
--- TRIGGER FOR UPDATE LEADERBOARD --
-CREATE TRIGGER trigger_leaderboard_update
-    AFTER INSERT OR UPDATE OF points ON "User_profiles"
-    FOR EACH STATEMENT
-EXECUTE FUNCTION update_leaderboard_on_change();
-
-
 -------------------------------------------------------------------------
 -------------------------------------------------------------------------
 -------------------------------------------------------------------------
 
-CREATE VIEW best_releases_last_24h AS
+CREATE OR REPLACE VIEW most_reviewed_releases_last_24h AS
 SELECT
     r.id,
     r.title,
     r.img,
-    rt.type AS release_type,
+    rt.type AS "releaseType",
 
     (
         SELECT COUNT(DISTINCT r_all.id)
         FROM "Reviews" r_all
         WHERE r_all.release_id = r.id AND r_all.text IS NOT NULL
-    )::int AS text_count,
+    )::int AS "textCount",
 
     (
         SELECT COUNT(DISTINCT r_all.id)
         FROM "Reviews" r_all
         WHERE r_all.release_id = r.id AND r_all.text IS NULL
-    )::int AS no_text_count,
+    )::int AS "withoutTextCount",
 
-    JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
+    CASE
+        WHEN count(a.id) = 0 THEN '[]'::json
+        ELSE JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
             'id', a.id,
             'name', a.name
-    )) AS author,
+        ))
+    END AS authors,
 
-    JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
-            'total', rr.total,
-            'type', rrt.type
-    )) AS ratings,
-    COUNT(rev.id) AS total_reviews
+    CASE
+        WHEN count(rr.total) = 0 THEN '[]'::json
+        ELSE json_agg(DISTINCT jsonb_build_object(
+                'total', rr.total,
+                'type', rrt.type
+    ))
+    END as ratings,
+    COUNT(rev.id) AS "totalCount"
 FROM "Releases" r
          LEFT JOIN "Release_artists" ra ON r.id = ra.release_id
          LEFT JOIN "Authors" a ON ra.author_id = a.id
@@ -393,7 +375,7 @@ FROM "Releases" r
          LEFT JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
 GROUP BY r.id, rt.type
 HAVING COUNT(rev.id) > 0
-ORDER BY total_reviews DESC;
+ORDER BY "totalCount" DESC;
 
 -------------------------------------------------------------------------
 -------------------------------------------------------------------------
@@ -404,51 +386,72 @@ SELECT
     r.id,
     r.title,
     EXTRACT(YEAR FROM r.publish_date) AS year,
-    r.img AS release_img,
-    rt.type AS release_type,
-    (
-        SELECT JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
-                'id', a.id,
-                'name', a.name,
-                'img', a.avatar_img
-                                 ))
-        FROM "Release_artists" ra
-            JOIN "Authors" a ON ra.author_id = a.id
-        WHERE ra.release_id = r.id
+    r.img,
+    rt.type AS "releaseType",
+    COALESCE(
+            (
+                SELECT
+                    JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
+                            'id', a.id,
+                            'name', a.name,
+                            'img', a.avatar_img
+                                      ))
+                FROM "Release_artists" ra
+                         JOIN "Authors" a ON ra.author_id = a.id
+                WHERE ra.release_id = r.id
+            ),
+            '[]'::json
     ) AS artists,
-    (
-        SELECT JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
-                'id', a.id,
-                'name', a.name,
-                'img', a.avatar_img
-        ))
-        FROM "Release_producers" rp
-                 JOIN "Authors" a ON rp.author_id = a.id
-        WHERE rp.release_id = r.id
+    COALESCE(
+            (
+                SELECT
+                    JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
+                            'id', a.id,
+                            'name', a.name,
+                            'img', a.avatar_img
+                                      ))
+                FROM "Release_producers" rp
+                         JOIN "Authors" a ON rp.author_id = a.id
+                WHERE rp.release_id = r.id
+            ),
+            '[]'::json
     ) AS producers,
-    (
-        SELECT JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
-                'id', a.id,
-                'name', a.name,
-                'img', a.avatar_img
-            ))
-        FROM "Release_designers" rd
-                 JOIN "Authors" a ON rd.author_id = a.id
-        WHERE rd.release_id = r.id
+    COALESCE(
+            (
+                SELECT
+                    JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
+                            'id', a.id,
+                            'name', a.name,
+                            'img', a.avatar_img
+                                      ))
+                FROM "Release_designers" rd
+                         JOIN "Authors" a ON rd.author_id = a.id
+                WHERE rd.release_id = r.id
+            ),
+            '[]'::json
     ) AS designers,
-    COUNT(DISTINCT ufr.user_id)::int AS likes_count,
-    JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
-            'userId', ufr.user_id,
-            'releaseId', ufr.release_id
-        )) AS user_fav_ids,
+    COUNT(DISTINCT ufr.user_id)::int AS "favCount",
+    CASE
+        WHEN count(ufr.user_id) = 0 THEN '[]'::json
+        ELSE JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
+                'userId', ufr.user_id,
+                'releaseId', ufr.release_id
+                               ))
+        END AS "userFavRelease",
     JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
             'type', rrt.type,
             'total', rr.total
-        )) AS ratings,
+                      )) AS ratings,
     JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
             'type', rrt.type,
-            'details', rrd
-        )) AS rating_details
+            'details', JSONB_BUILD_OBJECT(
+                    'rhymes', rrd.rhymes,
+                    'structure', rrd.structure,
+                    'atmosphere', rrd.atmosphere,
+                    'realization', rrd.realization,
+                    'individuality', rrd.individuality
+            )
+    )) AS "ratingDetails"
 FROM "Releases" r
          LEFT JOIN "Release_types" rt ON r.release_type_id = rt.id
          LEFT JOIN "User_fav_releases" ufr ON r.id = ufr.release_id
@@ -473,7 +476,7 @@ SELECT
     tul.rank AS position,
     rol.role,
     (COUNT(DISTINCT r.id) FILTER (WHERE r.text IS NOT NULL))::int AS "textCount",
-    (COUNT(DISTINCT r.id) FILTER (WHERE r.text IS NULL))::int AS "noTextCount",
+    (COUNT(DISTINCT r.id) FILTER (WHERE r.text IS NULL))::int AS "withoutTextCount",
     (
         SELECT COUNT(*)
         FROM "User_fav_reviews" ufr
@@ -505,22 +508,22 @@ GROUP BY u.id, u.nickname, u.created_at, up.bio, up.avatar, up.cover_image, up.p
 
 CREATE OR REPLACE VIEW leaderboard_summary AS
 SELECT
-    tul.user_id,
+    tul.user_id as "userId",
     tul.rank,
     up.points,
     u.nickname,
     up.avatar,
     up.cover_image as cover,
-    (count(DISTINCT r.id) FILTER (WHERE r.text IS NOT NULL))::int AS text_count,
-    (count(DISTINCT r.id) FILTER (WHERE r.text IS NULL))::int AS no_text_count,
+    (count(DISTINCT r.id) FILTER (WHERE r.text IS NOT NULL))::int AS "textCount",
+    (count(DISTINCT r.id) FILTER (WHERE r.text IS NULL))::int AS "withoutTextCount",
     (SELECT COUNT(*)
      FROM "User_fav_reviews" ufr
               JOIN "Reviews" rev ON ufr.review_id = rev.id
-     WHERE rev.user_id = tul.user_id)::int AS received_likes,
+     WHERE rev.user_id = tul.user_id)::int AS "receivedLikes",
     (SELECT COUNT(*)
      FROM "User_fav_reviews" ufr
               JOIN "Reviews" rev ON ufr.review_id = rev.id
-     WHERE ufr.user_id = tul.user_id AND rev.user_id != tul.user_id)::int AS given_likes
+     WHERE ufr.user_id = tul.user_id AND rev.user_id != tul.user_id)::int AS "givenLikes"
 FROM "Top_users_leaderboard" tul
          JOIN "User_profiles" up on up.user_id = tul.user_id
          JOIN "Users" u on u.id = up.user_id

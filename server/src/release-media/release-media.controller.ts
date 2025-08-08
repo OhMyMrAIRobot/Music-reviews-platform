@@ -10,19 +10,19 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.interface';
-import { ReleaseMediaStatusesEnum } from 'src/release-media-statuses/entities/release-media-statuses.enum';
 import { ReleaseMediaStatusesService } from 'src/release-media-statuses/release-media-statuses.service';
-import { ReleaseMediaTypesEnum } from 'src/release-media-types/entities/release-media-types.enum';
+import { ReleaseMediaStatusesEnum } from 'src/release-media-statuses/types/release-media-statuses.enum';
 import { ReleaseMediaTypesService } from 'src/release-media-types/release-media-types.service';
+import { ReleaseMediaTypesEnum } from 'src/release-media-types/types/release-media-types.enum';
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
+import { Roles } from 'src/shared/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/shared/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/shared/guards/roles.guard';
 import { AdminCreateReleaseMediaRequestDto } from './dto/request/admin-create-release-media.request.dto';
 import { AdminUpdateReleaseMediaRequestDto } from './dto/request/admin-update-release-media.request.dto';
 import { CreateReleaseMediaRequestDto } from './dto/request/create-release-media.request.dto';
-import { ReleaseMediaRequestQueryDto } from './dto/request/release-media.request.query.dto';
+import { ReleaseMediaRequestQuery } from './dto/request/query/release-media.request.query.dto';
 import { UpdateReleaseMediaRequestDto } from './dto/request/update-release-media.request.dto';
 import { ReleaseMediaService } from './release-media.service';
 
@@ -35,7 +35,7 @@ export class ReleaseMediaController {
   ) {}
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.SUPER_USER)
+  @Roles(UserRoleEnum.MEDIA)
   @Post()
   async create(
     @Body() dto: CreateReleaseMediaRequestDto,
@@ -68,7 +68,7 @@ export class ReleaseMediaController {
   }
 
   @Get()
-  findAll(@Query() query: ReleaseMediaRequestQueryDto) {
+  findAll(@Query() query: ReleaseMediaRequestQuery) {
     return this.releaseMediaService.findAll(query);
   }
 
@@ -81,7 +81,7 @@ export class ReleaseMediaController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.SUPER_USER)
+  @Roles(UserRoleEnum.MEDIA)
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -102,7 +102,7 @@ export class ReleaseMediaController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.SUPER_USER)
+  @Roles(UserRoleEnum.MEDIA)
   @Delete(':id')
   remove(@Param('id') id: string, @Request() req: IAuthenticatedRequest) {
     return this.releaseMediaService.remove(id, req.user.id);

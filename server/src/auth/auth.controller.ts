@@ -11,11 +11,11 @@ import {
 import { Response } from 'express';
 import { UsersService } from 'src/users/users.service';
 import { MailsService } from '../mails/mails.service';
-import { CodeRequestDto } from './dto/code-request.dto';
-import { LoginDto } from './dto/login.dto';
-import { RegisterDto } from './dto/register.dto';
-import { ResetPasswordDto } from './dto/reset-password.dto';
-import { JwtAuthNoActiveGuard } from './guards/jwt-auth-no-active.guard';
+import { JwtAuthNoActiveGuard } from '../shared/guards/jwt-auth-no-active.guard';
+import { LoginRequestDto } from './dto/request/login.request.dto';
+import { RegisterRequestDto } from './dto/request/register.request.dto';
+import { ResetPasswordRequestDto } from './dto/request/reset-password.request.dto';
+import { SendActivationCodeRequestDto } from './dto/request/send-activation-code.request.dto';
 import { AuthService } from './services/auth.service';
 import { TokensService } from './services/tokens.service';
 import { IAuthenticatedRequest } from './types/authenticated-request.interface';
@@ -31,8 +31,8 @@ export class AuthController {
   ) {}
 
   @Post('register')
-  async register(@Res() res: Response, @Body() registerDto: RegisterDto) {
-    const result = await this.authService.register(res, registerDto);
+  async register(@Res() res: Response, @Body() dto: RegisterRequestDto) {
+    const result = await this.authService.register(res, dto);
     const activationToken = this.tokensService.generateActivationToken(
       result.user.id,
       result.user.email,
@@ -54,8 +54,8 @@ export class AuthController {
   }
 
   @Post('login')
-  async login(@Res() res: Response, @Body() loginDto: LoginDto) {
-    const user = await this.authService.validateUser(loginDto);
+  async login(@Res() res: Response, @Body() dto: LoginRequestDto) {
+    const user = await this.authService.validateUser(dto);
     const result = await this.authService.login(res, user);
     return res.status(200).send(result);
   }
@@ -116,8 +116,8 @@ export class AuthController {
   }
 
   @Post('send-reset-password')
-  async sendResetPasswordCode(@Body() codeRequestDto: CodeRequestDto) {
-    const user = await this.usersService.findByEmail(codeRequestDto.email);
+  async sendResetPasswordCode(@Body() dto: SendActivationCodeRequestDto) {
+    const user = await this.usersService.findByEmail(dto.email);
     const resetToken = this.tokensService.generateResetToken(
       user.id,
       user.email,
@@ -143,13 +143,9 @@ export class AuthController {
   async resetPassword(
     @Res() res: Response,
     @Query('token') token: string,
-    @Body() resetPasswordDto: ResetPasswordDto,
+    @Body() dto: ResetPasswordRequestDto,
   ) {
-    const result = await this.authService.resetPassword(
-      res,
-      token,
-      resetPasswordDto,
-    );
+    const result = await this.authService.resetPassword(res, token, dto);
     res.status(200).send(result);
   }
 }

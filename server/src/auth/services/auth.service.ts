@@ -7,14 +7,14 @@ import * as bcrypt from 'bcrypt';
 import { plainToClass } from 'class-transformer';
 import { Response } from 'express';
 import { PrismaService } from '../../../prisma/prisma.service';
-import { InvalidCredentialsException } from '../../exceptions/invalid-credentials.exception';
 import { RolesService } from '../../roles/roles.service';
-import { UserResponseDto } from '../../users/dto/user-response.dto';
-import { UserWithPasswordResponseDto } from '../../users/dto/user-with-password-response.dto';
+import { InvalidCredentialsException } from '../../shared/exceptions/invalid-credentials.exception';
+import { UserWithPasswordResponseDto } from '../../users/dto/response/user-with-password.response.dto';
+import { UserResponseDto } from '../../users/dto/response/user.response.dto';
 import { UsersService } from '../../users/users.service';
-import { LoginDto } from '../dto/login.dto';
-import { RegisterDto } from '../dto/register.dto';
-import { ResetPasswordDto } from '../dto/reset-password.dto';
+import { LoginRequestDto } from '../dto/request/login.request.dto';
+import { RegisterRequestDto } from '../dto/request/register.request.dto';
+import { ResetPasswordRequestDto } from '../dto/request/reset-password.request.dto';
 import { JwtActionEnum } from '../types/jwt-action.enum';
 import { IJwtAuthPayload } from '../types/jwt-auth-payload.interface';
 import { TokensService } from './tokens.service';
@@ -28,16 +28,13 @@ export class AuthService {
     private readonly prisma: PrismaService,
   ) {}
 
-  async validateUser(loginDto: LoginDto): Promise<UserResponseDto> {
+  async validateUser(dto: LoginRequestDto): Promise<UserResponseDto> {
     const user: UserWithPasswordResponseDto =
-      await this.usersService.findByEmail(loginDto.email, true);
+      await this.usersService.findByEmail(dto.email, true);
 
     if (
       !user ||
-      !(await this.usersService.verifyPassword(
-        loginDto.password,
-        user.password,
-      ))
+      !(await this.usersService.verifyPassword(dto.password, user.password))
     ) {
       throw new InvalidCredentialsException();
     }
@@ -98,14 +95,11 @@ export class AuthService {
     return this.login(res, plainToClass(UserResponseDto, user));
   }
 
-  async register(res: Response, registerDto: RegisterDto) {
-    await this.usersService.isUserExists(
-      registerDto.email,
-      registerDto.nickname,
-    );
+  async register(res: Response, dto: RegisterRequestDto) {
+    await this.usersService.isUserExists(dto.email, dto.nickname);
 
     const hashedPassword = await this.usersService.createPasswordHash(
-      registerDto.password,
+      dto.password,
     );
     const userRole = await this.rolesService.findByName();
 
@@ -113,8 +107,8 @@ export class AuthService {
       const user = await this.prisma.$transaction(async (prisma) => {
         const user = await prisma.user.create({
           data: {
-            email: registerDto.email,
-            nickname: registerDto.nickname,
+            email: dto.email,
+            nickname: dto.nickname,
             password: hashedPassword,
             roleId: userRole.id,
           },
@@ -131,8 +125,7 @@ export class AuthService {
       });
 
       return this.login(res, plainToClass(UserResponseDto, user));
-    } catch (e) {
-      console.log(e);
+    } catch {
       throw new InternalServerErrorException(
         'Ошибка при выполении регистрации',
       );
@@ -153,7 +146,7 @@ export class AuthService {
   async resetPassword(
     res: Response,
     token: string,
-    resetPasswordDto: ResetPasswordDto,
+    dto: ResetPasswordRequestDto,
   ) {
     const { id } = this.tokensService.decodeActionToken(
       token,
@@ -162,13 +155,11 @@ export class AuthService {
 
     await this.usersService.findOne(id);
 
-    resetPasswordDto.password = await this.usersService.createPasswordHash(
-      resetPasswordDto.password,
-    );
+    dto.password = await this.usersService.createPasswordHash(dto.password);
 
     const updatedUser = await this.prisma.user.update({
       where: { id },
-      data: resetPasswordDto,
+      data: dto,
       include: { role: true },
     });
 

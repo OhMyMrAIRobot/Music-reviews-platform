@@ -1,12 +1,8 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { UserFavReview } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
-import { DuplicateFieldException } from 'src/exceptions/duplicate-field.exception';
-import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
 import { ReviewsService } from 'src/reviews/reviews.service';
 import { UsersService } from 'src/users/users.service';
-import { CreateUserFavReviewDto } from './dto/create-user-fav-review.dto';
-import { DeleteUserFavReviewDto } from './dto/delete-user-fav-review.dto';
 
 @Injectable()
 export class UserFavReviewsService {
@@ -16,11 +12,7 @@ export class UserFavReviewsService {
     private readonly reviewsService: ReviewsService,
   ) {}
 
-  async create(
-    createUserFavReviewDto: CreateUserFavReviewDto,
-    userId: string,
-  ): Promise<UserFavReview> {
-    const { reviewId } = createUserFavReviewDto;
+  async create(reviewId: string, userId: string): Promise<UserFavReview> {
     await this.usersService.findOne(userId);
     const review = await this.reviewsService.findOne(reviewId);
 
@@ -32,64 +24,40 @@ export class UserFavReviewsService {
 
     const existing = await this.findOne(userId, reviewId);
     if (existing) {
-      throw new DuplicateFieldException(
-        `Пользователь с id '${userId}' и`,
-        'id рецезии',
-        `${reviewId}`,
+      throw new ConflictException(
+        'Вы уже отметили данную рецензию как понравившеюся!',
       );
     }
 
     return this.prisma.userFavReview.create({
-      data: { ...createUserFavReviewDto, userId },
+      data: { reviewId, userId },
     });
-  }
-
-  async findAll(): Promise<UserFavReview[]> {
-    return this.prisma.userFavReview.findMany();
   }
 
   async findByUserId(userId: string): Promise<UserFavReview[]> {
-    const result = await this.prisma.userFavReview.findMany({
+    await this.usersService.findOne(userId);
+
+    return this.prisma.userFavReview.findMany({
       where: { userId },
     });
-
-    // if (result.length === 0) {
-    //   throw new EntityNotFoundException(
-    //     'Понравившиеся рецензии',
-    //     'id пользователя',
-    //     `${userId}`,
-    //   );
-    // }
-    return result;
   }
 
   async findByReviewId(reviewId: string): Promise<UserFavReview[]> {
-    const result = await this.prisma.userFavReview.findMany({
+    await this.reviewsService.findOne(reviewId);
+
+    return this.prisma.userFavReview.findMany({
       where: { reviewId },
     });
-
-    // if (result.length === 0) {
-    //   throw new EntityNotFoundException(
-    //     'Пользователи, которорым понравилась рецензия',
-    //     'id',
-    //     `${reviewId}`,
-    //   );
-    // }
-    return result;
   }
 
-  async remove(
-    deleteUserFavReviewDto: DeleteUserFavReviewDto,
-    userId: string,
-  ): Promise<UserFavReview> {
-    const { reviewId } = deleteUserFavReviewDto;
+  async remove(reviewId: string, userId: string): Promise<UserFavReview> {
+    await this.reviewsService.findOne(reviewId);
+    await this.usersService.findOne(userId);
 
     const existing = await this.findOne(userId, reviewId);
     if (!existing) {
-      throw new EntityNotFoundException(
-        `Пользователь с id '${userId}' и`,
-        'id рецензии',
-        `${reviewId}`,
+      throw new ConflictException(
+        'Вы не отмечали данную рецензию как понравившеюся!',
       );
     }
 
@@ -98,7 +66,7 @@ export class UserFavReviewsService {
     });
   }
 
-  private async findOne(
+  async findOne(
     userId: string,
     reviewId: string,
   ): Promise<UserFavReview | null> {

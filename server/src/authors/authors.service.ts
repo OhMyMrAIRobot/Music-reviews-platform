@@ -7,25 +7,25 @@ import { Author, Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
 import { AuthorTypesService } from 'src/author-types/author-types.service';
-import { DuplicateFieldException } from 'src/exceptions/duplicate-field.exception';
-import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
-import { NoDataProvidedException } from 'src/exceptions/no-data.exception';
 import { FileService } from 'src/file/files.service';
+import { DuplicateFieldException } from 'src/shared/exceptions/duplicate-field.exception';
+import { EntityNotFoundException } from 'src/shared/exceptions/entity-not-found.exception';
+import { NoDataProvidedException } from 'src/shared/exceptions/no-data.exception';
+import { CreateAuthorRequestDto } from './dto/request/create-author.request.dto';
+import { FindAuthorsQuery } from './dto/request/query/find-authors.query.dto';
+import { UpdateAuthorRequestDto } from './dto/request/update-author.request.dto';
 import {
-  AuthorResponseDto,
-  QueryAuthorResponseDto,
-} from './dto/author.response.dto';
-import { AuthorsQueryDto } from './dto/authors-query.dto';
+  AdminAuthorDto,
+  AdminFindAuthorsResponseDto,
+} from './dto/response/admin-find-authors.response.dto';
+import {
+  FindAuthorResponseDto,
+  QueryFindAuthorResponseDto,
+} from './dto/response/find-author.response.dto';
 import {
   AuthorQueryResponse,
-  AuthorsResponseDto,
-} from './dto/authors.response.dto';
-import { CreateAuthorDto } from './dto/create-author.dto';
-import {
-  AuthorDto,
   FindAuthorsResponseDto,
-} from './dto/find-authors-response.dto';
-import { UpdateAuthorDto } from './dto/update-author.dto';
+} from './dto/response/find-authors.response.dto';
 
 @Injectable()
 export class AuthorsService {
@@ -36,13 +36,11 @@ export class AuthorsService {
   ) {}
 
   async create(
-    createAuthorDto: CreateAuthorDto,
+    dto: CreateAuthorRequestDto,
     avatar?: Express.Multer.File,
     cover?: Express.Multer.File,
   ): Promise<Author> {
-    const typesExist = await this.authorTypesService.checkTypesExist(
-      createAuthorDto.types,
-    );
+    const typesExist = await this.authorTypesService.checkTypesExist(dto.types);
 
     if (!typesExist) {
       throw new BadRequestException(
@@ -50,7 +48,7 @@ export class AuthorsService {
       );
     }
 
-    const existingAuthor = await this.findByName(createAuthorDto.name);
+    const existingAuthor = await this.findByName(dto.name);
 
     if (existingAuthor) {
       throw new DuplicateFieldException(
@@ -60,7 +58,7 @@ export class AuthorsService {
       );
     }
 
-    const authorTypeConnections = createAuthorDto.types.map((typeId) => ({
+    const authorTypeConnections = dto.types.map((typeId) => ({
       authorType: {
         connect: { id: typeId },
       },
@@ -80,7 +78,7 @@ export class AuthorsService {
 
       const created = await this.prisma.author.create({
         data: {
-          name: createAuthorDto.name,
+          name: dto.name,
           types: {
             create: authorTypeConnections,
           },
@@ -96,7 +94,7 @@ export class AuthorsService {
         },
       });
 
-      return plainToInstance(AuthorDto, created);
+      return plainToInstance(AdminAuthorDto, created);
     } catch {
       if (avatarImg !== '')
         await this.fileService.deleteFile(`authors/avatars/${avatarImg}`);
@@ -107,7 +105,7 @@ export class AuthorsService {
     }
   }
 
-  async findAll(query: AuthorsQueryDto): Promise<FindAuthorsResponseDto> {
+  async findAll(query: FindAuthorsQuery): Promise<AdminFindAuthorsResponseDto> {
     const { limit, offset, query: name, typeId } = query;
 
     if (typeId) {
@@ -150,7 +148,7 @@ export class AuthorsService {
       }),
     ]);
 
-    return plainToInstance(FindAuthorsResponseDto, { count, authors });
+    return plainToInstance(AdminFindAuthorsResponseDto, { count, authors });
   }
 
   async checkAuthorsExist(authorIds: string[]): Promise<boolean> {
@@ -178,19 +176,19 @@ export class AuthorsService {
 
   async update(
     id: string,
-    updateAuthorDto: UpdateAuthorDto,
+    dto: UpdateAuthorRequestDto,
     avatar?: Express.Multer.File,
     cover?: Express.Multer.File,
   ): Promise<Author> {
-    if (Object.keys(updateAuthorDto).length === 0 && !avatar && !cover) {
+    if (Object.keys(dto).length === 0 && !avatar && !cover) {
       throw new NoDataProvidedException();
     }
 
     const author = await this.findOne(id);
 
-    if (updateAuthorDto.types) {
+    if (dto.types) {
       const typesExist = await this.authorTypesService.checkTypesExist(
-        updateAuthorDto.types,
+        dto.types,
       );
 
       if (!typesExist) {
@@ -200,8 +198,8 @@ export class AuthorsService {
       }
     }
 
-    if (updateAuthorDto.name) {
-      const existingAuthor = await this.findByName(updateAuthorDto.name);
+    if (dto.name) {
+      const existingAuthor = await this.findByName(dto.name);
 
       if (existingAuthor) {
         throw new DuplicateFieldException(
@@ -216,7 +214,7 @@ export class AuthorsService {
     let newCoverPath: string | undefined = undefined;
 
     try {
-      if (avatar && updateAuthorDto.clearAvatar !== true) {
+      if (avatar && dto.clearAvatar !== true) {
         newAvatarPath = await this.fileService.saveFile(
           avatar,
           'authors',
@@ -224,7 +222,7 @@ export class AuthorsService {
         );
       }
 
-      if (cover && updateAuthorDto.clearCover !== true) {
+      if (cover && dto.clearCover !== true) {
         newCoverPath = await this.fileService.saveFile(
           cover,
           'authors',
@@ -234,18 +232,18 @@ export class AuthorsService {
 
       const updated = await this.prisma.$transaction(async (prisma) => {
         const data: Prisma.AuthorUpdateInput = {
-          name: updateAuthorDto.name,
-          avatarImg: updateAuthorDto.clearAvatar === true ? '' : newAvatarPath,
-          coverImg: updateAuthorDto.clearCover === true ? '' : newCoverPath,
+          name: dto.name,
+          avatarImg: dto.clearAvatar === true ? '' : newAvatarPath,
+          coverImg: dto.clearCover === true ? '' : newCoverPath,
         };
 
-        if (updateAuthorDto.types) {
+        if (dto.types) {
           await prisma.authorOnType.deleteMany({
             where: { authorId: id },
           });
 
           data.types = {
-            create: updateAuthorDto.types.map((typeId) => ({
+            create: dto.types.map((typeId) => ({
               authorType: { connect: { id: typeId } },
             })),
           };
@@ -264,23 +262,17 @@ export class AuthorsService {
         });
       });
 
-      if (
-        (newAvatarPath || updateAuthorDto.clearAvatar) &&
-        author.avatarImg !== ''
-      ) {
+      if ((newAvatarPath || dto.clearAvatar) && author.avatarImg !== '') {
         await this.fileService.deleteFile(
           `authors/avatars/${author.avatarImg}`,
         );
       }
 
-      if (
-        (newCoverPath || updateAuthorDto.clearCover) &&
-        author.coverImg !== ''
-      ) {
+      if ((newCoverPath || dto.clearCover) && author.coverImg !== '') {
         await this.fileService.deleteFile(`authors/covers/${author.coverImg}`);
       }
 
-      return plainToInstance(AuthorDto, updated);
+      return plainToInstance(AdminAuthorDto, updated);
     } catch {
       if (newAvatarPath) {
         await this.fileService.deleteFile(`authors/avatars/${newAvatarPath}`);
@@ -310,123 +302,178 @@ export class AuthorsService {
     return author;
   }
 
-  async findById(id: string): Promise<AuthorResponseDto> {
+  async findById(id: string): Promise<FindAuthorResponseDto> {
+    await this.findOne(id);
+
     const rawQuery = `
-        WITH all_release_types AS (
-            SELECT type AS release_type FROM "Release_types"
-        ),
-
-        authors_with_types AS (
-            SELECT
-                a.id AS author_id,
-                rt.release_type
-            FROM "Authors" a
-            CROSS JOIN all_release_types rt
-        ),
-
-        author_releases AS (
-            SELECT DISTINCT
-                a.id AS author_id,
-                r.id AS release_id,
-                rt.type AS release_type
-            FROM "Authors" a
-            LEFT JOIN "Release_producers" rp ON a.id = rp.author_id
-            LEFT JOIN "Releases" r ON rp.release_id = r.id
-            LEFT JOIN "Release_types" rt ON r.release_type_id = rt.id
-            WHERE r.id IS NOT NULL AND rt.type IS NOT NULL
-            
-            UNION
-            
-            SELECT DISTINCT
-                a.id AS author_id,
-                r.id AS release_id,
-                rt.type AS release_type
-            FROM "Authors" a
-            LEFT JOIN "Release_artists" ra ON a.id = ra.author_id
-            LEFT JOIN "Releases" r ON ra.release_id = r.id
-            LEFT JOIN "Release_types" rt ON r.release_type_id = rt.id
-            WHERE r.id IS NOT NULL AND rt.type IS NOT NULL
-            
-            UNION
-            
-            SELECT DISTINCT
-                a.id AS author_id,
-                r.id AS release_id,
-                rt.type AS release_type
-            FROM "Authors" a
-            LEFT JOIN "Release_designers" rd ON a.id = rd.author_id
-            LEFT JOIN "Releases" r ON rd.release_id = r.id
-            LEFT JOIN "Release_types" rt ON r.release_type_id = rt.id
-            WHERE r.id IS NOT NULL AND rt.type IS NOT NULL
-        ),
-
-        release_ratings_aggregated AS (
-            SELECT
-                ar.author_id,
-                ar.release_type,
-                rrt.type AS rating_type,
-                AVG(rr.total) AS avg_rating
-            FROM author_releases ar
-            JOIN "Release_ratings" rr ON ar.release_id = rr.release_id
-            JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
-            WHERE rr.total > 0
-            GROUP BY ar.author_id, ar.release_type, rrt.type
-        ),
-
-        release_stats AS (
-            SELECT
-                awt.author_id,
-                awt.release_type,
-                CEIL(MAX(CASE WHEN rra.rating_type = 'no_text' THEN rra.avg_rating ELSE NULL END)) AS avg_no_text,
-                CEIL(MAX(CASE WHEN rra.rating_type = 'with_text' THEN rra.avg_rating ELSE NULL END)) AS avg_with_text,
-                CEIL(MAX(CASE WHEN rra.rating_type = 'super_user' THEN rra.avg_rating ELSE NULL END)) AS avg_super_user
-            FROM authors_with_types awt
-            LEFT JOIN release_ratings_aggregated rra ON
-                rra.author_id = awt.author_id AND
-                rra.release_type = awt.release_type
-            GROUP BY awt.author_id, awt.release_type
-        )
-
+        WITH
+            all_release_types AS (
+                SELECT
+                    type AS release_type
+                FROM
+                    "Release_types"
+            ),
+            authors_with_types AS (
+                SELECT
+                    a.id AS author_id,
+                    rt.release_type
+                FROM
+                    "Authors" a
+                        CROSS JOIN all_release_types rt
+            ),
+            author_releases AS (
+                SELECT DISTINCT
+                    a.id AS author_id,
+                    r.id AS release_id,
+                    rt.type AS release_type
+                FROM
+                    "Authors" a
+                        LEFT JOIN "Release_producers" rp ON a.id = rp.author_id
+                        LEFT JOIN "Releases" r ON rp.release_id = r.id
+                        LEFT JOIN "Release_types" rt ON r.release_type_id = rt.id
+                WHERE
+                    r.id IS NOT NULL
+                  AND rt.type IS NOT NULL
+                UNION
+                SELECT DISTINCT
+                    a.id AS author_id,
+                    r.id AS release_id,
+                    rt.type AS release_type
+                FROM
+                    "Authors" a
+                        LEFT JOIN "Release_artists" ra ON a.id = ra.author_id
+                        LEFT JOIN "Releases" r ON ra.release_id = r.id
+                        LEFT JOIN "Release_types" rt ON r.release_type_id = rt.id
+                WHERE
+                    r.id IS NOT NULL
+                  AND rt.type IS NOT NULL
+                UNION
+                SELECT DISTINCT
+                    a.id AS author_id,
+                    r.id AS release_id,
+                    rt.type AS release_type
+                FROM
+                    "Authors" a
+                        LEFT JOIN "Release_designers" rd ON a.id = rd.author_id
+                        LEFT JOIN "Releases" r ON rd.release_id = r.id
+                        LEFT JOIN "Release_types" rt ON r.release_type_id = rt.id
+                WHERE
+                    r.id IS NOT NULL
+                  AND rt.type IS NOT NULL
+            ),
+            release_ratings_aggregated AS (
+                SELECT
+                    ar.author_id,
+                    ar.release_type,
+                    rrt.type AS rating_type,
+                    AVG(rr.total) AS avg_rating
+                FROM
+                    author_releases ar
+                        JOIN "Release_ratings" rr ON ar.release_id = rr.release_id
+                        JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
+                WHERE
+                    rr.total > 0
+                GROUP BY
+                    ar.author_id,
+                    ar.release_type,
+                    rrt.type
+            ),
+            release_stats AS (
+                SELECT
+                    awt.author_id,
+                    awt.release_type,
+                    CEIL(
+                        MAX(
+                            CASE
+                                WHEN rra.rating_type = 'Оценка без рецензии' THEN rra.avg_rating
+                                ELSE NULL
+                                END
+                            )
+                    ) AS avg_no_text,
+                    CEIL(
+                        MAX(
+                            CASE
+                                WHEN rra.rating_type = 'Оценка с рецензией' THEN rra.avg_rating
+                                ELSE NULL
+                                END
+                            )
+                    ) AS avg_with_text,
+                    CEIL(
+                        MAX(
+                            CASE
+                                WHEN rra.rating_type = 'Оценка медиа' THEN rra.avg_rating
+                                ELSE NULL
+                                END
+                            )
+                    ) AS avg_media
+                FROM
+                    authors_with_types awt
+                        LEFT JOIN release_ratings_aggregated rra ON rra.author_id = awt.author_id
+                        AND rra.release_type = awt.release_type
+                GROUP BY
+                    awt.author_id,
+                    awt.release_type
+            )
         SELECT
             a.id,
             a.avatar_img AS img,
             a.cover_img AS cover,
             a.name,
-            COUNT(DISTINCT ufa.user_id)::int AS likes_count,
-            json_agg(DISTINCT jsonb_build_object(
-                    'userId', ufa.user_id, 
-                    'authorId', ufa.author_id
-            )) as user_fav_ids,
-            jsonb_agg(DISTINCT jsonb_build_object('id', at.id, 'type', at.type)) AS author_types,
+            COUNT(DISTINCT ufa.user_id)::INT AS "favCount",
+            CASE
+                WHEN count(ufa.user_id) = 0 THEN '[]'::json
+                ELSE json_agg(DISTINCT jsonb_build_object(
+                        'userId', ufa.user_id,
+                        'authorId', ufa.author_id
+                    ))
+            END AS "userFavAuthors",
+            CASE
+                WHEN count(at.id) = 0 THEN '[]'::json
+                ELSE json_agg(DISTINCT jsonb_build_object(
+                        'id', at.id,
+                        'type', at.type
+                    ))
+            END AS "authorTypes",
             jsonb_agg(
-                jsonb_build_object(
-                    'type', rs.release_type,
-                    'ratings', jsonb_build_object(
-                        'no_text', rs.avg_no_text,
-                        'with_text', rs.avg_with_text,
-                        'super_user', rs.avg_super_user
-                    )
-                )
-            ) FILTER (WHERE rs.release_type IS NOT NULL) AS release_type_stats
-        FROM "Authors" a
-        LEFT JOIN "Authors_on_types" aot ON a.id = aot.author_id
-        LEFT JOIN "Author_types" at ON aot.author_type_id = at.id
-        LEFT JOIN release_stats rs ON a.id = rs.author_id
-        LEFT JOIN "User_fav_authors" ufa ON a.id = ufa.author_id
-        WHERE (a.id = '${id}')
-        GROUP BY a.id, a.name, a.avatar_img
+            jsonb_build_object(
+                    'type',
+                    rs.release_type,
+                    'ratings',
+                    jsonb_build_object(
+                            'withoutText',
+                            rs.avg_no_text,
+                            'withText',
+                            rs.avg_with_text,
+                            'media',
+                            rs.avg_media
+                    ))
+                  ) FILTER (
+                      WHERE
+                      rs.release_type IS NOT NULL
+            ) AS "releaseTypeRatings"
+        FROM
+            "Authors" a
+                LEFT JOIN "Authors_on_types" aot ON a.id = aot.author_id
+                LEFT JOIN "Author_types" at ON aot.author_type_id = at.id
+                LEFT JOIN release_stats rs ON a.id = rs.author_id
+                LEFT JOIN "User_fav_authors" ufa ON a.id = ufa.author_id
+        WHERE 
+            (a.id = '${id}')
+        GROUP BY 
+            a.id, 
+            a.name, 
+            a.avatar_img
     `;
 
     const author =
-      await this.prisma.$queryRawUnsafe<QueryAuthorResponseDto>(rawQuery);
+      await this.prisma.$queryRawUnsafe<QueryFindAuthorResponseDto>(rawQuery);
     return author[0];
   }
 
-  async findAuthors(query: AuthorsQueryDto): Promise<AuthorsResponseDto> {
+  async findAuthors(query: FindAuthorsQuery): Promise<FindAuthorsResponseDto> {
     const typeId = query.typeId ? `'${query.typeId}'` : null;
     const name = query.query ?? null;
-    const limit = query.limit ? query.limit : 20;
-    const offset = query.offset ? query.offset : 0;
+    const { limit, offset = 0 } = query;
 
     if (query.typeId) {
       await this.authorTypesService.findOne(query.typeId);
@@ -455,112 +502,167 @@ export class AuthorsService {
     });
 
     const rawQuery = `
-        WITH all_release_types AS (
-            SELECT type AS release_type FROM "Release_types"
-        ),
-
-        authors_with_types AS (
-            SELECT
-                a.id AS author_id,
-                rt.release_type
-            FROM "Authors" a
-            CROSS JOIN all_release_types rt
-        ),
-
-        author_releases AS (
-            SELECT DISTINCT
-                a.id AS author_id,
-                r.id AS release_id,
-                rt.type AS release_type
-            FROM "Authors" a
-            LEFT JOIN "Release_producers" rp ON a.id = rp.author_id
-            LEFT JOIN "Releases" r ON rp.release_id = r.id
-            LEFT JOIN "Release_types" rt ON r.release_type_id = rt.id
-            WHERE r.id IS NOT NULL AND rt.type IS NOT NULL
-            
-            UNION
-            
-            SELECT DISTINCT
-                a.id AS author_id,
-                r.id AS release_id,
-                rt.type AS release_type
-            FROM "Authors" a
-            LEFT JOIN "Release_artists" ra ON a.id = ra.author_id
-            LEFT JOIN "Releases" r ON ra.release_id = r.id
-            LEFT JOIN "Release_types" rt ON r.release_type_id = rt.id
-            WHERE r.id IS NOT NULL AND rt.type IS NOT NULL
-            
-            UNION
-            
-            SELECT DISTINCT
-                a.id AS author_id,
-                r.id AS release_id,
-                rt.type AS release_type
-            FROM "Authors" a
-            LEFT JOIN "Release_designers" rd ON a.id = rd.author_id
-            LEFT JOIN "Releases" r ON rd.release_id = r.id
-            LEFT JOIN "Release_types" rt ON r.release_type_id = rt.id
-            WHERE r.id IS NOT NULL AND rt.type IS NOT NULL
-        ),
-
-        release_ratings_aggregated AS (
-            SELECT
-                ar.author_id,
-                ar.release_type,
-                rrt.type AS rating_type,
-                AVG(rr.total) AS avg_rating
-            FROM author_releases ar
-            JOIN "Release_ratings" rr ON ar.release_id = rr.release_id
-            JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
-            WHERE rr.total > 0
-            GROUP BY ar.author_id, ar.release_type, rrt.type
-        ),
-
-        release_stats AS (
-            SELECT
-                awt.author_id,
-                awt.release_type,
-                CEIL(MAX(CASE WHEN rra.rating_type = 'no_text' THEN rra.avg_rating ELSE NULL END)) AS avg_no_text,
-                CEIL(MAX(CASE WHEN rra.rating_type = 'with_text' THEN rra.avg_rating ELSE NULL END)) AS avg_with_text,
-                CEIL(MAX(CASE WHEN rra.rating_type = 'super_user' THEN rra.avg_rating ELSE NULL END)) AS avg_super_user
-            FROM authors_with_types awt
-            LEFT JOIN release_ratings_aggregated rra ON
-                rra.author_id = awt.author_id AND
-                rra.release_type = awt.release_type
-            GROUP BY awt.author_id, awt.release_type
-        )
-
+        WITH
+            all_release_types AS (
+                SELECT
+                    type AS release_type
+                FROM
+                    "Release_types"
+            ),
+            authors_with_types AS (
+                SELECT
+                    a.id AS author_id,
+                    rt.release_type
+                FROM
+                    "Authors" a
+                        CROSS JOIN all_release_types rt
+            ),
+            author_releases AS (
+                SELECT DISTINCT
+                    a.id AS author_id,
+                    r.id AS release_id,
+                    rt.type AS release_type
+                FROM
+                    "Authors" a
+                        LEFT JOIN "Release_producers" rp ON a.id = rp.author_id
+                        LEFT JOIN "Releases" r ON rp.release_id = r.id
+                        LEFT JOIN "Release_types" rt ON r.release_type_id = rt.id
+                WHERE
+                    r.id IS NOT NULL
+                  AND rt.type IS NOT NULL
+                UNION
+                SELECT DISTINCT
+                    a.id AS author_id,
+                    r.id AS release_id,
+                    rt.type AS release_type
+                FROM
+                    "Authors" a
+                        LEFT JOIN "Release_artists" ra ON a.id = ra.author_id
+                        LEFT JOIN "Releases" r ON ra.release_id = r.id
+                        LEFT JOIN "Release_types" rt ON r.release_type_id = rt.id
+                WHERE
+                    r.id IS NOT NULL
+                  AND rt.type IS NOT NULL
+                UNION
+                SELECT DISTINCT
+                    a.id AS author_id,
+                    r.id AS release_id,
+                    rt.type AS release_type
+                FROM
+                    "Authors" a
+                        LEFT JOIN "Release_designers" rd ON a.id = rd.author_id
+                        LEFT JOIN "Releases" r ON rd.release_id = r.id
+                        LEFT JOIN "Release_types" rt ON r.release_type_id = rt.id
+                WHERE
+                    r.id IS NOT NULL
+                  AND rt.type IS NOT NULL
+            ),
+            release_ratings_aggregated AS (
+                SELECT
+                    ar.author_id,
+                    ar.release_type,
+                    rrt.type AS rating_type,
+                    AVG(rr.total) AS avg_rating
+                FROM
+                    author_releases ar
+                        JOIN "Release_ratings" rr ON ar.release_id = rr.release_id
+                        JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
+                WHERE
+                    rr.total > 0
+                GROUP BY
+                    ar.author_id,
+                    ar.release_type,
+                    rrt.type
+            ),
+            release_stats AS (
+                SELECT
+                    awt.author_id,
+                    awt.release_type,
+                    CEIL(
+                            MAX(
+                                    CASE
+                                        WHEN rra.rating_type = 'Оценка без рецензии' THEN rra.avg_rating
+                                        ELSE NULL
+                                        END
+                            )
+                    ) AS avg_no_text,
+                    CEIL(
+                            MAX(
+                                    CASE
+                                        WHEN rra.rating_type = 'Оценка с рецензией' THEN rra.avg_rating
+                                        ELSE NULL
+                                        END
+                            )
+                    ) AS avg_with_text,
+                    CEIL(
+                            MAX(
+                                    CASE
+                                        WHEN rra.rating_type = 'Оценка медиа' THEN rra.avg_rating
+                                        ELSE NULL
+                                        END
+                            )
+                    ) AS avg_media
+                FROM
+                    authors_with_types awt
+                        LEFT JOIN release_ratings_aggregated rra ON rra.author_id = awt.author_id
+                        AND rra.release_type = awt.release_type
+                GROUP BY
+                    awt.author_id,
+                    awt.release_type
+            )
         SELECT
             a.id,
             a.avatar_img AS img,
             a.cover_img AS cover,
             a.name,
-            COUNT(DISTINCT ufa.user_id)::int AS likes_count,
-            json_agg(DISTINCT jsonb_build_object(
-                    'userId', ufa.user_id, 
-                    'authorId', ufa.author_id
-            )) as user_fav_ids,
-            jsonb_agg(DISTINCT jsonb_build_object('id', at.id, 'type', at.type)) AS author_types,
+            COUNT(DISTINCT ufa.user_id)::int AS "favCount",
+            CASE
+                WHEN count(ufa.user_id) = 0 THEN '[]'::json
+                ELSE json_agg(DISTINCT jsonb_build_object(
+                        'userId', ufa.user_id,
+                        'authorId', ufa.author_id
+                    ))
+            END AS "userFavAuthors",
+            CASE
+                WHEN count(at.id) = 0 THEN '[]'::json
+                ELSE json_agg(DISTINCT jsonb_build_object(
+                        'id', at.id,
+                        'type', at.type
+                    ))
+            END AS "authorTypes",
             jsonb_agg(
-                jsonb_build_object(
-                    'type', rs.release_type,
-                    'ratings', jsonb_build_object(
-                        'no_text', rs.avg_no_text,
-                        'with_text', rs.avg_with_text,
-                        'super_user', rs.avg_super_user
+            jsonb_build_object(
+                    'type',
+                    rs.release_type,
+                    'ratings',
+                    jsonb_build_object(
+                        'withoutText',
+                        rs.avg_no_text,
+                        'withText',
+                        rs.avg_with_text,
+                        'media',
+                        rs.avg_media
                     )
-                )
-            ) FILTER (WHERE rs.release_type IS NOT NULL) AS release_type_stats
-        FROM "Authors" a
-        LEFT JOIN "Authors_on_types" aot ON a.id = aot.author_id
-        LEFT JOIN "Author_types" at ON aot.author_type_id = at.id
-        LEFT JOIN release_stats rs ON a.id = rs.author_id
-        LEFT JOIN "User_fav_authors" ufa ON a.id = ufa.author_id
+            )
+                    ) FILTER (
+                WHERE
+                rs.release_type IS NOT NULL
+                ) AS "releaseTypeRatings"
+        FROM
+            "Authors" a
+                LEFT JOIN "Authors_on_types" aot ON a.id = aot.author_id
+                LEFT JOIN "Author_types" at ON aot.author_type_id = at.id
+                LEFT JOIN release_stats rs ON a.id = rs.author_id
+                LEFT JOIN "User_fav_authors" ufa ON a.id = ufa.author_id
         WHERE (${typeId} IS NULL OR at.id = ${typeId}) AND
-          (${name ? `'${name}'` : name}::text IS NULL OR a.name ILIKE '%' || ${name ? `'${name}'` : name} || '%')
-        GROUP BY a.id, a.name, a.avatar_img
-        ORDER BY a.id
-        LIMIT ${limit} OFFSET ${offset};
+            (${name ? `'${name}'` : name}::text IS NULL OR a.name ILIKE '%' || ${name ? `'${name}'` : name} || '%')
+        GROUP BY
+            a.id,
+            a.name,
+            a.avatar_img
+        ORDER BY
+            a.id
+        ${limit !== undefined ? `LIMIT ${limit}` : ''} OFFSET ${offset};
         `;
 
     const authors =

@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Delete,
   Get,
@@ -8,52 +7,39 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.interface';
-import { CreateUserFavReviewDto } from './dto/create-user-fav-review.dto';
-import { DeleteUserFavReviewDto } from './dto/delete-user-fav-review.dto';
+import { JwtAuthGuard } from 'src/shared/guards/jwt-auth.guard';
 import { UserFavReviewsService } from './user-fav-reviews.service';
 
 @Controller('user-fav-reviews')
 export class UserFavReviewsController {
   constructor(private readonly userFavReviewsService: UserFavReviewsService) {}
 
-  @Get()
-  findAll() {
-    return this.userFavReviewsService.findAll();
+  @Get('user/:userId')
+  findByUserId(@Param('userId') userId: string) {
+    return this.userFavReviewsService.findByUserId(userId);
   }
 
-  @Get('user/:id')
-  findByUserId(@Param('id') id: string) {
-    return this.userFavReviewsService.findByUserId(id);
-  }
-
-  @Get('review/:id')
-  findByReviewId(@Param('id') id: string) {
-    return this.userFavReviewsService.findByReviewId(id);
+  @Get('review/:reviewId')
+  findByReviewId(@Param('reviewId') reviewId: string) {
+    return this.userFavReviewsService.findByReviewId(reviewId);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post()
+  @Post(':reviewId')
   create(
     @Request() req: IAuthenticatedRequest,
-    @Body() createUserFavReviewDto: CreateUserFavReviewDto,
+    @Param('reviewId') reviewId: string,
   ) {
-    return this.userFavReviewsService.create(
-      createUserFavReviewDto,
-      req.user.id,
-    );
+    return this.userFavReviewsService.create(reviewId, req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete()
+  @Delete(':reviewId')
   remove(
     @Request() req: IAuthenticatedRequest,
-    @Body() deleteUserFavReviewDto: DeleteUserFavReviewDto,
+    @Param('reviewId') reviewId: string,
   ) {
-    return this.userFavReviewsService.remove(
-      deleteUserFavReviewDto,
-      req.user.id,
-    );
+    return this.userFavReviewsService.remove(reviewId, req.user.id);
   }
 }

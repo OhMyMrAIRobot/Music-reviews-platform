@@ -13,16 +13,16 @@ import {
 import { Response } from 'express';
 import { TokensService } from 'src/auth/services/tokens.service';
 import { MailsService } from 'src/mails/mails.service';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../auth/guards/roles.guard';
 import { AuthService } from '../auth/services/auth.service';
 import { IAuthenticatedRequest } from '../auth/types/authenticated-request.interface';
 import { UserRoleEnum } from '../roles/types/user-role.enum';
-import { AdminUpdateUserDto } from './dto/admin-update-user.dto';
-import { GetUsersQueryDto } from './dto/get-users-query.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { UserResponseDto } from './dto/user-response.dto';
+import { Roles } from '../shared/decorators/roles.decorator';
+import { JwtAuthGuard } from '../shared/guards/jwt-auth.guard';
+import { RolesGuard } from '../shared/guards/roles.guard';
+import { AdminUpdateUserRequestDto } from './dto/request/admin-update-user.request.dto';
+import { FindUsersQuery } from './dto/request/query/find-users.query.dto';
+import { UpdateUserRequestDto } from './dto/request/update-user.request.dto';
+import { UserResponseDto } from './dto/response/user.response.dto';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -34,19 +34,14 @@ export class UsersController {
     private readonly mailsService: MailsService,
   ) {}
 
-  @Get(':id')
-  async findOne(@Param('id') id: string): Promise<UserResponseDto> {
-    return this.usersService.findOne(id);
-  }
-
   @UseGuards(JwtAuthGuard)
   @Patch()
   async update(
     @Res() res: Response,
     @Request() req: IAuthenticatedRequest,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body() dto: UpdateUserRequestDto,
   ) {
-    const user = await this.usersService.update(req.user.id, updateUserDto);
+    const user = await this.usersService.update(req.user.id, dto);
     const result = await this.authService.login(res, user);
 
     let emailSent = false;
@@ -62,9 +57,8 @@ export class UsersController {
           activationToken,
         );
         emailSent = true;
-      } catch (e) {
+      } catch {
         emailSent = false;
-        console.log(e);
       }
     }
 
@@ -80,15 +74,15 @@ export class UsersController {
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
-  async findAll(@Query() query: GetUsersQueryDto) {
+  async findAll(@Query() query: FindUsersQuery) {
     return this.usersService.findAll(query);
   }
 
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get('user-info/:id')
-  async getUserFullInfo(@Param('id') id: string) {
-    return this.usersService.getFullUserInfoById(id);
+  @Get(':id')
+  async findUserDetails(@Param('id') id: string) {
+    return this.usersService.findUserDetails(id);
   }
 
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
@@ -96,7 +90,7 @@ export class UsersController {
   @Patch(':id')
   async adminUpdateUser(
     @Param('id') id: string,
-    @Body() dto: AdminUpdateUserDto,
+    @Body() dto: AdminUpdateUserRequestDto,
     @Request() req: IAuthenticatedRequest,
   ) {
     return this.usersService.adminUpdate(id, dto, req);

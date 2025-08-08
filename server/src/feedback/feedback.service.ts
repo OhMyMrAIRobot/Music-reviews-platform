@@ -7,17 +7,17 @@ import {
 import { Feedback, Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
-import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
 import { FeedbackRepliesService } from 'src/feedback-replies/feedback-replies.service';
 import { FeedbackStatusesService } from 'src/feedback-statuses/feedback-statuses.service';
 import { FeedbackStatusesEnum } from 'src/feedback-statuses/types/feedback-statuses.enum';
-import { CreateFeedbackDto } from './dto/create-feedback.dto';
-import { FeedbackQueryDto } from './dto/feedback-query.dto';
+import { EntityNotFoundException } from 'src/shared/exceptions/entity-not-found.exception';
+import { CreateFeedbackRequestDto } from './dto/request/create-feedback.request.dto';
+import { FindFeedbackQuery } from './dto/request/query/find-feedback.query.dto';
+import { UpdateFeedbackRequestDto } from './dto/request/update-feedback.request.dto';
 import {
   FeedbackResponseItem,
-  FeedbacksResponseDto,
-} from './dto/feedbacks.response.dto';
-import { UpdateFeedbackDto } from './dto/update-feedback.dto';
+  FindFeedbackResponseDto,
+} from './dto/response/find-feedback.response.dto';
 
 @Injectable()
 export class FeedbackService {
@@ -28,7 +28,7 @@ export class FeedbackService {
     private readonly statusesService: FeedbackStatusesService,
   ) {}
 
-  async create(createFeedbackDto: CreateFeedbackDto): Promise<Feedback> {
+  async create(dto: CreateFeedbackRequestDto): Promise<Feedback> {
     const status = await this.statusesService.findByStatus(
       FeedbackStatusesEnum.NEW,
     );
@@ -42,11 +42,11 @@ export class FeedbackService {
     }
 
     return this.prisma.feedback.create({
-      data: { ...createFeedbackDto, feedbackStatusId: status.id },
+      data: { ...dto, feedbackStatusId: status.id },
     });
   }
 
-  async findAll(query: FeedbackQueryDto): Promise<FeedbacksResponseDto> {
+  async findAll(query: FindFeedbackQuery): Promise<FindFeedbackResponseDto> {
     const { limit, offset, order, query: searchTerm, statusId } = query;
 
     if (statusId) {
@@ -67,7 +67,7 @@ export class FeedbackService {
       ];
     }
 
-    const [count, feedbacks] = await Promise.all([
+    const [count, feedback] = await Promise.all([
       this.prisma.feedback.count({ where }),
       this.prisma.feedback.findMany({
         where,
@@ -82,7 +82,7 @@ export class FeedbackService {
 
     return {
       count,
-      feedbacks: plainToInstance(FeedbackResponseItem, feedbacks, {
+      feedback: plainToInstance(FeedbackResponseItem, feedback, {
         excludeExtraneousValues: true,
       }),
     };
@@ -102,12 +102,10 @@ export class FeedbackService {
 
   async update(
     id: string,
-    updateFeedbackDto: UpdateFeedbackDto,
+    dto: UpdateFeedbackRequestDto,
   ): Promise<FeedbackResponseItem> {
     await this.findById(id);
-    const status = await this.statusesService.findOne(
-      updateFeedbackDto.feedbackStatusId,
-    );
+    const status = await this.statusesService.findOne(dto.feedbackStatusId);
 
     if (
       (status.status as FeedbackStatusesEnum) === FeedbackStatusesEnum.ANSWERED
@@ -123,7 +121,7 @@ export class FeedbackService {
 
     const updated = await this.prisma.feedback.update({
       where: { id },
-      data: updateFeedbackDto,
+      data: dto,
       include: {
         feedbackStatus: true,
       },
