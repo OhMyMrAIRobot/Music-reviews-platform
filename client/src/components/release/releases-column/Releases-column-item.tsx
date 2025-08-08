@@ -35,8 +35,8 @@ const ReleasesColumnItem: FC<IProps> = ({ release, isLoading }) => {
 
 				<div className='w-full max-w-1/2 grid grid-rows-3 h-[60px] lg:h-[72px] overflow-hidden text-ellipsis'>
 					<ReleaseReviewsCount
-						textCount={release.text_count}
-						noTextCount={release.no_text_count}
+						textCount={release.textCount}
+						noTextCount={release.withoutTextCount}
 					/>
 
 					<Link
@@ -47,7 +47,7 @@ const ReleasesColumnItem: FC<IProps> = ({ release, isLoading }) => {
 					</Link>
 
 					<ReleaseAuthors
-						authors={release.author}
+						authors={release.authors}
 						className='font-medium leading-3 text-sm lg:text-base'
 					/>
 				</div>

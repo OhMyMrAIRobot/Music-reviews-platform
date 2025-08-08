@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Route, Routes } from 'react-router'
+import { useEffect, useLayoutEffect, useState } from 'react'
+import { Route, Routes, useLocation } from 'react-router'
 import Layout from './components/Layout'
 import NotificationsContainer from './components/notifications/Notifications-container'
 import Loader from './components/utils/Loader'
@@ -27,6 +27,12 @@ export function App() {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
+
+	const { pathname } = useLocation()
+
+	useLayoutEffect(() => {
+		window.scrollTo(0, 0)
+	}, [pathname])
 
 	return isLoading ? (
 		<div className='min-w-screen min-h-screen flex items-center justify-center'>

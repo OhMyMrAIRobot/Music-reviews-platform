@@ -31,10 +31,8 @@ class AuthStore {
 		try {
 			const { user, accessToken } = await AuthAPI.checkAuth()
 			this.setAuthorization(user, accessToken)
-		} catch (e) {
+		} catch {
 			this.setAuth(false)
-			localStorage.removeItem('token')
-			console.log(e)
 		}
 	}
 
@@ -56,8 +54,8 @@ class AuthStore {
 			runInAction(() => {
 				this.isAuth = false
 				this.user = null
-				localStorage.removeItem('token')
 			})
+			localStorage.removeItem('token')
 		} catch (e) {
 			console.log(e)
 		}

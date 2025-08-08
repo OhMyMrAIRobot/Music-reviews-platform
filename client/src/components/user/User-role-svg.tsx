@@ -15,7 +15,7 @@ const UserRoleSvg: FC<IProps> = ({ role, className }) => {
 	switch (role.role) {
 		case RolesEnum.USER:
 			return <UserSvg className={className} />
-		case RolesEnum.SUPER_USER:
+		case RolesEnum.MEDIA:
 			return <UserTickSvg className={className} />
 		case RolesEnum.ADMIN:
 			return <UserShieldSvg className={className} />

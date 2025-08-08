@@ -3,7 +3,6 @@ import {
 	IAdminRelease,
 	IAdminReleasesResponse,
 } from '../models/release/admin-releases-response'
-import { IFavRelease } from '../models/release/fav-release'
 import { IRelease, IReleaseResponse } from '../models/release/release'
 import { IReleaseDetails } from '../models/release/release-details'
 import { IReleaseType } from '../models/release/release-types'
@@ -20,8 +19,10 @@ const _api = axios.create({
 })
 
 export const ReleaseAPI = {
-	async fetchMostReviewed(): Promise<IRelease[]> {
-		const { data } = await _api.get<IRelease[]>('list/most-commented')
+	async fetchReleaseTypes(): Promise<IReleaseType[]> {
+		const { data } = await axios.get<IReleaseType[]>(
+			`${SERVER_URL}/release-types`
+		)
 		return data
 	},
 
@@ -34,7 +35,7 @@ export const ReleaseAPI = {
 		offset: number | null
 	): Promise<IReleaseResponse> {
 		const { data } = await _api.get<IReleaseResponse>(
-			`list?
+			`public?
 			${typeId ? `typeId=${typeId}&` : ''}
 			${query ? `query=${query}&` : ''}
 			${field ? `field=${field}&` : ''}
@@ -46,30 +47,23 @@ export const ReleaseAPI = {
 		return data
 	},
 
-	async adminFetchReleases(
-		typeId: string | null,
-		query: string | null,
-		order: SortOrder | null,
-		limit: number | null,
-		offset: number | null
-	): Promise<IAdminReleasesResponse> {
-		const { data } = await api.get<IAdminReleasesResponse>(`/releases
-			?${typeId ? `typeId=${typeId}&` : ''}
-			${query ? `query=${query}&` : ''}
-			${order ? `order=${order}&` : ''}
-			${limit ? `limit=${limit}&` : ''}
-			${offset ? `offset=${offset}&` : ''}`)
-
+	async fetchReleaseDetails(id: string): Promise<IReleaseDetails> {
+		const { data } = await _api.get<IReleaseDetails>(`/details/${id}`)
 		return data
 	},
 
-	async fetchAuthorTopReleases(authorId: string): Promise<IRelease[]> {
-		const { data } = await _api.get<IRelease[]>(`author/top/${authorId}`)
+	async fetchMostReviewed(): Promise<IRelease[]> {
+		const { data } = await _api.get<IRelease[]>('public/most-commented')
 		return data
 	},
 
-	async fetchAuthorAllReleases(authorId: string): Promise<IRelease[]> {
-		const { data } = await _api.get<IRelease[]>(`author/all/${authorId}`)
+	async fetchByAuthorId(
+		authorId: string,
+		findAll: boolean
+	): Promise<IRelease[]> {
+		const { data } = await _api.get<IRelease[]>(
+			`author/${authorId}?findAll=${findAll}`
+		)
 		return data
 	},
 
@@ -84,15 +78,20 @@ export const ReleaseAPI = {
 		return data
 	},
 
-	async fetchReleaseDetails(id: string): Promise<IReleaseDetails> {
-		const { data } = await _api.get<IReleaseDetails>(`/details/${id}`)
-		return data
-	},
+	async adminFetchReleases(
+		typeId: string | null,
+		query: string | null,
+		order: SortOrder | null,
+		limit: number | null,
+		offset: number | null
+	): Promise<IAdminReleasesResponse> {
+		const { data } = await api.get<IAdminReleasesResponse>(`/releases/admin
+			?${typeId !== null ? `typeId=${typeId}&` : ''}
+			${query !== null ? `query=${query}&` : ''}
+			${order !== null ? `order=${order}&` : ''}
+			${limit !== null ? `limit=${limit}&` : ''}
+			${offset !== null ? `offset=${offset}&` : ''}`)
 
-	async fetchFavReleaseUsersIds(releaseId: string): Promise<IFavRelease[]> {
-		const { data } = await axios.get<IFavRelease[]>(
-			`${SERVER_URL}/user-fav-releases/release/${releaseId}`
-		)
 		return data
 	},
 
@@ -120,26 +119,5 @@ export const ReleaseAPI = {
 
 	async deleteRelease(id: string) {
 		await api.delete(`/releases/${id}`)
-	},
-
-	async addReleaseToFav(releaseId: string): Promise<IFavRelease> {
-		const { data } = await api.post<IFavRelease>('/user-fav-releases', {
-			releaseId,
-		})
-		return data
-	},
-
-	async deleteReleaseFromFav(releaseId: string): Promise<IFavRelease> {
-		const { data } = await api.delete<IFavRelease>('/user-fav-releases', {
-			data: { releaseId },
-		})
-		return data
-	},
-
-	async fetchReleaseTypes(): Promise<IReleaseType[]> {
-		const { data } = await axios.get<IReleaseType[]>(
-			`${SERVER_URL}/release-types`
-		)
-		return data
 	},
 }

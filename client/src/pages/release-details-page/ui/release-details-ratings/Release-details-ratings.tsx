@@ -11,9 +11,9 @@ interface IProps {
 
 const ReleaseDetailsRatings: FC<IProps> = observer(({ release }) => {
 	const ratingOrder = [
-		ReleaseRatingTypesEnum.SUPER_USER,
+		ReleaseRatingTypesEnum.MEDIA,
 		ReleaseRatingTypesEnum.WITH_TEXT,
-		ReleaseRatingTypesEnum.NO_TEXT,
+		ReleaseRatingTypesEnum.WITHOUT_TEXT,
 	]
 
 	const ratings = ratingOrder
@@ -26,15 +26,15 @@ const ReleaseDetailsRatings: FC<IProps> = observer(({ release }) => {
 				let className =
 					'w-20 h-8 lg:w-22 lg:h-10 rounded-3xl flex items-center justify-center text-xl lg:text-2xl font-bold relative '
 
-				if (rating?.type === ReleaseRatingTypesEnum.SUPER_USER) {
+				if (rating?.type === ReleaseRatingTypesEnum.MEDIA) {
 					className += 'bg-[rgba(255,255,255,.1)]'
 				} else if (rating?.type === ReleaseRatingTypesEnum.WITH_TEXT) {
 					className += 'bg-[rgba(35,101,199)]'
-				} else if (rating?.type === ReleaseRatingTypesEnum.NO_TEXT) {
+				} else if (rating?.type === ReleaseRatingTypesEnum.WITHOUT_TEXT) {
 					className += 'border-2 border-[rgba(35,101,199)]'
 				}
 
-				const ratingDetails = release.rating_details.find(
+				const ratingDetails = release.ratingDetails.find(
 					rd => rd.type === rating?.type
 				)
 

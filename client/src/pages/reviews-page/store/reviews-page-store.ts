@@ -1,8 +1,8 @@
 import { makeAutoObservable } from 'mobx'
 import { ReviewAPI } from '../../../api/review-api'
 import { IReview } from '../../../models/review/review.ts'
-import { TogglePromiseResult } from '../../../types/toggle-promise-result'
-import { toggleFav } from '../../../utils/toggle-fav'
+import { SortOrder } from '../../../types/sort-order-type.ts'
+import { toggleFavReview } from '../../../utils/toggle-fav-review.ts'
 
 class ReviewsPageStore {
 	constructor() {
@@ -20,7 +20,7 @@ class ReviewsPageStore {
 		this.reviewsCount = data
 	}
 
-	fetchReviews = async (order: string, limit: number, offset: number) => {
+	fetchReviews = async (order: SortOrder, limit: number, offset: number) => {
 		try {
 			const data = await ReviewAPI.fetchReviews(
 				order,
@@ -31,36 +31,17 @@ class ReviewsPageStore {
 			)
 			this.setReviews(data.reviews)
 			this.setCount(data.count)
-		} catch (e) {
-			console.log(e)
+		} catch {
+			this.setReviews([])
+			this.setCount(0)
 		}
 	}
 
 	toggleFavReview = async (
 		reviewId: string,
 		isFav: boolean
-	): Promise<TogglePromiseResult> => {
-		const result = await toggleFav(this.reviews, reviewId, isFav, {
-			add: ReviewAPI.addReviewToFav,
-			delete: ReviewAPI.deleteReviewFromFav,
-			fetch: ReviewAPI.fetchFavReviewUsersIds,
-		})
-
-		if (result) {
-			return {
-				status: true,
-				message: isFav
-					? 'Вы убрали рецензию из списка понравившихся!'
-					: 'Вы отметили рецензию как понравившеюся!',
-			}
-		} else {
-			return {
-				status: false,
-				message: isFav
-					? 'Не удалось убрать рецензию из списка понравившихся!'
-					: 'Не удалось отметить рецензию как понравившеюся!',
-			}
-		}
+	): Promise<string[]> => {
+		return toggleFavReview(this.reviews, reviewId, isFav)
 	}
 }
 

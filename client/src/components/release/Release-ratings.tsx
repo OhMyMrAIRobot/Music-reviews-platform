@@ -12,9 +12,9 @@ interface IProps {
 
 const ReleaseRatings: FC<IProps> = ({ ratings, className, showHint }) => {
 	const ratingOrder = [
-		ReleaseRatingTypesEnum.SUPER_USER,
+		ReleaseRatingTypesEnum.MEDIA,
 		ReleaseRatingTypesEnum.WITH_TEXT,
-		ReleaseRatingTypesEnum.NO_TEXT,
+		ReleaseRatingTypesEnum.WITHOUT_TEXT,
 	]
 
 	const sortedRatings = ratingOrder
@@ -25,13 +25,13 @@ const ReleaseRatings: FC<IProps> = ({ ratings, className, showHint }) => {
 		let baseClassName =
 			' inline-flex items-center justify-center font-semibold rounded-full '
 		let tooltip = ''
-		if (rating?.type === ReleaseRatingTypesEnum.SUPER_USER) {
+		if (rating?.type === ReleaseRatingTypesEnum.MEDIA) {
 			baseClassName += 'bg-[rgba(255,255,255,.1)]'
-			tooltip = 'Средняя оценка супер-пользователей'
+			tooltip = 'Средняя оценка Медиа'
 		} else if (rating?.type === ReleaseRatingTypesEnum.WITH_TEXT) {
 			baseClassName += 'bg-[rgba(35,101,199)]'
 			tooltip = 'Средняя оценка рецензий пользователей'
-		} else if (rating?.type === ReleaseRatingTypesEnum.NO_TEXT) {
+		} else if (rating?.type === ReleaseRatingTypesEnum.WITHOUT_TEXT) {
 			baseClassName += 'border-2 border-[rgba(35,101,199)]'
 			tooltip = 'Средняя оценка без рецензий пользователей'
 		}

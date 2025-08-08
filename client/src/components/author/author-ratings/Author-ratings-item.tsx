@@ -16,19 +16,19 @@ const AuthorRatingsItem: FC<IProps> = ({ rating, ratingType, releaseType }) => {
 
 	let tooltipText = ''
 	switch (ratingType) {
-		case ReleaseRatingTypesEnum.SUPER_USER:
-			tooltipText = `Средняя оценка ${releaseTypeText} от супер-пользователей`
+		case ReleaseRatingTypesEnum.MEDIA:
+			tooltipText = `Средняя оценка ${releaseTypeText} от Медиа`
 			break
 		case ReleaseRatingTypesEnum.WITH_TEXT:
 			tooltipText = `Средняя оценка ${releaseTypeText} с рецензией от пользователей`
 			break
-		case ReleaseRatingTypesEnum.NO_TEXT:
+		case ReleaseRatingTypesEnum.WITHOUT_TEXT:
 			tooltipText = `Средняя оценка ${releaseTypeText} без рецензий от пользователей`
 			break
 	}
 
 	let className = ''
-	if (ratingType === ReleaseRatingTypesEnum.SUPER_USER) {
+	if (ratingType === ReleaseRatingTypesEnum.MEDIA) {
 		className += `border-[rgba(255,255,255,.1)] ${
 			rating ? 'bg-[rgba(255,255,255,.1)]' : 'border-2 border-dashed'
 		}`
@@ -38,7 +38,7 @@ const AuthorRatingsItem: FC<IProps> = ({ rating, ratingType, releaseType }) => {
 				? 'bg-[rgba(35,101,199)] border-[rgba(35,101,199)]'
 				: 'border-dashed border-[rgba(35,101,199)]/60'
 		}`
-	} else if (ratingType === ReleaseRatingTypesEnum.NO_TEXT) {
+	} else if (ratingType === ReleaseRatingTypesEnum.WITHOUT_TEXT) {
 		className += `border-2 ${
 			rating
 				? 'border-[rgba(35,101,199)]'

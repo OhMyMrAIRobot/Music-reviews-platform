@@ -21,11 +21,11 @@ const ReleasesRatingPage = observer(() => {
 	}, [year, month, fetch])
 
 	const tracks = releasesRatingPageStore.releases.filter(
-		val => val.release_type === ReleaseTypesEnum.SINGLE
+		val => val.releaseType === ReleaseTypesEnum.SINGLE
 	)
 
 	const albums = releasesRatingPageStore.releases.filter(
-		val => val.release_type === ReleaseTypesEnum.ALBUM
+		val => val.releaseType === ReleaseTypesEnum.ALBUM
 	)
 
 	return (

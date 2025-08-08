@@ -16,12 +16,12 @@ const ReviewHeader: FC<IProps> = ({ review }) => {
 	return (
 		<div className='bg-zinc-950/70 p-2 rounded-[12px] flex gap-3'>
 			<Link
-				to={navigatoToProfile(review.user_id)}
+				to={navigatoToProfile(review.userId)}
 				className='flex items-center space-x-2 lg:space-x-3 w-full cursor-pointer'
 			>
 				<ReviewUserImage
 					nickname={review.nickname}
-					img={review.profile_img}
+					img={review.profileImg}
 					points={review.points}
 				/>
 
@@ -39,17 +39,17 @@ const ReviewHeader: FC<IProps> = ({ review }) => {
 				/>
 
 				<Link
-					to={navigateToReleaseDetails(review.release_id)}
+					to={navigateToReleaseDetails(review.releaseId)}
 					className='size-10 lg:size-11 rounded overflow-hidden aspect-square'
 				>
 					<img
 						loading='lazy'
 						decoding='async'
-						alt={review.release_title}
+						alt={review.releaseTitle}
 						src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
-							review.release_img === ''
+							review.releaseImg === ''
 								? import.meta.env.VITE_DEFAULT_COVER
-								: review.release_img
+								: review.releaseImg
 						}`}
 						className='size-full aspect-square'
 					/>

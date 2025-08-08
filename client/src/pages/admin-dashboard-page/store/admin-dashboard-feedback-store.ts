@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
 import { FeedbackAPI } from '../../../api/feedback-api'
+import { FeedbackReplyAPI } from '../../../api/feedback-reply-api'
 import { ICreateFeedbackReplyData } from '../../../models/feedback-reply/create-feedback-reply-data'
 import { IFeedbackReply } from '../../../models/feedback-reply/feedback-reply'
 import { IFeedback } from '../../../models/feedback/feedback'
-import { IFeedbacksResponse } from '../../../models/feedback/feedbacks-response'
+import { IFeedbackResponse } from '../../../models/feedback/feedback-response'
 import { SortOrder } from '../../../types/sort-order-type'
 
 class AdminDashboardFeedbackStore {
@@ -13,13 +14,13 @@ class AdminDashboardFeedbackStore {
 	}
 
 	count: number = 0
-	feedbacks: IFeedback[] = []
+	feedback: IFeedback[] = []
 	feedbackReply: IFeedbackReply | null = null
 
-	setFeedbacks(data: IFeedbacksResponse) {
+	setFeedbacks(data: IFeedbackResponse) {
 		runInAction(() => {
 			this.count = data.count
-			this.feedbacks = data.feedbacks
+			this.feedback = data.feedback
 		})
 	}
 
@@ -27,7 +28,7 @@ class AdminDashboardFeedbackStore {
 		this.feedbackReply = data
 	}
 
-	fetchFeedbacks = async (
+	fetchFeedback = async (
 		query: string | null,
 		statusId: string | null,
 		order: SortOrder | null,
@@ -35,7 +36,7 @@ class AdminDashboardFeedbackStore {
 		offset: number | null
 	) => {
 		try {
-			const data = await FeedbackAPI.fetchFeedbacks(
+			const data = await FeedbackAPI.fetchFeedback(
 				query,
 				statusId,
 				order,
@@ -52,9 +53,9 @@ class AdminDashboardFeedbackStore {
 		try {
 			const data = await FeedbackAPI.updateFeedbackStatus(id, statusId)
 			runInAction(() => {
-				const idx = this.feedbacks.findIndex(entry => entry.id === id)
+				const idx = this.feedback.findIndex(entry => entry.id === id)
 				if (idx !== -1) {
-					this.feedbacks[idx] = data
+					this.feedback[idx] = data
 				}
 			})
 			return []
@@ -78,7 +79,7 @@ class AdminDashboardFeedbackStore {
 
 	fetchFeedbackReply = async (feedbackId: string) => {
 		try {
-			const data = await FeedbackAPI.fetchFeedbackReply(feedbackId)
+			const data = await FeedbackReplyAPI.fetchFeedbackReply(feedbackId)
 			this.setFeedbackReply(data)
 		} catch {
 			this.setFeedbackReply(null)
@@ -90,19 +91,19 @@ class AdminDashboardFeedbackStore {
 	): Promise<boolean | string[]> => {
 		try {
 			const { feedbackReply, isSent, feedbackStatus } =
-				await FeedbackAPI.createFeedbackReply(replyData)
+				await FeedbackReplyAPI.createFeedbackReply(replyData)
 
 			if (feedbackReply) {
 				this.setFeedbackReply(feedbackReply)
 			}
 
 			if (feedbackStatus) {
-				const idx = this.feedbacks.findIndex(
+				const idx = this.feedback.findIndex(
 					entry => entry.id === replyData.feedbackId
 				)
 				if (idx !== -1) {
 					runInAction(() => {
-						this.feedbacks[idx].feedbackStatus = feedbackStatus
+						this.feedback[idx].feedbackStatus = feedbackStatus
 					})
 				}
 			}

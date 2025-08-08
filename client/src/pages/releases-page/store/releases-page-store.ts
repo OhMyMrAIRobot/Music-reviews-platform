@@ -36,8 +36,9 @@ class ReleasesPageStore {
 			)
 			this.setReleasesCount(data.count)
 			this.setReleases(data.releases)
-		} catch (e) {
-			console.log(e)
+		} catch {
+			this.setReleases([])
+			this.setReleasesCount(0)
 		}
 	}
 }

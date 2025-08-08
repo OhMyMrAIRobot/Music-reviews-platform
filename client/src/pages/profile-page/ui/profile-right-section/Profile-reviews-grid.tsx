@@ -3,7 +3,6 @@ import { FC } from 'react'
 import Pagination from '../../../../components/pagination/Pagination.tsx'
 import ReviewCard from '../../../../components/review/review-card/Review-card.tsx'
 import { IReview } from '../../../../models/review/review.ts'
-import { TogglePromiseResult } from '../../../../types/toggle-promise-result.ts'
 
 interface IProps {
 	items: IReview[]
@@ -12,10 +11,7 @@ interface IProps {
 	perPage: number
 	setCurrentPage: (val: number) => void
 	isLoading: boolean
-	storeToggle?: (
-		reviewId: string,
-		isLiked: boolean
-	) => Promise<TogglePromiseResult>
+	storeToggle?: (reviewId: string, isFav: boolean) => Promise<string[]>
 }
 
 const ProfileReviewsGrid: FC<IProps> = observer(

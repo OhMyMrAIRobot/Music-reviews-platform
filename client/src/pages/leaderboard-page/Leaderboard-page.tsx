@@ -29,7 +29,7 @@ const LeaderboardPage = () => {
 					  ))
 					: leaderboardStore.items.map(item => (
 							<LeaderboardItem
-								key={item.user_id}
+								key={item.userId}
 								item={item}
 								isLoading={isLoading}
 							/>

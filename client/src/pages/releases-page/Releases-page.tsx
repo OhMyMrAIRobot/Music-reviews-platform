@@ -4,6 +4,7 @@ import ReleasesGrid from '../../components/release/Releases-grid'
 import SkeletonLoader from '../../components/utils/Skeleton-loader'
 import { useLoading } from '../../hooks/use-loading'
 import { useStore } from '../../hooks/use-store'
+import { ReleaseSortFieldValues } from '../../models/release/release-sort-field-values'
 import { ReleaseSortFields } from '../../models/release/release-sort-fields'
 import { SortOrder } from '../../types/sort-order-type'
 
@@ -43,32 +44,32 @@ const ReleasesPage = () => {
 		let order: SortOrder = 'desc'
 
 		switch (selectedSort) {
-			case ReleaseSortFields.NO_TEXT_COUNT:
-				field = 'noTextCount'
+			case ReleaseSortFields.WITHOUT_TEXT_COUNT:
+				field = ReleaseSortFieldValues.WITHOUT_TEXT_COUNT
 				order = 'desc'
 				break
 			case ReleaseSortFields.TEXT_COUNT:
-				field = 'textCount'
+				field = ReleaseSortFieldValues.TEXT_COUNT
 				order = 'desc'
 				break
 			case ReleaseSortFields.PUBLISHED_NEW:
-				field = 'published'
+				field = ReleaseSortFieldValues.PUBLISHED
 				order = 'desc'
 				break
 			case ReleaseSortFields.PUBLISHED_OLD:
-				field = 'published'
+				field = ReleaseSortFieldValues.PUBLISHED
 				order = 'asc'
 				break
-			case ReleaseSortFields.SUPER_USER_RATING:
-				field = 'superUserRating'
+			case ReleaseSortFields.MEDIA_RATING:
+				field = ReleaseSortFieldValues.MEDIA_RATING
 				order = 'desc'
 				break
 			case ReleaseSortFields.WITH_TEXT_RATING:
-				field = 'superUserRating'
+				field = ReleaseSortFieldValues.WITH_TEXT_RATING
 				order = 'desc'
 				break
 			case ReleaseSortFields.NO_TEXT_RATING:
-				field = 'superUserRating'
+				field = ReleaseSortFieldValues.WITHOUT_TEXT_RATING
 				order = 'desc'
 				break
 		}

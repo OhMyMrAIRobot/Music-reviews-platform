@@ -18,7 +18,7 @@ const AdminDashboardFeedbackGrid = observer(() => {
 	const { adminDashboardFeedbackStore, metaStore } = useStore()
 
 	const { execute: _fetchFeedbacks, isLoading: isFeedbacksLoading } =
-		useLoading(adminDashboardFeedbackStore.fetchFeedbacks)
+		useLoading(adminDashboardFeedbackStore.fetchFeedback)
 
 	const {
 		execute: fetchFeedbackStatuses,
@@ -32,7 +32,7 @@ const AdminDashboardFeedbackGrid = observer(() => {
 	)
 	const [order, setOrder] = useState<SortOrder>(SortOrderEnum.DESC)
 
-	const fetchFeedbacks = () => {
+	const fetchFeedback = () => {
 		let statusId: string | null = null
 		if (activeStatus !== FeedbackStatusesFilterEnum.ALL) {
 			statusId =
@@ -51,12 +51,12 @@ const AdminDashboardFeedbackGrid = observer(() => {
 
 	useEffect(() => {
 		setCurrentPage(1)
-		fetchFeedbacks()
+		fetchFeedback()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [searchText, activeStatus])
 
 	useEffect(() => {
-		fetchFeedbacks()
+		fetchFeedback()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentPage, order])
 
@@ -120,13 +120,13 @@ const AdminDashboardFeedbackGrid = observer(() => {
 										isLoading={isFeedbacksLoading}
 									/>
 							  ))
-							: adminDashboardFeedbackStore.feedbacks.map((feedback, idx) => (
+							: adminDashboardFeedbackStore.feedback.map((feedback, idx) => (
 									<AdminDashboardFeedbackGridItem
 										key={feedback.id}
 										feedback={feedback}
 										isLoading={isFeedbacksLoading}
 										position={(currentPage - 1) * perPage + idx + 1}
-										refetchFeedbacks={fetchFeedbacks}
+										refetchFeedbacks={fetchFeedback}
 									/>
 							  ))}
 					</div>

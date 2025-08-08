@@ -1,5 +1,8 @@
+import axios from 'axios'
 import { IUserFavMedia } from '../models/release-media/user-fav-media'
 import { api } from './api-instance'
+
+const SERVER_URL = import.meta.env.VITE_SERVER_URL
 
 export const UserFavMediaAPI = {
 	async addToFav(mediaId: string): Promise<IUserFavMedia> {
@@ -16,9 +19,9 @@ export const UserFavMediaAPI = {
 		return data
 	},
 
-	async fetchMediaUserIds(mediaId: string): Promise<IUserFavMedia[]> {
-		const { data } = await api.get<IUserFavMedia[]>(
-			`/user-fav-media/media/${mediaId}`
+	async fetchFavByMediaId(mediaId: string): Promise<IUserFavMedia[]> {
+		const { data } = await axios.get<IUserFavMedia[]>(
+			`${SERVER_URL}/user-fav-media/media/${mediaId}`
 		)
 
 		return data

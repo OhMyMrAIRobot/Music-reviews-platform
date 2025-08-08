@@ -65,7 +65,7 @@ const SendReviewForm: FC<IProps> = observer(
 		useEffect(() => {
 			setUserReview(
 				releaseDetailsPageStore.releaseReviews?.find(
-					entry => entry.user_id === authStore.user?.id
+					entry => entry.userId === authStore.user?.id
 				)
 			)
 			setDefaultValues(userReview)
@@ -134,7 +134,7 @@ const SendReviewForm: FC<IProps> = observer(
 					atmosphere !== userReview.atmosphere
 				)
 			}
-			return false
+			return true
 		}, [
 			atmosphere,
 			individuality,
@@ -147,11 +147,9 @@ const SendReviewForm: FC<IProps> = observer(
 		])
 
 		const textAndTitleTogether = useMemo(() => {
-			return (
-				(text.trim() !== '' && title.trim() !== '') ||
-				(text.trim() === '' && title.trim() === '')
-			)
-		}, [text, title])
+			if (!isReview) return true
+			return text.trim() !== '' && title.trim() !== ''
+		}, [isReview, text, title])
 
 		const userMediaReview = releaseDetailsPageStore.userReleaseMedia
 
@@ -180,7 +178,7 @@ const SendReviewForm: FC<IProps> = observer(
 								}}
 							/>
 
-							{authStore.user?.role.role === RolesEnum.SUPER_USER && (
+							{authStore.user?.role.role === RolesEnum.MEDIA && (
 								<SwitchButton
 									title='Медиарецензия'
 									isActive={isMediaReview && !isReview}
@@ -267,7 +265,7 @@ const SendReviewForm: FC<IProps> = observer(
 										onClick={postReview}
 										className={`inline-flex items-center justify-center whitespace-nowrap text-sm font-medium rounded-full size-16 text-black transition-colors duration-200 ${
 											isLoading || !hasChanges || !textAndTitleTogether
-												? 'bg-white/40 cursor-not-allowed'
+												? 'bg-white/40 pointer-events-none'
 												: 'cursor-pointer hover:bg-white/70 bg-white'
 										}`}
 									>
@@ -276,7 +274,7 @@ const SendReviewForm: FC<IProps> = observer(
 								</div>
 							</div>
 						) : (
-							authStore.user?.role.role === RolesEnum.SUPER_USER && (
+							authStore.user?.role.role === RolesEnum.MEDIA && (
 								<SendMediaReviewForm releaseId={id} />
 							)
 						)}

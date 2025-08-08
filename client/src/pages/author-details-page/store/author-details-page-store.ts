@@ -1,12 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable } from 'mobx'
 import { AuthorAPI } from '../../../api/author-api'
 import { ReleaseAPI } from '../../../api/release-api'
 import { ReviewAPI } from '../../../api/review-api'
+import { UserFavAuthorAPI } from '../../../api/user-fav-author-api.ts'
 import { IAuthor } from '../../../models/author/author'
 import { IRelease } from '../../../models/release/release'
 import { IReview } from '../../../models/review/review.ts'
-import { TogglePromiseResult } from '../../../types/toggle-promise-result'
-import { toggleFav } from '../../../utils/toggle-fav'
+import { toggleFavReview } from '../../../utils/toggle-fav-review.ts'
 
 class AuthorDetailsPageStore {
 	constructor() {
@@ -45,7 +46,7 @@ class AuthorDetailsPageStore {
 
 	fetchTopReleases = async (authorId: string) => {
 		try {
-			const data = await ReleaseAPI.fetchAuthorTopReleases(authorId)
+			const data = await ReleaseAPI.fetchByAuthorId(authorId, false)
 			this.setTopReleases(data)
 		} catch (e) {
 			console.log(e)
@@ -54,16 +55,16 @@ class AuthorDetailsPageStore {
 
 	fetchLastReviews = async (authorId: string) => {
 		try {
-			const data = await ReviewAPI.fetchReviewsByAuthorId(authorId)
+			const data = await ReviewAPI.fetchReviewsByAuthorId(authorId, 25, 0)
 			this.setLastReviews(data)
-		} catch (e) {
-			console.log(e)
+		} catch {
+			this.setLastReviews([])
 		}
 	}
 
 	fetchAllReleases = async (authorId: string) => {
 		try {
-			const data = await ReleaseAPI.fetchAuthorAllReleases(authorId)
+			const data = await ReleaseAPI.fetchByAuthorId(authorId, true)
 			this.setAllReleases(data)
 		} catch (e) {
 			console.log(e)
@@ -73,55 +74,34 @@ class AuthorDetailsPageStore {
 	toggleFavAuthor = async (
 		authorId: string,
 		isFav: boolean
-	): Promise<TogglePromiseResult> => {
-		const result = await toggleFav(this.author, authorId, isFav, {
-			add: AuthorAPI.addFavAuthor,
-			delete: AuthorAPI.deleteFavAuthor,
-			fetch: AuthorAPI.fetchFavAuthorUsersIds,
-		})
+	): Promise<string[]> => {
+		try {
+			if (!isFav) {
+				await UserFavAuthorAPI.addToFav(authorId)
+			} else {
+				await UserFavAuthorAPI.deleteFromFav(authorId)
+			}
 
-		if (result) {
-			return {
-				status: true,
-				message: isFav
-					? 'Вы убрали автора из списка понравившихся'
-					: 'Вы отметили автора как понравившегося!',
+			const newFav = await UserFavAuthorAPI.fetchFavByAuthorId(authorId)
+
+			if (this.author) {
+				this.author.userFavAuthors = newFav
+				this.author.favCount = newFav.length
 			}
-		} else {
-			return {
-				status: false,
-				message: isFav
-					? 'Не удалось убрать автора из списка понравившихся!'
-					: 'Не удалось отметить автора как понравившегося!',
-			}
+
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
 		}
 	}
 
 	toggleFavReview = async (
 		reviewId: string,
 		isFav: boolean
-	): Promise<TogglePromiseResult> => {
-		const result = await toggleFav(this.lastReviews, reviewId, isFav, {
-			add: ReviewAPI.addReviewToFav,
-			delete: ReviewAPI.deleteReviewFromFav,
-			fetch: ReviewAPI.fetchFavReviewUsersIds,
-		})
-
-		if (result) {
-			return {
-				status: true,
-				message: isFav
-					? 'Вы убрали рецензию из списка понравившихся!'
-					: 'Вы отметили рецензию как понравившеюся!',
-			}
-		} else {
-			return {
-				status: false,
-				message: isFav
-					? 'Не удалось убрать рецензию из списка понравившихся!'
-					: 'Не удалось отметь рецензию как понравившеюся!',
-			}
-		}
+	): Promise<string[]> => {
+		return toggleFavReview(this.lastReviews, reviewId, isFav)
 	}
 }
 

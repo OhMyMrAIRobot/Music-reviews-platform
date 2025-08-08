@@ -59,7 +59,7 @@ class AdminDashboardUsersStore {
 
 	fetchUser = async (id: string) => {
 		try {
-			const data = await UserAPI.fetchUserInfo(id)
+			const data = await UserAPI.fetchUserDetails(id)
 			this.setUser(data)
 		} catch (e) {
 			console.log(e)

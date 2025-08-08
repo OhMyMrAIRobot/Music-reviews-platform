@@ -1,5 +1,5 @@
 import { IAuthorType } from './author-type'
-import { IReleaseTypeStats } from './authors-response'
+import { IReleaseTypeRatings } from './authors-response'
 import { IFavAuthor } from './fav-author'
 
 export interface IAuthor {
@@ -7,8 +7,8 @@ export interface IAuthor {
 	img: string
 	cover: string
 	name: string
-	likes_count: number
-	user_fav_ids: IFavAuthor[]
-	author_types: IAuthorType[]
-	release_type_stats: IReleaseTypeStats[]
+	favCount: number
+	userFavAuthors: IFavAuthor[]
+	authorTypes: IAuthorType[]
+	releaseTypeRatings: IReleaseTypeRatings[]
 }

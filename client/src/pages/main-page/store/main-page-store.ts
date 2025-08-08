@@ -5,9 +5,9 @@ import { ReviewAPI } from '../../../api/review-api'
 import { IReleaseMedia } from '../../../models/release-media/release-media.ts'
 import { IRelease } from '../../../models/release/release'
 import { IReview } from '../../../models/review/review.ts'
-import { TogglePromiseResult } from '../../../types/toggle-promise-result'
-import { toggleFav } from '../../../utils/toggle-fav'
+import { SortOrderEnum } from '../../../models/sort/sort-order-enum.ts'
 import { toggleFavMedia } from '../../../utils/toggle-fav-media.ts'
+import { toggleFavReview } from '../../../utils/toggle-fav-review.ts'
 
 class MainPageStore {
 	constructor() {
@@ -62,7 +62,13 @@ class MainPageStore {
 
 	fetchLastReviews = async () => {
 		try {
-			const data = await ReviewAPI.fetchReviews('asc', 45, 0, null, null)
+			const data = await ReviewAPI.fetchReviews(
+				SortOrderEnum.DESC,
+				45,
+				0,
+				null,
+				null
+			)
 			this.setLastReviews(data.reviews)
 		} catch {
 			this.setLastReviews([])
@@ -72,28 +78,8 @@ class MainPageStore {
 	toggleFavReview = async (
 		reviewId: string,
 		isFav: boolean
-	): Promise<TogglePromiseResult> => {
-		const result = await toggleFav(this.lastReviews, reviewId, isFav, {
-			add: ReviewAPI.addReviewToFav,
-			delete: ReviewAPI.deleteReviewFromFav,
-			fetch: ReviewAPI.fetchFavReviewUsersIds,
-		})
-
-		if (result) {
-			return {
-				status: true,
-				message: isFav
-					? 'Вы убрали рецензию из списка понравившихся!'
-					: 'Вы отметили рецензию как понравившеюся!',
-			}
-		} else {
-			return {
-				status: false,
-				message: isFav
-					? 'Не удалось убрать рецензию из списка понравившихся!'
-					: 'Не удалось отметь рецензию как понравившеюся!',
-			}
-		}
+	): Promise<string[]> => {
+		return toggleFavReview(this.lastReviews, reviewId, isFav)
 	}
 
 	fetchReleaseMedia = async (statusId: string, typeId: string) => {
