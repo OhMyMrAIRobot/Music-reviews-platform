@@ -1,4 +1,4 @@
-export class ReviewsResponseDto {
+export class FindReviewsResponseDto {
   count: number;
   reviews: ReviewQueryDataDto[];
 }
@@ -9,18 +9,18 @@ export class ReviewQueryDataDto {
   text: string;
   total: number;
   rhymes: number;
-  user_id: string;
+  userId: string;
   structure: number;
   realization: number;
   individuality: number;
   atmosphere: number;
   nickname: string;
-  profile_img: string;
+  profileImg: string;
   points: number;
   position: number | null;
-  release_img: string;
-  release_title: string;
-  release_id: string;
-  likes_count: number;
-  user_fav_ids: { userId: string; reviewId: string }[];
+  releaseImg: string;
+  releaseTitle: string;
+  releaseId: string;
+  favCount: number;
+  userFavReview: { userId: string; reviewId: string }[];
 }

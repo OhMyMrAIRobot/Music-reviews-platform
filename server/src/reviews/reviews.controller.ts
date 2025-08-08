@@ -15,58 +15,57 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.interface';
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
-import { AuthorReviewsParamsDto } from './dto/author-reviews-params.dto';
-import { CreateReviewDto } from './dto/create-review.dto';
-import { ReleaseReviewParamsDto } from './dto/release-review-params.dto';
-import { ReleaseReviewQueryDto } from './dto/release-review-query.dto';
-import { ReviewsQueryDto } from './dto/reviews-query.dto';
-import { UpdateReviewDto } from './dto/update-review.dto';
+import { CreateReviewRequestDto } from './dto/request/create-review.request.dto';
+import { FindReviewsByAuthorIdParams } from './dto/request/params/find-reviews-by-author-id.params.dto';
+import { FindReviewsByReleaseIdParams } from './dto/request/params/find-reviews-by-release-id.params.dto';
+import { FindReviewsByAuthorIdQuery } from './dto/request/query/find-reviews-by-author-id.query.dto';
+import { FindReviewsByReleaseIdQuery } from './dto/request/query/find-reviews-by-release-id.query.dto';
+import { FindReviewsQuery } from './dto/request/query/find-reviews.query.dto';
+import { UpdateReviewRequestDto } from './dto/request/update-review.request.dto';
 import { ReviewsService } from './reviews.service';
 
 @Controller('reviews')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
-  @Get('release/:id')
-  findByReleaseId(
-    @Param() params: ReleaseReviewParamsDto,
-    @Query() query: ReleaseReviewQueryDto,
-  ) {
-    return this.reviewsService.findByReleaseId(params.id, query);
-  }
-
-  @Get('author/:id')
-  findByAuthorId(@Param() params: AuthorReviewsParamsDto) {
-    return this.reviewsService.findByAuthorId(params.id);
-  }
-
-  @Get('user/:id')
-  findByUserId(@Param('id') id: string) {
-    return this.reviewsService.findByUserId(id);
-  }
-
-  @Get('list')
-  findReleases(@Query() query: ReviewsQueryDto) {
+  @Get()
+  findReleases(@Query() query: FindReviewsQuery) {
     return this.reviewsService.findReviews(query);
+  }
+
+  @Get('release/:releaseId')
+  findByReleaseId(
+    @Param() params: FindReviewsByReleaseIdParams,
+    @Query() query: FindReviewsByReleaseIdQuery,
+  ) {
+    return this.reviewsService.findByReleaseId(params.releaseId, query);
+  }
+
+  @Get('author/:authorId')
+  findByAuthorId(
+    @Param() params: FindReviewsByAuthorIdParams,
+    @Query() query: FindReviewsByAuthorIdQuery,
+  ) {
+    return this.reviewsService.findByAuthorId(params.authorId, query);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post()
   create(
     @Request() req: IAuthenticatedRequest,
-    @Body() createReviewDto: CreateReviewDto,
+    @Body() dto: CreateReviewRequestDto,
   ) {
-    return this.reviewsService.create(createReviewDto, req.user.id);
+    return this.reviewsService.create(dto, req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(
     @Request() req: IAuthenticatedRequest,
-    @Body() updateReviewDto: UpdateReviewDto,
+    @Body() dto: UpdateReviewRequestDto,
     @Param('id') id: string,
   ) {
-    return this.reviewsService.update(id, updateReviewDto, req.user.id);
+    return this.reviewsService.update(id, dto, req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -77,8 +76,8 @@ export class ReviewsController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
-  @Get()
-  findAll(@Query() query: ReviewsQueryDto) {
+  @Get('admin')
+  findAll(@Query() query: FindReviewsQuery) {
     return this.reviewsService.findAll(query);
   }
 
@@ -88,9 +87,9 @@ export class ReviewsController {
   updateById(
     @Param('userId') userId: string,
     @Param('id') id: string,
-    @Body() updateReviewDto: UpdateReviewDto,
+    @Body() dto: UpdateReviewRequestDto,
   ) {
-    return this.reviewsService.update(id, updateReviewDto, userId);
+    return this.reviewsService.update(id, dto, userId);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

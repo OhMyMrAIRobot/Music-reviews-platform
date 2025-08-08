@@ -31,7 +31,7 @@ export class AuthorsController {
     return this.authorsService.findAuthors(query);
   }
 
-  @Get(':id')
+  @Get('details/:id')
   findById(@Param() params: FindAuthorParamsDto) {
     return this.authorsService.findById(params.id);
   }

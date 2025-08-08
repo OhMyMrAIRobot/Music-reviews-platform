@@ -5,7 +5,7 @@ import { IsSearchQuery } from 'src/decorators/is-search-query.decorator';
 import { IsSortOrder } from 'src/decorators/is-sort-order.decorator';
 import { SortOrder } from 'src/shared/types/sort-order.type';
 
-export class ReviewsQueryDto {
+export class FindReviewsQuery {
   @IsOptional()
   @IsSortOrder()
   order?: SortOrder;

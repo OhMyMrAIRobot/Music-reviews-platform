@@ -9,9 +9,9 @@ import {
   Min,
   MinLength,
 } from 'class-validator';
-import { TitleAndTextTogether } from '../decorators/title-and-text-together.decorator';
+import { TitleAndTextTogether } from '../../decorators/title-and-text-together.decorator';
 
-export class CreateReviewDto {
+export class CreateReviewRequestDto {
   @IsInt({ message: 'Оценка "Рифмы / образы" должны быть целым числом' })
   @Min(1, { message: 'Оценка "Рифмы / образы" должны от 1 до 10' })
   @Max(10, { message: 'Оценка "Рифмы / образы" должны от 1 до 10' })

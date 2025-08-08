@@ -1,6 +1,6 @@
 import { IsEntityId } from 'src/decorators/is-entity-id.decorator';
 
-export class ReleaseReviewParamsDto {
+export class FindReviewsByAuthorIdParams {
   @IsEntityId()
-  id: string;
+  authorId: string;
 }

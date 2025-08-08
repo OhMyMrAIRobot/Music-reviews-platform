@@ -7,22 +7,24 @@ import { EntityNotFoundException } from 'src/exceptions/entity-not-found.excepti
 import { InsufficientPermissionsException } from 'src/exceptions/insufficient-permissions.exception';
 import { ReleasesService } from 'src/releases/releases.service';
 import { UsersService } from 'src/users/users.service';
+import { CreateReviewRequestDto } from './dto/request/create-review.request.dto';
+import { FindReviewsByAuthorIdQuery } from './dto/request/query/find-reviews-by-author-id.query.dto';
+import { FindReviewsByReleaseIdQuery } from './dto/request/query/find-reviews-by-release-id.query.dto';
+import { FindReviewsQuery } from './dto/request/query/find-reviews.query.dto';
+import { UpdateReviewRequestDto } from './dto/request/update-review.request.dto';
 import {
   AdminFindReviewsResponseDto,
   AdminReview,
-} from './dto/admin-find-reviews.response.dto';
-import { CreateReviewDto } from './dto/create-review.dto';
-import { ReleaseReviewQueryDto } from './dto/release-review-query.dto';
+} from './dto/response/admin-find-reviews.response.dto';
 import {
+  FindReviewsByReleaseIdResponseDto,
   ReleaseReview,
-  ReleaseReviewResponseDto,
-} from './dto/release-review.response.dto';
-import { ReviewsQueryDto } from './dto/reviews-query.dto';
+} from './dto/response/find-reviews-by-release-id.response.dto';
 import {
+  FindReviewsResponseDto,
   ReviewQueryDataDto,
-  ReviewsResponseDto,
-} from './dto/reviews.response.dto';
-import { UpdateReviewDto } from './dto/update-review.dto';
+} from './dto/response/find-reviews.response.dto';
+import { ReviewSortFieldsEnum } from './types/review-sort-fields.enum';
 
 @Injectable()
 export class ReviewsService {
@@ -32,11 +34,8 @@ export class ReviewsService {
     private readonly releasesService: ReleasesService,
   ) {}
 
-  async create(
-    createReviewDto: CreateReviewDto,
-    userId: string,
-  ): Promise<Review> {
-    const { releaseId } = createReviewDto;
+  async create(dto: CreateReviewRequestDto, userId: string): Promise<Review> {
+    const { releaseId } = dto;
 
     await this.usersService.findOne(userId);
     await this.releasesService.findOne(releaseId);
@@ -53,19 +52,19 @@ export class ReviewsService {
       );
     }
     const total = this.calculateTotalScore(
-      createReviewDto.rhymes,
-      createReviewDto.structure,
-      createReviewDto.realization,
-      createReviewDto.individuality,
-      createReviewDto.atmosphere,
+      dto.rhymes,
+      dto.structure,
+      dto.realization,
+      dto.individuality,
+      dto.atmosphere,
     );
 
     return this.prisma.review.create({
-      data: { ...createReviewDto, total, userId },
+      data: { ...dto, total, userId },
     });
   }
 
-  async findAll(query: ReviewsQueryDto): Promise<AdminFindReviewsResponseDto> {
+  async findAll(query: FindReviewsQuery): Promise<AdminFindReviewsResponseDto> {
     const { limit, offset, order, query: searchTerm } = query;
 
     const where: Prisma.ReviewWhereInput = {
@@ -145,10 +144,47 @@ export class ReviewsService {
     return existing;
   }
 
+  async update(
+    id: string,
+    dto: UpdateReviewRequestDto,
+    userId: string,
+  ): Promise<Review> {
+    const review = await this.checkBelongsToUser(id, userId);
+
+    await this.usersService.findOne(userId);
+    await this.releasesService.findOne(review.releaseId);
+
+    const total = this.calculateTotalScore(
+      dto.rhymes ?? review.rhymes,
+      dto.structure ?? review.structure,
+      dto.realization ?? review.realization,
+      dto.individuality ?? review.individuality,
+      dto.atmosphere ?? review.atmosphere,
+    );
+
+    return this.prisma.review.update({
+      where: { id: review.id },
+      data: {
+        ...dto,
+        total,
+        title: dto.title ?? null,
+        text: dto.text ?? null,
+      },
+    });
+  }
+
+  async remove(id: string, userId: string): Promise<Review> {
+    const review = await this.checkBelongsToUser(id, userId);
+
+    return this.prisma.review.delete({
+      where: { id: review.id },
+    });
+  }
+
   async findByReleaseId(
     releaseId: string,
-    query: ReleaseReviewQueryDto,
-  ): Promise<ReleaseReviewResponseDto> {
+    query: FindReviewsByReleaseIdQuery,
+  ): Promise<FindReviewsByReleaseIdResponseDto> {
     await this.releasesService.findOne(releaseId);
     const count = await this.prisma.review.count({
       where: {
@@ -158,14 +194,14 @@ export class ReviewsService {
     });
 
     const fieldMap: Record<string, string> = {
-      created: 'r.created_at',
-      likes: 'likes_count',
+      [ReviewSortFieldsEnum.CREATED]: 'r.created_at',
+      [ReviewSortFieldsEnum.LIKES]: '"favCount"',
     };
 
-    const field = query.field ? fieldMap[query.field] : fieldMap['created'];
-    const order = query.order ? query.order : 'desc';
-    const limit = query.limit ? query.limit : 5;
-    const offset = query.offset ? query.offset : 0;
+    const field = query.field
+      ? fieldMap[query.field]
+      : fieldMap[ReviewSortFieldsEnum.CREATED];
+    const { limit, offset = 0, order = 'desc' } = query;
 
     const rawQuery = `
         SELECT
@@ -179,18 +215,21 @@ export class ReviewsService {
           r.title,
           r.text,
           (
-              SELECT TO_CHAR(r.created_at, 'DD-MM-YYYY') AS created_at
+              SELECT TO_CHAR(r.created_at, 'DD-MM-YYYY') AS "createdAt"
           ),
-          u.id AS user_id,
+          u.id AS "userId",
           u.nickname,
           up.avatar,
           up.points,
           tul.rank AS position,
-          COUNT(DISTINCT ufr.user_id)::INT as likes_count,
-          JSONB_AGG(DISTINCT JSONB_BUILD_OBJECT(
-              'userId', ufr.user_id,
-              'reviewId', ufr.review_id
-            )) as user_fav_ids
+          COUNT(DISTINCT ufr.user_id)::INT as "favCount",
+          CASE 
+            WHEN count(ufr.user_id) = 0 THEN '[]'::json 
+            ELSE JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
+                'userId', ufr.user_id,
+                'reviewId', ufr.review_id
+            )) 
+          END as "userFavReview"
         FROM "Reviews" r
         LEFT JOIN "Users" u on r.user_id = u.id
         LEFT JOIN "User_profiles" up on u.id = up.user_id
@@ -199,7 +238,7 @@ export class ReviewsService {
         WHERE r.release_id = '${releaseId}'
         GROUP BY r.id, r.rhymes, r.structure, r.realization, r.individuality, r.atmosphere, r.total, r.title, r.text, u.id, u.nickname, up.avatar, tul.rank, r.created_at, up.points
         ORDER BY ${field} ${order}, r.id ASC
-        LIMIT ${limit}
+        ${limit !== undefined ? `LIMIT ${limit}` : ''}
         OFFSET ${offset}`;
 
     const reviews =
@@ -208,44 +247,7 @@ export class ReviewsService {
     return { count, reviews };
   }
 
-  async update(
-    id: string,
-    updateReviewDto: UpdateReviewDto,
-    userId: string,
-  ): Promise<Review> {
-    const review = await this.checkBelongsToUser(id, userId);
-
-    await this.usersService.findOne(userId);
-    await this.releasesService.findOne(review.releaseId);
-
-    const total = this.calculateTotalScore(
-      updateReviewDto.rhymes ?? review.rhymes,
-      updateReviewDto.structure ?? review.structure,
-      updateReviewDto.realization ?? review.realization,
-      updateReviewDto.individuality ?? review.individuality,
-      updateReviewDto.atmosphere ?? review.atmosphere,
-    );
-
-    return this.prisma.review.update({
-      where: { id: review.id },
-      data: {
-        ...updateReviewDto,
-        total,
-        title: updateReviewDto.title ?? null,
-        text: updateReviewDto.text ?? null,
-      },
-    });
-  }
-
-  async remove(id: string, userId: string): Promise<Review> {
-    const review = await this.checkBelongsToUser(id, userId);
-
-    return this.prisma.review.delete({
-      where: { id: review.id },
-    });
-  }
-
-  async findReviews(query: ReviewsQueryDto): Promise<ReviewsResponseDto> {
+  async findReviews(query: FindReviewsQuery): Promise<FindReviewsResponseDto> {
     const count = await this.prisma.review.count({
       where: {
         AND: [
@@ -260,20 +262,18 @@ export class ReviewsService {
       },
     });
 
-    const order = query.order ? query.order : 'desc';
-    const limit = query.limit ? query.limit : 45;
-    const offset = query.offset ? query.offset : 0;
+    const { limit, offset = 0, order = 'desc' } = query;
 
     const rawQuery = `
       WITH filtered_reviews AS (
-        SELECT rev.id
-        FROM "Reviews" rev
-        LEFT JOIN "User_fav_reviews" ufr ON rev.id = ufr.review_id
-        WHERE rev.text IS NOT NULL 
-          AND rev.title IS NOT NULL
-          ${query.userId ? `AND rev.user_id = '${query.userId}'` : ''}
-          ${query.favUserId ? `AND ufr.user_id = '${query.favUserId}'` : ''}
-        GROUP BY rev.id
+          SELECT rev.id
+          FROM "Reviews" rev
+                  LEFT JOIN "User_fav_reviews" ufr ON rev.id = ufr.review_id
+          WHERE rev.text IS NOT NULL
+            AND rev.title IS NOT NULL
+              ${query.userId ? `AND rev.user_id = '${query.userId}'` : ''}
+                ${query.favUserId ? `AND ufr.user_id = '${query.favUserId}'` : ''}
+          GROUP BY rev.id
       )
       SELECT
           rev.id,
@@ -285,32 +285,35 @@ export class ReviewsService {
           rev.realization,
           rev.individuality,
           rev.atmosphere,
-          rev.user_id,
+          rev.user_id as "userId",
           u.nickname,
-          p.avatar AS profile_img,
+          p.avatar AS "profileImg",
           p.points,
           tul.rank AS position,
-          r.img AS release_img,
-          r.title AS release_title,
-          r.id AS release_id,
-          COUNT(DISTINCT ufr.user_id)::int AS likes_count,
-          json_agg(DISTINCT jsonb_build_object(
-              'userId', ufr.user_id,
-              'reviewId', ufr.review_id
-          )) FILTER (WHERE ufr.user_id IS NOT NULL) AS user_fav_ids
+          r.img AS "releaseImg",
+          r.title AS "releaseTitle",
+          r.id AS "releaseId",
+          COUNT(DISTINCT ufr.user_id)::int AS "favCount",
+          CASE
+              WHEN count(ufr.user_id) = 0 THEN '[]'::json
+              ELSE json_agg(DISTINCT jsonb_build_object(
+                  'userId', ufr.user_id,
+                  'reviewId', ufr.review_id
+              )) FILTER (WHERE ufr.user_id IS NOT NULL)
+          END AS "userFavReview"
       FROM "Reviews" rev
-      LEFT JOIN "Users" u ON rev.user_id = u.id
-      LEFT JOIN "User_profiles" p ON u.id = p.user_id
-      LEFT JOIN "Top_users_leaderboard" tul ON p.user_id = tul.user_id
-      LEFT JOIN "Releases" r ON rev.release_id = r.id
-      LEFT JOIN "User_fav_reviews" ufr ON rev.id = ufr.review_id
+              LEFT JOIN "Users" u ON rev.user_id = u.id
+              LEFT JOIN "User_profiles" p ON u.id = p.user_id
+              LEFT JOIN "Top_users_leaderboard" tul ON p.user_id = tul.user_id
+              LEFT JOIN "Releases" r ON rev.release_id = r.id
+              LEFT JOIN "User_fav_reviews" ufr ON rev.id = ufr.review_id
       WHERE rev.id IN (SELECT id FROM filtered_reviews)
       GROUP BY
           rev.id, rev.title, rev.text, rev.total, rev.rhymes, rev.structure, rev.realization,
           rev.individuality, rev.atmosphere, u.nickname, p.avatar, p.points, tul.rank,
           r.img, r.title, r.id, rev.created_at, rev.user_id
       ORDER BY rev.created_at ${order}, rev.id ASC
-      LIMIT ${limit}
+      ${limit !== undefined ? `LIMIT ${limit}` : ''}
       OFFSET ${offset}`;
 
     const reviews =
@@ -319,7 +322,12 @@ export class ReviewsService {
     return { count, reviews };
   }
 
-  async findByAuthorId(authorId: string): Promise<ReviewQueryDataDto[]> {
+  async findByAuthorId(
+    authorId: string,
+    query: FindReviewsByAuthorIdQuery,
+  ): Promise<ReviewQueryDataDto[]> {
+    const { limit, offset = 0 } = query;
+
     return this.prisma.$queryRawUnsafe(`
       WITH author_releases AS (
         SELECT release_id FROM "Release_designers" WHERE author_id = '${authorId}'
@@ -339,19 +347,22 @@ export class ReviewsService {
           rev.realization,
           rev.individuality,
           rev.atmosphere,
-          rev.user_id,
+          rev.user_id as "userId",
           u.nickname,
-          p.avatar AS profile_img,
+          p.avatar AS "profileImg",
           p.points,
           tul.rank AS position,
-          r.img AS release_img,
-          r.title AS release_title,
-          r.id AS release_id,
-          COUNT(DISTINCT ufr.user_id)::int AS likes_count,
-          json_agg(DISTINCT jsonb_build_object(
+          r.img AS "releaseImg",
+          r.title AS "releaseTitle",
+          r.id AS "releaseId",
+          COUNT(DISTINCT ufr.user_id)::int AS "favCount",
+          CASE
+            WHEN count(ufr.user_id) = 0 THEN '[]'::json
+            ELSE json_agg(DISTINCT jsonb_build_object(
                   'userId', ufr.user_id,
                   'reviewId', ufr.review_id
-          )) AS user_fav_ids
+            )) 
+          END AS "userFavReview"
       FROM "Reviews" rev
               LEFT JOIN "Users" u ON rev.user_id = u.id
               LEFT JOIN "User_profiles" p ON u.id = p.user_id
@@ -365,8 +376,8 @@ export class ReviewsService {
           rev.individuality, rev.atmosphere, u.nickname, p.avatar, p.points, tul.rank,
           r.img, r.title, r.id, rev.created_at, rev.user_id
       ORDER BY rev.created_at desc, rev.id ASC
-      LIMIT 25
-      OFFSET 0
+      ${limit !== undefined ? `LIMIT ${limit}` : ''}
+      OFFSET ${offset}
       `);
   }
 

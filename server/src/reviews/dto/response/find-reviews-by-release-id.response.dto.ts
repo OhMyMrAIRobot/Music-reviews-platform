@@ -1,4 +1,4 @@
-export class ReleaseReviewResponseDto {
+export class FindReviewsByReleaseIdResponseDto {
   count: number;
   reviews: ReleaseReview[];
 }
@@ -13,12 +13,12 @@ export class ReleaseReview {
   realization: number;
   individuality: number;
   atmosphere: number;
-  created_at: string;
-  user_id: string;
+  createdAt: string;
+  userId: string;
   points: number;
   nickname: string;
   avatar: string;
   position: number | null;
-  likes_count: number;
-  user_fav_ids: { userId: string; authorId: string }[];
+  favCount: number;
+  userFavReview: { userId: string; reviewId: string }[];
 }
