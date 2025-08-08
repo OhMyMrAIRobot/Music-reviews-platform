@@ -8,6 +8,7 @@ import { IReleaseMedia } from '../../models/release-media/release-media'
 import { parseYoutubeId } from '../../utils/parse-youtube-id'
 import ReviewAuthor from '../review/review-card/Review-author'
 import ReviewLikes from '../review/review-card/Review-likes'
+import ReviewMarks from '../review/review-card/Review-marks'
 import ReviewUserImage from '../review/review-card/Review-user-image'
 import EyeSvg from '../svg/Eye-svg'
 import MoveToSvg from '../svg/Move-to-svg'
@@ -89,7 +90,9 @@ const ReleaseMediaReview: FC<IProps> = observer(
 						/>
 					</Link>
 
-					<div className='flex items-center justify-end'>
+					<div className='flex items-center justify-end gap-2 lg:gap-4'>
+						{media.review && <ReviewMarks {...media.review} />}
+
 						<Link
 							to={navigateToReleaseDetails(media.release.id)}
 							className='size-10 lg:size-11 rounded overflow-hidden aspect-square ml-auto'

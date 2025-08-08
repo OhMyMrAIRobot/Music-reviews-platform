@@ -10,6 +10,7 @@ export interface IReleaseMedia {
 	releaseMediaStatus: IReleaseMediaStatus
 	releaseMediaType: IReleaseMediaType
 	user: IReleaseMediaUser | null
+	review: IReleaseMediaReview | null
 	userFavMedia: IUserFavMedia[]
 	release: IReleaseMediaRelease
 }
@@ -26,4 +27,13 @@ interface IReleaseMediaRelease {
 	id: string
 	title: string
 	img: string
+}
+
+interface IReleaseMediaReview {
+	total: number
+	rhymes: number
+	structure: number
+	realization: number
+	individuality: number
+	atmosphere: number
 }
