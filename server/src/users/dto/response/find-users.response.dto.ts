@@ -1,5 +1,5 @@
 import { Exclude, Expose, Transform } from 'class-transformer';
-import { formatFullDate } from '../../shared/utils/format-full-date';
+import { formatFullDate } from '../../../shared/utils/format-full-date';
 
 interface UserProfileResponseObject {
   profile?: { avatar: string };
@@ -10,15 +10,15 @@ interface UsersResponseObject {
   profile?: { avatar: string };
 }
 
-export class GetUsersResponseDto {
+export class FindUsersResponseDto {
   @Expose()
   total: number;
 
   @Expose()
-  users: GetUsersPrismaResponseDto[];
+  users: FindUsersPrismaResponseDto[];
 }
 
-export class GetUsersPrismaResponseDto {
+export class FindUsersPrismaResponseDto {
   @Expose()
   id: string;
 

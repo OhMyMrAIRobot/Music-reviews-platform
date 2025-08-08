@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 import { IsEntityId } from 'src/decorators/is-entity-id.decorator';
 
-export class AdminUpdateUserDto {
+export class AdminUpdateUserRequestDto {
   @IsOptional()
   @IsString({ message: 'Никнейм должен быть строкой' })
   @Length(3, 20, {

@@ -5,7 +5,7 @@ import { IsSortOrder } from 'src/decorators/is-sort-order.decorator';
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
 import { SortOrder } from 'src/shared/types/sort-order.type';
 
-export class GetUsersQueryDto {
+export class FindUsersQuery {
   @IsOptional()
   @IsSearchQuery()
   @Length(1, 50, {
