@@ -11,26 +11,22 @@ export const UserAPI = {
 		query: string | null,
 		role: string | null,
 		order: SortOrder | null,
-		limit: number,
-		offset: number
+		limit: number | null,
+		offset: number | null
 	): Promise<IUsersResponse> {
-		const { data } = await api.get<IUsersResponse>(`/users
-			?limit=${limit}
-			&offset=${offset}
-			${query ? `&query=${query}` : ''}
-			${role ? `&role=${role}` : ''}
-			${order ? `&order=${order}` : ''}
+		const { data } = await api.get<IUsersResponse>(`/users?
+			${limit !== null ? `limit=${limit}&` : ''}
+			${offset !== null ? `offset=${offset}&` : ''}
+			${query !== null ? `&query=${query}` : ''}
+			${role !== null ? `&role=${role}` : ''}
+			${order !== null ? `&order=${order}` : ''}
 			`)
 		return data
 	},
 
-	async fetchUserInfo(id: string): Promise<IUserInfo> {
-		const { data } = await api.get<IUserInfo>(`/users/user-info/${id}`)
+	async fetchUserDetails(id: string): Promise<IUserInfo> {
+		const { data } = await api.get<IUserInfo>(`/users/${id}`)
 		return data
-	},
-
-	async adminDeleteUser(id: string) {
-		return await api.delete(`/users/${id}`)
 	},
 
 	async updateUser(
@@ -50,5 +46,9 @@ export const UserAPI = {
 			...updateData,
 		})
 		return data
+	},
+
+	async adminDeleteUser(id: string) {
+		return await api.delete(`/users/${id}`)
 	},
 }

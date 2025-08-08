@@ -134,7 +134,7 @@ const SendReviewForm: FC<IProps> = observer(
 					atmosphere !== userReview.atmosphere
 				)
 			}
-			return false
+			return true
 		}, [
 			atmosphere,
 			individuality,
@@ -147,11 +147,9 @@ const SendReviewForm: FC<IProps> = observer(
 		])
 
 		const textAndTitleTogether = useMemo(() => {
-			return (
-				(text.trim() !== '' && title.trim() !== '') ||
-				(text.trim() === '' && title.trim() === '')
-			)
-		}, [text, title])
+			if (!isReview) return true
+			return text.trim() !== '' && title.trim() !== ''
+		}, [isReview, text, title])
 
 		const userMediaReview = releaseDetailsPageStore.userReleaseMedia
 
@@ -267,7 +265,7 @@ const SendReviewForm: FC<IProps> = observer(
 										onClick={postReview}
 										className={`inline-flex items-center justify-center whitespace-nowrap text-sm font-medium rounded-full size-16 text-black transition-colors duration-200 ${
 											isLoading || !hasChanges || !textAndTitleTogether
-												? 'bg-white/40 cursor-not-allowed'
+												? 'bg-white/40 pointer-events-none'
 												: 'cursor-pointer hover:bg-white/70 bg-white'
 										}`}
 									>
