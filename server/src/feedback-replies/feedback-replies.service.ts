@@ -7,11 +7,11 @@ import {
 import { FeedbackResponse, FeedbackStatus } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
-import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
 import { FeedbackStatusesService } from 'src/feedback-statuses/feedback-statuses.service';
 import { FeedbackStatusesEnum } from 'src/feedback-statuses/types/feedback-statuses.enum';
 import { FeedbackService } from 'src/feedback/feedback.service';
 import { MailsService } from 'src/mails/mails.service';
+import { EntityNotFoundException } from 'src/shared/exceptions/entity-not-found.exception';
 import { UsersService } from 'src/users/users.service';
 import { CreateFeedbackReplyRequestDto } from './dto/request/create-feedback-reply.request.dto';
 import { CreateFeedbackReplyResponseDto } from './dto/response/create-feedback-reply.response.dto';

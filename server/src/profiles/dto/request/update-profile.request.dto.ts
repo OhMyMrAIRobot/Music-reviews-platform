@@ -1,6 +1,6 @@
 import { IsBoolean, IsOptional, IsString, Length } from 'class-validator';
 
-export class UpdateProfileDto {
+export class UpdateProfileRequestDto {
   @IsOptional()
   @IsString({ message: 'Описание профиля должно быть строкой' })
   @Length(0, 255, {

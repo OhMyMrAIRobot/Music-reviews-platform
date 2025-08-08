@@ -1,6 +1,6 @@
 import { IsString, Length } from 'class-validator';
 
-export class ResetPasswordDto {
+export class ResetPasswordRequestDto {
   @IsString({ message: 'Пароль должен быть строкой' })
   @Length(6, 64, {
     message:

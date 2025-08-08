@@ -9,12 +9,12 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.interface';
 import { UpdateProfileSocialMediaRequestDto } from 'src/profile-social-media/dto/request/update-profile-social-media.request.dto';
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
+import { Roles } from 'src/shared/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/shared/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/shared/guards/roles.guard';
 import { CreateProfileSocialMediaRequestDto } from './dto/request/create-profile-social-media.request.dto';
 import { ProfileSocialMediaService } from './profile-social-media.service';
 
@@ -33,28 +33,20 @@ export class ProfileSocialMediaController {
   @Post(':socialId')
   create(
     @Param('socialId') socialId: string,
-    @Body() createDto: CreateProfileSocialMediaRequestDto,
+    @Body() dto: CreateProfileSocialMediaRequestDto,
     @Request() req: IAuthenticatedRequest,
   ) {
-    return this.profileSocialMediaService.create(
-      req.user.id,
-      socialId,
-      createDto,
-    );
+    return this.profileSocialMediaService.create(req.user.id, socialId, dto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch(':socialId')
   update(
     @Param('socialId') socialId: string,
-    @Body() updateDto: UpdateProfileSocialMediaRequestDto,
+    @Body() dto: UpdateProfileSocialMediaRequestDto,
     @Request() req: IAuthenticatedRequest,
   ) {
-    return this.profileSocialMediaService.update(
-      socialId,
-      req.user.id,
-      updateDto,
-    );
+    return this.profileSocialMediaService.update(socialId, req.user.id, dto);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -72,14 +64,14 @@ export class ProfileSocialMediaController {
   adminCreate(
     @Param('userId') userId: string,
     @Param('socialId') socialId: string,
-    @Body() createDto: CreateProfileSocialMediaRequestDto,
+    @Body() dto: CreateProfileSocialMediaRequestDto,
     @Request() req: IAuthenticatedRequest,
   ) {
     return this.profileSocialMediaService.adminCreate(
       req,
       userId,
       socialId,
-      createDto,
+      dto,
     );
   }
 
@@ -89,14 +81,14 @@ export class ProfileSocialMediaController {
   adminUpdate(
     @Param('userId') userId: string,
     @Param('socialId') socialId: string,
-    @Body() updateDto: UpdateProfileSocialMediaRequestDto,
+    @Body() dto: UpdateProfileSocialMediaRequestDto,
     @Request() req: IAuthenticatedRequest,
   ) {
     return this.profileSocialMediaService.adminUpdate(
       req,
       userId,
       socialId,
-      updateDto,
+      dto,
     );
   }
 

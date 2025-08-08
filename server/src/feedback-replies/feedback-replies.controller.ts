@@ -7,12 +7,12 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.interface';
-import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
+import { Roles } from 'src/shared/decorators/roles.decorator';
+import { EntityNotFoundException } from 'src/shared/exceptions/entity-not-found.exception';
+import { JwtAuthGuard } from 'src/shared/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/shared/guards/roles.guard';
 import { CreateFeedbackReplyRequestDto } from './dto/request/create-feedback-reply.request.dto';
 import { FeedbackRepliesService } from './feedback-replies.service';
 

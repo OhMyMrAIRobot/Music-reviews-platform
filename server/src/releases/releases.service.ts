@@ -7,13 +7,13 @@ import { Prisma, Release } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
 import { AuthorsService } from 'src/authors/authors.service';
-import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
-import { NoDataProvidedException } from 'src/exceptions/no-data.exception';
 import { FileService } from 'src/file/files.service';
 import { ReleaseTypesService } from 'src/release-types/release-types.service';
+import { EntityNotFoundException } from 'src/shared/exceptions/entity-not-found.exception';
+import { NoDataProvidedException } from 'src/shared/exceptions/no-data.exception';
 import { CreateReleaseRequestDto } from './dto/request/create-release.response.dto';
 import { FindReleasesByAuthorIdQuery } from './dto/request/query/find-releases-by-author-id.query.dto';
-import { FindReleasesQueryDto } from './dto/request/query/find-releases.query.dto';
+import { FindReleasesQuery } from './dto/request/query/find-releases.query.dto';
 import { FindTopRatingReleasesQuery } from './dto/request/query/find-top-rating-releases.query.dto';
 import { UpdateReleaseRequestDto } from './dto/request/update-release.request.dto';
 import {
@@ -106,7 +106,7 @@ export class ReleasesService {
   }
 
   async findAll(
-    query: FindReleasesQueryDto,
+    query: FindReleasesQuery,
   ): Promise<FindAdminReleasesResponseDto> {
     const { limit, offset, typeId, query: searchQuery, order } = query;
 
@@ -522,7 +522,7 @@ export class ReleasesService {
   }
 
   async findReleases(
-    query: FindReleasesQueryDto,
+    query: FindReleasesQuery,
   ): Promise<FindReleasesResponseDto> {
     const type = query.typeId ? `'${query.typeId}'` : null;
 

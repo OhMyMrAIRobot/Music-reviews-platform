@@ -7,8 +7,8 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.interface';
+import { JwtAuthGuard } from 'src/shared/guards/jwt-auth.guard';
 import { UserFavReleasesService } from './user-fav-releases.service';
 
 @Controller('user-fav-releases')

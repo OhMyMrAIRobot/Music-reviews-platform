@@ -1,8 +1,8 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, Length } from 'class-validator';
-import { IsSearchQuery } from 'src/decorators/is-search-query.decorator';
-import { IsSortOrder } from 'src/decorators/is-sort-order.decorator';
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
+import { IsSearchQuery } from 'src/shared/decorators/is-search-query.decorator';
+import { IsSortOrder } from 'src/shared/decorators/is-sort-order.decorator';
 import { SortOrder } from 'src/shared/types/sort-order.type';
 
 export class FindUsersQuery {

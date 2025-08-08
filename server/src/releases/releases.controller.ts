@@ -12,15 +12,15 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
+import { Roles } from 'src/shared/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/shared/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/shared/guards/roles.guard';
 import { CreateReleaseRequestDto } from './dto/request/create-release.response.dto';
 import { FindReleaseDetailsParams } from './dto/request/params/find-release-details-params.dto';
 import { FindReleasesByAuthorIdParams } from './dto/request/params/find-releases-by-author-id.params.dto';
 import { FindReleasesByAuthorIdQuery } from './dto/request/query/find-releases-by-author-id.query.dto';
-import { FindReleasesQueryDto } from './dto/request/query/find-releases.query.dto';
+import { FindReleasesQuery } from './dto/request/query/find-releases.query.dto';
 import { FindTopRatingReleasesQuery } from './dto/request/query/find-top-rating-releases.query.dto';
 import { UpdateReleaseRequestDto } from './dto/request/update-release.request.dto';
 import { ReleasesService } from './releases.service';
@@ -30,7 +30,7 @@ export class ReleasesController {
   constructor(private readonly releasesService: ReleasesService) {}
 
   @Get('public')
-  findReleases(@Query() query: FindReleasesQueryDto) {
+  findReleases(@Query() query: FindReleasesQuery) {
     return this.releasesService.findReleases(query);
   }
 
@@ -74,7 +74,7 @@ export class ReleasesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @Get('admin')
-  findAll(@Query() query: FindReleasesQueryDto) {
+  findAll(@Query() query: FindReleasesQuery) {
     return this.releasesService.findAll(query);
   }
 

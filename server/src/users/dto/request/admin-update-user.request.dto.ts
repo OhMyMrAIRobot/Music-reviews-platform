@@ -5,7 +5,7 @@ import {
   IsString,
   Length,
 } from 'class-validator';
-import { IsEntityId } from 'src/decorators/is-entity-id.decorator';
+import { IsEntityId } from 'src/shared/decorators/is-entity-id.decorator';
 
 export class AdminUpdateUserRequestDto {
   @IsOptional()

@@ -2,10 +2,10 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { ProfileSocialMedia } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
 import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.interface';
-import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
-import { NoDataProvidedException } from 'src/exceptions/no-data.exception';
 import { UpdateProfileSocialMediaRequestDto } from 'src/profile-social-media/dto/request/update-profile-social-media.request.dto';
 import { ProfilesService } from 'src/profiles/profiles.service';
+import { EntityNotFoundException } from 'src/shared/exceptions/entity-not-found.exception';
+import { NoDataProvidedException } from 'src/shared/exceptions/no-data.exception';
 import { SocialMediaService } from 'src/social-media/social-media.service';
 import { UsersService } from 'src/users/users.service';
 import { CreateProfileSocialMediaRequestDto } from './dto/request/create-profile-social-media.request.dto';
@@ -22,7 +22,7 @@ export class ProfileSocialMediaService {
   async create(
     userId: string,
     socialId: string,
-    createDto: CreateProfileSocialMediaRequestDto,
+    dto: CreateProfileSocialMediaRequestDto,
   ): Promise<ProfileSocialMedia> {
     const profile = await this.profilesService.findByUserId(userId);
 
@@ -47,7 +47,7 @@ export class ProfileSocialMediaService {
       data: {
         socialId,
         profileId,
-        ...createDto,
+        ...dto,
       },
     });
   }
@@ -65,9 +65,9 @@ export class ProfileSocialMediaService {
   async update(
     socialId: string,
     userId: string,
-    updateDto: UpdateProfileSocialMediaRequestDto,
+    dto: UpdateProfileSocialMediaRequestDto,
   ): Promise<ProfileSocialMedia> {
-    if (!updateDto || Object.keys(updateDto).length === 0) {
+    if (!dto || Object.keys(dto).length === 0) {
       throw new NoDataProvidedException();
     }
 
@@ -77,7 +77,7 @@ export class ProfileSocialMediaService {
       where: {
         profileId_socialId: { profileId: profileSocial.profileId, socialId },
       },
-      data: updateDto,
+      data: dto,
     });
   }
 

@@ -10,11 +10,11 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.interface';
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
+import { Roles } from 'src/shared/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/shared/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/shared/guards/roles.guard';
 import { CreateReviewRequestDto } from './dto/request/create-review.request.dto';
 import { FindReviewsByAuthorIdParams } from './dto/request/params/find-reviews-by-author-id.params.dto';
 import { FindReviewsByReleaseIdParams } from './dto/request/params/find-reviews-by-release-id.params.dto';

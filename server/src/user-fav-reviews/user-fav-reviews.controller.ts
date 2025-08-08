@@ -7,8 +7,8 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.interface';
+import { JwtAuthGuard } from 'src/shared/guards/jwt-auth.guard';
 import { UserFavReviewsService } from './user-fav-reviews.service';
 
 @Controller('user-fav-reviews')

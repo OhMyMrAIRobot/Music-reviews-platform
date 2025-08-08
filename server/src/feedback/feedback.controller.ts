@@ -9,12 +9,12 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
+import { Roles } from 'src/shared/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/shared/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/shared/guards/roles.guard';
 import { CreateFeedbackRequestDto } from './dto/request/create-feedback.request.dto';
-import { FindFeedbackQueryDto } from './dto/request/find-feedback.query.dto';
+import { FindFeedbackQuery } from './dto/request/query/find-feedback.query.dto';
 import { UpdateFeedbackRequestDto } from './dto/request/update-feedback.request.dto';
 import { FeedbackService } from './feedback.service';
 
@@ -30,7 +30,7 @@ export class FeedbackController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   @Get()
-  findAll(@Query() query: FindFeedbackQueryDto) {
+  findAll(@Query() query: FindFeedbackQuery) {
     return this.feedbacksService.findAll(query);
   }
 

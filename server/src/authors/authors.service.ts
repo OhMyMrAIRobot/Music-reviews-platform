@@ -7,12 +7,12 @@ import { Author, Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
 import { AuthorTypesService } from 'src/author-types/author-types.service';
-import { DuplicateFieldException } from 'src/exceptions/duplicate-field.exception';
-import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
-import { NoDataProvidedException } from 'src/exceptions/no-data.exception';
 import { FileService } from 'src/file/files.service';
+import { DuplicateFieldException } from 'src/shared/exceptions/duplicate-field.exception';
+import { EntityNotFoundException } from 'src/shared/exceptions/entity-not-found.exception';
+import { NoDataProvidedException } from 'src/shared/exceptions/no-data.exception';
 import { CreateAuthorRequestDto } from './dto/request/create-author.request.dto';
-import { FindAuthorsQueryDto } from './dto/request/find-authors.query.dto';
+import { FindAuthorsQuery } from './dto/request/query/find-authors.query.dto';
 import { UpdateAuthorRequestDto } from './dto/request/update-author.request.dto';
 import {
   AdminAuthorDto,
@@ -36,13 +36,11 @@ export class AuthorsService {
   ) {}
 
   async create(
-    createAuthorDto: CreateAuthorRequestDto,
+    dto: CreateAuthorRequestDto,
     avatar?: Express.Multer.File,
     cover?: Express.Multer.File,
   ): Promise<Author> {
-    const typesExist = await this.authorTypesService.checkTypesExist(
-      createAuthorDto.types,
-    );
+    const typesExist = await this.authorTypesService.checkTypesExist(dto.types);
 
     if (!typesExist) {
       throw new BadRequestException(
@@ -50,7 +48,7 @@ export class AuthorsService {
       );
     }
 
-    const existingAuthor = await this.findByName(createAuthorDto.name);
+    const existingAuthor = await this.findByName(dto.name);
 
     if (existingAuthor) {
       throw new DuplicateFieldException(
@@ -60,7 +58,7 @@ export class AuthorsService {
       );
     }
 
-    const authorTypeConnections = createAuthorDto.types.map((typeId) => ({
+    const authorTypeConnections = dto.types.map((typeId) => ({
       authorType: {
         connect: { id: typeId },
       },
@@ -80,7 +78,7 @@ export class AuthorsService {
 
       const created = await this.prisma.author.create({
         data: {
-          name: createAuthorDto.name,
+          name: dto.name,
           types: {
             create: authorTypeConnections,
           },
@@ -107,9 +105,7 @@ export class AuthorsService {
     }
   }
 
-  async findAll(
-    query: FindAuthorsQueryDto,
-  ): Promise<AdminFindAuthorsResponseDto> {
+  async findAll(query: FindAuthorsQuery): Promise<AdminFindAuthorsResponseDto> {
     const { limit, offset, query: name, typeId } = query;
 
     if (typeId) {
@@ -180,19 +176,19 @@ export class AuthorsService {
 
   async update(
     id: string,
-    updateAuthorDto: UpdateAuthorRequestDto,
+    dto: UpdateAuthorRequestDto,
     avatar?: Express.Multer.File,
     cover?: Express.Multer.File,
   ): Promise<Author> {
-    if (Object.keys(updateAuthorDto).length === 0 && !avatar && !cover) {
+    if (Object.keys(dto).length === 0 && !avatar && !cover) {
       throw new NoDataProvidedException();
     }
 
     const author = await this.findOne(id);
 
-    if (updateAuthorDto.types) {
+    if (dto.types) {
       const typesExist = await this.authorTypesService.checkTypesExist(
-        updateAuthorDto.types,
+        dto.types,
       );
 
       if (!typesExist) {
@@ -202,8 +198,8 @@ export class AuthorsService {
       }
     }
 
-    if (updateAuthorDto.name) {
-      const existingAuthor = await this.findByName(updateAuthorDto.name);
+    if (dto.name) {
+      const existingAuthor = await this.findByName(dto.name);
 
       if (existingAuthor) {
         throw new DuplicateFieldException(
@@ -218,7 +214,7 @@ export class AuthorsService {
     let newCoverPath: string | undefined = undefined;
 
     try {
-      if (avatar && updateAuthorDto.clearAvatar !== true) {
+      if (avatar && dto.clearAvatar !== true) {
         newAvatarPath = await this.fileService.saveFile(
           avatar,
           'authors',
@@ -226,7 +222,7 @@ export class AuthorsService {
         );
       }
 
-      if (cover && updateAuthorDto.clearCover !== true) {
+      if (cover && dto.clearCover !== true) {
         newCoverPath = await this.fileService.saveFile(
           cover,
           'authors',
@@ -236,18 +232,18 @@ export class AuthorsService {
 
       const updated = await this.prisma.$transaction(async (prisma) => {
         const data: Prisma.AuthorUpdateInput = {
-          name: updateAuthorDto.name,
-          avatarImg: updateAuthorDto.clearAvatar === true ? '' : newAvatarPath,
-          coverImg: updateAuthorDto.clearCover === true ? '' : newCoverPath,
+          name: dto.name,
+          avatarImg: dto.clearAvatar === true ? '' : newAvatarPath,
+          coverImg: dto.clearCover === true ? '' : newCoverPath,
         };
 
-        if (updateAuthorDto.types) {
+        if (dto.types) {
           await prisma.authorOnType.deleteMany({
             where: { authorId: id },
           });
 
           data.types = {
-            create: updateAuthorDto.types.map((typeId) => ({
+            create: dto.types.map((typeId) => ({
               authorType: { connect: { id: typeId } },
             })),
           };
@@ -266,19 +262,13 @@ export class AuthorsService {
         });
       });
 
-      if (
-        (newAvatarPath || updateAuthorDto.clearAvatar) &&
-        author.avatarImg !== ''
-      ) {
+      if ((newAvatarPath || dto.clearAvatar) && author.avatarImg !== '') {
         await this.fileService.deleteFile(
           `authors/avatars/${author.avatarImg}`,
         );
       }
 
-      if (
-        (newCoverPath || updateAuthorDto.clearCover) &&
-        author.coverImg !== ''
-      ) {
+      if ((newCoverPath || dto.clearCover) && author.coverImg !== '') {
         await this.fileService.deleteFile(`authors/covers/${author.coverImg}`);
       }
 
@@ -480,9 +470,7 @@ export class AuthorsService {
     return author[0];
   }
 
-  async findAuthors(
-    query: FindAuthorsQueryDto,
-  ): Promise<FindAuthorsResponseDto> {
+  async findAuthors(query: FindAuthorsQuery): Promise<FindAuthorsResponseDto> {
     const typeId = query.typeId ? `'${query.typeId}'` : null;
     const name = query.query ?? null;
     const { limit, offset = 0 } = query;

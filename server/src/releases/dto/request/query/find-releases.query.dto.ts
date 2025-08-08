@@ -1,12 +1,12 @@
 import { Type } from 'class-transformer';
 import { IsIn, IsInt, IsOptional, Length } from 'class-validator';
-import { IsEntityId } from 'src/decorators/is-entity-id.decorator';
-import { IsSearchQuery } from 'src/decorators/is-search-query.decorator';
-import { IsSortOrder } from 'src/decorators/is-sort-order.decorator';
 import { ReleaseSortFieldsEnum } from 'src/releases/types/release-sort-fields.enum';
+import { IsEntityId } from 'src/shared/decorators/is-entity-id.decorator';
+import { IsSearchQuery } from 'src/shared/decorators/is-search-query.decorator';
+import { IsSortOrder } from 'src/shared/decorators/is-sort-order.decorator';
 import { SortOrder } from 'src/shared/types/sort-order.type';
 
-export class FindReleasesQueryDto {
+export class FindReleasesQuery {
   @IsOptional()
   @IsEntityId()
   typeId?: string;

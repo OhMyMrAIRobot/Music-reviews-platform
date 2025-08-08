@@ -7,12 +7,12 @@ import {
 import { Feedback, Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
-import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
 import { FeedbackRepliesService } from 'src/feedback-replies/feedback-replies.service';
 import { FeedbackStatusesService } from 'src/feedback-statuses/feedback-statuses.service';
 import { FeedbackStatusesEnum } from 'src/feedback-statuses/types/feedback-statuses.enum';
+import { EntityNotFoundException } from 'src/shared/exceptions/entity-not-found.exception';
 import { CreateFeedbackRequestDto } from './dto/request/create-feedback.request.dto';
-import { FindFeedbackQueryDto } from './dto/request/find-feedback.query.dto';
+import { FindFeedbackQuery } from './dto/request/query/find-feedback.query.dto';
 import { UpdateFeedbackRequestDto } from './dto/request/update-feedback.request.dto';
 import {
   FeedbackResponseItem,
@@ -46,7 +46,7 @@ export class FeedbackService {
     });
   }
 
-  async findAll(query: FindFeedbackQueryDto): Promise<FindFeedbackResponseDto> {
+  async findAll(query: FindFeedbackQuery): Promise<FindFeedbackResponseDto> {
     const { limit, offset, order, query: searchTerm, statusId } = query;
 
     if (statusId) {

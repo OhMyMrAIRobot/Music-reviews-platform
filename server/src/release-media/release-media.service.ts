@@ -2,16 +2,16 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
-import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
-import { InsufficientPermissionsException } from 'src/exceptions/insufficient-permissions.exception';
-import { NoDataProvidedException } from 'src/exceptions/no-data.exception';
 import { ReleaseMediaStatusesEnum } from 'src/release-media-statuses/types/release-media-statuses.enum';
 import { ReleasesService } from 'src/releases/releases.service';
+import { EntityNotFoundException } from 'src/shared/exceptions/entity-not-found.exception';
+import { InsufficientPermissionsException } from 'src/shared/exceptions/insufficient-permissions.exception';
+import { NoDataProvidedException } from 'src/shared/exceptions/no-data.exception';
 import { UsersService } from 'src/users/users.service';
 import { ReleaseMediaStatusesService } from '../../src/release-media-statuses/release-media-statuses.service';
 import { ReleaseMediaTypesService } from '../../src/release-media-types/release-media-types.service';
 import { CreateReleaseMediaDto } from './dto/create-release-media.dto';
-import { ReleaseMediaRequestQueryDto } from './dto/request/release-media.request.query.dto';
+import { ReleaseMediaRequestQuery } from './dto/request/query/release-media.request.query.dto';
 import { ReleaseMediaListResponseDto } from './dto/response/release-media-list.response.dto';
 import { ReleaseMediaResponseDto } from './dto/response/release-media.response.dto';
 import { UpdateReleaseMediaDto } from './dto/update-release-media.dto';
@@ -70,7 +70,7 @@ export class ReleaseMediaService {
   }
 
   async findAll(
-    query: ReleaseMediaRequestQueryDto,
+    query: ReleaseMediaRequestQuery,
   ): Promise<ReleaseMediaListResponseDto> {
     const {
       limit,

@@ -9,17 +9,17 @@ import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.inte
 import { FileService } from 'src/file/files.service';
 import { UsersService } from 'src/users/users.service';
 import { PrismaService } from '../../prisma/prisma.service';
-import { EntityNotFoundException } from '../exceptions/entity-not-found.exception';
-import { NoDataProvidedException } from '../exceptions/no-data.exception';
-import { UpdateProfileDto } from './dto/request/update-profile.request.dto';
+import { EntityNotFoundException } from '../shared/exceptions/entity-not-found.exception';
+import { NoDataProvidedException } from '../shared/exceptions/no-data.exception';
+import { UpdateProfileRequestDto } from './dto/request/update-profile.request.dto';
+import {
+  FindProfileByUserIdResponseDto,
+  QueryProfileResponseDto,
+} from './dto/response/find-profile-by-user-id.response.dto';
 import {
   ProfilePreferencesResponseDto,
   QueryProfilePreferencesResponseDto,
 } from './dto/response/profile-preferences.response.dto';
-import {
-  ProfileResponseDto,
-  QueryProfileResponseDto,
-} from './dto/response/profile.response.dto';
 
 @Injectable()
 export class ProfilesService {
@@ -44,11 +44,11 @@ export class ProfilesService {
 
   async updateByUserId(
     userId: string,
-    updateProfileDto: UpdateProfileDto,
+    dto: UpdateProfileRequestDto,
     avatar?: Express.Multer.File,
     cover?: Express.Multer.File,
   ): Promise<UserProfile> {
-    if (Object.keys(updateProfileDto).length === 0 && !avatar && !cover) {
+    if (Object.keys(dto).length === 0 && !avatar && !cover) {
       throw new NoDataProvidedException();
     }
 
@@ -58,36 +58,36 @@ export class ProfilesService {
     let newCoverPath: string | undefined = undefined;
 
     try {
-      if (updateProfileDto.clearAvatar) {
+      if (dto.clearAvatar) {
         newAvatarPath = '';
       }
 
-      if (updateProfileDto.clearCover) {
+      if (dto.clearCover) {
         newCoverPath = '';
       }
 
-      if (avatar && updateProfileDto.clearAvatar !== true) {
+      if (avatar && dto.clearAvatar !== true) {
         newAvatarPath = await this.fileService.saveFile(avatar, 'avatars');
       }
 
-      if (cover && updateProfileDto.clearCover !== true) {
+      if (cover && dto.clearCover !== true) {
         newCoverPath = await this.fileService.saveFile(cover, 'covers');
       }
 
       const updated = await this.prisma.userProfile.update({
         where: { userId },
         data: {
-          bio: updateProfileDto.bio,
+          bio: dto.bio,
           avatar: newAvatarPath,
           coverImage: newCoverPath,
         },
       });
 
-      if (updateProfileDto.clearAvatar || avatar) {
+      if (dto.clearAvatar || avatar) {
         await this.fileService.deleteFile('avatars/' + profile.avatar);
       }
 
-      if (updateProfileDto.clearCover || cover) {
+      if (dto.clearCover || cover) {
         await this.fileService.deleteFile('covers/' + profile.coverImage);
       }
       return updated;
@@ -106,14 +106,16 @@ export class ProfilesService {
   async adminUpdate(
     req: IAuthenticatedRequest,
     userId: string,
-    dto: UpdateProfileDto,
+    dto: UpdateProfileRequestDto,
   ) {
     await this.usersService.checkPermissions(req.user, userId);
 
     return this.updateByUserId(userId, dto);
   }
 
-  async findByUserIdExtended(userId: string): Promise<ProfileResponseDto> {
+  async findByUserIdExtended(
+    userId: string,
+  ): Promise<FindProfileByUserIdResponseDto> {
     await this.findByUserId(userId);
     const rawQuery = `
       SELECT * FROM user_profile_summary WHERE id = '${userId}'

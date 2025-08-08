@@ -3,8 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import { RefreshToken } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'prisma/prisma.service';
-import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
-import { InvalidTokenException } from 'src/exceptions/invalid-token.exception';
+import { EntityNotFoundException } from 'src/shared/exceptions/entity-not-found.exception';
+import { InvalidTokenException } from 'src/shared/exceptions/invalid-token.exception';
 import { IJwtActionPayload } from '../types/jwt-action-payload.interface';
 import { JwtActionEnum } from '../types/jwt-action.enum';
 import { IJwtAuthPayload } from '../types/jwt-auth-payload.interface';
@@ -65,8 +65,7 @@ export class TokensService {
       }
 
       return decodedToken;
-    } catch (e) {
-      console.log(e);
+    } catch {
       throw new InvalidTokenException();
     }
   }
@@ -76,9 +75,8 @@ export class TokensService {
       return this.jwtService.verify<IJwtAuthPayload>(token, {
         secret: process.env.JWT_REFRESH_SECRET,
       });
-    } catch (e) {
+    } catch {
       throw new InvalidTokenException();
-      console.log(e);
     }
   }
 

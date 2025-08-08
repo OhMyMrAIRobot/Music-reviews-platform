@@ -1,8 +1,8 @@
 // review-query.dto.ts
 import { Type } from 'class-transformer';
 import { IsIn, IsInt, IsOptional } from 'class-validator';
-import { IsSortOrder } from 'src/decorators/is-sort-order.decorator';
 import { ReviewSortFieldsEnum } from 'src/reviews/types/review-sort-fields.enum';
+import { IsSortOrder } from 'src/shared/decorators/is-sort-order.decorator';
 import { SortOrder } from 'src/shared/types/sort-order.type';
 
 export class FindReviewsByReleaseIdQuery {

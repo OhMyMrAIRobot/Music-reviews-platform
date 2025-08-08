@@ -1,4 +1,4 @@
-import { IsEntityId } from 'src/decorators/is-entity-id.decorator';
+import { IsEntityId } from 'src/shared/decorators/is-entity-id.decorator';
 
 export class FindReviewsByReleaseIdParams {
   @IsEntityId()

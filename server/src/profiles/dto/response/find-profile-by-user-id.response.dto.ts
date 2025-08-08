@@ -1,4 +1,4 @@
-export class ProfileResponseDto {
+export class FindProfileByUserIdResponseDto {
   id: string;
   nickname: string;
   createdAt: string;
@@ -15,4 +15,4 @@ export class ProfileResponseDto {
   social: { id: string; url: string; name: string }[];
 }
 
-export class QueryProfileResponseDto extends Array<ProfileResponseDto> {}
+export class QueryProfileResponseDto extends Array<FindProfileByUserIdResponseDto> {}

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AuthorType } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
-import { EntityNotFoundException } from 'src/exceptions/entity-not-found.exception';
+import { EntityNotFoundException } from 'src/shared/exceptions/entity-not-found.exception';
 
 @Injectable()
 export class AuthorTypesService {
