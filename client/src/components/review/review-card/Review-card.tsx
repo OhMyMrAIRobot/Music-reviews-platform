@@ -5,7 +5,6 @@ import { useAuth } from '../../../hooks/use-auth'
 import useNavigationPath from '../../../hooks/use-navigation-path.ts'
 import { useStore } from '../../../hooks/use-store'
 import { IReview } from '../../../models/review/review.ts'
-import { TogglePromiseResult } from '../../../types/toggle-promise-result'
 import MoveToSvg from '../../svg/Move-to-svg.tsx'
 import SkeletonLoader from '../../utils/Skeleton-loader.tsx'
 import ReviewHeader from './Review-header'
@@ -14,10 +13,7 @@ import ReviewLikes from './Review-likes'
 interface IProps {
 	review?: IReview
 	isLoading: boolean
-	storeToggle?: (
-		reviewId: string,
-		isLiked: boolean
-	) => Promise<TogglePromiseResult>
+	storeToggle?: (reviewId: string, isFav: boolean) => Promise<string[]>
 }
 
 const ReviewCard: FC<IProps> = observer(
@@ -31,18 +27,18 @@ const ReviewCard: FC<IProps> = observer(
 		const [toggling, setToggling] = useState<boolean>(false)
 		const [show, setShow] = useState<boolean>(false)
 
-		const isLiked =
-			review?.user_fav_ids?.some(item => item.userId === authStore.user?.id) ??
+		const isFav =
+			review?.userFavReview?.some(item => item.userId === authStore.user?.id) ??
 			false
 
-		const toggleFavReview = () => {
+		const toggleFavReview = async () => {
 			setToggling(true)
 			if (!checkAuth()) {
 				setToggling(false)
 				return
 			}
 
-			if (authStore.user?.id === review?.user_id) {
+			if (authStore.user?.id === review?.userId) {
 				notificationStore.addErrorNotification(
 					'Вы не можете отметить свою рецензию как понравившеюся!'
 				)
@@ -50,20 +46,24 @@ const ReviewCard: FC<IProps> = observer(
 				return
 			}
 
-			if (!storeToggle) {
+			if (!storeToggle || !review) {
 				notificationStore.addErrorNotification('Произошла ошибка!')
 				return
 			}
 
-			storeToggle(review?.id ?? '', isLiked)
-				.then(result => {
-					notificationStore.addNotification({
-						id: self.crypto.randomUUID(),
-						text: result.message,
-						isError: !result.status,
-					})
-				})
-				.finally(() => setToggling(false))
+			const errors = await storeToggle(review.id, isFav)
+
+			if (errors.length === 0) {
+				notificationStore.addSuccessNotification(
+					isFav
+						? 'Вы успешно убрали рецензию из списка понравившихся!'
+						: 'Вы успешно добавили рецензию в список понравившихся!'
+				)
+			} else {
+				errors.forEach(err => notificationStore.addErrorNotification(err))
+			}
+
+			setToggling(false)
 		}
 
 		return isLoading ? (
@@ -85,13 +85,13 @@ const ReviewCard: FC<IProps> = observer(
 					<div className='mt-5 flex justify-between items-center pr-2.5'>
 						<ReviewLikes
 							toggling={toggling}
-							isLiked={isLiked}
-							likesCount={review.likes_count}
+							isLiked={isFav}
+							likesCount={review.favCount}
 							toggleFavReview={toggleFavReview}
 						/>
 
 						<Link
-							to={navigateToReleaseDetails(review.release_id)}
+							to={navigateToReleaseDetails(review.releaseId)}
 							className='cursor-pointer hover:bg-white/10 size-8 lg:size-10 rounded-md flex items-center justify-center transition-all duration-200 relative'
 							onMouseEnter={() => setShow(true)}
 							onMouseLeave={() => setShow(false)}

@@ -19,6 +19,13 @@ const _api = axios.create({
 })
 
 export const AuthorAPI = {
+	async fetchAuthorTypes(): Promise<IAuthorType[]> {
+		const { data } = await axios.get<IAuthorType[]>(
+			`${SERVER_URL}/author-types`
+		)
+		return data
+	},
+
 	async fetchAuthors(
 		typeId: string | null,
 		query: string | null,
@@ -52,14 +59,7 @@ export const AuthorAPI = {
 	},
 
 	async fetchAuthorById(id: string): Promise<IAuthor> {
-		const { data } = await _api.get<IAuthor>(`/${id}`)
-		return data
-	},
-
-	async fetchAuthorTypes(): Promise<IAuthorType[]> {
-		const { data } = await axios.get<IAuthorType[]>(
-			`${SERVER_URL}/author-types`
-		)
+		const { data } = await _api.get<IAuthor>(`/details/${id}`)
 		return data
 	},
 

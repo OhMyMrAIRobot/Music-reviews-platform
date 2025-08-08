@@ -85,12 +85,12 @@ export const ReleaseAPI = {
 		limit: number | null,
 		offset: number | null
 	): Promise<IAdminReleasesResponse> {
-		const { data } = await api.get<IAdminReleasesResponse>(`/releases
-			?${typeId ? `typeId=${typeId}&` : ''}
-			${query ? `query=${query}&` : ''}
-			${order ? `order=${order}&` : ''}
-			${limit ? `limit=${limit}&` : ''}
-			${offset ? `offset=${offset}&` : ''}`)
+		const { data } = await api.get<IAdminReleasesResponse>(`/releases/admin
+			?${typeId !== null ? `typeId=${typeId}&` : ''}
+			${query !== null ? `query=${query}&` : ''}
+			${order !== null ? `order=${order}&` : ''}
+			${limit !== null ? `limit=${limit}&` : ''}
+			${offset !== null ? `offset=${offset}&` : ''}`)
 
 		return data
 	},

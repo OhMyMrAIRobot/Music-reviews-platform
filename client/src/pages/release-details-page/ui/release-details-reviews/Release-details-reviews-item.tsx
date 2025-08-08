@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import { Link } from 'react-router'
 import ReviewAuthor from '../../../../components/review/review-card/Review-author'
 import ReviewLikes from '../../../../components/review/review-card/Review-likes'
@@ -7,6 +7,7 @@ import ReviewMarks from '../../../../components/review/review-card/Review-marks'
 import ReviewUserImage from '../../../../components/review/review-card/Review-user-image'
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
 import { useAuth } from '../../../../hooks/use-auth'
+import { useLoading } from '../../../../hooks/use-loading'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
 import { IReleaseReview } from '../../../../models/review/release-review'
@@ -23,37 +24,36 @@ const ReleaseDetailsReviewsItem: FC<IProps> = observer(
 		const { navigatoToProfile } = useNavigationPath()
 
 		const { authStore, releaseDetailsPageStore, notificationStore } = useStore()
-		const isLiked =
-			review?.user_fav_ids?.some(item => item.userId === authStore.user?.id) ??
+
+		const isFav =
+			review?.userFavReview?.some(item => item.userId === authStore.user?.id) ??
 			false
 
-		const [toggling, setToggling] = useState<boolean>(false)
+		const { execute: toggle, isLoading: isToggling } = useLoading(
+			releaseDetailsPageStore.toggleFavReview
+		)
 
-		const toggleFavReview = () => {
-			setToggling(true)
-			if (!checkAuth()) {
-				setToggling(false)
-				return
-			}
+		const toggleFavReview = async () => {
+			if (!checkAuth() || !review) return
 
-			if (authStore.user?.id === review?.user_id) {
+			if (authStore.user?.id === review?.userId) {
 				notificationStore.addErrorNotification(
 					'Вы не можете отметить свою рецензию как понравившеюся!'
 				)
-				setToggling(false)
 				return
 			}
 
-			releaseDetailsPageStore
-				.toggleFavReview(review?.id ?? '', isLiked)
-				.then(result => {
-					notificationStore.addNotification({
-						id: self.crypto.randomUUID(),
-						text: result.message,
-						isError: !result.status,
-					})
-				})
-				.finally(() => setToggling(false))
+			const errors = await toggle(review.id, isFav)
+
+			if (errors.length === 0) {
+				notificationStore.addSuccessNotification(
+					isFav
+						? 'Вы успешно убрали рецензию из списка понравившихся!'
+						: 'Вы успешно добавили рецензию в список понравившихся!'
+				)
+			} else {
+				errors.forEach(err => notificationStore.addErrorNotification(err))
+			}
 		}
 
 		return isLoading ? (
@@ -63,7 +63,7 @@ const ReleaseDetailsReviewsItem: FC<IProps> = observer(
 				<div className='w-full bg-zinc-900 p-1.5 lg:p-[5px] flex flex-col border border-zinc-800 rounded-[15px] lg:rounded-[20px]'>
 					<div className='bg-zinc-950/70 px-2 py-2 rounded-[12px] flex gap-3 justify-between items-center select-none'>
 						<Link
-							to={navigatoToProfile(review.user_id)}
+							to={navigatoToProfile(review.userId)}
 							className='flex items-center space-x-2 lg:space-x-3'
 						>
 							<ReviewUserImage
@@ -92,12 +92,12 @@ const ReleaseDetailsReviewsItem: FC<IProps> = observer(
 						<p className='text-sm lg:text-lg font-light mt-2 break-words'>
 							{review.text}
 						</p>
-						<div className='text-xs opacity-60 mt-1'>{review.created_at}</div>
+						<div className='text-xs opacity-60 mt-1'>{review.createdAt}</div>
 						<div className='mt-3 mb-2'>
 							<ReviewLikes
-								toggling={toggling}
-								isLiked={isLiked}
-								likesCount={review.likes_count}
+								toggling={isToggling}
+								isLiked={isFav}
+								likesCount={review.favCount}
 								toggleFavReview={toggleFavReview}
 							/>
 						</div>

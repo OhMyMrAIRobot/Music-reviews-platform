@@ -5,15 +5,15 @@ import { ReleaseAPI } from '../../../api/release-api'
 import { ReleaseMediaAPI } from '../../../api/release-media-api'
 import { ReviewAPI } from '../../../api/review-api'
 import { UserFavReleaseAPI } from '../../../api/user-fav-release-api'
-import { UserFavReviewAPI } from '../../../api/user-fav-review-api'
 import { IReleaseMedia } from '../../../models/release-media/release-media'
 import { IReleaseMediaList } from '../../../models/release-media/release-media-list'
 import { IReleaseDetails } from '../../../models/release/release-details'
 import { IReleaseReview } from '../../../models/review/release-review'
+import { ReleaseReviewSortFieldsEnum } from '../../../models/review/release-review-sort-fields-enum'
 import { IReviewData } from '../../../models/review/review-data'
-import { TogglePromiseResult } from '../../../types/toggle-promise-result'
-import { toggleFav } from '../../../utils/toggle-fav'
+import { SortOrder } from '../../../types/sort-order-type'
 import { toggleFavMedia } from '../../../utils/toggle-fav-media'
+import { toggleFavReview } from '../../../utils/toggle-fav-review'
 
 class ReleaseDetailsPageStore {
 	constructor() {
@@ -56,8 +56,8 @@ class ReleaseDetailsPageStore {
 		try {
 			const data = await ReleaseAPI.fetchReleaseDetails(id)
 			this.setReviewDetails(data)
-		} catch (e) {
-			console.log(e)
+		} catch {
+			this.setReviewDetails(null)
 		}
 	}
 
@@ -93,13 +93,13 @@ class ReleaseDetailsPageStore {
 
 	fetchReleaseReviews = async (
 		releaseId: string,
-		field: string = 'created',
-		order: string = 'desc',
+		field: ReleaseReviewSortFieldsEnum,
+		order: SortOrder,
 		limit: number = 5,
 		offset: number = 0
 	) => {
 		try {
-			const data = await ReviewAPI.fetchReleaseReviews(
+			const data = await ReviewAPI.fetchReviewsByReleaseId(
 				releaseId,
 				field,
 				order,
@@ -108,8 +108,9 @@ class ReleaseDetailsPageStore {
 			)
 			this.setReviewsCount(data.count)
 			this.setReleaseReviews(data.reviews)
-		} catch (e) {
-			console.log(e)
+		} catch {
+			this.setReviewsCount(0)
+			this.setReleaseReviews([])
 		}
 	}
 
@@ -251,28 +252,8 @@ class ReleaseDetailsPageStore {
 	toggleFavReview = async (
 		reviewId: string,
 		isFav: boolean
-	): Promise<TogglePromiseResult> => {
-		const result = await toggleFav(this.releaseReviews, reviewId, isFav, {
-			add: UserFavReviewAPI.addToFav,
-			delete: UserFavReviewAPI.deleteFromFav,
-			fetch: UserFavReviewAPI.fetchFavByReviewId,
-		})
-
-		if (result) {
-			return {
-				status: true,
-				message: isFav
-					? 'Вы убрали рецензию из списка понравившихся!'
-					: 'Вы отметили рецензию как понравившеюся!',
-			}
-		} else {
-			return {
-				status: false,
-				message: isFav
-					? 'Не удалось убрать рецензию из списка понравившихся!'
-					: 'Не удалось отметить рецензию как понравившеюся!',
-			}
-		}
+	): Promise<string[]> => {
+		return toggleFavReview(this.releaseReviews, reviewId, isFav)
 	}
 
 	toggleFavMedia = async (

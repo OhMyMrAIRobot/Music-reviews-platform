@@ -11,17 +11,13 @@ import {
 import { IReview } from '../../models/review/review.ts'
 import { CarouselRef } from '../../types/carousel-ref'
 import { CarouselStateCallbacks } from '../../types/carousel-state-callbacks.ts'
-import { TogglePromiseResult } from '../../types/toggle-promise-result'
 import ReviewCard from '../review/review-card/Review-card'
 
 interface IProps extends CarouselStateCallbacks {
 	items: IReview[]
 	rowCount: number
 	isLoading: boolean
-	storeToggle: (
-		reviewId: string,
-		isLiked: boolean
-	) => Promise<TogglePromiseResult>
+	storeToggle: (reviewId: string, isFav: boolean) => Promise<string[]>
 }
 
 const LastReviewsCarousel = observer(

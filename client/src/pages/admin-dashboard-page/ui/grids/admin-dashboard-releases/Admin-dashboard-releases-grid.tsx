@@ -42,7 +42,7 @@ const AdminDashboardReleasesGrid = observer(() => {
 		}
 		return fetch(
 			typeId,
-			searchText,
+			searchText.trim() ? searchText : null,
 			order,
 			perPage,
 			(currentPage - 1) * perPage

@@ -2,14 +2,13 @@ import { makeAutoObservable } from 'mobx'
 import { ProfileAPI } from '../../../api/profile-api'
 import { ReleaseMediaAPI } from '../../../api/release-media-api.ts'
 import { ReviewAPI } from '../../../api/review-api'
-import { UserFavReviewAPI } from '../../../api/user-fav-review-api.ts'
 import { IProfile } from '../../../models/profile/profile'
 import { IProfilePreferences } from '../../../models/profile/profile-preferences.ts'
 import { IReleaseMedia } from '../../../models/release-media/release-media.ts'
 import { IReview } from '../../../models/review/review.ts'
-import { TogglePromiseResult } from '../../../types/toggle-promise-result'
-import { toggleFav } from '../../../utils/toggle-fav'
+import { SortOrderEnum } from '../../../models/sort/sort-order-enum.ts'
 import { toggleFavMedia } from '../../../utils/toggle-fav-media.ts'
+import { toggleFavReview } from '../../../utils/toggle-fav-review.ts'
 
 export class ProfilePageStore {
 	constructor() {
@@ -78,7 +77,7 @@ export class ProfilePageStore {
 	fetchReviews = async (limit: number, offset: number, userId: string) => {
 		try {
 			const data = await ReviewAPI.fetchReviews(
-				'desc',
+				SortOrderEnum.DESC,
 				limit,
 				offset,
 				userId,
@@ -99,7 +98,7 @@ export class ProfilePageStore {
 	) => {
 		try {
 			const data = await ReviewAPI.fetchReviews(
-				'desc',
+				SortOrderEnum.DESC,
 				limit,
 				offset,
 				null,
@@ -149,55 +148,15 @@ export class ProfilePageStore {
 	toggleReview = async (
 		reviewId: string,
 		isFav: boolean
-	): Promise<TogglePromiseResult> => {
-		const result = await toggleFav(this.reviews, reviewId, isFav, {
-			add: UserFavReviewAPI.addToFav,
-			delete: UserFavReviewAPI.deleteFromFav,
-			fetch: UserFavReviewAPI.fetchFavByReviewId,
-		})
-
-		if (result) {
-			return {
-				status: true,
-				message: isFav
-					? 'Вы убрали рецензию из списка понравившихся!'
-					: 'Вы отметили рецензию как понравившеюся!',
-			}
-		} else {
-			return {
-				status: false,
-				message: isFav
-					? 'Не удалось убрать рецензию из списка понравившихся!'
-					: 'Не удалось отметь рецензию как понравившеюся!',
-			}
-		}
+	): Promise<string[]> => {
+		return toggleFavReview(this.reviews, reviewId, isFav)
 	}
 
 	toggleFavReview = async (
 		reviewId: string,
 		isFav: boolean
-	): Promise<TogglePromiseResult> => {
-		const result = await toggleFav(this.favReviews, reviewId, isFav, {
-			add: UserFavReviewAPI.addToFav,
-			delete: UserFavReviewAPI.deleteFromFav,
-			fetch: UserFavReviewAPI.fetchFavByReviewId,
-		})
-
-		if (result) {
-			return {
-				status: true,
-				message: isFav
-					? 'Вы убрали рецензию из списка понравившихся!'
-					: 'Вы отметили рецензию как понравившеюся!',
-			}
-		} else {
-			return {
-				status: false,
-				message: isFav
-					? 'Не удалось убрать рецензию из списка понравившихся!'
-					: 'Не удалось отметь рецензию как понравившеюся!',
-			}
-		}
+	): Promise<string[]> => {
+		return toggleFavReview(this.favReviews, reviewId, isFav)
 	}
 }
 

@@ -5,7 +5,9 @@ import Loader from '../../components/utils/Loader.tsx'
 import { useLoading } from '../../hooks/use-loading.ts'
 import useNavigationPath from '../../hooks/use-navigation-path'
 import { useStore } from '../../hooks/use-store.ts'
+import { ReleaseReviewSortFieldsEnum } from '../../models/review/release-review-sort-fields-enum.ts'
 import { ReleaseReviewSortField } from '../../models/review/release-review-sort-fields.ts'
+import { SortOrderEnum } from '../../models/sort/sort-order-enum.ts'
 import { SortOrder } from '../../types/sort-order-type.ts'
 import ReleaseDetailsHeader from './ui/Release-details-header.tsx'
 import ReleaseDetailsMedia from './ui/release-details-media/Release-details-media.tsx'
@@ -39,13 +41,13 @@ const ReleaseDetailsPage = observer(() => {
 	)
 
 	const fetchReviews = async (): Promise<void> => {
-		let field = 'created'
-		let order: SortOrder = 'desc'
+		let field: ReleaseReviewSortFieldsEnum = ReleaseReviewSortFieldsEnum.CREATED
+		let order: SortOrder = SortOrderEnum.DESC
 
 		if (selectedSort === ReleaseReviewSortField.OLD) {
-			order = 'asc'
+			order = SortOrderEnum.ASC
 		} else if (selectedSort === ReleaseReviewSortField.POPULAR) {
-			field = 'likes'
+			field = ReleaseReviewSortFieldsEnum.LIKES
 		}
 		_fetchReviews(id, field, order, perPage, (currentPage - 1) * perPage).then(
 			() => setTotalItems(releaseDetailsPageStore.reviewsCount)

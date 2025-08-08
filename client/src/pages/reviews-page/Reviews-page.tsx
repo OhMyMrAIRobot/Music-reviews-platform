@@ -6,6 +6,7 @@ import ReviewCard from '../../components/review/review-card/Review-card'
 import { useLoading } from '../../hooks/use-loading'
 import { useStore } from '../../hooks/use-store'
 import { ReviewSortFields } from '../../models/review/review-sort-fields'
+import { SortOrderEnum } from '../../models/sort/sort-order-enum'
 import { SortOrder } from '../../types/sort-order-type'
 
 const ReviewsPage = observer(() => {
@@ -23,7 +24,9 @@ const ReviewsPage = observer(() => {
 
 	useEffect(() => {
 		const order: SortOrder =
-			selectedOrder === ReviewSortFields.NEW ? 'asc' : 'desc'
+			selectedOrder === ReviewSortFields.NEW
+				? SortOrderEnum.DESC
+				: SortOrderEnum.ASC
 		fetch(order, perPage, (currentPage - 1) * perPage)
 	}, [currentPage, fetch, selectedOrder])
 

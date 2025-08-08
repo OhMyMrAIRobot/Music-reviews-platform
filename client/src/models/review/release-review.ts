@@ -15,12 +15,12 @@ export interface IReleaseReview {
 	realization: number
 	individuality: number
 	atmosphere: number
-	created_at: string
-	user_id: string
+	createdAt: string
+	userId: string
 	nickname: string
 	avatar: string
 	points: number
 	position: number | null
-	likes_count: number
-	user_fav_ids: IFavReview[]
+	favCount: number
+	userFavReview: IFavReview[]
 }

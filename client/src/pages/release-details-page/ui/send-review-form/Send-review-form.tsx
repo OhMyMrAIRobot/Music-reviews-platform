@@ -65,7 +65,7 @@ const SendReviewForm: FC<IProps> = observer(
 		useEffect(() => {
 			setUserReview(
 				releaseDetailsPageStore.releaseReviews?.find(
-					entry => entry.user_id === authStore.user?.id
+					entry => entry.userId === authStore.user?.id
 				)
 			)
 			setDefaultValues(userReview)
