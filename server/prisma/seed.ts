@@ -519,6 +519,19 @@ async function main() {
     ],
   });
 
+  await prisma.registeredAuthor.createMany({
+    data: [
+      {
+        authorId: '4',
+        userId: '8',
+      },
+      {
+        authorId: '12',
+        userId: '8',
+      },
+    ],
+  });
+
   await prisma.authorOnType.createMany({
     data: [
       {

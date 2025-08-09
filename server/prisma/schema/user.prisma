@@ -19,6 +19,8 @@ model User {
   feedbackResponse    FeedbackResponse[]
   releaseMedia        ReleaseMedia[]
   userFavMedia        UserFavMedia[]
+  authorComment       AuthorComment[]
+  registeredAuthor    RegisteredAuthor[]
 
   @@map("Users")
 }

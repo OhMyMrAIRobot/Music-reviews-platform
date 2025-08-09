@@ -4,11 +4,12 @@ model Author {
   avatarImg String @default("") @map("avatar_img") @db.VarChar(255)
   coverImg  String @default("") @map("cover_img") @db.VarChar(255)
 
-  types           AuthorOnType[]
-  releaseProducer ReleaseProducer[]
-  releaseArtist   ReleaseArtist[]
-  releaseDesigner ReleaseDesigner[]
-  userFavAuthor   UserFavAuthor[]
+  types            AuthorOnType[]
+  releaseProducer  ReleaseProducer[]
+  releaseArtist    ReleaseArtist[]
+  releaseDesigner  ReleaseDesigner[]
+  userFavAuthor    UserFavAuthor[]
+  registeredAuthor RegisteredAuthor[]
 
   @@map("Authors")
 }
@@ -30,4 +31,33 @@ model AuthorOnType {
 
   @@id([authorId, authorTypeId])
   @@map("Authors_on_types")
+}
+
+model RegisteredAuthor {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  authorId  String   @map("author_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  author Author @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([userId, authorId])
+  @@map("Registered_authors")
+}
+
+model AuthorComment {
+  id        String   @id @default(cuid())
+  title     String   @db.VarChar(100)
+  text      String   @db.VarChar(8500)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  userId    String   @map("user_id")
+  releaseId String   @map("release_id")
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  release Release @relation(fields: [releaseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([userId, releaseId])
+  @@map("Author_comments")
 }

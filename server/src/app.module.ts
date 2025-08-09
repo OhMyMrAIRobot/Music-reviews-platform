@@ -25,6 +25,8 @@ import { UserFavMediaModule } from './user-fav-media/user-fav-media.module';
 import { UserFavReleasesModule } from './user-fav-releases/user-fav-releases.module';
 import { UserFavReviewsModule } from './user-fav-reviews/user-fav-reviews.module';
 import { UsersModule } from './users/users.module';
+import { RegisteredAuthorsModule } from './registered-authors/registered-authors.module';
+import { AuthorCommentsModule } from './author-comments/author-comments.module';
 
 @Module({
   imports: [
@@ -54,6 +56,8 @@ import { UsersModule } from './users/users.module';
     ReleaseMediaModule,
     UserFavMediaModule,
     ProfileSocialMediaModule,
+    RegisteredAuthorsModule,
+    AuthorCommentsModule,
   ],
   controllers: [],
   providers: [],

@@ -15,6 +15,7 @@ model Release {
   releaseRating   ReleaseRating[]
   userFavRelease  UserFavRelease[]
   releaseMedia    ReleaseMedia[]
+  authorComment   AuthorComment[]
 
   @@map("Releases")
 }

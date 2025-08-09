@@ -202,9 +202,14 @@ export class ReleasesService {
     };
   }
 
-  async findOne(id: string): Promise<Release> {
+  async findOne(id: string) {
     const existingRelease = await this.prisma.release.findUnique({
       where: { id },
+      include: {
+        releaseArtist: true,
+        releaseDesigner: true,
+        releaseProducer: true,
+      },
     });
 
     if (!existingRelease) {
