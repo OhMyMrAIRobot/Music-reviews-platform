@@ -86,7 +86,7 @@ const ReleaseDetailsReviewsItem: FC<IProps> = observer(
 						/>
 					</div>
 					<div className='px-1.5'>
-						<h5 className='text-base lg:text-lg mt-3 font-semibold'>
+						<h5 className='text-base lg:text-lg mt-3 font-semibold break-words'>
 							{review.title}
 						</h5>
 						<p className='text-sm lg:text-lg font-light mt-2 break-words'>

@@ -22,7 +22,7 @@ const ConfirmationModal: FC<IProps> = ({
 	return createPortal(
 		<ModalOverlay isOpen={isOpen} onCancel={onCancel} isLoading={isLoading}>
 			<div
-				className={`relative rounded-lg px-6 pb-6 pt-8 w-80 border border-white/10 bg-zinc-950 grid gap-6 transition-transform duration-300`}
+				className={`relative rounded-lg px-6 pb-6 pt-8 w-100 border border-white/10 bg-zinc-950 grid gap-6 transition-transform duration-300`}
 			>
 				<button
 					onClick={onCancel}
