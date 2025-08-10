@@ -19,7 +19,16 @@ const GlobalRouteList = () => {
 		<>
 			<Route path={ROUTES.MAIN} element={<MainPage />} />,
 			<Route path={ROUTES.FEEDBACK} element={<FeedbackPage />} />,
-			<Route path={ROUTES.AUTHORS} element={<AuthorsPage />} />,
+			<Route
+				path={ROUTES.AUTHORS}
+				element={<AuthorsPage onlyRegistered={false} />}
+			/>
+			,
+			<Route
+				path={ROUTES.REGISTERED_AUTHORS}
+				element={<AuthorsPage onlyRegistered={true} />}
+			/>
+			,
 			<Route path={ROUTES.REVIEWS} element={<ReviewsPage />} />,
 			<Route path={ROUTES.RELEASES} element={<ReleasesPage />} />,
 			<Route path={ROUTES.AUTHOR_DETAILS} element={<AuthorDetailsPage />} />,

@@ -25,17 +25,13 @@ const AuthorsGrid: FC<IProps> = ({
 			<section className='mt-5 overflow-hidden'>
 				<div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 lg:gap-6'>
 					{isLoading
-						? Array.from({
-								length:
-									total > 0 ? total - (currentPage - 1) * perPage : perPage,
-						  }).map((_, idx) => (
+						? Array.from({ length: perPage }).map((_, idx) => (
 								<AuthorCard
 									key={`author-skeleton-${idx}`}
 									isLoading={isLoading}
 								/>
 						  ))
-						: items.length > 0 &&
-						  items.map(author => (
+						: items.map(author => (
 								<AuthorCard
 									key={author.id}
 									author={author}

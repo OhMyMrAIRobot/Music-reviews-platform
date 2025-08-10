@@ -37,7 +37,13 @@ class SearchPageStore {
 		offset: number = 0
 	) => {
 		try {
-			const data = await AuthorAPI.fetchAuthors(null, query, limit, offset)
+			const data = await AuthorAPI.fetchAuthors(
+				null,
+				query,
+				limit,
+				offset,
+				false
+			)
 			this.setAuthorsCount(data.count)
 			this.setAuthors(data.authors)
 		} catch (e) {

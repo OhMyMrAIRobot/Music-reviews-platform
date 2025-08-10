@@ -1,17 +1,24 @@
 import { observer } from 'mobx-react-lite'
-import { useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import AuthorsGrid from '../../components/author/authors-grid/Authors-grid'
 import ComboBox from '../../components/buttons/Combo-box'
 import SkeletonLoader from '../../components/utils/Skeleton-loader'
 import { useLoading } from '../../hooks/use-loading'
 import { useStore } from '../../hooks/use-store'
+import { AuthorTypesFilterEnum } from '../../models/author/author-types-filter-enum'
 
-const AuthorsPage = observer(() => {
+interface IProps {
+	onlyRegistered: boolean
+}
+
+const AuthorsPage: FC<IProps> = observer(({ onlyRegistered }) => {
 	const perPage = 10
 
 	const { authorsPageStore, metaStore } = useStore()
 
-	const [selectedAuthorType, setSelectedAuthorType] = useState<string>()
+	const [selectedAuthorType, setSelectedAuthorType] = useState<string>(
+		AuthorTypesFilterEnum.ALL
+	)
 	const [currentPage, setCurrentPage] = useState<number>(1)
 
 	const { execute: fetchAuthors, isLoading: isAuthorsLoading } = useLoading(
@@ -26,25 +33,33 @@ const AuthorsPage = observer(() => {
 		const type = metaStore.authorTypes.find(
 			entry => entry.type === selectedAuthorType
 		)
-		fetchAuthors(type ? type.id : null, perPage, (currentPage - 1) * perPage)
+		fetchAuthors(
+			type ? type.id : null,
+			perPage,
+			(currentPage - 1) * perPage,
+			onlyRegistered
+		)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedAuthorType, currentPage, fetchAuthors])
+	}, [selectedAuthorType, currentPage, fetchAuthors, onlyRegistered])
 
 	useEffect(() => {
-		fetchTypes()
-	}, [fetchTypes])
+		if (metaStore.authorTypes.length === 0) {
+			fetchTypes()
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
 	return (
 		<>
 			<h1 id='authors' className='text-lg md:text-xl lg:text-3xl font-semibold'>
-				Авторы
+				{onlyRegistered ? 'Зарегистрированные авторы' : 'Авторы'}
 			</h1>
 
 			<div className='rounded-lg border border-white/10 bg-zinc-900 p-3 shadow-sm mt-5'>
 				<div className='w-full sm:w-55 h-10'>
 					{!isTypesLoading && metaStore.authorTypes.length > 0 ? (
 						<ComboBox
-							options={metaStore.authorTypes.map(entry => entry.type)}
+							options={Object.values(AuthorTypesFilterEnum)}
 							onChange={setSelectedAuthorType}
 							className='border border-white/10'
 							placeholder='Выберите тип автора'
@@ -58,7 +73,7 @@ const AuthorsPage = observer(() => {
 
 			<AuthorsGrid
 				items={authorsPageStore.authors}
-				isLoading={isAuthorsLoading}
+				isLoading={isAuthorsLoading || isTypesLoading}
 				currentPage={currentPage}
 				setCurrentPage={setCurrentPage}
 				total={authorsPageStore.authorsCount}

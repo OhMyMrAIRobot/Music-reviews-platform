@@ -12,6 +12,7 @@ export interface IAuthorData {
 	favCount: number
 	authorTypes: IAuthorType[]
 	releaseTypeRatings: IReleaseTypeRatings[]
+	isRegistered: boolean
 }
 
 export interface IReleaseTypeRatings {

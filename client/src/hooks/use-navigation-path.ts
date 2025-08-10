@@ -18,6 +18,8 @@ const useNavigationPath = () => {
 
 	const navigateToAuthors = `/${ROUTES.AUTHORS}`
 
+	const navigateToRegisteredAuthors = `/${ROUTES.REGISTERED_AUTHORS}`
+
 	const navigateToReviews = `/${ROUTES.REVIEWS}`
 
 	const navigateToMediaReviews = `/${ROUTES.MEDIA_REVIEWS}`
@@ -78,6 +80,7 @@ const useNavigationPath = () => {
 		navigateToAdminMedia,
 		navigateToMediaReviews,
 		navigateToAuthorComments,
+		navigateToRegisteredAuthors,
 	}
 }
 

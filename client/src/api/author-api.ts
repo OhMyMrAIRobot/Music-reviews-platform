@@ -30,14 +30,17 @@ export const AuthorAPI = {
 		typeId: string | null,
 		query: string | null,
 		limit: number | null,
-		offset: number | null
+		offset: number | null,
+		onlyRegistered: boolean | null
 	): Promise<IAuthorsResponse> {
 		const { data } = await _api.get<IAuthorsResponse>(
 			`/?
 			${typeId !== null ? `typeId=${typeId}&` : ''}
-			${query !== null ? `&query=${query}&` : ''}
-			${limit !== null ? `&limit=${limit}&` : ''}
-			${offset !== null ? `&offset=${offset}` : ''}`
+			${query !== null ? `query=${query}&` : ''}
+			${limit !== null ? `limit=${limit}&` : ''}
+			${offset !== null ? `offset=${offset}&` : ''}
+			${onlyRegistered !== null ? `onlyRegistered=${onlyRegistered}` : ''}
+			`
 		)
 		return data
 	},

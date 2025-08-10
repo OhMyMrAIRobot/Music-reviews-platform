@@ -2,7 +2,7 @@ import { FC } from 'react'
 import { Link } from 'react-router'
 import useNavigationPath from '../../hooks/use-navigation-path'
 import { IAuthorComment } from '../../models/author-comment/author-comment'
-import RegisteredAuthorTypeIcon from '../registered-author/Registered-author-type-icon'
+import RegisteredAuthorTypes from '../registered-author/Registered-author-types'
 import RegisteredAuthorWrittenComments from '../registered-author/Registered-author-written-comments'
 import ReviewAuthor from '../review/review-card/Review-author'
 import ReviewUserImage from '../review/review-card/Review-user-image'
@@ -27,7 +27,7 @@ const AuthorCommentHeader: FC<IProps> = ({ comment, showRelease = false }) => {
 				</Link>
 				<div className='flex items-center gap-1.5'>
 					<Link
-						to={navigatoToProfile(comment.id)}
+						to={navigatoToProfile(comment.userId)}
 						className='text-sm lg:text-lg font-semibold max-w-42 text-ellipsis whitespace-nowrap overflow-hidden'
 					>
 						<ReviewAuthor
@@ -35,13 +35,10 @@ const AuthorCommentHeader: FC<IProps> = ({ comment, showRelease = false }) => {
 							position={comment.position}
 						/>
 					</Link>
-					{comment.authorTypes.map(type => (
-						<RegisteredAuthorTypeIcon
-							key={type.id}
-							className={'size-5'}
-							type={type.type}
-						/>
-					))}
+					<RegisteredAuthorTypes
+						className={'size-5'}
+						types={comment.authorTypes}
+					/>
 					<RegisteredAuthorWrittenComments
 						count={comment.totalComments}
 						iconClassname='size-5'

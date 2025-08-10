@@ -17,6 +17,7 @@ export const ROUTES = {
 	EDIT_PROFILE: 'profile/edit',
 	MEDIA_REVIEWS: 'media-reviews',
 	AUTHOR_COMMENTS: 'author-comments',
+	REGISTERED_AUTHORS: 'registered-authors',
 	AUTH: {
 		PREFIX: 'auth',
 		LOGIN: 'login',

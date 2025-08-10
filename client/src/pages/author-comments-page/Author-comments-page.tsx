@@ -60,7 +60,7 @@ const AuthorCommentsPage = observer(() => {
 			</div>
 
 			<section className='mt-5 overflow-hidden py-2'>
-				<div className='gap-3 xl:gap-5 grid md:grid-cols-2 xl:grid-cols-3'>
+				<div className='gap-3 xl:gap-5 grid md:grid-cols-2 xl:grid-cols-3 grid-cols-1'>
 					{isLoading
 						? Array.from({ length: perPage }).map((_, idx) => (
 								<AuthorComment

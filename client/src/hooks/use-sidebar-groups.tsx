@@ -1,4 +1,5 @@
 import AuthorCommentSvg from '../components/author-comment/svg/Author-comment-svg'
+import RegisteredAuthorSvg from '../components/registered-author/svg/Registered-author-svg'
 import TextReviewSvg from '../components/review/svg/Text-review-svg'
 import { ISidebarItemProps } from '../components/sidebar/Sidebar-item'
 import AboutSvg from '../components/sidebar/svg/About-svg'
@@ -30,6 +31,7 @@ export const useSidebarGroups = () => {
 		navigateToActivation,
 		navigateToMediaReviews,
 		navigateToAuthorComments,
+		navigateToRegisteredAuthors,
 	} = useNavigationPath()
 
 	const { isActive } = useActivePath()
@@ -76,6 +78,12 @@ export const useSidebarGroups = () => {
 			icon: <AuthorCommentSvg className='size-5' />,
 			label: 'Авторские комментарии',
 			active: isActive(`/${ROUTES.AUTHOR_COMMENTS}`),
+		},
+		{
+			href: navigateToRegisteredAuthors,
+			icon: <RegisteredAuthorSvg className='size-5' />,
+			label: 'Зарегистрированные авторы',
+			active: isActive(`/${ROUTES.REGISTERED_AUTHORS}`),
 		},
 		{
 			href: navigateToAuthors,

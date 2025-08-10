@@ -93,7 +93,7 @@ const AuthorDetailsHeader: FC<IProps> = observer(({ author, isLoading }) => {
 							<div className='bg-zinc-950 px-3 py-2 lg:px-5 lg:py-3 rounded-xl inline-flex items-center gap-2'>
 								<h2 className='text-sm lg:text-4xl font-bold'>{author.name}</h2>
 
-								<AuthorTypes types={author.authorTypes} />
+								<AuthorTypes types={author.authorTypes} className='size-7' />
 							</div>
 
 							<div className='bg-zinc-950 px-3 py-1 lg:px-5 lg:py-3 rounded-xl items-center inline-flex'>

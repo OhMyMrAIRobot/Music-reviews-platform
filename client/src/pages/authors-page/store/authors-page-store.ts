@@ -21,10 +21,17 @@ class AuthorsPageStore {
 	fetchAuthors = async (
 		typeId: string | null = null,
 		limit: number = 20,
-		offset: number = 0
+		offset: number = 0,
+		onlyRegistered: boolean
 	) => {
 		try {
-			const data = await AuthorAPI.fetchAuthors(typeId, null, limit, offset)
+			const data = await AuthorAPI.fetchAuthors(
+				typeId,
+				null,
+				limit,
+				offset,
+				onlyRegistered
+			)
 			this.setAuthorsCount(data.count)
 			this.setAuthors(data.authors)
 		} catch (e) {
