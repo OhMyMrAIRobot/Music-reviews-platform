@@ -1,6 +1,6 @@
 import { AuthorType } from '@prisma/client';
 
-export class FindAuthorCommentsByReleaseIdResponseDto {
+export class AuthorCommentResponseDto {
   id: string;
   title: string;
   text: string;

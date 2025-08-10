@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -13,6 +14,7 @@ import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.inte
 import { JwtAuthGuard } from 'src/shared/guards/jwt-auth.guard';
 import { AuthorCommentsService } from './author-comments.service';
 import { FindAuthorCommentsByReleaseIdParams } from './dto/params/find-author-comments-by-release-id-params.dto';
+import { FindAuthorCommentsQuery } from './dto/query/find-author-comments.query.dto';
 import { CreateAuthorCommentRequestDto } from './dto/request/create-author-comment.request.dto';
 import { UpdateAuthorCommentRequestDto } from './dto/request/update-author-comment.request.dto';
 
@@ -27,6 +29,11 @@ export class AuthorCommentsController {
     @Request() req: IAuthenticatedRequest,
   ) {
     return this.authorCommentsService.create(dto, req.user.id);
+  }
+
+  @Get()
+  findAll(@Query() query: FindAuthorCommentsQuery) {
+    return this.authorCommentsService.findAll(query);
   }
 
   @Get('release/:releaseId')

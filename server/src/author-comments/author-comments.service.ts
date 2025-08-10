@@ -5,9 +5,11 @@ import { RegisteredAuthorsService } from 'src/registered-authors/registered-auth
 import { ReleasesService } from 'src/releases/releases.service';
 import { EntityNotFoundException } from 'src/shared/exceptions/entity-not-found.exception';
 import { InsufficientPermissionsException } from 'src/shared/exceptions/insufficient-permissions.exception';
+import { FindAuthorCommentsQuery } from './dto/query/find-author-comments.query.dto';
 import { CreateAuthorCommentRequestDto } from './dto/request/create-author-comment.request.dto';
 import { UpdateAuthorCommentRequestDto } from './dto/request/update-author-comment.request.dto';
-import { FindAuthorCommentsByReleaseIdResponseDto } from './dto/response/find-author-comments-by-release-id.response.dto';
+import { AuthorCommentResponseDto } from './dto/response/author-comment.response.dto';
+import { FindAuthorCommentsResponseDto } from './dto/response/find-author-comments.response.dto';
 
 @Injectable()
 export class AuthorCommentsService {
@@ -20,7 +22,7 @@ export class AuthorCommentsService {
   async create(
     dto: CreateAuthorCommentRequestDto,
     userId: string,
-  ): Promise<FindAuthorCommentsByReleaseIdResponseDto> {
+  ): Promise<AuthorCommentResponseDto> {
     await this.registeredAuthorsService.checkUserIsReleaseAuthor(
       userId,
       dto.releaseId,
@@ -45,63 +47,23 @@ export class AuthorCommentsService {
 
   async findByReleaseId(
     releaseId: string,
-  ): Promise<FindAuthorCommentsByReleaseIdResponseDto[]> {
+  ): Promise<AuthorCommentResponseDto[]> {
     await this.releasesService.findOne(releaseId);
 
     const query = `
-    WITH user_author_types AS (
-      SELECT
-        ra.user_id,
-        json_agg(DISTINCT jsonb_build_object('id', at.id, 'type', at.type)) AS types
-      FROM "Registered_authors" ra
-      JOIN "Authors_on_types" aot ON aot.author_id = ra.author_id
-      JOIN "Author_types" at ON at.id = aot.author_type_id
-      GROUP BY ra.user_id
-    ),
-    user_comments_count AS (
-      SELECT
-        user_id,
-        COUNT(*)::int AS total_comments
-      FROM "Author_comments"
-      GROUP BY user_id
-    )
-
-    SELECT
-      ac.id,
-      ac.title,
-      ac.text,
-      TO_CHAR(ac.created_at, 'DD-MM-YYYY') AS "createdAt",
-      u.id AS "userId",
-      u.nickname,
-      up.avatar,
-      up.points,
-      ac.release_id as "releaseId",
-      r.img as "releaseImg",
-      tul.rank AS position,
-      COALESCE((
-        SELECT types FROM user_author_types WHERE user_id = u.id
-      ), '[]'::json) AS "authorTypes",
-      COALESCE(ucc.total_comments, 0) AS "totalComments"
-    FROM "Author_comments" ac
-      JOIN "Users" u ON u.id = ac.user_id
-      LEFT JOIN "User_profiles" up ON up.user_id = u.id
-      LEFT JOIN user_comments_count ucc ON ucc.user_id = u.id
-      JOIN "Releases" r on ac.release_id = r.id
-      LEFT JOIN "Top_users_leaderboard" tul ON u.id = tul.user_id
+    ${this.baseQuery}
     WHERE ac.release_id = '${releaseId}'
     ORDER BY ac.created_at DESC, ac.id DESC
   `;
 
-    return this.prisma.$queryRawUnsafe<
-      FindAuthorCommentsByReleaseIdResponseDto[]
-    >(query);
+    return this.prisma.$queryRawUnsafe<AuthorCommentResponseDto[]>(query);
   }
 
   async update(
     id: string,
     userId: string,
     dto: UpdateAuthorCommentRequestDto,
-  ): Promise<FindAuthorCommentsByReleaseIdResponseDto> {
+  ): Promise<AuthorCommentResponseDto> {
     const comment = await this.findOne(id);
     if (userId !== comment.userId) {
       throw new InsufficientPermissionsException();
@@ -153,11 +115,41 @@ export class AuthorCommentsService {
     });
   }
 
+  async findAll(
+    query: FindAuthorCommentsQuery,
+  ): Promise<FindAuthorCommentsResponseDto> {
+    const { limit, offset = 0, order = 'DESC' } = query;
+
+    const rawQuery = `
+    ${this.baseQuery}
+    ORDER BY ac.created_at ${order}, ac.id DESC
+    ${limit !== undefined ? `LIMIT ${limit}` : ''} OFFSET ${offset}
+  `;
+
+    const [count, comments] = await Promise.all([
+      this.prisma.authorComment.count(),
+      this.prisma.$queryRawUnsafe<AuthorCommentResponseDto[]>(rawQuery),
+    ]);
+
+    return { count, comments };
+  }
+
   private async getCommentDto(
     commentId: string,
-  ): Promise<FindAuthorCommentsByReleaseIdResponseDto> {
+  ): Promise<AuthorCommentResponseDto> {
     const query = `
-    WITH user_author_types AS (
+    ${this.baseQuery}
+    WHERE ac.id = '${commentId}'
+  `;
+
+    const [result] =
+      await this.prisma.$queryRawUnsafe<AuthorCommentResponseDto[]>(query);
+
+    return result;
+  }
+
+  private baseQuery = `
+      WITH user_author_types AS (
       SELECT
         ra.user_id,
         json_agg(DISTINCT jsonb_build_object('id', at.id, 'type', at.type)) AS types
@@ -196,14 +188,5 @@ export class AuthorCommentsService {
       LEFT JOIN user_comments_count ucc ON ucc.user_id = u.id
       JOIN "Releases" r on ac.release_id = r.id
       LEFT JOIN "Top_users_leaderboard" tul ON u.id = tul.user_id
-    WHERE ac.id = '${commentId}'
-  `;
-
-    const [result] =
-      await this.prisma.$queryRawUnsafe<
-        [FindAuthorCommentsByReleaseIdResponseDto]
-      >(query);
-
-    return result;
-  }
+    `;
 }
