@@ -10,4 +10,8 @@ export interface IAuthorComment {
 	nickname: string
 	avatar: string
 	totalComments: number
+	points: number
+	releaseId: string
+	releaseImg: string
+	position: number | null
 }

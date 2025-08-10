@@ -72,7 +72,7 @@ const ReleaseMediaReview: FC<IProps> = observer(
 		return isLoading || !media || !media.user ? (
 			<SkeletonLoader className={'w-full rounded-2xl lg:rounded-[20px] h-63'} />
 		) : (
-			<div className='w-full bg-zinc-900 overflow-hidden p-1.5 flex flex-col border border-zinc-800 rounded-2xl lg:rounded-[20px]'>
+			<div className='w-full bg-zinc-900 p-1.5 flex flex-col border border-zinc-800 rounded-2xl lg:rounded-[20px]'>
 				<div className='bg-zinc-950/70 p-2 rounded-xl flex gap-3'>
 					<Link
 						to={navigatoToProfile(media.user.id)}
