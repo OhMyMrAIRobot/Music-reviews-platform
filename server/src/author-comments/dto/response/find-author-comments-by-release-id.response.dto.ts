@@ -10,4 +10,8 @@ export class FindAuthorCommentsByReleaseIdResponseDto {
   nickname: string;
   avatar: string;
   totalComments: number;
+  releaseId: string;
+  releaseImg: string;
+  points: number;
+  position: number | null;
 }

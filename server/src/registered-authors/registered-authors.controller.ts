@@ -3,5 +3,7 @@ import { RegisteredAuthorsService } from './registered-authors.service';
 
 @Controller('registered-authors')
 export class RegisteredAuthorsController {
-  constructor(private readonly registeredAuthorsService: RegisteredAuthorsService) {}
+  constructor(
+    private readonly registeredAuthorsService: RegisteredAuthorsService,
+  ) {}
 }

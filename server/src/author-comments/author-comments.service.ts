@@ -74,14 +74,20 @@ export class AuthorCommentsService {
       u.id AS "userId",
       u.nickname,
       up.avatar,
+      up.points,
+      ac.release_id as "releaseId",
+      r.img as "releaseImg",
+      tul.rank AS position,
       COALESCE((
         SELECT types FROM user_author_types WHERE user_id = u.id
       ), '[]'::json) AS "authorTypes",
       COALESCE(ucc.total_comments, 0) AS "totalComments"
     FROM "Author_comments" ac
-    JOIN "Users" u ON u.id = ac.user_id
-    LEFT JOIN "User_profiles" up ON up.user_id = u.id
-    LEFT JOIN user_comments_count ucc ON ucc.user_id = u.id
+      JOIN "Users" u ON u.id = ac.user_id
+      LEFT JOIN "User_profiles" up ON up.user_id = u.id
+      LEFT JOIN user_comments_count ucc ON ucc.user_id = u.id
+      JOIN "Releases" r on ac.release_id = r.id
+      LEFT JOIN "Top_users_leaderboard" tul ON u.id = tul.user_id
     WHERE ac.release_id = '${releaseId}'
     ORDER BY ac.created_at DESC, ac.id DESC
   `;
@@ -176,14 +182,20 @@ export class AuthorCommentsService {
       u.id AS "userId",
       u.nickname,
       up.avatar,
+      up.points,
+      ac.release_id as "releaseId",
+      r.img as "releaseImg",
+      tul.rank AS position,
       COALESCE((
         SELECT types FROM user_author_types WHERE user_id = u.id
       ), '[]'::json) AS "authorTypes",
       COALESCE(ucc.total_comments, 0) AS "totalComments"
     FROM "Author_comments" ac
-    JOIN "Users" u ON u.id = ac.user_id
-    LEFT JOIN "User_profiles" up ON up.user_id = u.id
-    LEFT JOIN user_comments_count ucc ON ucc.user_id = u.id
+      JOIN "Users" u ON u.id = ac.user_id
+      LEFT JOIN "User_profiles" up ON up.user_id = u.id
+      LEFT JOIN user_comments_count ucc ON ucc.user_id = u.id
+      JOIN "Releases" r on ac.release_id = r.id
+      LEFT JOIN "Top_users_leaderboard" tul ON u.id = tul.user_id
     WHERE ac.id = '${commentId}'
   `;
 
