@@ -29,4 +29,8 @@ export class FindAuthorsQuery {
   @Transform(({ value }) => value === 'true')
   @IsBoolean()
   onlyRegistered?: boolean;
+
+  @IsOptional()
+  @IsEntityId()
+  userId?: string;
 }

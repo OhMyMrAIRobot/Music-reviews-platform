@@ -473,7 +473,7 @@ export class AuthorsService {
   async findAuthors(query: FindAuthorsQuery): Promise<FindAuthorsResponseDto> {
     const typeId = query.typeId ? `'${query.typeId}'` : null;
     const name = query.query ?? null;
-    const { limit, offset = 0, onlyRegistered = false } = query;
+    const { limit, offset = 0, onlyRegistered = false, userId } = query;
 
     if (query.typeId) {
       await this.authorTypesService.findOne(query.typeId);
@@ -500,7 +500,7 @@ export class AuthorsService {
           onlyRegistered
             ? {
                 registeredAuthor: {
-                  some: {},
+                  some: { userId },
                 },
               }
             : {},
@@ -620,7 +620,11 @@ export class AuthorsService {
         registered_authors_flag AS (
         SELECT
             a.id,
-            EXISTS(SELECT 1 FROM "Registered_authors" ra WHERE ra.author_id = a.id) AS is_registered
+            EXISTS(SELECT 
+              1 FROM "Registered_authors" ra 
+            WHERE ra.author_id = a.id
+            ${userId ? `AND ra.user_id = '${userId}'` : ''}
+          ) AS is_registered
         FROM
             "Authors" a
         )

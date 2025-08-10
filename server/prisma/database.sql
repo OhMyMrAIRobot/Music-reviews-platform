@@ -492,7 +492,29 @@ SELECT
     CASE
         WHEN count(sm.id) = 0 THEN '[]'::json
         ELSE JSON_AGG(DISTINCT JSONB_BUILD_OBJECT('id', sm.id, 'name', sm.name, 'url', psm.url))
-    END AS social
+        END AS social,
+    EXISTS(
+        SELECT 1 FROM "Registered_authors" ra WHERE ra.user_id = u.id
+    ) AS "isAuthor",
+    COALESCE(
+            (
+                SELECT JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
+                        'id', at.id,
+                        'type', at.type
+                                         ))
+                FROM "Registered_authors" ra
+                         JOIN "Authors" a ON ra.author_id = a.id
+                         JOIN "Authors_on_types" aot ON a.id = aot.author_id
+                         JOIN "Author_types" at ON aot.author_type_id = at.id
+                WHERE ra.user_id = u.id
+            ),
+            '[]'::json
+    ) AS "authorTypes",
+    (
+        SELECT COUNT(DISTINCT ac.id)::int
+        FROM "Author_comments" ac
+        WHERE ac.user_id = u.id
+    ) AS "authorCommentsCount"
 FROM "User_profiles" up
          JOIN "Users" u ON up.user_id = u.id
          LEFT JOIN "Top_users_leaderboard" tul ON up.user_id = tul.user_id
