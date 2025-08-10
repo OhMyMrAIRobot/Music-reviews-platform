@@ -1,5 +1,6 @@
 import { FC } from 'react'
 import { Link } from 'react-router'
+import AuthorCommentColorSvg from '../../../../../components/author-comment/svg/Author-comment-color-svg'
 import NoTextReviewSvg from '../../../../../components/review/svg/No-text-review-svg'
 import TextReviewSvg from '../../../../../components/review/svg/Text-review-svg'
 import PixelHeartFillSvg from '../../../../../components/svg/Pixel-heart-fill-svg'
@@ -78,6 +79,22 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
 					)}
 				</div>
 			</div>
+
+			{profile.isAuthor && (
+				<div>
+					<ProfileStatsRow
+						title={'Написано авторских комментариев'}
+						value={profile.authorCommentsCount}
+						icon={<AuthorCommentColorSvg className={'size-5'} />}
+					/>
+				</div>
+			)}
+
+			<div
+				data-orientation='horizontal'
+				className='shrink-0 bg-white/10 h-[1px] w-full'
+			/>
+
 			<div>
 				<ProfileStatsRow
 					title={'Рецензий'}
@@ -94,7 +111,7 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
 			<div
 				data-orientation='horizontal'
 				className='shrink-0 bg-white/10 h-[1px] w-full'
-			></div>
+			/>
 
 			<div>
 				<ProfileStatsRow

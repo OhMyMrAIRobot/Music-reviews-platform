@@ -5,6 +5,7 @@ import { useStore } from '../../../../hooks/use-store'
 import { IProfile } from '../../../../models/profile/profile'
 import { ProfileSections } from '../../../../models/profile/profile-sections'
 import { RolesEnum } from '../../../../models/role/roles-enum'
+import ProfileAuthorCardsGrid from './Profile-author-cards-grid'
 import ProfileMediaReviewsGrid from './Profile-media-reviews-grid'
 import ProfilePreferencesGrid from './profile-preferences/Profile-preferences-grid'
 import ProfileReviewsGrid from './Profile-reviews-grid'
@@ -22,7 +23,9 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 	const { profilePageStore } = useStore()
 
 	const [selectedSection, setSelectedSection] = useState<string>(
-		ProfileSections.PREFER
+		profilePageStore.profile?.isAuthor === true
+			? ProfileSections.AUTHOR_CARDS
+			: ProfileSections.PREFER
 	)
 	const [reviewsCurrentPage, setReviewsCurrentPage] = useState<number>(1)
 	const [favCurrentPage, setFavCurrentPage] = useState<number>(1)
@@ -30,9 +33,11 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 	const { execute: fetchReviews, isLoading: isReviewsLoading } = useLoading(
 		profilePageStore.fetchReviews
 	)
-
 	const { execute: fetchFavReviews, isLoading: isFavReviewsLoading } =
 		useLoading(profilePageStore.fetchFavReviews)
+	const { execute: fetchCards, isLoading: isCardsLoading } = useLoading(
+		profilePageStore.fetchAuthorCards
+	)
 
 	useEffect(() => {
 		if (id) {
@@ -43,6 +48,9 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 				case ProfileSections.LIKES:
 					fetchFavReviews(perPage, (favCurrentPage - 1) * perPage, id)
 					break
+				case ProfileSections.AUTHOR_CARDS:
+					if (profilePageStore.profile?.isAuthor === true) fetchCards(id)
+					break
 			}
 		}
 	}, [
@@ -52,6 +60,8 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 		selectedSection,
 		fetchReviews,
 		fetchFavReviews,
+		profilePageStore.profile?.isAuthor,
+		fetchCards,
 	])
 
 	return (
@@ -73,6 +83,14 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 				className='mt-5 flex gap-1 lg:gap-2 items-center'
 				id='profile-sections'
 			>
+				{profile.isAuthor && (
+					<ProfileSectionButton
+						title={ProfileSections.AUTHOR_CARDS}
+						isActive={selectedSection === ProfileSections.AUTHOR_CARDS}
+						onClick={() => setSelectedSection(ProfileSections.AUTHOR_CARDS)}
+					/>
+				)}
+
 				<ProfileSectionButton
 					title={ProfileSections.PREFER}
 					isActive={selectedSection === ProfileSections.PREFER}
@@ -99,6 +117,10 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 					onClick={() => setSelectedSection(ProfileSections.LIKES)}
 				/>
 			</div>
+
+			{selectedSection === ProfileSections.AUTHOR_CARDS && (
+				<ProfileAuthorCardsGrid isLoading={isCardsLoading} />
+			)}
 
 			{selectedSection === ProfileSections.PREFER && <ProfilePreferencesGrid />}
 

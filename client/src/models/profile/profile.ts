@@ -1,3 +1,5 @@
+import { IAuthorType } from '../author/author-type'
+
 export interface IProfile {
 	id: string
 	nickname: string
@@ -13,4 +15,7 @@ export interface IProfile {
 	receivedLikes: number
 	givenLikes: number
 	social: { id: string; url: string; name: string }[]
+	isAuthor: boolean
+	authorTypes: IAuthorType[]
+	authorCommentsCount: number
 }

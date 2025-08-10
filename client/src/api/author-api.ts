@@ -31,7 +31,8 @@ export const AuthorAPI = {
 		query: string | null,
 		limit: number | null,
 		offset: number | null,
-		onlyRegistered: boolean | null
+		onlyRegistered: boolean | null,
+		userId: string | null
 	): Promise<IAuthorsResponse> {
 		const { data } = await _api.get<IAuthorsResponse>(
 			`/?
@@ -39,7 +40,8 @@ export const AuthorAPI = {
 			${query !== null ? `query=${query}&` : ''}
 			${limit !== null ? `limit=${limit}&` : ''}
 			${offset !== null ? `offset=${offset}&` : ''}
-			${onlyRegistered !== null ? `onlyRegistered=${onlyRegistered}` : ''}
+			${onlyRegistered !== null ? `onlyRegistered=${onlyRegistered}&` : ''}
+			${userId !== null ? `userId=${userId}` : ''}
 			`
 		)
 		return data

@@ -53,6 +53,11 @@ const ProfilePreferencesGridRow: FC<IProps> = ({
 					</div>
 				</div>
 			</div>
+			{!isLoading && items.length === 0 && (
+				<div className='col-span-full text-center text-xs text-muted-foreground bg-gradient-to-br from-zinc-900 border border-zinc-950 py-2 rounded-xl'>
+					Нет предпочтений
+				</div>
+			)}
 		</div>
 	)
 }

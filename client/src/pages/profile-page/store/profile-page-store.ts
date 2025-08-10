@@ -1,7 +1,9 @@
 import { makeAutoObservable } from 'mobx'
+import { AuthorAPI } from '../../../api/author-api.ts'
 import { ProfileAPI } from '../../../api/profile-api'
 import { ReleaseMediaAPI } from '../../../api/release-media-api.ts'
 import { ReviewAPI } from '../../../api/review-api'
+import { IAuthorData } from '../../../models/author/authors-response.ts'
 import { IProfile } from '../../../models/profile/profile'
 import { IProfilePreferences } from '../../../models/profile/profile-preferences.ts'
 import { IReleaseMedia } from '../../../models/release-media/release-media.ts'
@@ -23,6 +25,7 @@ export class ProfilePageStore {
 	favReviewsCount: number = 0
 	media: IReleaseMedia[] = []
 	mediaCount: number = 0
+	authorCards: IAuthorData[] = []
 
 	setProfile(data: IProfile | null) {
 		this.profile = data
@@ -54,6 +57,10 @@ export class ProfilePageStore {
 
 	setMediaCount(data: number) {
 		this.mediaCount = data
+	}
+
+	setAuthorCards(data: IAuthorData[]) {
+		this.authorCards = data
 	}
 
 	fetchProfile = async (id: string) => {
@@ -135,6 +142,22 @@ export class ProfilePageStore {
 		} catch {
 			this.setMedia([])
 			this.setMediaCount(0)
+		}
+	}
+
+	fetchAuthorCards = async (userId: string) => {
+		try {
+			const data = await AuthorAPI.fetchAuthors(
+				null,
+				null,
+				null,
+				null,
+				true,
+				userId
+			)
+			this.setAuthorCards(data.authors)
+		} catch {
+			this.setAuthorCards([])
 		}
 	}
 
