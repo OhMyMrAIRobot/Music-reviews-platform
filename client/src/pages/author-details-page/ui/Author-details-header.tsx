@@ -2,6 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { FC } from 'react'
 import AuthorTypes from '../../../components/author/author-types/Author-types'
 import ToggleFavButton from '../../../components/buttons/Toggle-fav-button'
+import RegisteredAuthorTypes from '../../../components/registered-author/Registered-author-types'
 import LikesCount from '../../../components/utils/Likes-count'
 import SkeletonLoader from '../../../components/utils/Skeleton-loader'
 import { useAuth } from '../../../hooks/use-auth'
@@ -24,7 +25,7 @@ const AuthorDetailsHeader: FC<IProps> = observer(({ author, isLoading }) => {
 	)
 
 	const isFav =
-		author?.userFavAuthors?.some(val => val.userId === authStore.user?.id) ??
+		author?.userFavAuthor?.some(val => val.userId === authStore.user?.id) ??
 		false
 
 	const toggleFavAuthor = async () => {
@@ -92,7 +93,14 @@ const AuthorDetailsHeader: FC<IProps> = observer(({ author, isLoading }) => {
 						<div className='flex absolute bottom-5 left-5 lg:bottom-10 lg:left-10 gap-3 z-300'>
 							<div className='bg-zinc-950 px-3 py-2 lg:px-5 lg:py-3 rounded-xl inline-flex items-center gap-2'>
 								<h2 className='text-sm lg:text-4xl font-bold'>{author.name}</h2>
-								<AuthorTypes types={author.authorTypes} className='size-7' />
+								{author.isRegistered ? (
+									<RegisteredAuthorTypes
+										types={author.authorTypes}
+										className='size-7'
+									/>
+								) : (
+									<AuthorTypes types={author.authorTypes} className='size-7' />
+								)}
 							</div>
 
 							<div className='bg-zinc-950 px-3 py-1 lg:px-5 lg:py-3 rounded-xl items-center inline-flex'>

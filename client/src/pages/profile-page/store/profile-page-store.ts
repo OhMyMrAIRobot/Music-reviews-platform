@@ -3,7 +3,7 @@ import { AuthorAPI } from '../../../api/author-api.ts'
 import { ProfileAPI } from '../../../api/profile-api'
 import { ReleaseMediaAPI } from '../../../api/release-media-api.ts'
 import { ReviewAPI } from '../../../api/review-api'
-import { IAuthorData } from '../../../models/author/authors-response.ts'
+import { IAuthor } from '../../../models/author/author.ts'
 import { IProfile } from '../../../models/profile/profile'
 import { IProfilePreferences } from '../../../models/profile/profile-preferences.ts'
 import { IReleaseMedia } from '../../../models/release-media/release-media.ts'
@@ -25,7 +25,7 @@ export class ProfilePageStore {
 	favReviewsCount: number = 0
 	media: IReleaseMedia[] = []
 	mediaCount: number = 0
-	authorCards: IAuthorData[] = []
+	authorCards: IAuthor[] = []
 
 	setProfile(data: IProfile | null) {
 		this.profile = data
@@ -59,7 +59,7 @@ export class ProfilePageStore {
 		this.mediaCount = data
 	}
 
-	setAuthorCards(data: IAuthorData[]) {
+	setAuthorCards(data: IAuthor[]) {
 		this.authorCards = data
 	}
 

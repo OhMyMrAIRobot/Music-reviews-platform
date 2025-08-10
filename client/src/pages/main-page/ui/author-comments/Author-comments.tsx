@@ -3,12 +3,15 @@ import { useEffect, useRef, useState } from 'react'
 import AuthorCommentColorSvg from '../../../../components/author-comment/svg/Author-comment-color-svg'
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
 import { useLoading } from '../../../../hooks/use-loading'
+import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
 import { CarouselRef } from '../../../../types/carousel-ref'
 import AuthorCommentsCarousel from './carousel/Author-comments-carousel'
 
 const AuthorComments = observer(() => {
 	const { mainPageStore } = useStore()
+
+	const { navigateToAuthorComments } = useNavigationPath()
 
 	const { execute: fetch, isLoading } = useLoading(
 		mainPageStore.fetchAuthorComments
@@ -33,7 +36,7 @@ const AuthorComments = observer(() => {
 			}
 			buttonTitle={'Все авторские комментарии'}
 			showButton={true}
-			href={'#'}
+			href={navigateToAuthorComments}
 			handlePrev={() => carouselRef.current?.scrollPrev()}
 			handleNext={() => carouselRef.current?.scrollNext()}
 			carousel={

@@ -1,18 +1,8 @@
-import { IAuthorType } from './author-type'
+import { IAuthor } from './author'
 
 export interface IAuthorsResponse {
 	count: number
-	authors: IAuthorData[]
-}
-
-export interface IAuthorData {
-	id: string
-	img: string
-	name: string
-	favCount: number
-	authorTypes: IAuthorType[]
-	releaseTypeRatings: IReleaseTypeRatings[]
-	isRegistered: boolean
+	authors: IAuthor[]
 }
 
 export interface IReleaseTypeRatings {

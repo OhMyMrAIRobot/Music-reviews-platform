@@ -85,7 +85,7 @@ class AuthorDetailsPageStore {
 			const newFav = await UserFavAuthorAPI.fetchFavByAuthorId(authorId)
 
 			if (this.author) {
-				this.author.userFavAuthors = newFav
+				this.author.userFavAuthor = newFav
 				this.author.favCount = newFav.length
 			}
 

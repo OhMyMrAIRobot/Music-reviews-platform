@@ -1,16 +1,16 @@
 import { makeAutoObservable } from 'mobx'
 import { AuthorAPI } from '../../../api/author-api'
-import { IAuthorData } from '../../../models/author/authors-response'
+import { IAuthor } from '../../../models/author/author'
 
 class AuthorsPageStore {
 	constructor() {
 		makeAutoObservable(this)
 	}
 
-	authors: IAuthorData[] = []
+	authors: IAuthor[] = []
 	authorsCount: number = 0
 
-	setAuthors(data: IAuthorData[]) {
+	setAuthors(data: IAuthor[]) {
 		this.authors = data
 	}
 
@@ -30,7 +30,8 @@ class AuthorsPageStore {
 				null,
 				limit,
 				offset,
-				onlyRegistered
+				onlyRegistered,
+				null
 			)
 			this.setAuthorsCount(data.count)
 			this.setAuthors(data.authors)

@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { Link } from 'react-router'
 import useNavigationPath from '../../../hooks/use-navigation-path'
-import { IAuthorData } from '../../../models/author/authors-response'
+import { IAuthor } from '../../../models/author/author'
 import { ReleaseTypesEnum } from '../../../models/release/release-types'
 import RegisteredAuthorTypes from '../../registered-author/Registered-author-types'
 import LikesCount from '../../utils/Likes-count'
@@ -10,7 +10,7 @@ import AuthorReleaseTypesRatings from '../author-ratings/Author-release-types-ra
 import AuthorTypes from '../author-types/Author-types'
 
 interface IProps {
-	author?: IAuthorData
+	author?: IAuthor
 	isLoading: boolean
 }
 

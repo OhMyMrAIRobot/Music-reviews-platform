@@ -49,6 +49,11 @@ const AuthorsPage: FC<IProps> = observer(({ onlyRegistered }) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
+	useEffect(() => {
+		setSelectedAuthorType(AuthorTypesFilterEnum.ALL)
+		setCurrentPage(1)
+	}, [onlyRegistered])
+
 	return (
 		<>
 			<h1 id='authors' className='text-lg md:text-xl lg:text-3xl font-semibold'>

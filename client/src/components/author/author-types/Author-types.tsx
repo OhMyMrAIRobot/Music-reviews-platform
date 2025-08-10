@@ -15,7 +15,7 @@ const AuthorTypes: FC<IProps> = ({ types, className }) => {
 			tooltip={<Tooltip>{type.type}</Tooltip>}
 			spanClassName='text-white relative'
 			key={type.type}
-			centered={false}
+			centered={true}
 		>
 			<AuthorTypeSvg type={type} className={className} />
 		</TooltipSpan>

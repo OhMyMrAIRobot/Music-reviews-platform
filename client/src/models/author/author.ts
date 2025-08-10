@@ -8,7 +8,8 @@ export interface IAuthor {
 	cover: string
 	name: string
 	favCount: number
-	userFavAuthors: IFavAuthor[]
+	userFavAuthor: IFavAuthor[]
 	authorTypes: IAuthorType[]
+	isRegistered: boolean
 	releaseTypeRatings: IReleaseTypeRatings[]
 }
