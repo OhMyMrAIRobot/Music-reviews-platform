@@ -19,4 +19,5 @@ export class AuthorQueryResponse {
       };
     },
   ];
+  isRegistered: boolean;
 }

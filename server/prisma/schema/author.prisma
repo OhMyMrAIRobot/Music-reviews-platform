@@ -36,7 +36,7 @@ model AuthorOnType {
 model RegisteredAuthor {
   id        String   @id @default(cuid())
   userId    String   @map("user_id")
-  authorId  String   @map("author_id")
+  authorId  String   @unique @map("author_id")
   createdAt DateTime @default(now()) @map("created_at")
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)

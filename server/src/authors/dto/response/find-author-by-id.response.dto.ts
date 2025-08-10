@@ -1,4 +1,4 @@
-export class FindAuthorResponseDto {
+export class FindAuthorByIdResponseDto {
   id: string;
   img: string;
   cover: string;
@@ -18,4 +18,4 @@ export class FindAuthorResponseDto {
   ];
 }
 
-export class QueryFindAuthorResponseDto extends Array<FindAuthorResponseDto> {}
+export class QueryFindAuthorResponseDto extends Array<FindAuthorByIdResponseDto> {}

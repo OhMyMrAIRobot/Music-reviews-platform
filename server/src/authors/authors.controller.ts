@@ -18,7 +18,7 @@ import { JwtAuthGuard } from 'src/shared/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/shared/guards/roles.guard';
 import { AuthorsService } from './authors.service';
 import { CreateAuthorRequestDto } from './dto/request/create-author.request.dto';
-import { FindAuthorParams } from './dto/request/params/find-author.params.dto';
+import { FindAuthorByIdParams } from './dto/request/params/find-author-by-id.params.dto';
 import { FindAuthorsQuery } from './dto/request/query/find-authors.query.dto';
 import { UpdateAuthorRequestDto } from './dto/request/update-author.request.dto';
 
@@ -32,7 +32,7 @@ export class AuthorsController {
   }
 
   @Get('details/:id')
-  findById(@Param() params: FindAuthorParams) {
+  findById(@Param() params: FindAuthorByIdParams) {
     return this.authorsService.findById(params.id);
   }
 

@@ -1,6 +1,6 @@
 import { IsEntityId } from 'src/shared/decorators/is-entity-id.decorator';
 
-export class FindAuthorParams {
+export class FindAuthorByIdParams {
   @IsEntityId()
   id: string;
 }
