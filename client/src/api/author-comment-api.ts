@@ -1,5 +1,7 @@
 import axios from 'axios'
 import { IAuthorComment } from '../models/author-comment/author-comment'
+import { IAuthorCommentsResponse } from '../models/author-comment/author-comments-response'
+import { SortOrder } from '../types/sort-order-type'
 import { api } from './api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
@@ -29,6 +31,20 @@ export const AuthorCommentAPI = {
 
 	async fetchByReleaseId(releaseId: string): Promise<IAuthorComment[]> {
 		const { data } = await _api.get<IAuthorComment[]>(`/release/${releaseId}`)
+
+		return data
+	},
+
+	async fetchAll(
+		limit: number | null,
+		offset: number | null,
+		order: SortOrder | null
+	): Promise<IAuthorCommentsResponse> {
+		const { data } = await _api.get<IAuthorCommentsResponse>(`?
+			${limit !== null ? `limit=${limit}&` : ''}
+			${offset !== null ? `offset=${offset}&` : ''}	
+			${order !== null ? `order=${order}&` : ''}	
+		`)
 
 		return data
 	},

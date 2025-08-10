@@ -3,7 +3,7 @@ import { Link } from 'react-router'
 import CarouselNavButton from './Carousel-nav-button'
 
 interface IProps {
-	title: string
+	title: ReactNode
 	buttonTitle: string
 	showButton: boolean
 	href: string

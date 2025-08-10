@@ -1,7 +1,9 @@
 import { makeAutoObservable } from 'mobx'
+import { AuthorCommentAPI } from '../../../api/author-comment-api.ts'
 import { ReleaseAPI } from '../../../api/release-api'
 import { ReleaseMediaAPI } from '../../../api/release-media-api.ts'
 import { ReviewAPI } from '../../../api/review-api'
+import { IAuthorComment } from '../../../models/author-comment/author-comment.ts'
 import { IReleaseMedia } from '../../../models/release-media/release-media.ts'
 import { IRelease } from '../../../models/release/release'
 import { IReview } from '../../../models/review/review.ts'
@@ -18,6 +20,7 @@ class MainPageStore {
 	lastReleases: IRelease[] = []
 	lastReviews: IReview[] = []
 	releaseMedia: IReleaseMedia[] = []
+	authorComments: IAuthorComment[] = []
 
 	setMostReviewedReleases(data: IRelease[]) {
 		this.mostReviewedReleases = data
@@ -33,6 +36,10 @@ class MainPageStore {
 
 	setReleaseMedia(data: IReleaseMedia[]) {
 		this.releaseMedia = data
+	}
+
+	setAuthorComments(data: IAuthorComment[]) {
+		this.authorComments = data
 	}
 
 	fetchTopReleases = async () => {
@@ -97,6 +104,15 @@ class MainPageStore {
 			this.setReleaseMedia(data.releaseMedia)
 		} catch {
 			this.setReleaseMedia([])
+		}
+	}
+
+	fetchAuthorComments = async () => {
+		try {
+			const data = await AuthorCommentAPI.fetchAll(15, 0, 'desc')
+			this.setAuthorComments(data.comments)
+		} catch {
+			this.setAuthorComments([])
 		}
 	}
 
