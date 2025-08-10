@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 import { AuthorTypesEnum } from '../src/author-types/entities/author-types.enum';
 import { FeedbackStatusesEnum } from '../src/feedback-statuses/types/feedback-statuses.enum';
 import { ReleaseMediaStatusesEnum } from '../src/release-media-statuses/types/release-media-statuses.enum';
@@ -37,6 +38,8 @@ async function main() {
   await prisma.releaseMediaStatus.deleteMany();
   await prisma.releaseMediaType.deleteMany();
 
+  const password = await bcrypt.hash('1234567', 10);
+
   await prisma.role.createMany({
     data: [
       {
@@ -64,8 +67,7 @@ async function main() {
         id: '1',
         email: 'GoneFF@gmail.com',
         nickname: 'GoneFF',
-        password:
-          '$2b$10$0bD/1z03VDQP3ko9BJ/2U.FGCyjcyY7sSXaf5.psHwB012H0xBswe',
+        password,
         isActive: true,
         roleId: '2',
       },
@@ -73,8 +75,7 @@ async function main() {
         id: '2',
         email: 'ar4iks@gmail.com',
         nickname: 'ar4iks',
-        password:
-          '$2b$10$0bD/1z03VDQP3ko9BJ/2U.FGCyjcyY7sSXaf5.psHwB012H0xBswe',
+        password,
         isActive: true,
         roleId: '1',
       },
@@ -82,8 +83,7 @@ async function main() {
         id: '3',
         email: 'corobok228@gmail.com',
         nickname: 'corobok228',
-        password:
-          '$2b$10$0bD/1z03VDQP3ko9BJ/2U.FGCyjcyY7sSXaf5.psHwB012H0xBswe',
+        password,
         isActive: true,
         roleId: '1',
       },
@@ -91,8 +91,7 @@ async function main() {
         id: '4',
         email: 'Gamarjoba@gmail.com',
         nickname: 'Gamarjoba',
-        password:
-          '$2b$10$0bD/1z03VDQP3ko9BJ/2U.FGCyjcyY7sSXaf5.psHwB012H0xBswe',
+        password,
         isActive: true,
         roleId: '1',
       },
@@ -100,8 +99,7 @@ async function main() {
         id: '5',
         email: '6g6@gmail.com',
         nickname: '6g6',
-        password:
-          '$2b$10$0bD/1z03VDQP3ko9BJ/2U.FGCyjcyY7sSXaf5.psHwB012H0xBswe',
+        password,
         isActive: true,
         roleId: '1',
       },
@@ -109,8 +107,7 @@ async function main() {
         id: '6',
         email: 'ChebuR@gmail.com',
         nickname: 'ChebuR',
-        password:
-          '$2b$10$0bD/1z03VDQP3ko9BJ/2U.FGCyjcyY7sSXaf5.psHwB012H0xBswe',
+        password,
         isActive: true,
         roleId: '1',
       },
@@ -118,8 +115,7 @@ async function main() {
         id: '7',
         email: 'meshok@gmail.com',
         nickname: 'Meshok',
-        password:
-          '$2b$10$0bD/1z03VDQP3ko9BJ/2U.FGCyjcyY7sSXaf5.psHwB012H0xBswe',
+        password,
         isActive: true,
         roleId: '1',
       },
@@ -127,8 +123,7 @@ async function main() {
         id: '8',
         email: 'norizeek@gmail.com',
         nickname: 'norizeek',
-        password:
-          '$2b$10$0bD/1z03VDQP3ko9BJ/2U.FGCyjcyY7sSXaf5.psHwB012H0xBswe',
+        password,
         isActive: true,
         roleId: '3',
       },
@@ -136,8 +131,7 @@ async function main() {
         id: '9',
         email: 'SPlash@gmail.com',
         nickname: 'SPlash',
-        password:
-          '$2b$10$0bD/1z03VDQP3ko9BJ/2U.FGCyjcyY7sSXaf5.psHwB012H0xBswe',
+        password,
         isActive: true,
         roleId: '1',
       },
@@ -145,8 +139,7 @@ async function main() {
         id: '10',
         email: 'panikaa_@gmail.com',
         nickname: 'panikaa_',
-        password:
-          '$2b$10$0bD/1z03VDQP3ko9BJ/2U.FGCyjcyY7sSXaf5.psHwB012H0xBswe',
+        password,
         isActive: true,
         roleId: '1',
       },
@@ -154,8 +147,23 @@ async function main() {
         id: '11',
         email: 'THUNDER_BITS@gmail.com',
         nickname: 'THUNDER_BITS',
-        password:
-          '$2b$10$0bD/1z03VDQP3ko9BJ/2U.FGCyjcyY7sSXaf5.psHwB012H0xBswe',
+        password,
+        isActive: true,
+        roleId: '1',
+      },
+      {
+        id: '12',
+        email: 'markul@gmail.com',
+        nickname: 'Markul',
+        password,
+        isActive: true,
+        roleId: '1',
+      },
+      {
+        id: '13',
+        email: 'saluki@gmail.com',
+        nickname: 'Saluki',
+        password,
         isActive: true,
         roleId: '1',
       },
@@ -295,14 +303,13 @@ async function main() {
         id: '1',
         avatar: 'GoneFF.png',
         coverImage: '0.png',
-        bio: 'young designer from sp',
+        bio: 'GoneFF bio',
         userId: '1',
         points: 152892,
       },
       {
         id: '2',
         avatar: 'ar4iks.png',
-        bio: 'young designer from sp',
         coverImage: 'ar4iks.png',
         userId: '2',
         points: 89324,
@@ -311,14 +318,12 @@ async function main() {
         id: '3',
         avatar: 'corobok228.png',
         coverImage: 'corobok228.png',
-        bio: 'young designer from sp',
         userId: '3',
         points: 24295,
       },
       {
         id: '4',
         avatar: 'gamarjoba.png',
-        bio: 'young designer from sp',
         userId: '4',
         points: 5769,
       },
@@ -326,45 +331,52 @@ async function main() {
         id: '5',
         avatar: '6g6.png',
         coverImage: '6g6.png',
-        bio: 'young designer from sp',
         userId: '5',
         points: 7769,
       },
       {
         id: '6',
-        bio: 'young designer from sp',
         userId: '6',
       },
       {
         id: '7',
-        bio: 'young designer from sp',
         userId: '7',
       },
       {
         id: '8',
         avatar: 'norizeek.png',
         coverImage: 'norizeek.png',
-        bio: 'young designer from sp',
         userId: '8',
         points: 93295,
       },
       {
         id: '9',
         avatar: 'SPlash.png',
-        bio: 'young designer from sp',
         userId: '9',
       },
       {
         id: '10',
-        bio: 'young designer from sp',
         userId: '10',
       },
       {
         id: '11',
         avatar: 'THUNDER_BITS.png',
-        bio: 'young designer from sp',
         userId: '11',
         points: 12,
+      },
+      {
+        id: '12',
+        avatar: 'Markul.png',
+        coverImage: 'Markul.png',
+        userId: '12',
+        bio: 'Зарегистрированный автор Markul',
+      },
+      {
+        id: '13',
+        avatar: 'Saluki.png',
+        coverImage: 'Saluki.png',
+        userId: '13',
+        bio: 'Зарегистрированный автор Saluki',
       },
     ],
   });
@@ -523,11 +535,11 @@ async function main() {
     data: [
       {
         authorId: '4',
-        userId: '8',
+        userId: '12',
       },
       {
-        authorId: '12',
-        userId: '8',
+        authorId: '3',
+        userId: '13',
       },
     ],
   });
@@ -699,6 +711,63 @@ async function main() {
         title: 'Zima Blue',
         img: '15.png',
         releaseTypeId: '3',
+      },
+    ],
+  });
+
+  await prisma.authorComment.createMany({
+    data: [
+      {
+        id: '0',
+        title:
+          'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit',
+        userId: '12',
+        releaseId: '5',
+        text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ac libero nulla. Vivamus at nibh mattis, cursus odio sed, lacinia ante. Fusce sit amet ligula a mi elementum ultrices. Nunc nulla erat, laoreet id ipsum sit amet, facilisis pharetra felis. Vestibulum ornare elementum velit, eu finibus enim auctor quis. In id lorem commodo, porttitor leo vel, ultricies mauris. Proin ac scelerisque ante. Phasellus id lorem sed urna maximus pretium ut eget eros. Aenean luctus sem ut quam maximus malesuada. Sed semper nisl in massa tempor, quis facilisis orci laoreet. Donec laoreet sit amet tortor id sodales.\n\nCurabitur consequat tellus non lacus posuere, sit amet dignissim dolor sodales. Nunc sodales elit id ante euismod, id aliquet dui interdum. Aliquam bibendum neque vel gravida consectetur. Nam vehicula convallis tortor ornare tristique. Cras lobortis ligula aliquam arcu sollicitudin vulputate. Integer nisi velit, vulputate et posuere ut, bibendum ac ante. Phasellus cursus lectus in luctus iaculis. In hac habitasse platea dictumst. Nullam eget eleifend dolor, sit amet tincidunt justo. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Fusce commodo erat feugiat mauris sodales, vel pulvinar sem pretium. Duis accumsan, dolor vel pretium tincidunt, mi purus dapibus ligula, eget facilisis augue ligula a enim. Ut tellus metus, congue non purus non, bibendum laoreet felis.',
+        createdAt: new Date(Date.now() - 1 * 3600 * 1000),
+      },
+      {
+        id: '1',
+        title: 'Sed faucibus efficitur risus et accumsan.',
+        userId: '12',
+        releaseId: '6',
+        text: 'Nam tristique massa sed mauris rhoncus vehicula eu sit amet justo. Aenean imperdiet enim convallis pretium porta. Nam vitae ligula iaculis, rutrum ante rhoncus, interdum orci. Nunc ut finibus tellus, ac mollis felis. Etiam rhoncus luctus enim quis fermentum. Donec sit amet turpis ligula. Ut tempor mauris arcu, et suscipit nulla pretium vel. Aliquam efficitur lectus nunc, non accumsan nisl pellentesque feugiat. Sed vehicula blandit justo ac ullamcorper. Phasellus ullamcorper tempus nulla ac finibus. Ut pulvinar orci et ultricies fringilla. Sed id lacus in justo elementum convallis. Donec iaculis augue vel dolor pharetra, quis aliquet ipsum egestas. Sed a finibus dui. Nunc iaculis, felis nec ullamcorper pulvinar, odio lorem placerat sapien, ac porta elit turpis at sem. Proin ultrices ullamcorper ultrices.\n\nVestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Suspendisse convallis scelerisque consequat. Pellentesque fringilla nibh vitae mauris malesuada, vel malesuada orci fringilla. Maecenas eget dui nulla. Sed vehicula a purus et elementum. Aenean auctor purus nibh, et suscipit mauris auctor eget. Aliquam non efficitur tellus. Quisque fermentum eros justo, a rutrum justo convallis ut. Duis dictum mauris id vestibulum commodo. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Curabitur ac bibendum tellus. Proin placerat urna a leo egestas, at pulvinar nisl tincidunt. In id metus sem. Curabitur ullamcorper faucibus nisl, sed tempor nulla rhoncus a.',
+        createdAt: new Date(Date.now() - 10 * 3600 * 1000),
+      },
+      {
+        id: '2',
+        title:
+          'Maecenas vitae blandit tortor. Nam sed cursus nunc, id aliquam felis.',
+        userId: '12',
+        releaseId: '8',
+        text: 'Pellentesque dapibus, enim quis tristique lobortis, orci turpis lobortis mauris, at molestie nibh massa in elit. Mauris interdum risus et imperdiet scelerisque. Nulla vitae hendrerit mi, id consequat leo. Vestibulum urna velit, lacinia lobortis facilisis eget, tincidunt ut justo. In tristique mi quis est fermentum, sed lobortis risus eleifend. Aenean eget tellus semper, iaculis metus vitae, faucibus ante. Nullam enim nibh, mattis at felis a, rhoncus accumsan mauris. Donec sit amet dignissim turpis, et egestas ex. Fusce varius tortor vel diam elementum sodales. Praesent vulputate semper dui, quis rhoncus erat porta eget. Nullam vel eros quis nibh hendrerit facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. In vel augue urna.\n\nNullam ligula diam, pulvinar nec leo non, placerat hendrerit nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Duis imperdiet dapibus vulputate. Sed ornare est elit, non consectetur arcu mollis non. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nunc sit amet est quis turpis rhoncus porttitor ac ac urna. Fusce iaculis ac tellus in consequat. Sed lobortis, neque vehicula finibus laoreet, justo arcu egestas diam, ac sollicitudin quam dui ut velit. Nam ullamcorper sodales sem id malesuada. Vivamus sed feugiat arcu. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nulla id felis id arcu faucibus elementum viverra vitae mi. Sed facilisis, nisi eu mollis placerat, dolor sapien vestibulum sapien, egestas volutpat ligula enim at elit. In porta ante et massa cursus, in porta neque bibendum. Fusce nec sodales erat.',
+        createdAt: new Date(Date.now() - 12 * 3600 * 1000),
+      },
+      {
+        id: '3',
+        title:
+          'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas',
+        userId: '12',
+        releaseId: '9',
+        text: 'Nulla at tristique turpis, ut vehicula nisi. Aenean laoreet justo pretium gravida dignissim. Pellentesque vitae ante vulputate justo mattis dignissim. Duis feugiat, velit vitae facilisis maximus, dolor metus faucibus purus, at suscipit lorem arcu in risus. Sed mollis pretium mattis. Quisque eget facilisis lorem, malesuada porta felis. Maecenas ut nulla et nisl rhoncus interdum. Fusce efficitur enim quis massa vestibulum, eget pretium ligula faucibus. Quisque sed orci eget risus bibendum tempus sit amet non est. Pellentesque vitae dictum dolor. Morbi velit libero, blandit eu consequat id, commodo porttitor ipsum. Curabitur placerat, metus consequat tristique sagittis, nulla elit accumsan libero, quis venenatis erat lectus et enim. Nam ac ornare odio. Ut dictum eu leo et finibus.\n\nSed feugiat vehicula elementum. Donec a justo sit amet risus tincidunt mollis in a nunc. Nulla elementum quam sed magna iaculis ornare. Cras eu lorem elit. In pellentesque nisl vulputate, mattis elit id, auctor lacus. Nulla vehicula iaculis euismod. Donec ante mi, lobortis a ligula vel, ullamcorper scelerisque velit. Cras porttitor odio mauris, et pulvinar est dictum at. Morbi tellus ipsum, sagittis eget est vitae, posuere imperdiet massa.',
+        createdAt: new Date(Date.now() - 15 * 3600 * 1000),
+      },
+      {
+        id: '4',
+        title: 'Aliquam tincidunt tempor felis et luctus.',
+        userId: '13',
+        releaseId: '8',
+        text: 'Maecenas vel mauris eu urna posuere imperdiet. Nulla facilisi. Donec sit amet turpis leo. Proin ut viverra leo. Sed tincidunt enim sit amet tortor iaculis, at placerat urna dignissim. Cras tristique sollicitudin molestie. Fusce elementum placerat mollis. Quisque aliquam semper mattis. Nullam sodales gravida diam sed sagittis. Praesent blandit metus ac porttitor laoreet. Cras id sem volutpat, euismod nibh id, lobortis sapien. Vestibulum fringilla, risus eget tincidunt vehicula, nibh sapien tincidunt justo, in eleifend dui ante at dolor. Aliquam tincidunt tempor felis et luctus. Nulla facilisi. Nulla tristique mauris odio, vitae egestas metus dictum ac. Phasellus iaculis mi at velit tempor, ut suscipit diam mattis.Sed non posuere mauris. Donec congue consequat nunc, sit amet interdum purus pharetra eget. Curabitur purus erat, vehicula quis pharetra id, vehicula nec lorem. Suspendisse risus metus, pulvinar at magna et, malesuada egestas velit. Mauris dictum elit magna. Maecenas eu rutrum justo, vitae accumsan ipsum. Fusce rhoncus interdum lorem sed eleifend. Vestibulum ornare sagittis feugiat. Nullam eu odio quis justo suscipit sodales nec a elit. Morbi euismod est non elit rhoncus, in malesuada ante pulvinar. Duis orci dui, bibendum eu nisl at, lobortis molestie neque.',
+        createdAt: new Date(Date.now() - 0 * 3600 * 1000),
+      },
+      {
+        id: '5',
+        title:
+          'Suspendisse consectetur volutpat orci, vel aliquam dui mattis in.',
+        userId: '13',
+        releaseId: '10',
+        text: 'Integer egestas enim eget pellentesque lobortis. Vestibulum vulputate odio velit, non rhoncus tellus vulputate a. Praesent fringilla iaculis arcu, a vulputate metus fermentum non. Sed commodo, lorem ac suscipit dapibus, sem velit eleifend sem, pulvinar laoreet urna urna at justo. Cras mi nisl, imperdiet id sollicitudin at, ornare sollicitudin dui. Fusce volutpat convallis placerat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis ac tempus quam. Suspendisse consectetur volutpat orci, vel aliquam dui mattis in. Ut sagittis congue velit a vulputate. In sed mollis tortor. Maecenas lacus elit, sollicitudin nec enim vitae, facilisis hendrerit urna. Sed id varius urna. Sed nulla tellus, malesuada vitae lacus sed, ullamcorper fermentum ipsum. Quisque tristique semper dui, sed ultrices velit euismod lacinia.\n\nVestibulum tincidunt nunc urna, nec pulvinar diam fermentum in. Fusce interdum finibus massa, nec iaculis ipsum ullamcorper eu. Etiam ornare sem sollicitudin erat porta, ac aliquam risus tempus. Quisque id dapibus dolor. Etiam vitae ex eget risus mattis ultricies. Suspendisse accumsan aliquam lacus eu lacinia. Suspendisse at dolor congue ipsum rutrum facilisis non sit amet nisl. Nullam eros ligula, luctus pharetra maximus at, egestas sed justo.',
+        createdAt: new Date(Date.now() - 2 * 3600 * 1000),
       },
     ],
   });

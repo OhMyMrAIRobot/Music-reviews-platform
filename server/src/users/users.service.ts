@@ -308,7 +308,6 @@ export class UsersService {
       throw new BadRequestException('Вы не можете редактировать свой аккаунт!');
     }
 
-    // Check permissions
     const targetUser = await this.findOne(targetId);
 
     if (targetUser.role.role === UserRoleEnum.ROOT_ADMIN) {

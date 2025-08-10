@@ -162,44 +162,43 @@ EXECUTE FUNCTION handle_fav_review_points();
 
 ---------------------------------------------------------
 -- FUNCTION TO UPDATE FAV RELEASE OR FAV AUTHOR POINTS --
-CREATE OR REPLACE FUNCTION handle_favorite_points()
+CREATE OR REPLACE FUNCTION handle_points()
     RETURNS TRIGGER AS $$
 DECLARE
-    points_change INT;
+    points_amount INT;
 BEGIN
+    -- Получаем количество очков из параметров триггера
+    points_amount := TG_ARGV[0]::INT;
+    
     IF TG_OP = 'INSERT' THEN
-        points_change := 5;
+        UPDATE "User_profiles"
+        SET points = points + points_amount
+        WHERE user_id = NEW.user_id;
     ELSIF TG_OP = 'DELETE' THEN
-        points_change := -5;
-    ELSE
-        RETURN NULL;
-    END IF;
-
-    IF points_change > 0 THEN
         UPDATE "User_profiles"
-        SET points = points + points_change
-        WHERE user_id = COALESCE(NEW.user_id, OLD.user_id);
-    ELSE
-        UPDATE "User_profiles"
-        SET points = GREATEST(points + points_change, 0)
-        WHERE user_id = COALESCE(NEW.user_id, OLD.user_id);
+        SET points = GREATEST(points - points_amount, 0)
+        WHERE user_id = OLD.user_id;
     END IF;
 
     RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;
 END;
 $$ LANGUAGE plpgsql;
 
--------------------------------------------------------------------
--- INSERT OR DELETE ON "User_fav_releases" and "User_fav_authors"--
+
+CREATE TRIGGER author_comment_points_trigger
+    AFTER INSERT OR DELETE ON "Author_comments"
+    FOR EACH ROW
+EXECUTE FUNCTION handle_points(5000);
+
 CREATE TRIGGER fav_release_points_trigger
     AFTER INSERT OR DELETE ON "User_fav_releases"
     FOR EACH ROW
-EXECUTE FUNCTION handle_favorite_points();
+EXECUTE FUNCTION handle_points(5);
 
 CREATE TRIGGER fav_author_points_trigger
     AFTER INSERT OR DELETE ON "User_fav_authors"
     FOR EACH ROW
-EXECUTE FUNCTION handle_favorite_points();
+EXECUTE FUNCTION handle_points(5);
 
 -------------------------------------------------------------------------
 -------------------------------------------------------------------------
