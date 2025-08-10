@@ -1,7 +1,7 @@
 import { FC } from 'react'
+import AuthorCommentColorSvg from '../author-comment/svg/Author-comment-color-svg'
 import Tooltip from '../tooltip/Tooltip'
 import TooltipSpan from '../tooltip/Tooltip-span'
-import WrittenCommentsSvg from './svg/Written-comments-svg'
 
 interface IProps {
 	count: number
@@ -19,7 +19,7 @@ const RegisteredAuthorWrittenComments: FC<IProps> = ({
 				spanClassName='text-white relative cursor-pointer flex items-center gap-1'
 				centered={true}
 			>
-				<WrittenCommentsSvg className={iconClassname} />
+				<AuthorCommentColorSvg className={iconClassname} />
 				<span className='font-bold text-sm'>{count}</span>
 			</TooltipSpan>
 		)

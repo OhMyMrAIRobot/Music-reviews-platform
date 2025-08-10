@@ -4,6 +4,7 @@ import AdminDashboardMediaStore from '../pages/admin-dashboard-page/store/admin-
 import AdminDashboardReleasesStore from '../pages/admin-dashboard-page/store/admin-dashboard-releases-store'
 import AdminDashboardReviewsStore from '../pages/admin-dashboard-page/store/admin-dashboard-reviews-store'
 import AdminDashboardUsersStore from '../pages/admin-dashboard-page/store/admin-dashboard-users-store'
+import AuthorCommentsPageStore from '../pages/author-comments-page/store/author-comments-page-store'
 import AuthorDetailsPageStore from '../pages/author-details-page/store/author-details-page-store'
 import AuthorsPageStore from '../pages/authors-page/store/authors-page-store'
 import LeaderboardStore from '../pages/leaderboard-page/store/leaderboard-store'
@@ -42,6 +43,7 @@ class Store {
 	adminDashboardReviewsStore = AdminDashboardReviewsStore
 	adminDashboardFeedbackStore = AdminDashboardFeedbackStore
 	adminDashboardMediaStore = AdminDashboardMediaStore
+	authorCommentsPageStore = AuthorCommentsPageStore
 }
 
 export default Store

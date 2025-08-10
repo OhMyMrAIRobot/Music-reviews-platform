@@ -16,6 +16,7 @@ export const ROUTES = {
 	PROFILE: 'profile/:id',
 	EDIT_PROFILE: 'profile/edit',
 	MEDIA_REVIEWS: 'media-reviews',
+	AUTHOR_COMMENTS: 'author-comments',
 	AUTH: {
 		PREFIX: 'auth',
 		LOGIN: 'login',

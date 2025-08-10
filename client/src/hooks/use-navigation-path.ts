@@ -22,6 +22,8 @@ const useNavigationPath = () => {
 
 	const navigateToMediaReviews = `/${ROUTES.MEDIA_REVIEWS}`
 
+	const navigateToAuthorComments = `/${ROUTES.AUTHOR_COMMENTS}`
+
 	const navigateToLeaderboard = `/${ROUTES.LEADERBOARD}`
 
 	const navigateToRatings = `/${ROUTES.RATINGS}`
@@ -75,6 +77,7 @@ const useNavigationPath = () => {
 		navigateToAdminFeedback,
 		navigateToAdminMedia,
 		navigateToMediaReviews,
+		navigateToAuthorComments,
 	}
 }
 

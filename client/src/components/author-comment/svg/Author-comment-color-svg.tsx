@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { ISvgProps } from '../../../models/svg/svg-props'
 
-const WrittenCommentsSvg: FC<ISvgProps> = ({ className }) => {
+const AuthorCommentColorSvg: FC<ISvgProps> = ({ className }) => {
 	return (
 		<svg
 			xmlns='http://www.w3.org/2000/svg'
@@ -53,4 +53,4 @@ const WrittenCommentsSvg: FC<ISvgProps> = ({ className }) => {
 	)
 }
 
-export default WrittenCommentsSvg
+export default AuthorCommentColorSvg

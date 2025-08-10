@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useRef, useState } from 'react'
+import AuthorCommentColorSvg from '../../../../components/author-comment/svg/Author-comment-color-svg'
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
-import WrittenCommentsSvg from '../../../../components/registered-author/svg/Written-comments-svg'
 import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
 import { CarouselRef } from '../../../../types/carousel-ref'
@@ -27,7 +27,7 @@ const AuthorComments = observer(() => {
 		<CarouselContainer
 			title={
 				<div className='flex items-center gap-x-2'>
-					<WrittenCommentsSvg className='size-8' />
+					<AuthorCommentColorSvg className='size-8' />
 					Авторские комментарии
 				</div>
 			}
