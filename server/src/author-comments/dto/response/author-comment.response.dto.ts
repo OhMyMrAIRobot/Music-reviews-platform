@@ -11,6 +11,7 @@ export class AuthorCommentResponseDto {
   avatar: string;
   totalComments: number;
   releaseId: string;
+  releaseTitle: string;
   releaseImg: string;
   points: number;
   position: number | null;

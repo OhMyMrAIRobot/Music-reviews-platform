@@ -11,7 +11,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.interface';
+import { UserRoleEnum } from 'src/roles/types/user-role.enum';
+import { Roles } from 'src/shared/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/shared/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/shared/guards/roles.guard';
 import { AuthorCommentsService } from './author-comments.service';
 import { FindAuthorCommentsByReleaseIdParams } from './dto/params/find-author-comments-by-release-id-params.dto';
 import { FindAuthorCommentsQuery } from './dto/query/find-author-comments.query.dto';
@@ -48,12 +51,29 @@ export class AuthorCommentsController {
     @Body() dto: UpdateAuthorCommentRequestDto,
     @Request() req: IAuthenticatedRequest,
   ) {
-    return this.authorCommentsService.update(id, req.user.id, dto);
+    return this.authorCommentsService.update(id, dto, req.user.id);
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   delete(@Param('id') id: string, @Request() req: IAuthenticatedRequest) {
     return this.authorCommentsService.delete(id, req.user.id);
+  }
+
+  @Patch('admin/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  adminUpdate(
+    @Param('id') id: string,
+    @Body() dto: UpdateAuthorCommentRequestDto,
+  ) {
+    return this.authorCommentsService.update(id, dto);
+  }
+
+  @Delete('admin/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  adminDelete(@Param('id') id: string) {
+    return this.authorCommentsService.delete(id);
   }
 }

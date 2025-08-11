@@ -61,18 +61,20 @@ export class AuthorCommentsService {
 
   async update(
     id: string,
-    userId: string,
     dto: UpdateAuthorCommentRequestDto,
+    userId?: string,
   ): Promise<AuthorCommentResponseDto> {
     const comment = await this.findOne(id);
-    if (userId !== comment.userId) {
+    if (userId && userId !== comment.userId) {
       throw new InsufficientPermissionsException();
     }
 
-    await this.registeredAuthorsService.checkUserIsReleaseAuthor(
-      userId,
-      comment.releaseId,
-    );
+    if (userId) {
+      await this.registeredAuthorsService.checkUserIsReleaseAuthor(
+        userId,
+        comment.releaseId,
+      );
+    }
 
     const updated = await this.prisma.authorComment.update({
       where: { id },
@@ -81,15 +83,19 @@ export class AuthorCommentsService {
     return this.getCommentDto(updated.id);
   }
 
-  async delete(id: string, userId: string) {
+  async delete(id: string, userId?: string) {
     const comment = await this.findOne(id);
-    if (userId !== comment.userId) {
+    if (userId && userId !== comment.userId) {
       throw new InsufficientPermissionsException();
     }
-    await this.registeredAuthorsService.checkUserIsReleaseAuthor(
-      userId,
-      comment.releaseId,
-    );
+
+    if (userId) {
+      await this.registeredAuthorsService.checkUserIsReleaseAuthor(
+        userId,
+        comment.releaseId,
+      );
+    }
+
     return this.prisma.authorComment.delete({
       where: { id },
     });
@@ -118,16 +124,43 @@ export class AuthorCommentsService {
   async findAll(
     query: FindAuthorCommentsQuery,
   ): Promise<FindAuthorCommentsResponseDto> {
-    const { limit, offset = 0, order = 'DESC' } = query;
+    const { limit, offset = 0, order = 'DESC', query: searchQuery } = query;
+
+    const searchCondition = searchQuery
+      ? `WHERE (
+         ac.title ILIKE '%${searchQuery}%' OR 
+         ac.text ILIKE '%${searchQuery}%' OR 
+         u.nickname ILIKE '%${searchQuery}%' OR 
+         r.title ILIKE '%${searchQuery}%'
+       )`
+      : '';
 
     const rawQuery = `
     ${this.baseQuery}
+    ${searchCondition}
     ORDER BY ac.created_at ${order}, ac.id DESC
     ${limit !== undefined ? `LIMIT ${limit}` : ''} OFFSET ${offset}
   `;
 
     const [count, comments] = await Promise.all([
-      this.prisma.authorComment.count(),
+      this.prisma.authorComment.count({
+        where: {
+          OR: [
+            { title: { contains: searchQuery, mode: 'insensitive' } },
+            { text: { contains: searchQuery, mode: 'insensitive' } },
+            {
+              user: {
+                nickname: { contains: searchQuery, mode: 'insensitive' },
+              },
+            },
+            {
+              release: {
+                title: { contains: searchQuery, mode: 'insensitive' },
+              },
+            },
+          ],
+        },
+      }),
       this.prisma.$queryRawUnsafe<AuthorCommentResponseDto[]>(rawQuery),
     ]);
 
@@ -177,6 +210,7 @@ export class AuthorCommentsService {
       up.points,
       ac.release_id as "releaseId",
       r.img as "releaseImg",
+      r.title as "releaseTitle",
       tul.rank AS position,
       COALESCE((
         SELECT types FROM user_author_types WHERE user_id = u.id

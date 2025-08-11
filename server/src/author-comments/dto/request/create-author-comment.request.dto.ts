@@ -4,7 +4,7 @@ import { IsEntityId } from 'src/shared/decorators/is-entity-id.decorator';
 export class CreateAuthorCommentRequestDto {
   @IsString({ message: 'Поле title должно быть строкой!' })
   @Length(5, 100, {
-    message: 'Заголовок комментария должна быть от 10 до 100 символов!',
+    message: 'Заголовок комментария должна быть от 5 до 100 символов!',
   })
   title: string;
 
