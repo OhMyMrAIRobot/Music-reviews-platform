@@ -109,7 +109,12 @@ class MainPageStore {
 
 	fetchAuthorComments = async () => {
 		try {
-			const data = await AuthorCommentAPI.fetchAll(15, 0, 'desc')
+			const data = await AuthorCommentAPI.fetchAll(
+				15,
+				0,
+				SortOrderEnum.DESC,
+				null
+			)
 			this.setAuthorComments(data.comments)
 		} catch {
 			this.setAuthorComments([])

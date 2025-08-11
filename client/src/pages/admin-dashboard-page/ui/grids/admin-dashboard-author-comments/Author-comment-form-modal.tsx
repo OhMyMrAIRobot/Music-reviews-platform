@@ -6,47 +6,53 @@ import FormTextbox from '../../../../../components/form-elements/Form-textbox'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay'
 import { useLoading } from '../../../../../hooks/use-loading'
 import { useStore } from '../../../../../hooks/use-store'
-import { IAdminReview } from '../../../../../models/review/admin-reviews-response'
+import { IAuthorComment } from '../../../../../models/author-comment/author-comment'
 
 interface IProps {
 	isOpen: boolean
 	onClose: () => void
-	review: IAdminReview
+	comment: IAuthorComment
 }
 
-const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
-	const { adminDashboardReviewsStore, notificationStore } = useStore()
+const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
+	const { adminDashboardAuthorCommentsStore, notificationStore } = useStore()
 
-	const { execute: updateReview, isLoading } = useLoading(
-		adminDashboardReviewsStore.updateReview
+	const { execute: update, isLoading } = useLoading(
+		adminDashboardAuthorCommentsStore.updateComment
 	)
 
-	const [title, setTitle] = useState<string>(review.title)
-	const [text, setText] = useState<string>(review.text)
+	const [title, setTitle] = useState<string>(comment.title)
+	const [text, setText] = useState<string>(comment.text)
 
 	useEffect(() => {
-		setTitle(review.title)
-		setText(review.text)
-	}, [review])
+		setTitle(comment.title)
+		setText(comment.text)
+	}, [comment])
 
 	const hasChanges = useMemo(() => {
-		return title !== review.title || text !== review.text
-	}, [title, text, review.title, review.text])
+		return title !== comment.title || text !== comment.text
+	}, [title, comment.title, comment.text, text])
 
-	const textAndTitleTogether = useMemo(() => {
+	const isFormValid = useMemo(() => {
 		return (
-			(text.trim() !== '' && title.trim() !== '') ||
-			(text.trim() === '' && title.trim() === '')
+			text.trim().length >= 300 &&
+			title.trim().length >= 5 &&
+			title.trim().length <= 100
 		)
 	}, [text, title])
 
-	const handleSubmit = async () => {
-		const errors = await updateReview(review.user.id, review.id, {
-			title: title.trim() !== '' ? title.trim() : undefined,
-			text: text.trim() !== '' ? text.trim() : undefined,
-		})
+	const updateComment = async () => {
+		if (!isFormValid) return
+
+		const errors = await update(
+			comment.id,
+			title.trim() !== '' ? title.trim() : undefined,
+			text.trim() !== '' ? text.trim() : undefined
+		)
 		if (errors.length === 0) {
-			notificationStore.addSuccessNotification('Рецензия успешно обновлена!')
+			notificationStore.addSuccessNotification(
+				'Авторский комментарий успешно обновлен!'
+			)
 			onClose()
 		} else {
 			errors.forEach(error => {
@@ -62,18 +68,18 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
 			>
 				<div className='grid gap-6'>
 					<h1 className='border-b border-white/10 text-3xl font-bold py-4 text-center'>
-						Редактирование рецензии
+						Редактирование авторского комментария
 					</h1>
 
 					<div className='grid gap-2'>
 						<FormLabel
 							name={'Заголовок'}
-							htmlFor={'review-title-input'}
+							htmlFor={'comment-title-input'}
 							isRequired={false}
 						/>
 						<FormInput
-							id={'review-title-input'}
-							placeholder={'Заголовок рецензии...'}
+							id={'comment-title-input'}
+							placeholder={'Заголовок...'}
 							type={'text'}
 							value={title}
 							setValue={setTitle}
@@ -82,13 +88,13 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
 
 					<div className='grid gap-2'>
 						<FormLabel
-							name={'Текст рецензии'}
-							htmlFor={'review-text-input'}
+							name={'Комментарий'}
+							htmlFor={'comment-text-input'}
 							isRequired={false}
 						/>
 						<FormTextbox
-							id={'review-text-input'}
-							placeholder={'Текст рецензии...'}
+							id={'comment-text-input'}
+							placeholder={'Комментарий...'}
 							value={text}
 							setValue={setText}
 							className='h-60'
@@ -100,8 +106,8 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
 							<FormButton
 								title={'Сохранить'}
 								isInvert={true}
-								onClick={handleSubmit}
-								disabled={!hasChanges || !textAndTitleTogether || isLoading}
+								onClick={updateComment}
+								disabled={!hasChanges || isLoading || !isFormValid}
 								isLoading={isLoading}
 							/>
 						</div>
@@ -121,4 +127,4 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
 	)
 }
 
-export default ReviewFormModal
+export default AuthorCommentFormModal

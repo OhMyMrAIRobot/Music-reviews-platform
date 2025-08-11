@@ -12,6 +12,7 @@ export interface IAuthorComment {
 	totalComments: number
 	points: number
 	releaseId: string
+	releaseTitle: string
 	releaseImg: string
 	position: number | null
 }

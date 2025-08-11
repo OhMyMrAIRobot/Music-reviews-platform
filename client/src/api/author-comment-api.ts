@@ -38,12 +38,14 @@ export const AuthorCommentAPI = {
 	async fetchAll(
 		limit: number | null,
 		offset: number | null,
-		order: SortOrder | null
+		order: SortOrder | null,
+		query: string | null
 	): Promise<IAuthorCommentsResponse> {
 		const { data } = await _api.get<IAuthorCommentsResponse>(`?
 			${limit !== null ? `limit=${limit}&` : ''}
 			${offset !== null ? `offset=${offset}&` : ''}	
 			${order !== null ? `order=${order}&` : ''}	
+			${query !== null ? `query=${query}&` : ''}	
 		`)
 
 		return data
@@ -64,5 +66,25 @@ export const AuthorCommentAPI = {
 
 	async delete(id: string) {
 		return api.delete(`author-comments/${id}`)
+	},
+
+	async adminUpdate(
+		id: string,
+		title?: string,
+		text?: string
+	): Promise<IAuthorComment> {
+		const { data } = await api.patch<IAuthorComment>(
+			`author-comments/admin/${id}`,
+			{
+				title,
+				text,
+			}
+		)
+
+		return data
+	},
+
+	async adminDelete(id: string) {
+		return api.delete(`author-comments/admin/${id}`)
 	},
 }

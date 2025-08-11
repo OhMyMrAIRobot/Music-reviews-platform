@@ -1,6 +1,7 @@
 import { useActivePath } from '../../hooks/use-active-path'
 import useNavigationPath from '../../hooks/use-navigation-path'
 import { ROUTES } from '../../routes/routes-enum'
+import AuthorCommentSvg from '../author-comment/svg/Author-comment-svg'
 import LogoutSvg from '../header/svg/Logout-svg'
 import ProfileSvg from '../header/svg/Profile-svg'
 import TextReviewSvg from '../review/svg/Text-review-svg'
@@ -21,6 +22,7 @@ const AdminSidebar = () => {
 		navigateToAdminReviews,
 		navigateToAdminFeedback,
 		navigateToAdminMedia,
+		navigateToAdminAuthorComments,
 	} = useNavigationPath()
 
 	const { isActive } = useActivePath()
@@ -57,6 +59,14 @@ const AdminSidebar = () => {
 			svgIcon: <MediaPlayerSvg className={'size-5'} />,
 		},
 		{
+			title: 'Комментарии авторов',
+			isActive: isActive(
+				`/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.AUTHOR_COMMENTS}`
+			),
+			href: navigateToAdminAuthorComments,
+			svgIcon: <AuthorCommentSvg className={'size-5'} />,
+		},
+		{
 			title: 'Сообщения',
 			isActive: isActive(`/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.FEEDBACK}`),
 			href: navigateToAdminFeedback,
@@ -65,7 +75,7 @@ const AdminSidebar = () => {
 	]
 
 	return (
-		<div className='fixed flex flex-col px-2 gap-1.5 inset-0 w-14 lg:w-50 border-r border-white/15 bg-zinc-950 pt-3 pb-5'>
+		<div className='fixed flex flex-col px-2 gap-1.5 inset-0 w-14 lg:w-55 border-r border-white/15 bg-zinc-950 pt-3 pb-5'>
 			<span className='w-full pb-2 lg:pb-4 flex justify-center'>
 				<LogoFullSvg className={'w-4/5 hidden lg:block'} />
 				<LogoSmallSvg className={'w-4/5 lg:hidden'} />

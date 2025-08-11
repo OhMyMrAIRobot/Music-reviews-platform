@@ -25,7 +25,7 @@ class AuthorCommentsPageStore {
 		order: SortOrder
 	) => {
 		try {
-			const data = await AuthorCommentAPI.fetchAll(limit, offset, order)
+			const data = await AuthorCommentAPI.fetchAll(limit, offset, order, null)
 			this.setAuthorComments(data.comments)
 			this.setCount(data.count)
 		} catch {

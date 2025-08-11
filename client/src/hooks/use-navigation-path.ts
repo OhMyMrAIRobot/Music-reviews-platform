@@ -44,6 +44,8 @@ const useNavigationPath = () => {
 
 	const navigateToAdminMedia = `/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.MEDIA}`
 
+	const navigateToAdminAuthorComments = `/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.AUTHOR_COMMENTS}`
+
 	const navigateToReleaseDetails = (id: string) =>
 		`/${ROUTES.RELEASE_DETAILS_PREFIX}/${id}`
 
@@ -81,6 +83,7 @@ const useNavigationPath = () => {
 		navigateToMediaReviews,
 		navigateToAuthorComments,
 		navigateToRegisteredAuthors,
+		navigateToAdminAuthorComments,
 	}
 }
 
