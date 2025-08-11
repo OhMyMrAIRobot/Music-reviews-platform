@@ -10,6 +10,7 @@ model Author {
   releaseDesigner  ReleaseDesigner[]
   userFavAuthor    UserFavAuthor[]
   registeredAuthor RegisteredAuthor[]
+  authorRequest    AuthorRequest[]
 
   @@map("Authors")
 }
@@ -60,4 +61,28 @@ model AuthorComment {
 
   @@unique([userId, releaseId])
   @@map("Author_comments")
+}
+
+model AuthorRequest {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  authorId     String   @map("author_id")
+  statusId     String
+  confirmation String   @db.VarChar(300)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  user   User                @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  author Author              @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  status AuthorRequestStatus @relation(fields: [statusId], references: [id], onUpdate: Cascade, onDelete: Restrict)
+
+  @@map("Author_requests")
+}
+
+model AuthorRequestStatus {
+  id     String @id @default(cuid())
+  status String @unique @db.VarChar(30)
+
+  authorRequest AuthorRequest[]
+
+  @@map("Author_request_statuses")
 }

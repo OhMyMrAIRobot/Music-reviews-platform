@@ -27,6 +27,7 @@ import { UserFavReviewsModule } from './user-fav-reviews/user-fav-reviews.module
 import { UsersModule } from './users/users.module';
 import { RegisteredAuthorsModule } from './registered-authors/registered-authors.module';
 import { AuthorCommentsModule } from './author-comments/author-comments.module';
+import { AuthorRequestStatusesModule } from './author-request-statuses/author-request-statuses.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { AuthorCommentsModule } from './author-comments/author-comments.module';
     ProfileSocialMediaModule,
     RegisteredAuthorsModule,
     AuthorCommentsModule,
+    AuthorRequestStatusesModule,
   ],
   controllers: [],
   providers: [],

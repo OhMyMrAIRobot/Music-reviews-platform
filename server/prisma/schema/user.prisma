@@ -21,6 +21,7 @@ model User {
   userFavMedia        UserFavMedia[]
   authorComment       AuthorComment[]
   registeredAuthor    RegisteredAuthor[]
+  authorRequest       AuthorRequest[]
 
   @@map("Users")
 }
