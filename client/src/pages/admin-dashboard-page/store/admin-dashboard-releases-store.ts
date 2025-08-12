@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
+import { AuthorAPI } from '../../../api/author-api'
 import { ReleaseAPI } from '../../../api/release-api'
+import { IAdminAuthor } from '../../../models/author/admin-authors-response'
 import {
 	IAdminRelease,
 	IAdminReleasesResponse,
@@ -15,11 +17,17 @@ class AdminDashboardReleasesStore {
 	count: number = 0
 	releases: IAdminRelease[] = []
 
+	authors: IAdminAuthor[] = []
+
 	setReleases(data: IAdminReleasesResponse) {
 		runInAction(() => {
 			this.count = data.count
 			this.releases = data.releases
 		})
+	}
+
+	setAuthors(data: IAdminAuthor[]) {
+		this.authors = data
 	}
 
 	fetchReleases = async (
@@ -40,6 +48,15 @@ class AdminDashboardReleasesStore {
 			this.setReleases(data)
 		} catch (e) {
 			console.log(e)
+		}
+	}
+
+	fetchAuthors = async (query: string | null, limit: number | null) => {
+		try {
+			const data = await AuthorAPI.adminFetchAuthors(null, query, limit, 0)
+			this.setAuthors(data.authors)
+		} catch {
+			this.setAuthors([])
 		}
 	}
 

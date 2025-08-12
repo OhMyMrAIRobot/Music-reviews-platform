@@ -35,7 +35,7 @@ export const AuthorAPI = {
 		userId: string | null
 	): Promise<IAuthorsResponse> {
 		const { data } = await _api.get<IAuthorsResponse>(
-			`/?
+			`/public?
 			${typeId !== null ? `typeId=${typeId}&` : ''}
 			${query !== null ? `query=${query}&` : ''}
 			${limit !== null ? `limit=${limit}&` : ''}
@@ -53,8 +53,8 @@ export const AuthorAPI = {
 		limit: number | null,
 		offset: number | null
 	): Promise<IAdminAuthorsResponse> {
-		const { data } = await api.get<IAdminAuthorsResponse>(
-			`/authors/admin?
+		const { data } = await _api.get<IAdminAuthorsResponse>(
+			`/?
 			${typeId !== null ? `typeId=${typeId}&` : ''}
 			${query !== null ? `query=${query}&` : ''}
 			${limit !== null ? `limit=${limit}&` : ''}
