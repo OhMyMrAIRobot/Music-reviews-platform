@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { AuthorConfirmationStatusesEnum } from '../src/author-confirmation-statuses/types/author-confirmation-statuses.enum';
 import { AuthorTypesEnum } from '../src/author-types/entities/author-types.enum';
 import { FeedbackStatusesEnum } from '../src/feedback-statuses/types/feedback-statuses.enum';
 import { ReleaseMediaStatusesEnum } from '../src/release-media-statuses/types/release-media-statuses.enum';
@@ -37,6 +38,8 @@ async function main() {
   await prisma.topUsersLeaderboard.deleteMany();
   await prisma.releaseMediaStatus.deleteMany();
   await prisma.releaseMediaType.deleteMany();
+  await prisma.authorConfirmationStatus.deleteMany();
+  await prisma.authorConfirmation.deleteMany();
 
   const password = await bcrypt.hash('1234567', 10);
 
@@ -166,6 +169,23 @@ async function main() {
         password,
         isActive: true,
         roleId: '1',
+      },
+    ],
+  });
+
+  await prisma.authorConfirmationStatus.createMany({
+    data: [
+      {
+        id: '0',
+        status: AuthorConfirmationStatusesEnum.APPROVED,
+      },
+      {
+        id: '1',
+        status: AuthorConfirmationStatusesEnum.PENDING,
+      },
+      {
+        id: '2',
+        status: AuthorConfirmationStatusesEnum.REJECTED,
       },
     ],
   });
@@ -1846,6 +1866,7 @@ main()
     console.error(e);
     process.exit(1);
   })
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   .finally(async () => {
     await prisma.$disconnect();
   });

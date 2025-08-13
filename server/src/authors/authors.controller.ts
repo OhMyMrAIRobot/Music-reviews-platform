@@ -27,6 +27,11 @@ export class AuthorsController {
   constructor(private readonly authorsService: AuthorsService) {}
 
   @Get()
+  findAll(@Query() query: FindAuthorsQuery) {
+    return this.authorsService.findAll(query);
+  }
+
+  @Get('public')
   findAuthors(@Query() query: FindAuthorsQuery) {
     return this.authorsService.findAuthors(query);
   }
@@ -58,13 +63,6 @@ export class AuthorsController {
       files?.avatarImg?.[0],
       files?.coverImg?.[0],
     );
-  }
-
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
-  @Get('admin')
-  findAll(@Query() query: FindAuthorsQuery) {
-    return this.authorsService.findAll(query);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

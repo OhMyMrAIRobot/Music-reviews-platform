@@ -4,13 +4,13 @@ model Author {
   avatarImg String @default("") @map("avatar_img") @db.VarChar(255)
   coverImg  String @default("") @map("cover_img") @db.VarChar(255)
 
-  types            AuthorOnType[]
-  releaseProducer  ReleaseProducer[]
-  releaseArtist    ReleaseArtist[]
-  releaseDesigner  ReleaseDesigner[]
-  userFavAuthor    UserFavAuthor[]
-  registeredAuthor RegisteredAuthor[]
-  authorRequest    AuthorRequest[]
+  types              AuthorOnType[]
+  releaseProducer    ReleaseProducer[]
+  releaseArtist      ReleaseArtist[]
+  releaseDesigner    ReleaseDesigner[]
+  userFavAuthor      UserFavAuthor[]
+  registeredAuthor   RegisteredAuthor[]
+  authorConfirmation AuthorConfirmation[]
 
   @@map("Authors")
 }
@@ -63,7 +63,7 @@ model AuthorComment {
   @@map("Author_comments")
 }
 
-model AuthorRequest {
+model AuthorConfirmation {
   id           String   @id @default(cuid())
   userId       String   @map("user_id")
   authorId     String   @map("author_id")
@@ -71,18 +71,19 @@ model AuthorRequest {
   confirmation String   @db.VarChar(300)
   createdAt    DateTime @default(now()) @map("created_at")
 
-  user   User                @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  author Author              @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  status AuthorRequestStatus @relation(fields: [statusId], references: [id], onUpdate: Cascade, onDelete: Restrict)
+  user   User                     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  author Author                   @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  status AuthorConfirmationStatus @relation(fields: [statusId], references: [id], onUpdate: Cascade, onDelete: Restrict)
 
-  @@map("Author_requests")
+  @@unique([authorId, userId])
+  @@map("Author_confirmations")
 }
 
-model AuthorRequestStatus {
+model AuthorConfirmationStatus {
   id     String @id @default(cuid())
   status String @unique @db.VarChar(30)
 
-  authorRequest AuthorRequest[]
+  authorConfirmation AuthorConfirmation[]
 
-  @@map("Author_request_statuses")
+  @@map("Author_confirmation_statuses")
 }
