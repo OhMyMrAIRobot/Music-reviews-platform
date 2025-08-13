@@ -32,6 +32,7 @@ export const useSidebarGroups = () => {
 		navigateToMediaReviews,
 		navigateToAuthorComments,
 		navigateToRegisteredAuthors,
+		navigateToAuthorConfirmation,
 	} = useNavigationPath()
 
 	const { isActive } = useActivePath()
@@ -54,6 +55,12 @@ export const useSidebarGroups = () => {
 			icon: <AboutSvg className='size-6 fill-white' />,
 			label: 'О нас',
 			active: isActive('456'),
+		},
+		{
+			href: navigateToAuthorConfirmation,
+			icon: <ActivationSvg className='size-5' />,
+			label: 'Стать автором',
+			active: isActive(`/${ROUTES.AUTHOR_CONFIRMATION}`),
 		},
 	]
 
