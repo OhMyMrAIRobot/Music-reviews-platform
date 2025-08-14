@@ -26,6 +26,8 @@ const useNavigationPath = () => {
 
 	const navigateToAuthorComments = `/${ROUTES.AUTHOR_COMMENTS}`
 
+	const navigateToAuthorLikes = `/${ROUTES.AUTHOR_LIKES}`
+
 	const navigateToLeaderboard = `/${ROUTES.LEADERBOARD}`
 
 	const navigateToRatings = `/${ROUTES.RATINGS}`
@@ -87,6 +89,7 @@ const useNavigationPath = () => {
 		navigateToRegisteredAuthors,
 		navigateToAdminAuthorComments,
 		navigateToAuthorConfirmation,
+		navigateToAuthorLikes,
 	}
 }
 

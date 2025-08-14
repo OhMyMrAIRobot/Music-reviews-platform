@@ -3,12 +3,15 @@ import { useEffect, useRef, useState } from 'react'
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
 import AuthorLikeColorSvg from '../../../../components/registered-author/svg/Author-like-color-svg'
 import { useLoading } from '../../../../hooks/use-loading'
+import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
 import { CarouselRef } from '../../../../types/carousel-ref'
 import AuthorLikesCarousel from './carousel/Author-likes-carousel'
 
 const AuthorLikes = observer(() => {
 	const { mainPageStore } = useStore()
+
+	const { navigateToAuthorLikes } = useNavigationPath()
 
 	const { execute: fetch, isLoading } = useLoading(
 		mainPageStore.fetchAuthorLikes
@@ -34,7 +37,7 @@ const AuthorLikes = observer(() => {
 			}
 			buttonTitle={'Все авторские лайки'}
 			showButton={true}
-			href={'#'}
+			href={navigateToAuthorLikes}
 			handlePrev={() => carouselRef.current?.scrollPrev()}
 			handleNext={() => carouselRef.current?.scrollNext()}
 			carousel={

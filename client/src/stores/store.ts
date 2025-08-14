@@ -8,6 +8,7 @@ import AdminDashboardUsersStore from '../pages/admin-dashboard-page/store/admin-
 import AuthorCommentsPageStore from '../pages/author-comments-page/store/author-comments-page-store'
 import AuthorConfirmationPageStore from '../pages/author-confirmation-page/store/author-confirmation-page-store'
 import AuthorDetailsPageStore from '../pages/author-details-page/store/author-details-page-store'
+import AuthorLikesPageStore from '../pages/author-likes-page/store/author-likes-page-store'
 import AuthorsPageStore from '../pages/authors-page/store/authors-page-store'
 import LeaderboardStore from '../pages/leaderboard-page/store/leaderboard-store'
 import MainPageStore from '../pages/main-page/store/main-page-store'
@@ -40,13 +41,14 @@ class Store {
 	profilePageStore = ProfilePageStore
 	mediaReviewPageStore = MediaReviewsPageStore
 	authorConfirmationPageStore = AuthorConfirmationPageStore
+	authorCommentsPageStore = AuthorCommentsPageStore
+	authorLikesPageStore = AuthorLikesPageStore
 	adminDashboardUsersStore = AdminDashboardUsersStore
 	adminDashboardAuthorsStore = AdminDashboardAuthorsStore
 	adminDashboardReleasesStore = AdminDashboardReleasesStore
 	adminDashboardReviewsStore = AdminDashboardReviewsStore
 	adminDashboardFeedbackStore = AdminDashboardFeedbackStore
 	adminDashboardMediaStore = AdminDashboardMediaStore
-	authorCommentsPageStore = AuthorCommentsPageStore
 	adminDashboardAuthorCommentsStore = AdminDashboardAuthorCommentsStore
 }
 

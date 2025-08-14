@@ -1,6 +1,7 @@
 import { Route } from 'react-router'
 import AuthorCommentsPage from '../pages/author-comments-page/Author-comments-page'
 import AuthorDetailsPage from '../pages/author-details-page/Author-details-page'
+import AuthorLikesPage from '../pages/author-likes-page/Author-likes-page'
 import AuthorsPage from '../pages/authors-page/Authors-page'
 import FeedbackPage from '../pages/feedback-page/Feedback-page'
 import LeaderboardPage from '../pages/leaderboard-page/Leaderboard-page'
@@ -39,6 +40,7 @@ const GlobalRouteList = () => {
 			<Route path={ROUTES.RATINGS} element={<ReleasesRatingPage />} />,
 			<Route path={ROUTES.MEDIA_REVIEWS} element={<MediaReviewsPage />} />,
 			<Route path={ROUTES.AUTHOR_COMMENTS} element={<AuthorCommentsPage />} />,
+			<Route path={ROUTES.AUTHOR_LIKES} element={<AuthorLikesPage />} />,
 			<Route path={ROUTES.NOT_DEFINED} element={<MainPage />} />,
 		</>
 	)

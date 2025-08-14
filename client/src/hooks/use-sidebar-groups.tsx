@@ -1,4 +1,5 @@
 import AuthorCommentSvg from '../components/author-comment/svg/Author-comment-svg'
+import AuthorLikeSvg from '../components/registered-author/svg/Author-like-svg'
 import RegisteredAuthorSvg from '../components/registered-author/svg/Registered-author-svg'
 import TextReviewSvg from '../components/review/svg/Text-review-svg'
 import { ISidebarItemProps } from '../components/sidebar/Sidebar-item'
@@ -33,6 +34,7 @@ export const useSidebarGroups = () => {
 		navigateToAuthorComments,
 		navigateToRegisteredAuthors,
 		navigateToAuthorConfirmation,
+		navigateToAuthorLikes,
 	} = useNavigationPath()
 
 	const { isActive } = useActivePath()
@@ -58,7 +60,7 @@ export const useSidebarGroups = () => {
 		},
 		{
 			href: navigateToAuthorConfirmation,
-			icon: <ActivationSvg className='size-5' />,
+			icon: <ActivationSvg className='size-5.5' />,
 			label: 'Стать автором',
 			active: isActive(`/${ROUTES.AUTHOR_CONFIRMATION}`),
 		},
@@ -80,6 +82,12 @@ export const useSidebarGroups = () => {
 	]
 
 	const sidebarThirdGroup: ISidebarItemProps[] = [
+		{
+			href: navigateToAuthorLikes,
+			icon: <AuthorLikeSvg className='size-5' />,
+			label: 'Авторские лайки',
+			active: isActive(`/${ROUTES.AUTHOR_LIKES}`),
+		},
 		{
 			href: navigateToAuthorComments,
 			icon: <AuthorCommentSvg className='size-5' />,
@@ -130,7 +138,7 @@ export const useSidebarGroups = () => {
 	if (authStore.isAuth && !authStore.user?.isActive) {
 		sidebarFourthGroup.push({
 			href: navigateToActivation,
-			icon: <ActivationSvg className='size-5' />,
+			icon: <ActivationSvg className='size-5.5' />,
 			label: 'Активация',
 			active: isActive(`/${ROUTES.AUTH.PREFIX}/${ROUTES.AUTH.ACTIVATE}`),
 		})
