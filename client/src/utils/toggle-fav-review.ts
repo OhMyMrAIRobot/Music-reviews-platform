@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { runInAction } from 'mobx'
 import { UserFavReviewAPI } from '../api/user-fav-review-api'
-import { IFavReview } from '../models/review/fav-review'
+import { IAuthorFavReview } from '../models/review/author-fav-review'
+import { IUserFavReview } from '../models/review/user-fav-review'
 
 interface IReview {
-	userFavReview: IFavReview[]
+	userFavReview: IUserFavReview[]
+	authorFavReview: IAuthorFavReview[]
 	favCount: number
 	[key: string]: any
 }
@@ -27,8 +29,9 @@ export const toggleFavReview = async (
 
 		if (idx !== -1) {
 			runInAction(() => {
-				items[idx].userFavReview = newLikes
-				items[idx].favCount = newLikes.length
+				items[idx].userFavReview = newLikes.userFavReview
+				items[idx].authorFavReview = newLikes.authorFavReview
+				items[idx].favCount = newLikes.userFavReview.length
 			})
 		}
 

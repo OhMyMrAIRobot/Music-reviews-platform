@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { IUserFavByMediaIdResponse } from '../models/release-media/user-fav-by-media-id-response'
 import { IUserFavMedia } from '../models/release-media/user-fav-media'
 import { api } from './api-instance'
 
@@ -19,9 +20,9 @@ export const UserFavMediaAPI = {
 		return data
 	},
 
-	async fetchFavByMediaId(mediaId: string): Promise<IUserFavMedia[]> {
-		const { data } = await axios.get<IUserFavMedia[]>(
-			`${SERVER_URL}/user-fav-media/media/${mediaId}`
+	async fetchFavByMediaId(mediaId: string): Promise<IUserFavByMediaIdResponse> {
+		const { data } = await axios.get<IUserFavByMediaIdResponse>(
+			`${SERVER_URL}/user-fav-media/${mediaId}`
 		)
 
 		return data

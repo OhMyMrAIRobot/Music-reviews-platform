@@ -10,6 +10,7 @@ export interface IAuthorComment {
 	nickname: string
 	avatar: string
 	totalComments: number
+	totalAuthorLikes: number
 	points: number
 	releaseId: string
 	releaseTitle: string

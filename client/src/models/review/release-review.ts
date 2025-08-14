@@ -1,4 +1,5 @@
-import { IFavReview } from './fav-review'
+import { IAuthorFavReview } from './author-fav-review'
+import { IUserFavReview } from './user-fav-review'
 
 export interface IReleaseReviewResponse {
 	count: number
@@ -22,5 +23,6 @@ export interface IReleaseReview {
 	points: number
 	position: number | null
 	favCount: number
-	userFavReview: IFavReview[]
+	userFavReview: IUserFavReview[]
+	authorFavReview: IAuthorFavReview[]
 }

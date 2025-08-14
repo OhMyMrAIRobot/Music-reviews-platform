@@ -2,6 +2,7 @@ import { FC } from 'react'
 import { Link } from 'react-router'
 import useNavigationPath from '../../hooks/use-navigation-path'
 import { IAuthorComment } from '../../models/author-comment/author-comment'
+import RegisteredAuthorGivenLikes from '../registered-author/Registered-author-given-likes'
 import RegisteredAuthorTypes from '../registered-author/Registered-author-types'
 import RegisteredAuthorWrittenComments from '../registered-author/Registered-author-written-comments'
 import ReviewAuthor from '../review/review-card/Review-author'
@@ -38,6 +39,10 @@ const AuthorCommentHeader: FC<IProps> = ({ comment, showRelease = false }) => {
 					<RegisteredAuthorTypes
 						className={'size-5'}
 						types={comment.authorTypes}
+					/>
+					<RegisteredAuthorGivenLikes
+						count={comment.totalAuthorLikes}
+						iconClassname='size-5'
 					/>
 					<RegisteredAuthorWrittenComments
 						count={comment.totalComments}

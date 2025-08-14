@@ -21,7 +21,8 @@ export const toggleFavMedia = async (
 
 		if (idx !== -1) {
 			runInAction(() => {
-				items[idx].userFavMedia = newLikes
+				items[idx].userFavMedia = newLikes.userFavMedia
+				items[idx].authorFavMedia = newLikes.authorFavMedia
 			})
 		}
 

@@ -142,6 +142,7 @@ const ReleaseMediaReview: FC<IProps> = observer(
 						isLiked={isFav}
 						likesCount={media.userFavMedia.length}
 						toggleFavReview={handleClickFav}
+						authorLikes={media.authorFavMedia}
 					/>
 
 					<div className='flex items-center gap-x-0.5'>

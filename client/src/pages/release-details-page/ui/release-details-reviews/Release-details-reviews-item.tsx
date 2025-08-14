@@ -99,6 +99,7 @@ const ReleaseDetailsReviewsItem: FC<IProps> = observer(
 								isLiked={isFav}
 								likesCount={review.favCount}
 								toggleFavReview={toggleFavReview}
+								authorLikes={review.authorFavReview}
 							/>
 						</div>
 					</div>

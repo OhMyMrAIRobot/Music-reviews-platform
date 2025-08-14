@@ -1,4 +1,4 @@
-export interface IFavReview {
+export interface IUserFavReview {
 	userId: string
 	reviewId: string
 }
