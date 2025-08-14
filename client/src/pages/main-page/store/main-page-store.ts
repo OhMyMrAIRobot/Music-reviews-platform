@@ -3,7 +3,9 @@ import { AuthorCommentAPI } from '../../../api/author-comment-api.ts'
 import { ReleaseAPI } from '../../../api/release-api'
 import { ReleaseMediaAPI } from '../../../api/release-media-api.ts'
 import { ReviewAPI } from '../../../api/review-api'
+import { UserFavReviewAPI } from '../../../api/user-fav-review-api.ts'
 import { IAuthorComment } from '../../../models/author-comment/author-comment.ts'
+import { IAuthorLike } from '../../../models/author-likes/author-like.ts'
 import { IReleaseMedia } from '../../../models/release-media/release-media.ts'
 import { IRelease } from '../../../models/release/release'
 import { IReview } from '../../../models/review/review.ts'
@@ -21,6 +23,7 @@ class MainPageStore {
 	lastReviews: IReview[] = []
 	releaseMedia: IReleaseMedia[] = []
 	authorComments: IAuthorComment[] = []
+	authorLikes: IAuthorLike[] = []
 
 	setMostReviewedReleases(data: IRelease[]) {
 		this.mostReviewedReleases = data
@@ -40,6 +43,10 @@ class MainPageStore {
 
 	setAuthorComments(data: IAuthorComment[]) {
 		this.authorComments = data
+	}
+
+	setAuthorLikes(data: IAuthorLike[]) {
+		this.authorLikes = data
 	}
 
 	fetchTopReleases = async () => {
@@ -118,6 +125,15 @@ class MainPageStore {
 			this.setAuthorComments(data.comments)
 		} catch {
 			this.setAuthorComments([])
+		}
+	}
+
+	fetchAuthorLikes = async () => {
+		try {
+			const data = await UserFavReviewAPI.fetchAuthorLikes(20, 0)
+			this.setAuthorLikes(data.items)
+		} catch {
+			this.setAuthorLikes([])
 		}
 	}
 
