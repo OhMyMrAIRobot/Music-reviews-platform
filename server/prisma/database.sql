@@ -361,9 +361,65 @@ SELECT
         ELSE json_agg(DISTINCT jsonb_build_object(
                 'total', rr.total,
                 'type', rrt.type
-    ))
+        ))
     END as ratings,
-    COUNT(rev.id) AS "totalCount"
+    COUNT(rev.id) AS "totalCount",
+    EXISTS (
+        SELECT 1
+        FROM "Author_comments" ac
+            JOIN "Registered_authors" ra ON ra.user_id = ac.user_id
+        WHERE ac.release_id = r.id
+            AND ra.author_id IN (
+                SELECT rp.author_id
+                FROM "Release_producers" rp
+                WHERE rp.release_id = r.id
+                UNION
+                SELECT ar.author_id
+                FROM "Release_artists" ar
+                WHERE ar.release_id = r.id
+                UNION
+                SELECT rd.author_id
+                FROM "Release_designers" rd
+                WHERE rd.release_id = r.id
+            )
+    ) AS "hasAuthorComments",
+    (
+        EXISTS (
+            SELECT 1
+            FROM "User_fav_reviews" ufr
+                JOIN "Reviews" r2 ON r2.id = ufr.review_id
+                JOIN "Registered_authors" ra2 ON ra2.user_id = ufr.user_id
+            WHERE r2.release_id = r.id
+              AND ra2.author_id IN (
+                SELECT rp.author_id
+                FROM "Release_producers" rp
+                WHERE rp.release_id = r.id
+                UNION
+                SELECT ar.author_id
+                FROM "Release_artists" ar
+                WHERE ar.release_id = r.id
+                UNION
+                SELECT rd.author_id
+                FROM "Release_designers" rd
+                WHERE rd.release_id = r.id
+            )
+        )
+        OR
+        EXISTS (
+            SELECT 1
+            FROM "User_fav_media" ufm
+                JOIN "Release_media" rm ON rm.id = ufm.media_id
+                JOIN "Registered_authors" ra3 ON ra3.user_id = ufm.user_id
+            WHERE rm.release_id = r.id
+              AND ra3.author_id IN (
+                SELECT rp.author_id FROM "Release_producers" rp WHERE rp.release_id = r.id
+                UNION
+                SELECT ar.author_id FROM "Release_artists" ar WHERE ar.release_id = r.id
+                UNION
+                SELECT rd.author_id FROM "Release_designers" rd WHERE rd.release_id = r.id
+            )
+        )
+    ) AS "hasAuthorLikes"
 FROM "Releases" r
          LEFT JOIN "Release_artists" ra ON r.id = ra.release_id
          LEFT JOIN "Authors" a ON ra.author_id = a.id
