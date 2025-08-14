@@ -1,4 +1,3 @@
-// review-query.dto.ts
 import { Type } from 'class-transformer';
 import { IsIn, IsInt, IsOptional } from 'class-validator';
 import { ReviewSortFieldsEnum } from 'src/reviews/types/review-sort-fields.enum';

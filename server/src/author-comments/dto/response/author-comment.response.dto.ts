@@ -10,6 +10,7 @@ export class AuthorCommentResponseDto {
   nickname: string;
   avatar: string;
   totalComments: number;
+  totalAuthorLikes: number;
   releaseId: string;
   releaseTitle: string;
   releaseImg: string;

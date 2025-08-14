@@ -23,4 +23,10 @@ export class ReviewQueryDataDto {
   releaseId: string;
   favCount: number;
   userFavReview: { userId: string; reviewId: string }[];
+  authorFavReview: {
+    userId: string;
+    avatar: string;
+    nickname: string;
+    reviewId: string;
+  }[];
 }

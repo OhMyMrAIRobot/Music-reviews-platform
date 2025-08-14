@@ -15,12 +15,7 @@ import { UserFavReviewsService } from './user-fav-reviews.service';
 export class UserFavReviewsController {
   constructor(private readonly userFavReviewsService: UserFavReviewsService) {}
 
-  @Get('user/:userId')
-  findByUserId(@Param('userId') userId: string) {
-    return this.userFavReviewsService.findByUserId(userId);
-  }
-
-  @Get('review/:reviewId')
+  @Get(':reviewId')
   findByReviewId(@Param('reviewId') reviewId: string) {
     return this.userFavReviewsService.findByReviewId(reviewId);
   }

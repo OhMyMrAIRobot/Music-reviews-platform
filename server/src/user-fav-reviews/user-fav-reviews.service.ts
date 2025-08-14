@@ -1,8 +1,11 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { UserFavReview } from '@prisma/client';
+import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
 import { ReviewsService } from 'src/reviews/reviews.service';
+import { EntityNotFoundException } from 'src/shared/exceptions/entity-not-found.exception';
 import { UsersService } from 'src/users/users.service';
+import { FindUserFavByReviewIdResponseDto } from './dto/response/find-user-fav-by-review-id.response.dto';
 
 @Injectable()
 export class UserFavReviewsService {
@@ -34,23 +37,52 @@ export class UserFavReviewsService {
     });
   }
 
-  async findByUserId(userId: string): Promise<UserFavReview[]> {
-    await this.usersService.findOne(userId);
-
-    return this.prisma.userFavReview.findMany({
-      where: { userId },
+  async findByReviewId(
+    reviewId: string,
+  ): Promise<FindUserFavByReviewIdResponseDto> {
+    const reviewWithRelease = await this.prisma.review.findUnique({
+      where: { id: reviewId },
+      select: {
+        id: true,
+        release: {
+          select: {
+            releaseProducer: { select: { authorId: true } },
+            releaseArtist: { select: { authorId: true } },
+            releaseDesigner: { select: { authorId: true } },
+          },
+        },
+      },
     });
-  }
 
-  async findByReviewId(reviewId: string): Promise<UserFavReview[]> {
-    await this.reviewsService.findOne(reviewId);
+    if (!reviewWithRelease) {
+      throw new EntityNotFoundException('Рецензия', 'id', reviewId);
+    }
 
-    return this.prisma.userFavReview.findMany({
+    const favs = await this.prisma.userFavReview.findMany({
       where: { reviewId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            nickname: true,
+            profile: { select: { avatar: true } },
+            registeredAuthor: { select: { authorId: true } },
+          },
+        },
+      },
     });
+
+    return plainToInstance(
+      FindUserFavByReviewIdResponseDto,
+      {
+        userFavReview: favs,
+        review: { release: reviewWithRelease.release },
+      },
+      { excludeExtraneousValues: true },
+    );
   }
 
-  async remove(reviewId: string, userId: string): Promise<UserFavReview> {
+  async remove(reviewId: string, userId: string) {
     await this.reviewsService.findOne(reviewId);
     await this.usersService.findOne(userId);
 

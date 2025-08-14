@@ -77,12 +77,37 @@ export class ReleaseMediaService {
         releaseMediaStatus: true,
         releaseMediaType: true,
         user: {
-          select: { id: true, nickname: true },
+          select: {
+            id: true,
+            nickname: true,
+            profile: { select: { avatar: true, points: true } },
+            topUsersLeaderboard: { select: { rank: true } },
+          },
         },
         release: {
-          select: { id: true, title: true, img: true },
+          select: {
+            id: true,
+            title: true,
+            img: true,
+            releaseProducer: { select: { authorId: true } },
+            releaseArtist: { select: { authorId: true } },
+            releaseDesigner: { select: { authorId: true } },
+          },
         },
-        userFavMedia: true,
+        userFavMedia: {
+          select: {
+            userId: true,
+            mediaId: true,
+            user: {
+              select: {
+                id: true,
+                nickname: true,
+                profile: { select: { avatar: true } },
+                registeredAuthor: { select: { authorId: true } },
+              },
+            },
+          },
+        },
         review: {
           select: {
             total: true,
@@ -194,9 +219,29 @@ export class ReleaseMediaService {
             },
           },
           release: {
-            select: { id: true, title: true, img: true },
+            select: {
+              id: true,
+              title: true,
+              img: true,
+              releaseProducer: { select: { authorId: true } },
+              releaseArtist: { select: { authorId: true } },
+              releaseDesigner: { select: { authorId: true } },
+            },
           },
-          userFavMedia: true,
+          userFavMedia: {
+            select: {
+              userId: true,
+              mediaId: true,
+              user: {
+                select: {
+                  id: true,
+                  nickname: true,
+                  profile: { select: { avatar: true } },
+                  registeredAuthor: { select: { authorId: true } },
+                },
+              },
+            },
+          },
           review: {
             select: {
               total: true,
@@ -229,12 +274,37 @@ export class ReleaseMediaService {
         releaseMediaStatus: true,
         releaseMediaType: true,
         user: {
-          select: { id: true, nickname: true },
+          select: {
+            id: true,
+            nickname: true,
+            profile: { select: { avatar: true, points: true } },
+            topUsersLeaderboard: { select: { rank: true } },
+          },
         },
         release: {
-          select: { id: true, title: true, img: true },
+          select: {
+            id: true,
+            title: true,
+            img: true,
+            releaseProducer: { select: { authorId: true } },
+            releaseArtist: { select: { authorId: true } },
+            releaseDesigner: { select: { authorId: true } },
+          },
         },
-        userFavMedia: true,
+        userFavMedia: {
+          select: {
+            userId: true,
+            mediaId: true,
+            user: {
+              select: {
+                id: true,
+                nickname: true,
+                profile: { select: { avatar: true } },
+                registeredAuthor: { select: { authorId: true } },
+              },
+            },
+          },
+        },
         review: {
           select: {
             total: true,
@@ -315,12 +385,37 @@ export class ReleaseMediaService {
         releaseMediaStatus: true,
         releaseMediaType: true,
         user: {
-          select: { id: true, nickname: true },
+          select: {
+            id: true,
+            nickname: true,
+            profile: { select: { avatar: true, points: true } },
+            topUsersLeaderboard: { select: { rank: true } },
+          },
         },
         release: {
-          select: { id: true, title: true, img: true },
+          select: {
+            id: true,
+            title: true,
+            img: true,
+            releaseProducer: { select: { authorId: true } },
+            releaseArtist: { select: { authorId: true } },
+            releaseDesigner: { select: { authorId: true } },
+          },
         },
-        userFavMedia: true,
+        userFavMedia: {
+          select: {
+            userId: true,
+            mediaId: true,
+            user: {
+              select: {
+                id: true,
+                nickname: true,
+                profile: { select: { avatar: true } },
+                registeredAuthor: { select: { authorId: true } },
+              },
+            },
+          },
+        },
         review: {
           select: {
             total: true,

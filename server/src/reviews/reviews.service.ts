@@ -214,38 +214,76 @@ export class ReviewsService {
 
     const rawQuery = `
         SELECT
-          r.id,
-          r.rhymes,
-          r.structure,
-          r.realization,
-          r.individuality,
-          r.atmosphere,
-          r.total,
-          r.title,
-          r.text,
-          (
-              SELECT TO_CHAR(r.created_at, 'DD-MM-YYYY') AS "createdAt"
-          ),
-          u.id AS "userId",
-          u.nickname,
-          up.avatar,
-          up.points,
-          tul.rank AS position,
-          COUNT(DISTINCT ufr.user_id)::INT as "favCount",
-          CASE 
-            WHEN count(ufr.user_id) = 0 THEN '[]'::json 
-            ELSE JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
-                'userId', ufr.user_id,
-                'reviewId', ufr.review_id
-            )) 
-          END as "userFavReview"
+            r.id,
+            r.rhymes,
+            r.structure,
+            r.realization,
+            r.individuality,
+            r.atmosphere,
+            r.total,
+            r.title,
+            r.text,
+            (
+                SELECT TO_CHAR(r.created_at, 'DD-MM-YYYY') AS "createdAt"
+            ),
+            u.id AS "userId",
+            u.nickname,
+            up.avatar,
+            up.points,
+            tul.rank AS position,
+            COUNT(DISTINCT ufr.user_id)::INT AS "favCount",
+            CASE
+                WHEN COUNT(ufr.user_id) = 0 THEN '[]'::json
+                ELSE JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
+                        'userId', ufr.user_id,
+                        'reviewId', ufr.review_id
+                ))
+                END AS "userFavReview",
+            CASE
+                WHEN COUNT(ufr.user_id) FILTER (
+                    WHERE EXISTS (
+                        SELECT 1
+                        FROM "Registered_authors" ra
+                        WHERE ra.user_id = ufr.user_id
+                          AND ra.author_id IN (
+                            SELECT rp.author_id FROM "Release_producers" rp WHERE rp.release_id = r.release_id
+                            UNION
+                            SELECT ra2.author_id FROM "Release_artists" ra2 WHERE ra2.release_id = r.release_id
+                            UNION
+                            SELECT rd.author_id FROM "Release_designers" rd WHERE rd.release_id = r.release_id
+                        )
+                    )
+                    ) = 0 THEN '[]'::json
+                ELSE JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
+                        'userId', ufr.user_id,
+                        'reviewId', ufr.review_id,
+                        'nickname', u2.nickname,
+                        'avatar', COALESCE(up2.avatar, '')
+                    )) FILTER (
+                        WHERE EXISTS (
+                        SELECT 1
+                        FROM "Registered_authors" ra
+                        WHERE ra.user_id = ufr.user_id
+                          AND ra.author_id IN (
+                            SELECT rp.author_id FROM "Release_producers" rp WHERE rp.release_id = r.release_id
+                            UNION
+                            SELECT ra2.author_id FROM "Release_artists" ra2 WHERE ra2.release_id = r.release_id
+                            UNION
+                            SELECT rd.author_id FROM "Release_designers" rd WHERE rd.release_id = r.release_id
+                        )
+                ))
+                END AS "authorFavReview"
         FROM "Reviews" r
-        LEFT JOIN "Users" u on r.user_id = u.id
-        LEFT JOIN "User_profiles" up on u.id = up.user_id
-        LEFT JOIN "Top_users_leaderboard" tul ON up.user_id = tul.user_id
-        LEFT JOIN "User_fav_reviews" ufr on r.id = ufr.review_id
+                LEFT JOIN "Users" u ON r.user_id = u.id
+                LEFT JOIN "User_profiles" up ON u.id = up.user_id
+                LEFT JOIN "Top_users_leaderboard" tul ON up.user_id = tul.user_id
+                LEFT JOIN "User_fav_reviews" ufr ON r.id = ufr.review_id
+                LEFT JOIN "Users" u2 ON u2.id = ufr.user_id
+                LEFT JOIN "User_profiles" up2 ON up2.user_id = u2.id
         WHERE r.release_id = '${releaseId}'
-        GROUP BY r.id, r.rhymes, r.structure, r.realization, r.individuality, r.atmosphere, r.total, r.title, r.text, u.id, u.nickname, up.avatar, tul.rank, r.created_at, up.points
+        GROUP BY
+            r.id, r.rhymes, r.structure, r.realization, r.individuality, r.atmosphere, r.total, r.title, r.text,
+            u.id, u.nickname, up.avatar, tul.rank, r.created_at, up.points
         ORDER BY ${field} ${order}, r.id ASC
         ${limit !== undefined ? `LIMIT ${limit}` : ''}
         OFFSET ${offset}`;
@@ -309,13 +347,56 @@ export class ReviewsService {
                   'userId', ufr.user_id,
                   'reviewId', ufr.review_id
               )) FILTER (WHERE ufr.user_id IS NOT NULL)
-          END AS "userFavReview"
+          END AS "userFavReview",
+          CASE
+              WHEN COUNT(ufr.user_id) FILTER (
+                  WHERE EXISTS (
+                      SELECT 1
+                      FROM "Registered_authors" ra
+                      WHERE ra.user_id = ufr.user_id
+                        AND ra.author_id IN (
+                          SELECT rp.author_id FROM "Release_producers" rp
+                          WHERE rp.release_id = rev.release_id
+                          UNION
+                          SELECT ra2.author_id FROM "Release_artists" ra2
+                          WHERE ra2.release_id = rev.release_id
+                          UNION
+                          SELECT rd.author_id FROM "Release_designers" rd
+                          WHERE rd.release_id = rev.release_id
+                      )
+                  )
+                  ) = 0 THEN '[]'::json
+              ELSE JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
+                      'userId', ufr.user_id,
+                      'reviewId', ufr.review_id,
+                      'nickname', u2.nickname,
+                      'avatar', up2.avatar
+                  )) FILTER (
+                      WHERE EXISTS (
+                          SELECT 1
+                          FROM "Registered_authors" ra
+                          WHERE ra.user_id = ufr.user_id
+                            AND ra.author_id IN (
+                              SELECT rp.author_id FROM "Release_producers" rp
+                              WHERE rp.release_id = rev.release_id
+                              UNION
+                              SELECT ra2.author_id FROM "Release_artists" ra2
+                              WHERE ra2.release_id = rev.release_id
+                              UNION
+                              SELECT rd.author_id FROM "Release_designers" rd
+                              WHERE rd.release_id = rev.release_id
+                          )
+                      )
+                  )
+          END AS "authorFavReview"
       FROM "Reviews" rev
               LEFT JOIN "Users" u ON rev.user_id = u.id
               LEFT JOIN "User_profiles" p ON u.id = p.user_id
               LEFT JOIN "Top_users_leaderboard" tul ON p.user_id = tul.user_id
               LEFT JOIN "Releases" r ON rev.release_id = r.id
               LEFT JOIN "User_fav_reviews" ufr ON rev.id = ufr.review_id
+              LEFT JOIN "Users" u2 ON u2.id = ufr.user_id
+              LEFT JOIN "User_profiles" up2 ON up2.user_id = u2.id
       WHERE rev.id IN (SELECT id FROM filtered_reviews)
       GROUP BY
           rev.id, rev.title, rev.text, rev.total, rev.rhymes, rev.structure, rev.realization,
@@ -371,7 +452,48 @@ export class ReviewsService {
                   'userId', ufr.user_id,
                   'reviewId', ufr.review_id
             )) 
-          END AS "userFavReview"
+          END AS "userFavReview",
+          CASE
+            WHEN COUNT(ufr.user_id) FILTER (
+                WHERE EXISTS (
+                    SELECT 1
+                    FROM "Registered_authors" ra
+                    WHERE ra.user_id = ufr.user_id
+                      AND ra.author_id IN (
+                        SELECT rp.author_id FROM "Release_producers" rp
+                        WHERE rp.release_id = rev.release_id
+                        UNION
+                        SELECT ra2.author_id FROM "Release_artists" ra2
+                        WHERE ra2.release_id = rev.release_id
+                        UNION
+                        SELECT rd.author_id FROM "Release_designers" rd
+                        WHERE rd.release_id = rev.release_id
+                    )
+                )
+                ) = 0 THEN '[]'::json
+            ELSE JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
+                    'userId', ufr.user_id,
+                    'reviewId', ufr.review_id,
+                    'nickname', u2.nickname,
+                    'avatar', up2.avatar
+                                  )) FILTER (
+                    WHERE EXISTS (
+                    SELECT 1
+                    FROM "Registered_authors" ra
+                    WHERE ra.user_id = ufr.user_id
+                      AND ra.author_id IN (
+                        SELECT rp.author_id FROM "Release_producers" rp
+                        WHERE rp.release_id = rev.release_id
+                        UNION
+                        SELECT ra2.author_id FROM "Release_artists" ra2
+                        WHERE ra2.release_id = rev.release_id
+                        UNION
+                        SELECT rd.author_id FROM "Release_designers" rd
+                        WHERE rd.release_id = rev.release_id
+                    )
+                )
+            )
+          END AS "authorFavReview"
       FROM "Reviews" rev
               LEFT JOIN "Users" u ON rev.user_id = u.id
               LEFT JOIN "User_profiles" p ON u.id = p.user_id
@@ -379,6 +501,8 @@ export class ReviewsService {
               LEFT JOIN "Releases" r ON rev.release_id = r.id
               LEFT JOIN "User_fav_reviews" ufr ON rev.id = ufr.review_id
               JOIN author_releases ar ON r.id = ar.release_id
+              LEFT JOIN "Users" u2 ON u2.id = ufr.user_id
+              LEFT JOIN "User_profiles" up2 ON up2.user_id = u2.id
       WHERE rev.text IS NOT NULL AND rev.title IS NOT NULL
       GROUP BY
           rev.id, rev.title, rev.text, rev.total, rev.rhymes, rev.structure, rev.realization,

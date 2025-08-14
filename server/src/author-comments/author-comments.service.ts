@@ -183,44 +183,66 @@ export class AuthorCommentsService {
 
   private baseQuery = `
       WITH user_author_types AS (
-      SELECT
-        ra.user_id,
-        json_agg(DISTINCT jsonb_build_object('id', at.id, 'type', at.type)) AS types
-      FROM "Registered_authors" ra
-      JOIN "Authors_on_types" aot ON aot.author_id = ra.author_id
-      JOIN "Author_types" at ON at.id = aot.author_type_id
-      GROUP BY ra.user_id
-    ),
-    user_comments_count AS (
-      SELECT
-        user_id,
-        COUNT(*)::int AS total_comments
-      FROM "Author_comments"
-      GROUP BY user_id
-    )
+          SELECT
+              ra.user_id,
+              json_agg(DISTINCT jsonb_build_object('id', at.id, 'type', at.type)) AS types
+          FROM "Registered_authors" ra
+                  JOIN "Authors_on_types" aot ON aot.author_id = ra.author_id
+                  JOIN "Author_types" at ON at.id = aot.author_type_id
+          GROUP BY ra.user_id
+      ),
+          user_comments_count AS (
+              SELECT
+                  user_id,
+                  COUNT(*)::int AS total_comments
+              FROM "Author_comments"
+              GROUP BY user_id
+          ),
+          user_author_like_count AS (
+              SELECT
+                  ufr.user_id,
+                  COUNT(*)::int AS total_author_likes
+              FROM "User_fav_reviews" ufr
+                        JOIN "Reviews" rv ON rv.id = ufr.review_id
+              WHERE EXISTS (
+                  SELECT 1
+                  FROM "Registered_authors" ra
+                  WHERE ra.user_id = ufr.user_id
+                    AND ra.author_id IN (
+                      SELECT rp.author_id FROM "Release_producers" rp WHERE rp.release_id = rv.release_id
+                      UNION
+                      SELECT ra2.author_id FROM "Release_artists" ra2 WHERE ra2.release_id = rv.release_id
+                      UNION
+                      SELECT rd.author_id FROM "Release_designers" rd WHERE rd.release_id = rv.release_id
+                  )
+              )
+              GROUP BY ufr.user_id
+          )
 
-    SELECT
-      ac.id,
-      ac.title,
-      ac.text,
-      TO_CHAR(ac.created_at, 'DD-MM-YYYY') AS "createdAt",
-      u.id AS "userId",
-      u.nickname,
-      up.avatar,
-      up.points,
-      ac.release_id as "releaseId",
-      r.img as "releaseImg",
-      r.title as "releaseTitle",
-      tul.rank AS position,
-      COALESCE((
-        SELECT types FROM user_author_types WHERE user_id = u.id
-      ), '[]'::json) AS "authorTypes",
-      COALESCE(ucc.total_comments, 0) AS "totalComments"
-    FROM "Author_comments" ac
-      JOIN "Users" u ON u.id = ac.user_id
-      LEFT JOIN "User_profiles" up ON up.user_id = u.id
-      LEFT JOIN user_comments_count ucc ON ucc.user_id = u.id
-      JOIN "Releases" r on ac.release_id = r.id
-      LEFT JOIN "Top_users_leaderboard" tul ON u.id = tul.user_id
+      SELECT
+          ac.id,
+          ac.title,
+          ac.text,
+          TO_CHAR(ac.created_at, 'DD-MM-YYYY') AS "createdAt",
+          u.id AS "userId",
+          u.nickname,
+          up.avatar,
+          up.points,
+          ac.release_id as "releaseId",
+          r.img as "releaseImg",
+          r.title as "releaseTitle",
+          tul.rank AS position,
+          COALESCE((
+                      SELECT types FROM user_author_types WHERE user_id = u.id
+                  ), '[]'::json) AS "authorTypes",
+          COALESCE(ucc.total_comments, 0) AS "totalComments",
+          COALESCE(ualc.total_author_likes, 0) AS "totalAuthorLikes"
+      FROM "Author_comments" ac
+          JOIN "Users" u ON u.id = ac.user_id
+          LEFT JOIN "User_profiles" up ON up.user_id = u.id
+          LEFT JOIN user_comments_count ucc ON ucc.user_id = u.id
+          JOIN "Releases" r on ac.release_id = r.id
+          LEFT JOIN "Top_users_leaderboard" tul ON u.id = tul.user_id
+          LEFT JOIN user_author_like_count ualc ON ualc.user_id = u.id
     `;
 }
