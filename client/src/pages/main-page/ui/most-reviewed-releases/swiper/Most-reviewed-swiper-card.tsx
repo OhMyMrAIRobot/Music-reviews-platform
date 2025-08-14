@@ -1,5 +1,7 @@
 import { FC } from 'react'
 import { Link } from 'react-router'
+import AuthorCommentColorSvg from '../../../../../components/author-comment/svg/Author-comment-color-svg'
+import AuthorLikeColorSvg from '../../../../../components/registered-author/svg/Author-like-color-svg'
 import ReleaseAuthors from '../../../../../components/release/Release-authors'
 import ReleaseRatings from '../../../../../components/release/Release-ratings'
 import ReleaseTypeIcon from '../../../../../components/release/Release-type-icon'
@@ -17,9 +19,9 @@ const MostReviewedCarouselCard: FC<IProps> = ({ release, index }) => {
 
 	return (
 		release && (
-			<div className='w-full max-w-[300px] lg:max-w-[350px] flex flex-col items-center shadow-2xl select-none border border-white/10 bg-black/40 rounded-[30px] lg:rounded-[40px] p-[15px] overflow-hidden h-[85%]'>
+			<div className='w-full max-w-[300px] lg:max-w-[350px] flex flex-col items-center shadow-2xl select-none border border-white/10 bg-black/40 rounded-[30px] lg:rounded-[40px] p-[15px] h-[85%]'>
 				{/* COVER */}
-				<div className='flex flex-col items-center gap-2 relative '>
+				<div className='flex flex-col items-center gap-2 relative w-full'>
 					<span className='font-semibold absolute left-3 top-3 lg:left-4 lg:top-4 bg-black/10 text-white backdrop-blur-md text-[12px] lg:text-[13px] h-7 rounded-full px-3 flex items-center'>
 						Топ-{index + 1} за сутки
 					</span>
@@ -44,7 +46,7 @@ const MostReviewedCarouselCard: FC<IProps> = ({ release, index }) => {
 				</div>
 
 				{/* TITLE, AUTHORS, MARKS */}
-				<div className='flex justify-between w-full items-center gap-5 mt-2 '>
+				<div className='flex justify-between w-full items-center gap-5 mt-2'>
 					<div className='w-full'>
 						<span className='text-left lg:text-xl font-medium block'>
 							{release.title}
@@ -64,6 +66,36 @@ const MostReviewedCarouselCard: FC<IProps> = ({ release, index }) => {
 						/>
 					</div>
 				</div>
+
+				{release.hasAuthorComments && (
+					<div className='bg-zinc-900/60 hover:bg-zinc-800/60 transition-all duration-500 px-4 py-2 2xl:py-3 border border-opacity-[2%] rounded-[15px] group relative overflow-hidden w-full mt-4'>
+						<div className='h-[1px] w-[93px] top-0 right-3 absolute bg-gradient-to-r from-white/0 via-white/35 to-white/0' />
+						<div className='h-[30px] w-[1px] top-3 right-0 absolute bg-gradient-to-b from-white/0 via-white/25 to-white/0' />
+						<div className='absolute h-[130%] w-[130%] bg-gradient-to-bl from-blue-700 opacity-20 z-0 to-50% group-hover:scale-[120%] origin-top-right transition-all duration-500 right-0 top-0' />
+
+						<div className='flex items-center justify-between w-full'>
+							<span className='leading-5 font-semibold text-xs lg:text-sm'>
+								Автор прокомментировал релиз
+							</span>
+							<AuthorCommentColorSvg className='size-5 lg:size-7' />
+						</div>
+					</div>
+				)}
+
+				{release.hasAuthorLikes && (
+					<div className='bg-zinc-900/60 hover:bg-zinc-800/60 transition-all duration-500 px-4 py-2 2xl:py-3 border border-opacity-[2%] rounded-[15px] group relative overflow-hidden mt-2 w-full'>
+						<div className='h-[1px] w-[93px] top-0 right-3 absolute bg-gradient-to-r from-white/0 via-white/35 to-white/0' />
+						<div className='h-[30px] w-[1px] top-3 right-0 absolute bg-gradient-to-b from-white/0 via-white/25 to-white/0' />
+						<div className='absolute h-[130%] w-[130%] bg-gradient-to-bl from-[#FD322B] opacity-20 z-0 to-50% group-hover:scale-[120%] origin-top-right transition-all duration-500 right-0 top-0' />
+
+						<div className='flex items-center justify-between w-full'>
+							<span className='leading-5 font-semibold text-xs lg:text-sm'>
+								Автор поставил лайки на рецензии
+							</span>
+							<AuthorLikeColorSvg className='size-5 lg:size-7' />
+						</div>
+					</div>
+				)}
 
 				<div className='mt-auto flex items-center justify-between w-full h-10 2xl:h-11'>
 					<Link

@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import useNavigationPath from '../../hooks/use-navigation-path'
 import { IRelease } from '../../models/release/release'
 import SkeletonLoader from '../utils/Skeleton-loader'
+import ReleaseAuthorActions from './Release-author-actions'
 import ReleaseAuthors from './Release-authors'
 import ReleaseRatings from './Release-ratings'
 import ReleaseReviewsCount from './Release-reviews-count'
@@ -20,7 +21,7 @@ const ReleaseCard: FC<IProps> = ({ release, isLoading }) => {
 		<SkeletonLoader className='w-full h-full rounded-xl' />
 	) : (
 		release && (
-			<div className='bg-zinc-900 hover:bg-white/10 p-1 overflow-hidden flex flex-col justify-start relative w-full h-full rounded-xl border border-zinc-800 duration-300'>
+			<div className='bg-zinc-900 hover:bg-white/10 p-1 flex flex-col justify-start relative w-full h-full rounded-xl border border-zinc-800 duration-300'>
 				<Link
 					to={navigateToReleaseDetails(release.id)}
 					className='relative block aspect-square'
@@ -61,6 +62,12 @@ const ReleaseCard: FC<IProps> = ({ release, isLoading }) => {
 				<ReleaseAuthors
 					authors={release.authors}
 					className='text-[13px] font-medium mt-2 leading-3'
+				/>
+
+				<ReleaseAuthorActions
+					hasAuthorComments={release.hasAuthorComments}
+					hasAuthorLikes={release.hasAuthorLikes}
+					className='mt-2'
 				/>
 
 				<div className='flex items-center px-1 pb-1 gap-1 text-white mt-auto pt-5'>
