@@ -1,6 +1,7 @@
 import { FC } from 'react'
 import { Link } from 'react-router'
 import AuthorCommentColorSvg from '../../../../../components/author-comment/svg/Author-comment-color-svg'
+import AuthorLikeColorSvg from '../../../../../components/registered-author/svg/Author-like-color-svg'
 import NoTextReviewSvg from '../../../../../components/review/svg/No-text-review-svg'
 import TextReviewSvg from '../../../../../components/review/svg/Text-review-svg'
 import PixelHeartFillSvg from '../../../../../components/svg/Pixel-heart-fill-svg'
@@ -87,6 +88,11 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
 						value={profile.authorCommentsCount}
 						icon={<AuthorCommentColorSvg className={'size-5'} />}
 					/>
+					<ProfileStatsRow
+						title={'Поставлено авторских лайков'}
+						value={profile.givenAuthorLikes}
+						icon={<AuthorLikeColorSvg className={'size-5'} />}
+					/>
 				</div>
 			)}
 
@@ -115,14 +121,19 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
 
 			<div>
 				<ProfileStatsRow
+					title={'Получено авторских лайков'}
+					value={profile.receivedLikes}
+					icon={<AuthorLikeColorSvg className={'size-5'} />}
+				/>
+				<ProfileStatsRow
 					title={'Получено лайков'}
 					value={profile.receivedLikes}
-					icon={<PixelHeartSvg className={'size-[19px]'} />}
+					icon={<PixelHeartSvg className={'w-5 h-4.5'} />}
 				/>
 				<ProfileStatsRow
 					title={'Поставлено лайков'}
 					value={profile.givenLikes}
-					icon={<PixelHeartFillSvg className={'size-[19px]'} />}
+					icon={<PixelHeartFillSvg className={'w-5 h-4.5'} />}
 				/>
 			</div>
 		</div>

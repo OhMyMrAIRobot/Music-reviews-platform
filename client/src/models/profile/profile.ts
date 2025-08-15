@@ -18,4 +18,6 @@ export interface IProfile {
 	isAuthor: boolean
 	authorTypes: IAuthorType[]
 	authorCommentsCount: number
+	receivedAuthorLikes: number
+	givenAuthorLikes: number
 }
