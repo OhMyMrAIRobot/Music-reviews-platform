@@ -2,6 +2,8 @@ import { FC } from 'react'
 import { ISvgProps } from '../../../models/svg/svg-props'
 
 const AuthorLikeColorSvg: FC<ISvgProps> = ({ className }) => {
+	const gradientId = `paint0_linear_${Math.random().toString(36).substr(2, 9)}`
+
 	return (
 		<svg
 			xmlns='http://www.w3.org/2000/svg'
@@ -11,7 +13,7 @@ const AuthorLikeColorSvg: FC<ISvgProps> = ({ className }) => {
 		>
 			<path
 				d='M25.6541 4.44193L15.0679 0L4.44193 4.34593L0 14.9321L4.34593 25.5581L14.9321 30L25.5581 25.6541L30 15.0679L25.6541 4.44193Z'
-				fill='url(#paint0_linear_4508_4748)'
+				fill={`url(#${gradientId})`}
 			/>
 			<path
 				d='M20.4763 7.73438H15.8675L14.742 8.86933L13.6166 7.73438H9.00779L5.52441 11.2368V15.817L14.742 25.2678L23.9597 15.817V11.2368L20.4763 7.73438Z'
@@ -59,7 +61,7 @@ const AuthorLikeColorSvg: FC<ISvgProps> = ({ className }) => {
 			/>
 			<defs>
 				<linearGradient
-					id='paint0_linear_4508_4748'
+					id={gradientId}
 					x1='15'
 					y1='1.01858'
 					x2='15'
