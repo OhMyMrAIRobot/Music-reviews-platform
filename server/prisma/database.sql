@@ -745,3 +745,103 @@ FROM "Top_users_leaderboard" tul
          LEFT JOIN "Reviews" r ON u.id = r.user_id
 GROUP BY tul.user_id, tul.rank, up.points, u.nickname, up.avatar, up.cover_image
 ORDER BY up.points DESC, tul.user_id;
+
+CREATE OR REPLACE VIEW platform_counters_summary AS
+SELECT
+    (
+        SELECT COUNT(*)
+        FROM "Users"
+    )::int AS "totalUsers",
+
+    (
+        SELECT COUNT(DISTINCT ra.user_id)
+        FROM "Registered_authors" ra
+    )::int AS "registeredAuthors",
+
+    (
+        COALESCE((
+            SELECT COUNT(*)
+            FROM "User_fav_reviews" ufr
+            JOIN "Reviews" rev ON rev.id = ufr.review_id
+            WHERE EXISTS (
+                SELECT 1
+                FROM "Registered_authors" ra
+                WHERE ra.user_id = ufr.user_id
+                        AND ra.author_id IN (
+                            SELECT rp.author_id FROM "Release_producers" rp WHERE rp.release_id = rev.release_id
+                            UNION
+                            SELECT ar.author_id FROM "Release_artists" ar WHERE ar.release_id = rev.release_id
+                            UNION
+                            SELECT rd.author_id FROM "Release_designers" rd WHERE rd.release_id = rev.release_id
+                        )
+            )
+        ), 0)
+            +
+        COALESCE((
+            SELECT COUNT(*)
+                FROM "User_fav_media" ufm
+                JOIN "Release_media" rm ON rm.id = ufm.media_id
+                WHERE EXISTS (
+                    SELECT 1
+                    FROM "Registered_authors" ra
+                    WHERE ra.user_id = ufm.user_id
+                        AND ra.author_id IN (
+                            SELECT rp.author_id FROM "Release_producers" rp WHERE rp.release_id = rm.release_id
+                            UNION
+                            SELECT ar.author_id FROM "Release_artists" ar WHERE ar.release_id = rm.release_id
+                            UNION
+                            SELECT rd.author_id FROM "Release_designers" rd WHERE rd.release_id = rm.release_id
+                        )
+                )
+        ), 0)
+    )::int AS "authorLikes",
+
+    (
+        SELECT COUNT(*)
+        FROM "Author_comments" ac
+        WHERE EXISTS (
+            SELECT 1
+            FROM "Registered_authors" ra
+            WHERE ra.user_id = ac.user_id
+              AND ra.author_id IN (
+                SELECT rp.author_id FROM "Release_producers" rp WHERE rp.release_id = ac.release_id
+                UNION
+                SELECT ar.author_id FROM "Release_artists" ar WHERE ar.release_id = ac.release_id
+                UNION
+                SELECT rd.author_id FROM "Release_designers" rd WHERE rd.release_id = ac.release_id
+            )
+        )
+    )::int AS "authorComments",
+
+    (
+        SELECT COUNT(*)
+        FROM "Releases" r
+        JOIN "Release_types" rt ON r.release_type_id = rt.id
+        WHERE rt.type = 'Трек'
+    )::int AS "totalTracks",
+
+    (
+        SELECT COUNT(*)
+        FROM "Releases" r
+        JOIN "Release_types" rt ON r.release_type_id = rt.id
+        WHERE rt.type = 'Альбом'
+    )::int AS "totalAlbums",
+
+    (
+        SELECT COUNT(*)
+        FROM "Release_media" rm
+        WHERE rm.user_id IS NOT NULL
+    )::int AS "mediaReviews",
+
+    (
+        SELECT COUNT(*)
+        FROM "Reviews" rev
+        WHERE rev.text IS NOT NULL
+    )::int AS "reviews",
+
+    (
+        SELECT COUNT(*)
+        FROM "Release_ratings" rr
+        JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
+        WHERE rrt.type = 'Оценка без рецензии'
+    )::int AS "withoutTextRatings";
