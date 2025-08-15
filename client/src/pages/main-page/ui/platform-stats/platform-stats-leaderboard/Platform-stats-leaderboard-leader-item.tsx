@@ -35,7 +35,7 @@ const PlatformStatsLeaderboardLeaderItem: FC<IProps> = ({
 			<div className='h-[1px] w-[93px] top-[-1px] right-1 absolute bg-gradient-to-r from-white/0 via-white/35 to-white/0' />
 			<div className='h-[1px] w-[60px] bottom-[-1px] left-2 absolute bg-gradient-to-r from-white/0 via-white/35 to-white/0' />
 
-			<div className='bg-zinc-950 flex items-center justify-center size-[30px] rounded-lg absolute -top-3 border -left-0.5'>
+			<div className='bg-zinc-950 flex items-center justify-center size-[30px] rounded-lg absolute -top-3 border border-white/10 -left-0.5'>
 				{position}
 			</div>
 
