@@ -120,10 +120,11 @@ EXECUTE FUNCTION update_release_rating();
 ------------------------------------------
 -- FUNCTION TO UPDATE FAV REVIEW POINTS --
 CREATE OR REPLACE FUNCTION handle_fav_review_points()
-    RETURNS TRIGGER AS $$
+RETURNS TRIGGER AS $$
 DECLARE
     points_change_author INT;
     points_change_user INT;
+    is_author_like BOOLEAN;
 BEGIN
     IF TG_OP = 'INSERT' THEN
         points_change_author := 3;
@@ -135,22 +136,54 @@ BEGIN
         RETURN NULL;
     END IF;
 
-    UPDATE "User_profiles"
-    SET points = GREATEST(points + points_change_author, 0)
-    FROM "Reviews"
-    WHERE "User_profiles".user_id = "Reviews".user_id
-      AND "Reviews".id = COALESCE(NEW.review_id, OLD.review_id);
+    SELECT EXISTS (
+        SELECT 1
+        FROM "Reviews" rv
+        WHERE rv.id = COALESCE(NEW.review_id, OLD.review_id)
+          AND EXISTS (
+              SELECT 1
+              FROM "Registered_authors" ra
+              WHERE ra.user_id = COALESCE(NEW.user_id, OLD.user_id)
+                AND ra.author_id IN (
+                  SELECT rp.author_id 
+                  FROM "Release_producers" rp 
+                  WHERE rp.release_id = rv.release_id
+                  UNION
+                  SELECT ar.author_id 
+                  FROM "Release_artists" ar 
+                  WHERE ar.release_id = rv.release_id
+                  UNION
+                  SELECT rd.author_id 
+                  FROM "Release_designers" rd 
+                  WHERE rd.release_id = rv.release_id
+                )
+          )
+    ) INTO is_author_like;
 
-    UPDATE "User_profiles"
-    SET points = GREATEST(points + points_change_user, 0)
-    WHERE user_id = COALESCE(NEW.user_id, OLD.user_id);
+    IF is_author_like THEN
+        IF TG_OP = 'INSERT' THEN
+            points_change_author := 500;
+            points_change_user := 100;
+        ELSE
+            points_change_author := -500;
+            points_change_user := -100;
+        END IF;
+    END IF;
+
+    UPDATE "User_profiles" up
+    SET points = GREATEST(up.points + points_change_author, 0)
+    FROM "Reviews" rv
+    WHERE up.user_id = rv.user_id
+      AND rv.id = COALESCE(NEW.review_id, OLD.review_id);
+
+    UPDATE "User_profiles" up
+    SET points = GREATEST(up.points + points_change_user, 0)
+    WHERE up.user_id = COALESCE(NEW.user_id, OLD.user_id);
 
     RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;
 END;
 $$ LANGUAGE plpgsql;
 
---------------------------------------------
--- INSERT OR DELETE ON "User_fav_reviews" --
 CREATE TRIGGER fav_review_points_trigger
     AFTER INSERT OR DELETE ON "User_fav_reviews"
     FOR EACH ROW
@@ -532,51 +565,168 @@ SELECT
     rol.role,
     (COUNT(DISTINCT r.id) FILTER (WHERE r.text IS NOT NULL))::int AS "textCount",
     (COUNT(DISTINCT r.id) FILTER (WHERE r.text IS NULL))::int AS "withoutTextCount",
+
     (
         SELECT COUNT(*)
         FROM "User_fav_reviews" ufr
                  JOIN "Reviews" rev ON ufr.review_id = rev.id
         WHERE rev.user_id = u.id
     )::int AS "receivedLikes",
+
     (
         SELECT COUNT(*)
         FROM "User_fav_reviews" ufr
-                 JOIN "Reviews" rev ON ufr.review_id = rev.id
+        JOIN "Reviews" rev ON ufr.review_id = rev.id
         WHERE ufr.user_id = u.id AND rev.user_id != u.id
     )::int AS "givenLikes",
+
+    (
+        COALESCE((
+            SELECT COUNT(*)
+                FROM "User_fav_reviews" ufr
+                JOIN "Reviews" rev ON rev.id = ufr.review_id
+                WHERE rev.user_id = u.id
+                    AND EXISTS (
+                         SELECT 1
+                         FROM "Registered_authors" ra
+                         WHERE ra.user_id = ufr.user_id
+                           AND ra.author_id IN (
+                             SELECT rp.author_id
+                             FROM "Release_producers" rp
+                             WHERE rp.release_id = rev.release_id
+                             UNION
+                             SELECT ar.author_id
+                             FROM "Release_artists" ar
+                             WHERE ar.release_id = rev.release_id
+                             UNION
+                             SELECT rd.author_id
+                             FROM "Release_designers" rd
+                             WHERE rd.release_id = rev.release_id
+                           )
+                    )
+        ), 0)
+        +
+        COALESCE((
+            SELECT COUNT(*)
+                FROM "User_fav_media" ufm
+                JOIN "Release_media" rm ON rm.id = ufm.media_id
+                WHERE rm.user_id = u.id
+                    AND EXISTS (
+                         SELECT 1
+                         FROM "Registered_authors" ra
+                         WHERE ra.user_id = ufm.user_id
+                           AND ra.author_id IN (
+                             SELECT rp.author_id
+                             FROM "Release_producers" rp
+                             WHERE rp.release_id = rm.release_id
+                             UNION
+                             SELECT ar.author_id
+                             FROM "Release_artists" ar
+                             WHERE ar.release_id = rm.release_id
+                             UNION
+                             SELECT rd.author_id
+                             FROM "Release_designers" rd
+                             WHERE rd.release_id = rm.release_id
+                         )
+                    )
+        ), 0)
+    )::int AS "receivedAuthorLikes",
+
+    (
+        COALESCE((
+            SELECT COUNT(*)
+                FROM "User_fav_reviews" ufr
+                JOIN "Reviews" rev ON rev.id = ufr.review_id
+                WHERE ufr.user_id = u.id
+                    AND rev.user_id != u.id
+                    AND EXISTS (
+                         SELECT 1
+                         FROM "Registered_authors" ra
+                         WHERE ra.user_id = u.id
+                           AND ra.author_id IN (
+                             SELECT rp.author_id
+                             FROM "Release_producers" rp
+                             WHERE rp.release_id = rev.release_id
+                             UNION
+                             SELECT ar.author_id
+                             FROM "Release_artists" ar
+                             WHERE ar.release_id = rev.release_id
+                             UNION
+                             SELECT rd.author_id
+                             FROM "Release_designers" rd
+                             WHERE rd.release_id = rev.release_id
+                         )
+                    )
+        ), 0)
+        +
+        COALESCE((
+            SELECT COUNT(*)
+            FROM "User_fav_media" ufm
+            JOIN "Release_media" rm ON rm.id = ufm.media_id
+            WHERE ufm.user_id = u.id
+                AND rm.user_id != u.id
+                AND EXISTS (
+                         SELECT 1
+                         FROM "Registered_authors" ra
+                         WHERE ra.user_id = u.id
+                           AND ra.author_id IN (
+                             SELECT rp.author_id
+                             FROM "Release_producers" rp
+                             WHERE rp.release_id = rm.release_id
+                             UNION
+                             SELECT ar.author_id
+                             FROM "Release_artists" ar
+                             WHERE ar.release_id = rm.release_id
+                             UNION
+                             SELECT rd.author_id
+                             FROM "Release_designers" rd
+                             WHERE rd.release_id = rm.release_id
+                         )
+                     )
+        ), 0)
+    )::int AS "givenAuthorLikes",
+
     CASE
-        WHEN count(sm.id) = 0 THEN '[]'::json
-        ELSE JSON_AGG(DISTINCT JSONB_BUILD_OBJECT('id', sm.id, 'name', sm.name, 'url', psm.url))
-        END AS social,
+        WHEN COUNT(sm.id) = 0 THEN '[]'::json
+        ELSE JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
+                'id', sm.id,
+                'name', sm.name,
+                'url', psm.url
+        ))
+    END AS social,
+
     EXISTS(
         SELECT 1 FROM "Registered_authors" ra WHERE ra.user_id = u.id
     ) AS "isAuthor",
+
     COALESCE(
             (
                 SELECT JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
                         'id', at.id,
                         'type', at.type
-                                         ))
+                ))
                 FROM "Registered_authors" ra
-                         JOIN "Authors" a ON ra.author_id = a.id
-                         JOIN "Authors_on_types" aot ON a.id = aot.author_id
-                         JOIN "Author_types" at ON aot.author_type_id = at.id
+                    JOIN "Authors" a ON ra.author_id = a.id
+                    JOIN "Authors_on_types" aot ON a.id = aot.author_id
+                    JOIN "Author_types" at ON aot.author_type_id = at.id
                 WHERE ra.user_id = u.id
             ),
             '[]'::json
     ) AS "authorTypes",
+
     (
         SELECT COUNT(DISTINCT ac.id)::int
         FROM "Author_comments" ac
         WHERE ac.user_id = u.id
     ) AS "authorCommentsCount"
+
 FROM "User_profiles" up
-         JOIN "Users" u ON up.user_id = u.id
-         LEFT JOIN "Top_users_leaderboard" tul ON up.user_id = tul.user_id
-         LEFT JOIN "Reviews" r ON u.id = r.user_id
-         LEFT JOIN "Profile_social_media" psm ON up.id = psm.profile_id
-         LEFT JOIN "Social_media" sm ON psm.social_id = sm.id
-         LEFT JOIN "Roles" rol ON u.role_id = rol.id
+    JOIN "Users" u ON up.user_id = u.id
+    LEFT JOIN "Top_users_leaderboard" tul ON up.user_id = tul.user_id
+    LEFT JOIN "Reviews" r ON u.id = r.user_id
+    LEFT JOIN "Profile_social_media" psm ON up.id = psm.profile_id
+    LEFT JOIN "Social_media" sm ON psm.social_id = sm.id
+    LEFT JOIN "Roles" rol ON u.role_id = rol.id
 GROUP BY u.id, u.nickname, u.created_at, up.bio, up.avatar, up.cover_image, up.points, tul.rank, rol.role;
 
 -------------------------------------------------------------------------
@@ -844,4 +994,82 @@ SELECT
         FROM "Release_ratings" rr
         JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
         WHERE rrt.type = 'Оценка без рецензии'
-    )::int AS "withoutTextRatings";
+    )::int AS "withoutTextRatings"
+;
+
+CREATE OR REPLACE FUNCTION handle_fav_media_points()
+RETURNS TRIGGER AS $$
+DECLARE
+    points_change_owner INT;
+    points_change_user INT;
+    is_author_like BOOLEAN;
+    v_media_id TEXT;
+    v_user_id TEXT;
+BEGIN
+    v_media_id := COALESCE(NEW.media_id, OLD.media_id);
+    v_user_id := COALESCE(NEW.user_id, OLD.user_id);
+
+    IF TG_OP = 'INSERT' THEN
+        points_change_owner := 3;
+        points_change_user  := 1;
+    ELSIF TG_OP = 'DELETE' THEN
+        points_change_owner := -3;
+        points_change_user  := -1;
+    ELSE
+        RETURN NULL;
+    END IF;
+
+    SELECT EXISTS (
+        SELECT 1
+        FROM "Release_media" rm
+        WHERE rm.id = v_media_id
+          AND EXISTS (
+            SELECT 1
+            FROM "Registered_authors" ra
+            WHERE ra.user_id = v_user_id
+              AND ra.author_id IN (
+                SELECT rp.author_id 
+                FROM "Release_producers" rp 
+                WHERE rp.release_id = rm.release_id
+                UNION
+                SELECT ar.author_id 
+                FROM "Release_artists" ar 
+                WHERE ar.release_id = rm.release_id
+                UNION
+                SELECT rd.author_id 
+                FROM "Release_designers" rd 
+                WHERE rd.release_id = rm.release_id
+              )
+          )
+    ) INTO is_author_like;
+
+    IF is_author_like THEN
+        IF TG_OP = 'INSERT' THEN
+            points_change_owner := 500;
+            points_change_user  := 100;
+        ELSE
+            points_change_owner := -500;
+            points_change_user  := -100;
+        END IF;
+    END IF;
+
+    UPDATE "User_profiles" up
+    SET points = GREATEST(up.points + points_change_owner, 0)
+    FROM "Release_media" rm
+    WHERE rm.id = v_media_id
+      AND up.user_id = rm.user_id;
+
+    UPDATE "User_profiles" up
+    SET points = GREATEST(up.points + points_change_user, 0)
+    WHERE up.user_id = v_user_id;
+
+    RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER fav_media_points_trigger
+    AFTER INSERT OR DELETE ON "User_fav_media"
+    FOR EACH ROW
+EXECUTE FUNCTION handle_fav_media_points();
+
+

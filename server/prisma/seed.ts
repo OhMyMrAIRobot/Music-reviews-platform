@@ -40,6 +40,8 @@ async function main() {
   await prisma.releaseMediaType.deleteMany();
   await prisma.authorConfirmationStatus.deleteMany();
   await prisma.authorConfirmation.deleteMany();
+  await prisma.authorComment.deleteMany();
+  await prisma.userFavMedia.deleteMany();
 
   const password = await bcrypt.hash('1234567', 10);
 

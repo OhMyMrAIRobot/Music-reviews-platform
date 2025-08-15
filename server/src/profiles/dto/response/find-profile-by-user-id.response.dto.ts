@@ -18,6 +18,8 @@ export class FindProfileByUserIdResponseDto {
   isAuthor: boolean;
   authorTypes: AuthorType[];
   authorCommentsCount: number;
+  receivedAuthorLikes: number;
+  givenAuthorLikes: number;
 }
 
 export class QueryProfileResponseDto extends Array<FindProfileByUserIdResponseDto> {}
