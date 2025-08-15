@@ -15,7 +15,7 @@ class LeaderboardStore {
 
 	fetchLeaderboard = async () => {
 		try {
-			const data = await LeaderboardAPI.fetchLeaderboard()
+			const data = await LeaderboardAPI.fetchLeaderboard(null, null)
 			this.setItems(data)
 		} catch {
 			this.setItems([])

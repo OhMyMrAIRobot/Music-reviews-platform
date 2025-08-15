@@ -4,6 +4,7 @@ import AuthorLikes from './ui/author-likes/Author-likes'
 import LastReleases from './ui/last-releases/Last-releases'
 import LastReviews from './ui/last-reviews/Last-reviews'
 import MostReviewedReleases from './ui/most-reviewed-releases/carousel/Most-reviewed-releases'
+import PlatformStats from './ui/platform-stats/Platform-stats'
 import ReleaseMediaReviews from './ui/release-media-reviews/Release-media-reviews'
 
 const MainPage = observer(() => {
@@ -16,6 +17,7 @@ const MainPage = observer(() => {
 				<LastReleases />
 				<ReleaseMediaReviews />
 				<LastReviews />
+				<PlatformStats />
 			</div>
 		</>
 	)

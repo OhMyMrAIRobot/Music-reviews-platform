@@ -1,11 +1,15 @@
 import { makeAutoObservable } from 'mobx'
 import { AuthorCommentAPI } from '../../../api/author-comment-api.ts'
+import { GlobalAppAPI } from '../../../api/global-app-api.ts'
+import { LeaderboardAPI } from '../../../api/leaderboard-api.ts'
 import { ReleaseAPI } from '../../../api/release-api'
 import { ReleaseMediaAPI } from '../../../api/release-media-api.ts'
 import { ReviewAPI } from '../../../api/review-api'
 import { UserFavReviewAPI } from '../../../api/user-fav-review-api.ts'
 import { IAuthorComment } from '../../../models/author-comment/author-comment.ts'
 import { IAuthorLike } from '../../../models/author-likes/author-like.ts'
+import { ILeaderboardItem } from '../../../models/leaderboard/leaderboard-item.ts'
+import { IPlatformStats } from '../../../models/platform-stats/platform-stats.ts'
 import { IReleaseMedia } from '../../../models/release-media/release-media.ts'
 import { IRelease } from '../../../models/release/release'
 import { IReview } from '../../../models/review/review.ts'
@@ -24,6 +28,8 @@ class MainPageStore {
 	releaseMedia: IReleaseMedia[] = []
 	authorComments: IAuthorComment[] = []
 	authorLikes: IAuthorLike[] = []
+	platformStats: IPlatformStats | null = null
+	leaderboard: ILeaderboardItem[] = []
 
 	setMostReviewedReleases(data: IRelease[]) {
 		this.mostReviewedReleases = data
@@ -47,6 +53,14 @@ class MainPageStore {
 
 	setAuthorLikes(data: IAuthorLike[]) {
 		this.authorLikes = data
+	}
+
+	setPlatformStats(data: IPlatformStats | null) {
+		this.platformStats = data
+	}
+
+	setLeaderboard(data: ILeaderboardItem[]) {
+		this.leaderboard = data
 	}
 
 	fetchTopReleases = async () => {
@@ -134,6 +148,24 @@ class MainPageStore {
 			this.setAuthorLikes(data.items)
 		} catch {
 			this.setAuthorLikes([])
+		}
+	}
+
+	fetchPlatformStats = async () => {
+		try {
+			const data = await GlobalAppAPI.fetchPlatformStats()
+			this.setPlatformStats(data)
+		} catch {
+			this.setPlatformStats(null)
+		}
+	}
+
+	fetchLeaderboard = async () => {
+		try {
+			const data = await LeaderboardAPI.fetchLeaderboard(10, 0)
+			this.setLeaderboard(data)
+		} catch {
+			this.setLeaderboard([])
 		}
 	}
 
