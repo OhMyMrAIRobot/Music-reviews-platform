@@ -67,11 +67,17 @@ export class UserFavReviewsService {
         FROM "Registered_authors" ra
         WHERE ra.user_id = ufr.user_id
           AND ra.author_id IN (
-            SELECT rp.author_id FROM "Release_producers" rp WHERE rp.release_id = rev.release_id
+            SELECT rp.author_id 
+            FROM "Release_producers" rp 
+            WHERE rp.release_id = rev.release_id
             UNION
-            SELECT ar.author_id FROM "Release_artists" ar WHERE ar.release_id = rev.release_id
+            SELECT ar.author_id 
+            FROM "Release_artists" ar 
+            WHERE ar.release_id = rev.release_id
             UNION
-            SELECT rd.author_id FROM "Release_designers" rd WHERE rd.release_id = rev.release_id
+            SELECT rd.author_id 
+            FROM "Release_designers" rd 
+            WHERE rd.release_id = rev.release_id
           )
       );
     `);
@@ -104,11 +110,17 @@ export class UserFavReviewsService {
         FROM "Registered_authors" ra
         WHERE ra.user_id = ufr.user_id
           AND ra.author_id IN (
-            SELECT rp.author_id FROM "Release_producers" rp WHERE rp.release_id = rev.release_id
+            SELECT rp.author_id 
+            FROM "Release_producers" rp 
+            WHERE rp.release_id = rev.release_id
             UNION
-            SELECT ar.author_id FROM "Release_artists" ar WHERE ar.release_id = rev.release_id
+            SELECT ar.author_id 
+            FROM "Release_artists" ar 
+            WHERE ar.release_id = rev.release_id
             UNION
-            SELECT rd.author_id FROM "Release_designers" rd WHERE rd.release_id = rev.release_id
+            SELECT rd.author_id 
+            FROM "Release_designers" rd 
+            WHERE rd.release_id = rev.release_id
           )
       )
       ORDER BY ufr.created_at DESC, ufr.review_id DESC

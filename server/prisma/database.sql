@@ -591,24 +591,157 @@ SELECT
     u.nickname,
     up.avatar,
     up.cover_image as cover,
-    (count(DISTINCT r.id) FILTER (WHERE r.text IS NOT NULL))::int AS "textCount",
-    (count(DISTINCT r.id) FILTER (WHERE r.text IS NULL))::int AS "withoutTextCount",
+    (COUNT(DISTINCT r.id) FILTER (WHERE r.text IS NOT NULL))::int AS "textCount",
+    (COUNT(DISTINCT r.id) FILTER (WHERE r.text IS NULL))::int AS "withoutTextCount",
+
     (SELECT COUNT(*)
      FROM "User_fav_reviews" ufr
               JOIN "Reviews" rev ON ufr.review_id = rev.id
      WHERE rev.user_id = tul.user_id)::int AS "receivedLikes",
+
     (SELECT COUNT(*)
      FROM "User_fav_reviews" ufr
               JOIN "Reviews" rev ON ufr.review_id = rev.id
-     WHERE ufr.user_id = tul.user_id AND rev.user_id != tul.user_id)::int AS "givenLikes"
+     WHERE ufr.user_id = tul.user_id AND rev.user_id != tul.user_id)::int AS "givenLikes",
+
+    (
+        COALESCE((
+            SELECT COUNT(*)
+                FROM "User_fav_reviews" ufr
+                JOIN "Reviews" rev ON rev.id = ufr.review_id
+                WHERE rev.user_id = tul.user_id
+                    AND EXISTS (
+                         SELECT 1
+                         FROM "Registered_authors" ra
+                         WHERE ra.user_id = ufr.user_id
+                           AND ra.author_id IN (
+                             SELECT rp.author_id FROM "Release_producers" rp WHERE rp.release_id = rev.release_id
+                             UNION
+                             SELECT ar.author_id FROM "Release_artists" ar WHERE ar.release_id = rev.release_id
+                             UNION
+                             SELECT rd.author_id FROM "Release_designers" rd WHERE rd.release_id = rev.release_id
+                         )
+                     )
+            ), 0)
+        +
+        COALESCE((
+            SELECT COUNT(*)
+                FROM "User_fav_media" ufm
+                JOIN "Release_media" rm ON rm.id = ufm.media_id
+                WHERE rm.user_id = tul.user_id
+                    AND EXISTS (
+                         SELECT 1
+                         FROM "Registered_authors" ra
+                         WHERE ra.user_id = ufm.user_id
+                           AND ra.author_id IN (
+                             SELECT rp.author_id
+                             FROM "Release_producers" rp
+                             WHERE rp.release_id = rm.release_id
+                             UNION
+                             SELECT ar.author_id
+                             FROM "Release_artists" ar
+                             WHERE ar.release_id = rm.release_id
+                             UNION
+                             SELECT rd.author_id
+                             FROM "Release_designers" rd
+                             WHERE rd.release_id = rm.release_id
+                         )
+                     )
+            ), 0)
+        )::int AS "receivedAuthorLikes",
+
+    (
+        SELECT
+            COALESCE(
+                json_agg(
+                    jsonb_build_object(
+                        'userId', liker_id,
+                        'avatar', liker_avatar,
+                        'nickname', liker_nickname,
+                        'count', total_cnt
+                    )
+                    ORDER BY total_cnt DESC, liker_id ASC
+                ),
+                '[]'::json
+            )
+        FROM (
+            SELECT
+                liker_id,
+                liker_nickname,
+                liker_avatar,
+                SUM(cnt)::int AS total_cnt
+            FROM (
+                SELECT
+                    ufr.user_id AS liker_id,
+                    u2.nickname AS liker_nickname,
+                    up2.avatar AS liker_avatar,
+                    COUNT(*)::int AS cnt
+                FROM "User_fav_reviews" ufr
+                JOIN "Reviews" rev ON rev.id = ufr.review_id
+                JOIN "Users" u2 ON u2.id = ufr.user_id
+                LEFT JOIN "User_profiles" up2 ON up2.user_id = u2.id
+                WHERE rev.user_id = tul.user_id
+                    AND EXISTS (
+                        SELECT 1
+                        FROM "Registered_authors" ra
+                        WHERE ra.user_id = ufr.user_id
+                            AND ra.author_id IN (
+                                SELECT rp.author_id
+                                FROM "Release_producers" rp
+                                WHERE rp.release_id = rev.release_id
+                                UNION
+                                SELECT ar.author_id
+                                FROM "Release_artists" ar
+                                WHERE ar.release_id = rev.release_id
+                                UNION
+                                SELECT rd.author_id
+                                FROM "Release_designers" rd
+                                WHERE rd.release_id = rev.release_id
+                              )
+                    )
+                GROUP BY ufr.user_id, u2.nickname, up2.avatar
+
+                UNION ALL
+
+                SELECT
+                    ufm.user_id AS liker_id,
+                    u3.nickname AS liker_nickname,
+                    up3.avatar AS liker_avatar,
+                    COUNT(*)::int AS cnt
+                FROM "User_fav_media" ufm
+                JOIN "Release_media" rm ON rm.id = ufm.media_id
+                JOIN "Users" u3 ON u3.id = ufm.user_id
+                LEFT JOIN "User_profiles" up3 ON up3.user_id = u3.id
+                WHERE rm.user_id = tul.user_id
+                    AND EXISTS (
+                        SELECT 1
+                            FROM "Registered_authors" ra
+                              WHERE ra.user_id = ufm.user_id
+                                AND ra.author_id IN (
+                                  SELECT rp.author_id
+                                  FROM "Release_producers" rp
+                                  WHERE rp.release_id = rm.release_id
+                                  UNION
+                                  SELECT ar.author_id
+                                  FROM "Release_artists" ar
+                                  WHERE ar.release_id = rm.release_id
+                                  UNION
+                                  SELECT rd.author_id
+                                  FROM "Release_designers" rd
+                                  WHERE rd.release_id = rm.release_id
+                                )
+                    )
+                GROUP BY ufm.user_id, u3.nickname, up3.avatar
+                ) z
+                GROUP BY liker_id, liker_nickname, liker_avatar
+                ORDER BY SUM(cnt) DESC, liker_id ASC
+                LIMIT 3
+            ) t
+    ) AS "topAuthorLikers"
+
 FROM "Top_users_leaderboard" tul
-         JOIN "User_profiles" up on up.user_id = tul.user_id
-         JOIN "Users" u on u.id = up.user_id
-         LEFT JOIN "Reviews" r on u.id = r.user_id
-GROUP BY tul.user_id,
-         tul.rank,
-         up.points,
-         u.nickname,
-         up.avatar,
-         up.cover_image
-ORDER BY up.points DESC, tul.user_id
+         JOIN "User_profiles" up ON up.user_id = tul.user_id
+         JOIN "Users" u ON u.id = up.user_id
+         LEFT JOIN "Reviews" r ON u.id = r.user_id
+GROUP BY tul.user_id, tul.rank, up.points, u.nickname, up.avatar, up.cover_image
+ORDER BY up.points DESC, tul.user_id;

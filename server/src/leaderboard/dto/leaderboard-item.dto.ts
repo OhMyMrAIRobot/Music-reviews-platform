@@ -9,4 +9,11 @@ export class LeaderboardItemDto {
   withoutTextCount: number;
   receivedLikes: number;
   givenLikes: number;
+  receivedAuthorLikes: number;
+  topAuthorLikers: {
+    count: number;
+    userId: string;
+    nickname: string;
+    avatar: string;
+  }[];
 }
