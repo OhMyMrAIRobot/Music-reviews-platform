@@ -1,7 +1,7 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { AuthorConfirmationStatusesService } from './author-confirmation-statuses.service';
 
-@Controller('author-request-statuses')
+@Controller('author-confirmation-statuses')
 export class AuthorConfirmationStatusesController {
   constructor(
     private readonly authorConfirmationStatusesService: AuthorConfirmationStatusesService,

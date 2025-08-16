@@ -25,7 +25,7 @@ class User {
   nickname: string;
 }
 
-export class FindAuthorConfirmationsByUserIdResponseDto {
+export class AuthorConfirmationResponseDto {
   @Expose()
   id: string;
 

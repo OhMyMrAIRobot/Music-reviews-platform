@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -10,9 +11,13 @@ import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.inte
 import { AuthorConfirmationStatusesService } from 'src/author-confirmation-statuses/author-confirmation-statuses.service';
 import { AuthorConfirmationStatusesEnum } from 'src/author-confirmation-statuses/types/author-confirmation-statuses.enum';
 import { AuthorsService } from 'src/authors/authors.service';
+import { UserRoleEnum } from 'src/roles/types/user-role.enum';
+import { Roles } from 'src/shared/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/shared/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/shared/guards/roles.guard';
 import { UsersService } from 'src/users/users.service';
 import { AuthorConfirmationsService } from './author-confirmations.service';
+import { FindAuthorConfirmationsQuery } from './dto/query/find-author-confirmations-query.dto';
 import { CreateAuthorConfirmationRequestDto } from './dto/request/create-author-confirmation.request.dto';
 
 @Controller('author-confirmations')
@@ -52,5 +57,12 @@ export class AuthorConfirmationsController {
   @UseGuards(JwtAuthGuard)
   async findByUserId(@Request() req: IAuthenticatedRequest) {
     return this.authorConfirmationsService.findByUserId(req.user.id);
+  }
+
+  @Get()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  async findAll(@Query() query: FindAuthorConfirmationsQuery) {
+    return this.authorConfirmationsService.findAll(query);
   }
 }
