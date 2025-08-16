@@ -1,10 +1,10 @@
-import { IAuthUser } from '../models/auth/auth-user'
-import { IAuthResponseWithEmail } from '../models/auth/response/auth-response-with-email'
-import { IUpdateUserData } from '../models/user/update-user-data'
-import { IUserInfo } from '../models/user/user-info'
-import { IUsersResponse } from '../models/user/users-response'
-import { SortOrder } from '../types/sort-order-type'
-import { api } from './api-instance'
+import { IAuthUser } from '../../models/auth/auth-user'
+import { IAuthResponseWithEmail } from '../../models/auth/response/auth-response-with-email'
+import { IUpdateUserData } from '../../models/user/update-user-data'
+import { IUserInfo } from '../../models/user/user-info'
+import { IUsersResponse } from '../../models/user/users-response'
+import { SortOrder } from '../../types/sort-order-type'
+import { api } from '../api-instance'
 
 export const UserAPI = {
 	async fetchUsers(

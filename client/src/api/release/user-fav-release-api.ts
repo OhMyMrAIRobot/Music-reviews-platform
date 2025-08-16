@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { IFavRelease } from '../models/release/fav-release'
-import { api } from './api-instance'
+import { IFavRelease } from '../../models/release/fav-release'
+import { api } from '../api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
 
