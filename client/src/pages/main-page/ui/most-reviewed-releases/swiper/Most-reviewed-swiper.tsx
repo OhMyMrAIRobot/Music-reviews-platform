@@ -6,7 +6,7 @@ import CloseSvg from '../../../../../components/svg/Close-svg'
 import NextSvg from '../../../../../components/svg/Next-svg'
 import PrevSvg from '../../../../../components/svg/Prev-svg'
 import { useStore } from '../../../../../hooks/use-store'
-import MostReviewedCarouselCard from './Most-reviewed-swiper-card'
+import MostReviewedSwiperCard from './Most-reviewed-swiper-card'
 
 interface IProps {
 	show: boolean
@@ -95,12 +95,12 @@ const MostReviewedSwiper: FC<IProps> = ({ show, setShow, index, setIndex }) => {
 							className='h-full flex items-center justify-center'
 						>
 							<div
-								className={`h-full xl:w-full w-full max-w-[350px] xl:max-w-full mx-auto ${
+								className={`h-full transition-all duration-500 xl:w-full w-full max-w-[350px] xl:max-w-full mx-auto ${
 									i === index ? 'scale-100' : 'scale-90 blur-xs'
 								}
               `}
 							>
-								<MostReviewedCarouselCard release={release} index={i} />
+								<MostReviewedSwiperCard release={release} index={i} />
 							</div>
 						</SwiperSlide>
 					))}

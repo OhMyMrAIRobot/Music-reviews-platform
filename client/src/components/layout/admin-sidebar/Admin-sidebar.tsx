@@ -2,6 +2,7 @@ import { useActivePath } from '../../../hooks/use-active-path'
 import useNavigationPath from '../../../hooks/use-navigation-path'
 import { ROUTES } from '../../../routes/routes-enum'
 import AuthorCommentSvg from '../../author/author-comment/svg/Author-comment-svg'
+import RegisteredAuthorSvg from '../../author/registered-author/svg/Registered-author-svg'
 import TextReviewSvg from '../../review/svg/Text-review-svg'
 import LogoFullSvg from '../../svg/Logo-full-svg'
 import LogoSmallSvg from '../../svg/Logo-small-svg'
@@ -23,6 +24,7 @@ const AdminSidebar = () => {
 		navigateToAdminFeedback,
 		navigateToAdminMedia,
 		navigateToAdminAuthorComments,
+		navigateToAdminAuthorConfirmation,
 	} = useNavigationPath()
 
 	const { isActive } = useActivePath()
@@ -65,6 +67,14 @@ const AdminSidebar = () => {
 			),
 			href: navigateToAdminAuthorComments,
 			svgIcon: <AuthorCommentSvg className={'size-5'} />,
+		},
+		{
+			title: 'Верификация авторов',
+			isActive: isActive(
+				`/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.AUTHOR_CONFIRMATION}`
+			),
+			href: navigateToAdminAuthorConfirmation,
+			svgIcon: <RegisteredAuthorSvg className={'size-5'} />,
 		},
 		{
 			title: 'Сообщения',

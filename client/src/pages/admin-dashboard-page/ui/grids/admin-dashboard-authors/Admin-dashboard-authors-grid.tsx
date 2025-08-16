@@ -125,7 +125,7 @@ const AdminDashboardAuthorsGrid = observer(() => {
 						{isLoading
 							? Array.from({ length: perPage }).map((_, idx) => (
 									<AdminDashboardAuthorsGridItem
-										key={`User-skeleton-${idx}`}
+										key={`Author-skeleton-${idx}`}
 										isLoading={isLoading}
 									/>
 							  ))

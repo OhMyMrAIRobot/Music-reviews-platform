@@ -14,7 +14,7 @@ interface IProps {
 	index: number
 }
 
-const MostReviewedCarouselCard: FC<IProps> = ({ release, index }) => {
+const MostReviewedSwiperCard: FC<IProps> = ({ release, index }) => {
 	const { navigateToReleaseDetails } = useNavigationPath()
 
 	return (
@@ -46,7 +46,7 @@ const MostReviewedCarouselCard: FC<IProps> = ({ release, index }) => {
 				</div>
 
 				{/* TITLE, AUTHORS, MARKS */}
-				<div className='flex justify-between w-full items-center gap-5 mt-2'>
+				<div className='flex justify-between w-full items-center gap-5 mt-2 pb-2'>
 					<div className='w-full'>
 						<span className='text-left lg:text-xl font-medium block'>
 							{release.title}
@@ -68,7 +68,7 @@ const MostReviewedCarouselCard: FC<IProps> = ({ release, index }) => {
 				</div>
 
 				{release.hasAuthorComments && (
-					<div className='bg-zinc-900/60 hover:bg-zinc-800/60 transition-all duration-500 px-4 py-2 2xl:py-3 border border-opacity-[2%] rounded-[15px] group relative overflow-hidden w-full mt-4'>
+					<div className='bg-zinc-900/60 hover:bg-zinc-800/60 transition-all duration-500 px-4 py-2 2xl:py-3 border border-opacity-[2%] rounded-[15px] group relative overflow-hidden w-full mt-2'>
 						<div className='h-[1px] w-[93px] top-0 right-3 absolute bg-gradient-to-r from-white/0 via-white/35 to-white/0' />
 						<div className='h-[30px] w-[1px] top-3 right-0 absolute bg-gradient-to-b from-white/0 via-white/25 to-white/0' />
 						<div className='absolute h-[130%] w-[130%] bg-gradient-to-bl from-blue-700 opacity-20 z-0 to-50% group-hover:scale-[120%] origin-top-right transition-all duration-500 right-0 top-0' />
@@ -118,4 +118,4 @@ const MostReviewedCarouselCard: FC<IProps> = ({ release, index }) => {
 	)
 }
 
-export default MostReviewedCarouselCard
+export default MostReviewedSwiperCard

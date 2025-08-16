@@ -1,10 +1,12 @@
 import { makeAutoObservable } from 'mobx'
 import { AuthorAPI } from '../api/author/author-api'
+import { AuthorConfirmationAPI } from '../api/author/author-confirmation-api'
 import { FeedbackAPI } from '../api/feedback/feedback-api'
 import { ReleaseAPI } from '../api/release/release-api'
 import { ReleaseMediaAPI } from '../api/release/release-media-api'
 import { RolesAPI } from '../api/role-api'
 import { SocialMediaAPI } from '../api/social-media-api'
+import { IAuthorConfirmationStatus } from '../models/author/author-confirmation/author-confirmation-status'
 import { IAuthorType } from '../models/author/author-type/author-type'
 import { IFeedbackStatus } from '../models/feedback/feedback-status/feedback-status'
 import { IReleaseMediaStatus } from '../models/release/release-media/release-media-status/release-media-status'
@@ -25,6 +27,7 @@ class MetaStore {
 	feedbackStatuses: IFeedbackStatus[] = []
 	releaseMediaStatuses: IReleaseMediaStatus[] = []
 	releaseMediaTypes: IReleaseMediaType[] = []
+	authorConfirmationStatuses: IAuthorConfirmationStatus[] = []
 
 	setAuthorTypes(data: IAuthorType[]) {
 		this.authorTypes = data
@@ -54,12 +57,16 @@ class MetaStore {
 		this.releaseMediaTypes = data
 	}
 
+	setAuthorConfirmationStatuses(data: IAuthorConfirmationStatus[]) {
+		this.authorConfirmationStatuses = data
+	}
+
 	fetchAuthorTypes = async () => {
 		try {
 			const data = await AuthorAPI.fetchAuthorTypes()
 			this.setAuthorTypes(data)
-		} catch (e) {
-			console.log(e)
+		} catch {
+			this.setAuthorTypes([])
 		}
 	}
 
@@ -67,8 +74,8 @@ class MetaStore {
 		try {
 			const data = await SocialMediaAPI.fetchSocials()
 			this.setSocials(data)
-		} catch (e) {
-			console.log(e)
+		} catch {
+			this.setSocials([])
 		}
 	}
 
@@ -77,8 +84,8 @@ class MetaStore {
 			const data = await RolesAPI.fetchRoles()
 
 			this.setRoles(data)
-		} catch (e) {
-			console.log(e)
+		} catch {
+			this.setRoles([])
 		}
 	}
 
@@ -86,8 +93,8 @@ class MetaStore {
 		try {
 			const data = await ReleaseAPI.fetchReleaseTypes()
 			this.setReleaseTypes(data)
-		} catch (e) {
-			console.log(e)
+		} catch {
+			this.setReleaseTypes([])
 		}
 	}
 
@@ -95,8 +102,8 @@ class MetaStore {
 		try {
 			const data = await FeedbackAPI.fetchFeedbackStatuses()
 			this.setFeedbackStatuses(data)
-		} catch (e) {
-			console.log(e)
+		} catch {
+			this.setFeedbackStatuses([])
 		}
 	}
 
@@ -104,8 +111,8 @@ class MetaStore {
 		try {
 			const data = await ReleaseMediaAPI.fetchReleaseMediaStatuses()
 			this.setReleaseMediaStatuses(data)
-		} catch (e) {
-			console.log(e)
+		} catch {
+			this.setReleaseMediaStatuses([])
 		}
 	}
 
@@ -113,8 +120,17 @@ class MetaStore {
 		try {
 			const data = await ReleaseMediaAPI.fetchReleaseMediaTypes()
 			this.setReleaseMediaTypes(data)
-		} catch (e) {
-			console.log(e)
+		} catch {
+			this.setReleaseMediaTypes([])
+		}
+	}
+
+	fetchAuthorConfirmationStatuses = async () => {
+		try {
+			const data = await AuthorConfirmationAPI.fetchStatuses()
+			this.setAuthorConfirmationStatuses(data)
+		} catch {
+			this.setAuthorConfirmationStatuses([])
 		}
 	}
 }

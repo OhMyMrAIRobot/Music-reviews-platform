@@ -39,6 +39,7 @@ export const ROUTES = {
 		FEEDBACK: 'feedback',
 		MEDIA: 'media',
 		AUTHOR_COMMENTS: 'author-comments',
+		AUTHOR_CONFIRMATION: 'author-confirmation',
 		NOT_DEFINED: '*',
 	},
 	NOT_DEFINED: '*',

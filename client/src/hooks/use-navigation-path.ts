@@ -50,6 +50,8 @@ const useNavigationPath = () => {
 
 	const navigateToAdminAuthorComments = `/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.AUTHOR_COMMENTS}`
 
+	const navigateToAdminAuthorConfirmation = `/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.AUTHOR_CONFIRMATION}`
+
 	const navigateToReleaseDetails = (id: string) =>
 		`/${ROUTES.RELEASE_DETAILS_PREFIX}/${id}`
 
@@ -90,6 +92,7 @@ const useNavigationPath = () => {
 		navigateToAdminAuthorComments,
 		navigateToAuthorConfirmation,
 		navigateToAuthorLikes,
+		navigateToAdminAuthorConfirmation,
 	}
 }
 

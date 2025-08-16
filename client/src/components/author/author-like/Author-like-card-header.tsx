@@ -15,10 +15,11 @@ const AuthorLikeCardHeader: FC<IProps> = ({ authorLike }) => {
 	return (
 		<div className='relative py-1 px-1.5'>
 			<div className='relative flex items-center w-full'>
-				<Link
-					to={navigatoToProfile(authorLike.reviewAuthor.id)}
-					className='shrink-0'
-				>
+				<div className='relative flex items-center'>
+					<Link
+						to={navigatoToProfile(authorLike.reviewAuthor.id)}
+						className='absolute inset-0'
+					/>
 					<img
 						loading='lazy'
 						decoding='async'
@@ -30,11 +31,11 @@ const AuthorLikeCardHeader: FC<IProps> = ({ authorLike }) => {
 						}`}
 						className='shrink-0 size-10 lg:size-14 border border-white/10 rounded-full object-cover'
 					/>
-				</Link>
 
-				<span className='ml-2.5 text-sm max-w-30 text-ellipsis font-medium whitespace-nowrap overflow-hidden'>
-					{authorLike.reviewAuthor.nickname}
-				</span>
+					<span className='ml-2.5 text-sm max-w-30 text-ellipsis font-medium whitespace-nowrap overflow-hidden'>
+						{authorLike.reviewAuthor.nickname}
+					</span>
+				</div>
 
 				<Link
 					to={navigateToReleaseDetails(authorLike.release.id)}
