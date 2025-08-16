@@ -1,4 +1,4 @@
-import { IAuthorType } from '../author/author-type'
+import { IAuthorType } from '../author-type/author-type'
 
 export interface IAuthorComment {
 	id: string

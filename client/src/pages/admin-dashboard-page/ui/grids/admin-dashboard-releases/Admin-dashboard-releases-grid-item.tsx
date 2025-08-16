@@ -7,9 +7,9 @@ import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
 import { useLoading } from '../../../../../hooks/use-loading.ts'
 import useNavigationPath from '../../../../../hooks/use-navigation-path.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
-import { AuthorTypesEnum } from '../../../../../models/author/author-types-enum.ts'
-import { IAdminRelease } from '../../../../../models/release/admin-releases-response.ts'
-import { SortOrderEnum } from '../../../../../models/sort/sort-order-enum.ts'
+import { AuthorTypesEnum } from '../../../../../models/author/author-type/author-types-enum.ts'
+import { IAdminRelease } from '../../../../../models/release/admin-release/admin-release.ts'
+import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum.ts'
 import { SortOrder } from '../../../../../types/sort-order-type.ts'
 import { getAuthorTypeColor } from '../../../../../utils/get-author-type-color.ts'
 import { getReleaseTypeColor } from '../../../../../utils/get-release-type-color.ts'
@@ -163,7 +163,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 							<span>Дата создания</span>
 							<ArrowBottomSvg
 								className={`size-3 ${
-									order === SortOrderEnum.ASC ? 'rotate-180' : ''
+									order === SortOrdersEnum.ASC ? 'rotate-180' : ''
 								}`}
 							/>
 						</button>

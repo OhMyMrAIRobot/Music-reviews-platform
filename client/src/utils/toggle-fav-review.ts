@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { runInAction } from 'mobx'
 import { UserFavReviewAPI } from '../api/user-fav-review-api'
-import { IAuthorFavReview } from '../models/review/author-fav-review'
-import { IUserFavReview } from '../models/review/user-fav-review'
+import { IAuthorFavReview } from '../models/review/user-fav-review/author-fav-review'
+import { IUserFavReview } from '../models/review/user-fav-review/user-fav-review'
 
 interface IReview {
 	userFavReview: IUserFavReview[]

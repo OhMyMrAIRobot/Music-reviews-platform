@@ -1,7 +1,7 @@
 import axios from 'axios'
-import { IAuthorLikesResponse } from '../models/author-likes/author-likes-response'
-import { IUserFavByReviewIdResponse } from '../models/review/user-fav-by-review-id-response'
-import { IUserFavReview } from '../models/review/user-fav-review'
+import { IAuthorLikesResponse } from '../models/author/author-likes/author-likes-response'
+import { IUserFavByReviewIdResponse } from '../models/review/user-fav-review/user-fav-by-review-id-response'
+import { IUserFavReview } from '../models/review/user-fav-review/user-fav-review'
 import { api } from './api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL

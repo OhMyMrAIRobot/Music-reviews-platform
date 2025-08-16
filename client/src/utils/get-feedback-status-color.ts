@@ -1,4 +1,4 @@
-import { FeedbackStatusesEnum } from '../models/feedback/feedback-statuses-enum'
+import { FeedbackStatusesEnum } from '../models/feedback/feedback-status/feedback-statuses-enum'
 
 export const getFeedbackStatusColor = (status: string) => {
 	switch (status) {

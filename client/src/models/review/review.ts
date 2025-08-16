@@ -1,10 +1,5 @@
-import { IAuthorFavReview } from './author-fav-review'
-import { IUserFavReview } from './user-fav-review'
-
-export interface IReviewsResponse {
-	count: number
-	reviews: IReview[]
-}
+import { IAuthorFavReview } from './user-fav-review/author-fav-review'
+import { IUserFavReview } from './user-fav-review/user-fav-review'
 
 export interface IReview {
 	id: string

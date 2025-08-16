@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { IUserFavByMediaIdResponse } from '../models/release-media/user-fav-by-media-id-response'
-import { IUserFavMedia } from '../models/release-media/user-fav-media'
+import { IUserFavByMediaIdResponse } from '../models/release/release-media/user-fav-media/user-fav-by-media-id-response'
+import { IUserFavMedia } from '../models/release/release-media/user-fav-media/user-fav-media'
 import { api } from './api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL

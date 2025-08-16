@@ -7,9 +7,9 @@ import ModalOverlay from '../../../../../components/modals/Modal-overlay'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import { useLoading } from '../../../../../hooks/use-loading'
 import { useStore } from '../../../../../hooks/use-store'
-import { IFeedbackReply } from '../../../../../models/feedback-reply/feedback-reply'
 import { IFeedback } from '../../../../../models/feedback/feedback'
-import { FeedbackStatusesEnum } from '../../../../../models/feedback/feedback-statuses-enum'
+import { IFeedbackReply } from '../../../../../models/feedback/feedback-reply/feedback-reply'
+import { FeedbackStatusesEnum } from '../../../../../models/feedback/feedback-status/feedback-statuses-enum'
 import { getFeedbackStatusColor } from '../../../../../utils/get-feedback-status-color'
 
 interface IProps {

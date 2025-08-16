@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { runInAction } from 'mobx'
 import { UserFavMediaAPI } from '../api/user-fav-media-api'
-import { IReleaseMedia } from '../models/release-media/release-media'
+import { IReleaseMedia } from '../models/release/release-media/release-media'
 
 export const toggleFavMedia = async (
 	items: IReleaseMedia[],

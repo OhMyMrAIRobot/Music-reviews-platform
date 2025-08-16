@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { Link } from 'react-router'
 import useNavigationPath from '../../hooks/use-navigation-path'
-import { IAuthorLike } from '../../models/author-likes/author-like'
+import { IAuthorLike } from '../../models/author/author-likes/author-like'
 import SkeletonLoader from '../utils/Skeleton-loader'
 import AuthorLikeCardHeader from './Author-like-card-header'
 

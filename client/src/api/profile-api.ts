@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { IProfile } from '../models/profile/profile'
-import { IProfilePreferences } from '../models/profile/profile-preferences'
+import { IProfilePreferences } from '../models/profile/profile-preference/profile-preferences'
 import { IUpdateProfileData } from '../models/profile/update-profile-data'
 import { IUpdatedProfile } from '../models/profile/updated-profile'
 import { api } from './api-instance'

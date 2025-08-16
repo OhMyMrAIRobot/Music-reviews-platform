@@ -7,7 +7,7 @@ import Pagination from '../../components/pagination/Pagination'
 import { useLoading } from '../../hooks/use-loading'
 import { useStore } from '../../hooks/use-store'
 import { ReviewSortFields } from '../../models/review/review-sort-fields'
-import { SortOrderEnum } from '../../models/sort/sort-order-enum'
+import { SortOrdersEnum } from '../../models/sort/sort-orders-enum'
 
 const AuthorCommentsPage = observer(() => {
 	const perPage = 12
@@ -28,8 +28,8 @@ const AuthorCommentsPage = observer(() => {
 			perPage,
 			(currentPage - 1) * perPage,
 			selectedOrder === ReviewSortFields.NEW
-				? SortOrderEnum.DESC
-				: SortOrderEnum.ASC
+				? SortOrdersEnum.DESC
+				: SortOrdersEnum.ASC
 		)
 	}, [currentPage, fetch, selectedOrder])
 

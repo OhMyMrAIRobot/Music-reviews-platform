@@ -4,10 +4,10 @@ import Pagination from '../../components/pagination/Pagination'
 import ReleaseMediaReview from '../../components/release-media/Release-media-review'
 import { useLoading } from '../../hooks/use-loading'
 import { useStore } from '../../hooks/use-store'
-import { ReleaseMediaStatusesEnum } from '../../models/release-media-status/release-media-statuses-enum'
-import { ReleaseMediaTypesEnum } from '../../models/release-media-type/release-media-types-enum'
+import { ReleaseMediaStatusesEnum } from '../../models/release/release-media/release-media-status/release-media-statuses-enum'
+import { ReleaseMediaTypesEnum } from '../../models/release/release-media/release-media-type/release-media-types-enum'
 import { ReviewSortFields } from '../../models/review/review-sort-fields'
-import { SortOrderEnum } from '../../models/sort/sort-order-enum'
+import { SortOrdersEnum } from '../../models/sort/sort-orders-enum'
 import { SortOrder } from '../../types/sort-order-type'
 
 const MediaReviewsPage = () => {
@@ -46,8 +46,8 @@ const MediaReviewsPage = () => {
 
 		const order: SortOrder =
 			selectedOrder === ReviewSortFields.NEW
-				? SortOrderEnum.DESC
-				: SortOrderEnum.ASC
+				? SortOrdersEnum.DESC
+				: SortOrdersEnum.ASC
 
 		return fetchMedia(
 			statusId,

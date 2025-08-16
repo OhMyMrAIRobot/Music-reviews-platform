@@ -1,8 +1,8 @@
 import axios from 'axios'
-import { IReleaseMediaStatus } from '../models/release-media-status/release-media-status'
-import { IReleaseMediaType } from '../models/release-media-type/release-media-type'
-import { IReleaseMedia } from '../models/release-media/release-media'
-import { IReleaseMediaList } from '../models/release-media/release-media-list'
+import { IReleaseMedia } from '../models/release/release-media/release-media'
+import { IReleaseMediaList } from '../models/release/release-media/release-media-list'
+import { IReleaseMediaStatus } from '../models/release/release-media/release-media-status/release-media-status'
+import { IReleaseMediaType } from '../models/release/release-media/release-media-type/release-media-type'
 import { SortOrder } from '../types/sort-order-type'
 import { api } from './api-instance'
 

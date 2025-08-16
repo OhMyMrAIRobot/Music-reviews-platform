@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { IAuthorConfirmationStatus } from '../models/author-confirmation-status/author-confirmation-status'
-import { IAuthorConfirmation } from '../models/author-confirmation/author-confirmation'
+import { IAuthorConfirmation } from '../models/author/author-confirmation/author-confirmation'
+import { IAuthorConfirmationStatus } from '../models/author/author-confirmation/author-confirmation-status'
 import { api } from './api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL

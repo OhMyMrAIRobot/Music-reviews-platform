@@ -6,7 +6,7 @@ import FormTextbox from '../../../../../components/form-elements/Form-textbox'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay'
 import { useLoading } from '../../../../../hooks/use-loading'
 import { useStore } from '../../../../../hooks/use-store'
-import { IAdminReview } from '../../../../../models/review/admin-reviews-response'
+import { IAdminReview } from '../../../../../models/review/admin-review/admin-review'
 
 interface IProps {
 	isOpen: boolean

@@ -6,9 +6,9 @@ import ReleaseMediaStatusIcon from '../../../../../components/release-media/Rele
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import { useLoading } from '../../../../../hooks/use-loading'
 import { useStore } from '../../../../../hooks/use-store'
-import { ReleaseMediaStatusesFilterOptions } from '../../../../../models/release-media-status/release-media-statuses-filter-options'
-import { ReleaseMediaTypesFilterOptions } from '../../../../../models/release-media-type/release-media-types-filter-options'
-import { SortOrderEnum } from '../../../../../models/sort/sort-order-enum'
+import { ReleaseMediaStatusesFilterOptions } from '../../../../../models/release/release-media/release-media-status/release-media-statuses-filter-options'
+import { ReleaseMediaTypesFilterOptions } from '../../../../../models/release/release-media/release-media-type/release-media-types-filter-options'
+import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
 import { SortOrder } from '../../../../../types/sort-order-type'
 import AdminFilterButton from '../../buttons/Admin-filter-button'
 import AdminDashboardMediaGridItem from './Admin-dashboard-media-grid-item'
@@ -28,7 +28,7 @@ const AdminDashboardMediaGrid = observer(() => {
 	const [activeType, setActiveType] = useState<string>(
 		ReleaseMediaTypesFilterOptions.ALL
 	)
-	const [order, setOrder] = useState<SortOrder>(SortOrderEnum.DESC)
+	const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC)
 
 	const { execute: fetchStatuses, isLoading: isStatusesLoading } = useLoading(
 		metaStore.fetchReleaseMediaStatuses
@@ -162,9 +162,9 @@ const AdminDashboardMediaGrid = observer(() => {
 					order={order}
 					toggleOrder={() =>
 						setOrder(
-							order === SortOrderEnum.DESC
-								? SortOrderEnum.ASC
-								: SortOrderEnum.DESC
+							order === SortOrdersEnum.DESC
+								? SortOrdersEnum.ASC
+								: SortOrdersEnum.DESC
 						)
 					}
 				/>

@@ -5,7 +5,7 @@ import ComboBox from '../../components/buttons/Combo-box'
 import SkeletonLoader from '../../components/utils/Skeleton-loader'
 import { useLoading } from '../../hooks/use-loading'
 import { useStore } from '../../hooks/use-store'
-import { AuthorTypesFilterEnum } from '../../models/author/author-types-filter-enum'
+import { AuthorTypesFilterEnum } from '../../models/author/author-type/author-types-filter-enum'
 
 interface IProps {
 	onlyRegistered: boolean

@@ -5,10 +5,10 @@ import { ReleaseMediaAPI } from '../../../api/release-media-api.ts'
 import { ReviewAPI } from '../../../api/review-api'
 import { IAuthor } from '../../../models/author/author.ts'
 import { IProfile } from '../../../models/profile/profile'
-import { IProfilePreferences } from '../../../models/profile/profile-preferences.ts'
-import { IReleaseMedia } from '../../../models/release-media/release-media.ts'
+import { IProfilePreferences } from '../../../models/profile/profile-preference/profile-preferences.ts'
+import { IReleaseMedia } from '../../../models/release/release-media/release-media.ts'
 import { IReview } from '../../../models/review/review.ts'
-import { SortOrderEnum } from '../../../models/sort/sort-order-enum.ts'
+import { SortOrdersEnum } from '../../../models/sort/sort-orders-enum.ts'
 import { toggleFavMedia } from '../../../utils/toggle-fav-media.ts'
 import { toggleFavReview } from '../../../utils/toggle-fav-review.ts'
 
@@ -84,7 +84,7 @@ export class ProfilePageStore {
 	fetchReviews = async (limit: number, offset: number, userId: string) => {
 		try {
 			const data = await ReviewAPI.fetchReviews(
-				SortOrderEnum.DESC,
+				SortOrdersEnum.DESC,
 				limit,
 				offset,
 				userId,
@@ -105,7 +105,7 @@ export class ProfilePageStore {
 	) => {
 		try {
 			const data = await ReviewAPI.fetchReviews(
-				SortOrderEnum.DESC,
+				SortOrdersEnum.DESC,
 				limit,
 				offset,
 				null,

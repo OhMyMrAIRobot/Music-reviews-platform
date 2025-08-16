@@ -2,8 +2,9 @@
 import { makeAutoObservable } from 'mobx'
 import { AuthorAPI } from '../../../api/author-api'
 import { AuthorConfirmationAPI } from '../../../api/author-confirmation-api'
-import { IAuthorConfirmation } from '../../../models/author-confirmation/author-confirmation'
-import { IAdminAuthor } from '../../../models/author/admin-authors-response'
+import { IAdminAuthor } from '../../../models/author/admin-author/admin-author'
+import {} from '../../../models/author/admin-author/admin-authors-response'
+import { IAuthorConfirmation } from '../../../models/author/author-confirmation/author-confirmation'
 
 class AuthorConfirmationPageStore {
 	constructor() {

@@ -5,9 +5,9 @@ import Loader from '../../components/utils/Loader.tsx'
 import { useLoading } from '../../hooks/use-loading.ts'
 import useNavigationPath from '../../hooks/use-navigation-path'
 import { useStore } from '../../hooks/use-store.ts'
-import { ReleaseReviewSortFieldsEnum } from '../../models/review/release-review-sort-fields-enum.ts'
-import { ReleaseReviewSortField } from '../../models/review/release-review-sort-fields.ts'
-import { SortOrderEnum } from '../../models/sort/sort-order-enum.ts'
+import { ReleaseReviewSortFieldsEnum } from '../../models/review/release-review/release-review-sort-fields-enum.ts'
+import { ReleaseReviewSortField } from '../../models/review/release-review/release-review-sort-fields.ts'
+import { SortOrdersEnum } from '../../models/sort/sort-orders-enum.ts'
 import authStore from '../../stores/auth-store.ts'
 import { SortOrder } from '../../types/sort-order-type.ts'
 import ReleaseDetailsAuthorComments from './ui/release-details-author-comments/Release-details-author-comments.tsx'
@@ -45,10 +45,10 @@ const ReleaseDetailsPage = observer(() => {
 
 	const fetchReviews = async (): Promise<void> => {
 		let field: ReleaseReviewSortFieldsEnum = ReleaseReviewSortFieldsEnum.CREATED
-		let order: SortOrder = SortOrderEnum.DESC
+		let order: SortOrder = SortOrdersEnum.DESC
 
 		if (selectedSort === ReleaseReviewSortField.OLD) {
-			order = SortOrderEnum.ASC
+			order = SortOrdersEnum.ASC
 		} else if (selectedSort === ReleaseReviewSortField.POPULAR) {
 			field = ReleaseReviewSortFieldsEnum.LIKES
 		}

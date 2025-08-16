@@ -1,7 +1,7 @@
-import { IFavRelease } from './fav-release'
+import { IFavRelease } from '../fav-release'
+import { IReleaseRating } from '../release-rating'
+import { IReleaseRatingValues } from '../release-rating/release-rating-values'
 import { IReleaseDetailsAuthor } from './release-details-author'
-import { IReleaseRating } from './release-rating'
-import { IReleaseRatingDetails } from './release-rating-details'
 
 export interface IReleaseDetails {
 	id: string
@@ -15,5 +15,5 @@ export interface IReleaseDetails {
 	favCount: number
 	userFavRelease: IFavRelease[]
 	ratings: IReleaseRating[]
-	ratingDetails: IReleaseRatingDetails[]
+	ratingDetails: IReleaseRatingValues[]
 }

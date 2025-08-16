@@ -4,7 +4,7 @@ import CarouselNavButton from '../../../../components/carousel/Carousel-nav-butt
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
 import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
-import { ReleaseMediaStatusesEnum } from '../../../../models/release-media-status/release-media-statuses-enum'
+import { ReleaseMediaStatusesEnum } from '../../../../models/release/release-media/release-media-status/release-media-statuses-enum'
 import { RolesEnum } from '../../../../models/role/roles-enum'
 import { CarouselRef } from '../../../../types/carousel-ref'
 import ReleaseDetailsMediaCarousel from './Release-details-media-carousel'

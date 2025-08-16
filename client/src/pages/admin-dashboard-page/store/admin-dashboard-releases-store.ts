@@ -2,11 +2,10 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { AuthorAPI } from '../../../api/author-api'
 import { ReleaseAPI } from '../../../api/release-api'
-import { IAdminAuthor } from '../../../models/author/admin-authors-response'
-import {
-	IAdminRelease,
-	IAdminReleasesResponse,
-} from '../../../models/release/admin-releases-response'
+import { IAdminAuthor } from '../../../models/author/admin-author/admin-author'
+import {} from '../../../models/author/admin-author/admin-authors-response'
+import { IAdminRelease } from '../../../models/release/admin-release/admin-release'
+import { IAdminReleasesResponse } from '../../../models/release/admin-release/admin-releases-response'
 import { SortOrder } from '../../../types/sort-order-type'
 
 class AdminDashboardReleasesStore {

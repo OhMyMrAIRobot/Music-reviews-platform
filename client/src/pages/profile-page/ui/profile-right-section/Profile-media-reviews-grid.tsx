@@ -5,8 +5,8 @@ import ReleaseMediaReview from '../../../../components/release-media/Release-med
 import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
 import { IProfile } from '../../../../models/profile/profile'
-import { ReleaseMediaStatusesEnum } from '../../../../models/release-media-status/release-media-statuses-enum'
-import { ReleaseMediaTypesEnum } from '../../../../models/release-media-type/release-media-types-enum'
+import { ReleaseMediaStatusesEnum } from '../../../../models/release/release-media/release-media-status/release-media-statuses-enum'
+import { ReleaseMediaTypesEnum } from '../../../../models/release/release-media/release-media-type/release-media-types-enum'
 
 interface IProps {
 	profile: IProfile

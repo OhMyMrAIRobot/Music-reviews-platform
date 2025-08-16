@@ -1,6 +1,6 @@
 import { FC } from 'react'
-import { IAuthorType } from '../../models/author/author-type'
-import { AuthorTypesEnum } from '../../models/author/author-types-enum'
+import { IAuthorType } from '../../models/author/author-type/author-type'
+import { AuthorTypesEnum } from '../../models/author/author-type/author-types-enum'
 import Tooltip from '../tooltip/Tooltip'
 import TooltipSpan from '../tooltip/Tooltip-span'
 import RegisteredArtistSvg from './svg/Registered-artist-svg'

@@ -1,10 +1,11 @@
 import axios from 'axios'
-import { IAdminReviewsResponse } from '../models/review/admin-reviews-response'
-import { IAdminUpdateReviewData } from '../models/review/admin-update-review-data'
-import { IReleaseReviewResponse } from '../models/review/release-review'
-import { ReleaseReviewSortFieldsEnum } from '../models/review/release-review-sort-fields-enum'
-import { IReview, IReviewsResponse } from '../models/review/review'
+import { IAdminReviewsResponse } from '../models/review/admin-review/admin-reviews-response'
+import { IAdminUpdateReviewData } from '../models/review/admin-review/admin-update-review-data'
+import { ReleaseReviewSortFieldsEnum } from '../models/review/release-review/release-review-sort-fields-enum'
+import { IReleaseReviewsResponse } from '../models/review/release-review/release-reviews-response'
+import { IReview } from '../models/review/review'
 import { IReviewData } from '../models/review/review-data'
+import { IReviewsResponse } from '../models/review/reviews-response'
 import { SortOrder } from '../types/sort-order-type'
 import { api } from './api-instance'
 
@@ -42,8 +43,8 @@ export const ReviewAPI = {
 		order: SortOrder | null,
 		limit: number | null,
 		offset: number | null
-	): Promise<IReleaseReviewResponse> {
-		const { data } = await _api.get<IReleaseReviewResponse>(
+	): Promise<IReleaseReviewsResponse> {
+		const { data } = await _api.get<IReleaseReviewsResponse>(
 			`/release/${releaseId}?
 			${field !== null ? `field=${field}&` : ''}
 			${order !== null ? `order=${order}&` : ''}

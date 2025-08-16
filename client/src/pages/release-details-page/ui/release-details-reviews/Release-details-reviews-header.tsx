@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import ComboBox from '../../../../components/buttons/Combo-box'
-import { ReleaseReviewSortField } from '../../../../models/review/release-review-sort-fields'
+import { ReleaseReviewSortField } from '../../../../models/review/release-review/release-review-sort-fields'
 
 interface IProps {
 	count: number

@@ -1,8 +1,8 @@
 import { FC } from 'react'
 import { Link } from 'react-router'
 import useNavigationPath from '../../../hooks/use-navigation-path'
-import { IAuthorFavMedia } from '../../../models/release-media/author-fav-media'
-import { IAuthorFavReview } from '../../../models/review/author-fav-review'
+import { IAuthorFavMedia } from '../../../models/release/release-media/user-fav-media/author-fav-media'
+import { IAuthorFavReview } from '../../../models/review/user-fav-review/author-fav-review'
 import Tooltip from '../../tooltip/Tooltip'
 import TooltipSpan from '../../tooltip/Tooltip-span'
 

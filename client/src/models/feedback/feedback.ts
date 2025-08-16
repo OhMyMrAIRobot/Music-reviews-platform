@@ -1,4 +1,4 @@
-import { IFeedbackStatus } from './feedback-status'
+import { IFeedbackStatus } from './feedback-status/feedback-status'
 
 export interface IFeedback {
 	id: string

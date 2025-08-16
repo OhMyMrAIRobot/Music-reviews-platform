@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import SkeletonLoader from '../../../components/utils/Skeleton-loader'
-import { IAuthorConfirmation } from '../../../models/author-confirmation/author-confirmation'
+import { IAuthorConfirmation } from '../../../models/author/author-confirmation/author-confirmation'
 import { getAuthorConfirmationStatusColor } from '../../../utils/get-author-confirmation-status-color'
 
 interface IProps {

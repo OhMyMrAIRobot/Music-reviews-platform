@@ -10,7 +10,7 @@ import { useAuth } from '../../../../hooks/use-auth'
 import { useLoading } from '../../../../hooks/use-loading'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
-import { IReleaseReview } from '../../../../models/review/release-review'
+import { IReleaseReview } from '../../../../models/review/release-review/release-review'
 
 interface IProps {
 	review?: IReleaseReview

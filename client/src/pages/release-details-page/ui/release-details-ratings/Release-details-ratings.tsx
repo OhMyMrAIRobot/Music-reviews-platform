@@ -1,8 +1,8 @@
 import { observer } from 'mobx-react-lite'
 import { FC } from 'react'
 import TooltipSpan from '../../../../components/tooltip/Tooltip-span'
-import { IReleaseDetails } from '../../../../models/release/release-details'
-import { ReleaseRatingTypesEnum } from '../../../../models/release/release-rating-types-enum'
+import { IReleaseDetails } from '../../../../models/release/release-details/release-details'
+import { ReleaseRatingTypesEnum } from '../../../../models/release/release-rating/release-rating-types-enum'
 import ReleaseDetailsRatingsTooltip from './Release-details-ratings-tooltip'
 
 interface IProps {

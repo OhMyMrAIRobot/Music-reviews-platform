@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import Pagination from '../../../../components/pagination/Pagination.tsx'
-import { IReleaseReview } from '../../../../models/review/release-review.ts'
+import { IReleaseReview } from '../../../../models/review/release-review/release-review.ts'
 import ReleaseDetailsReviewsHeader from './Release-details-reviews-header.tsx'
 import ReleaseDetailsReviewsItem from './Release-details-reviews-item.tsx'
 

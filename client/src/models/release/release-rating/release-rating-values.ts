@@ -1,4 +1,4 @@
-export interface IReleaseRatingDetails {
+export interface IReleaseRatingValues {
 	type: string
 	details: {
 		rhymes: number

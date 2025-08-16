@@ -8,7 +8,7 @@ import { useLoading } from '../../../../../hooks/use-loading'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../../hooks/use-store'
 import { IAuthorComment } from '../../../../../models/author-comment/author-comment'
-import { SortOrderEnum } from '../../../../../models/sort/sort-order-enum'
+import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
 import { SortOrder } from '../../../../../types/sort-order-type'
 import AdminDeleteButton from '../../buttons/Admin-delete-button'
 import AdminOpenButton from '../../buttons/Admin-open-button'
@@ -170,7 +170,7 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = observer(
 								<span>Дата публикации</span>
 								<ArrowBottomSvg
 									className={`size-3 ${
-										order === SortOrderEnum.ASC ? 'rotate-180' : ''
+										order === SortOrdersEnum.ASC ? 'rotate-180' : ''
 									}`}
 								/>
 							</button>

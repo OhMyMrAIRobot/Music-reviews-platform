@@ -1,10 +1,8 @@
 import axios from 'axios'
-import {
-	IAdminAuthor,
-	IAdminAuthorsResponse,
-} from '../models/author/admin-authors-response'
+import { IAdminAuthor } from '../models/author/admin-author/admin-author'
+import { IAdminAuthorsResponse } from '../models/author/admin-author/admin-authors-response'
 import { IAuthor } from '../models/author/author'
-import { IAuthorType } from '../models/author/author-type'
+import { IAuthorType } from '../models/author/author-type/author-type'
 import { IAuthorsResponse } from '../models/author/authors-response'
 import { api } from './api-instance'
 

@@ -7,7 +7,7 @@ import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
 import { useLoading } from '../../../../../hooks/use-loading.ts'
 import useNavigationPath from '../../../../../hooks/use-navigation-path.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
-import { SortOrderEnum } from '../../../../../models/sort/sort-order-enum.ts'
+import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum.ts'
 import { UserStatusesEnum } from '../../../../../models/user/user-statuses-enum.ts'
 import { IUser } from '../../../../../models/user/user.ts'
 import { SortOrder } from '../../../../../types/sort-order-type.ts'
@@ -140,7 +140,7 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 							<span>Дата создания</span>
 							<ArrowBottomSvg
 								className={`size-3 ${
-									order === SortOrderEnum.ASC ? 'rotate-180' : ''
+									order === SortOrdersEnum.ASC ? 'rotate-180' : ''
 								}`}
 							/>
 						</button>

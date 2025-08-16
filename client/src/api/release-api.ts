@@ -1,11 +1,9 @@
 import axios from 'axios'
-import {
-	IAdminRelease,
-	IAdminReleasesResponse,
-} from '../models/release/admin-releases-response'
+import { IAdminRelease } from '../models/release/admin-release/admin-release'
+import { IAdminReleasesResponse } from '../models/release/admin-release/admin-releases-response'
 import { IRelease, IReleaseResponse } from '../models/release/release'
-import { IReleaseDetails } from '../models/release/release-details'
-import { IReleaseType } from '../models/release/release-types'
+import { IReleaseDetails } from '../models/release/release-details/release-details'
+import { IReleaseType } from '../models/release/release-type/release-type'
 import { ITopRatingReleases } from '../models/release/top-rating-releases'
 import { SortOrder } from '../types/sort-order-type'
 import { api } from './api-instance'

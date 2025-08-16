@@ -1,4 +1,4 @@
-import { IAuthorType } from './author-type'
+import { IAuthorType } from './author-type/author-type'
 import { IReleaseTypeRatings } from './authors-response'
 import { IFavAuthor } from './fav-author'
 

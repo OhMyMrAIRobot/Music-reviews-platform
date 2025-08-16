@@ -7,13 +7,13 @@ import { ReleaseMediaAPI } from '../../../api/release-media-api.ts'
 import { ReviewAPI } from '../../../api/review-api'
 import { UserFavReviewAPI } from '../../../api/user-fav-review-api.ts'
 import { IAuthorComment } from '../../../models/author-comment/author-comment.ts'
-import { IAuthorLike } from '../../../models/author-likes/author-like.ts'
+import { IAuthorLike } from '../../../models/author/author-likes/author-like.ts'
 import { ILeaderboardItem } from '../../../models/leaderboard/leaderboard-item.ts'
 import { IPlatformStats } from '../../../models/platform-stats/platform-stats.ts'
-import { IReleaseMedia } from '../../../models/release-media/release-media.ts'
 import { IRelease } from '../../../models/release/release'
+import { IReleaseMedia } from '../../../models/release/release-media/release-media.ts'
 import { IReview } from '../../../models/review/review.ts'
-import { SortOrderEnum } from '../../../models/sort/sort-order-enum.ts'
+import { SortOrdersEnum } from '../../../models/sort/sort-orders-enum.ts'
 import { toggleFavMedia } from '../../../utils/toggle-fav-media.ts'
 import { toggleFavReview } from '../../../utils/toggle-fav-review.ts'
 
@@ -91,7 +91,7 @@ class MainPageStore {
 	fetchLastReviews = async () => {
 		try {
 			const data = await ReviewAPI.fetchReviews(
-				SortOrderEnum.DESC,
+				SortOrdersEnum.DESC,
 				45,
 				0,
 				null,
@@ -133,7 +133,7 @@ class MainPageStore {
 			const data = await AuthorCommentAPI.fetchAll(
 				15,
 				0,
-				SortOrderEnum.DESC,
+				SortOrdersEnum.DESC,
 				null
 			)
 			this.setAuthorComments(data.comments)

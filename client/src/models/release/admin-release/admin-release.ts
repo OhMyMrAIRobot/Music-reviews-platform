@@ -1,9 +1,4 @@
-import { IReleaseType } from './release-types'
-
-export interface IAdminReleasesResponse {
-	count: number
-	releases: IAdminRelease[]
-}
+import { IReleaseType } from '../release-type/release-type'
 
 export interface IAdminRelease {
 	id: string

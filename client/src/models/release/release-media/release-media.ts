@@ -1,7 +1,7 @@
-import { IReleaseMediaStatus } from '../release-media-status/release-media-status'
-import { IReleaseMediaType } from '../release-media-type/release-media-type'
-import { IAuthorFavMedia } from './author-fav-media'
-import { IUserFavMedia } from './user-fav-media'
+import { IReleaseMediaStatus } from './release-media-status/release-media-status'
+import { IReleaseMediaType } from './release-media-type/release-media-type'
+import { IAuthorFavMedia } from './user-fav-media/author-fav-media'
+import { IUserFavMedia } from './user-fav-media/user-fav-media'
 
 export interface IReleaseMedia {
 	id: string

@@ -1,4 +1,4 @@
-import { IFeedbackStatus } from '../feedback/feedback-status'
+import { IFeedbackStatus } from '../feedback-status/feedback-status'
 import { IFeedbackReply } from './feedback-reply'
 
 export interface ICreateFeedbackReplyResponse {

@@ -1,4 +1,4 @@
-export enum ReleaseTypesFilterEnum {
+export enum ReleaseTypesFilterOptions {
 	ALL = 'Все',
 	ALBUM = 'Альбом',
 	SINGLE = 'Трек',

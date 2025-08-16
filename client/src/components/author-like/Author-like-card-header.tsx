@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { Link } from 'react-router'
 import useNavigationPath from '../../hooks/use-navigation-path'
-import { IAuthorLike } from '../../models/author-likes/author-like'
+import { IAuthorLike } from '../../models/author/author-likes/author-like'
 import Tooltip from '../tooltip/Tooltip'
 import TooltipSpan from '../tooltip/Tooltip-span'
 

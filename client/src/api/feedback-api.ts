@@ -2,7 +2,7 @@ import axios from 'axios'
 import { IFeedback } from '../models/feedback/feedback'
 import { IFeedbackData } from '../models/feedback/feedback-data'
 import { IFeedbackResponse } from '../models/feedback/feedback-response'
-import { IFeedbackStatus } from '../models/feedback/feedback-status'
+import { IFeedbackStatus } from '../models/feedback/feedback-status/feedback-status'
 import { SortOrder } from '../types/sort-order-type'
 import { api } from './api-instance'
 

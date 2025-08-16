@@ -2,9 +2,9 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { FeedbackAPI } from '../../../api/feedback-api'
 import { FeedbackReplyAPI } from '../../../api/feedback-reply-api'
-import { ICreateFeedbackReplyData } from '../../../models/feedback-reply/create-feedback-reply-data'
-import { IFeedbackReply } from '../../../models/feedback-reply/feedback-reply'
 import { IFeedback } from '../../../models/feedback/feedback'
+import { ICreateFeedbackReplyData } from '../../../models/feedback/feedback-reply/create-feedback-reply-data'
+import { IFeedbackReply } from '../../../models/feedback/feedback-reply/feedback-reply'
 import { IFeedbackResponse } from '../../../models/feedback/feedback-response'
 import { SortOrder } from '../../../types/sort-order-type'
 

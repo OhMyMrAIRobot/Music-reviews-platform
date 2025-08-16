@@ -1,4 +1,4 @@
-import { IRegisteredAuthor } from '../registered-author/registered-author'
+import { IRegisteredAuthor } from '../author/registered-author/registered-author'
 import { IRole } from '../role/role'
 
 export interface IAuthUser {

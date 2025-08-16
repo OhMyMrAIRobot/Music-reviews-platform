@@ -4,7 +4,7 @@ import AdminHeader from '../../../../../components/admin-header/Admin-header'
 import Pagination from '../../../../../components/pagination/Pagination'
 import { useLoading } from '../../../../../hooks/use-loading'
 import { useStore } from '../../../../../hooks/use-store'
-import { SortOrderEnum } from '../../../../../models/sort/sort-order-enum'
+import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
 import { SortOrder } from '../../../../../types/sort-order-type'
 import AdminDashboardReviewsGridItem from './Admin-dashboard-reviews-grid-item'
 
@@ -15,7 +15,7 @@ const AdminDashboardReviewsGrid = observer(() => {
 
 	const [searchText, setSearchText] = useState<string>('')
 	const [currentPage, setCurrentPage] = useState<number>(1)
-	const [order, setOrder] = useState<SortOrder>(SortOrderEnum.DESC)
+	const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC)
 
 	const { execute: fetch, isLoading } = useLoading(
 		adminDashboardReviewsStore.fetchReviews
@@ -55,9 +55,9 @@ const AdminDashboardReviewsGrid = observer(() => {
 					order={order}
 					toggleOrder={() =>
 						setOrder(
-							order === SortOrderEnum.DESC
-								? SortOrderEnum.ASC
-								: SortOrderEnum.DESC
+							order === SortOrdersEnum.DESC
+								? SortOrdersEnum.ASC
+								: SortOrdersEnum.DESC
 						)
 					}
 				/>

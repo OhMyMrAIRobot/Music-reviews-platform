@@ -1,4 +1,4 @@
-import { AuthorConfirmationStatusesEnum } from '../models/author-confirmation-status/author-confirmation-statuses-enum'
+import { AuthorConfirmationStatusesEnum } from '../models/author/author-confirmation/author-confirmation-statuses-enum'
 
 export const getAuthorConfirmationStatusColor = (status: string): string => {
 	switch (status) {
