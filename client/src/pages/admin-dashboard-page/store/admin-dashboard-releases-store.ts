@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
-import { AuthorAPI } from '../../../api/author-api'
-import { ReleaseAPI } from '../../../api/release-api'
+import { AuthorAPI } from '../../../api/author/author-api'
+import { ReleaseAPI } from '../../../api/release/release-api'
 import { IAdminAuthor } from '../../../models/author/admin-author/admin-author'
 import {} from '../../../models/author/admin-author/admin-authors-response'
 import { IAdminRelease } from '../../../models/release/admin-release/admin-release'

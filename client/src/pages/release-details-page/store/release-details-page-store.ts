@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
-import { AuthorCommentAPI } from '../../../api/author-comment-api'
-import { ReleaseAPI } from '../../../api/release-api'
-import { ReleaseMediaAPI } from '../../../api/release-media-api'
-import { ReviewAPI } from '../../../api/review-api'
-import { UserFavReleaseAPI } from '../../../api/user-fav-release-api'
+import { AuthorCommentAPI } from '../../../api/author/author-comment-api'
+import { ReleaseAPI } from '../../../api/release/release-api'
+import { ReleaseMediaAPI } from '../../../api/release/release-media-api'
+import { UserFavReleaseAPI } from '../../../api/release/user-fav-release-api'
+import { ReviewAPI } from '../../../api/review/review-api'
 import { IAuthorComment } from '../../../models/author/author-comment/author-comment'
 import { IReleaseDetails } from '../../../models/release/release-details/release-details'
 import { IReleaseMedia } from '../../../models/release/release-media/release-media'

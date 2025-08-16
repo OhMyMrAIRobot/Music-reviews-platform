@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx'
-import { ReviewAPI } from '../../../api/review-api'
+import { ReviewAPI } from '../../../api/review/review-api.ts'
 import { IReview } from '../../../models/review/review.ts'
 import { SortOrder } from '../../../types/sort-order-type.ts'
 import { toggleFavReview } from '../../../utils/toggle-fav-review.ts'

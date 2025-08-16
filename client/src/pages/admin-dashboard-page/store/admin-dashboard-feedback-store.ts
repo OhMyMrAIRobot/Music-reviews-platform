@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
-import { FeedbackAPI } from '../../../api/feedback-api'
-import { FeedbackReplyAPI } from '../../../api/feedback-reply-api'
+import { FeedbackAPI } from '../../../api/feedback/feedback-api'
+import { FeedbackReplyAPI } from '../../../api/feedback/feedback-reply-api'
 import { IFeedback } from '../../../models/feedback/feedback'
 import { ICreateFeedbackReplyData } from '../../../models/feedback/feedback-reply/create-feedback-reply-data'
 import { IFeedbackReply } from '../../../models/feedback/feedback-reply/feedback-reply'

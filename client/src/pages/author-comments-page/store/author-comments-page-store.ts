@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx'
-import { AuthorCommentAPI } from '../../../api/author-comment-api'
+import { AuthorCommentAPI } from '../../../api/author/author-comment-api'
 import { IAuthorComment } from '../../../models/author/author-comment/author-comment'
 import { SortOrder } from '../../../types/sort-order-type'
 

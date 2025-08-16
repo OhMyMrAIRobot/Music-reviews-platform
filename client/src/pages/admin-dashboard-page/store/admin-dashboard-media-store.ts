@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
-import { ReleaseAPI } from '../../../api/release-api'
-import { ReleaseMediaAPI } from '../../../api/release-media-api'
+import { ReleaseAPI } from '../../../api/release/release-api'
+import { ReleaseMediaAPI } from '../../../api/release/release-media-api'
 import { IAdminRelease } from '../../../models/release/admin-release/admin-release'
 import { IReleaseMedia } from '../../../models/release/release-media/release-media'
 import { IReleaseMediaList } from '../../../models/release/release-media/release-media-list'

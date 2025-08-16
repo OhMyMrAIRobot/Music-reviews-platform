@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx'
-import { AuthorAPI } from '../../../api/author-api'
+import { AuthorAPI } from '../../../api/author/author-api'
 import { IAuthor } from '../../../models/author/author'
 
 class AuthorsPageStore {

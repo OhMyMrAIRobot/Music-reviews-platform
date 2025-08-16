@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx'
-import { AuthorAPI } from '../../../api/author-api'
-import { ReleaseAPI } from '../../../api/release-api'
+import { AuthorAPI } from '../../../api/author/author-api'
+import { ReleaseAPI } from '../../../api/release/release-api'
 import { IAuthor } from '../../../models/author/author'
 import { IRelease } from '../../../models/release/release'
 

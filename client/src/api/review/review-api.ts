@@ -1,13 +1,13 @@
 import axios from 'axios'
-import { IAdminReviewsResponse } from '../models/review/admin-review/admin-reviews-response'
-import { IAdminUpdateReviewData } from '../models/review/admin-review/admin-update-review-data'
-import { ReleaseReviewSortFieldsEnum } from '../models/review/release-review/release-review-sort-fields-enum'
-import { IReleaseReviewsResponse } from '../models/review/release-review/release-reviews-response'
-import { IReview } from '../models/review/review'
-import { IReviewData } from '../models/review/review-data'
-import { IReviewsResponse } from '../models/review/reviews-response'
-import { SortOrder } from '../types/sort-order-type'
-import { api } from './api-instance'
+import { IAdminReviewsResponse } from '../../models/review/admin-review/admin-reviews-response'
+import { IAdminUpdateReviewData } from '../../models/review/admin-review/admin-update-review-data'
+import { ReleaseReviewSortFieldsEnum } from '../../models/review/release-review/release-review-sort-fields-enum'
+import { IReleaseReviewsResponse } from '../../models/review/release-review/release-reviews-response'
+import { IReview } from '../../models/review/review'
+import { IReviewData } from '../../models/review/review-data'
+import { IReviewsResponse } from '../../models/review/reviews-response'
+import { SortOrder } from '../../types/sort-order-type'
+import { api } from '../api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
 const _api = axios.create({

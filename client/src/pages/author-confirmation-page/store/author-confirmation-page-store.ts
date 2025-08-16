@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable } from 'mobx'
-import { AuthorAPI } from '../../../api/author-api'
-import { AuthorConfirmationAPI } from '../../../api/author-confirmation-api'
+import { AuthorAPI } from '../../../api/author/author-api'
+import { AuthorConfirmationAPI } from '../../../api/author/author-confirmation-api'
 import { IAdminAuthor } from '../../../models/author/admin-author/admin-author'
 import {} from '../../../models/author/admin-author/admin-authors-response'
 import { IAuthorConfirmation } from '../../../models/author/author-confirmation/author-confirmation'

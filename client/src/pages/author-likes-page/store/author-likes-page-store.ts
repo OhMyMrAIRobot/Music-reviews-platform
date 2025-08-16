@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx'
-import { UserFavReviewAPI } from '../../../api/user-fav-review-api'
+import { UserFavReviewAPI } from '../../../api/review/user-fav-review-api'
 import { IAuthorLike } from '../../../models/author/author-likes/author-like'
 
 class AuthorLikesPageStore {

@@ -1,8 +1,8 @@
 import axios from 'axios'
-import { IAuthorComment } from '../models/author/author-comment/author-comment'
-import { IAuthorCommentsResponse } from '../models/author/author-comment/author-comments-response'
-import { SortOrder } from '../types/sort-order-type'
-import { api } from './api-instance'
+import { IAuthorComment } from '../../models/author/author-comment/author-comment'
+import { IAuthorCommentsResponse } from '../../models/author/author-comment/author-comments-response'
+import { SortOrder } from '../../types/sort-order-type'
+import { api } from '../api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
 

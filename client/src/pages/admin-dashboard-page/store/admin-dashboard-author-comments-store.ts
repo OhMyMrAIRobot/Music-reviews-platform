@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
-import { AuthorCommentAPI } from '../../../api/author-comment-api'
+import { AuthorCommentAPI } from '../../../api/author/author-comment-api'
 import { IAuthorComment } from '../../../models/author/author-comment/author-comment'
 import { IAuthorCommentsResponse } from '../../../models/author/author-comment/author-comments-response'
 import { SortOrder } from '../../../types/sort-order-type'

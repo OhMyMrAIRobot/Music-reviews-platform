@@ -1,7 +1,7 @@
-import { ICreateFeedbackReplyData } from '../models/feedback/feedback-reply/create-feedback-reply-data'
-import { ICreateFeedbackReplyResponse } from '../models/feedback/feedback-reply/create-feedback-reply-response'
-import { IFeedbackReply } from '../models/feedback/feedback-reply/feedback-reply'
-import { api } from './api-instance'
+import { ICreateFeedbackReplyData } from '../../models/feedback/feedback-reply/create-feedback-reply-data'
+import { ICreateFeedbackReplyResponse } from '../../models/feedback/feedback-reply/create-feedback-reply-response'
+import { IFeedbackReply } from '../../models/feedback/feedback-reply/feedback-reply'
+import { api } from '../api-instance'
 
 export const FeedbackReplyAPI = {
 	async fetchFeedbackReply(feedbackId: string): Promise<IFeedbackReply> {

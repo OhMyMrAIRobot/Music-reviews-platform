@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
-import { ProfileAPI } from '../../../api/profile-api'
 import { SocialMediaAPI } from '../../../api/social-media-api'
-import { UserAPI } from '../../../api/user-api'
+import { ProfileAPI } from '../../../api/user/profile-api'
+import { UserAPI } from '../../../api/user/user-api'
 import { IUpdateProfileData } from '../../../models/profile/update-profile-data'
 import { IUpdateUserData } from '../../../models/user/update-user-data'
 import { IUser } from '../../../models/user/user'

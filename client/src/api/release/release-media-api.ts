@@ -1,10 +1,10 @@
 import axios from 'axios'
-import { IReleaseMedia } from '../models/release/release-media/release-media'
-import { IReleaseMediaList } from '../models/release/release-media/release-media-list'
-import { IReleaseMediaStatus } from '../models/release/release-media/release-media-status/release-media-status'
-import { IReleaseMediaType } from '../models/release/release-media/release-media-type/release-media-type'
-import { SortOrder } from '../types/sort-order-type'
-import { api } from './api-instance'
+import { IReleaseMedia } from '../../models/release/release-media/release-media'
+import { IReleaseMediaList } from '../../models/release/release-media/release-media-list'
+import { IReleaseMediaStatus } from '../../models/release/release-media/release-media-status/release-media-status'
+import { IReleaseMediaType } from '../../models/release/release-media/release-media-type/release-media-type'
+import { SortOrder } from '../../types/sort-order-type'
+import { api } from '../api-instance'
 
 const _api = axios.create({
 	baseURL: `${import.meta.env.VITE_SERVER_URL}/`,

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
-import { ReviewAPI } from '../../../api/review-api'
+import { ReviewAPI } from '../../../api/review/review-api'
 import { IAdminReview } from '../../../models/review/admin-review/admin-review'
 import { IAdminReviewsResponse } from '../../../models/review/admin-review/admin-reviews-response'
 import { IAdminUpdateReviewData } from '../../../models/review/admin-review/admin-update-review-data'
