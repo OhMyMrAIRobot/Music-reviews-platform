@@ -1,17 +1,19 @@
 import { useActivePath } from '../../hooks/use-active-path'
 import useNavigationPath from '../../hooks/use-navigation-path'
 import { ROUTES } from '../../routes/routes-enum'
-import AuthorCommentSvg from '../author-comment/svg/Author-comment-svg'
-import LogoutSvg from '../header/svg/Logout-svg'
-import ProfileSvg from '../header/svg/Profile-svg'
+import AuthorCommentSvg from '../author/author-comment/svg/Author-comment-svg'
+import AdminSidebarItem, {
+	IAdminSidebarItemProps,
+} from '../layout/admin-sidebar/Admin-sidebar-item'
+import LogoutSvg from '../layout/header/svg/Logout-svg'
+import ProfileSvg from '../layout/header/svg/Profile-svg'
+import AuthorSvg from '../layout/sidebar/svg/Author-svg'
+import ReleaseSvg from '../layout/sidebar/svg/Release-svg'
 import TextReviewSvg from '../review/svg/Text-review-svg'
-import AuthorSvg from '../sidebar/svg/Author-svg'
-import ReleaseSvg from '../sidebar/svg/Release-svg'
 import LogoFullSvg from '../svg/Logo-full-svg'
 import LogoSmallSvg from '../svg/Logo-small-svg'
 import MediaPlayerSvg from '../svg/Media-player-svg'
 import PencilSvg from '../svg/Pencil-svg'
-import AdminSidebarItem, { IAdminSidebarItemProps } from './Admin-sidebar-item'
 
 const AdminSidebar = () => {
 	const {

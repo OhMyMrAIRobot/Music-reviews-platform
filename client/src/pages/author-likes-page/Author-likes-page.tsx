@@ -1,8 +1,8 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
-import AuthorLikeCard from '../../components/author-like/Author-like-card'
+import AuthorLikeCard from '../../components/author/author-like/Author-like-card'
+import AuthorLikeColorSvg from '../../components/author/author-like/svg/Author-like-color-svg'
 import Pagination from '../../components/pagination/Pagination'
-import AuthorLikeColorSvg from '../../components/registered-author/svg/Author-like-color-svg'
 import { useLoading } from '../../hooks/use-loading'
 import { useStore } from '../../hooks/use-store'
 

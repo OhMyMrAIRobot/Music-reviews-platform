@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import ComboBox from '../../components/buttons/Combo-box'
 import Pagination from '../../components/pagination/Pagination'
-import ReleaseMediaReview from '../../components/release-media/Release-media-review'
+import ReleaseMediaReview from '../../components/release/release-media/Release-media-review'
 import { useLoading } from '../../hooks/use-loading'
 import { useStore } from '../../hooks/use-store'
 import { ReleaseMediaStatusesEnum } from '../../models/release/release-media/release-media-status/release-media-statuses-enum'

@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useRef, useState } from 'react'
+import AuthorLikeColorSvg from '../../../../components/author/author-like/svg/Author-like-color-svg'
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
-import AuthorLikeColorSvg from '../../../../components/registered-author/svg/Author-like-color-svg'
 import { useLoading } from '../../../../hooks/use-loading'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'

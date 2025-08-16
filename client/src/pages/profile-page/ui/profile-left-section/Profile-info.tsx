@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import RegisteredAuthorTypes from '../../../../components/registered-author/Registered-author-types'
+import RegisteredAuthorTypes from '../../../../components/author/registered-author/Registered-author-types'
 import UserRoleSpan from '../../../../components/user/User-role-span'
 import { IProfile } from '../../../../models/profile/profile'
 import ProfileSocialItem from './profile-social-item/Profile-social-item'

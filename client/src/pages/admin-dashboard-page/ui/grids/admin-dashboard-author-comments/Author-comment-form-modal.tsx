@@ -6,7 +6,7 @@ import FormTextbox from '../../../../../components/form-elements/Form-textbox'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay'
 import { useLoading } from '../../../../../hooks/use-loading'
 import { useStore } from '../../../../../hooks/use-store'
-import { IAuthorComment } from '../../../../../models/author-comment/author-comment'
+import { IAuthorComment } from '../../../../../models/author/author-comment/author-comment'
 
 interface IProps {
 	isOpen: boolean

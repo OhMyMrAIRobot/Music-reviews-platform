@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useState } from 'react'
 import { Link } from 'react-router'
-import ArrowBottomSvg from '../../../../../components/header/svg/Arrow-bottom-svg'
+import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import { useLoading } from '../../../../../hooks/use-loading'

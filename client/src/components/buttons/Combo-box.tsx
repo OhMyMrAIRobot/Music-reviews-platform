@@ -1,6 +1,6 @@
 import { FC, useEffect, useRef, useState } from 'react'
 import { getRoleColor } from '../../utils/get-role-color'
-import ArrowBottomSvg from '../header/svg/Arrow-bottom-svg'
+import ArrowBottomSvg from '../layout/header/svg/Arrow-bottom-svg'
 import TickSvg from '../svg/Tick-svg'
 
 interface ComboBoxProps {

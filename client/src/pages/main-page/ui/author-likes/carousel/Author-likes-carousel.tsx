@@ -8,7 +8,7 @@ import {
 	useImperativeHandle,
 	useState,
 } from 'react'
-import AuthorLikeCard from '../../../../../components/author-like/Author-like-card'
+import AuthorLikeCard from '../../../../../components/author/author-like/Author-like-card'
 import { IAuthorLike } from '../../../../../models/author/author-likes/author-like'
 import { CarouselRef } from '../../../../../types/carousel-ref'
 import { CarouselStateCallbacks } from '../../../../../types/carousel-state-callbacks'

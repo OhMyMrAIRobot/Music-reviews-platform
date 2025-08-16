@@ -1,6 +1,6 @@
 import { FC, useState } from 'react'
 import { Link } from 'react-router'
-import ArrowBottomSvg from '../../../../../components/header/svg/Arrow-bottom-svg.tsx'
+import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg.tsx'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal.tsx'
 import ReleaseTypeIcon from '../../../../../components/release/Release-type-icon.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'

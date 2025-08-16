@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { Link } from 'react-router'
-import AuthorLikeColorSvg from '../../../../../components/registered-author/svg/Author-like-color-svg'
+import AuthorLikeColorSvg from '../../../../../components/author/author-like/svg/Author-like-color-svg'
 import LogoSmallSvg from '../../../../../components/svg/Logo-small-svg'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'

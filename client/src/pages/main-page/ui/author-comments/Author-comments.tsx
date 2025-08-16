@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useRef, useState } from 'react'
-import AuthorCommentColorSvg from '../../../../components/author-comment/svg/Author-comment-color-svg'
+import AuthorCommentColorSvg from '../../../../components/author/author-comment/svg/Author-comment-color-svg'
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
 import { useLoading } from '../../../../hooks/use-loading'
 import useNavigationPath from '../../../../hooks/use-navigation-path'

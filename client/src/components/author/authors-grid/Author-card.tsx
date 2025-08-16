@@ -3,11 +3,11 @@ import { Link } from 'react-router'
 import useNavigationPath from '../../../hooks/use-navigation-path'
 import { IAuthor } from '../../../models/author/author'
 import { ReleaseTypesEnum } from '../../../models/release/release-type/release-types-enum'
-import RegisteredAuthorTypes from '../../registered-author/Registered-author-types'
 import LikesCount from '../../utils/Likes-count'
 import SkeletonLoader from '../../utils/Skeleton-loader'
 import AuthorReleaseTypesRatings from '../author-ratings/Author-release-types-ratings'
 import AuthorTypes from '../author-types/Author-types'
+import RegisteredAuthorTypes from '../registered-author/Registered-author-types'
 
 interface IProps {
 	author?: IAuthor

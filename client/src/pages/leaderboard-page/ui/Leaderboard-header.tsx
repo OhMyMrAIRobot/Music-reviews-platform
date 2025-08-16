@@ -1,4 +1,4 @@
-import AuthorLikeColorSvg from '../../../components/registered-author/svg/Author-like-color-svg'
+import AuthorLikeColorSvg from '../../../components/author/author-like/svg/Author-like-color-svg'
 import NoTextReviewSvg from '../../../components/review/svg/No-text-review-svg'
 import TextReviewSvg from '../../../components/review/svg/Text-review-svg'
 import LogoSmallSvg from '../../../components/svg/Logo-small-svg'

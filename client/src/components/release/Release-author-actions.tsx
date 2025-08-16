@@ -1,6 +1,6 @@
 import { FC } from 'react'
-import AuthorCommentColorSvg from '../author-comment/svg/Author-comment-color-svg'
-import AuthorLikeColorSvg from '../registered-author/svg/Author-like-color-svg'
+import AuthorCommentColorSvg from '../author/author-comment/svg/Author-comment-color-svg'
+import AuthorLikeColorSvg from '../author/author-like/svg/Author-like-color-svg'
 import Tooltip from '../tooltip/Tooltip'
 import TooltipSpan from '../tooltip/Tooltip-span'
 

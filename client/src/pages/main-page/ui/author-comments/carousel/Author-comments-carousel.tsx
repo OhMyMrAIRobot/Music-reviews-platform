@@ -8,8 +8,8 @@ import {
 	useImperativeHandle,
 	useState,
 } from 'react'
-import AuthorComment from '../../../../../components/author-comment/Author-comment'
-import { IAuthorComment } from '../../../../../models/author-comment/author-comment'
+import AuthorComment from '../../../../../components/author/author-comment/Author-comment'
+import { IAuthorComment } from '../../../../../models/author/author-comment/author-comment'
 import { CarouselRef } from '../../../../../types/carousel-ref'
 import { CarouselStateCallbacks } from '../../../../../types/carousel-state-callbacks'
 

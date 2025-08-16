@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useCallback, useEffect, useState } from 'react'
 import Pagination from '../../../../components/pagination/Pagination'
-import ReleaseMediaReview from '../../../../components/release-media/Release-media-review'
+import ReleaseMediaReview from '../../../../components/release/release-media/Release-media-review'
 import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
 import { IProfile } from '../../../../models/profile/profile'
