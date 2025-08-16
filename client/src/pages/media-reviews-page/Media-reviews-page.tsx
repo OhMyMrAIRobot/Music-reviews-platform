@@ -7,6 +7,7 @@ import { useStore } from '../../hooks/use-store'
 import { ReleaseMediaStatusesEnum } from '../../models/release-media-status/release-media-statuses-enum'
 import { ReleaseMediaTypesEnum } from '../../models/release-media-type/release-media-types-enum'
 import { ReviewSortFields } from '../../models/review/review-sort-fields'
+import { SortOrderEnum } from '../../models/sort/sort-order-enum'
 import { SortOrder } from '../../types/sort-order-type'
 
 const MediaReviewsPage = () => {
@@ -44,7 +45,9 @@ const MediaReviewsPage = () => {
 		if (!typeId || !statusId) return
 
 		const order: SortOrder =
-			selectedOrder === ReviewSortFields.NEW ? 'asc' : 'desc'
+			selectedOrder === ReviewSortFields.NEW
+				? SortOrderEnum.DESC
+				: SortOrderEnum.ASC
 
 		return fetchMedia(
 			statusId,

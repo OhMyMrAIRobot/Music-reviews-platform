@@ -120,7 +120,7 @@ const PlatformStatistics = observer(() => {
 
 				<PlatformStatisticsRow
 					isLoading={isStatsLoading}
-					title={'Оценков без рецензий'}
+					title={'Оценок без рецензий'}
 					value={stats?.withoutTextRatings ?? 0}
 					svg={<NoTextReviewSvg className='size-5' />}
 				/>

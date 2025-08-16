@@ -19,7 +19,7 @@ const MostReviewedCarouselCard: FC<IProps> = ({ release, index }) => {
 
 	return (
 		release && (
-			<div className='w-full max-w-[300px] lg:max-w-[350px] flex flex-col items-center shadow-2xl select-none border border-white/10 bg-black/40 rounded-[30px] lg:rounded-[40px] p-[15px] h-[85%]'>
+			<div className='size-full flex flex-col items-center shadow-2xl select-none border border-white/10 bg-black/40 rounded-[30px] lg:rounded-[40px] p-[15px]'>
 				{/* COVER */}
 				<div className='flex flex-col items-center gap-2 relative w-full'>
 					<span className='font-semibold absolute left-3 top-3 lg:left-4 lg:top-4 bg-black/10 text-white backdrop-blur-md text-[12px] lg:text-[13px] h-7 rounded-full px-3 flex items-center'>
@@ -41,7 +41,7 @@ const MostReviewedCarouselCard: FC<IProps> = ({ release, index }) => {
 								? import.meta.env.VITE_DEFAULT_COVER
 								: release.img
 						}`}
-						className='rounded-[15px] lg:rounded-[25px] border border-white/10'
+						className='rounded-[15px] lg:rounded-[25px] border border-white/10 object-cover size-full'
 					/>
 				</div>
 

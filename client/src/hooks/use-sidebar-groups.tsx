@@ -58,13 +58,16 @@ export const useSidebarGroups = () => {
 			label: 'О нас',
 			active: isActive('456'),
 		},
-		{
+	]
+
+	if (authStore.isAuth) {
+		sidebarFirstGroup.push({
 			href: navigateToAuthorConfirmation,
 			icon: <ActivationSvg className='size-5.5' />,
 			label: 'Стать автором',
 			active: isActive(`/${ROUTES.AUTHOR_CONFIRMATION}`),
-		},
-	]
+		})
+	}
 
 	const sidebarSecondGroup: ISidebarItemProps[] = [
 		{

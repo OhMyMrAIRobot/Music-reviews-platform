@@ -77,7 +77,7 @@ const AuthorLikesCarousel = observer(
 							{isLoading
 								? Array.from({ length: 10 }).map((_, idx) => (
 										<div
-											className='flex-[0_0_270px]'
+											className='flex-[0_0_270px] max-w-[270px]'
 											key={`skeleton-author-like-${idx}`}
 										>
 											<AuthorLikeCard isLoading={isLoading} />
@@ -85,7 +85,7 @@ const AuthorLikesCarousel = observer(
 								  ))
 								: items.map(item => (
 										<div
-											className='flex-[0_0_270px]'
+											className='flex-[0_0_270px] max-w-[270px]'
 											key={item.author.id + item.reviewAuthor.id}
 										>
 											<AuthorLikeCard isLoading={isLoading} authorLike={item} />

@@ -122,7 +122,7 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
 			<div>
 				<ProfileStatsRow
 					title={'Получено авторских лайков'}
-					value={profile.receivedLikes}
+					value={profile.receivedAuthorLikes}
 					icon={<AuthorLikeColorSvg className={'size-5'} />}
 				/>
 				<ProfileStatsRow
