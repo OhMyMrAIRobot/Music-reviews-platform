@@ -12,4 +12,6 @@ export class ReleaseResponseData {
   withoutTextCount: number;
   authors: { id: string; name: string }[];
   ratings: { type: string; total: number }[];
+  hasAuthorLikes: boolean;
+  hasAuthorComments: boolean;
 }

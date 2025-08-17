@@ -1,5 +1,27 @@
 import { Exclude, Expose, Type } from 'class-transformer';
 
+class RegisteredAuthorDto {
+  @Exclude()
+  id: string;
+
+  @Expose()
+  userId: string;
+
+  @Expose()
+  authorId: string;
+
+  @Exclude()
+  createdAt: string;
+}
+
+class UserRoleDto {
+  @Expose()
+  id: string;
+
+  @Expose()
+  role: string;
+}
+
 export class UserResponseDto {
   @Expose()
   id: string;
@@ -23,9 +45,10 @@ export class UserResponseDto {
   password: string;
 
   @Expose()
-  @Type(() => Object)
-  role: {
-    id: string;
-    role: string;
-  };
+  @Type(() => UserRoleDto)
+  role: UserRoleDto;
+
+  @Expose()
+  @Type(() => RegisteredAuthorDto)
+  registeredAuthor: RegisteredAuthorDto[];
 }

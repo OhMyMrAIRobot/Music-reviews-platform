@@ -18,7 +18,7 @@ import { JwtAuthGuard } from 'src/shared/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/shared/guards/roles.guard';
 import { AuthorsService } from './authors.service';
 import { CreateAuthorRequestDto } from './dto/request/create-author.request.dto';
-import { FindAuthorParams } from './dto/request/params/find-author.params.dto';
+import { FindAuthorByIdParams } from './dto/request/params/find-author-by-id.params.dto';
 import { FindAuthorsQuery } from './dto/request/query/find-authors.query.dto';
 import { UpdateAuthorRequestDto } from './dto/request/update-author.request.dto';
 
@@ -27,12 +27,17 @@ export class AuthorsController {
   constructor(private readonly authorsService: AuthorsService) {}
 
   @Get()
+  findAll(@Query() query: FindAuthorsQuery) {
+    return this.authorsService.findAll(query);
+  }
+
+  @Get('public')
   findAuthors(@Query() query: FindAuthorsQuery) {
     return this.authorsService.findAuthors(query);
   }
 
   @Get('details/:id')
-  findById(@Param() params: FindAuthorParams) {
+  findById(@Param() params: FindAuthorByIdParams) {
     return this.authorsService.findById(params.id);
   }
 
@@ -58,13 +63,6 @@ export class AuthorsController {
       files?.avatarImg?.[0],
       files?.coverImg?.[0],
     );
-  }
-
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
-  @Get('admin')
-  findAll(@Query() query: FindAuthorsQuery) {
-    return this.authorsService.findAll(query);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

@@ -19,6 +19,9 @@ model User {
   feedbackResponse    FeedbackResponse[]
   releaseMedia        ReleaseMedia[]
   userFavMedia        UserFavMedia[]
+  authorComment       AuthorComment[]
+  registeredAuthor    RegisteredAuthor[]
+  authorConfirmation  AuthorConfirmation[]
 
   @@map("Users")
 }
@@ -43,8 +46,9 @@ model Role {
 }
 
 model UserFavRelease {
-  userId    String @map("user_id")
-  releaseId String @map("release_id")
+  userId    String   @map("user_id")
+  releaseId String   @map("release_id")
+  createdAt DateTime @default(now()) @map("created_at")
 
   release Release @relation(fields: [releaseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
@@ -55,8 +59,9 @@ model UserFavRelease {
 }
 
 model UserFavReview {
-  userId   String @map("user_id")
-  reviewId String @map("review_id")
+  userId    String   @map("user_id")
+  reviewId  String   @map("review_id")
+  createdAt DateTime @default(now()) @map("created_at")
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -66,8 +71,9 @@ model UserFavReview {
 }
 
 model UserFavAuthor {
-  userId   String @map("user_id")
-  authorId String @map("author_id")
+  userId    String   @map("user_id")
+  authorId  String   @map("author_id")
+  createdAt DateTime @default(now()) @map("created_at")
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   author Author @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -77,8 +83,9 @@ model UserFavAuthor {
 }
 
 model UserFavMedia {
-  userId  String @map("user_id")
-  mediaId String @map("media_id")
+  userId    String   @map("user_id")
+  mediaId   String   @map("media_id")
+  createdAt DateTime @default(now()) @map("created_at")
 
   user  User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   media ReleaseMedia @relation(fields: [mediaId], references: [id], onDelete: Cascade, onUpdate: Cascade)

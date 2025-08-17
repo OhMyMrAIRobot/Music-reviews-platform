@@ -1,4 +1,3 @@
-// review-query.dto.ts
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional } from 'class-validator';
 

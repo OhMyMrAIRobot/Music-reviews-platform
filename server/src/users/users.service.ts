@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { plainToClass, plainToInstance } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.interface';
 import { IJwtAuthPayload } from 'src/auth/types/jwt-auth-payload.interface';
 import { FileService } from 'src/file/files.service';
@@ -115,7 +115,7 @@ export class UsersService {
   ): Promise<UserResponseDto | UserWithPasswordResponseDto> {
     const user = await this.prisma.user.findUnique({
       where: { id },
-      include: { role: true },
+      include: { role: true, registeredAuthor: true },
     });
 
     if (!user) {
@@ -123,8 +123,12 @@ export class UsersService {
     }
 
     return includePassword
-      ? plainToInstance(UserWithPasswordResponseDto, user)
-      : plainToInstance(UserResponseDto, user);
+      ? plainToInstance(UserWithPasswordResponseDto, user, {
+          excludeExtraneousValues: true,
+        })
+      : plainToInstance(UserResponseDto, user, {
+          excludeExtraneousValues: true,
+        });
   }
 
   async findUserDetails(id: string) {
@@ -157,7 +161,7 @@ export class UsersService {
   ): Promise<UserResponseDto | UserWithPasswordResponseDto> {
     const user = await this.prisma.user.findFirst({
       where: { email: { equals: email, mode: 'insensitive' } },
-      include: { role: true },
+      include: { role: true, registeredAuthor: true },
     });
 
     if (!user) {
@@ -196,10 +200,10 @@ export class UsersService {
     const updatedUser = await this.prisma.user.update({
       where: { id },
       data: dto,
-      include: { role: true },
+      include: { role: true, registeredAuthor: true },
     });
 
-    return plainToClass(UserResponseDto, updatedUser);
+    return plainToInstance(UserResponseDto, updatedUser);
   }
 
   async adminUpdate(
@@ -243,7 +247,7 @@ export class UsersService {
       include: { role: true },
     });
 
-    return plainToClass(UserResponseDto, updatedUser);
+    return plainToInstance(UserResponseDto, updatedUser);
   }
 
   async delete(id: string): Promise<UserResponseDto> {
@@ -263,7 +267,7 @@ export class UsersService {
       await this.fileService.deleteFile('covers/' + profile.coverImage);
     }
 
-    return plainToClass(UserResponseDto, deletedUser);
+    return plainToInstance(UserResponseDto, deletedUser);
   }
 
   async adminDelete(req: IAuthenticatedRequest, id: string) {
@@ -282,10 +286,10 @@ export class UsersService {
     const updatedUser = await this.prisma.user.update({
       where: { id },
       data: { isActive: true },
-      include: { role: true },
+      include: { role: true, registeredAuthor: true },
     });
 
-    return plainToClass(UserResponseDto, updatedUser);
+    return plainToInstance(UserResponseDto, updatedUser);
   }
 
   async verifyPassword(
@@ -304,7 +308,6 @@ export class UsersService {
       throw new BadRequestException('Вы не можете редактировать свой аккаунт!');
     }
 
-    // Check permissions
     const targetUser = await this.findOne(targetId);
 
     if (targetUser.role.role === UserRoleEnum.ROOT_ADMIN) {

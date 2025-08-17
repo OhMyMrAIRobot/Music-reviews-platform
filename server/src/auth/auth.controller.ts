@@ -45,9 +45,8 @@ export class AuthController {
         result.user.nickname,
         activationToken,
       );
-    } catch (e) {
+    } catch {
       emailSent = false;
-      console.log(e);
     }
 
     return res.status(200).send({ ...result, emailSent: emailSent });

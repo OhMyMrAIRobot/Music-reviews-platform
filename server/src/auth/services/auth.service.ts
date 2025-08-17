@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { Response } from 'express';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { RolesService } from '../../roles/roles.service';
@@ -39,11 +39,11 @@ export class AuthService {
       throw new InvalidCredentialsException();
     }
 
-    return plainToClass(UserResponseDto, user);
+    return plainToInstance(UserResponseDto, user);
   }
 
   async login(res: Response, user: UserResponseDto) {
-    const role = await this.rolesService.findByName(user.role.role);
+    const role = await this.rolesService.findById(user.role.id);
 
     const validRole = this.rolesService.getValidRole(role.role);
 
@@ -92,7 +92,7 @@ export class AuthService {
     }
 
     const user = await this.usersService.findOne(decodedToken.id);
-    return this.login(res, plainToClass(UserResponseDto, user));
+    return this.login(res, plainToInstance(UserResponseDto, user));
   }
 
   async register(res: Response, dto: RegisterRequestDto) {
@@ -114,6 +114,7 @@ export class AuthService {
           },
           include: {
             role: true,
+            registeredAuthor: true,
           },
         });
 
@@ -124,7 +125,7 @@ export class AuthService {
         return user;
       });
 
-      return this.login(res, plainToClass(UserResponseDto, user));
+      return this.login(res, plainToInstance(UserResponseDto, user));
     } catch {
       throw new InternalServerErrorException(
         'Ошибка при выполении регистрации',
@@ -160,9 +161,9 @@ export class AuthService {
     const updatedUser = await this.prisma.user.update({
       where: { id },
       data: dto,
-      include: { role: true },
+      include: { role: true, registeredAuthor: true },
     });
 
-    return this.login(res, updatedUser);
+    return this.login(res, plainToInstance(UserResponseDto, updatedUser));
   }
 }

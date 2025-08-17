@@ -120,10 +120,11 @@ EXECUTE FUNCTION update_release_rating();
 ------------------------------------------
 -- FUNCTION TO UPDATE FAV REVIEW POINTS --
 CREATE OR REPLACE FUNCTION handle_fav_review_points()
-    RETURNS TRIGGER AS $$
+RETURNS TRIGGER AS $$
 DECLARE
     points_change_author INT;
     points_change_user INT;
+    is_author_like BOOLEAN;
 BEGIN
     IF TG_OP = 'INSERT' THEN
         points_change_author := 3;
@@ -135,22 +136,54 @@ BEGIN
         RETURN NULL;
     END IF;
 
-    UPDATE "User_profiles"
-    SET points = GREATEST(points + points_change_author, 0)
-    FROM "Reviews"
-    WHERE "User_profiles".user_id = "Reviews".user_id
-      AND "Reviews".id = COALESCE(NEW.review_id, OLD.review_id);
+    SELECT EXISTS (
+        SELECT 1
+        FROM "Reviews" rv
+        WHERE rv.id = COALESCE(NEW.review_id, OLD.review_id)
+          AND EXISTS (
+              SELECT 1
+              FROM "Registered_authors" ra
+              WHERE ra.user_id = COALESCE(NEW.user_id, OLD.user_id)
+                AND ra.author_id IN (
+                  SELECT rp.author_id 
+                  FROM "Release_producers" rp 
+                  WHERE rp.release_id = rv.release_id
+                  UNION
+                  SELECT ar.author_id 
+                  FROM "Release_artists" ar 
+                  WHERE ar.release_id = rv.release_id
+                  UNION
+                  SELECT rd.author_id 
+                  FROM "Release_designers" rd 
+                  WHERE rd.release_id = rv.release_id
+                )
+          )
+    ) INTO is_author_like;
 
-    UPDATE "User_profiles"
-    SET points = GREATEST(points + points_change_user, 0)
-    WHERE user_id = COALESCE(NEW.user_id, OLD.user_id);
+    IF is_author_like THEN
+        IF TG_OP = 'INSERT' THEN
+            points_change_author := 500;
+            points_change_user := 100;
+        ELSE
+            points_change_author := -500;
+            points_change_user := -100;
+        END IF;
+    END IF;
+
+    UPDATE "User_profiles" up
+    SET points = GREATEST(up.points + points_change_author, 0)
+    FROM "Reviews" rv
+    WHERE up.user_id = rv.user_id
+      AND rv.id = COALESCE(NEW.review_id, OLD.review_id);
+
+    UPDATE "User_profiles" up
+    SET points = GREATEST(up.points + points_change_user, 0)
+    WHERE up.user_id = COALESCE(NEW.user_id, OLD.user_id);
 
     RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;
 END;
 $$ LANGUAGE plpgsql;
 
---------------------------------------------
--- INSERT OR DELETE ON "User_fav_reviews" --
 CREATE TRIGGER fav_review_points_trigger
     AFTER INSERT OR DELETE ON "User_fav_reviews"
     FOR EACH ROW
@@ -162,44 +195,43 @@ EXECUTE FUNCTION handle_fav_review_points();
 
 ---------------------------------------------------------
 -- FUNCTION TO UPDATE FAV RELEASE OR FAV AUTHOR POINTS --
-CREATE OR REPLACE FUNCTION handle_favorite_points()
+CREATE OR REPLACE FUNCTION handle_points()
     RETURNS TRIGGER AS $$
 DECLARE
-    points_change INT;
+    points_amount INT;
 BEGIN
+    -- Получаем количество очков из параметров триггера
+    points_amount := TG_ARGV[0]::INT;
+    
     IF TG_OP = 'INSERT' THEN
-        points_change := 5;
+        UPDATE "User_profiles"
+        SET points = points + points_amount
+        WHERE user_id = NEW.user_id;
     ELSIF TG_OP = 'DELETE' THEN
-        points_change := -5;
-    ELSE
-        RETURN NULL;
-    END IF;
-
-    IF points_change > 0 THEN
         UPDATE "User_profiles"
-        SET points = points + points_change
-        WHERE user_id = COALESCE(NEW.user_id, OLD.user_id);
-    ELSE
-        UPDATE "User_profiles"
-        SET points = GREATEST(points + points_change, 0)
-        WHERE user_id = COALESCE(NEW.user_id, OLD.user_id);
+        SET points = GREATEST(points - points_amount, 0)
+        WHERE user_id = OLD.user_id;
     END IF;
 
     RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;
 END;
 $$ LANGUAGE plpgsql;
 
--------------------------------------------------------------------
--- INSERT OR DELETE ON "User_fav_releases" and "User_fav_authors"--
+
+CREATE TRIGGER author_comment_points_trigger
+    AFTER INSERT OR DELETE ON "Author_comments"
+    FOR EACH ROW
+EXECUTE FUNCTION handle_points(5000);
+
 CREATE TRIGGER fav_release_points_trigger
     AFTER INSERT OR DELETE ON "User_fav_releases"
     FOR EACH ROW
-EXECUTE FUNCTION handle_favorite_points();
+EXECUTE FUNCTION handle_points(5);
 
 CREATE TRIGGER fav_author_points_trigger
     AFTER INSERT OR DELETE ON "User_fav_authors"
     FOR EACH ROW
-EXECUTE FUNCTION handle_favorite_points();
+EXECUTE FUNCTION handle_points(5);
 
 -------------------------------------------------------------------------
 -------------------------------------------------------------------------
@@ -362,9 +394,65 @@ SELECT
         ELSE json_agg(DISTINCT jsonb_build_object(
                 'total', rr.total,
                 'type', rrt.type
-    ))
+        ))
     END as ratings,
-    COUNT(rev.id) AS "totalCount"
+    COUNT(rev.id) AS "totalCount",
+    EXISTS (
+        SELECT 1
+        FROM "Author_comments" ac
+            JOIN "Registered_authors" ra ON ra.user_id = ac.user_id
+        WHERE ac.release_id = r.id
+            AND ra.author_id IN (
+                SELECT rp.author_id
+                FROM "Release_producers" rp
+                WHERE rp.release_id = r.id
+                UNION
+                SELECT ar.author_id
+                FROM "Release_artists" ar
+                WHERE ar.release_id = r.id
+                UNION
+                SELECT rd.author_id
+                FROM "Release_designers" rd
+                WHERE rd.release_id = r.id
+            )
+    ) AS "hasAuthorComments",
+    (
+        EXISTS (
+            SELECT 1
+            FROM "User_fav_reviews" ufr
+                JOIN "Reviews" r2 ON r2.id = ufr.review_id
+                JOIN "Registered_authors" ra2 ON ra2.user_id = ufr.user_id
+            WHERE r2.release_id = r.id
+              AND ra2.author_id IN (
+                SELECT rp.author_id
+                FROM "Release_producers" rp
+                WHERE rp.release_id = r.id
+                UNION
+                SELECT ar.author_id
+                FROM "Release_artists" ar
+                WHERE ar.release_id = r.id
+                UNION
+                SELECT rd.author_id
+                FROM "Release_designers" rd
+                WHERE rd.release_id = r.id
+            )
+        )
+        OR
+        EXISTS (
+            SELECT 1
+            FROM "User_fav_media" ufm
+                JOIN "Release_media" rm ON rm.id = ufm.media_id
+                JOIN "Registered_authors" ra3 ON ra3.user_id = ufm.user_id
+            WHERE rm.release_id = r.id
+              AND ra3.author_id IN (
+                SELECT rp.author_id FROM "Release_producers" rp WHERE rp.release_id = r.id
+                UNION
+                SELECT ar.author_id FROM "Release_artists" ar WHERE ar.release_id = r.id
+                UNION
+                SELECT rd.author_id FROM "Release_designers" rd WHERE rd.release_id = r.id
+            )
+        )
+    ) AS "hasAuthorLikes"
 FROM "Releases" r
          LEFT JOIN "Release_artists" ra ON r.id = ra.release_id
          LEFT JOIN "Authors" a ON ra.author_id = a.id
@@ -477,29 +565,186 @@ SELECT
     rol.role,
     (COUNT(DISTINCT r.id) FILTER (WHERE r.text IS NOT NULL))::int AS "textCount",
     (COUNT(DISTINCT r.id) FILTER (WHERE r.text IS NULL))::int AS "withoutTextCount",
+
     (
+      COALESCE((
         SELECT COUNT(*)
         FROM "User_fav_reviews" ufr
-                 JOIN "Reviews" rev ON ufr.review_id = rev.id
+        JOIN "Reviews" rev ON ufr.review_id = rev.id
         WHERE rev.user_id = u.id
+      ), 0)
+      +
+      COALESCE((
+        SELECT COUNT(*)
+        FROM "User_fav_media" ufm
+        JOIN "Release_media" rm ON rm.id = ufm.media_id
+        WHERE rm.user_id = u.id
+      ), 0)
     )::int AS "receivedLikes",
+
     (
+      COALESCE((
         SELECT COUNT(*)
         FROM "User_fav_reviews" ufr
-                 JOIN "Reviews" rev ON ufr.review_id = rev.id
+        JOIN "Reviews" rev ON ufr.review_id = rev.id
         WHERE ufr.user_id = u.id AND rev.user_id != u.id
+      ), 0)
+      +
+      COALESCE((
+        SELECT COUNT(*)
+        FROM "User_fav_media" ufm
+        JOIN "Release_media" rm ON rm.id = ufm.media_id
+        WHERE ufm.user_id = u.id AND rm.user_id != u.id
+      ), 0)
     )::int AS "givenLikes",
+
+    (
+        COALESCE((
+            SELECT COUNT(*)
+                FROM "User_fav_reviews" ufr
+                JOIN "Reviews" rev ON rev.id = ufr.review_id
+                WHERE rev.user_id = u.id
+                    AND EXISTS (
+                         SELECT 1
+                         FROM "Registered_authors" ra
+                         WHERE ra.user_id = ufr.user_id
+                           AND ra.author_id IN (
+                             SELECT rp.author_id
+                             FROM "Release_producers" rp
+                             WHERE rp.release_id = rev.release_id
+                             UNION
+                             SELECT ar.author_id
+                             FROM "Release_artists" ar
+                             WHERE ar.release_id = rev.release_id
+                             UNION
+                             SELECT rd.author_id
+                             FROM "Release_designers" rd
+                             WHERE rd.release_id = rev.release_id
+                           )
+                    )
+        ), 0)
+        +
+        COALESCE((
+            SELECT COUNT(*)
+                FROM "User_fav_media" ufm
+                JOIN "Release_media" rm ON rm.id = ufm.media_id
+                WHERE rm.user_id = u.id
+                    AND EXISTS (
+                         SELECT 1
+                         FROM "Registered_authors" ra
+                         WHERE ra.user_id = ufm.user_id
+                           AND ra.author_id IN (
+                             SELECT rp.author_id
+                             FROM "Release_producers" rp
+                             WHERE rp.release_id = rm.release_id
+                             UNION
+                             SELECT ar.author_id
+                             FROM "Release_artists" ar
+                             WHERE ar.release_id = rm.release_id
+                             UNION
+                             SELECT rd.author_id
+                             FROM "Release_designers" rd
+                             WHERE rd.release_id = rm.release_id
+                         )
+                    )
+        ), 0)
+    )::int AS "receivedAuthorLikes",
+
+    (
+        COALESCE((
+            SELECT COUNT(*)
+                FROM "User_fav_reviews" ufr
+                JOIN "Reviews" rev ON rev.id = ufr.review_id
+                WHERE ufr.user_id = u.id
+                    AND rev.user_id != u.id
+                    AND EXISTS (
+                         SELECT 1
+                         FROM "Registered_authors" ra
+                         WHERE ra.user_id = u.id
+                           AND ra.author_id IN (
+                             SELECT rp.author_id
+                             FROM "Release_producers" rp
+                             WHERE rp.release_id = rev.release_id
+                             UNION
+                             SELECT ar.author_id
+                             FROM "Release_artists" ar
+                             WHERE ar.release_id = rev.release_id
+                             UNION
+                             SELECT rd.author_id
+                             FROM "Release_designers" rd
+                             WHERE rd.release_id = rev.release_id
+                         )
+                    )
+        ), 0)
+        +
+        COALESCE((
+            SELECT COUNT(*)
+            FROM "User_fav_media" ufm
+            JOIN "Release_media" rm ON rm.id = ufm.media_id
+            WHERE ufm.user_id = u.id
+                AND rm.user_id != u.id
+                AND EXISTS (
+                         SELECT 1
+                         FROM "Registered_authors" ra
+                         WHERE ra.user_id = u.id
+                           AND ra.author_id IN (
+                             SELECT rp.author_id
+                             FROM "Release_producers" rp
+                             WHERE rp.release_id = rm.release_id
+                             UNION
+                             SELECT ar.author_id
+                             FROM "Release_artists" ar
+                             WHERE ar.release_id = rm.release_id
+                             UNION
+                             SELECT rd.author_id
+                             FROM "Release_designers" rd
+                             WHERE rd.release_id = rm.release_id
+                         )
+                     )
+        ), 0)
+    )::int AS "givenAuthorLikes",
+
     CASE
-        WHEN count(sm.id) = 0 THEN '[]'::json
-        ELSE JSON_AGG(DISTINCT JSONB_BUILD_OBJECT('id', sm.id, 'name', sm.name, 'url', psm.url))
-    END AS social
+        WHEN COUNT(sm.id) = 0 THEN '[]'::json
+        ELSE JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
+                'id', sm.id,
+                'name', sm.name,
+                'url', psm.url
+        ))
+    END AS social,
+
+    EXISTS(
+        SELECT 1 FROM "Registered_authors" ra WHERE ra.user_id = u.id
+    ) AS "isAuthor",
+
+    COALESCE(
+            (
+                SELECT JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
+                        'id', at.id,
+                        'type', at.type
+                ))
+                FROM "Registered_authors" ra
+                    JOIN "Authors" a ON ra.author_id = a.id
+                    JOIN "Authors_on_types" aot ON a.id = aot.author_id
+                    JOIN "Author_types" at ON aot.author_type_id = at.id
+                WHERE ra.user_id = u.id
+            ),
+            '[]'::json
+    ) AS "authorTypes",
+
+    (
+        SELECT COUNT(DISTINCT ac.id)::int
+        FROM "Author_comments" ac
+        WHERE ac.user_id = u.id
+    ) AS "authorCommentsCount"
+
 FROM "User_profiles" up
-         JOIN "Users" u ON up.user_id = u.id
-         LEFT JOIN "Top_users_leaderboard" tul ON up.user_id = tul.user_id
-         LEFT JOIN "Reviews" r ON u.id = r.user_id
-         LEFT JOIN "Profile_social_media" psm ON up.id = psm.profile_id
-         LEFT JOIN "Social_media" sm ON psm.social_id = sm.id
-         LEFT JOIN "Roles" rol ON u.role_id = rol.id
+    JOIN "Users" u ON up.user_id = u.id
+    LEFT JOIN "Top_users_leaderboard" tul ON up.user_id = tul.user_id
+    LEFT JOIN "Reviews" r ON u.id = r.user_id
+    LEFT JOIN "Profile_social_media" psm ON up.id = psm.profile_id
+    LEFT JOIN "Social_media" sm ON psm.social_id = sm.id
+    LEFT JOIN "Roles" rol ON u.role_id = rol.id
 GROUP BY u.id, u.nickname, u.created_at, up.bio, up.avatar, up.cover_image, up.points, tul.rank, rol.role;
 
 -------------------------------------------------------------------------
@@ -514,24 +759,363 @@ SELECT
     u.nickname,
     up.avatar,
     up.cover_image as cover,
-    (count(DISTINCT r.id) FILTER (WHERE r.text IS NOT NULL))::int AS "textCount",
-    (count(DISTINCT r.id) FILTER (WHERE r.text IS NULL))::int AS "withoutTextCount",
-    (SELECT COUNT(*)
-     FROM "User_fav_reviews" ufr
-              JOIN "Reviews" rev ON ufr.review_id = rev.id
-     WHERE rev.user_id = tul.user_id)::int AS "receivedLikes",
-    (SELECT COUNT(*)
-     FROM "User_fav_reviews" ufr
-              JOIN "Reviews" rev ON ufr.review_id = rev.id
-     WHERE ufr.user_id = tul.user_id AND rev.user_id != tul.user_id)::int AS "givenLikes"
+    (COUNT(DISTINCT r.id) FILTER (WHERE r.text IS NOT NULL))::int AS "textCount",
+    (COUNT(DISTINCT r.id) FILTER (WHERE r.text IS NULL))::int AS "withoutTextCount",
+
+    (
+      COALESCE((
+        SELECT COUNT(*)
+        FROM "User_fav_reviews" ufr
+        JOIN "Reviews" rev ON ufr.review_id = rev.id
+        WHERE rev.user_id = tul.user_id
+      ), 0)
+      +
+      COALESCE((
+        SELECT COUNT(*)
+        FROM "User_fav_media" ufm
+        JOIN "Release_media" rm ON rm.id = ufm.media_id
+        WHERE rm.user_id = tul.user_id
+      ), 0)
+    )::int AS "receivedLikes",
+
+    (
+      COALESCE((
+        SELECT COUNT(*)
+        FROM "User_fav_reviews" ufr
+        JOIN "Reviews" rev ON ufr.review_id = rev.id
+        WHERE ufr.user_id = tul.user_id AND rev.user_id != tul.user_id
+      ), 0)
+      +
+      COALESCE((
+        SELECT COUNT(*)
+        FROM "User_fav_media" ufm
+        JOIN "Release_media" rm ON rm.id = ufm.media_id
+        WHERE ufm.user_id = tul.user_id AND rm.user_id != tul.user_id
+      ), 0)
+    )::int AS "givenLikes",
+
+    (
+        COALESCE((
+            SELECT COUNT(*)
+                FROM "User_fav_reviews" ufr
+                JOIN "Reviews" rev ON rev.id = ufr.review_id
+                WHERE rev.user_id = tul.user_id
+                    AND EXISTS (
+                         SELECT 1
+                         FROM "Registered_authors" ra
+                         WHERE ra.user_id = ufr.user_id
+                           AND ra.author_id IN (
+                             SELECT rp.author_id 
+                             FROM "Release_producers" rp 
+                             WHERE rp.release_id = rev.release_id
+                             UNION
+                             SELECT ar.author_id 
+                             FROM "Release_artists" ar 
+                             WHERE ar.release_id = rev.release_id
+                             UNION
+                             SELECT rd.author_id 
+                             FROM "Release_designers" rd 
+                             WHERE rd.release_id = rev.release_id
+                         )
+                     )
+            ), 0)
+        +
+        COALESCE((
+            SELECT COUNT(*)
+                FROM "User_fav_media" ufm
+                JOIN "Release_media" rm ON rm.id = ufm.media_id
+                WHERE rm.user_id = tul.user_id
+                    AND EXISTS (
+                         SELECT 1
+                         FROM "Registered_authors" ra
+                         WHERE ra.user_id = ufm.user_id
+                           AND ra.author_id IN (
+                             SELECT rp.author_id
+                             FROM "Release_producers" rp
+                             WHERE rp.release_id = rm.release_id
+                             UNION
+                             SELECT ar.author_id
+                             FROM "Release_artists" ar
+                             WHERE ar.release_id = rm.release_id
+                             UNION
+                             SELECT rd.author_id
+                             FROM "Release_designers" rd
+                             WHERE rd.release_id = rm.release_id
+                         )
+                     )
+            ), 0)
+        )::int AS "receivedAuthorLikes",
+
+    (
+        SELECT
+            COALESCE(
+                json_agg(
+                    jsonb_build_object(
+                        'userId', liker_id,
+                        'avatar', liker_avatar,
+                        'nickname', liker_nickname,
+                        'count', total_cnt
+                    )
+                    ORDER BY total_cnt DESC, liker_id ASC
+                ),
+                '[]'::json
+            )
+        FROM (
+            SELECT
+                liker_id,
+                liker_nickname,
+                liker_avatar,
+                SUM(cnt)::int AS total_cnt
+            FROM (
+                SELECT
+                    ufr.user_id AS liker_id,
+                    u2.nickname AS liker_nickname,
+                    up2.avatar AS liker_avatar,
+                    COUNT(*)::int AS cnt
+                FROM "User_fav_reviews" ufr
+                JOIN "Reviews" rev ON rev.id = ufr.review_id
+                JOIN "Users" u2 ON u2.id = ufr.user_id
+                LEFT JOIN "User_profiles" up2 ON up2.user_id = u2.id
+                WHERE rev.user_id = tul.user_id
+                    AND EXISTS (
+                        SELECT 1
+                        FROM "Registered_authors" ra
+                        WHERE ra.user_id = ufr.user_id
+                            AND ra.author_id IN (
+                                SELECT rp.author_id
+                                FROM "Release_producers" rp
+                                WHERE rp.release_id = rev.release_id
+                                UNION
+                                SELECT ar.author_id
+                                FROM "Release_artists" ar
+                                WHERE ar.release_id = rev.release_id
+                                UNION
+                                SELECT rd.author_id
+                                FROM "Release_designers" rd
+                                WHERE rd.release_id = rev.release_id
+                              )
+                    )
+                GROUP BY ufr.user_id, u2.nickname, up2.avatar
+
+                UNION ALL
+
+                SELECT
+                    ufm.user_id AS liker_id,
+                    u3.nickname AS liker_nickname,
+                    up3.avatar AS liker_avatar,
+                    COUNT(*)::int AS cnt
+                FROM "User_fav_media" ufm
+                JOIN "Release_media" rm ON rm.id = ufm.media_id
+                JOIN "Users" u3 ON u3.id = ufm.user_id
+                LEFT JOIN "User_profiles" up3 ON up3.user_id = u3.id
+                WHERE rm.user_id = tul.user_id
+                    AND EXISTS (
+                        SELECT 1
+                            FROM "Registered_authors" ra
+                              WHERE ra.user_id = ufm.user_id
+                                AND ra.author_id IN (
+                                  SELECT rp.author_id
+                                  FROM "Release_producers" rp
+                                  WHERE rp.release_id = rm.release_id
+                                  UNION
+                                  SELECT ar.author_id
+                                  FROM "Release_artists" ar
+                                  WHERE ar.release_id = rm.release_id
+                                  UNION
+                                  SELECT rd.author_id
+                                  FROM "Release_designers" rd
+                                  WHERE rd.release_id = rm.release_id
+                                )
+                    )
+                GROUP BY ufm.user_id, u3.nickname, up3.avatar
+                ) z
+                GROUP BY liker_id, liker_nickname, liker_avatar
+                ORDER BY SUM(cnt) DESC, liker_id ASC
+                LIMIT 3
+            ) t
+    ) AS "topAuthorLikers"
+
 FROM "Top_users_leaderboard" tul
-         JOIN "User_profiles" up on up.user_id = tul.user_id
-         JOIN "Users" u on u.id = up.user_id
-         LEFT JOIN "Reviews" r on u.id = r.user_id
-GROUP BY tul.user_id,
-         tul.rank,
-         up.points,
-         u.nickname,
-         up.avatar,
-         up.cover_image
-ORDER BY up.points DESC, tul.user_id
+         JOIN "User_profiles" up ON up.user_id = tul.user_id
+         JOIN "Users" u ON u.id = up.user_id
+         LEFT JOIN "Reviews" r ON u.id = r.user_id
+GROUP BY tul.user_id, tul.rank, up.points, u.nickname, up.avatar, up.cover_image
+ORDER BY up.points DESC, tul.user_id;
+
+CREATE OR REPLACE VIEW platform_counters_summary AS
+SELECT
+    (
+        SELECT COUNT(*)
+        FROM "Users"
+    )::int AS "totalUsers",
+
+    (
+        SELECT COUNT(DISTINCT ra.user_id)
+        FROM "Registered_authors" ra
+    )::int AS "registeredAuthors",
+
+    (
+        COALESCE((
+            SELECT COUNT(*)
+            FROM "User_fav_reviews" ufr
+            JOIN "Reviews" rev ON rev.id = ufr.review_id
+            WHERE EXISTS (
+                SELECT 1
+                FROM "Registered_authors" ra
+                WHERE ra.user_id = ufr.user_id
+                        AND ra.author_id IN (
+                            SELECT rp.author_id FROM "Release_producers" rp WHERE rp.release_id = rev.release_id
+                            UNION
+                            SELECT ar.author_id FROM "Release_artists" ar WHERE ar.release_id = rev.release_id
+                            UNION
+                            SELECT rd.author_id FROM "Release_designers" rd WHERE rd.release_id = rev.release_id
+                        )
+            )
+        ), 0)
+            +
+        COALESCE((
+            SELECT COUNT(*)
+                FROM "User_fav_media" ufm
+                JOIN "Release_media" rm ON rm.id = ufm.media_id
+                WHERE EXISTS (
+                    SELECT 1
+                    FROM "Registered_authors" ra
+                    WHERE ra.user_id = ufm.user_id
+                        AND ra.author_id IN (
+                            SELECT rp.author_id FROM "Release_producers" rp WHERE rp.release_id = rm.release_id
+                            UNION
+                            SELECT ar.author_id FROM "Release_artists" ar WHERE ar.release_id = rm.release_id
+                            UNION
+                            SELECT rd.author_id FROM "Release_designers" rd WHERE rd.release_id = rm.release_id
+                        )
+                )
+        ), 0)
+    )::int AS "authorLikes",
+
+    (
+        SELECT COUNT(*)
+        FROM "Author_comments" ac
+        WHERE EXISTS (
+            SELECT 1
+            FROM "Registered_authors" ra
+            WHERE ra.user_id = ac.user_id
+              AND ra.author_id IN (
+                SELECT rp.author_id FROM "Release_producers" rp WHERE rp.release_id = ac.release_id
+                UNION
+                SELECT ar.author_id FROM "Release_artists" ar WHERE ar.release_id = ac.release_id
+                UNION
+                SELECT rd.author_id FROM "Release_designers" rd WHERE rd.release_id = ac.release_id
+            )
+        )
+    )::int AS "authorComments",
+
+    (
+        SELECT COUNT(*)
+        FROM "Releases" r
+        JOIN "Release_types" rt ON r.release_type_id = rt.id
+        WHERE rt.type = 'Трек'
+    )::int AS "totalTracks",
+
+    (
+        SELECT COUNT(*)
+        FROM "Releases" r
+        JOIN "Release_types" rt ON r.release_type_id = rt.id
+        WHERE rt.type = 'Альбом'
+    )::int AS "totalAlbums",
+
+    (
+        SELECT COUNT(*)
+        FROM "Release_media" rm
+        WHERE rm.user_id IS NOT NULL
+    )::int AS "mediaReviews",
+
+    (
+        SELECT COUNT(*)
+        FROM "Reviews" rev
+        WHERE rev.text IS NOT NULL
+    )::int AS "reviews",
+
+    (
+        SELECT COUNT(*)
+        FROM "Release_ratings" rr
+        JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
+        WHERE rrt.type = 'Оценка без рецензии'
+    )::int AS "withoutTextRatings"
+;
+
+CREATE OR REPLACE FUNCTION handle_fav_media_points()
+RETURNS TRIGGER AS $$
+DECLARE
+    points_change_owner INT;
+    points_change_user INT;
+    is_author_like BOOLEAN;
+    v_media_id TEXT;
+    v_user_id TEXT;
+BEGIN
+    v_media_id := COALESCE(NEW.media_id, OLD.media_id);
+    v_user_id := COALESCE(NEW.user_id, OLD.user_id);
+
+    IF TG_OP = 'INSERT' THEN
+        points_change_owner := 3;
+        points_change_user  := 1;
+    ELSIF TG_OP = 'DELETE' THEN
+        points_change_owner := -3;
+        points_change_user  := -1;
+    ELSE
+        RETURN NULL;
+    END IF;
+
+    SELECT EXISTS (
+        SELECT 1
+        FROM "Release_media" rm
+        WHERE rm.id = v_media_id
+          AND EXISTS (
+            SELECT 1
+            FROM "Registered_authors" ra
+            WHERE ra.user_id = v_user_id
+              AND ra.author_id IN (
+                SELECT rp.author_id 
+                FROM "Release_producers" rp 
+                WHERE rp.release_id = rm.release_id
+                UNION
+                SELECT ar.author_id 
+                FROM "Release_artists" ar 
+                WHERE ar.release_id = rm.release_id
+                UNION
+                SELECT rd.author_id 
+                FROM "Release_designers" rd 
+                WHERE rd.release_id = rm.release_id
+              )
+          )
+    ) INTO is_author_like;
+
+    IF is_author_like THEN
+        IF TG_OP = 'INSERT' THEN
+            points_change_owner := 500;
+            points_change_user  := 100;
+        ELSE
+            points_change_owner := -500;
+            points_change_user  := -100;
+        END IF;
+    END IF;
+
+    UPDATE "User_profiles" up
+    SET points = GREATEST(up.points + points_change_owner, 0)
+    FROM "Release_media" rm
+    WHERE rm.id = v_media_id
+      AND up.user_id = rm.user_id;
+
+    UPDATE "User_profiles" up
+    SET points = GREATEST(up.points + points_change_user, 0)
+    WHERE up.user_id = v_user_id;
+
+    RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER fav_media_points_trigger
+    AFTER INSERT OR DELETE ON "User_fav_media"
+    FOR EACH ROW
+EXECUTE FUNCTION handle_fav_media_points();
+
+

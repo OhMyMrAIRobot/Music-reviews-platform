@@ -24,14 +24,9 @@ export class UserFavMediaController {
     return this.userFavMediaService.create(mediaId, req.user.id);
   }
 
-  @Get('media/:id')
-  findByMediaId(@Param('id') id: string) {
-    return this.userFavMediaService.findByMediaId(id);
-  }
-
-  @Get('user/:id')
-  findByUserId(@Param('id') id: string) {
-    return this.userFavMediaService.findByUserId(id);
+  @Get(':mediaId')
+  findByMediaId(@Param('mediaId') mediaId: string) {
+    return this.userFavMediaService.findByMediaId(mediaId);
   }
 
   @UseGuards(JwtAuthGuard)

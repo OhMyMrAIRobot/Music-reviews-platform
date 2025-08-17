@@ -15,6 +15,7 @@ model Release {
   releaseRating   ReleaseRating[]
   userFavRelease  UserFavRelease[]
   releaseMedia    ReleaseMedia[]
+  authorComment   AuthorComment[]
 
   @@map("Releases")
 }
@@ -69,6 +70,7 @@ model ReleaseMedia {
   url                  String   @unique @db.VarChar(255)
   releaseId            String   @map("release_id")
   userId               String?  @map("user_id")
+  reviewId             String?  @unique @map("review_id")
   releaseMediaTypeId   String   @map("release_media_type_id")
   releaseMediaStatusId String   @map("release_media_status_id")
   createdAt            DateTime @default(now()) @map("created_at")
@@ -78,6 +80,7 @@ model ReleaseMedia {
   releaseMediaType   ReleaseMediaType   @relation(fields: [releaseMediaTypeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   releaseMediaStatus ReleaseMediaStatus @relation(fields: [releaseMediaStatusId], references: [id])
   userFavMedia       UserFavMedia[]
+  review             Review?            @relation(fields: [reviewId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
   @@unique([releaseId, userId])
   @@map("Release_media")

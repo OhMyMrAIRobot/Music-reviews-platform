@@ -1,5 +1,5 @@
-import { Type } from 'class-transformer';
-import { IsInt, IsOptional, Length } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsBoolean, IsInt, IsOptional, Length } from 'class-validator';
 import { IsEntityId } from 'src/shared/decorators/is-entity-id.decorator';
 import { IsSearchQuery } from 'src/shared/decorators/is-search-query.decorator';
 
@@ -24,4 +24,13 @@ export class FindAuthorsQuery {
   @Type(() => Number)
   @IsInt()
   offset?: number;
+
+  @IsOptional()
+  @Transform(({ value }) => value === 'true')
+  @IsBoolean()
+  onlyRegistered?: boolean;
+
+  @IsOptional()
+  @IsEntityId()
+  userId?: string;
 }

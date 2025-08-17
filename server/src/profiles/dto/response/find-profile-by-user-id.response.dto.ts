@@ -1,3 +1,5 @@
+import { AuthorType } from '@prisma/client';
+
 export class FindProfileByUserIdResponseDto {
   id: string;
   nickname: string;
@@ -13,6 +15,11 @@ export class FindProfileByUserIdResponseDto {
   receivedLikes: number;
   givenLikes: number;
   social: { id: string; url: string; name: string }[];
+  isAuthor: boolean;
+  authorTypes: AuthorType[];
+  authorCommentsCount: number;
+  receivedAuthorLikes: number;
+  givenAuthorLikes: number;
 }
 
 export class QueryProfileResponseDto extends Array<FindProfileByUserIdResponseDto> {}

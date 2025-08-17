@@ -202,9 +202,14 @@ export class ReleasesService {
     };
   }
 
-  async findOne(id: string): Promise<Release> {
+  async findOne(id: string) {
     const existingRelease = await this.prisma.release.findUnique({
       where: { id },
+      include: {
+        releaseArtist: true,
+        releaseDesigner: true,
+        releaseProducer: true,
+      },
     });
 
     if (!existingRelease) {
@@ -345,7 +350,9 @@ export class ReleasesService {
         "textCount", 
         "withoutTextCount", 
         authors, 
-        ratings 
+        ratings,
+        "hasAuthorComments",
+        "hasAuthorLikes"
       FROM most_reviewed_releases_last_24h 
       LIMIT 15;
     `;
@@ -414,7 +421,71 @@ export class ReleasesService {
                 WHERE rr.release_id = r.id AND rrt.type = 'Оценка с рецензией') AS text_rating,
                 (SELECT rr.total FROM "Release_ratings" rr
                     JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
-                WHERE rr.release_id = r.id AND rrt.type = 'Оценка без рецензии') AS no_text_rating
+                WHERE rr.release_id = r.id AND rrt.type = 'Оценка без рецензии') AS no_text_rating,
+
+                EXISTS (
+                    SELECT 1
+                    FROM "Author_comments" ac
+                        JOIN "Registered_authors" ra ON ra.user_id = ac.user_id
+                    WHERE ac.release_id = r.id
+                      AND ra.author_id IN (
+                        SELECT rp.author_id
+                        FROM "Release_producers" rp
+                        WHERE rp.release_id = r.id
+                        UNION
+                        SELECT ar.author_id
+                        FROM "Release_artists" ar
+                        WHERE ar.release_id = r.id
+                        UNION
+                        SELECT rd.author_id
+                        FROM "Release_designers" rd
+                        WHERE rd.release_id = r.id
+                    )
+                ) AS "hasAuthorComments",
+
+                (
+                  EXISTS (
+                      SELECT 1
+                      FROM "User_fav_reviews" ufr
+                              JOIN "Reviews" r2 ON r2.id = ufr.review_id
+                              JOIN "Registered_authors" ra2 ON ra2.user_id = ufr.user_id
+                      WHERE r2.release_id = r.id
+                        AND ra2.author_id IN (
+                          SELECT rp.author_id 
+                          FROM "Release_producers" rp 
+                          WHERE rp.release_id = r.id
+                          UNION
+                          SELECT ar.author_id 
+                          FROM "Release_artists" ar 
+                          WHERE ar.release_id = r.id
+                          UNION
+                          SELECT rd.author_id 
+                          FROM "Release_designers" rd 
+                          WHERE rd.release_id = r.id
+                      )
+                  )
+                OR
+                  EXISTS (
+                      SELECT 1
+                      FROM "User_fav_media" ufm
+                              JOIN "Release_media" rm ON rm.id = ufm.media_id
+                              JOIN "Registered_authors" ra3 ON ra3.user_id = ufm.user_id
+                      WHERE rm.release_id = r.id
+                        AND ra3.author_id IN (
+                          SELECT rp.author_id 
+                          FROM "Release_producers" rp 
+                          WHERE rp.release_id = r.id
+                          UNION
+                          SELECT ar.author_id 
+                          FROM "Release_artists" ar 
+                          WHERE ar.release_id = r.id
+                          UNION
+                          SELECT rd.author_id 
+                          FROM "Release_designers" rd 
+                          WHERE rd.release_id = r.id
+                      )
+                  )
+              ) AS "hasAuthorLikes"
 
             FROM "Releases" r
                     LEFT JOIN "Release_types" rt on r.release_type_id = rt.id
@@ -427,7 +498,7 @@ export class ReleasesService {
                     LEFT JOIN "Release_rating_types" rrt on rr.release_rating_type_id = rrt.id
             GROUP BY r.id, rt.type, r.publish_date
         )
-        SELECT id, title, img, "releaseType", "textCount", "withoutTextCount", author as authors, ratings
+        SELECT id, title, img, "releaseType", "textCount", "withoutTextCount", author as authors, ratings, "hasAuthorComments", "hasAuthorLikes"
         FROM release_data rd
         WHERE EXISTS (
             SELECT 1
@@ -496,7 +567,72 @@ export class ReleasesService {
               WHERE rr.release_id = r.id AND rrt.type = 'Оценка с рецензией') AS text_rating,
               (SELECT rr.total FROM "Release_ratings" rr
                   JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
-              WHERE rr.release_id = r.id AND rrt.type = 'Оценка без рецензии') AS no_text_rating
+              WHERE rr.release_id = r.id AND rrt.type = 'Оценка без рецензии') AS no_text_rating,
+
+              EXISTS (
+                  SELECT 1
+                  FROM "Author_comments" ac
+                          JOIN "Registered_authors" ra ON ra.user_id = ac.user_id
+                  WHERE ac.release_id = r.id
+                    AND ra.author_id IN (
+                      SELECT rp.author_id
+                      FROM "Release_producers" rp
+                      WHERE rp.release_id = r.id
+                      UNION
+                      SELECT ar.author_id
+                      FROM "Release_artists" ar
+                      WHERE ar.release_id = r.id
+                      UNION
+                      SELECT rd.author_id
+                      FROM "Release_designers" rd
+                      WHERE rd.release_id = r.id
+                  )
+              ) AS "hasAuthorComments",
+
+              (
+                EXISTS (
+                    SELECT 1
+                    FROM "User_fav_reviews" ufr
+                            JOIN "Reviews" r2 ON r2.id = ufr.review_id
+                            JOIN "Registered_authors" ra2 ON ra2.user_id = ufr.user_id
+                    WHERE r2.release_id = r.id
+                      AND ra2.author_id IN (
+                        SELECT rp.author_id 
+                        FROM "Release_producers" rp 
+                        WHERE rp.release_id = r.id
+                        UNION
+                        SELECT ar.author_id 
+                        FROM "Release_artists" ar 
+                        WHERE ar.release_id = r.id
+                        UNION
+                        SELECT rd.author_id 
+                        FROM "Release_designers" rd 
+                        WHERE rd.release_id = r.id
+                      )
+                )
+                OR
+                EXISTS (
+                    SELECT 1
+                    FROM "User_fav_media" ufm
+                            JOIN "Release_media" rm ON rm.id = ufm.media_id
+                            JOIN "Registered_authors" ra3 ON ra3.user_id = ufm.user_id
+                    WHERE rm.release_id = r.id
+                      AND ra3.author_id IN (
+                        SELECT rp.author_id 
+                        FROM "Release_producers" rp 
+                        WHERE rp.release_id = r.id
+                        UNION
+                        SELECT ar.author_id 
+                        FROM "Release_artists" ar 
+                        
+                        WHERE ar.release_id = r.id
+                        UNION
+                        SELECT rd.author_id 
+                        FROM "Release_designers" rd 
+                        WHERE rd.release_id = r.id
+                    )
+                )
+                ) AS "hasAuthorLikes"
 
           FROM "Releases" r
                   LEFT JOIN "Release_types" rt on r.release_type_id = rt.id
@@ -509,7 +645,7 @@ export class ReleasesService {
                   LEFT JOIN "Release_rating_types" rrt on rr.release_rating_type_id = rrt.id
           GROUP BY r.id, rt.type, r.publish_date
       )
-      SELECT id, title, img, "releaseType", "textCount", "withoutTextCount", authors, ratings
+      SELECT id, title, img, "releaseType", "textCount", "withoutTextCount", authors, ratings, "hasAuthorComments", "hasAuthorLikes"
       FROM release_data rd
       WHERE (${year} IS NULL OR EXTRACT(YEAR FROM rd.publish_date) = ${year})
         AND (${month} IS NULL OR EXTRACT(MONTH FROM rd.publish_date) = ${month})
@@ -589,7 +725,69 @@ export class ReleasesService {
 
                 (SELECT rr.total FROM "Release_ratings" rr
                     JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
-                  WHERE rr.release_id = r.id AND rrt.type = 'Оценка без рецензии') AS "withoutTextRating"
+                  WHERE rr.release_id = r.id AND rrt.type = 'Оценка без рецензии') AS "withoutTextRating",
+
+                EXISTS (
+                    SELECT 1
+                    FROM "Author_comments" ac
+                            JOIN "Registered_authors" ra ON ra.user_id = ac.user_id
+                    WHERE ac.release_id = r.id
+                      AND ra.author_id IN (
+                        SELECT rp.author_id 
+                        FROM "Release_producers" rp 
+                        WHERE rp.release_id = r.id
+                        UNION
+                        SELECT ar.author_id 
+                        FROM "Release_artists" ar 
+                        WHERE ar.release_id = r.id
+                        UNION
+                        SELECT rd.author_id 
+                        FROM "Release_designers" rd 
+                        WHERE rd.release_id = r.id
+                    )
+                ) AS "hasAuthorComments",
+                         
+                (
+                  EXISTS (
+                    SELECT 1
+                    FROM "User_fav_reviews" ufr
+                         JOIN "Reviews" r2 ON r2.id = ufr.review_id
+                         JOIN "Registered_authors" ra2 ON ra2.user_id = ufr.user_id
+                    WHERE r2.release_id = r.id
+                        AND ra2.author_id IN (
+                          SELECT rp.author_id 
+                          FROM "Release_producers" rp 
+                          WHERE rp.release_id = r.id
+                          UNION
+                          SELECT ar.author_id 
+                          FROM "Release_artists" ar 
+                          WHERE ar.release_id = r.id
+                          UNION
+                          SELECT rd.author_id 
+                          FROM "Release_designers" 
+                          rd WHERE rd.release_id = r.id
+                ))
+              OR
+                  EXISTS (
+                    SELECT 1
+                      FROM "User_fav_media" ufm
+                         JOIN "Release_media" rm ON rm.id = ufm.media_id
+                         JOIN "Registered_authors" ra3 ON ra3.user_id = ufm.user_id
+                    WHERE rm.release_id = r.id
+                        AND ra3.author_id IN (
+                            SELECT rp.author_id FROM 
+                            "Release_producers" rp 
+                            WHERE rp.release_id = r.id
+                            UNION
+                            SELECT ar.author_id 
+                            FROM "Release_artists" ar 
+                            WHERE ar.release_id = r.id
+                            UNION
+                            SELECT rd.author_id 
+                            FROM "Release_designers" rd 
+                            WHERE rd.release_id = r.id
+                )
+            )) AS "hasAuthorLikes"
 
           FROM "Releases" r
                   LEFT JOIN "Release_types" rt on r.release_type_id = rt.id
@@ -602,7 +800,7 @@ export class ReleasesService {
               (${title ? `'${title}'` : title}::text IS NULL OR r.title ILIKE '%' || ${title ? `'${title}'` : title} || '%')
           GROUP BY r.id, rt.type, r.publish_date
       )
-      SELECT id, title, img, "releaseType", "textCount", "withoutTextCount", authors, ratings
+      SELECT id, title, img, "releaseType", "textCount", "withoutTextCount", authors, ratings,  "hasAuthorLikes", "hasAuthorComments"
       FROM release_data rd
       ORDER BY ${field} ${order}, id ASC
       ${limit !== undefined ? `LIMIT ${limit}` : ''} ${offset !== undefined ? `OFFSET ${offset}` : ''}
