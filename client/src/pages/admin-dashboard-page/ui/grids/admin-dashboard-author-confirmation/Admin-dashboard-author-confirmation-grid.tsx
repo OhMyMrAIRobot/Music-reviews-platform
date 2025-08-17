@@ -7,6 +7,8 @@ import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import { useLoading } from '../../../../../hooks/use-loading'
 import { useStore } from '../../../../../hooks/use-store'
 import { AuthorConfirmationStatusesFilterOptions } from '../../../../../models/author/author-confirmation/author-confirmation-statuses-filter-options'
+import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
+import { SortOrder } from '../../../../../types/sort-order-type'
 import AdminFilterButton from '../../buttons/Admin-filter-button'
 import AdminDashboardAuthorConfirmationGridItem from './Admin-dashboard-author-confirmation-grid-item'
 
@@ -27,6 +29,7 @@ const AdminDashboardAuthorConfirmationGrid = observer(() => {
 	const [status, setStatus] = useState<AuthorConfirmationStatusesFilterOptions>(
 		AuthorConfirmationStatusesFilterOptions.ALL
 	)
+	const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC)
 
 	const fetchConfirmations = () => {
 		let statusId: string | null = null
@@ -39,6 +42,7 @@ const AdminDashboardAuthorConfirmationGrid = observer(() => {
 			perPage,
 			(currentPage - 1) * perPage,
 			statusId,
+			order,
 			searchText.trim() ? searchText.trim() : null
 		)
 	}
@@ -61,7 +65,7 @@ const AdminDashboardAuthorConfirmationGrid = observer(() => {
 		if (isConfirmationsLoading) return
 		fetchConfirmations()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentPage])
+	}, [currentPage, order])
 
 	const items = adminDashboardAuthorConfirmationStore.items
 
@@ -104,6 +108,14 @@ const AdminDashboardAuthorConfirmationGrid = observer(() => {
 				<AdminDashboardAuthorConfirmationGridItem
 					className='bg-white/5 font-medium'
 					isLoading={false}
+					order={order}
+					toggleOrder={() =>
+						setOrder(
+							order === SortOrdersEnum.DESC
+								? SortOrdersEnum.ASC
+								: SortOrdersEnum.DESC
+						)
+					}
 				/>
 
 				{!isConfirmationsLoading && items.length === 0 && (

@@ -10,6 +10,7 @@ export interface IAuthorConfirmation {
 interface User {
 	id: string
 	nickname: string
+	avatar: string
 }
 
 interface Status {
@@ -20,4 +21,5 @@ interface Status {
 interface Author {
 	id: string
 	name: string
+	avatarImg: string
 }
