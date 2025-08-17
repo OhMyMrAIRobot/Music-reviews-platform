@@ -1,6 +1,13 @@
 import { Exclude, Expose, Transform, Type } from 'class-transformer';
 import { formatFullDate } from 'src/shared/utils/format-full-date';
 
+type UserProfileLite = { avatar: string };
+type UserLite = {
+  id: string;
+  nickname: string;
+  profile?: UserProfileLite | null;
+};
+
 class Status {
   @Expose()
   id: string;
@@ -15,6 +22,9 @@ class Author {
 
   @Expose()
   name: string;
+
+  @Expose()
+  avatarImg: string;
 }
 
 class User {
@@ -23,6 +33,10 @@ class User {
 
   @Expose()
   nickname: string;
+
+  @Expose()
+  @Transform(({ obj }: { obj: UserLite }) => obj.profile?.avatar ?? '')
+  avatar: string;
 }
 
 export class AuthorConfirmationResponseDto {

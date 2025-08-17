@@ -11,7 +11,7 @@ type ReleaseWithAuthors = {
 };
 
 type RegisteredAuthorLink = { authorId: string };
-type UserProfileLite = { avatar: string | null };
+type UserProfileLite = { avatar: string };
 type UserLite = {
   id: string;
   nickname: string;
@@ -64,15 +64,15 @@ class ReleaseMediaUser {
 
   @Expose()
   @Transform(
-    ({ obj }: { obj: UserWithProfileAndRank }) => obj.profile?.avatar ?? null,
+    ({ obj }: { obj: UserWithProfileAndRank }) => obj.profile?.avatar ?? '',
   )
-  avatar: string | null;
+  avatar: string;
 
   @Expose()
   @Transform(
-    ({ obj }: { obj: UserWithProfileAndRank }) => obj.profile?.points ?? null,
+    ({ obj }: { obj: UserWithProfileAndRank }) => obj.profile?.points ?? 0,
   )
-  points: number | null;
+  points: number;
 
   @Expose()
   @Transform(

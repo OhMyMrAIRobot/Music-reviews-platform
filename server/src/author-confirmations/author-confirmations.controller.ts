@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  Param,
+  Patch,
   Post,
   Query,
   Request,
@@ -19,6 +22,7 @@ import { UsersService } from 'src/users/users.service';
 import { AuthorConfirmationsService } from './author-confirmations.service';
 import { FindAuthorConfirmationsQuery } from './dto/query/find-author-confirmations-query.dto';
 import { CreateAuthorConfirmationRequestDto } from './dto/request/create-author-confirmation.request.dto';
+import { UpdateAuthorConfirmationRequestDto } from './dto/request/update-author-confirmation.request.dto';
 
 @Controller('author-confirmations')
 export class AuthorConfirmationsController {
@@ -64,5 +68,22 @@ export class AuthorConfirmationsController {
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   async findAll(@Query() query: FindAuthorConfirmationsQuery) {
     return this.authorConfirmationsService.findAll(query);
+  }
+
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  async update(
+    @Param('id') id: string,
+    @Body() dto: UpdateAuthorConfirmationRequestDto,
+  ) {
+    return this.authorConfirmationsService.update(id, dto);
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  async delete(@Param('id') id: string) {
+    return this.authorConfirmationsService.delete(id);
   }
 }
