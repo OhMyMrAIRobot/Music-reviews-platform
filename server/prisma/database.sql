@@ -567,17 +567,35 @@ SELECT
     (COUNT(DISTINCT r.id) FILTER (WHERE r.text IS NULL))::int AS "withoutTextCount",
 
     (
+      COALESCE((
         SELECT COUNT(*)
         FROM "User_fav_reviews" ufr
-                 JOIN "Reviews" rev ON ufr.review_id = rev.id
+        JOIN "Reviews" rev ON ufr.review_id = rev.id
         WHERE rev.user_id = u.id
+      ), 0)
+      +
+      COALESCE((
+        SELECT COUNT(*)
+        FROM "User_fav_media" ufm
+        JOIN "Release_media" rm ON rm.id = ufm.media_id
+        WHERE rm.user_id = u.id
+      ), 0)
     )::int AS "receivedLikes",
 
     (
+      COALESCE((
         SELECT COUNT(*)
         FROM "User_fav_reviews" ufr
         JOIN "Reviews" rev ON ufr.review_id = rev.id
         WHERE ufr.user_id = u.id AND rev.user_id != u.id
+      ), 0)
+      +
+      COALESCE((
+        SELECT COUNT(*)
+        FROM "User_fav_media" ufm
+        JOIN "Release_media" rm ON rm.id = ufm.media_id
+        WHERE ufm.user_id = u.id AND rm.user_id != u.id
+      ), 0)
     )::int AS "givenLikes",
 
     (
@@ -744,15 +762,37 @@ SELECT
     (COUNT(DISTINCT r.id) FILTER (WHERE r.text IS NOT NULL))::int AS "textCount",
     (COUNT(DISTINCT r.id) FILTER (WHERE r.text IS NULL))::int AS "withoutTextCount",
 
-    (SELECT COUNT(*)
-     FROM "User_fav_reviews" ufr
-              JOIN "Reviews" rev ON ufr.review_id = rev.id
-     WHERE rev.user_id = tul.user_id)::int AS "receivedLikes",
+    (
+      COALESCE((
+        SELECT COUNT(*)
+        FROM "User_fav_reviews" ufr
+        JOIN "Reviews" rev ON ufr.review_id = rev.id
+        WHERE rev.user_id = tul.user_id
+      ), 0)
+      +
+      COALESCE((
+        SELECT COUNT(*)
+        FROM "User_fav_media" ufm
+        JOIN "Release_media" rm ON rm.id = ufm.media_id
+        WHERE rm.user_id = tul.user_id
+      ), 0)
+    )::int AS "receivedLikes",
 
-    (SELECT COUNT(*)
-     FROM "User_fav_reviews" ufr
-              JOIN "Reviews" rev ON ufr.review_id = rev.id
-     WHERE ufr.user_id = tul.user_id AND rev.user_id != tul.user_id)::int AS "givenLikes",
+    (
+      COALESCE((
+        SELECT COUNT(*)
+        FROM "User_fav_reviews" ufr
+        JOIN "Reviews" rev ON ufr.review_id = rev.id
+        WHERE ufr.user_id = tul.user_id AND rev.user_id != tul.user_id
+      ), 0)
+      +
+      COALESCE((
+        SELECT COUNT(*)
+        FROM "User_fav_media" ufm
+        JOIN "Release_media" rm ON rm.id = ufm.media_id
+        WHERE ufm.user_id = tul.user_id AND rm.user_id != tul.user_id
+      ), 0)
+    )::int AS "givenLikes",
 
     (
         COALESCE((
@@ -765,11 +805,17 @@ SELECT
                          FROM "Registered_authors" ra
                          WHERE ra.user_id = ufr.user_id
                            AND ra.author_id IN (
-                             SELECT rp.author_id FROM "Release_producers" rp WHERE rp.release_id = rev.release_id
+                             SELECT rp.author_id 
+                             FROM "Release_producers" rp 
+                             WHERE rp.release_id = rev.release_id
                              UNION
-                             SELECT ar.author_id FROM "Release_artists" ar WHERE ar.release_id = rev.release_id
+                             SELECT ar.author_id 
+                             FROM "Release_artists" ar 
+                             WHERE ar.release_id = rev.release_id
                              UNION
-                             SELECT rd.author_id FROM "Release_designers" rd WHERE rd.release_id = rev.release_id
+                             SELECT rd.author_id 
+                             FROM "Release_designers" rd 
+                             WHERE rd.release_id = rev.release_id
                          )
                      )
             ), 0)
