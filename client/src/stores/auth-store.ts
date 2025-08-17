@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
 import { AuthAPI } from '../api/auth-api'
-import { UserAPI } from '../api/user-api'
+import { UserAPI } from '../api/user/user-api'
 import { IAuthUser } from '../models/auth/auth-user'
 import { IRegistrationRequest } from '../models/auth/request/registration-request'
 import { IResetPasswordRequest } from '../models/auth/request/reset-password-request'

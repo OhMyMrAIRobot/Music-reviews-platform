@@ -2,7 +2,7 @@ import { FC } from 'react'
 import AuthorReleaseTypesRatings from '../../../components/author/author-ratings/Author-release-types-ratings'
 import SkeletonLoader from '../../../components/utils/Skeleton-loader'
 import { IAuthor } from '../../../models/author/author'
-import { ReleaseTypesEnum } from '../../../models/release/release-types'
+import { ReleaseTypesEnum } from '../../../models/release/release-type/release-types-enum'
 
 interface IProps {
 	author?: IAuthor

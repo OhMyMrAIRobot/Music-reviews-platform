@@ -8,7 +8,7 @@ import ModalOverlay from '../../../../../components/modals/Modal-overlay'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import { useLoading } from '../../../../../hooks/use-loading'
 import { useStore } from '../../../../../hooks/use-store'
-import { IReleaseMedia } from '../../../../../models/release-media/release-media'
+import { IReleaseMedia } from '../../../../../models/release/release-media/release-media'
 
 interface IProps {
 	isOpen: boolean

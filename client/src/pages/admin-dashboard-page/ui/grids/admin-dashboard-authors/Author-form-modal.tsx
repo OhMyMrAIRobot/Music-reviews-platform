@@ -3,12 +3,15 @@ import FormButton from '../../../../../components/form-elements/Form-button.tsx'
 import FormCheckbox from '../../../../../components/form-elements/Form-checkbox.tsx'
 import FormInput from '../../../../../components/form-elements/Form-input.tsx'
 import FormLabel from '../../../../../components/form-elements/Form-label.tsx'
-import FormMultiSelect from '../../../../../components/form-elements/Form-multi-select.tsx'
+import FormMultiSelect, {
+	IMultiSelectValue,
+} from '../../../../../components/form-elements/Form-multi-select.tsx'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
 import { useLoading } from '../../../../../hooks/use-loading.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
-import { IAdminAuthor } from '../../../../../models/author/admin-authors-response.ts'
+import { IAdminAuthor } from '../../../../../models/author/admin-author/admin-author.ts'
+import {} from '../../../../../models/author/admin-author/admin-authors-response.ts'
 import { arraysEqual } from '../../../../../utils/arrays-equal.ts'
 import SelectImageLabel from '../../../../edit-profile-page/ui/labels/Select-image-label.tsx'
 import SelectedImageLabel from '../../../../edit-profile-page/ui/labels/Selected-image-label.tsx'
@@ -32,7 +35,7 @@ const AuthorFormModal: FC<IProps> = ({
 	const [avatar, setAvatar] = useState<File | null>(null)
 	const [cover, setCover] = useState<File | null>(null)
 	const [name, setName] = useState<string>('')
-	const [selectedTypes, setSelectedTypes] = useState<string[]>([])
+	const [selectedTypes, setSelectedTypes] = useState<IMultiSelectValue[]>([])
 	const [deleteAvatar, setDeleteAvatar] = useState<boolean>(false)
 	const [deleteCover, setDeleteCover] = useState<boolean>(false)
 
@@ -78,13 +81,13 @@ const AuthorFormModal: FC<IProps> = ({
 
 		if (
 			!author ||
-			!arraysEqual(author.types.map(t => t.type).sort(), selectedTypes.sort())
+			!arraysEqual(
+				author.types.map(t => t.type).sort(),
+				selectedTypes.map(st => st.name).sort()
+			)
 		) {
-			selectedTypes.forEach(selectedType => {
-				const type = metaStore.authorTypes.find(el => el.type === selectedType)
-				if (type) {
-					formData.append('types[]', type.id)
-				}
+			selectedTypes.forEach(st => {
+				formData.append('types[]', st.id)
 			})
 		}
 
@@ -123,8 +126,13 @@ const AuthorFormModal: FC<IProps> = ({
 
 		if (author.name !== name) return true
 
-		const originalTypes = author.types.map(t => t.type)
-		if (!arraysEqual(originalTypes.sort(), selectedTypes.sort())) return true
+		if (
+			!arraysEqual(
+				author.types.map(t => t.type).sort(),
+				selectedTypes.map(st => st.name).sort()
+			)
+		)
+			return true
 
 		if (avatar || cover) return true
 
@@ -158,7 +166,11 @@ const AuthorFormModal: FC<IProps> = ({
 	useEffect(() => {
 		if (author && isOpen) {
 			setName(author.name)
-			setSelectedTypes(author.types.map(t => t.type))
+			setSelectedTypes(
+				author.types.map(t => {
+					return { name: t.type, id: t.id }
+				})
+			)
 
 			if (author.avatarImg) {
 				setAvatarPreviewUrl(
@@ -179,6 +191,17 @@ const AuthorFormModal: FC<IProps> = ({
 			resetForm()
 		}
 	}, [isOpen, author])
+
+	const loadOptions = async (
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		search: string,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		limit: number | null
+	): Promise<IMultiSelectValue[]> => {
+		return metaStore.authorTypes.map(el => {
+			return { name: el.type, id: el.id }
+		})
+	}
 
 	const title = author ? 'Редактирование автора' : 'Добавление автора'
 	const buttonText = author ? 'Сохранить' : 'Добавить'
@@ -339,10 +362,10 @@ const AuthorFormModal: FC<IProps> = ({
 							/>
 							<FormMultiSelect
 								id={'author-types'}
-								placeholder={'Тип автора'}
-								options={metaStore.authorTypes.map(el => el.type)}
+								placeholder={'Выберите тип автора'}
 								value={selectedTypes}
 								onChange={setSelectedTypes}
+								loadOptions={loadOptions}
 							/>
 						</div>
 					</div>

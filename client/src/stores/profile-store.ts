@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
-import { ProfileAPI } from '../api/profile-api'
 import { SocialMediaAPI } from '../api/social-media-api'
+import { ProfileAPI } from '../api/user/profile-api'
 import { IProfile } from '../models/profile/profile'
 import { TogglePromiseResult } from '../types/toggle-promise-result'
 

@@ -1,12 +1,14 @@
 import { makeAutoObservable } from 'mobx'
-import { ProfileAPI } from '../../../api/profile-api'
-import { ReleaseMediaAPI } from '../../../api/release-media-api.ts'
-import { ReviewAPI } from '../../../api/review-api'
+import { AuthorAPI } from '../../../api/author/author-api.ts'
+import { ReleaseMediaAPI } from '../../../api/release/release-media-api.ts'
+import { ReviewAPI } from '../../../api/review/review-api.ts'
+import { ProfileAPI } from '../../../api/user/profile-api.ts'
+import { IAuthor } from '../../../models/author/author.ts'
 import { IProfile } from '../../../models/profile/profile'
-import { IProfilePreferences } from '../../../models/profile/profile-preferences.ts'
-import { IReleaseMedia } from '../../../models/release-media/release-media.ts'
+import { IProfilePreferences } from '../../../models/profile/profile-preference/profile-preferences.ts'
+import { IReleaseMedia } from '../../../models/release/release-media/release-media.ts'
 import { IReview } from '../../../models/review/review.ts'
-import { SortOrderEnum } from '../../../models/sort/sort-order-enum.ts'
+import { SortOrdersEnum } from '../../../models/sort/sort-orders-enum.ts'
 import { toggleFavMedia } from '../../../utils/toggle-fav-media.ts'
 import { toggleFavReview } from '../../../utils/toggle-fav-review.ts'
 
@@ -23,6 +25,7 @@ export class ProfilePageStore {
 	favReviewsCount: number = 0
 	media: IReleaseMedia[] = []
 	mediaCount: number = 0
+	authorCards: IAuthor[] = []
 
 	setProfile(data: IProfile | null) {
 		this.profile = data
@@ -56,6 +59,10 @@ export class ProfilePageStore {
 		this.mediaCount = data
 	}
 
+	setAuthorCards(data: IAuthor[]) {
+		this.authorCards = data
+	}
+
 	fetchProfile = async (id: string) => {
 		try {
 			const data = await ProfileAPI.fetchProfile(id)
@@ -77,7 +84,7 @@ export class ProfilePageStore {
 	fetchReviews = async (limit: number, offset: number, userId: string) => {
 		try {
 			const data = await ReviewAPI.fetchReviews(
-				SortOrderEnum.DESC,
+				SortOrdersEnum.DESC,
 				limit,
 				offset,
 				userId,
@@ -98,7 +105,7 @@ export class ProfilePageStore {
 	) => {
 		try {
 			const data = await ReviewAPI.fetchReviews(
-				SortOrderEnum.DESC,
+				SortOrdersEnum.DESC,
 				limit,
 				offset,
 				null,
@@ -135,6 +142,22 @@ export class ProfilePageStore {
 		} catch {
 			this.setMedia([])
 			this.setMediaCount(0)
+		}
+	}
+
+	fetchAuthorCards = async (userId: string) => {
+		try {
+			const data = await AuthorAPI.fetchAuthors(
+				null,
+				null,
+				null,
+				null,
+				true,
+				userId
+			)
+			this.setAuthorCards(data.authors)
+		} catch {
+			this.setAuthorCards([])
 		}
 	}
 

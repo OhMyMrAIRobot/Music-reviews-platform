@@ -1,13 +1,13 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
-import AdminHeader from '../../../../../components/admin-header/Admin-header'
 import FeedbackStatusIcon from '../../../../../components/feedback/Feedback-status-icon'
+import AdminHeader from '../../../../../components/layout/admin-header/Admin-header'
 import Pagination from '../../../../../components/pagination/Pagination'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import { useLoading } from '../../../../../hooks/use-loading'
 import { useStore } from '../../../../../hooks/use-store'
-import { FeedbackStatusesFilterEnum } from '../../../../../models/feedback/feedback-statuses-filter-enum'
-import { SortOrderEnum } from '../../../../../models/sort/sort-order-enum'
+import { FeedbackStatusesFilterEnum } from '../../../../../models/feedback/feedback-status/feedback-statuses-filter-enum'
+import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
 import { SortOrder } from '../../../../../types/sort-order-type'
 import AdminFilterButton from '../../buttons/Admin-filter-button'
 import AdminDashboardFeedbackGridItem from './Admin-dashboard-feedback-grid-item'
@@ -30,7 +30,7 @@ const AdminDashboardFeedbackGrid = observer(() => {
 	const [activeStatus, setActiveStatus] = useState<string>(
 		FeedbackStatusesFilterEnum.ALL
 	)
-	const [order, setOrder] = useState<SortOrder>(SortOrderEnum.DESC)
+	const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC)
 
 	const fetchFeedback = () => {
 		let statusId: string | null = null
@@ -104,9 +104,9 @@ const AdminDashboardFeedbackGrid = observer(() => {
 					order={order}
 					toggleOrder={() =>
 						setOrder(
-							order === SortOrderEnum.DESC
-								? SortOrderEnum.ASC
-								: SortOrderEnum.DESC
+							order === SortOrdersEnum.DESC
+								? SortOrdersEnum.ASC
+								: SortOrdersEnum.DESC
 						)
 					}
 				/>

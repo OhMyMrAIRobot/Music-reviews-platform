@@ -3,7 +3,7 @@ import { useParams } from 'react-router'
 import ReleasesColumn from '../../../components/release/releases-column/Releases-column'
 import { useLoading } from '../../../hooks/use-loading'
 import { useStore } from '../../../hooks/use-store'
-import { ReleaseTypesEnum } from '../../../models/release/release-types'
+import { ReleaseTypesEnum } from '../../../models/release/release-type/release-types-enum'
 
 const AuthorDetailsReleases = () => {
 	const { id } = useParams()

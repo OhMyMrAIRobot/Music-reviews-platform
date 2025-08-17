@@ -18,15 +18,23 @@ const useNavigationPath = () => {
 
 	const navigateToAuthors = `/${ROUTES.AUTHORS}`
 
+	const navigateToRegisteredAuthors = `/${ROUTES.REGISTERED_AUTHORS}`
+
 	const navigateToReviews = `/${ROUTES.REVIEWS}`
 
 	const navigateToMediaReviews = `/${ROUTES.MEDIA_REVIEWS}`
+
+	const navigateToAuthorComments = `/${ROUTES.AUTHOR_COMMENTS}`
+
+	const navigateToAuthorLikes = `/${ROUTES.AUTHOR_LIKES}`
 
 	const navigateToLeaderboard = `/${ROUTES.LEADERBOARD}`
 
 	const navigateToRatings = `/${ROUTES.RATINGS}`
 
 	const navigateToEditProfile = `/${ROUTES.EDIT_PROFILE}`
+
+	const navigateToAuthorConfirmation = `/${ROUTES.AUTHOR_CONFIRMATION}`
 
 	const navigateToAdminUsers = `/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.USERS}`
 
@@ -39,6 +47,10 @@ const useNavigationPath = () => {
 	const navigateToAdminFeedback = `/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.FEEDBACK}`
 
 	const navigateToAdminMedia = `/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.MEDIA}`
+
+	const navigateToAdminAuthorComments = `/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.AUTHOR_COMMENTS}`
+
+	const navigateToAdminAuthorConfirmation = `/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.AUTHOR_CONFIRMATION}`
 
 	const navigateToReleaseDetails = (id: string) =>
 		`/${ROUTES.RELEASE_DETAILS_PREFIX}/${id}`
@@ -75,6 +87,12 @@ const useNavigationPath = () => {
 		navigateToAdminFeedback,
 		navigateToAdminMedia,
 		navigateToMediaReviews,
+		navigateToAuthorComments,
+		navigateToRegisteredAuthors,
+		navigateToAdminAuthorComments,
+		navigateToAuthorConfirmation,
+		navigateToAuthorLikes,
+		navigateToAdminAuthorConfirmation,
 	}
 }
 

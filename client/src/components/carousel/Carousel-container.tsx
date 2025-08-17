@@ -3,7 +3,7 @@ import { Link } from 'react-router'
 import CarouselNavButton from './Carousel-nav-button'
 
 interface IProps {
-	title: string
+	title: ReactNode
 	buttonTitle: string
 	showButton: boolean
 	href: string
@@ -26,10 +26,10 @@ const CarouselContainer: FC<IProps> = ({
 	carousel,
 }) => {
 	return (
-		<section className='2xl:container w-full flex flex-col items-center gap-y-2 select-none'>
+		<section className='2xl:container w-full flex flex-col items-center gap-y-2'>
 			<div className='flex w-full sm:items-center items-end justify-between'>
 				<h3 className='text-lg lg:text-2xl font-semibold'>{title}</h3>
-				<div className='flex flex-col-reverse sm:flex-row sm:gap-5 gap-2 select-none items-center'>
+				<div className='flex flex-col-reverse sm:flex-row sm:gap-5 gap-2 items-center'>
 					{showButton && (
 						<Link
 							to={href}

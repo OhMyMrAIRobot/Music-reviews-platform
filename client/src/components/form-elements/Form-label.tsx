@@ -10,10 +10,10 @@ const FormLabel: FC<IProps> = ({ name, htmlFor, isRequired = true }) => {
 	return (
 		<label
 			htmlFor={htmlFor}
-			className='text-sm font-bold leading-none select-none flex gap-0.5'
+			className='text-sm font-bold leading-none select-none inline-block'
 		>
 			{name}
-			{isRequired && <span className='text-red-500'>*</span>}
+			{isRequired && <span className='text-red-500'>{` *`}</span>}
 		</label>
 	)
 }

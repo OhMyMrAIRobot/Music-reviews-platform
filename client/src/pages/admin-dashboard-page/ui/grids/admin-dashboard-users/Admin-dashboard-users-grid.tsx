@@ -1,12 +1,12 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
-import AdminHeader from '../../../../../components/admin-header/Admin-header.tsx'
+import AdminHeader from '../../../../../components/layout/admin-header/Admin-header.tsx'
 import Pagination from '../../../../../components/pagination/Pagination.tsx'
 import UserRoleSvg from '../../../../../components/user/User-role-svg.tsx'
 import { useLoading } from '../../../../../hooks/use-loading.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
 import { RolesFilterOptions } from '../../../../../models/role/roles-filter-options.ts'
-import { SortOrderEnum } from '../../../../../models/sort/sort-order-enum.ts'
+import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum.ts'
 import { SortOrder } from '../../../../../types/sort-order-type.ts'
 import AdminFilterButton from '../../buttons/Admin-filter-button.tsx'
 import AdminDashboardUsersGridItem from './Admin-dashboard-users-grid-item.tsx'
@@ -21,7 +21,7 @@ const AdminDashboardUsersGrid = observer(() => {
 		RolesFilterOptions.ALL
 	)
 	const [currentPage, setCurrentPage] = useState<number>(1)
-	const [order, setOrder] = useState<SortOrder>(SortOrderEnum.DESC)
+	const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC)
 
 	const { execute: fetch, isLoading } = useLoading(
 		adminDashboardUsersStore.fetchUsers
@@ -78,9 +78,9 @@ const AdminDashboardUsersGrid = observer(() => {
 					order={order}
 					toggleOrder={() =>
 						setOrder(
-							order === SortOrderEnum.DESC
-								? SortOrderEnum.ASC
-								: SortOrderEnum.DESC
+							order === SortOrdersEnum.DESC
+								? SortOrdersEnum.ASC
+								: SortOrdersEnum.DESC
 						)
 					}
 				/>

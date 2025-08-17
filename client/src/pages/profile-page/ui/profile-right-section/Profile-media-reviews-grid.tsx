@@ -1,12 +1,12 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useCallback, useEffect, useState } from 'react'
 import Pagination from '../../../../components/pagination/Pagination'
-import ReleaseMediaReview from '../../../../components/release-media/Release-media-review'
+import ReleaseMediaReview from '../../../../components/release/release-media/Release-media-review'
 import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
 import { IProfile } from '../../../../models/profile/profile'
-import { ReleaseMediaStatusesEnum } from '../../../../models/release-media-status/release-media-statuses-enum'
-import { ReleaseMediaTypesEnum } from '../../../../models/release-media-type/release-media-types-enum'
+import { ReleaseMediaStatusesEnum } from '../../../../models/release/release-media/release-media-status/release-media-statuses-enum'
+import { ReleaseMediaTypesEnum } from '../../../../models/release/release-media/release-media-type/release-media-types-enum'
 
 interface IProps {
 	profile: IProfile

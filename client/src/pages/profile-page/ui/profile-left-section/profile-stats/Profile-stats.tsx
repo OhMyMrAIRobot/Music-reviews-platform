@@ -1,5 +1,7 @@
 import { FC } from 'react'
 import { Link } from 'react-router'
+import AuthorCommentColorSvg from '../../../../../components/author/author-comment/svg/Author-comment-color-svg'
+import AuthorLikeColorSvg from '../../../../../components/author/author-like/svg/Author-like-color-svg'
 import NoTextReviewSvg from '../../../../../components/review/svg/No-text-review-svg'
 import TextReviewSvg from '../../../../../components/review/svg/Text-review-svg'
 import PixelHeartFillSvg from '../../../../../components/svg/Pixel-heart-fill-svg'
@@ -78,6 +80,27 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
 					)}
 				</div>
 			</div>
+
+			{profile.isAuthor && (
+				<div>
+					<ProfileStatsRow
+						title={'Написано авторских комментариев'}
+						value={profile.authorCommentsCount}
+						icon={<AuthorCommentColorSvg className={'size-5'} />}
+					/>
+					<ProfileStatsRow
+						title={'Поставлено авторских лайков'}
+						value={profile.givenAuthorLikes}
+						icon={<AuthorLikeColorSvg className={'size-5'} />}
+					/>
+				</div>
+			)}
+
+			<div
+				data-orientation='horizontal'
+				className='shrink-0 bg-white/10 h-[1px] w-full'
+			/>
+
 			<div>
 				<ProfileStatsRow
 					title={'Рецензий'}
@@ -94,18 +117,23 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
 			<div
 				data-orientation='horizontal'
 				className='shrink-0 bg-white/10 h-[1px] w-full'
-			></div>
+			/>
 
 			<div>
 				<ProfileStatsRow
+					title={'Получено авторских лайков'}
+					value={profile.receivedAuthorLikes}
+					icon={<AuthorLikeColorSvg className={'size-5'} />}
+				/>
+				<ProfileStatsRow
 					title={'Получено лайков'}
 					value={profile.receivedLikes}
-					icon={<PixelHeartSvg className={'size-[19px]'} />}
+					icon={<PixelHeartSvg className={'w-5 h-4.5'} />}
 				/>
 				<ProfileStatsRow
 					title={'Поставлено лайков'}
 					value={profile.givenLikes}
-					icon={<PixelHeartFillSvg className={'size-[19px]'} />}
+					icon={<PixelHeartFillSvg className={'w-5 h-4.5'} />}
 				/>
 			</div>
 		</div>

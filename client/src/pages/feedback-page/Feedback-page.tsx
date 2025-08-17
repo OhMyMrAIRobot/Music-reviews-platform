@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { FeedbackAPI } from '../../api/feedback-api'
+import { FeedbackAPI } from '../../api/feedback/feedback-api'
 import FormButton from '../../components/form-elements/Form-button'
 import FormInput from '../../components/form-elements/Form-input'
 import FormLabel from '../../components/form-elements/Form-label'

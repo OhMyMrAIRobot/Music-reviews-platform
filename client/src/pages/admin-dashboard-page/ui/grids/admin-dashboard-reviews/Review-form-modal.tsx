@@ -6,7 +6,7 @@ import FormTextbox from '../../../../../components/form-elements/Form-textbox'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay'
 import { useLoading } from '../../../../../hooks/use-loading'
 import { useStore } from '../../../../../hooks/use-store'
-import { IAdminReview } from '../../../../../models/review/admin-reviews-response'
+import { IAdminReview } from '../../../../../models/review/admin-review/admin-review'
 
 interface IProps {
 	isOpen: boolean
@@ -42,8 +42,8 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
 
 	const handleSubmit = async () => {
 		const errors = await updateReview(review.user.id, review.id, {
-			title: title.trim() !== '' ? title : undefined,
-			text: text.trim() !== '' ? text : undefined,
+			title: title.trim() !== '' ? title.trim() : undefined,
+			text: text.trim() !== '' ? text.trim() : undefined,
 		})
 		if (errors.length === 0) {
 			notificationStore.addSuccessNotification('Рецензия успешно обновлена!')

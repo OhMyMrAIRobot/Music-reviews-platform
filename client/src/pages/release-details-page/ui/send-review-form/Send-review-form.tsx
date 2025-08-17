@@ -6,7 +6,7 @@ import TickSvg from '../../../../components/svg/Tick-svg'
 import TrashSvg from '../../../../components/svg/Trash-svg'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
-import { IReleaseReview } from '../../../../models/review/release-review'
+import { IReleaseReview } from '../../../../models/review/release-review/release-review'
 import { RolesEnum } from '../../../../models/role/roles-enum'
 import { calculateTotalMark } from '../../../../utils/calculate-total-mark'
 import SendMediaReviewForm from '../release-details-media/Send-media-review-form'
@@ -212,9 +212,9 @@ const SendReviewForm: FC<IProps> = observer(
 						)}
 
 						{!isMediaReview ? (
-							<div className='border bg-zinc-900 rounded-xl p-2 border-white/10'>
+							<div className='border bg-zinc-900 rounded-xl p-2 border-white/10 grid gap-y-4 lg:gap-y-5'>
 								{userReview && (
-									<div className='flex justify-end mb-4'>
+									<div className='flex justify-end'>
 										<button
 											onClick={deleteReview}
 											className='inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium bg-white/5 hover:bg-red-500 text-white h-10 px-6 py-2 space-x-2 text-xs lg:text-sm cursor-pointer transition-colors duration-200'
@@ -250,7 +250,7 @@ const SendReviewForm: FC<IProps> = observer(
 									text={text}
 									setText={setText}
 								/>
-								<div className='mt-5 flex items-center space-x-10 justify-end'>
+								<div className='flex items-center space-x-10 justify-end'>
 									<div className='relative'>
 										<span className='font-bold text-4xl lg:text-5xl'>
 											{total}

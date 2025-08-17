@@ -4,8 +4,8 @@ import ReleasesGrid from '../../components/release/Releases-grid'
 import SkeletonLoader from '../../components/utils/Skeleton-loader'
 import { useLoading } from '../../hooks/use-loading'
 import { useStore } from '../../hooks/use-store'
-import { ReleaseSortFieldValues } from '../../models/release/release-sort-field-values'
-import { ReleaseSortFields } from '../../models/release/release-sort-fields'
+import { ReleaseSortFieldValues } from '../../models/release/release-sort/release-sort-field-values'
+import { ReleaseSortFields } from '../../models/release/release-sort/release-sort-fields'
 import { SortOrder } from '../../types/sort-order-type'
 
 const ReleasesPage = () => {

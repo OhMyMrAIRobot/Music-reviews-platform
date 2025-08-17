@@ -1,12 +1,12 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
-import AdminHeader from '../../../../../components/admin-header/Admin-header.tsx'
 import AuthorTypeSvg from '../../../../../components/author/author-types/Author-type-svg.tsx'
+import AdminHeader from '../../../../../components/layout/admin-header/Admin-header.tsx'
 import Pagination from '../../../../../components/pagination/Pagination.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
 import { useLoading } from '../../../../../hooks/use-loading.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
-import { AuthorTypesFilterEnum } from '../../../../../models/author/author-types-filter-enum.ts'
+import { AuthorTypesFilterEnum } from '../../../../../models/author/author-type/author-types-filter-enum.ts'
 import AdminFilterButton from '../../buttons/Admin-filter-button.tsx'
 import AdminDashboardAuthorsGridItem from './Admin-dashboard-authors-grid-item.tsx'
 import AuthorFormModal from './Author-form-modal.tsx'
@@ -125,7 +125,7 @@ const AdminDashboardAuthorsGrid = observer(() => {
 						{isLoading
 							? Array.from({ length: perPage }).map((_, idx) => (
 									<AdminDashboardAuthorsGridItem
-										key={`User-skeleton-${idx}`}
+										key={`Author-skeleton-${idx}`}
 										isLoading={isLoading}
 									/>
 							  ))

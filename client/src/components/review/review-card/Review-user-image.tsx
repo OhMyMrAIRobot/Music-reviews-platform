@@ -1,5 +1,7 @@
 import { FC } from 'react'
 import { getLevelConfig, getUserLevel } from '../../../utils/user-level'
+import Tooltip from '../../tooltip/Tooltip'
+import TooltipSpan from '../../tooltip/Tooltip-span'
 
 interface IProps {
 	nickname: string
@@ -22,13 +24,21 @@ const ReviewUserImage: FC<IProps> = ({ nickname, img, points }) => {
 				className='rounded-full border border-white/10 min-w-10 size-10 lg:size-11 cursor-pointer aspect-square object-cover'
 			/>
 			{level && (
-				<img
-					alt={'level'}
-					src={`${import.meta.env.VITE_SERVER_URL}/public/assets/${
-						getLevelConfig(level).image
-					}`}
-					className='size-7 absolute -bottom-1.5 -right-2.5'
-				/>
+				<TooltipSpan
+					tooltip={
+						<Tooltip>{`${getLevelConfig(level).name} пользователя`}</Tooltip>
+					}
+					spanClassName='text-white cursor-pointer absolute -bottom-1.5 -right-2.5'
+					centered={true}
+				>
+					<img
+						alt={'level'}
+						src={`${import.meta.env.VITE_SERVER_URL}/public/assets/${
+							getLevelConfig(level).image
+						}`}
+						className='size-7 '
+					/>
+				</TooltipSpan>
 			)}
 		</div>
 	)

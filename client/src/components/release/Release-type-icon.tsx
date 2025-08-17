@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { ReleaseTypesEnum } from '../../models/release/release-types'
+import { ReleaseTypesEnum } from '../../models/release/release-type/release-types-enum'
 import AlbumSvg from './svg/Album-svg'
 import SingleSvg from './svg/Single-svg'
 

@@ -8,8 +8,8 @@ import {
 	useImperativeHandle,
 	useState,
 } from 'react'
-import ReleaseMediaReview from '../../../../../components/release-media/Release-media-review'
-import { IReleaseMedia } from '../../../../../models/release-media/release-media'
+import ReleaseMediaReview from '../../../../../components/release/release-media/Release-media-review'
+import { IReleaseMedia } from '../../../../../models/release/release-media/release-media'
 import { CarouselRef } from '../../../../../types/carousel-ref'
 import { CarouselStateCallbacks } from '../../../../../types/carousel-state-callbacks'
 import mainPageStore from '../../../store/main-page-store'

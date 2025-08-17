@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import useNavigationPath from '../../../hooks/use-navigation-path'
 import { IRelease } from '../../../models/release/release'
 import SkeletonLoader from '../../utils/Skeleton-loader'
+import ReleaseAuthorActions from '../Release-author-actions'
 import ReleaseAuthors from '../Release-authors'
 import ReleaseRatings from '../Release-ratings'
 import ReleaseReviewsCount from '../Release-reviews-count'
@@ -33,11 +34,17 @@ const ReleasesColumnItem: FC<IProps> = ({ release, isLoading }) => {
 					/>
 				</Link>
 
-				<div className='w-full max-w-1/2 grid grid-rows-3 h-[60px] lg:h-[72px] overflow-hidden text-ellipsis'>
-					<ReleaseReviewsCount
-						textCount={release.textCount}
-						noTextCount={release.withoutTextCount}
-					/>
+				<div className='w-full max-w-1/2 grid grid-rows-3 h-[60px] lg:h-[72px] text-ellipsis'>
+					<div className='flex items-center gap-2'>
+						<ReleaseReviewsCount
+							textCount={release.textCount}
+							noTextCount={release.withoutTextCount}
+						/>
+						<ReleaseAuthorActions
+							hasAuthorComments={release.hasAuthorComments}
+							hasAuthorLikes={release.hasAuthorLikes}
+						/>
+					</div>
 
 					<Link
 						to={navigateToReleaseDetails(release.id)}

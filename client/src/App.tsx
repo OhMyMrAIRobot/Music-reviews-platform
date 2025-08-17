@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useState } from 'react'
 import { Route, Routes, useLocation } from 'react-router'
-import Layout from './components/Layout'
+import Layout from './components/layout/Layout'
 import NotificationsContainer from './components/notifications/Notifications-container'
 import Loader from './components/utils/Loader'
 import { useStore } from './hooks/use-store'

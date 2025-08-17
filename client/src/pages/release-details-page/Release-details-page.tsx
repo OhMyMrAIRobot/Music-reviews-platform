@@ -5,13 +5,16 @@ import Loader from '../../components/utils/Loader.tsx'
 import { useLoading } from '../../hooks/use-loading.ts'
 import useNavigationPath from '../../hooks/use-navigation-path'
 import { useStore } from '../../hooks/use-store.ts'
-import { ReleaseReviewSortFieldsEnum } from '../../models/review/release-review-sort-fields-enum.ts'
-import { ReleaseReviewSortField } from '../../models/review/release-review-sort-fields.ts'
-import { SortOrderEnum } from '../../models/sort/sort-order-enum.ts'
+import { ReleaseReviewSortFieldsEnum } from '../../models/review/release-review/release-review-sort-fields-enum.ts'
+import { ReleaseReviewSortField } from '../../models/review/release-review/release-review-sort-fields.ts'
+import { SortOrdersEnum } from '../../models/sort/sort-orders-enum.ts'
+import authStore from '../../stores/auth-store.ts'
 import { SortOrder } from '../../types/sort-order-type.ts'
+import ReleaseDetailsAuthorComments from './ui/release-details-author-comments/Release-details-author-comments.tsx'
 import ReleaseDetailsHeader from './ui/Release-details-header.tsx'
 import ReleaseDetailsMedia from './ui/release-details-media/Release-details-media.tsx'
 import ReleaseDetailsReviews from './ui/release-details-reviews/Release-details-reviews.tsx'
+import SendAuthorCommentForm from './ui/send-author-comment-form/Send-author-comment-form.tsx'
 import SendReviewForm from './ui/send-review-form/Send-review-form.tsx'
 
 const ReleaseDetailsPage = observer(() => {
@@ -42,10 +45,10 @@ const ReleaseDetailsPage = observer(() => {
 
 	const fetchReviews = async (): Promise<void> => {
 		let field: ReleaseReviewSortFieldsEnum = ReleaseReviewSortFieldsEnum.CREATED
-		let order: SortOrder = SortOrderEnum.DESC
+		let order: SortOrder = SortOrdersEnum.DESC
 
 		if (selectedSort === ReleaseReviewSortField.OLD) {
-			order = SortOrderEnum.ASC
+			order = SortOrdersEnum.ASC
 		} else if (selectedSort === ReleaseReviewSortField.POPULAR) {
 			field = ReleaseReviewSortFieldsEnum.LIKES
 		}
@@ -70,6 +73,15 @@ const ReleaseDetailsPage = observer(() => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentPage, selectedSort])
 
+	const registeredAuthorIds = authStore.user
+		? authStore.user.registeredAuthor.map(ra => ra.authorId)
+		: []
+
+	const isUserAuthor =
+		release?.artists.some(ra => registeredAuthorIds.includes(ra.id)) ||
+		release?.producers.some(rp => registeredAuthorIds.includes(rp.id)) ||
+		release?.designers.some(rd => registeredAuthorIds.includes(rd.id))
+
 	return isReleaseLoading ? (
 		<div className='w-full'>
 			<Loader className={'mx-auto size-20 border-white'} />
@@ -81,7 +93,13 @@ const ReleaseDetailsPage = observer(() => {
 
 				<ReleaseDetailsMedia releaseId={release.id} />
 
-				<SendReviewForm fetchReviews={fetchReviews} releaseId={release.id} />
+				<ReleaseDetailsAuthorComments releaseId={release.id} />
+
+				{isUserAuthor ? (
+					<SendAuthorCommentForm releaseId={release.id} />
+				) : (
+					<SendReviewForm fetchReviews={fetchReviews} releaseId={release.id} />
+				)}
 
 				<ReleaseDetailsReviews
 					reviews={reviews}

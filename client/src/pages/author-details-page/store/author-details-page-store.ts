@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable } from 'mobx'
-import { AuthorAPI } from '../../../api/author-api'
-import { ReleaseAPI } from '../../../api/release-api'
-import { ReviewAPI } from '../../../api/review-api'
-import { UserFavAuthorAPI } from '../../../api/user-fav-author-api.ts'
+import { AuthorAPI } from '../../../api/author/author-api.ts'
+import { UserFavAuthorAPI } from '../../../api/author/user-fav-author-api.ts'
+import { ReleaseAPI } from '../../../api/release/release-api.ts'
+import { ReviewAPI } from '../../../api/review/review-api.ts'
 import { IAuthor } from '../../../models/author/author'
 import { IRelease } from '../../../models/release/release'
 import { IReview } from '../../../models/review/review.ts'
@@ -85,7 +85,7 @@ class AuthorDetailsPageStore {
 			const newFav = await UserFavAuthorAPI.fetchFavByAuthorId(authorId)
 
 			if (this.author) {
-				this.author.userFavAuthors = newFav
+				this.author.userFavAuthor = newFav
 				this.author.favCount = newFav.length
 			}
 

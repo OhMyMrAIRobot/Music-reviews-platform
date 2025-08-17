@@ -4,9 +4,9 @@ import HourglassSvg from '../../../../components/svg/Hourglass-svg'
 import RejectSvg from '../../../../components/svg/Reject-svg'
 import { useAuth } from '../../../../hooks/use-auth'
 import { useStore } from '../../../../hooks/use-store'
-import { ReleaseMediaStatusesEnum } from '../../../../models/release-media-status/release-media-statuses-enum'
-import { ReleaseMediaTypesEnum } from '../../../../models/release-media-type/release-media-types-enum'
-import { IReleaseMedia } from '../../../../models/release-media/release-media'
+import { IReleaseMedia } from '../../../../models/release/release-media/release-media'
+import { ReleaseMediaStatusesEnum } from '../../../../models/release/release-media/release-media-status/release-media-statuses-enum'
+import { ReleaseMediaTypesEnum } from '../../../../models/release/release-media/release-media-type/release-media-types-enum'
 import { parseYoutubeId } from '../../../../utils/parse-youtube-id'
 
 interface IProps {

@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx'
-import { ReleaseAPI } from '../../../api/release-api'
+import { ReleaseAPI } from '../../../api/release/release-api'
 import { IRelease } from '../../../models/release/release'
 
 class ReleasesPageStore {

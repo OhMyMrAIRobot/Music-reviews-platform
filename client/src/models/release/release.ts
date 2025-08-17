@@ -15,4 +15,6 @@ export interface IRelease {
 	withoutTextCount: number
 	authors: IReleaseAuthor[]
 	ratings: IReleaseRating[]
+	hasAuthorLikes: boolean
+	hasAuthorComments: boolean
 }

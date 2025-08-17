@@ -11,19 +11,18 @@ const ProfilePage = () => {
 
 	const { profilePageStore } = useStore()
 
-	const { execute: fetchProfile, isLoading } = useLoading(
+	const { execute: fetchProfile, isLoading: isProfileLoading } = useLoading(
 		profilePageStore.fetchProfile
 	)
 
 	useEffect(() => {
-		if (id) {
-			fetchProfile(id)
-		}
+		if (!id) return
+		fetchProfile(id)
 	}, [fetchProfile, id])
 
 	const profile = profilePageStore.profile
 
-	return isLoading ? (
+	return isProfileLoading ? (
 		<Loader className={'mx-auto size-20 border-white'} />
 	) : (
 		profile && (

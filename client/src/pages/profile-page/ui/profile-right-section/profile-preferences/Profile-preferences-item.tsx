@@ -2,10 +2,10 @@ import { FC } from 'react'
 import { Link } from 'react-router'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
-import { IProfilePreferenceItem } from '../../../../../models/profile/profile-preference-item'
+import { IProfilePreference } from '../../../../../models/profile/profile-preference/profile-preference-item'
 
 interface IProps {
-	item?: IProfilePreferenceItem
+	item?: IProfilePreference
 	isAuthor: boolean
 	isLoading: boolean
 }

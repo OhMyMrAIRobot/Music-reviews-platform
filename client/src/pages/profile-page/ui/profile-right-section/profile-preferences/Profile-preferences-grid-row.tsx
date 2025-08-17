@@ -1,12 +1,12 @@
 import { EmblaOptionsType } from 'embla-carousel'
 import useEmblaCarousel from 'embla-carousel-react'
 import { FC } from 'react'
-import { IProfilePreferenceItem } from '../../../../../models/profile/profile-preference-item'
+import { IProfilePreference } from '../../../../../models/profile/profile-preference/profile-preference-item'
 import ProfilePreferencesItem from './Profile-preferences-item'
 
 interface IProps {
 	title: string
-	items: IProfilePreferenceItem[]
+	items: IProfilePreference[]
 	isAuthor: boolean
 	isLoading: boolean
 }
@@ -53,6 +53,11 @@ const ProfilePreferencesGridRow: FC<IProps> = ({
 					</div>
 				</div>
 			</div>
+			{!isLoading && items.length === 0 && (
+				<div className='col-span-full text-center text-xs text-muted-foreground bg-gradient-to-br from-zinc-900 border border-zinc-950 py-2 rounded-xl'>
+					Нет предпочтений
+				</div>
+			)}
 		</div>
 	)
 }

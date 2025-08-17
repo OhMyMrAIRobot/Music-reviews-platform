@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { runInAction } from 'mobx'
-import { UserFavMediaAPI } from '../api/user-fav-media-api'
-import { IReleaseMedia } from '../models/release-media/release-media'
+import { UserFavMediaAPI } from '../api/release/user-fav-media-api'
+import { IReleaseMedia } from '../models/release/release-media/release-media'
 
 export const toggleFavMedia = async (
 	items: IReleaseMedia[],
@@ -21,7 +21,8 @@ export const toggleFavMedia = async (
 
 		if (idx !== -1) {
 			runInAction(() => {
-				items[idx].userFavMedia = newLikes
+				items[idx].userFavMedia = newLikes.userFavMedia
+				items[idx].authorFavMedia = newLikes.authorFavMedia
 			})
 		}
 

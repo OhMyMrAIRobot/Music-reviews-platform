@@ -1,13 +1,13 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
-import AdminHeader from '../../../../../components/admin-header/Admin-header.tsx'
+import AdminHeader from '../../../../../components/layout/admin-header/Admin-header.tsx'
 import Pagination from '../../../../../components/pagination/Pagination.tsx'
 import ReleaseTypeIcon from '../../../../../components/release/Release-type-icon.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
 import { useLoading } from '../../../../../hooks/use-loading.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
-import { ReleaseTypesFilterEnum } from '../../../../../models/release/release-types-filter-enum.ts'
-import { SortOrderEnum } from '../../../../../models/sort/sort-order-enum.ts'
+import { ReleaseTypesFilterOptions } from '../../../../../models/release/release-type/release-types-filter-options.ts'
+import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum.ts'
 import { SortOrder } from '../../../../../types/sort-order-type.ts'
 import AdminFilterButton from '../../buttons/Admin-filter-button.tsx'
 import AdminDashboardReleasesGridItem from './Admin-dashboard-releases-grid-item.tsx'
@@ -22,9 +22,9 @@ const AdminDashboardReleasesGrid = observer(() => {
 	const [searchText, setSearchText] = useState<string>('')
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [activeType, setActiveType] = useState<string>(
-		ReleaseTypesFilterEnum.ALL
+		ReleaseTypesFilterOptions.ALL
 	)
-	const [order, setOrder] = useState<SortOrder>(SortOrderEnum.DESC)
+	const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC)
 
 	const { execute: fetch, isLoading: isReleasesLoading } = useLoading(
 		adminDashboardReleasesStore.fetchReleases
@@ -36,7 +36,7 @@ const AdminDashboardReleasesGrid = observer(() => {
 
 	const fetchReleases = () => {
 		let typeId: string | null = null
-		if (activeType !== ReleaseTypesFilterEnum.ALL) {
+		if (activeType !== ReleaseTypesFilterOptions.ALL) {
 			const type = metaStore.releaseTypes.find(type => type.type === activeType)
 			typeId = type?.id ?? null
 		}
@@ -88,7 +88,7 @@ const AdminDashboardReleasesGrid = observer(() => {
 									className='w-20 h-4 rounded-lg mr-5 mb-1'
 								/>
 						  ))
-						: Object.values(ReleaseTypesFilterEnum).map(type => (
+						: Object.values(ReleaseTypesFilterOptions).map(type => (
 								<AdminFilterButton
 									key={type}
 									title={
@@ -117,9 +117,9 @@ const AdminDashboardReleasesGrid = observer(() => {
 					order={order}
 					toggleOrder={() =>
 						setOrder(
-							order === SortOrderEnum.DESC
-								? SortOrderEnum.ASC
-								: SortOrderEnum.DESC
+							order === SortOrdersEnum.DESC
+								? SortOrdersEnum.ASC
+								: SortOrdersEnum.DESC
 						)
 					}
 				/>

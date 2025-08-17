@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { FeedbackStatusesEnum } from '../../models/feedback/feedback-statuses-enum'
+import { FeedbackStatusesEnum } from '../../models/feedback/feedback-status/feedback-statuses-enum'
 import MessageChatSvg from './svg/Message-chat-svg'
 import MessageCircleSvg from './svg/Message-circle-svg'
 import MessageTickSvg from './svg/Message-tick-svg'

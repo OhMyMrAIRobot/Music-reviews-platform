@@ -1,15 +1,16 @@
 import { FC } from 'react'
 import { Link } from 'react-router'
 import useNavigationPath from '../../../hooks/use-navigation-path'
-import { IAuthorData } from '../../../models/author/authors-response'
-import { ReleaseTypesEnum } from '../../../models/release/release-types'
+import { IAuthor } from '../../../models/author/author'
+import { ReleaseTypesEnum } from '../../../models/release/release-type/release-types-enum'
 import LikesCount from '../../utils/Likes-count'
 import SkeletonLoader from '../../utils/Skeleton-loader'
 import AuthorReleaseTypesRatings from '../author-ratings/Author-release-types-ratings'
 import AuthorTypes from '../author-types/Author-types'
+import RegisteredAuthorTypes from '../registered-author/Registered-author-types'
 
 interface IProps {
-	author?: IAuthorData
+	author?: IAuthor
 	isLoading: boolean
 }
 
@@ -40,7 +41,14 @@ const AuthorCard: FC<IProps> = ({ author, isLoading }) => {
 
 				<div className='text-sm md:text-xl font-semibold flex items-center justify-center gap-x-1'>
 					<span>{author.name}</span>
-					<AuthorTypes types={author.authorTypes} />
+					{author.isRegistered ? (
+						<RegisteredAuthorTypes
+							types={author.authorTypes}
+							className='size-7'
+						/>
+					) : (
+						<AuthorTypes types={author.authorTypes} className='size-7' />
+					)}
 				</div>
 
 				<LikesCount count={author.favCount} />

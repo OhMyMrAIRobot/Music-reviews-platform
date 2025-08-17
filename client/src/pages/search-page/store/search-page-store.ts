@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx'
-import { AuthorAPI } from '../../../api/author-api'
-import { ReleaseAPI } from '../../../api/release-api'
-import { IAuthorData } from '../../../models/author/authors-response'
+import { AuthorAPI } from '../../../api/author/author-api'
+import { ReleaseAPI } from '../../../api/release/release-api'
+import { IAuthor } from '../../../models/author/author'
 import { IRelease } from '../../../models/release/release'
 
 class SearchPageStore {
@@ -9,13 +9,13 @@ class SearchPageStore {
 		makeAutoObservable(this)
 	}
 
-	authors: IAuthorData[] = []
+	authors: IAuthor[] = []
 	authorsCount: number = 0
 
 	releases: IRelease[] = []
 	releasesCount: number = 0
 
-	setAuthors(data: IAuthorData[]) {
+	setAuthors(data: IAuthor[]) {
 		this.authors = data
 	}
 
@@ -37,7 +37,14 @@ class SearchPageStore {
 		offset: number = 0
 	) => {
 		try {
-			const data = await AuthorAPI.fetchAuthors(null, query, limit, offset)
+			const data = await AuthorAPI.fetchAuthors(
+				null,
+				query,
+				limit,
+				offset,
+				false,
+				null
+			)
 			this.setAuthorsCount(data.count)
 			this.setAuthors(data.authors)
 		} catch (e) {

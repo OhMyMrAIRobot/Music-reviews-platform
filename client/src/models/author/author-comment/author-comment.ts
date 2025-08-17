@@ -1,0 +1,19 @@
+import { IAuthorType } from '../author-type/author-type'
+
+export interface IAuthorComment {
+	id: string
+	title: string
+	text: string
+	createdAt: string
+	userId: string
+	authorTypes: IAuthorType[]
+	nickname: string
+	avatar: string
+	totalComments: number
+	totalAuthorLikes: number
+	points: number
+	releaseId: string
+	releaseTitle: string
+	releaseImg: string
+	position: number | null
+}

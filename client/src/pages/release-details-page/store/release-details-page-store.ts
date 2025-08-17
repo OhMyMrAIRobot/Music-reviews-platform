@@ -1,15 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
-import { ReleaseAPI } from '../../../api/release-api'
-import { ReleaseMediaAPI } from '../../../api/release-media-api'
-import { ReviewAPI } from '../../../api/review-api'
-import { UserFavReleaseAPI } from '../../../api/user-fav-release-api'
-import { IReleaseMedia } from '../../../models/release-media/release-media'
-import { IReleaseMediaList } from '../../../models/release-media/release-media-list'
-import { IReleaseDetails } from '../../../models/release/release-details'
-import { IReleaseReview } from '../../../models/review/release-review'
-import { ReleaseReviewSortFieldsEnum } from '../../../models/review/release-review-sort-fields-enum'
+import { AuthorCommentAPI } from '../../../api/author/author-comment-api'
+import { ReleaseAPI } from '../../../api/release/release-api'
+import { ReleaseMediaAPI } from '../../../api/release/release-media-api'
+import { UserFavReleaseAPI } from '../../../api/release/user-fav-release-api'
+import { ReviewAPI } from '../../../api/review/review-api'
+import { IAuthorComment } from '../../../models/author/author-comment/author-comment'
+import { IReleaseDetails } from '../../../models/release/release-details/release-details'
+import { IReleaseMedia } from '../../../models/release/release-media/release-media'
+import { IReleaseMediaList } from '../../../models/release/release-media/release-media-list'
+import { IReleaseReview } from '../../../models/review/release-review/release-review'
+import { ReleaseReviewSortFieldsEnum } from '../../../models/review/release-review/release-review-sort-fields-enum'
 import { IReviewData } from '../../../models/review/review-data'
 import { SortOrder } from '../../../types/sort-order-type'
 import { toggleFavMedia } from '../../../utils/toggle-fav-media'
@@ -28,6 +30,8 @@ class ReleaseDetailsPageStore {
 	releaseMediaCount: number = 0
 
 	userReleaseMedia: IReleaseMedia | null = null
+
+	authorComments: IAuthorComment[] = []
 
 	setReviewDetails(data: IReleaseDetails | null) {
 		this.releaseDetails = data
@@ -50,6 +54,10 @@ class ReleaseDetailsPageStore {
 
 	setUserReleaseMedia(data: IReleaseMedia | null) {
 		this.userReleaseMedia = data
+	}
+
+	setAuthorComments(data: IAuthorComment[]) {
+		this.authorComments = data
 	}
 
 	fetchReleaseDetails = async (id: string) => {
@@ -111,6 +119,75 @@ class ReleaseDetailsPageStore {
 		} catch {
 			this.setReviewsCount(0)
 			this.setReleaseReviews([])
+		}
+	}
+
+	fetchAuthorComments = async (releaseId: string) => {
+		try {
+			const data = await AuthorCommentAPI.fetchByReleaseId(releaseId)
+			this.setAuthorComments(data)
+		} catch (e) {
+			this.setAuthorComments([])
+		}
+	}
+
+	postAuthorComment = async (
+		releaseId: string,
+		title: string,
+		text: string
+	): Promise<string[]> => {
+		try {
+			const data = await AuthorCommentAPI.create(releaseId, title, text)
+			runInAction(() => {
+				this.authorComments.unshift(data)
+			})
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
+		}
+	}
+
+	updateAuthorComment = async (
+		id: string,
+		title?: string,
+		text?: string
+	): Promise<string[]> => {
+		try {
+			const data = await AuthorCommentAPI.update(id, title, text)
+
+			const idx = this.authorComments.findIndex(ac => ac.id === id)
+			if (idx !== -1) {
+				runInAction(() => {
+					this.authorComments[idx] = data
+				})
+			}
+
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
+		}
+	}
+
+	deleteAuthorComment = async (id: string): Promise<string[]> => {
+		try {
+			await AuthorCommentAPI.delete(id)
+
+			const idx = this.authorComments.findIndex(ac => ac.id === id)
+			if (idx !== -1) {
+				runInAction(() => {
+					this.authorComments.splice(idx, 1)
+				})
+			}
+
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
 		}
 	}
 

@@ -1,7 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx'
-import { ReleaseMediaAPI } from '../../../api/release-media-api'
-import { IReleaseMedia } from '../../../models/release-media/release-media'
-import { IReleaseMediaList } from '../../../models/release-media/release-media-list'
+import { ReleaseMediaAPI } from '../../../api/release/release-media-api'
+import { IReleaseMedia } from '../../../models/release/release-media/release-media'
+import { IReleaseMediaList } from '../../../models/release/release-media/release-media-list'
 import { SortOrder } from '../../../types/sort-order-type'
 import { toggleFavMedia } from '../../../utils/toggle-fav-media'
 

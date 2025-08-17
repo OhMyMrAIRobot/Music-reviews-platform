@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
-import { ReleaseAPI } from '../../../api/release-api'
-import {
-	IAdminRelease,
-	IAdminReleasesResponse,
-} from '../../../models/release/admin-releases-response'
+import { AuthorAPI } from '../../../api/author/author-api'
+import { ReleaseAPI } from '../../../api/release/release-api'
+import { IAdminAuthor } from '../../../models/author/admin-author/admin-author'
+import {} from '../../../models/author/admin-author/admin-authors-response'
+import { IAdminRelease } from '../../../models/release/admin-release/admin-release'
+import { IAdminReleasesResponse } from '../../../models/release/admin-release/admin-releases-response'
 import { SortOrder } from '../../../types/sort-order-type'
 
 class AdminDashboardReleasesStore {
@@ -15,11 +16,17 @@ class AdminDashboardReleasesStore {
 	count: number = 0
 	releases: IAdminRelease[] = []
 
+	authors: IAdminAuthor[] = []
+
 	setReleases(data: IAdminReleasesResponse) {
 		runInAction(() => {
 			this.count = data.count
 			this.releases = data.releases
 		})
+	}
+
+	setAuthors(data: IAdminAuthor[]) {
+		this.authors = data
 	}
 
 	fetchReleases = async (
@@ -40,6 +47,15 @@ class AdminDashboardReleasesStore {
 			this.setReleases(data)
 		} catch (e) {
 			console.log(e)
+		}
+	}
+
+	fetchAuthors = async (query: string | null, limit: number | null) => {
+		try {
+			const data = await AuthorAPI.adminFetchAuthors(null, query, limit, 0)
+			this.setAuthors(data.authors)
+		} catch {
+			this.setAuthors([])
 		}
 	}
 

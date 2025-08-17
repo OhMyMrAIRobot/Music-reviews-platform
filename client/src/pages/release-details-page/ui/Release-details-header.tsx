@@ -5,7 +5,7 @@ import LikesCount from '../../../components/utils/Likes-count'
 import { useAuth } from '../../../hooks/use-auth'
 import { useLoading } from '../../../hooks/use-loading'
 import { useStore } from '../../../hooks/use-store'
-import { IReleaseDetails } from '../../../models/release/release-details'
+import { IReleaseDetails } from '../../../models/release/release-details/release-details'
 import ReleaseDetailsAuthors from './release-details-authors/Release-details-authors'
 import ReleaseDetailsRatings from './release-details-ratings/Release-details-ratings'
 

@@ -10,7 +10,7 @@ import { useAuth } from '../../../../hooks/use-auth'
 import { useLoading } from '../../../../hooks/use-loading'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
-import { IReleaseReview } from '../../../../models/review/release-review'
+import { IReleaseReview } from '../../../../models/review/release-review/release-review'
 
 interface IProps {
 	review?: IReleaseReview
@@ -86,7 +86,7 @@ const ReleaseDetailsReviewsItem: FC<IProps> = observer(
 						/>
 					</div>
 					<div className='px-1.5'>
-						<h5 className='text-base lg:text-lg mt-3 font-semibold'>
+						<h5 className='text-base lg:text-lg mt-3 font-semibold break-words'>
 							{review.title}
 						</h5>
 						<p className='text-sm lg:text-lg font-light mt-2 break-words'>
@@ -99,6 +99,7 @@ const ReleaseDetailsReviewsItem: FC<IProps> = observer(
 								isLiked={isFav}
 								likesCount={review.favCount}
 								toggleFavReview={toggleFavReview}
+								authorLikes={review.authorFavReview}
 							/>
 						</div>
 					</div>
