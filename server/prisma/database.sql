@@ -1119,3 +1119,126 @@ CREATE TRIGGER fav_media_points_trigger
 EXECUTE FUNCTION handle_fav_media_points();
 
 
+CREATE OR REPLACE VIEW "Nomination_results" AS
+SELECT
+  nt.id  AS nomination_type_id,
+  nt.type AS nomination_type,
+  nv.year,
+  nv.month,
+  CASE WHEN nv.author_id IS NOT NULL THEN 'author' ELSE 'release' END AS entity_kind,
+  nv.author_id,
+  nv.release_id,
+  COUNT(*)::int AS votes
+FROM "Nomination_votes" nv
+JOIN "Nomination_types" nt ON nt.id = nv.nomination_type_id
+GROUP BY nt.id, nt.type, nv.year, nv.month, nv.author_id, nv.release_id;
+
+
+CREATE OR REPLACE VIEW "Nomination_winners_single" AS
+WITH ranked AS (
+  SELECT
+    r.nomination_type_id,
+    r.nomination_type,
+    r.year,
+    r.month,
+    r.entity_kind,
+    r.author_id,
+    r.release_id,
+    r.votes,
+    ROW_NUMBER() OVER (
+      PARTITION BY r.nomination_type_id, r.year, r.month
+      ORDER BY r.votes DESC, COALESCE(r.author_id, r.release_id) ASC
+    ) AS rn
+  FROM "Nomination_results" r
+)
+SELECT
+  nomination_type_id,
+  nomination_type,
+  year,
+  month,
+  entity_kind,
+  author_id,
+  release_id,
+  votes
+FROM ranked
+WHERE rn = 1;
+
+
+CREATE OR REPLACE VIEW "Nomination_winners_enriched" AS
+WITH w AS (
+  SELECT *
+  FROM "Nomination_winners_single"
+)
+SELECT
+  w.nomination_type_id,
+  w.nomination_type,
+  w.year,
+  w.month,
+  w.entity_kind,
+
+  COALESCE(w.author_id, w.release_id) AS entity_id,
+
+  a.id   AS author_id,
+  a.name AS author_name,
+  a.avatar_img AS author_avatar_img,
+  a.cover_img  AS author_cover_img,
+
+  rel.id    AS release_id,
+  rel.title AS release_title,
+  rel.img   AS release_img,
+
+  w.votes
+FROM w
+LEFT JOIN "Authors" a  ON a.id  = w.author_id
+LEFT JOIN "Releases" rel ON rel.id = w.release_id;
+
+CREATE OR REPLACE VIEW "Nomination_winners_monthly_json" AS
+WITH base AS (
+    SELECT
+        nomination_type,
+        year,
+        month,
+        entity_kind,
+        entity_id,
+        votes,
+        author_id,
+        author_name,
+        author_avatar_img,
+        author_cover_img,
+        release_id,
+        release_title,
+        release_img,
+        release_authors
+    FROM "Nomination_winners_enriched"
+)
+SELECT
+    year,
+    month,
+    json_agg(
+            jsonb_build_object(
+                    'type', nomination_type,
+                    'entityKind', entity_kind,
+                    'entityId',   entity_id,
+                    'votes',      votes
+            )
+                || CASE WHEN entity_kind = 'author' THEN jsonb_build_object(
+                    'author', jsonb_build_object(
+                            'id',        author_id,
+                            'name',      author_name,
+                            'avatarImg', author_avatar_img,
+                            'coverImg',  author_cover_img
+                    )
+                ) ELSE '{}'::jsonb END
+                || CASE WHEN entity_kind = 'release' THEN jsonb_build_object(
+                    'release', jsonb_build_object(
+                            'id',      release_id,
+                            'title',   release_title,
+                            'img',     release_img,
+                            'authors', COALESCE(to_jsonb(release_authors), '[]'::jsonb)
+                    )
+                ) ELSE '{}'::jsonb END
+            ORDER BY nomination_type
+    ) AS results
+FROM base
+GROUP BY year, month
+ORDER BY year, month;

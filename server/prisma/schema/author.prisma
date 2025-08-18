@@ -11,14 +11,17 @@ model Author {
   userFavAuthor      UserFavAuthor[]
   registeredAuthor   RegisteredAuthor[]
   authorConfirmation AuthorConfirmation[]
+  nomitationVote     NomitationVote[]
 
   @@map("Authors")
 }
 
 model AuthorType {
-  id      String         @id @default(cuid())
-  type    String         @unique @db.VarChar(30)
-  authors AuthorOnType[]
+  id   String @id @default(cuid())
+  type String @unique @db.VarChar(30)
+
+  authors                         AuthorOnType[]
+  nominationTypeAllowedAuthorType NominationTypeAllowedAuthorType[]
 
   @@map("Author_types")
 }
