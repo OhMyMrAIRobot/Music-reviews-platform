@@ -11,6 +11,7 @@ import AuthorConfirmationPageStore from '../pages/author-confirmation-page/store
 import AuthorDetailsPageStore from '../pages/author-details-page/store/author-details-page-store'
 import AuthorLikesPageStore from '../pages/author-likes-page/store/author-likes-page-store'
 import AuthorsPageStore from '../pages/authors-page/store/authors-page-store'
+import AwardsPageStore from '../pages/awards-page/store/awards-page-store'
 import LeaderboardStore from '../pages/leaderboard-page/store/leaderboard-store'
 import MainPageStore from '../pages/main-page/store/main-page-store'
 import MediaReviewsPageStore from '../pages/media-reviews-page/store/media-reviews-page-store'
@@ -44,6 +45,7 @@ class Store {
 	authorConfirmationPageStore = AuthorConfirmationPageStore
 	authorCommentsPageStore = AuthorCommentsPageStore
 	authorLikesPageStore = AuthorLikesPageStore
+	awardsPageStore = AwardsPageStore
 	adminDashboardUsersStore = AdminDashboardUsersStore
 	adminDashboardAuthorsStore = AdminDashboardAuthorsStore
 	adminDashboardReleasesStore = AdminDashboardReleasesStore

@@ -3,6 +3,7 @@ import AuthorCommentsPage from '../pages/author-comments-page/Author-comments-pa
 import AuthorDetailsPage from '../pages/author-details-page/Author-details-page'
 import AuthorLikesPage from '../pages/author-likes-page/Author-likes-page'
 import AuthorsPage from '../pages/authors-page/Authors-page'
+import AwardsPage from '../pages/awards-page/Awards-page'
 import FeedbackPage from '../pages/feedback-page/Feedback-page'
 import LeaderboardPage from '../pages/leaderboard-page/Leaderboard-page'
 import MainPage from '../pages/main-page/Main-page'
@@ -41,6 +42,7 @@ const GlobalRouteList = () => {
 			<Route path={ROUTES.MEDIA_REVIEWS} element={<MediaReviewsPage />} />,
 			<Route path={ROUTES.AUTHOR_COMMENTS} element={<AuthorCommentsPage />} />,
 			<Route path={ROUTES.AUTHOR_LIKES} element={<AuthorLikesPage />} />,
+			<Route path={ROUTES.AWARDS} element={<AwardsPage />} />,
 			<Route path={ROUTES.NOT_DEFINED} element={<MainPage />} />,
 		</>
 	)
