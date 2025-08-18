@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 import { PrismaModule } from 'prisma/prisma.module';
+import { NominationTypesModule } from 'src/nomination-types/nomination-types.module';
+import { NominationsModule } from 'src/nominations/nominations.module';
 import { AuthModule } from '../auth/auth.module';
 import { AuthorCommentsModule } from '../author-comments/author-comments.module';
 import { AuthorConfirmationStatusesModule } from '../author-confirmation-statuses/author-confirmation-statuses.module';
@@ -64,6 +66,8 @@ import { AppService } from './app.service';
     AuthorCommentsModule,
     AuthorConfirmationStatusesModule,
     AuthorConfirmationsModule,
+    NominationsModule,
+    NominationTypesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

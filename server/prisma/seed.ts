@@ -3,6 +3,7 @@ import * as bcrypt from 'bcrypt';
 import { AuthorConfirmationStatusesEnum } from '../src/author-confirmation-statuses/types/author-confirmation-statuses.enum';
 import { AuthorTypesEnum } from '../src/author-types/entities/author-types.enum';
 import { FeedbackStatusesEnum } from '../src/feedback-statuses/types/feedback-statuses.enum';
+import { NominationTypesEnum } from '../src/nomination-types/types/nomination-types.enum';
 import { ReleaseMediaStatusesEnum } from '../src/release-media-statuses/types/release-media-statuses.enum';
 import { ReleaseMediaTypesEnum } from '../src/release-media-types/types/release-media-types.enum';
 import { ReleaseTypesEnum } from '../src/release-types/types/release-types.enum';
@@ -42,6 +43,10 @@ async function main() {
   await prisma.authorConfirmation.deleteMany();
   await prisma.authorComment.deleteMany();
   await prisma.userFavMedia.deleteMany();
+  await prisma.nominationType.deleteMany();
+  await prisma.nominationTypeAllowedAuthorType.deleteMany();
+  await prisma.nominationTypeAllowedReleaseType.deleteMany();
+  await prisma.nomitationVote.deleteMany();
 
   const password = await bcrypt.hash('1234567', 10);
 
@@ -860,6 +865,117 @@ async function main() {
         title: 'Zima Blue',
         img: '15.png',
         releaseTypeId: '3',
+      },
+    ],
+  });
+
+  await prisma.nominationType.createMany({
+    data: [
+      {
+        id: '0',
+        type: NominationTypesEnum.ALBUM_OF_MONTH,
+      },
+      {
+        id: '1',
+        type: NominationTypesEnum.ARTIST_OF_MONTH,
+      },
+      {
+        id: '2',
+        type: NominationTypesEnum.COVER_OF_MONTH,
+      },
+      {
+        id: '3',
+        type: NominationTypesEnum.HIT_OF_MONTH,
+      },
+      {
+        id: '4',
+        type: NominationTypesEnum.PRODUCER_OF_MONTH,
+      },
+    ],
+  });
+
+  await prisma.nomitationVote.createMany({
+    data: [
+      {
+        userId: '1',
+        nominationTypeId: '0',
+        year: 2025,
+        month: 4,
+        releaseId: '3',
+        createdAt: new Date('2025-4-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '1',
+        year: 2025,
+        month: 4,
+        authorId: '6',
+        createdAt: new Date('2025-4-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '2',
+        year: 2025,
+        month: 4,
+        releaseId: '3',
+        createdAt: new Date('2025-4-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '3',
+        year: 2025,
+        month: 4,
+        releaseId: '11',
+        createdAt: new Date('2025-4-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '4',
+        year: 2025,
+        month: 4,
+        authorId: '5',
+        createdAt: new Date('2025-4-1'),
+      },
+
+      {
+        userId: '1',
+        nominationTypeId: '0',
+        year: 2024,
+        month: 2,
+        releaseId: 'release5',
+        createdAt: new Date('2024-2-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '1',
+        year: 2024,
+        month: 2,
+        authorId: '1',
+        createdAt: new Date('2024-2-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '2',
+        year: 2024,
+        month: 2,
+        releaseId: 'release5',
+        createdAt: new Date('2024-2-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '3',
+        year: 2024,
+        month: 2,
+        releaseId: 'release5',
+        createdAt: new Date('2024-2-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '4',
+        year: 2024,
+        month: 2,
+        authorId: '1',
+        createdAt: new Date('2024-2-1'),
       },
     ],
   });
