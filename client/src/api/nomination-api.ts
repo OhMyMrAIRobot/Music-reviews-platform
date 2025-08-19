@@ -1,5 +1,6 @@
 import axios from 'axios'
-import { INominationWinnersResponse } from '../models/nomination/nomination-winners-response'
+import { INominationWinnerParticipation } from '../models/nomination/nomination-winner-participation/nomination-winner-participation'
+import { INominationWinnersResponse } from '../models/nomination/nomination-winner/nomination-winners-response'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
 
@@ -16,10 +17,20 @@ export const NominationAPI = {
 		month: number | null,
 		year: number | null
 	): Promise<INominationWinnersResponse> {
-		const { data } = await _api.get(`?
+		const { data } = await _api.get<INominationWinnersResponse>(`?
 			${month !== null ? `month=${month}&` : ''}
 			${year !== null ? `year=${year}&` : ''}
 		`)
+
+		return data
+	},
+
+	async fetchWinnersByAuthorId(
+		authorId: string
+	): Promise<INominationWinnerParticipation> {
+		const { data } = await _api.get<INominationWinnerParticipation>(
+			`author/${authorId}`
+		)
 
 		return data
 	},

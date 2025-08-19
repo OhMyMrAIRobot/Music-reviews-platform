@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx'
 import { NominationAPI } from '../../../api/nomination-api'
-import { INominationMonthWinners } from '../../../models/nomination/nomination-month-winners'
+import { INominationMonthWinners } from '../../../models/nomination/nomination-winner/nomination-month-winners'
 
 class AwardsPageStore {
 	constructor() {

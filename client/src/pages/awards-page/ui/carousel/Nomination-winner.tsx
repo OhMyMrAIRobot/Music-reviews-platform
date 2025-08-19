@@ -3,7 +3,7 @@ import { Link } from 'react-router'
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { NominationTypesEnum } from '../../../../models/nomination/nomination-type/nomination-type-enum'
-import { INominationWinner } from '../../../../models/nomination/nomination-winner'
+import { INominationWinner } from '../../../../models/nomination/nomination-winner/nomination-winner'
 
 interface IProps {
 	item?: INominationWinner

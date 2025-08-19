@@ -8,17 +8,17 @@ import {
 	useImperativeHandle,
 	useState,
 } from 'react'
-import { INominationWinner } from '../../../../models/nomination/nomination-winner/nomination-winner'
+import { INominationWinnerParticipationItem } from '../../../../models/nomination/nomination-winner-participation/nomination-winner-participation-item'
 import { CarouselRef } from '../../../../types/carousel-ref'
 import { CarouselStateCallbacks } from '../../../../types/carousel-state-callbacks'
-import NominationWinner from './Nomination-winner'
+import AuthorDetailsNominationsCarouselItem from './Author-details-nominations-carousel-item'
 
 interface IProps extends CarouselStateCallbacks {
-	items?: INominationWinner[]
+	items?: INominationWinnerParticipationItem[]
 	isLoading: boolean
 }
 
-const NominationCarousel = observer(
+const AuthorDetailsNominationsCarousel = observer(
 	forwardRef<CarouselRef, IProps>(
 		(
 			{ items, isLoading, onCanScrollPrevChange, onCanScrollNextChange },
@@ -73,22 +73,25 @@ const NominationCarousel = observer(
 			return (
 				<div className='embla w-full select-none'>
 					<div ref={emblaRef} className='embla__viewport pt-2'>
-						<div className='embla__container gap-1 touch-pan-y touch-pinch-zoom'>
+						<div className='embla__container gap-3 touch-pan-y touch-pinch-zoom xl:px-10'>
 							{isLoading || !items
 								? Array.from({ length: 5 }).map((_, idx) => (
 										<div
-											className='flex-[0_0_230px] lg:flex-[0_0_300px] px-2 pb-2'
+											className='flex-[0_0_250px] lg:flex-[0_0_400px] py-5 px-2'
 											key={`Nomination-skeleton-${idx}`}
 										>
-											<NominationWinner isLoading={true} />
+											<AuthorDetailsNominationsCarouselItem isLoading={true} />
 										</div>
 								  ))
 								: items.map(item => (
 										<div
-											className='flex-[0_0_230px] lg:flex-[0_0_300px] px-2 pb-2'
-											key={item.type}
+											className='flex-[0_0_250px] lg:flex-[0_0_400px] py-5 px-2'
+											key={`${item.year}-${item.month}-${item.nominationTypeId}`}
 										>
-											<NominationWinner isLoading={false} item={item} />
+											<AuthorDetailsNominationsCarouselItem
+												isLoading={false}
+												item={item}
+											/>
 										</div>
 								  ))}
 						</div>
@@ -99,4 +102,4 @@ const NominationCarousel = observer(
 	)
 )
 
-export default NominationCarousel
+export default AuthorDetailsNominationsCarousel

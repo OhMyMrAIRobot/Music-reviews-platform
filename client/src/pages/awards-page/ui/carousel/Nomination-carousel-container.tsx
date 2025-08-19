@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useRef, useState } from 'react'
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
-import { INominationMonthWinners } from '../../../../models/nomination/nomination-month-winners'
+import { INominationMonthWinners } from '../../../../models/nomination/nomination-winner/nomination-month-winners'
 import { CarouselRef } from '../../../../types/carousel-ref'
 import { MonthEnum, MonthEnumType } from '../../../../types/month-enum-type'
 import NominationCarousel from './Nomination-carousel'

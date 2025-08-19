@@ -97,7 +97,9 @@ const SendReviewForm: FC<IProps> = observer(
 
 				if (errors.length === 0) {
 					notificationStore.addSuccessNotification(
-						`Вы успешно ${userReview ? 'обновили' : 'добавили'} рецензию!`
+						`Вы успешно ${userReview ? 'обновили' : 'добавили'} ${
+							isReview ? 'рецензию' : 'оценку'
+						}!`
 					)
 				} else {
 					errors.forEach(error => {
@@ -124,20 +126,31 @@ const SendReviewForm: FC<IProps> = observer(
 
 		const hasChanges = useMemo(() => {
 			if (userReview) {
-				return (
-					title !== userReview.title ||
-					text !== userReview.text ||
-					rhymes !== userReview.rhymes ||
-					structure !== userReview.structure ||
-					realization !== userReview.realization ||
-					individuality !== userReview.individuality ||
-					atmosphere !== userReview.atmosphere
-				)
+				if (isReview) {
+					return (
+						title !== userReview.title ||
+						text !== userReview.text ||
+						rhymes !== userReview.rhymes ||
+						structure !== userReview.structure ||
+						realization !== userReview.realization ||
+						individuality !== userReview.individuality ||
+						atmosphere !== userReview.atmosphere
+					)
+				} else {
+					return (
+						rhymes !== userReview.rhymes ||
+						structure !== userReview.structure ||
+						realization !== userReview.realization ||
+						individuality !== userReview.individuality ||
+						atmosphere !== userReview.atmosphere
+					)
+				}
 			}
 			return true
 		}, [
 			atmosphere,
 			individuality,
+			isReview,
 			realization,
 			rhymes,
 			structure,
