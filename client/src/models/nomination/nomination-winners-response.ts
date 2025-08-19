@@ -1,7 +1,7 @@
-import { INominationWinner } from './nomination-winner'
+import { INominationMonthWinners } from './nomination-month-winners'
 
 export interface INominationWinnersResponse {
-	year: number
-	month: number
-	results: INominationWinner[]
+	minYear: number
+	maxYear: number
+	items: INominationMonthWinners[]
 }

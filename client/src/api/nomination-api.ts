@@ -15,7 +15,7 @@ export const NominationAPI = {
 	async fetchWinners(
 		month: number | null,
 		year: number | null
-	): Promise<INominationWinnersResponse[]> {
+	): Promise<INominationWinnersResponse> {
 		const { data } = await _api.get(`?
 			${month !== null ? `month=${month}&` : ''}
 			${year !== null ? `year=${year}&` : ''}

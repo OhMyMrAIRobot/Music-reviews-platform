@@ -8,17 +8,17 @@ import {
 	useImperativeHandle,
 	useState,
 } from 'react'
-import AuthorLikeCard from '../../../../../components/author/author-like/Author-like-card'
-import { IAuthorLike } from '../../../../../models/author/author-likes/author-like'
-import { CarouselRef } from '../../../../../types/carousel-ref'
-import { CarouselStateCallbacks } from '../../../../../types/carousel-state-callbacks'
+import { INominationWinner } from '../../../../models/nomination/nomination-winner'
+import { CarouselRef } from '../../../../types/carousel-ref'
+import { CarouselStateCallbacks } from '../../../../types/carousel-state-callbacks'
+import NominationWinner from './Nomination-winner'
 
 interface IProps extends CarouselStateCallbacks {
-	items: IAuthorLike[]
+	items?: INominationWinner[]
 	isLoading: boolean
 }
 
-const AuthorLikesCarousel = observer(
+const NominationCarousel = observer(
 	forwardRef<CarouselRef, IProps>(
 		(
 			{ items, isLoading, onCanScrollPrevChange, onCanScrollNextChange },
@@ -26,7 +26,7 @@ const AuthorLikesCarousel = observer(
 		) => {
 			const options: EmblaOptionsType = {
 				align: 'start',
-				slidesToScroll: 1,
+				slidesToScroll: 'auto',
 			}
 			const [emblaRef, emblaApi] = useEmblaCarousel(options)
 			const [, setCanScrollPrev] = useState(false)
@@ -71,21 +71,24 @@ const AuthorLikesCarousel = observer(
 			)
 
 			return (
-				<div className='embla w-full'>
+				<div className='embla w-full select-none'>
 					<div ref={emblaRef} className='embla__viewport pt-2'>
-						<div className='embla__container gap-3 touch-pan-y touch-pinch-zoom'>
-							{isLoading
-								? Array.from({ length: 10 }).map((_, idx) => (
+						<div className='embla__container gap-1 touch-pan-y touch-pinch-zoom'>
+							{isLoading || !items
+								? Array.from({ length: 5 }).map((_, idx) => (
 										<div
-											className='flex-[0_0_270px] max-w-[270px]'
-											key={`skeleton-author-like-${idx}`}
+											className='flex-[0_0_230px] lg:flex-[0_0_300px] px-2 pb-2'
+											key={`Nomination-skeleton-${idx}`}
 										>
-											<AuthorLikeCard isLoading={isLoading} />
+											<NominationWinner isLoading={true} />
 										</div>
 								  ))
-								: items.map((item, idx) => (
-										<div className='flex-[0_0_270px] max-w-[270px]' key={idx}>
-											<AuthorLikeCard isLoading={isLoading} authorLike={item} />
+								: items.map(item => (
+										<div
+											className='flex-[0_0_230px] lg:flex-[0_0_300px] px-2 pb-2'
+											key={item.type}
+										>
+											<NominationWinner isLoading={false} item={item} />
 										</div>
 								  ))}
 						</div>
@@ -96,4 +99,4 @@ const AuthorLikesCarousel = observer(
 	)
 )
 
-export default AuthorLikesCarousel
+export default NominationCarousel

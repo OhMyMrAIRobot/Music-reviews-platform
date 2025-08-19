@@ -10,5 +10,7 @@ interface IRelease {
 	id: string
 	title: string
 	img: string
-	authors: string[]
+	artists: string[]
+	producers: string[]
+	designers: string[]
 }

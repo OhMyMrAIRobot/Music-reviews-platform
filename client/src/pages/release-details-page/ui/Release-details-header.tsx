@@ -81,7 +81,7 @@ const ReleaseDetailsHeader: FC<IProps> = observer(({ release }) => {
 				<ReleaseDetailsRatings release={release} />
 			</div>
 
-			<div className='absolute right-1 top-0 lg:right-3 lg:top-3 z-20 flex items-center gap-x-3 '>
+			<div className='absolute right-1 top-0 lg:right-3 lg:top-3 z-20 flex items-center gap-x-3 overflow-x-hidden'>
 				{release.favCount > 0 && (
 					<div className='bg-zinc-950 px-2 py-1 lg:px-3 lg:py-2 flex rounded-xl items-center select-none'>
 						<LikesCount count={release.favCount} />
