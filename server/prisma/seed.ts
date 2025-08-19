@@ -637,6 +637,44 @@ async function main() {
         name: 'кайдãн',
         avatarImg: 'kaidan.png',
       },
+      {
+        id: '16',
+        name: '5opka',
+        avatarImg: '5opka.png',
+        coverImg: '5opka.png',
+      },
+      {
+        id: '17',
+        name: 'MellSher',
+        avatarImg: 'MellSher.png',
+        coverImg: 'MellSher.png',
+      },
+      {
+        id: '18',
+        name: 'BEATCASTER',
+        avatarImg: 'BEATCASTER.png',
+      },
+      {
+        id: '19',
+        name: 'Мэйби Бэйби',
+        avatarImg: 'maybebaby.png',
+      },
+      {
+        id: '20',
+        name: 'XWinner',
+        avatarImg: 'XWinner.png',
+      },
+      {
+        id: '21',
+        name: 'ПОЛМАТЕРИ',
+        avatarImg: 'polmateri.png',
+        coverImg: 'polmateri.png',
+      },
+      {
+        id: '22',
+        name: 'ХА+ЛУЙ',
+        avatarImg: '22.png',
+      },
     ],
   });
 
@@ -734,6 +772,34 @@ async function main() {
       {
         authorId: '15',
         authorTypeId: '2',
+      },
+      {
+        authorId: '16',
+        authorTypeId: '1',
+      },
+      {
+        authorId: '17',
+        authorTypeId: '1',
+      },
+      {
+        authorId: '18',
+        authorTypeId: '2',
+      },
+      {
+        authorId: '19',
+        authorTypeId: '1',
+      },
+      {
+        authorId: '20',
+        authorTypeId: '2',
+      },
+      {
+        authorId: '21',
+        authorTypeId: '1',
+      },
+      {
+        authorId: '22',
+        authorTypeId: '3',
       },
     ],
   });
@@ -866,6 +932,34 @@ async function main() {
         img: '15.png',
         releaseTypeId: '3',
       },
+      {
+        id: '16',
+        publishDate: new Date('2025-07-25').toISOString(),
+        title: 'SUPER PUPER NOVA',
+        img: '16.png',
+        releaseTypeId: '1',
+      },
+      {
+        id: '17',
+        publishDate: new Date('2025-07-25').toISOString(),
+        title: 'XXL',
+        img: '16.png',
+        releaseTypeId: '3',
+      },
+      {
+        id: '18',
+        publishDate: new Date('2025-07-21').toISOString(),
+        title: 'Силиконовый Гном',
+        img: '18.png',
+        releaseTypeId: '3',
+      },
+      {
+        id: '19',
+        publishDate: new Date('2025-07-18').toISOString(),
+        title: 'простая замечательная жизнь ипи',
+        img: '19.png',
+        releaseTypeId: '1',
+      },
     ],
   });
 
@@ -896,13 +990,56 @@ async function main() {
 
   await prisma.nomitationVote.createMany({
     data: [
+      // 2025 ИЮЛЬ
+      {
+        userId: '1',
+        nominationTypeId: '0',
+        year: 2025,
+        month: 7,
+        releaseId: '16',
+        createdAt: new Date('2025-8-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '1',
+        year: 2025,
+        month: 7,
+        authorId: '19',
+        createdAt: new Date('2025-8-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '2',
+        year: 2025,
+        month: 7,
+        releaseId: '19',
+        createdAt: new Date('2025-8-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '3',
+        year: 2025,
+        month: 7,
+        releaseId: '17',
+        createdAt: new Date('2025-5-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '4',
+        year: 2025,
+        month: 7,
+        authorId: '18',
+        createdAt: new Date('2025-5-1'),
+      },
+
+      // 2025 АПРЕЛЬ
       {
         userId: '1',
         nominationTypeId: '0',
         year: 2025,
         month: 4,
         releaseId: '3',
-        createdAt: new Date('2025-4-1'),
+        createdAt: new Date('2025-5-1'),
       },
       {
         userId: '1',
@@ -910,7 +1047,7 @@ async function main() {
         year: 2025,
         month: 4,
         authorId: '6',
-        createdAt: new Date('2025-4-1'),
+        createdAt: new Date('2025-5-1'),
       },
       {
         userId: '1',
@@ -918,7 +1055,7 @@ async function main() {
         year: 2025,
         month: 4,
         releaseId: '3',
-        createdAt: new Date('2025-4-1'),
+        createdAt: new Date('2025-5-1'),
       },
       {
         userId: '1',
@@ -926,7 +1063,7 @@ async function main() {
         year: 2025,
         month: 4,
         releaseId: '11',
-        createdAt: new Date('2025-4-1'),
+        createdAt: new Date('2025-5-1'),
       },
       {
         userId: '1',
@@ -934,16 +1071,17 @@ async function main() {
         year: 2025,
         month: 4,
         authorId: '5',
-        createdAt: new Date('2025-4-1'),
+        createdAt: new Date('2025-5-1'),
       },
 
+      // 2024 ФЕВРАЛЬ
       {
         userId: '1',
         nominationTypeId: '0',
         year: 2024,
         month: 2,
         releaseId: 'release5',
-        createdAt: new Date('2024-2-1'),
+        createdAt: new Date('2024-3-1'),
       },
       {
         userId: '1',
@@ -951,7 +1089,7 @@ async function main() {
         year: 2024,
         month: 2,
         authorId: '1',
-        createdAt: new Date('2024-2-1'),
+        createdAt: new Date('2024-3-1'),
       },
       {
         userId: '1',
@@ -959,7 +1097,7 @@ async function main() {
         year: 2024,
         month: 2,
         releaseId: 'release5',
-        createdAt: new Date('2024-2-1'),
+        createdAt: new Date('2024-3-1'),
       },
       {
         userId: '1',
@@ -967,7 +1105,7 @@ async function main() {
         year: 2024,
         month: 2,
         releaseId: 'release5',
-        createdAt: new Date('2024-2-1'),
+        createdAt: new Date('2024-3-1'),
       },
       {
         userId: '1',
@@ -975,7 +1113,7 @@ async function main() {
         year: 2024,
         month: 2,
         authorId: '1',
-        createdAt: new Date('2024-2-1'),
+        createdAt: new Date('2024-3-1'),
       },
     ],
   });
@@ -1155,6 +1293,30 @@ async function main() {
         releaseId: '15',
         authorId: '4',
       },
+      {
+        releaseId: '16',
+        authorId: '16',
+      },
+      {
+        releaseId: '16',
+        authorId: '17',
+      },
+      {
+        releaseId: '17',
+        authorId: '16',
+      },
+      {
+        releaseId: '17',
+        authorId: '17',
+      },
+      {
+        releaseId: '18',
+        authorId: '19',
+      },
+      {
+        releaseId: '19',
+        authorId: '21',
+      },
     ],
   });
 
@@ -1219,6 +1381,27 @@ async function main() {
       {
         releaseId: '15',
         authorId: '8',
+      },
+      {
+        releaseId: '17',
+        authorId: '18',
+      },
+      {
+        releaseId: '18',
+        authorId: '20',
+      },
+      {
+        releaseId: '19',
+        authorId: '21',
+      },
+    ],
+  });
+
+  await prisma.releaseDesigner.createMany({
+    data: [
+      {
+        releaseId: '19',
+        authorId: '22',
       },
     ],
   });

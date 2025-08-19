@@ -11,7 +11,9 @@ interface NominationReleaseDto {
   id: string;
   title: string;
   img: string;
-  authors: string[];
+  artists: string[];
+  producers: string[];
+  designers: string[];
 }
 
 interface NominationWinnerBaseDto {
@@ -35,8 +37,14 @@ interface ReleaseWinnerItemDto extends NominationWinnerBaseDto {
 
 type NominationWinnerItemDto = AuthorWinnerItemDto | ReleaseWinnerItemDto;
 
-export interface FindNominationWinnersResponseDto {
+export interface NominationMonthWinnerItemDto {
   year: number;
   month: number;
   results: NominationWinnerItemDto[];
+}
+
+export interface FindNominationWinnersResponseDto {
+  minYear: number;
+  maxYear: number;
+  items: NominationMonthWinnerItemDto[];
 }

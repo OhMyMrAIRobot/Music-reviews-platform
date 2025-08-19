@@ -1166,31 +1166,93 @@ WHERE rn = 1;
 
 CREATE OR REPLACE VIEW "Nomination_winners_enriched" AS
 WITH w AS (
-  SELECT *
-  FROM "Nomination_winners_single"
+    SELECT
+        r.nomination_type_id,
+        r.nomination_type,
+        r.year,
+        r.month,
+        r.entity_kind,
+        r.author_id,
+        r.release_id,
+        r.votes
+    FROM "Nomination_winners_single" r
 )
 SELECT
-  w.nomination_type_id,
-  w.nomination_type,
-  w.year,
-  w.month,
-  w.entity_kind,
+    w.nomination_type_id,
+    w.nomination_type,
+    w.year,
+    w.month,
+    w.entity_kind,
 
-  COALESCE(w.author_id, w.release_id) AS entity_id,
+    COALESCE(w.author_id, w.release_id) AS entity_id,
 
-  a.id   AS author_id,
-  a.name AS author_name,
-  a.avatar_img AS author_avatar_img,
-  a.cover_img  AS author_cover_img,
+    -- Author fields (when entity_kind='author')
+    a.id   AS author_id,
+    a.name AS author_name,
+    a.avatar_img AS author_avatar_img,
+    a.cover_img  AS author_cover_img,
 
-  rel.id    AS release_id,
-  rel.title AS release_title,
-  rel.img   AS release_img,
+    -- Release fields (when entity_kind='release')
+    rel.id    AS release_id,
+    rel.title AS release_title,
+    rel.img   AS release_img,
 
-  w.votes
+    -- For release-entity winners: array of all related author names (producers, artists, designers)
+    CASE
+        WHEN w.entity_kind = 'release' THEN COALESCE(rel_arstists.authors, ARRAY[]::text[])
+        ELSE ARRAY[]::text[]
+    END AS release_artists,
+
+    CASE
+        WHEN w.entity_kind = 'release' THEN COALESCE(rel_producers.authors, ARRAY[]::text[])
+        ELSE ARRAY[]::text[]
+    END AS release_producers,
+
+    CASE
+        WHEN w.entity_kind = 'release' THEN COALESCE(rel_designers.authors, ARRAY[]::text[])
+        ELSE ARRAY[]::text[]
+    END AS release_designers,
+
+    w.votes
 FROM w
-LEFT JOIN "Authors" a  ON a.id  = w.author_id
-LEFT JOIN "Releases" rel ON rel.id = w.release_id;
+    LEFT JOIN "Authors" a ON a.id  = w.author_id
+    LEFT JOIN "Releases" rel ON rel.id = w.release_id
+    LEFT JOIN LATERAL (
+    SELECT ARRAY(
+            SELECT DISTINCT aut.name
+            FROM (
+                SELECT ra.author_id
+                FROM "Release_artists" ra
+                WHERE ra.release_id = rel.id
+            ) u
+            JOIN "Authors" aut ON aut.id = u.author_id
+            ORDER BY aut.name
+        )::text[] AS authors
+    ) rel_arstists ON TRUE
+    LEFT JOIN LATERAL (
+    SELECT ARRAY(
+                   SELECT DISTINCT aut.name
+                   FROM (
+                            SELECT rp.author_id
+                            FROM "Release_producers" rp
+                            WHERE rp.release_id = rel.id
+                        ) u
+                            JOIN "Authors" aut ON aut.id = u.author_id
+                   ORDER BY aut.name
+           )::text[] AS authors
+    ) rel_producers ON TRUE
+    LEFT JOIN LATERAL (
+    SELECT ARRAY(
+                   SELECT DISTINCT aut.name
+                   FROM (
+                            SELECT rd.author_id
+                            FROM "Release_designers" rd
+                            WHERE rd.release_id = rel.id
+                        ) u
+                            JOIN "Authors" aut ON aut.id = u.author_id
+                   ORDER BY aut.name
+           )::text[] AS authors
+    ) rel_designers ON TRUE;
 
 CREATE OR REPLACE VIEW "Nomination_winners_monthly_json" AS
 WITH base AS (
@@ -1208,7 +1270,9 @@ WITH base AS (
         release_id,
         release_title,
         release_img,
-        release_authors
+        release_artists,
+        release_producers,
+        release_designers
     FROM "Nomination_winners_enriched"
 )
 SELECT
@@ -1227,14 +1291,16 @@ SELECT
                             'name',      author_name,
                             'avatarImg', author_avatar_img,
                             'coverImg',  author_cover_img
-                    )
+                              )
                 ) ELSE '{}'::jsonb END
                 || CASE WHEN entity_kind = 'release' THEN jsonb_build_object(
                     'release', jsonb_build_object(
                             'id',      release_id,
                             'title',   release_title,
                             'img',     release_img,
-                            'authors', COALESCE(to_jsonb(release_authors), '[]'::jsonb)
+                            'artists', COALESCE(to_jsonb(release_artists), '[]'::jsonb),
+                            'producers', COALESCE(to_jsonb(release_producers), '[]'::jsonb),
+                            'designers', COALESCE(to_jsonb(release_designers), '[]'::jsonb)
                     )
                 ) ELSE '{}'::jsonb END
             ORDER BY nomination_type
