@@ -5,6 +5,7 @@ import {
   FindNominationWinnersResponseDto,
   NominationMonthWinnerItemDto,
 } from './dto/response/find-nomination-winners.response.dto';
+import { FindNominationWinnersByAuthorIdResponseDto } from './dto/response/find-nominations-winners-by-author-id.response.dto';
 
 @Injectable()
 export class NominationsService {
@@ -35,5 +36,29 @@ export class NominationsService {
     ]);
 
     return { ...yearRange, items: data };
+  }
+
+  async findNominationWinnersByAuthorId(
+    authorId: string,
+  ): Promise<FindNominationWinnersByAuthorIdResponseDto> {
+    const rawQuery = `
+      SELECT *
+      FROM "Nomination_winner_participations_enriched_json"
+      WHERE "authorId" = '${authorId}'
+    `;
+
+    const data =
+      await this.prisma.$queryRawUnsafe<
+        FindNominationWinnersByAuthorIdResponseDto[]
+      >(rawQuery);
+
+    if (data.length === 0) {
+      return {
+        authorId,
+        nominations: [],
+      };
+    }
+
+    return data[0];
   }
 }

@@ -1,4 +1,4 @@
-export type NominationEntityKind = 'author' | 'release';
+import { NominationEntityKind } from 'src/nominations/types/nomination-entity-kind.type';
 
 interface NominationAuthorDto {
   id: string;

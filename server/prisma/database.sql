@@ -1186,18 +1186,15 @@ SELECT
 
     COALESCE(w.author_id, w.release_id) AS entity_id,
 
-    -- Author fields (when entity_kind='author')
     a.id   AS author_id,
     a.name AS author_name,
     a.avatar_img AS author_avatar_img,
     a.cover_img  AS author_cover_img,
 
-    -- Release fields (when entity_kind='release')
     rel.id    AS release_id,
     rel.title AS release_title,
     rel.img   AS release_img,
 
-    -- For release-entity winners: array of all related author names (producers, artists, designers)
     CASE
         WHEN w.entity_kind = 'release' THEN COALESCE(rel_arstists.authors, ARRAY[]::text[])
         ELSE ARRAY[]::text[]
@@ -1291,7 +1288,7 @@ SELECT
                             'name',      author_name,
                             'avatarImg', author_avatar_img,
                             'coverImg',  author_cover_img
-                              )
+                )
                 ) ELSE '{}'::jsonb END
                 || CASE WHEN entity_kind = 'release' THEN jsonb_build_object(
                     'release', jsonb_build_object(
@@ -1301,10 +1298,220 @@ SELECT
                             'artists', COALESCE(to_jsonb(release_artists), '[]'::jsonb),
                             'producers', COALESCE(to_jsonb(release_producers), '[]'::jsonb),
                             'designers', COALESCE(to_jsonb(release_designers), '[]'::jsonb)
-                    )
-                ) ELSE '{}'::jsonb END
+                )
+            ) ELSE '{}'::jsonb END
             ORDER BY nomination_type
     ) AS results
 FROM base
 GROUP BY year, month
 ORDER BY year, month;
+
+CREATE OR REPLACE VIEW "Nomination_winner_participations" AS
+WITH w AS (
+    SELECT
+        r.nomination_type_id,
+        r.nomination_type,
+        r.year,
+        r.month,
+        r.entity_kind,
+        r.author_id,
+        r.release_id,
+        r.votes
+    FROM "Nomination_winners_single" r
+),
+
+     release_participants AS (
+         SELECT
+             w.nomination_type_id,
+             w.nomination_type,
+             w.year,
+             w.month,
+             w.entity_kind,
+             w.author_id,
+             w.release_id,
+             w.votes,
+             rr.author_id AS participant_author_id,
+             rr.role
+         FROM w
+            JOIN LATERAL (
+                SELECT ra.author_id, 'artist'::text AS role
+                FROM "Release_artists" ra
+                WHERE ra.release_id = w.release_id
+                UNION ALL
+                SELECT rp.author_id, 'producer'::text AS role
+                FROM "Release_producers" rp
+                WHERE rp.release_id = w.release_id
+                UNION ALL
+                SELECT rd.author_id, 'designer'::text AS role
+                FROM "Release_designers" rd
+                WHERE rd.release_id = w.release_id
+            ) rr ON TRUE
+         WHERE w.entity_kind = 'release'
+     ),
+
+     release_participants_agg AS (
+         SELECT
+             nomination_type_id,
+             nomination_type,
+             year,
+             month,
+             'release'::text AS entity_kind,
+             NULL::text AS author_id,
+             release_id,
+             votes,
+             participant_author_id
+         FROM release_participants
+         GROUP BY nomination_type_id, nomination_type, year, month, release_id, votes, participant_author_id
+     ),
+
+     author_participants AS (
+         SELECT
+             w.nomination_type_id,
+             w.nomination_type,
+             w.year,
+             w.month,
+             'author'::text AS entity_kind,
+             w.author_id,
+             NULL::text     AS release_id,
+             w.votes,
+             w.author_id    AS participant_author_id
+         FROM w
+         WHERE w.entity_kind = 'author'
+    )
+SELECT * FROM author_participants
+UNION ALL
+SELECT * FROM release_participants_agg;
+
+CREATE OR REPLACE VIEW "Nomination_winner_participations_enriched" AS
+WITH e AS (
+    SELECT
+        ne.nomination_type_id,
+        ne.nomination_type,
+        ne.year,
+        ne.month,
+        ne.entity_kind,
+        ne.entity_id,
+        ne.author_id,
+        ne.author_name,
+        ne.author_avatar_img,
+        ne.author_cover_img,
+        ne.release_id,
+        ne.release_title,
+        ne.release_img,
+        ne.release_artists,
+        ne.release_producers,
+        ne.release_designers,
+        ne.votes
+    FROM "Nomination_winners_enriched" ne
+),
+     p AS (
+         SELECT
+             nomination_type_id,
+             nomination_type,
+             year,
+             month,
+             entity_kind,
+             author_id,
+             release_id,
+             votes,
+             participant_author_id
+         FROM "Nomination_winner_participations"
+     )
+SELECT
+    e.nomination_type_id,
+    e.nomination_type,
+    e.year,
+    e.month,
+    e.entity_kind,
+    e.entity_id,
+
+    e.author_id         AS winner_author_id,
+    e.author_name       AS winner_author_name,
+    e.author_avatar_img AS winner_author_avatar_img,
+    e.author_cover_img  AS winner_author_cover_img,
+
+    e.release_id        AS winner_release_id,
+    e.release_title     AS winner_release_title,
+    e.release_img       AS winner_release_img,
+
+    e.release_artists,
+    e.release_producers,
+    e.release_designers,
+
+    p.participant_author_id,
+
+    e.votes
+FROM e
+    JOIN p ON p.nomination_type_id = e.nomination_type_id
+                AND p.year = e.year
+                AND p.month = e.month
+                AND p.entity_kind = e.entity_kind
+                AND p.author_id IS NOT DISTINCT FROM e.author_id
+                AND p.release_id IS NOT DISTINCT FROM e.release_id;
+
+
+CREATE OR REPLACE VIEW "Nomination_winner_participations_enriched_json" AS
+WITH base AS (
+  SELECT
+    nomination_type_id,
+    nomination_type,
+    year,
+    month,
+    entity_kind,
+    entity_id,
+    winner_author_id,
+    winner_author_name,
+    winner_author_avatar_img,
+    winner_author_cover_img,
+    winner_release_id,
+    winner_release_title,
+    winner_release_img,
+    release_artists,
+    release_producers,
+    release_designers,
+    participant_author_id,
+    votes
+  FROM "Nomination_winner_participations_enriched"
+)
+SELECT
+  participant_author_id AS "authorId",
+  json_agg(
+    jsonb_build_object(
+      'nominationTypeId', nomination_type_id,
+      'nominationType',   nomination_type,
+      'year',             year,
+      'month',            month,
+      'entityKind',       entity_kind,
+      'entityId',         entity_id,
+      'votes',            votes
+    )
+    || CASE
+         WHEN entity_kind = 'author' THEN jsonb_build_object(
+           'author', jsonb_build_object(
+             'id',        winner_author_id,
+             'name',      winner_author_name,
+             'avatarImg', winner_author_avatar_img,
+             'coverImg',  winner_author_cover_img
+           )
+         )
+         ELSE '{}'::jsonb
+       END
+    || CASE
+         WHEN entity_kind = 'release' THEN jsonb_build_object(
+           'release', jsonb_build_object(
+             'id',        winner_release_id,
+             'title',     winner_release_title,
+             'img',       winner_release_img,
+             'artists',   COALESCE(to_jsonb(release_artists),   '[]'::jsonb),
+             'producers', COALESCE(to_jsonb(release_producers), '[]'::jsonb),
+             'designers', COALESCE(to_jsonb(release_designers), '[]'::jsonb)
+           )
+         )
+         ELSE '{}'::jsonb
+       END
+    ORDER BY year, month, nomination_type
+  ) AS "nominations"
+FROM base
+GROUP BY participant_author_id;
+
+
