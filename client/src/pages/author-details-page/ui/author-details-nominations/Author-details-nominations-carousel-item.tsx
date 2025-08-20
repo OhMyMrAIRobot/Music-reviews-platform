@@ -50,7 +50,7 @@ const AuthorDetailsNominationsCarouselItem: FC<IProps> = ({
 
 		const angle = Math.atan2(y - centerY, x - centerX) * (180 / Math.PI)
 
-		glare.style.opacity = '0.1'
+		glare.style.opacity = '0.13'
 		glare.style.transform = `rotate(${angle}deg) translate(-50%, -50%)`
 	}
 
@@ -105,7 +105,7 @@ const AuthorDetailsNominationsCarouselItem: FC<IProps> = ({
 				</div>
 
 				<div className='px-[13px] lg:px-[25px] pt-3 pb-2.5 lg:pt-5 lg:pb-5'>
-					<div className='flex flex-col items-start justify-start'>
+					<div className='flex flex-col items-start justify-center min-h-[36px] lg:min-h-[55px]'>
 						<span className='text-sm lg:text-[20px] font-semibold tracking-tighter leading-[100%] gap-y-1'>
 							{item.entityKind === 'author'
 								? item.author?.name

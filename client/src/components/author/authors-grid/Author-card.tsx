@@ -3,6 +3,9 @@ import { Link } from 'react-router'
 import useNavigationPath from '../../../hooks/use-navigation-path'
 import { IAuthor } from '../../../models/author/author'
 import { ReleaseTypesEnum } from '../../../models/release/release-type/release-types-enum'
+import AwardSvg from '../../svg/Award-svg'
+import Tooltip from '../../tooltip/Tooltip'
+import TooltipSpan from '../../tooltip/Tooltip-span'
 import LikesCount from '../../utils/Likes-count'
 import SkeletonLoader from '../../utils/Skeleton-loader'
 import AuthorReleaseTypesRatings from '../author-ratings/Author-release-types-ratings'
@@ -62,6 +65,46 @@ const AuthorCard: FC<IProps> = ({ author, isLoading }) => {
 					releaseType={ReleaseTypesEnum.ALBUM}
 					stats={author.releaseTypeRatings}
 				/>
+
+				{author.nominationsCount > 0 && (
+					<div className='bg-zinc-800 border border-zinc-700 rounded-full flex space-x-1.5 lg:space-x-3 items-center py-[6px] px-3 mt-3 justify-center'>
+						{author.winsCount > 0 && (
+							<>
+								<TooltipSpan
+									tooltip={<Tooltip>Победы в номинациях</Tooltip>}
+									spanClassName='text-white relative flex items-center space-x-1 text-xs lg:text-sm'
+									centered={true}
+								>
+									<img
+										loading='lazy'
+										decoding='async'
+										alt={'rice'}
+										src={`${
+											import.meta.env.VITE_SERVER_URL
+										}/public/assets/rice.png`}
+										className='w-4'
+									/>
+									<span>{author.winsCount}</span>
+								</TooltipSpan>
+
+								<div
+									data-orientation='vertical'
+									role='none'
+									className='shrink-0 bg-zinc-600 h-[15px] w-[1px]'
+								/>
+							</>
+						)}
+
+						<TooltipSpan
+							tooltip={<Tooltip>Всего номинаций</Tooltip>}
+							spanClassName='text-white relative flex items-center space-x-1 text-xs lg:text-sm'
+							centered={true}
+						>
+							<AwardSvg className='w-5' />
+							<span>{author.winsCount}</span>
+						</TooltipSpan>
+					</div>
+				)}
 			</Link>
 		)
 	)
