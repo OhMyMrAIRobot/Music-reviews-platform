@@ -17,4 +17,6 @@ export class AuthorDetailsResponseDto {
       media: number | null;
     };
   }[];
+  nominationsCount: number;
+  winsCount: number;
 }
