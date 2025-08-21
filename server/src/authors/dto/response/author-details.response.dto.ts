@@ -19,4 +19,8 @@ export class AuthorDetailsResponseDto {
   }[];
   nominationsCount: number;
   winsCount: number;
+  nominationParticipations: {
+    name: string;
+    count: number;
+  }[];
 }

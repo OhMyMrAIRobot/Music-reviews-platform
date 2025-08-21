@@ -675,6 +675,23 @@ async function main() {
         name: 'ХА+ЛУЙ',
         avatarImg: '22.png',
       },
+      {
+        id: '23',
+        name: 'Pepel Nahudi',
+        avatarImg: '23.png',
+        coverImg: '23.png',
+      },
+      {
+        id: '24',
+        name: 'галерея корнера',
+        avatarImg: '24.png',
+      },
+      {
+        id: '25',
+        name: 'SLAVA MARLOW',
+        avatarImg: '25.png',
+        coverImg: '25.png',
+      },
     ],
   });
 
@@ -800,6 +817,22 @@ async function main() {
       {
         authorId: '22',
         authorTypeId: '3',
+      },
+      {
+        authorId: '23',
+        authorTypeId: '1',
+      },
+      {
+        authorId: '24',
+        authorTypeId: '3',
+      },
+      {
+        authorId: '25',
+        authorTypeId: '1',
+      },
+      {
+        authorId: '25',
+        authorTypeId: '2',
       },
     ],
   });
@@ -960,6 +993,34 @@ async function main() {
         img: '19.png',
         releaseTypeId: '1',
       },
+      {
+        id: '20',
+        publishDate: new Date('2025-06-27').toISOString(),
+        title: 'GARGONNA MUSIC',
+        img: '20.png',
+        releaseTypeId: '1',
+      },
+      {
+        id: '21',
+        publishDate: new Date('2025-06-27').toISOString(),
+        title: 'Честных правил',
+        img: '21.png',
+        releaseTypeId: '3',
+      },
+      {
+        id: '22',
+        publishDate: new Date('2025-06-06').toISOString(),
+        title: 'НЕ ЗАБЫЛ ╥﹏╥',
+        img: '22.png',
+        releaseTypeId: '3',
+      },
+      {
+        id: '23',
+        publishDate: new Date('2025-06-13').toISOString(),
+        title: 'ЭЛЬФ 1',
+        img: '23.png',
+        releaseTypeId: '1',
+      },
     ],
   });
 
@@ -1030,6 +1091,47 @@ async function main() {
         month: 7,
         authorId: '18',
         createdAt: new Date('2025-5-1'),
+      },
+      // 2025 ИЮНЬ
+      {
+        userId: '1',
+        nominationTypeId: '0',
+        year: 2025,
+        month: 6,
+        releaseId: '23',
+        createdAt: new Date('2025-7-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '1',
+        year: 2025,
+        month: 6,
+        authorId: '4',
+        createdAt: new Date('2025-7-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '2',
+        year: 2025,
+        month: 6,
+        releaseId: '20',
+        createdAt: new Date('2025-7-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '3',
+        year: 2025,
+        month: 6,
+        releaseId: '21',
+        createdAt: new Date('2025-7-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '4',
+        year: 2025,
+        month: 6,
+        authorId: '25',
+        createdAt: new Date('2025-7-1'),
       },
 
       // 2025 АПРЕЛЬ
@@ -1317,6 +1419,26 @@ async function main() {
         releaseId: '19',
         authorId: '21',
       },
+      {
+        releaseId: '20',
+        authorId: '23',
+      },
+      {
+        releaseId: '21',
+        authorId: '4',
+      },
+      {
+        releaseId: '22',
+        authorId: '3',
+      },
+      {
+        releaseId: '22',
+        authorId: '25',
+      },
+      {
+        releaseId: '23',
+        authorId: '25',
+      },
     ],
   });
 
@@ -1394,6 +1516,26 @@ async function main() {
         releaseId: '19',
         authorId: '21',
       },
+      {
+        releaseId: '21',
+        authorId: '4',
+      },
+      {
+        releaseId: '21',
+        authorId: '8',
+      },
+      {
+        releaseId: '21',
+        authorId: '12',
+      },
+      {
+        releaseId: '22',
+        authorId: '25',
+      },
+      {
+        releaseId: '23',
+        authorId: '25',
+      },
     ],
   });
 
@@ -1402,6 +1544,10 @@ async function main() {
       {
         releaseId: '19',
         authorId: '22',
+      },
+      {
+        releaseId: '20',
+        authorId: '24',
       },
     ],
   });
