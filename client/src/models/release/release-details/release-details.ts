@@ -16,4 +16,5 @@ export interface IReleaseDetails {
 	userFavRelease: IFavRelease[]
 	ratings: IReleaseRating[]
 	ratingDetails: IReleaseRatingValues[]
+	nominationTypes: string[]
 }
