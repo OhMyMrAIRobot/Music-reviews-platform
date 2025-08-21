@@ -29,9 +29,8 @@ const PlatformStatsLeaderboardLeaderItem: FC<IProps> = ({
 		<SkeletonLoader className={`rounded-xl ${className} pb-44`} />
 	) : (
 		<div
-			className={`bg-zinc-900 border border-white/10 flex flex-col p-[3px] rounded-xl items-stretch relative ${className}`}
+			className={`bg-zinc-900 border border-white/10 flex flex-col p-[3px] rounded-xl items-stretch relative ${className} hover:-translate-y-3 transition-all duration-300 hover:bg-white/10`}
 		>
-			<div className='w-10/12 h-[40px] top-2 left-1/2 -translate-x-1/2 rounded-full bg-white opacity-30 blur-xl z-[-1] absolute' />
 			<div className='h-[1px] w-[93px] top-[-1px] right-1 absolute bg-gradient-to-r from-white/0 via-white/35 to-white/0' />
 			<div className='h-[1px] w-[60px] bottom-[-1px] left-2 absolute bg-gradient-to-r from-white/0 via-white/35 to-white/0' />
 

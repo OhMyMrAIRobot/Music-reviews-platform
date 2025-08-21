@@ -26,7 +26,7 @@ const PlatformStatsLeaderboardItem: FC<IProps> = ({
 	return isLoading || !item ? (
 		<SkeletonLoader className='w-full rounded-xl h-[48px]' />
 	) : (
-		<div className='bg-zinc-900 border border-white/10 flex p-[3px] rounded-xl items-stretch justify-between'>
+		<div className='bg-zinc-900 border border-white/10 flex p-[3px] rounded-xl items-stretch justify-between hover:bg-white/10 transition-all duration-200'>
 			<div className='flex items-center gap-2'>
 				<div className='bg-zinc-950 flex items-center justify-center size-[40px] rounded-lg '>
 					{position}

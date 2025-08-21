@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { FC } from 'react'
+import AuthorNominations from '../../../components/author/author-nomination/Author-nominations'
 import AuthorTypes from '../../../components/author/author-types/Author-types'
 import RegisteredAuthorTypes from '../../../components/author/registered-author/Registered-author-types'
 import ToggleFavButton from '../../../components/buttons/Toggle-fav-button'
@@ -90,7 +91,7 @@ const AuthorDetailsHeader: FC<IProps> = observer(({ author, isLoading }) => {
 							toggling={isToggling}
 						/>
 
-						<div className='flex absolute bottom-5 left-5 lg:bottom-10 lg:left-10 gap-3 z-300'>
+						<div className='flex absolute bottom-5 lg:bottom-10 gap-3 z-300 w-full px-10'>
 							<div className='bg-zinc-950 px-3 py-2 lg:px-5 lg:py-3 rounded-xl inline-flex items-center gap-2'>
 								<h2 className='text-sm lg:text-4xl font-bold'>{author.name}</h2>
 								{author.isRegistered ? (
@@ -105,6 +106,13 @@ const AuthorDetailsHeader: FC<IProps> = observer(({ author, isLoading }) => {
 
 							<div className='bg-zinc-950 px-3 py-1 lg:px-5 lg:py-3 rounded-xl items-center inline-flex'>
 								<LikesCount count={author.favCount} />
+							</div>
+
+							<div className='bg-zinc-800 border border-zinc-700 rounded-full flex space-x-1.5 lg:space-x-3 items-center py-[6px] px-3 mt-auto justify-center ml-auto'>
+								<AuthorNominations
+									winsCount={author.winsCount}
+									totalCount={author.nominationsCount}
+								/>
 							</div>
 						</div>
 					</div>
