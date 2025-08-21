@@ -26,6 +26,7 @@ export class FindReleaseDetailsResponseDto {
       individuality: number;
     };
   }[];
+  nominationTypes: string[];
 }
 
 export class QueryReleaseDetailResponseDto extends Array<FindReleaseDetailsResponseDto> {}

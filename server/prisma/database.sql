@@ -538,8 +538,29 @@ SELECT
                     'atmosphere', rrd.atmosphere,
                     'realization', rrd.realization,
                     'individuality', rrd.individuality
-            )
-    )) AS "ratingDetails"
+                       )
+                      )) AS "ratingDetails",
+
+    COALESCE((
+            SELECT JSON_AGG(nr.nomination_type ORDER BY nr.nomination_type)
+            FROM (
+                    SELECT DISTINCT rres.nomination_type
+                    FROM "Nomination_results" rres
+                        JOIN (
+                            SELECT nomination_type_id, year, month, SUM(votes) AS total_votes
+                            FROM "Nomination_results"
+                            GROUP BY nomination_type_id, year, month
+                    ) bt
+                        ON bt.nomination_type_id = rres.nomination_type_id
+                            AND bt.year = rres.year
+                            AND bt.month = rres.month
+            WHERE rres.entity_kind = 'release'
+                AND rres.release_id = r.id
+                AND bt.total_votes > 0
+                AND (rres.votes::numeric / bt.total_votes::numeric) > 0.2
+            ) nr
+    ), '[]'::json) AS "nominationTypes"
+
 FROM "Releases" r
          LEFT JOIN "Release_types" rt ON r.release_type_id = rt.id
          LEFT JOIN "User_fav_releases" ufr ON r.id = ufr.release_id

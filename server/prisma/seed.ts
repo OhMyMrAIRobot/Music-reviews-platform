@@ -692,6 +692,22 @@ async function main() {
         avatarImg: '25.png',
         coverImg: '25.png',
       },
+      {
+        id: '26',
+        name: 'Midix',
+        avatarImg: '26.png',
+        coverImg: '26.png',
+      },
+      {
+        id: '27',
+        name: 'whyisilly',
+        avatarImg: '27.png',
+      },
+      {
+        id: '28',
+        name: 'NEWLIGHTCHILD',
+        avatarImg: '28.png',
+      },
     ],
   });
 
@@ -833,6 +849,22 @@ async function main() {
       {
         authorId: '25',
         authorTypeId: '2',
+      },
+      {
+        authorId: '26',
+        authorTypeId: '1',
+      },
+      {
+        authorId: '26',
+        authorTypeId: '2',
+      },
+      {
+        authorId: '27',
+        authorTypeId: '3',
+      },
+      {
+        authorId: '28',
+        authorTypeId: '1',
       },
     ],
   });
@@ -1021,6 +1053,271 @@ async function main() {
         img: '23.png',
         releaseTypeId: '1',
       },
+      {
+        id: '24',
+        publishDate: new Date('2025-05-23').toISOString(),
+        title: 'Midix x Midix',
+        img: '24.png',
+        releaseTypeId: '1',
+      },
+      {
+        id: '25',
+        publishDate: new Date('2025-05-23').toISOString(),
+        title: 'SELFHARM',
+        img: '25.png',
+        releaseTypeId: '3',
+      },
+    ],
+  });
+
+  await prisma.releaseArtist.createMany({
+    data: [
+      {
+        releaseId: 'release1',
+        authorId: '1',
+      },
+      {
+        releaseId: 'release2',
+        authorId: '1',
+      },
+      {
+        releaseId: 'release3',
+        authorId: '1',
+      },
+      {
+        releaseId: 'release4',
+        authorId: '1',
+      },
+      {
+        releaseId: 'release5',
+        authorId: '1',
+      },
+      {
+        releaseId: '3',
+        authorId: '6',
+      },
+      {
+        releaseId: '4',
+        authorId: '6',
+      },
+      {
+        releaseId: '5',
+        authorId: '4',
+      },
+      {
+        releaseId: '6',
+        authorId: '4',
+      },
+      {
+        releaseId: '7',
+        authorId: '4',
+      },
+      {
+        releaseId: '8',
+        authorId: '3',
+      },
+      {
+        releaseId: '8',
+        authorId: '4',
+      },
+      {
+        releaseId: '9',
+        authorId: '4',
+      },
+      {
+        releaseId: '10',
+        authorId: '3',
+      },
+      {
+        releaseId: '11',
+        authorId: '5',
+      },
+      {
+        releaseId: '12',
+        authorId: '5',
+      },
+      {
+        releaseId: '13',
+        authorId: '5',
+      },
+      {
+        releaseId: '14',
+        authorId: '4',
+      },
+      {
+        releaseId: '15',
+        authorId: '4',
+      },
+      {
+        releaseId: '16',
+        authorId: '16',
+      },
+      {
+        releaseId: '16',
+        authorId: '17',
+      },
+      {
+        releaseId: '17',
+        authorId: '16',
+      },
+      {
+        releaseId: '17',
+        authorId: '17',
+      },
+      {
+        releaseId: '18',
+        authorId: '19',
+      },
+      {
+        releaseId: '19',
+        authorId: '21',
+      },
+      {
+        releaseId: '20',
+        authorId: '23',
+      },
+      {
+        releaseId: '21',
+        authorId: '4',
+      },
+      {
+        releaseId: '22',
+        authorId: '3',
+      },
+      {
+        releaseId: '22',
+        authorId: '25',
+      },
+      {
+        releaseId: '23',
+        authorId: '25',
+      },
+      {
+        releaseId: '24',
+        authorId: '26',
+      },
+      {
+        releaseId: '25',
+        authorId: '28',
+      },
+    ],
+  });
+
+  await prisma.releaseProducer.createMany({
+    data: [
+      {
+        releaseId: 'release3',
+        authorId: '13',
+      },
+      {
+        releaseId: 'release3',
+        authorId: '14',
+      },
+      {
+        releaseId: 'release4',
+        authorId: '15',
+      },
+      {
+        releaseId: 'release5',
+        authorId: '15',
+      },
+      {
+        releaseId: '4',
+        authorId: '6',
+      },
+      {
+        releaseId: '4',
+        authorId: '7',
+      },
+      {
+        releaseId: '8',
+        authorId: '3',
+      },
+      {
+        releaseId: '9',
+        authorId: '8',
+      },
+      {
+        releaseId: '10',
+        authorId: '3',
+      },
+      {
+        releaseId: '11',
+        authorId: '5',
+      },
+      {
+        releaseId: '11',
+        authorId: '9',
+      },
+      {
+        releaseId: '11',
+        authorId: '10',
+      },
+      {
+        releaseId: '13',
+        authorId: '11',
+      },
+      {
+        releaseId: '14',
+        authorId: '12',
+      },
+      {
+        releaseId: '15',
+        authorId: '8',
+      },
+      {
+        releaseId: '17',
+        authorId: '18',
+      },
+      {
+        releaseId: '18',
+        authorId: '20',
+      },
+      {
+        releaseId: '19',
+        authorId: '21',
+      },
+      {
+        releaseId: '21',
+        authorId: '4',
+      },
+      {
+        releaseId: '21',
+        authorId: '8',
+      },
+      {
+        releaseId: '21',
+        authorId: '12',
+      },
+      {
+        releaseId: '22',
+        authorId: '25',
+      },
+      {
+        releaseId: '23',
+        authorId: '25',
+      },
+      {
+        releaseId: '24',
+        authorId: '26',
+      },
+    ],
+  });
+
+  await prisma.releaseDesigner.createMany({
+    data: [
+      {
+        releaseId: '19',
+        authorId: '22',
+      },
+      {
+        releaseId: '20',
+        authorId: '24',
+      },
+      {
+        releaseId: '24',
+        authorId: '27',
+      },
     ],
   });
 
@@ -1132,6 +1429,47 @@ async function main() {
         month: 6,
         authorId: '25',
         createdAt: new Date('2025-7-1'),
+      },
+      // 2025 МАЙ
+      {
+        userId: '1',
+        nominationTypeId: '0',
+        year: 2025,
+        month: 5,
+        releaseId: '24',
+        createdAt: new Date('2025-6-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '1',
+        year: 2025,
+        month: 5,
+        authorId: '28',
+        createdAt: new Date('2025-6-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '2',
+        year: 2025,
+        month: 5,
+        releaseId: '24',
+        createdAt: new Date('2025-5-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '3',
+        year: 2025,
+        month: 5,
+        releaseId: '25',
+        createdAt: new Date('2025-6-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '4',
+        year: 2025,
+        month: 5,
+        authorId: '26',
+        createdAt: new Date('2025-6-1'),
       },
 
       // 2025 АПРЕЛЬ
@@ -1313,241 +1651,6 @@ async function main() {
         releaseId: 'release5',
         text: 'Fusce lacus velit, tempor id dui eget, iaculis finibus tellus. Curabitur et euismod risus. Sed hendrerit massa id sem tristique, quis semper dolor fermentum. Phasellus eget ornare neque, ut mattis odio. Suspendisse consectetur dignissim nisl a commodo. Nam egestas, turpis ut suscipit sollicitudin, lacus tellus porta purus, quis pellentesque purus leo sed nisi. Nam facilisis eleifend efficitur. Quisque augue massa, tincidunt in justo quis, pulvinar condimentum nunc. Fusce quam mi, volutpat volutpat tristique sed, fringilla a risus. Vestibulum vulputate tempus arcu. Etiam efficitur ipsum et nibh posuere, ac fermentum velit sollicitudin. Pellentesque ut mi felis. Mauris tellus mauris, tincidunt nec ante vitae, ullamcorper auctor mauris. Pellentesque ultrices arcu eget ornare dictum.',
         createdAt: new Date(Date.now() - 1 * 1800 * 1000),
-      },
-    ],
-  });
-
-  await prisma.releaseArtist.createMany({
-    data: [
-      {
-        releaseId: 'release1',
-        authorId: '1',
-      },
-      {
-        releaseId: 'release2',
-        authorId: '1',
-      },
-      {
-        releaseId: 'release3',
-        authorId: '1',
-      },
-      {
-        releaseId: 'release4',
-        authorId: '1',
-      },
-      {
-        releaseId: 'release5',
-        authorId: '1',
-      },
-      {
-        releaseId: '3',
-        authorId: '6',
-      },
-      {
-        releaseId: '4',
-        authorId: '6',
-      },
-      {
-        releaseId: '5',
-        authorId: '4',
-      },
-      {
-        releaseId: '6',
-        authorId: '4',
-      },
-      {
-        releaseId: '7',
-        authorId: '4',
-      },
-      {
-        releaseId: '8',
-        authorId: '3',
-      },
-      {
-        releaseId: '8',
-        authorId: '4',
-      },
-      {
-        releaseId: '9',
-        authorId: '4',
-      },
-      {
-        releaseId: '10',
-        authorId: '3',
-      },
-      {
-        releaseId: '11',
-        authorId: '5',
-      },
-      {
-        releaseId: '12',
-        authorId: '5',
-      },
-      {
-        releaseId: '13',
-        authorId: '5',
-      },
-      {
-        releaseId: '14',
-        authorId: '4',
-      },
-      {
-        releaseId: '15',
-        authorId: '4',
-      },
-      {
-        releaseId: '16',
-        authorId: '16',
-      },
-      {
-        releaseId: '16',
-        authorId: '17',
-      },
-      {
-        releaseId: '17',
-        authorId: '16',
-      },
-      {
-        releaseId: '17',
-        authorId: '17',
-      },
-      {
-        releaseId: '18',
-        authorId: '19',
-      },
-      {
-        releaseId: '19',
-        authorId: '21',
-      },
-      {
-        releaseId: '20',
-        authorId: '23',
-      },
-      {
-        releaseId: '21',
-        authorId: '4',
-      },
-      {
-        releaseId: '22',
-        authorId: '3',
-      },
-      {
-        releaseId: '22',
-        authorId: '25',
-      },
-      {
-        releaseId: '23',
-        authorId: '25',
-      },
-    ],
-  });
-
-  await prisma.releaseProducer.createMany({
-    data: [
-      {
-        releaseId: 'release3',
-        authorId: '13',
-      },
-      {
-        releaseId: 'release3',
-        authorId: '14',
-      },
-      {
-        releaseId: 'release4',
-        authorId: '15',
-      },
-      {
-        releaseId: 'release5',
-        authorId: '15',
-      },
-      {
-        releaseId: '4',
-        authorId: '6',
-      },
-      {
-        releaseId: '4',
-        authorId: '7',
-      },
-      {
-        releaseId: '8',
-        authorId: '3',
-      },
-      {
-        releaseId: '9',
-        authorId: '8',
-      },
-      {
-        releaseId: '10',
-        authorId: '3',
-      },
-      {
-        releaseId: '11',
-        authorId: '5',
-      },
-      {
-        releaseId: '11',
-        authorId: '9',
-      },
-      {
-        releaseId: '11',
-        authorId: '10',
-      },
-      {
-        releaseId: '13',
-        authorId: '11',
-      },
-      {
-        releaseId: '14',
-        authorId: '12',
-      },
-      {
-        releaseId: '15',
-        authorId: '8',
-      },
-      {
-        releaseId: '17',
-        authorId: '18',
-      },
-      {
-        releaseId: '18',
-        authorId: '20',
-      },
-      {
-        releaseId: '19',
-        authorId: '21',
-      },
-      {
-        releaseId: '21',
-        authorId: '4',
-      },
-      {
-        releaseId: '21',
-        authorId: '8',
-      },
-      {
-        releaseId: '21',
-        authorId: '12',
-      },
-      {
-        releaseId: '22',
-        authorId: '25',
-      },
-      {
-        releaseId: '23',
-        authorId: '25',
-      },
-    ],
-  });
-
-  await prisma.releaseDesigner.createMany({
-    data: [
-      {
-        releaseId: '19',
-        authorId: '22',
-      },
-      {
-        releaseId: '20',
-        authorId: '24',
       },
     ],
   });
