@@ -1,11 +1,23 @@
 import { NominationEntityKind } from 'src/nominations/types/nomination-entity-kind.type';
 
-class CandidateDto {
+interface CandidateBaseDto {
   id: string;
-  title: string;
   img: string;
   entityKind: NominationEntityKind;
 }
+
+interface ReleaseCandidateDto extends CandidateBaseDto {
+  title: string;
+  entityKind: 'release';
+  authors: string[];
+}
+
+interface AuthorCandidateDto extends CandidateBaseDto {
+  name: string;
+  entityKind: 'author';
+}
+
+type CandidateDto = ReleaseCandidateDto | AuthorCandidateDto;
 
 export class FindNominationCandidatesResponseDto {
   year: number;
@@ -15,7 +27,7 @@ export class FindNominationCandidatesResponseDto {
 
   albumCandidates: CandidateDto[];
   singleCandidates: CandidateDto[];
+  coverCandidates: CandidateDto[];
   artistCandidates: CandidateDto[];
-  designerCandidates: CandidateDto[];
   producerCandidates: CandidateDto[];
 }
