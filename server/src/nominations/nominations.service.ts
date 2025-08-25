@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { FindNominationWinnersQueryDto } from './dto/query/find-nomination-winners.query.dto';
+import { FindNominationCandidatesResponseDto } from './dto/response/find-nomination-candidates.response.dto';
 import {
   FindNominationWinnersResponseDto,
   NominationMonthWinnerItemDto,
@@ -60,5 +61,140 @@ export class NominationsService {
     }
 
     return data[0];
+  }
+
+  async findCandidates(): Promise<FindNominationCandidatesResponseDto> {
+    const rawQuery = `
+      WITH period AS (
+          SELECT
+              (date_trunc('month', now()) - interval '1 month')::date AS start_date,
+              (date_trunc('month', now())::date - 1)                  AS end_date,
+              EXTRACT(YEAR  FROM (date_trunc('month', now()) - interval '1 month'))::int  AS year,
+              EXTRACT(MONTH FROM (date_trunc('month', now()) - interval '1 month'))::int  AS month
+      )
+      SELECT
+          p.year,
+          p.month,
+          p.start_date AS "startDate",
+          p.end_date   AS "endDate",
+
+          COALESCE((
+              SELECT jsonb_agg(
+                          jsonb_build_object(
+                                'id', x.id, 
+                                'title', x.title, 
+                                'img', x.img,
+                                'entityKind', 'release'
+                          )
+                ORDER BY x.title
+              )
+              FROM (
+                    SELECT 
+                      DISTINCT r.id, 
+                      r.title, 
+                      r.img
+                    FROM "Releases" r
+                        JOIN "Release_types" rt ON rt.id = r.release_type_id
+                    WHERE r.publish_date::date BETWEEN p.start_date 
+                        AND p.end_date AND rt.type = 'Альбом'
+              ) x
+          ), '[]'::jsonb) AS "albumCandidates",
+
+          COALESCE((
+                  SELECT jsonb_agg(
+                            jsonb_build_object(
+                                  'id', x.id, 
+                                  'title', x.title, 
+                                  'img', x.img,
+                                  'entityKind', 'release'
+                            )
+                    ORDER BY x.title
+                  )
+                  FROM (
+                        SELECT 
+                            DISTINCT r.id, 
+                            r.title, 
+                            r.img
+                        FROM "Releases" r
+                            JOIN "Release_types" rt ON rt.id = r.release_type_id
+                        WHERE r.publish_date::date BETWEEN p.start_date 
+                            AND p.end_date AND rt.type = 'Трек'
+                  ) x
+          ), '[]'::jsonb) AS "singleCandidates",
+
+          COALESCE((
+                  SELECT jsonb_agg(
+                                  jsonb_build_object(
+                                  'id', x.id, 
+                                  'name', x.name, 
+                                  'img', x.img,
+                                  'entityKind', 'author'
+                                  )
+                    ORDER BY x.name
+                  )
+                  FROM (
+                        SELECT 
+                            DISTINCT a.id, 
+                            a.name, 
+                            a.avatar_img AS img
+                        FROM "Release_artists" ra
+                            JOIN "Releases" r ON r.id = ra.release_id
+                            JOIN "Authors"  a ON a.id = ra.author_id
+                        WHERE r.publish_date::date BETWEEN p.start_date AND p.end_date
+                  ) x
+          ), '[]'::jsonb) AS "artistCandidates",
+
+          COALESCE((
+                  SELECT jsonb_agg(
+                                  jsonb_build_object(
+                                  'id', x.id, 
+                                  'name', x.name, 
+                                  'img', x.img,
+                                  'entityKind', 'author'
+                          )
+                    ORDER BY x.name
+                  )
+                  FROM (
+                        SELECT 
+                            DISTINCT a.id, 
+                            a.name, 
+                            a.avatar_img AS img
+                        FROM "Release_designers" rd
+                            JOIN "Releases" r ON r.id = rd.release_id
+                            JOIN "Authors"  a ON a.id = rd.author_id
+                        WHERE r.publish_date::date BETWEEN p.start_date AND p.end_date
+                  ) x
+          ), '[]'::jsonb) AS "designerCandidates",
+
+          COALESCE((
+                    SELECT jsonb_agg(
+                                    jsonb_build_object(
+                                        'id', x.id, 
+                                        'name', x.name, 
+                                        'img', x.img,
+                                        'entityKind', 'author'
+                                    )
+                      ORDER BY x.name
+                    )
+                    FROM (
+                          SELECT 
+                              DISTINCT a.id, 
+                              a.name, 
+                              a.avatar_img AS img
+                          FROM "Release_producers" rp
+                                JOIN "Releases" r ON r.id = rp.release_id
+                                JOIN "Authors"  a ON a.id = rp.author_id
+                          WHERE r.publish_date::date BETWEEN p.start_date AND p.end_date
+                     ) x
+          ), '[]'::jsonb) AS "producerCandidates"
+      FROM period p;
+    `;
+
+    const [result] =
+      await this.prisma.$queryRawUnsafe<FindNominationCandidatesResponseDto[]>(
+        rawQuery,
+      );
+
+    return result;
   }
 }

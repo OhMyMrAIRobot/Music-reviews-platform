@@ -20,4 +20,9 @@ export class NominationsController {
       params.authorId,
     );
   }
+
+  @Get('candidates')
+  findCandidates() {
+    return this.nominationsService.findCandidates();
+  }
 }
