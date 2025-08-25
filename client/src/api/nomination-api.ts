@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { INominationCandidatesResponse } from '../models/nomination/nomination-candidate/nomination-candidates-response'
 import { INominationWinnerParticipation } from '../models/nomination/nomination-winner-participation/nomination-winner-participation'
 import { INominationWinnersResponse } from '../models/nomination/nomination-winner/nomination-winners-response'
 
@@ -30,6 +31,14 @@ export const NominationAPI = {
 	): Promise<INominationWinnerParticipation> {
 		const { data } = await _api.get<INominationWinnerParticipation>(
 			`author/${authorId}`
+		)
+
+		return data
+	},
+
+	async fetchCandidates(): Promise<INominationCandidatesResponse> {
+		const { data } = await _api.get<INominationCandidatesResponse>(
+			`/candidates`
 		)
 
 		return data
