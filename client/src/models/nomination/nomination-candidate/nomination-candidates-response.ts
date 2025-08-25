@@ -1,4 +1,4 @@
-import { INominationCandidate } from './nomination-candidate'
+import { NominationCandidate } from './nomination-candidate'
 
 export interface INominationCandidatesResponse {
 	year: number
@@ -6,9 +6,9 @@ export interface INominationCandidatesResponse {
 	startDate: string
 	endDate: string
 
-	albumCandidates: INominationCandidate[]
-	singleCandidates: INominationCandidate[]
-	artistCandidates: INominationCandidate[]
-	designerCandidates: INominationCandidate[]
-	producerCandidates: INominationCandidate[]
+	albumCandidates: NominationCandidate[]
+	singleCandidates: NominationCandidate[]
+	coverCandidates: NominationCandidate[]
+	artistCandidates: NominationCandidate[]
+	producerCandidates: NominationCandidate[]
 }

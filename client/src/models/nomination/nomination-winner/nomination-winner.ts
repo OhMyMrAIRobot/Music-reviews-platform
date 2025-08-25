@@ -1,6 +1,6 @@
 import { NominationEntityKind } from '../nomination-entity-kind'
 
-export type INominationWinner =
+export type NominationWinner =
 	| IReleaseNominationWinner
 	| IAuthorNominationWinner
 

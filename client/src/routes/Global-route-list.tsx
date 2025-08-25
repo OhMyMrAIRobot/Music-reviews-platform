@@ -8,6 +8,7 @@ import FeedbackPage from '../pages/feedback-page/Feedback-page'
 import LeaderboardPage from '../pages/leaderboard-page/Leaderboard-page'
 import MainPage from '../pages/main-page/Main-page'
 import MediaReviewsPage from '../pages/media-reviews-page/Media-reviews-page'
+import NominationVotesPage from '../pages/nomination-votes-page/Nomination-votes-page'
 import ProfilePage from '../pages/profile-page/Profile-page'
 import ReleaseDetailsPage from '../pages/release-details-page/Release-details-page'
 import ReleasesPage from '../pages/releases-page/Releases-page'
@@ -43,6 +44,8 @@ const GlobalRouteList = () => {
 			<Route path={ROUTES.AUTHOR_COMMENTS} element={<AuthorCommentsPage />} />,
 			<Route path={ROUTES.AUTHOR_LIKES} element={<AuthorLikesPage />} />,
 			<Route path={ROUTES.AWARDS} element={<AwardsPage />} />,
+			<Route path={ROUTES.NOMINATION_VOTES} element={<NominationVotesPage />} />
+			,
 			<Route path={ROUTES.NOT_DEFINED} element={<MainPage />} />,
 		</>
 	)

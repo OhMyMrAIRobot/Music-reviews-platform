@@ -8,13 +8,13 @@ import {
 	useImperativeHandle,
 	useState,
 } from 'react'
-import { INominationWinner } from '../../../../models/nomination/nomination-winner/nomination-winner'
+import { NominationWinner } from '../../../../models/nomination/nomination-winner/nomination-winner'
 import { CarouselRef } from '../../../../types/carousel-ref'
 import { CarouselStateCallbacks } from '../../../../types/carousel-state-callbacks'
-import NominationWinner from './Nomination-winner'
+import NominationWinnerCard from './Nomination-winner'
 
 interface IProps extends CarouselStateCallbacks {
-	items?: INominationWinner[]
+	items?: NominationWinner[]
 	isLoading: boolean
 }
 
@@ -80,7 +80,7 @@ const NominationCarousel = observer(
 											className='flex-[0_0_230px] lg:flex-[0_0_300px] px-2 pb-2'
 											key={`Nomination-skeleton-${idx}`}
 										>
-											<NominationWinner isLoading={true} />
+											<NominationWinnerCard isLoading={true} />
 										</div>
 								  ))
 								: items.map(item => (
@@ -88,7 +88,7 @@ const NominationCarousel = observer(
 											className='flex-[0_0_230px] lg:flex-[0_0_300px] px-2 pb-2'
 											key={item.type}
 										>
-											<NominationWinner isLoading={false} item={item} />
+											<NominationWinnerCard isLoading={false} item={item} />
 										</div>
 								  ))}
 						</div>

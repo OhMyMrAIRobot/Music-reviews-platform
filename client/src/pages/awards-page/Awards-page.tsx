@@ -1,13 +1,18 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router'
 import ComboBox from '../../components/buttons/Combo-box'
 import SkeletonLoader from '../../components/utils/Skeleton-loader'
 import { useLoading } from '../../hooks/use-loading'
+import useNavigationPath from '../../hooks/use-navigation-path'
 import { useStore } from '../../hooks/use-store'
+import { MonthEnum, MonthEnumType } from '../../types/month-enum-type'
 import NominationCarouselContainer from './ui/carousel/Nomination-carousel-container'
 
 const AwardsPage = observer(() => {
 	const { awardsPageStore } = useStore()
+
+	const { navigateToVotes } = useNavigationPath()
 
 	const { execute: fetch, isLoading } = useLoading(awardsPageStore.fetchAwards)
 
@@ -36,9 +41,12 @@ const AwardsPage = observer(() => {
 			</h1>
 
 			<div className='flex justify-between items-center gap-5 h-15 mt-5'>
-				<div className='w-40 bg-white h-full rounded-lg text-black flex items-center justify-center font-medium text-sm px-3 py-2'>
-					Номинанты в этом месяце
-				</div>
+				<Link
+					to={navigateToVotes}
+					className='w-40 bg-white h-full rounded-lg text-black flex items-center justify-center font-medium text-sm px-3 py-2'
+				>
+					Голосование за {MonthEnum[new Date().getMonth() as MonthEnumType]}
+				</Link>
 
 				<div className='w-full rounded-lg border border-white/10 bg-zinc-900 p-3 shadow-sm flex gap-4 items-center'>
 					<span className='hidden sm:block text-white/70 font-bold '>Год:</span>

@@ -3,14 +3,14 @@ import { Link } from 'react-router'
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { NominationTypesEnum } from '../../../../models/nomination/nomination-type/nomination-type-enum'
-import { INominationWinner } from '../../../../models/nomination/nomination-winner/nomination-winner'
+import { NominationWinner } from '../../../../models/nomination/nomination-winner/nomination-winner'
 
 interface IProps {
-	item?: INominationWinner
+	item?: NominationWinner
 	isLoading: boolean
 }
 
-const NominationWinner: FC<IProps> = ({ item, isLoading }) => {
+const NominationWinnerCard: FC<IProps> = ({ item, isLoading }) => {
 	const { navigateToReleaseDetails, navigateToAuthorDetails } =
 		useNavigationPath()
 
@@ -80,4 +80,4 @@ const NominationWinner: FC<IProps> = ({ item, isLoading }) => {
 	)
 }
 
-export default NominationWinner
+export default NominationWinnerCard
