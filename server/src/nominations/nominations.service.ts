@@ -1,16 +1,28 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { NomitationVote } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
+import { AuthorTypesEnum } from 'src/author-types/entities/author-types.enum';
+import { AuthorsService } from 'src/authors/authors.service';
+import { NominationTypesService } from 'src/nomination-types/nomination-types.service';
+import { ReleasesService } from 'src/releases/releases.service';
 import { FindNominationWinnersQueryDto } from './dto/query/find-nomination-winners.query.dto';
+import { AddNominationVoteRequestDto } from './dto/request/add-nomination-vote.request.dto';
 import { FindNominationCandidatesResponseDto } from './dto/response/find-nomination-candidates.response.dto';
 import {
   FindNominationWinnersResponseDto,
   NominationMonthWinnerItemDto,
 } from './dto/response/find-nomination-winners.response.dto';
 import { FindNominationWinnersByAuthorIdResponseDto } from './dto/response/find-nominations-winners-by-author-id.response.dto';
+import { NominationPeriod } from './types/nomination-period.type';
 
 @Injectable()
 export class NominationsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly nominationTypesService: NominationTypesService,
+    private readonly releasesService: ReleasesService,
+    private readonly authorsService: AuthorsService,
+  ) {}
 
   async findNominationWinners(
     query: FindNominationWinnersQueryDto,
@@ -39,6 +51,52 @@ export class NominationsService {
     return { ...yearRange, items: data };
   }
 
+  async addNominationVote(dto: AddNominationVoteRequestDto, userId: string) {
+    await this.nominationTypesService.findOne(dto.nominationTypeId);
+
+    const period = this.getNominationPeriodUTC();
+
+    const exist = await this.findOne(
+      userId,
+      dto.nominationTypeId,
+      period.month,
+      period.year,
+    );
+
+    if (exist) {
+      throw new BadRequestException(
+        'Вы уже оставляли голос в данной номинации в текущем периоде голосования!',
+      );
+    }
+
+    if (dto.entityKind === 'release') {
+      await this.assertReleaseIsEligible(
+        dto.nominationTypeId,
+        dto.entityId,
+        period,
+      );
+    } else if (dto.entityKind === 'author') {
+      await this.assertAuthorIsEligible(
+        dto.nominationTypeId,
+        dto.entityId,
+        period,
+      );
+    } else {
+      throw new BadRequestException('Неподдерживаемый тип сущности!');
+    }
+
+    return this.prisma.nomitationVote.create({
+      data: {
+        userId,
+        nominationTypeId: dto.nominationTypeId,
+        month: period.month,
+        year: period.year,
+        releaseId: dto.entityKind === 'release' ? dto.entityId : null,
+        authorId: dto.entityKind === 'author' ? dto.entityId : null,
+      },
+    });
+  }
+
   async findNominationWinnersByAuthorId(
     authorId: string,
   ): Promise<FindNominationWinnersByAuthorIdResponseDto> {
@@ -61,6 +119,24 @@ export class NominationsService {
     }
 
     return data[0];
+  }
+
+  async findOne(
+    userId: string,
+    nominationTypeId: string,
+    month: number,
+    year: number,
+  ): Promise<NomitationVote | null> {
+    return this.prisma.nomitationVote.findUnique({
+      where: {
+        userId_nominationTypeId_year_month: {
+          userId,
+          nominationTypeId,
+          year,
+          month,
+        },
+      },
+    });
   }
 
   async findCandidates(): Promise<FindNominationCandidatesResponseDto> {
@@ -245,5 +321,127 @@ export class NominationsService {
       );
 
     return result;
+  }
+
+  private getNominationPeriodUTC(): NominationPeriod {
+    const now = new Date();
+    const currentMonthStart = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1),
+    );
+    const previousMonthStart = new Date(
+      Date.UTC(
+        currentMonthStart.getUTCFullYear(),
+        currentMonthStart.getUTCMonth() - 1,
+        1,
+      ),
+    );
+    const year = previousMonthStart.getUTCFullYear();
+    const month = previousMonthStart.getUTCMonth() + 1;
+
+    return {
+      year,
+      month,
+      start: previousMonthStart,
+      nextMonthStart: currentMonthStart,
+    };
+  }
+
+  private async assertReleaseIsEligible(
+    nominationTypeId: string,
+    releaseId: string,
+    period: NominationPeriod,
+  ) {
+    const release = await this.releasesService.findOne(releaseId);
+
+    if (
+      !(
+        release.publishDate >= period.start &&
+        release.publishDate < period.nextMonthStart
+      )
+    ) {
+      throw new BadRequestException(
+        'Дата публикации релиза не соответствует периоду голосования!',
+      );
+    }
+
+    const allowed =
+      await this.prisma.nominationTypeAllowedReleaseType.findFirst({
+        where: {
+          nominationTypeId,
+          releaseTypeId: release.releaseTypeId,
+        },
+        select: { nominationTypeId: true },
+      });
+
+    if (!allowed) {
+      throw new BadRequestException('Тип релиза не соответсвует номинации!');
+    }
+  }
+
+  private async assertAuthorIsEligible(
+    nominationTypeId: string,
+    authorId: string,
+    period: NominationPeriod,
+  ) {
+    await this.authorsService.findOne(authorId);
+
+    const allowedTypes =
+      await this.prisma.nominationTypeAllowedAuthorType.findMany({
+        where: { nominationTypeId },
+        select: {
+          authorType: { select: { type: true } },
+        },
+      });
+
+    if (allowedTypes.length === 0) {
+      throw new BadRequestException('Тип автора не соответсвует номинации!');
+    }
+
+    const allowedTypeNames = new Set(
+      allowedTypes.map((x) => x.authorType.type),
+    );
+
+    const checks: Promise<{ id: string } | null>[] = [];
+
+    if (allowedTypeNames.has(AuthorTypesEnum.ARTIST)) {
+      checks.push(
+        this.prisma.release.findFirst({
+          where: {
+            publishDate: { gte: period.start, lt: period.nextMonthStart },
+            releaseArtist: { some: { authorId } },
+          },
+          select: { id: true },
+        }),
+      );
+    }
+    if (allowedTypeNames.has(AuthorTypesEnum.PRODUCER)) {
+      checks.push(
+        this.prisma.release.findFirst({
+          where: {
+            publishDate: { gte: period.start, lt: period.nextMonthStart },
+            releaseProducer: { some: { authorId } },
+          },
+          select: { id: true },
+        }),
+      );
+    }
+    if (allowedTypeNames.has(AuthorTypesEnum.DESIGNER)) {
+      checks.push(
+        this.prisma.release.findFirst({
+          where: {
+            publishDate: { gte: period.start, lt: period.nextMonthStart },
+            releaseDesigner: { some: { authorId } },
+          },
+          select: { id: true },
+        }),
+      );
+    }
+
+    const results = await Promise.all(checks);
+    const eligible = results.some((r) => r !== null);
+
+    if (!eligible) {
+      throw new BadRequestException('Данный автор не выдвинут на голосование!');
+    }
   }
 }

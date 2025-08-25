@@ -43,9 +43,9 @@ async function main() {
   await prisma.authorConfirmation.deleteMany();
   await prisma.authorComment.deleteMany();
   await prisma.userFavMedia.deleteMany();
-  await prisma.nominationType.deleteMany();
   await prisma.nominationTypeAllowedAuthorType.deleteMany();
   await prisma.nominationTypeAllowedReleaseType.deleteMany();
+  await prisma.nominationType.deleteMany();
   await prisma.nomitationVote.deleteMany();
 
   const password = await bcrypt.hash('1234567', 10);
@@ -1346,49 +1346,66 @@ async function main() {
     ],
   });
 
+  await prisma.nominationTypeAllowedReleaseType.createMany({
+    data: [
+      { nominationTypeId: '0', releaseTypeId: '1' },
+      { nominationTypeId: '2', releaseTypeId: '1' },
+      { nominationTypeId: '2', releaseTypeId: '3' },
+      { nominationTypeId: '3', releaseTypeId: '3' },
+    ],
+  });
+
+  await prisma.nominationTypeAllowedAuthorType.createMany({
+    data: [
+      { nominationTypeId: '1', authorTypeId: '1' },
+      { nominationTypeId: '4', authorTypeId: '2' },
+    ],
+    skipDuplicates: true,
+  });
+
   await prisma.nomitationVote.createMany({
     data: [
       // 2025 ИЮЛЬ
-      {
-        userId: '1',
-        nominationTypeId: '0',
-        year: 2025,
-        month: 7,
-        releaseId: '16',
-        createdAt: new Date('2025-8-1'),
-      },
-      {
-        userId: '1',
-        nominationTypeId: '1',
-        year: 2025,
-        month: 7,
-        authorId: '19',
-        createdAt: new Date('2025-8-1'),
-      },
-      {
-        userId: '1',
-        nominationTypeId: '2',
-        year: 2025,
-        month: 7,
-        releaseId: '19',
-        createdAt: new Date('2025-8-1'),
-      },
-      {
-        userId: '1',
-        nominationTypeId: '3',
-        year: 2025,
-        month: 7,
-        releaseId: '17',
-        createdAt: new Date('2025-5-1'),
-      },
-      {
-        userId: '1',
-        nominationTypeId: '4',
-        year: 2025,
-        month: 7,
-        authorId: '18',
-        createdAt: new Date('2025-5-1'),
-      },
+      // {
+      //   userId: '1',
+      //   nominationTypeId: '0',
+      //   year: 2025,
+      //   month: 7,
+      //   releaseId: '16',
+      //   createdAt: new Date('2025-8-1'),
+      // },
+      // {
+      //   userId: '1',
+      //   nominationTypeId: '1',
+      //   year: 2025,
+      //   month: 7,
+      //   authorId: '19',
+      //   createdAt: new Date('2025-8-1'),
+      // },
+      // {
+      //   userId: '1',
+      //   nominationTypeId: '2',
+      //   year: 2025,
+      //   month: 7,
+      //   releaseId: '19',
+      //   createdAt: new Date('2025-8-1'),
+      // },
+      // {
+      //   userId: '1',
+      //   nominationTypeId: '3',
+      //   year: 2025,
+      //   month: 7,
+      //   releaseId: '17',
+      //   createdAt: new Date('2025-5-1'),
+      // },
+      // {
+      //   userId: '1',
+      //   nominationTypeId: '4',
+      //   year: 2025,
+      //   month: 7,
+      //   authorId: '18',
+      //   createdAt: new Date('2025-5-1'),
+      // },
       // 2025 ИЮНЬ
       {
         userId: '1',

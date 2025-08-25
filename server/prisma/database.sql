@@ -1141,6 +1141,11 @@ EXECUTE FUNCTION handle_fav_media_points();
 
 
 CREATE OR REPLACE VIEW "Nomination_results" AS
+WITH prev AS (
+  SELECT
+    EXTRACT(YEAR  FROM (date_trunc('month', now()) - interval '1 month'))::int  AS year,
+    EXTRACT(MONTH FROM (date_trunc('month', now()) - interval '1 month'))::int  AS month
+)
 SELECT
   nt.id  AS nomination_type_id,
   nt.type AS nomination_type,
@@ -1152,6 +1157,8 @@ SELECT
   COUNT(*)::int AS votes
 FROM "Nomination_votes" nv
 JOIN "Nomination_types" nt ON nt.id = nv.nomination_type_id
+CROSS JOIN prev p
+WHERE NOT (nv.year = p.year AND nv.month = p.month)
 GROUP BY nt.id, nt.type, nv.year, nv.month, nv.author_id, nv.release_id;
 
 
@@ -1534,5 +1541,3 @@ SELECT
   ) AS "nominations"
 FROM base
 GROUP BY participant_author_id;
-
-

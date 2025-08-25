@@ -1,6 +1,18 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
+import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.interface';
+import { JwtAuthGuard } from 'src/shared/guards/jwt-auth.guard';
 import { FindNominationWinnersByAuthorIdParams } from './dto/params/find-nomination-winners-by-author-id.params.dto';
 import { FindNominationWinnersQueryDto } from './dto/query/find-nomination-winners.query.dto';
+import { AddNominationVoteRequestDto } from './dto/request/add-nomination-vote.request.dto';
 import { NominationsService } from './nominations.service';
 
 @Controller('nominations')
@@ -24,5 +36,14 @@ export class NominationsController {
   @Get('candidates')
   findCandidates() {
     return this.nominationsService.findCandidates();
+  }
+
+  @Post()
+  @UseGuards(JwtAuthGuard)
+  addNominationVote(
+    @Body() dto: AddNominationVoteRequestDto,
+    @Request() req: IAuthenticatedRequest,
+  ) {
+    return this.nominationsService.addNominationVote(dto, req.user.id);
   }
 }
