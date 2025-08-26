@@ -3,6 +3,7 @@ import * as bcrypt from 'bcrypt';
 import { AuthorConfirmationStatusesEnum } from '../src/author-confirmation-statuses/types/author-confirmation-statuses.enum';
 import { AuthorTypesEnum } from '../src/author-types/entities/author-types.enum';
 import { FeedbackStatusesEnum } from '../src/feedback-statuses/types/feedback-statuses.enum';
+import { NominationTypesEnum } from '../src/nomination-types/types/nomination-types.enum';
 import { ReleaseMediaStatusesEnum } from '../src/release-media-statuses/types/release-media-statuses.enum';
 import { ReleaseMediaTypesEnum } from '../src/release-media-types/types/release-media-types.enum';
 import { ReleaseTypesEnum } from '../src/release-types/types/release-types.enum';
@@ -42,6 +43,10 @@ async function main() {
   await prisma.authorConfirmation.deleteMany();
   await prisma.authorComment.deleteMany();
   await prisma.userFavMedia.deleteMany();
+  await prisma.nominationTypeAllowedAuthorType.deleteMany();
+  await prisma.nominationTypeAllowedReleaseType.deleteMany();
+  await prisma.nominationType.deleteMany();
+  await prisma.nominationVote.deleteMany();
 
   const password = await bcrypt.hash('1234567', 10);
 
@@ -632,6 +637,77 @@ async function main() {
         name: 'кайдãн',
         avatarImg: 'kaidan.png',
       },
+      {
+        id: '16',
+        name: '5opka',
+        avatarImg: '5opka.png',
+        coverImg: '5opka.png',
+      },
+      {
+        id: '17',
+        name: 'MellSher',
+        avatarImg: 'MellSher.png',
+        coverImg: 'MellSher.png',
+      },
+      {
+        id: '18',
+        name: 'BEATCASTER',
+        avatarImg: 'BEATCASTER.png',
+      },
+      {
+        id: '19',
+        name: 'Мэйби Бэйби',
+        avatarImg: 'maybebaby.png',
+      },
+      {
+        id: '20',
+        name: 'XWinner',
+        avatarImg: 'XWinner.png',
+      },
+      {
+        id: '21',
+        name: 'ПОЛМАТЕРИ',
+        avatarImg: 'polmateri.png',
+        coverImg: 'polmateri.png',
+      },
+      {
+        id: '22',
+        name: 'ХА+ЛУЙ',
+        avatarImg: '22.png',
+      },
+      {
+        id: '23',
+        name: 'Pepel Nahudi',
+        avatarImg: '23.png',
+        coverImg: '23.png',
+      },
+      {
+        id: '24',
+        name: 'галерея корнера',
+        avatarImg: '24.png',
+      },
+      {
+        id: '25',
+        name: 'SLAVA MARLOW',
+        avatarImg: '25.png',
+        coverImg: '25.png',
+      },
+      {
+        id: '26',
+        name: 'Midix',
+        avatarImg: '26.png',
+        coverImg: '26.png',
+      },
+      {
+        id: '27',
+        name: 'whyisilly',
+        avatarImg: '27.png',
+      },
+      {
+        id: '28',
+        name: 'NEWLIGHTCHILD',
+        avatarImg: '28.png',
+      },
     ],
   });
 
@@ -729,6 +805,66 @@ async function main() {
       {
         authorId: '15',
         authorTypeId: '2',
+      },
+      {
+        authorId: '16',
+        authorTypeId: '1',
+      },
+      {
+        authorId: '17',
+        authorTypeId: '1',
+      },
+      {
+        authorId: '18',
+        authorTypeId: '2',
+      },
+      {
+        authorId: '19',
+        authorTypeId: '1',
+      },
+      {
+        authorId: '20',
+        authorTypeId: '2',
+      },
+      {
+        authorId: '21',
+        authorTypeId: '1',
+      },
+      {
+        authorId: '22',
+        authorTypeId: '3',
+      },
+      {
+        authorId: '23',
+        authorTypeId: '1',
+      },
+      {
+        authorId: '24',
+        authorTypeId: '3',
+      },
+      {
+        authorId: '25',
+        authorTypeId: '1',
+      },
+      {
+        authorId: '25',
+        authorTypeId: '2',
+      },
+      {
+        authorId: '26',
+        authorTypeId: '1',
+      },
+      {
+        authorId: '26',
+        authorTypeId: '2',
+      },
+      {
+        authorId: '27',
+        authorTypeId: '3',
+      },
+      {
+        authorId: '28',
+        authorTypeId: '1',
       },
     ],
   });
@@ -861,6 +997,581 @@ async function main() {
         img: '15.png',
         releaseTypeId: '3',
       },
+      {
+        id: '16',
+        publishDate: new Date('2025-07-25').toISOString(),
+        title: 'SUPER PUPER NOVA',
+        img: '16.png',
+        releaseTypeId: '1',
+      },
+      {
+        id: '17',
+        publishDate: new Date('2025-07-25').toISOString(),
+        title: 'XXL',
+        img: '16.png',
+        releaseTypeId: '3',
+      },
+      {
+        id: '18',
+        publishDate: new Date('2025-07-21').toISOString(),
+        title: 'Силиконовый Гном',
+        img: '18.png',
+        releaseTypeId: '3',
+      },
+      {
+        id: '19',
+        publishDate: new Date('2025-07-18').toISOString(),
+        title: 'простая замечательная жизнь ипи',
+        img: '19.png',
+        releaseTypeId: '1',
+      },
+      {
+        id: '20',
+        publishDate: new Date('2025-06-27').toISOString(),
+        title: 'GARGONNA MUSIC',
+        img: '20.png',
+        releaseTypeId: '1',
+      },
+      {
+        id: '21',
+        publishDate: new Date('2025-06-27').toISOString(),
+        title: 'Честных правил',
+        img: '21.png',
+        releaseTypeId: '3',
+      },
+      {
+        id: '22',
+        publishDate: new Date('2025-06-06').toISOString(),
+        title: 'НЕ ЗАБЫЛ ╥﹏╥',
+        img: '22.png',
+        releaseTypeId: '3',
+      },
+      {
+        id: '23',
+        publishDate: new Date('2025-06-13').toISOString(),
+        title: 'ЭЛЬФ 1',
+        img: '23.png',
+        releaseTypeId: '1',
+      },
+      {
+        id: '24',
+        publishDate: new Date('2025-05-23').toISOString(),
+        title: 'Midix x Midix',
+        img: '24.png',
+        releaseTypeId: '1',
+      },
+      {
+        id: '25',
+        publishDate: new Date('2025-05-23').toISOString(),
+        title: 'SELFHARM',
+        img: '25.png',
+        releaseTypeId: '3',
+      },
+    ],
+  });
+
+  await prisma.releaseArtist.createMany({
+    data: [
+      {
+        releaseId: 'release1',
+        authorId: '1',
+      },
+      {
+        releaseId: 'release2',
+        authorId: '1',
+      },
+      {
+        releaseId: 'release3',
+        authorId: '1',
+      },
+      {
+        releaseId: 'release4',
+        authorId: '1',
+      },
+      {
+        releaseId: 'release5',
+        authorId: '1',
+      },
+      {
+        releaseId: '3',
+        authorId: '6',
+      },
+      {
+        releaseId: '4',
+        authorId: '6',
+      },
+      {
+        releaseId: '5',
+        authorId: '4',
+      },
+      {
+        releaseId: '6',
+        authorId: '4',
+      },
+      {
+        releaseId: '7',
+        authorId: '4',
+      },
+      {
+        releaseId: '8',
+        authorId: '3',
+      },
+      {
+        releaseId: '8',
+        authorId: '4',
+      },
+      {
+        releaseId: '9',
+        authorId: '4',
+      },
+      {
+        releaseId: '10',
+        authorId: '3',
+      },
+      {
+        releaseId: '11',
+        authorId: '5',
+      },
+      {
+        releaseId: '12',
+        authorId: '5',
+      },
+      {
+        releaseId: '13',
+        authorId: '5',
+      },
+      {
+        releaseId: '14',
+        authorId: '4',
+      },
+      {
+        releaseId: '15',
+        authorId: '4',
+      },
+      {
+        releaseId: '16',
+        authorId: '16',
+      },
+      {
+        releaseId: '16',
+        authorId: '17',
+      },
+      {
+        releaseId: '17',
+        authorId: '16',
+      },
+      {
+        releaseId: '17',
+        authorId: '17',
+      },
+      {
+        releaseId: '18',
+        authorId: '19',
+      },
+      {
+        releaseId: '19',
+        authorId: '21',
+      },
+      {
+        releaseId: '20',
+        authorId: '23',
+      },
+      {
+        releaseId: '21',
+        authorId: '4',
+      },
+      {
+        releaseId: '22',
+        authorId: '3',
+      },
+      {
+        releaseId: '22',
+        authorId: '25',
+      },
+      {
+        releaseId: '23',
+        authorId: '25',
+      },
+      {
+        releaseId: '24',
+        authorId: '26',
+      },
+      {
+        releaseId: '25',
+        authorId: '28',
+      },
+    ],
+  });
+
+  await prisma.releaseProducer.createMany({
+    data: [
+      {
+        releaseId: 'release3',
+        authorId: '13',
+      },
+      {
+        releaseId: 'release3',
+        authorId: '14',
+      },
+      {
+        releaseId: 'release4',
+        authorId: '15',
+      },
+      {
+        releaseId: 'release5',
+        authorId: '15',
+      },
+      {
+        releaseId: '4',
+        authorId: '6',
+      },
+      {
+        releaseId: '4',
+        authorId: '7',
+      },
+      {
+        releaseId: '8',
+        authorId: '3',
+      },
+      {
+        releaseId: '9',
+        authorId: '8',
+      },
+      {
+        releaseId: '10',
+        authorId: '3',
+      },
+      {
+        releaseId: '11',
+        authorId: '5',
+      },
+      {
+        releaseId: '11',
+        authorId: '9',
+      },
+      {
+        releaseId: '11',
+        authorId: '10',
+      },
+      {
+        releaseId: '13',
+        authorId: '11',
+      },
+      {
+        releaseId: '14',
+        authorId: '12',
+      },
+      {
+        releaseId: '15',
+        authorId: '8',
+      },
+      {
+        releaseId: '17',
+        authorId: '18',
+      },
+      {
+        releaseId: '18',
+        authorId: '20',
+      },
+      {
+        releaseId: '19',
+        authorId: '21',
+      },
+      {
+        releaseId: '21',
+        authorId: '4',
+      },
+      {
+        releaseId: '21',
+        authorId: '8',
+      },
+      {
+        releaseId: '21',
+        authorId: '12',
+      },
+      {
+        releaseId: '22',
+        authorId: '25',
+      },
+      {
+        releaseId: '23',
+        authorId: '25',
+      },
+      {
+        releaseId: '24',
+        authorId: '26',
+      },
+    ],
+  });
+
+  await prisma.releaseDesigner.createMany({
+    data: [
+      {
+        releaseId: '19',
+        authorId: '22',
+      },
+      {
+        releaseId: '20',
+        authorId: '24',
+      },
+      {
+        releaseId: '24',
+        authorId: '27',
+      },
+    ],
+  });
+
+  await prisma.nominationType.createMany({
+    data: [
+      {
+        id: '0',
+        type: NominationTypesEnum.ALBUM_OF_MONTH,
+      },
+      {
+        id: '1',
+        type: NominationTypesEnum.ARTIST_OF_MONTH,
+      },
+      {
+        id: '2',
+        type: NominationTypesEnum.COVER_OF_MONTH,
+      },
+      {
+        id: '3',
+        type: NominationTypesEnum.HIT_OF_MONTH,
+      },
+      {
+        id: '4',
+        type: NominationTypesEnum.PRODUCER_OF_MONTH,
+      },
+    ],
+  });
+
+  await prisma.nominationTypeAllowedReleaseType.createMany({
+    data: [
+      { nominationTypeId: '0', releaseTypeId: '1' },
+      { nominationTypeId: '2', releaseTypeId: '1' },
+      { nominationTypeId: '2', releaseTypeId: '3' },
+      { nominationTypeId: '3', releaseTypeId: '3' },
+    ],
+  });
+
+  await prisma.nominationTypeAllowedAuthorType.createMany({
+    data: [
+      { nominationTypeId: '1', authorTypeId: '1' },
+      { nominationTypeId: '4', authorTypeId: '2' },
+    ],
+    skipDuplicates: true,
+  });
+
+  await prisma.nominationVote.createMany({
+    data: [
+      // 2025 ИЮЛЬ
+      // {
+      //   userId: '1',
+      //   nominationTypeId: '0',
+      //   year: 2025,
+      //   month: 7,
+      //   releaseId: '16',
+      //   createdAt: new Date('2025-8-1'),
+      // },
+      // {
+      //   userId: '1',
+      //   nominationTypeId: '1',
+      //   year: 2025,
+      //   month: 7,
+      //   authorId: '19',
+      //   createdAt: new Date('2025-8-1'),
+      // },
+      // {
+      //   userId: '1',
+      //   nominationTypeId: '2',
+      //   year: 2025,
+      //   month: 7,
+      //   releaseId: '19',
+      //   createdAt: new Date('2025-8-1'),
+      // },
+      // {
+      //   userId: '1',
+      //   nominationTypeId: '3',
+      //   year: 2025,
+      //   month: 7,
+      //   releaseId: '17',
+      //   createdAt: new Date('2025-5-1'),
+      // },
+      // {
+      //   userId: '1',
+      //   nominationTypeId: '4',
+      //   year: 2025,
+      //   month: 7,
+      //   authorId: '18',
+      //   createdAt: new Date('2025-5-1'),
+      // },
+      // 2025 ИЮНЬ
+      {
+        userId: '1',
+        nominationTypeId: '0',
+        year: 2025,
+        month: 6,
+        releaseId: '23',
+        createdAt: new Date('2025-7-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '1',
+        year: 2025,
+        month: 6,
+        authorId: '4',
+        createdAt: new Date('2025-7-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '2',
+        year: 2025,
+        month: 6,
+        releaseId: '20',
+        createdAt: new Date('2025-7-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '3',
+        year: 2025,
+        month: 6,
+        releaseId: '21',
+        createdAt: new Date('2025-7-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '4',
+        year: 2025,
+        month: 6,
+        authorId: '25',
+        createdAt: new Date('2025-7-1'),
+      },
+      // 2025 МАЙ
+      {
+        userId: '1',
+        nominationTypeId: '0',
+        year: 2025,
+        month: 5,
+        releaseId: '24',
+        createdAt: new Date('2025-6-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '1',
+        year: 2025,
+        month: 5,
+        authorId: '28',
+        createdAt: new Date('2025-6-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '2',
+        year: 2025,
+        month: 5,
+        releaseId: '24',
+        createdAt: new Date('2025-5-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '3',
+        year: 2025,
+        month: 5,
+        releaseId: '25',
+        createdAt: new Date('2025-6-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '4',
+        year: 2025,
+        month: 5,
+        authorId: '26',
+        createdAt: new Date('2025-6-1'),
+      },
+
+      // 2025 АПРЕЛЬ
+      {
+        userId: '1',
+        nominationTypeId: '0',
+        year: 2025,
+        month: 4,
+        releaseId: '3',
+        createdAt: new Date('2025-5-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '1',
+        year: 2025,
+        month: 4,
+        authorId: '6',
+        createdAt: new Date('2025-5-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '2',
+        year: 2025,
+        month: 4,
+        releaseId: '3',
+        createdAt: new Date('2025-5-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '3',
+        year: 2025,
+        month: 4,
+        releaseId: '11',
+        createdAt: new Date('2025-5-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '4',
+        year: 2025,
+        month: 4,
+        authorId: '5',
+        createdAt: new Date('2025-5-1'),
+      },
+
+      // 2024 ФЕВРАЛЬ
+      {
+        userId: '1',
+        nominationTypeId: '0',
+        year: 2024,
+        month: 2,
+        releaseId: 'release5',
+        createdAt: new Date('2024-3-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '1',
+        year: 2024,
+        month: 2,
+        authorId: '1',
+        createdAt: new Date('2024-3-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '2',
+        year: 2024,
+        month: 2,
+        releaseId: 'release5',
+        createdAt: new Date('2024-3-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '3',
+        year: 2024,
+        month: 2,
+        releaseId: 'release5',
+        createdAt: new Date('2024-3-1'),
+      },
+      {
+        userId: '1',
+        nominationTypeId: '4',
+        year: 2024,
+        month: 2,
+        authorId: '1',
+        createdAt: new Date('2024-3-1'),
+      },
     ],
   });
 
@@ -957,152 +1668,6 @@ async function main() {
         releaseId: 'release5',
         text: 'Fusce lacus velit, tempor id dui eget, iaculis finibus tellus. Curabitur et euismod risus. Sed hendrerit massa id sem tristique, quis semper dolor fermentum. Phasellus eget ornare neque, ut mattis odio. Suspendisse consectetur dignissim nisl a commodo. Nam egestas, turpis ut suscipit sollicitudin, lacus tellus porta purus, quis pellentesque purus leo sed nisi. Nam facilisis eleifend efficitur. Quisque augue massa, tincidunt in justo quis, pulvinar condimentum nunc. Fusce quam mi, volutpat volutpat tristique sed, fringilla a risus. Vestibulum vulputate tempus arcu. Etiam efficitur ipsum et nibh posuere, ac fermentum velit sollicitudin. Pellentesque ut mi felis. Mauris tellus mauris, tincidunt nec ante vitae, ullamcorper auctor mauris. Pellentesque ultrices arcu eget ornare dictum.',
         createdAt: new Date(Date.now() - 1 * 1800 * 1000),
-      },
-    ],
-  });
-
-  await prisma.releaseArtist.createMany({
-    data: [
-      {
-        releaseId: 'release1',
-        authorId: '1',
-      },
-      {
-        releaseId: 'release2',
-        authorId: '1',
-      },
-      {
-        releaseId: 'release3',
-        authorId: '1',
-      },
-      {
-        releaseId: 'release4',
-        authorId: '1',
-      },
-      {
-        releaseId: 'release5',
-        authorId: '1',
-      },
-      {
-        releaseId: '3',
-        authorId: '6',
-      },
-      {
-        releaseId: '4',
-        authorId: '6',
-      },
-      {
-        releaseId: '5',
-        authorId: '4',
-      },
-      {
-        releaseId: '6',
-        authorId: '4',
-      },
-      {
-        releaseId: '7',
-        authorId: '4',
-      },
-      {
-        releaseId: '8',
-        authorId: '3',
-      },
-      {
-        releaseId: '8',
-        authorId: '4',
-      },
-      {
-        releaseId: '9',
-        authorId: '4',
-      },
-      {
-        releaseId: '10',
-        authorId: '3',
-      },
-      {
-        releaseId: '11',
-        authorId: '5',
-      },
-      {
-        releaseId: '12',
-        authorId: '5',
-      },
-      {
-        releaseId: '13',
-        authorId: '5',
-      },
-      {
-        releaseId: '14',
-        authorId: '4',
-      },
-      {
-        releaseId: '15',
-        authorId: '4',
-      },
-    ],
-  });
-
-  await prisma.releaseProducer.createMany({
-    data: [
-      {
-        releaseId: 'release3',
-        authorId: '13',
-      },
-      {
-        releaseId: 'release3',
-        authorId: '14',
-      },
-      {
-        releaseId: 'release4',
-        authorId: '15',
-      },
-      {
-        releaseId: 'release5',
-        authorId: '15',
-      },
-      {
-        releaseId: '4',
-        authorId: '6',
-      },
-      {
-        releaseId: '4',
-        authorId: '7',
-      },
-      {
-        releaseId: '8',
-        authorId: '3',
-      },
-      {
-        releaseId: '9',
-        authorId: '8',
-      },
-      {
-        releaseId: '10',
-        authorId: '3',
-      },
-      {
-        releaseId: '11',
-        authorId: '5',
-      },
-      {
-        releaseId: '11',
-        authorId: '9',
-      },
-      {
-        releaseId: '11',
-        authorId: '10',
-      },
-      {
-        releaseId: '13',
-        authorId: '11',
-      },
-      {
-        releaseId: '14',
-        authorId: '12',
-      },
-      {
-        releaseId: '15',
-        authorId: '8',
       },
     ],
   });

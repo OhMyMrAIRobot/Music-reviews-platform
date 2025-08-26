@@ -17,4 +17,10 @@ export class AuthorDetailsResponseDto {
       media: number | null;
     };
   }[];
+  nominationsCount: number;
+  winsCount: number;
+  nominationParticipations: {
+    name: string;
+    count: number;
+  }[];
 }
