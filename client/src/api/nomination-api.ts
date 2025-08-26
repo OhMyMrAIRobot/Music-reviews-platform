@@ -60,8 +60,14 @@ export const NominationAPI = {
 		nominationTypeId: string,
 		entityKind: NominationEntityKind,
 		entityId: string
-	) {
-		return api.post(`/nominations`, { nominationTypeId, entityKind, entityId })
+	): Promise<INominationUserVote> {
+		const { data } = await api.post<INominationUserVote>(`/nominations`, {
+			nominationTypeId,
+			entityKind,
+			entityId,
+		})
+
+		return data
 	},
 
 	async fetchUserVotes(): Promise<INominationUserVote[]> {
