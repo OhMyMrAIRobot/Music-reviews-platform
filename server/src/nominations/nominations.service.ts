@@ -53,7 +53,10 @@ export class NominationsService {
     return { ...yearRange, items: data };
   }
 
-  async addNominationVote(dto: AddNominationVoteRequestDto, userId: string) {
+  async addNominationVote(
+    dto: AddNominationVoteRequestDto,
+    userId: string,
+  ): Promise<NominationUserVoteResponseDto> {
     await this.nominationTypesService.findOne(dto.nominationTypeId);
 
     const period = this.getNominationPeriodUTC();
@@ -87,7 +90,7 @@ export class NominationsService {
       throw new BadRequestException('Неподдерживаемый тип сущности!');
     }
 
-    return this.prisma.nominationVote.create({
+    const created = await this.prisma.nominationVote.create({
       data: {
         userId,
         nominationTypeId: dto.nominationTypeId,
@@ -96,6 +99,13 @@ export class NominationsService {
         releaseId: dto.entityKind === 'release' ? dto.entityId : null,
         authorId: dto.entityKind === 'author' ? dto.entityId : null,
       },
+      include: {
+        nominationType: true,
+      },
+    });
+
+    return plainToInstance(NominationUserVoteResponseDto, created, {
+      excludeExtraneousValues: true,
     });
   }
 
@@ -138,6 +148,7 @@ export class NominationsService {
         nominationType: true,
       },
     });
+
     return plainToInstance(NominationUserVoteResponseDto, votes, {
       excludeExtraneousValues: true,
     });
