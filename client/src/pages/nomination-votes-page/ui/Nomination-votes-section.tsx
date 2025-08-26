@@ -1,16 +1,18 @@
 import { observer } from 'mobx-react-lite'
 import { FC } from 'react'
 import { NominationCandidate } from '../../../models/nomination/nomination-candidate/nomination-candidate'
+import { INominationType } from '../../../models/nomination/nomination-type/nomination-type'
 import NominationVotesSectionItem from './Nomination-votes-section-item'
 
 interface IProps {
 	title: string
 	isLoading: boolean
 	candidates?: NominationCandidate[]
+	nominationType?: INominationType
 }
 
 const NominationVotesSection: FC<IProps> = observer(
-	({ title, candidates, isLoading }) => {
+	({ title, candidates, isLoading, nominationType }) => {
 		return (
 			(isLoading || (candidates && candidates.length > 0)) && (
 				<div className='border-b border-white/10 pb-5'>
@@ -29,6 +31,7 @@ const NominationVotesSection: FC<IProps> = observer(
 										key={`${title}-${candidate.id}`}
 										isLoading={false}
 										candidate={candidate}
+										nominationType={nominationType}
 									/>
 							  ))}
 					</div>

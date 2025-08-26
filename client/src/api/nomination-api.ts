@@ -1,7 +1,10 @@
 import axios from 'axios'
 import { INominationCandidatesResponse } from '../models/nomination/nomination-candidate/nomination-candidates-response'
+import { NominationEntityKind } from '../models/nomination/nomination-entity-kind'
+import { INominationType } from '../models/nomination/nomination-type/nomination-type'
 import { INominationWinnerParticipation } from '../models/nomination/nomination-winner-participation/nomination-winner-participation'
 import { INominationWinnersResponse } from '../models/nomination/nomination-winner/nomination-winners-response'
+import { api } from './api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
 
@@ -14,6 +17,14 @@ const _api = axios.create({
 })
 
 export const NominationAPI = {
+	async fetchNominationTypes(): Promise<INominationType[]> {
+		const { data } = await axios.get<INominationType[]>(
+			`${SERVER_URL}/nomination-types`
+		)
+
+		return data
+	},
+
 	async fetchWinners(
 		month: number | null,
 		year: number | null
@@ -42,5 +53,13 @@ export const NominationAPI = {
 		)
 
 		return data
+	},
+
+	async postVote(
+		nominationTypeId: string,
+		entityKind: NominationEntityKind,
+		entityId: string
+	) {
+		return api.post(`/nominations`, { nominationTypeId, entityKind, entityId })
 	},
 }

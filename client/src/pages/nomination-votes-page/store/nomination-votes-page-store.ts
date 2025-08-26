@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable } from 'mobx'
 import { NominationAPI } from '../../../api/nomination-api'
 import { INominationCandidatesResponse } from '../../../models/nomination/nomination-candidate/nomination-candidates-response'
+import { NominationEntityKind } from '../../../models/nomination/nomination-entity-kind'
 
 class NominationVotesPageStore {
 	constructor() {
@@ -19,6 +21,21 @@ class NominationVotesPageStore {
 			this.setCandidates(data)
 		} catch {
 			this.setCandidates(null)
+		}
+	}
+
+	postVote = async (
+		nominationTypeId: string,
+		entityKind: NominationEntityKind,
+		entityId: string
+	): Promise<string[]> => {
+		try {
+			await NominationAPI.postVote(nominationTypeId, entityKind, entityId)
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
 		}
 	}
 }
