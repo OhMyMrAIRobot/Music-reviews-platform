@@ -38,6 +38,12 @@ export class NominationsController {
     return this.nominationsService.findCandidates();
   }
 
+  @Get('votes')
+  @UseGuards(JwtAuthGuard)
+  findUserVotes(@Request() req: IAuthenticatedRequest) {
+    return this.nominationsService.findUserVotes(req.user.id);
+  }
+
   @Post()
   @UseGuards(JwtAuthGuard)
   addNominationVote(

@@ -46,7 +46,7 @@ async function main() {
   await prisma.nominationTypeAllowedAuthorType.deleteMany();
   await prisma.nominationTypeAllowedReleaseType.deleteMany();
   await prisma.nominationType.deleteMany();
-  await prisma.nomitationVote.deleteMany();
+  await prisma.nominationVote.deleteMany();
 
   const password = await bcrypt.hash('1234567', 10);
 
@@ -1363,7 +1363,7 @@ async function main() {
     skipDuplicates: true,
   });
 
-  await prisma.nomitationVote.createMany({
+  await prisma.nominationVote.createMany({
     data: [
       // 2025 ИЮЛЬ
       // {

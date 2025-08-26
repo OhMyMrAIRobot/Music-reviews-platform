@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { NomitationVote } from '@prisma/client';
+import { NominationVote } from '@prisma/client';
+import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
 import { AuthorTypesEnum } from 'src/author-types/entities/author-types.enum';
 import { AuthorsService } from 'src/authors/authors.service';
@@ -13,6 +14,7 @@ import {
   NominationMonthWinnerItemDto,
 } from './dto/response/find-nomination-winners.response.dto';
 import { FindNominationWinnersByAuthorIdResponseDto } from './dto/response/find-nominations-winners-by-author-id.response.dto';
+import { NominationUserVoteResponseDto } from './dto/response/nomination-user-vote.response.dto';
 import { NominationPeriod } from './types/nomination-period.type';
 
 @Injectable()
@@ -85,7 +87,7 @@ export class NominationsService {
       throw new BadRequestException('Неподдерживаемый тип сущности!');
     }
 
-    return this.prisma.nomitationVote.create({
+    return this.prisma.nominationVote.create({
       data: {
         userId,
         nominationTypeId: dto.nominationTypeId,
@@ -121,13 +123,33 @@ export class NominationsService {
     return data[0];
   }
 
+  async findUserVotes(
+    userId: string,
+  ): Promise<NominationUserVoteResponseDto[]> {
+    const period = this.getNominationPeriodUTC();
+
+    const votes = await this.prisma.nominationVote.findMany({
+      where: {
+        userId,
+        month: period.month,
+        year: period.year,
+      },
+      include: {
+        nominationType: true,
+      },
+    });
+    return plainToInstance(NominationUserVoteResponseDto, votes, {
+      excludeExtraneousValues: true,
+    });
+  }
+
   async findOne(
     userId: string,
     nominationTypeId: string,
     month: number,
     year: number,
-  ): Promise<NomitationVote | null> {
-    return this.prisma.nomitationVote.findUnique({
+  ): Promise<NominationVote | null> {
+    return this.prisma.nominationVote.findUnique({
       where: {
         userId_nominationTypeId_year_month: {
           userId,
@@ -168,18 +190,6 @@ export class NominationsService {
                         FROM "Release_artists" ra
                         JOIN "Authors" a ON a.id = ra.author_id
                         WHERE ra.release_id = x.id
-
-                        UNION
-                        SELECT DISTINCT a.name AS name
-                        FROM "Release_producers" rp
-                        JOIN "Authors" a ON a.id = rp.author_id
-                        WHERE rp.release_id = x.id
-
-                        UNION
-                        SELECT DISTINCT a.name AS name
-                        FROM "Release_designers" rd
-                        JOIN "Authors" a ON a.id = rd.author_id
-                        WHERE rd.release_id = x.id
                       ) names
                     ), '[]'::jsonb)
                   )
@@ -208,18 +218,6 @@ export class NominationsService {
                         FROM "Release_artists" ra
                         JOIN "Authors" a ON a.id = ra.author_id
                         WHERE ra.release_id = x.id
-
-                        UNION
-                        SELECT DISTINCT a.name AS name
-                        FROM "Release_producers" rp
-                        JOIN "Authors" a ON a.id = rp.author_id
-                        WHERE rp.release_id = x.id
-
-                        UNION
-                        SELECT DISTINCT a.name AS name
-                        FROM "Release_designers" rd
-                        JOIN "Authors" a ON a.id = rd.author_id
-                        WHERE rd.release_id = x.id
                       ) names
                     ), '[]'::jsonb)
                   )
@@ -244,18 +242,6 @@ export class NominationsService {
                     'authors', COALESCE((
                       SELECT jsonb_agg(name ORDER BY name)
                       FROM (
-                        SELECT DISTINCT a.name AS name
-                        FROM "Release_artists" ra
-                        JOIN "Authors" a ON a.id = ra.author_id
-                        WHERE ra.release_id = x.id
-
-                        UNION
-                        SELECT DISTINCT a.name AS name
-                        FROM "Release_producers" rp
-                        JOIN "Authors" a ON a.id = rp.author_id
-                        WHERE rp.release_id = x.id
-
-                        UNION
                         SELECT DISTINCT a.name AS name
                         FROM "Release_designers" rd
                         JOIN "Authors" a ON a.id = rd.author_id

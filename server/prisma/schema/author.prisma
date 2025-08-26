@@ -11,7 +11,7 @@ model Author {
   userFavAuthor      UserFavAuthor[]
   registeredAuthor   RegisteredAuthor[]
   authorConfirmation AuthorConfirmation[]
-  nomitationVote     NomitationVote[]
+  nominationVote     NominationVote[]
 
   @@map("Authors")
 }

@@ -2,7 +2,7 @@ model NominationType {
   id   String @id @default(cuid())
   type String @unique @db.VarChar(60)
 
-  nomitationVote                   NomitationVote[]
+  nominationVote                   NominationVote[]
   nominationTypeAllowedAuthorType  NominationTypeAllowedAuthorType[]
   nominationTypeAllowedReleaseType NominationTypeAllowedReleaseType[]
 
@@ -31,7 +31,7 @@ model NominationTypeAllowedReleaseType {
   @@map("Nomination_type_allowed_release_types")
 }
 
-model NomitationVote {
+model NominationVote {
   id               String   @id @default(cuid())
   userId           String?  @map("user_id")
   nominationTypeId String   @map("nomination_type_id")

@@ -16,7 +16,7 @@ model Release {
   userFavRelease  UserFavRelease[]
   releaseMedia    ReleaseMedia[]
   authorComment   AuthorComment[]
-  nomitationVote  NomitationVote[]
+  nominationVote  NominationVote[]
 
   @@map("Releases")
 }
