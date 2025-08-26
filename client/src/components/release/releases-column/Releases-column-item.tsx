@@ -35,16 +35,18 @@ const ReleasesColumnItem: FC<IProps> = ({ release, isLoading }) => {
 				</Link>
 
 				<div className='w-full max-w-1/2 grid grid-rows-3 h-[60px] lg:h-[72px] text-ellipsis'>
-					<div className='flex items-center gap-2'>
-						<ReleaseReviewsCount
-							textCount={release.textCount}
-							noTextCount={release.withoutTextCount}
-						/>
-						<ReleaseAuthorActions
-							hasAuthorComments={release.hasAuthorComments}
-							hasAuthorLikes={release.hasAuthorLikes}
-						/>
-					</div>
+					{(release.textCount !== 0 || release.withoutTextCount !== 0) && (
+						<div className='flex items-center gap-2'>
+							<ReleaseReviewsCount
+								textCount={release.textCount}
+								noTextCount={release.withoutTextCount}
+							/>
+							<ReleaseAuthorActions
+								hasAuthorComments={release.hasAuthorComments}
+								hasAuthorLikes={release.hasAuthorLikes}
+							/>
+						</div>
+					)}
 
 					<Link
 						to={navigateToReleaseDetails(release.id)}

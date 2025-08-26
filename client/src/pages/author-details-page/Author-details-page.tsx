@@ -8,6 +8,7 @@ import AuthorDetailsReleases from './ui/Author-details-releases'
 import AuthorDetailsReleasesCarousel from './ui/Author-details-releases-carousel'
 import AuthorDetailsReviewsCarousel from './ui/Author-details-reviews-carousel'
 import AuthorDetailsStats from './ui/Author-details-stats'
+import AuthorDetailsNominations from './ui/author-details-nominations/Author-details-nominations'
 
 const AuthorDetailsPage = observer(() => {
 	const { id } = useParams()
@@ -25,6 +26,8 @@ const AuthorDetailsPage = observer(() => {
 		}
 	}, [fetchAuthor, id])
 
+	if (!id) return null
+
 	return (
 		authorDetailsPageStore.author && (
 			<div className='flex flex-col gap-10'>
@@ -36,9 +39,10 @@ const AuthorDetailsPage = observer(() => {
 					author={authorDetailsPageStore.author}
 					isLoading={isLoading}
 				/>
-				<AuthorDetailsReleasesCarousel />
-				<AuthorDetailsReviewsCarousel />
-				<AuthorDetailsReleases />
+				<AuthorDetailsReleasesCarousel id={id} />
+				<AuthorDetailsReviewsCarousel id={id} />
+				<AuthorDetailsNominations id={id} />
+				<AuthorDetailsReleases id={id} />
 			</div>
 		)
 	)

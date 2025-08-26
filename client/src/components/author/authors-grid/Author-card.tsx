@@ -5,6 +5,7 @@ import { IAuthor } from '../../../models/author/author'
 import { ReleaseTypesEnum } from '../../../models/release/release-type/release-types-enum'
 import LikesCount from '../../utils/Likes-count'
 import SkeletonLoader from '../../utils/Skeleton-loader'
+import AuthorNominations from '../author-nomination/Author-nominations'
 import AuthorReleaseTypesRatings from '../author-ratings/Author-release-types-ratings'
 import AuthorTypes from '../author-types/Author-types'
 import RegisteredAuthorTypes from '../registered-author/Registered-author-types'
@@ -62,6 +63,15 @@ const AuthorCard: FC<IProps> = ({ author, isLoading }) => {
 					releaseType={ReleaseTypesEnum.ALBUM}
 					stats={author.releaseTypeRatings}
 				/>
+
+				{author.nominationsCount > 0 && (
+					<div className='bg-zinc-800 border border-zinc-700 rounded-full flex items-center py-[6px] px-3 mt-3 justify-center'>
+						<AuthorNominations
+							winsCount={author.winsCount}
+							totalCount={author.nominationsCount}
+						/>
+					</div>
+				)}
 			</Link>
 		)
 	)

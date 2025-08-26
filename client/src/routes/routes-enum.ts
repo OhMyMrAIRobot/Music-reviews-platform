@@ -20,6 +20,8 @@ export const ROUTES = {
 	AUTHOR_LIKES: 'author-likes',
 	AUTHOR_CONFIRMATION: 'author-confirmation',
 	REGISTERED_AUTHORS: 'registered-authors',
+	AWARDS: 'awards',
+	NOMINATION_VOTES: 'votes',
 	AUTH: {
 		PREFIX: 'auth',
 		LOGIN: 'login',

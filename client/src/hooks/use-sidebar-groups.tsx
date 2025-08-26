@@ -11,6 +11,7 @@ import RatingsSvg from '../components/layout/sidebar/svg/Ratings-svg'
 import ReleaseSvg from '../components/layout/sidebar/svg/Release-svg'
 import TextReviewSvg from '../components/review/svg/Text-review-svg'
 import ActivationSvg from '../components/svg/Activation-svg'
+import AwardSvg from '../components/svg/Award-svg'
 import MediaPlayerSvg from '../components/svg/Media-player-svg'
 import PencilSvg from '../components/svg/Pencil-svg'
 import { ROUTES } from '../routes/routes-enum'
@@ -35,6 +36,7 @@ export const useSidebarGroups = () => {
 		navigateToRegisteredAuthors,
 		navigateToAuthorConfirmation,
 		navigateToAuthorLikes,
+		navigateToAwards,
 	} = useNavigationPath()
 
 	const { isActive } = useActivePath()
@@ -81,6 +83,12 @@ export const useSidebarGroups = () => {
 			icon: <RatingsSvg className='size-5' />,
 			label: 'Рейтинг',
 			active: isActive(`/${ROUTES.RATINGS}`),
+		},
+		{
+			href: navigateToAwards,
+			icon: <AwardSvg className='size-5' />,
+			label: 'Премия',
+			active: isActive(`/${ROUTES.AWARDS}`),
 		},
 	]
 

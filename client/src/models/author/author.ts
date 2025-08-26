@@ -12,4 +12,10 @@ export interface IAuthor {
 	authorTypes: IAuthorType[]
 	isRegistered: boolean
 	releaseTypeRatings: IReleaseTypeRatings[]
+	nominationsCount: number
+	winsCount: number
+	nominationParticipations: {
+		name: string
+		count: number
+	}[]
 }

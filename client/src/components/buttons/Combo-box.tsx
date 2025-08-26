@@ -2,6 +2,7 @@ import { FC, useEffect, useRef, useState } from 'react'
 import { getRoleColor } from '../../utils/get-role-color'
 import ArrowBottomSvg from '../layout/header/svg/Arrow-bottom-svg'
 import TickSvg from '../svg/Tick-svg'
+import Loader from '../utils/Loader'
 
 interface ComboBoxProps {
 	options: string[]
@@ -9,6 +10,7 @@ interface ComboBoxProps {
 	onChange: (selected: string) => void
 	className?: string
 	placeholder?: string
+	isLoading?: boolean
 }
 
 const ComboBox: FC<ComboBoxProps> = ({
@@ -17,6 +19,7 @@ const ComboBox: FC<ComboBoxProps> = ({
 	onChange,
 	className = '',
 	placeholder = '',
+	isLoading = false,
 }) => {
 	if (options.length === 0) {
 		throw new Error('ComboBox: options must be a non-empty array.')
@@ -41,20 +44,26 @@ const ComboBox: FC<ComboBoxProps> = ({
 	return (
 		<div
 			ref={comboRef}
-			className={`relative inline-block w-full h-full bg-zinc-950 rounded-md ${className} select-none`}
+			className={`relative inline-block w-full h-full bg-zinc-950 rounded-md ${className} select-none ${
+				isLoading ? 'pointer-events-none opacity-50' : ''
+			}`}
 		>
 			<button
 				onClick={() => setIsOpen(!isOpen)}
 				role='combobox'
 				className='flex w-full gap-x-1 h-full justify-between items-center px-3 text-sm font-medium text-white cursor-pointer py-2'
 			>
-				<span
-					className={`${getRoleColor(selected)} ${
-						selected === placeholder ? 'opacity-50' : ''
-					}`}
-				>
-					{selected}
-				</span>
+				<div className='flex items-center gap-1.5'>
+					{isLoading && <Loader className='size-4' />}
+					<span
+						className={`${getRoleColor(selected)} ${
+							selected === placeholder ? 'opacity-50' : ''
+						}`}
+					>
+						{selected}
+					</span>
+				</div>
+
 				<ArrowBottomSvg className='h-5 w-4 opacity-70' />
 			</button>
 

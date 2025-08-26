@@ -2,6 +2,7 @@ import { makeAutoObservable } from 'mobx'
 import { AuthorAPI } from '../api/author/author-api'
 import { AuthorConfirmationAPI } from '../api/author/author-confirmation-api'
 import { FeedbackAPI } from '../api/feedback/feedback-api'
+import { NominationAPI } from '../api/nomination-api'
 import { ReleaseAPI } from '../api/release/release-api'
 import { ReleaseMediaAPI } from '../api/release/release-media-api'
 import { RolesAPI } from '../api/role-api'
@@ -9,6 +10,7 @@ import { SocialMediaAPI } from '../api/social-media-api'
 import { IAuthorConfirmationStatus } from '../models/author/author-confirmation/author-confirmation-status'
 import { IAuthorType } from '../models/author/author-type/author-type'
 import { IFeedbackStatus } from '../models/feedback/feedback-status/feedback-status'
+import { INominationType } from '../models/nomination/nomination-type/nomination-type'
 import { IReleaseMediaStatus } from '../models/release/release-media/release-media-status/release-media-status'
 import { IReleaseMediaType } from '../models/release/release-media/release-media-type/release-media-type'
 import { IReleaseType } from '../models/release/release-type/release-type'
@@ -28,6 +30,7 @@ class MetaStore {
 	releaseMediaStatuses: IReleaseMediaStatus[] = []
 	releaseMediaTypes: IReleaseMediaType[] = []
 	authorConfirmationStatuses: IAuthorConfirmationStatus[] = []
+	nominationTypes: INominationType[] = []
 
 	setAuthorTypes(data: IAuthorType[]) {
 		this.authorTypes = data
@@ -59,6 +62,10 @@ class MetaStore {
 
 	setAuthorConfirmationStatuses(data: IAuthorConfirmationStatus[]) {
 		this.authorConfirmationStatuses = data
+	}
+
+	setNominationTypes(data: INominationType[]) {
+		this.nominationTypes = data
 	}
 
 	fetchAuthorTypes = async () => {
@@ -131,6 +138,15 @@ class MetaStore {
 			this.setAuthorConfirmationStatuses(data)
 		} catch {
 			this.setAuthorConfirmationStatuses([])
+		}
+	}
+
+	fetchNominationTypes = async () => {
+		try {
+			const data = await NominationAPI.fetchNominationTypes()
+			this.setNominationTypes(data)
+		} catch {
+			this.setNominationTypes([])
 		}
 	}
 }

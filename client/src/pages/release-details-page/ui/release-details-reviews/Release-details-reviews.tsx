@@ -50,7 +50,7 @@ const ReleaseDetailsReviews: FC<IProps> = ({
 							review =>
 								review.text && (
 									<ReleaseDetailsReviewsItem
-										key={review.id}
+										key={review.userId}
 										review={review}
 										isLoading={isLoading}
 									/>

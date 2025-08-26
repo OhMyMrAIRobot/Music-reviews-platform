@@ -2,9 +2,11 @@
 import { makeAutoObservable } from 'mobx'
 import { AuthorAPI } from '../../../api/author/author-api.ts'
 import { UserFavAuthorAPI } from '../../../api/author/user-fav-author-api.ts'
+import { NominationAPI } from '../../../api/nomination-api.ts'
 import { ReleaseAPI } from '../../../api/release/release-api.ts'
 import { ReviewAPI } from '../../../api/review/review-api.ts'
 import { IAuthor } from '../../../models/author/author'
+import { INominationWinnerParticipationItem } from '../../../models/nomination/nomination-winner-participation/nomination-winner-participation-item.ts'
 import { IRelease } from '../../../models/release/release'
 import { IReview } from '../../../models/review/review.ts'
 import { toggleFavReview } from '../../../utils/toggle-fav-review.ts'
@@ -18,8 +20,9 @@ class AuthorDetailsPageStore {
 	topReleases: IRelease[] = []
 	lastReviews: IReview[] = []
 	allReleases: IRelease[] = []
+	nominations: INominationWinnerParticipationItem[] = []
 
-	setAuthor(data: IAuthor) {
+	setAuthor(data: IAuthor | null) {
 		this.author = data
 	}
 
@@ -35,12 +38,16 @@ class AuthorDetailsPageStore {
 		this.allReleases = data
 	}
 
+	setNominations(data: INominationWinnerParticipationItem[]) {
+		this.nominations = data
+	}
+
 	fetchAuthorById = async (id: string) => {
 		try {
 			const data = await AuthorAPI.fetchAuthorById(id)
 			this.setAuthor(data)
-		} catch (e) {
-			console.log(e)
+		} catch {
+			this.setAuthor(null)
 		}
 	}
 
@@ -48,8 +55,8 @@ class AuthorDetailsPageStore {
 		try {
 			const data = await ReleaseAPI.fetchByAuthorId(authorId, false)
 			this.setTopReleases(data)
-		} catch (e) {
-			console.log(e)
+		} catch {
+			this.setTopReleases([])
 		}
 	}
 
@@ -66,8 +73,17 @@ class AuthorDetailsPageStore {
 		try {
 			const data = await ReleaseAPI.fetchByAuthorId(authorId, true)
 			this.setAllReleases(data)
-		} catch (e) {
-			console.log(e)
+		} catch {
+			this.setAllReleases([])
+		}
+	}
+
+	fetchNominations = async (authorId: string) => {
+		try {
+			const data = await NominationAPI.fetchWinnersByAuthorId(authorId)
+			this.setNominations(data.nominations)
+		} catch {
+			this.setNominations([])
 		}
 	}
 

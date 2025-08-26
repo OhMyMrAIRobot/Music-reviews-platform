@@ -1,13 +1,15 @@
-import { useEffect } from 'react'
-import { useParams } from 'react-router'
+import { observer } from 'mobx-react-lite'
+import { FC, useEffect } from 'react'
 import ReleasesColumn from '../../../components/release/releases-column/Releases-column'
 import { useLoading } from '../../../hooks/use-loading'
 import { useStore } from '../../../hooks/use-store'
 import { ReleaseTypesEnum } from '../../../models/release/release-type/release-types-enum'
 
-const AuthorDetailsReleases = () => {
-	const { id } = useParams()
+interface IProps {
+	id: string
+}
 
+const AuthorDetailsReleases: FC<IProps> = observer(({ id }) => {
 	const { authorDetailsPageStore } = useStore()
 
 	const { execute: fetch, isLoading } = useLoading(
@@ -15,10 +17,9 @@ const AuthorDetailsReleases = () => {
 	)
 
 	useEffect(() => {
-		if (id) {
-			fetch(id)
-		}
-	}, [fetch, id])
+		fetch(id)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [id])
 
 	const tracks = authorDetailsPageStore.allReleases.filter(
 		val => val.releaseType === ReleaseTypesEnum.SINGLE
@@ -46,6 +47,6 @@ const AuthorDetailsReleases = () => {
 			</div>
 		</section>
 	)
-}
+})
 
 export default AuthorDetailsReleases
