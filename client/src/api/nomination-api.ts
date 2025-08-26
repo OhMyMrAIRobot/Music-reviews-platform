@@ -2,6 +2,7 @@ import axios from 'axios'
 import { INominationCandidatesResponse } from '../models/nomination/nomination-candidate/nomination-candidates-response'
 import { NominationEntityKind } from '../models/nomination/nomination-entity-kind'
 import { INominationType } from '../models/nomination/nomination-type/nomination-type'
+import { INominationUserVote } from '../models/nomination/nomination-user-vote'
 import { INominationWinnerParticipation } from '../models/nomination/nomination-winner-participation/nomination-winner-participation'
 import { INominationWinnersResponse } from '../models/nomination/nomination-winner/nomination-winners-response'
 import { api } from './api-instance'
@@ -61,5 +62,11 @@ export const NominationAPI = {
 		entityId: string
 	) {
 		return api.post(`/nominations`, { nominationTypeId, entityKind, entityId })
+	},
+
+	async fetchUserVotes(): Promise<INominationUserVote[]> {
+		const { data } = await api.get<INominationUserVote[]>(`/nominations/votes`)
+
+		return data
 	},
 }
