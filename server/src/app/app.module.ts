@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 import { PrismaModule } from 'prisma/prisma.module';
 import { AlbumValueVotesModule } from 'src/album-value-votes/album-value-votes.module';
+import { AlbumValuesModule } from 'src/album-values/album-values.module';
 import { NominationTypesModule } from 'src/nomination-types/nomination-types.module';
 import { NominationsModule } from 'src/nominations/nominations.module';
 import { AuthModule } from '../auth/auth.module';
@@ -70,6 +71,7 @@ import { AppService } from './app.service';
     NominationsModule,
     NominationTypesModule,
     AlbumValueVotesModule,
+    AlbumValuesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
