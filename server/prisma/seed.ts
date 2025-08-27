@@ -47,6 +47,8 @@ async function main() {
   await prisma.nominationTypeAllowedReleaseType.deleteMany();
   await prisma.nominationType.deleteMany();
   await prisma.nominationVote.deleteMany();
+  await prisma.albumValueVote.deleteMany();
+  await prisma.albumValueAggregate.deleteMany();
 
   const password = await bcrypt.hash('1234567', 10);
 
@@ -1571,6 +1573,43 @@ async function main() {
         month: 2,
         authorId: '1',
         createdAt: new Date('2024-3-1'),
+      },
+    ],
+  });
+
+  await prisma.albumValueVote.createMany({
+    data: [
+      {
+        userId: '1',
+        releaseId: 'release2',
+        rarityGenre: 1.5,
+        rarityPerformance: 1.5,
+        formatReleaseScore: 1,
+        integrityGenre: 0.5,
+        integritySemantic: 0.5,
+        depthScore: 2,
+        qualityRhymesImages: 9,
+        qualityStructureRhythm: 9,
+        qualityStyleImpl: 8,
+        qualityIndividuality: 10,
+        influenceAuthorPopularity: 3.5,
+        influenceReleaseAnticip: 3.5,
+      },
+      {
+        userId: '2',
+        releaseId: 'release2',
+        rarityGenre: 1,
+        rarityPerformance: 1,
+        formatReleaseScore: 1,
+        integrityGenre: 0.5,
+        integritySemantic: 0.5,
+        depthScore: 2,
+        qualityRhymesImages: 8,
+        qualityStructureRhythm: 8,
+        qualityStyleImpl: 8,
+        qualityIndividuality: 8,
+        influenceAuthorPopularity: 2.5,
+        influenceReleaseAnticip: 2.5,
       },
     ],
   });
