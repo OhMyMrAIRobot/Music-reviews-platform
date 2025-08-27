@@ -209,6 +209,7 @@ export class ReleasesService {
         releaseArtist: true,
         releaseDesigner: true,
         releaseProducer: true,
+        releaseType: true,
       },
     });
 
