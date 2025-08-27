@@ -1,0 +1,93 @@
+model AlbumValueVote {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  releaseId String   @map("release_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  release   Release  @relation(fields: [releaseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  // ---------- Критерии ----------
+  // Редкость
+  rarityGenre               Decimal @map("rarity_genre") @db.Decimal(2, 1)
+  rarityPerformance         Decimal @map("rarity_performance") @db.Decimal(2, 1)
+  // Целостность
+  formatReleaseScore        Int     @map("format_release_score") @db.SmallInt
+  integrityGenre            Decimal @map("integrity_genre") @db.Decimal(2, 1)
+  integritySemantic         Decimal @map("integrity_semantic") @db.Decimal(2, 1)
+  // Глубина
+  depthScore                Int     @map("depth_score") @db.SmallInt
+  // Качество
+  qualityRhymesImages       Int     @map("quality_rhymes_images") @db.SmallInt
+  qualityStructureRhythm    Int     @map("quality_structure_rhythm") @db.SmallInt
+  qualityStyleImpl          Int     @map("quality_style_impl") @db.SmallInt
+  qualityIndividuality      Int     @map("quality_individuality") @db.SmallInt
+  // Влияние
+  influenceAuthorPopularity Decimal @map("influence_author_popularity") @db.Decimal(2, 1)
+  influenceReleaseAnticip   Decimal @map("influence_release_anticip") @db.Decimal(2, 1)
+
+  @@unique([userId, releaseId])
+  @@map("Album_value_votes")
+}
+
+model AlbumValueAggregate {
+  releaseId  String   @id @map("release_id")
+  votesCount Int      @map("votes_count")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  release    Release  @relation(fields: [releaseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  // ---------- Суммы по подкритериям и производным ----------
+  // Редкость
+  sumRarityGenre               Decimal @map("sum_rarity_genre") @db.Decimal(10, 2)
+  sumRarityPerformance         Decimal @map("sum_rarity_performance") @db.Decimal(10, 2)
+  // Целостность
+  sumFormatReleaseScore        Int     @map("sum_format_release_score") @db.Integer
+  sumIntegrityGenre            Decimal @map("sum_integrity_genre") @db.Decimal(10, 2)
+  sumIntegritySemantic         Decimal @map("sum_integrity_semantic") @db.Decimal(10, 2)
+  // Глубина
+  sumDepth                     Int     @map("sum_depth") @db.Integer
+  // Качество
+  sumQualityRhymesImages       Int     @map("sum_quality_rhymes_images") @db.Integer
+  sumQualityStructureRhythm    Int     @map("sum_quality_structure_rhythm") @db.Integer
+  sumQualityStyleImpl          Int     @map("sum_quality_style_impl") @db.Integer
+  sumQualityIndividuality      Int     @map("sum_quality_individuality") @db.Integer
+  sumQualityPoints             Int     @map("sum_quality_points") @db.Integer
+  sumQualityFactor             Decimal @map("sum_quality_factor") @db.Decimal(12, 4)
+  // Влияние
+  sumInfluenceAuthorPopularity Decimal @map("sum_influence_author_popularity") @db.Decimal(10, 2)
+  sumInfluenceReleaseAnticip   Decimal @map("sum_influence_release_anticip") @db.Decimal(10, 2)
+  sumInfluencePoints           Decimal @map("sum_influence_points") @db.Decimal(10, 2)
+  sumInfluenceMultiplier       Decimal @map("sum_influence_multiplier") @db.Decimal(10, 2)
+  // Итог
+  sumCore                      Decimal @map("sum_core") @db.Decimal(12, 2)
+  sumFinalValue                Decimal @map("sum_final_value") @db.Decimal(14, 2)
+
+  // ---------- Средние значения по каждому критерию ----------
+  // Редкость
+  rarityGenreAvg               Decimal @map("rarity_genre_avg") @db.Decimal(4, 2)
+  rarityPerformanceAvg         Decimal @map("rarity_performance_avg") @db.Decimal(4, 2)
+  rarityAvg                    Decimal @map("rarity_avg") @db.Decimal(4, 2)
+  // Целостность
+  formatReleaseScoreAvg        Decimal @map("format_release_score_avg") @db.Decimal(4, 2)
+  integrityGenreAvg            Decimal @map("integrity_genre_avg") @db.Decimal(4, 2)
+  integritySemanticAvg         Decimal @map("integrity_semantic_avg") @db.Decimal(4, 2)
+  integrityAvg                 Decimal @map("integrity_avg") @db.Decimal(4, 2)
+  // Глубина
+  depthAvg                     Decimal @map("depth_avg") @db.Decimal(4, 2)
+  // Качество
+  qualityRhymesImagesAvg       Decimal @map("quality_rhymes_images_avg") @db.Decimal(5, 2)
+  qualityStructureRhythmAvg    Decimal @map("quality_structure_rhythm_avg") @db.Decimal(5, 2)
+  qualityStyleImplAvg          Decimal @map("quality_style_impl_avg") @db.Decimal(5, 2)
+  qualityIndividualityAvg      Decimal @map("quality_individuality_avg") @db.Decimal(5, 2)
+  qualityPointsAvg             Decimal @map("quality_points_avg") @db.Decimal(5, 2)
+  qualityFactorAvg             Decimal @map("quality_factor_avg") @db.Decimal(6, 4)
+  // Влияние
+  influenceAuthorPopularityAvg Decimal @map("influence_author_popularity_avg") @db.Decimal(4, 2)
+  influenceReleaseAnticipAvg   Decimal @map("influence_release_anticip_avg") @db.Decimal(4, 2)
+  influencePointsAvg           Decimal @map("influence_points_avg") @db.Decimal(4, 2)
+  influenceMultiplierAvg       Decimal @map("influence_multiplier_avg") @db.Decimal(4, 2)
+  // Итог
+  coreSumAvg                   Decimal @map("core_sum_avg") @db.Decimal(6, 2)
+  valueAvg                     Decimal @map("value_avg") @db.Decimal(7, 2)
+
+  @@map("Album_value_aggregate")
+}
