@@ -7,6 +7,7 @@ import { toDecimal } from 'src/shared/utils/to-decimal';
 import { FindAlbumValuesQuery } from './dto/request/query/find-album-values.query.dto';
 import { AlbumValueResponseDto } from './dto/response/album-value.response.dto';
 import { FindAlbumValuesResponseDto } from './dto/response/find-album-values.response.dto';
+import { ALBUM_VALUE_TIER_RANGES } from './types/album-values-tier.type';
 
 @Injectable()
 export class AlbumValuesService {
@@ -39,12 +40,28 @@ export class AlbumValuesService {
   async findAll(
     query: FindAlbumValuesQuery,
   ): Promise<FindAlbumValuesResponseDto> {
-    const { minValue, maxValue, limit, offset = 0, order } = query;
+    const { limit, offset = 0, order, tiers } = query;
+
+    const filters: string[] = [];
+
+    if (tiers && tiers.length > 0) {
+      const orClauses = tiers
+        .map((t) => {
+          const range = ALBUM_VALUE_TIER_RANGES[t];
+          if (!range) return null;
+          return `(av.value_avg >= ${range.min} AND av.value_avg <= ${range.max})`;
+        })
+        .filter((x): x is string => Boolean(x));
+      if (orClauses.length > 0) {
+        filters.push(`(${orClauses.join(' OR ')})`);
+      }
+    }
+
+    const whereSql = filters.length > 0 ? `WHERE ${filters.join(' AND ')}` : '';
 
     const rawQuery = `
 			${this.baseQuery}
-			WHERE ${minValue !== undefined ? `av.value_avg > ${minValue} AND` : ''} 
-						${maxValue !== undefined ? `av.value_avg < ${maxValue}` : '1=1'}
+			${whereSql}
 			ORDER BY ${
         order !== undefined
           ? `${order === 'asc' ? `av.value_avg ASC` : `av.value_avg DESC`}`
@@ -54,17 +71,32 @@ export class AlbumValuesService {
 			OFFSET ${offset}
 		`;
 
-    const where: Prisma.AlbumValueAggregateWhereInput = {
-      valueAvg: {
-        ...(minValue !== undefined ? { gt: toDecimal(minValue) } : {}),
-        ...(maxValue !== undefined ? { lt: toDecimal(maxValue) } : {}),
-      },
-    };
+    const andParts: Prisma.AlbumValueAggregateWhereInput[] = [];
+
+    if (tiers && tiers.length > 0) {
+      const orRanges = tiers
+        .map((t) => {
+          const range = ALBUM_VALUE_TIER_RANGES[t];
+          if (!range) return null;
+          return {
+            valueAvg: {
+              gte: toDecimal(range.min),
+              lte: toDecimal(range.max),
+            },
+          } as Prisma.AlbumValueAggregateWhereInput;
+        })
+        .filter((x): x is Prisma.AlbumValueAggregateWhereInput => Boolean(x));
+
+      if (orRanges.length > 0) {
+        andParts.push({ OR: orRanges });
+      }
+    }
+
+    const where: Prisma.AlbumValueAggregateWhereInput =
+      andParts.length > 0 ? { AND: andParts } : {};
 
     const [count, values] = await Promise.all([
-      this.prisma.albumValueAggregate.count({
-        where,
-      }),
+      this.prisma.albumValueAggregate.count({ where }),
       this.prisma.$queryRawUnsafe<AlbumValueResponseDto[]>(rawQuery),
     ]);
 
