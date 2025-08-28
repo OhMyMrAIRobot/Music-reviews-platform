@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { IAlbumValue } from '../models/album-value/album-value'
-import { AlbumValuesEnum } from '../models/album-value/album-value-enum'
+import { AlbumValueTiersEnum } from '../models/album-value/album-value-tiers-enum'
 import { IAlbumValuesResponse } from '../models/album-value/album-values-response'
 import { SortOrder } from '../types/sort-order-type'
 
@@ -19,7 +19,7 @@ export const AlbumValueAPI = {
 		limit: number | null,
 		offset: number | null,
 		order: SortOrder | null,
-		tiers: AlbumValuesEnum[] | null
+		tiers: AlbumValueTiersEnum[] | null
 	): Promise<IAlbumValuesResponse> {
 		const { data } = await _api.get<IAlbumValuesResponse>(`/?
 			${limit !== null ? `limit=${limit}&` : ''}

@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx'
 import { AlbumValueAPI } from '../../../api/album-value-api'
 import { IAlbumValue } from '../../../models/album-value/album-value'
-import { AlbumValuesEnum } from '../../../models/album-value/album-value-enum'
+import { AlbumValueTiersEnum } from '../../../models/album-value/album-value-tiers-enum'
 import { SortOrder } from '../../../types/sort-order-type'
 
 class AlbumValuesPageStore {
@@ -24,7 +24,7 @@ class AlbumValuesPageStore {
 		limit: number | null,
 		offset: number | null,
 		order: SortOrder | null,
-		tiers: AlbumValuesEnum[] | null
+		tiers: AlbumValueTiersEnum[] | null
 	) => {
 		try {
 			const data = await AlbumValueAPI.fetchAlbumValues(
