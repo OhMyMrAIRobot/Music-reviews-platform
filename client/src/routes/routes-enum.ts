@@ -22,6 +22,7 @@ export const ROUTES = {
 	REGISTERED_AUTHORS: 'registered-authors',
 	AWARDS: 'awards',
 	NOMINATION_VOTES: 'votes',
+	ALBUM_VALUES: 'album-values',
 	AUTH: {
 		PREFIX: 'auth',
 		LOGIN: 'login',
