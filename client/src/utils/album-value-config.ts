@@ -20,8 +20,8 @@ export const ALBUM_VALUES: {
 			image: 'silver_album.gif',
 			minPoints: 0,
 			maxPoints: 5.99,
-			borderColor: '',
-			gradient: '',
+			borderColor: 'border-[#C2C5C9]/30',
+			gradient: 'from-[#C0C0C0] to-[#C0C0C0]/0',
 		},
 	},
 	{
@@ -42,8 +42,8 @@ export const ALBUM_VALUES: {
 			image: 'emerald_album.gif',
 			minPoints: 12,
 			maxPoints: 17.99,
-			borderColor: '',
-			gradient: '',
+			borderColor: 'border-[#407E6A]/30',
+			gradient: 'from-[#0FAA77] to-[#0FAA77]/0',
 		},
 	},
 	{
@@ -53,8 +53,8 @@ export const ALBUM_VALUES: {
 			image: 'sapphire_album.gif',
 			minPoints: 18,
 			maxPoints: 23.99,
-			borderColor: '',
-			gradient: '',
+			borderColor: 'border-[#575FB0]/30',
+			gradient: 'from-[#5676ea] to-[#5676ea]/0',
 		},
 	},
 	{
@@ -64,8 +64,8 @@ export const ALBUM_VALUES: {
 			image: 'ruby_album.gif',
 			minPoints: 24,
 			maxPoints: 31,
-			borderColor: '',
-			gradient: '',
+			borderColor: 'border-[#954545]/30',
+			gradient: 'from-[#EA4343] to-[#EA4343]/0',
 		},
 	},
 ]

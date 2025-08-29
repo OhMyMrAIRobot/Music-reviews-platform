@@ -8,6 +8,7 @@ import { useLoading } from '../../hooks/use-loading'
 import { useStore } from '../../hooks/use-store'
 import { AlbumValueSortOptions } from '../../models/album-value/album-value-sort-options'
 import { AlbumValueTiersEnum } from '../../models/album-value/album-value-tiers-enum'
+import { SortOrdersEnum } from '../../models/sort/sort-orders-enum'
 import { ALBUM_VALUES } from '../../utils/album-value-config'
 
 const AlbumValuesPage = () => {
@@ -24,10 +25,16 @@ const AlbumValuesPage = () => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
 
 	useEffect(() => {
+		const order =
+			sortOrder !== ''
+				? sortOrder === AlbumValueSortOptions.ASC
+					? SortOrdersEnum.ASC
+					: SortOrdersEnum.DESC
+				: null
 		fetch(
 			perPage,
 			(currentPage - 1) * perPage,
-			sortOrder !== '' ? sortOrder : null,
+			order,
 			selectedTiers.length > 0 ? selectedTiers : null
 		)
 	}, [fetch, selectedTiers, sortOrder, currentPage])

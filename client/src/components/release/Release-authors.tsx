@@ -12,7 +12,7 @@ const ReleaseAuthors: FC<IProps> = ({ authors, className }) => {
 	const { navigateToAuthorDetails } = useNavigationPath()
 
 	return (
-		<div className={`flex flex-wrap gap-1 items-center ${className}`}>
+		<div className={`flex flex-wrap gap-x-1 items-center ${className}`}>
 			{authors.map((author, index) => (
 				<Link
 					to={navigateToAuthorDetails(author.id)}
@@ -22,8 +22,9 @@ const ReleaseAuthors: FC<IProps> = ({ authors, className }) => {
 					<div className='opacity-50 hover:underline underline-offset-4 hover:opacity-90 transition-all duration-200 cursor-pointer'>
 						{author.name}
 					</div>
-					<span className='ml-[1px] pr-[3px] opacity-50'>
-						{index < authors.length - 1 && ','}
+
+					<span className='opacity-50'>
+						{index < authors.length - 1 && ', '}
 					</span>
 				</Link>
 			))}

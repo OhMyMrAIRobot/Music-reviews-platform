@@ -28,14 +28,16 @@ const AlbumValueCard: FC<IProps> = ({ isLoading, value }) => {
 	const config = getAlbumValueTierConfig(level)
 
 	return (
-		<Link
-			to={navigateToReleaseDetails(value.release.id)}
+		<div
 			className={`bg-zinc-900/40 hover:bg-zinc-900 p-2 lg:p-3 lg:pb-4 rounded-[25px] flex flex-col justify-start relative w-full h-full border duration-300 overflow-hidden ${config.borderColor}`}
 		>
 			<div
 				className={`absolute inset-0 opacity-15 bg-gradient-to-br pointer-events-none ${config.gradient}`}
 			/>
-			<div className='relative z-10'>
+			<Link
+				to={navigateToReleaseDetails(value.release.id)}
+				className='relative z-10'
+			>
 				<img
 					alt={value.release.title}
 					loading='lazy'
@@ -47,11 +49,17 @@ const AlbumValueCard: FC<IProps> = ({ isLoading, value }) => {
 							: value.release.img
 					}`}
 				/>
-			</div>
+			</Link>
 
 			<div className='my-2 lg:mt-[15px] mb-2 relative z-10'>
 				<span className='text-base !leading-[22px] text-center w-full text-white font-semibold block'>
-					{value.release.title}
+					<Link
+						to={navigateToReleaseDetails(value.release.id)}
+						className='relative z-10'
+					>
+						{value.release.title}
+					</Link>
+
 					<ReleaseAuthors
 						authors={value.release.authors}
 						className='justify-center text-lg font-normal'
@@ -75,7 +83,7 @@ const AlbumValueCard: FC<IProps> = ({ isLoading, value }) => {
 					{value.totalValue}
 				</span>
 			</div>
-		</Link>
+		</div>
 	)
 }
 
