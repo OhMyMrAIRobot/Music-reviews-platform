@@ -7,7 +7,9 @@ import {
 	getAlbumValueTierConfig,
 } from '../../utils/album-value-config'
 import ReleaseAuthors from '../release/Release-authors'
+import TooltipSpan from '../tooltip/Tooltip-span'
 import SkeletonLoader from '../utils/Skeleton-loader'
+import AlbumValueTooltip from './Album-value-tooltip'
 
 interface IProps {
 	isLoading: boolean
@@ -67,9 +69,13 @@ const AlbumValueCard: FC<IProps> = ({ isLoading, value }) => {
 				</span>
 			</div>
 
-			<div className='py-1 flex gap-2 w-full max-w-[140px] lg:max-w-[205px] mx-auto items-center justify-start pl-2.5 text-center mt-auto relative z-10 rounded-full overflow-hidden'>
+			<TooltipSpan
+				tooltip={<AlbumValueTooltip value={value} />}
+				centered={true}
+				spanClassName='relative py-1 flex gap-2 w-full max-w-[140px] lg:max-w-[205px] mx-auto items-center justify-start pl-2.5 text-center mt-auto relative z-10 rounded-full'
+			>
 				<div
-					className={`absolute inset-0 opacity-20 bg-gradient-to-br pointer-events-none ${config.gradient}`}
+					className={`absolute inset-0 rounded-full opacity-20 bg-gradient-to-br pointer-events-none ${config.gradient}`}
 				/>
 				<img
 					loading='lazy'
@@ -82,7 +88,7 @@ const AlbumValueCard: FC<IProps> = ({ isLoading, value }) => {
 				<span className='cursor-default text-[24px] 2xl:text-[32px] font-bold'>
 					{value.totalValue}
 				</span>
-			</div>
+			</TooltipSpan>
 		</div>
 	)
 }
