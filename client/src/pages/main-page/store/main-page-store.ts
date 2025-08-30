@@ -1,4 +1,5 @@
 import { makeAutoObservable } from 'mobx'
+import { AlbumValueAPI } from '../../../api/album-value-api.ts'
 import { AuthorCommentAPI } from '../../../api/author/author-comment-api.ts'
 import { GlobalAppAPI } from '../../../api/global-app-api.ts'
 import { LeaderboardAPI } from '../../../api/leaderboard-api.ts'
@@ -6,6 +7,7 @@ import { ReleaseAPI } from '../../../api/release/release-api.ts'
 import { ReleaseMediaAPI } from '../../../api/release/release-media-api.ts'
 import { ReviewAPI } from '../../../api/review/review-api.ts'
 import { UserFavReviewAPI } from '../../../api/review/user-fav-review-api.ts'
+import { IAlbumValue } from '../../../models/album-value/album-value.ts'
 import { IAuthorComment } from '../../../models/author/author-comment/author-comment.ts'
 import { IAuthorLike } from '../../../models/author/author-likes/author-like.ts'
 import { ILeaderboardItem } from '../../../models/leaderboard/leaderboard-item.ts'
@@ -30,6 +32,7 @@ class MainPageStore {
 	authorLikes: IAuthorLike[] = []
 	platformStats: IPlatformStats | null = null
 	leaderboard: ILeaderboardItem[] = []
+	albumValues: IAlbumValue[] = []
 
 	setMostReviewedReleases(data: IRelease[]) {
 		this.mostReviewedReleases = data
@@ -61,6 +64,10 @@ class MainPageStore {
 
 	setLeaderboard(data: ILeaderboardItem[]) {
 		this.leaderboard = data
+	}
+
+	setAlbumValues(data: IAlbumValue[]) {
+		this.albumValues = data
 	}
 
 	fetchTopReleases = async () => {
@@ -166,6 +173,15 @@ class MainPageStore {
 			this.setLeaderboard(data)
 		} catch {
 			this.setLeaderboard([])
+		}
+	}
+
+	fetchAlbumValues = async () => {
+		try {
+			const data = await AlbumValueAPI.fetchAlbumValues(15, 0, null, null)
+			this.setAlbumValues(data.values)
+		} catch {
+			this.setAlbumValues([])
 		}
 	}
 

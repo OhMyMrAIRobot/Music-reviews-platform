@@ -7,9 +7,10 @@ import {
 
 interface IProps {
 	value: IAlbumValue
+	className?: string
 }
 
-const AlbumValueTooltip: FC<IProps> = ({ value }) => {
+const AlbumValueTooltip: FC<IProps> = ({ value, className = '' }) => {
 	const level = getAlbumValueTier(value.totalValue)
 
 	if (!level) return null
@@ -18,7 +19,7 @@ const AlbumValueTooltip: FC<IProps> = ({ value }) => {
 
 	return (
 		<div
-			className={`text-left min-w-[200px] rounded-xl z-2000 px-2 py-1.5 relative overflow-hidden border ${config.borderColor} shadow-md opacity-95`}
+			className={`text-left rounded-xl z-2000 px-2 py-1.5 relative overflow-hidden border ${config.borderColor} ${className} shadow-md opacity-95`}
 		>
 			<div
 				className={`absolute inset-0 opacity-20 bg-gradient-to-br pointer-events-none ${config.gradient}`}
