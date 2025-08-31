@@ -5,11 +5,13 @@ import Loader from '../../components/utils/Loader.tsx'
 import { useLoading } from '../../hooks/use-loading.ts'
 import useNavigationPath from '../../hooks/use-navigation-path'
 import { useStore } from '../../hooks/use-store.ts'
+import { ReleaseTypesEnum } from '../../models/release/release-type/release-types-enum.ts'
 import { ReleaseReviewSortFieldsEnum } from '../../models/review/release-review/release-review-sort-fields-enum.ts'
 import { ReleaseReviewSortField } from '../../models/review/release-review/release-review-sort-fields.ts'
 import { SortOrdersEnum } from '../../models/sort/sort-orders-enum.ts'
 import authStore from '../../stores/auth-store.ts'
 import { SortOrder } from '../../types/sort-order-type.ts'
+import ReleaseDetailsAlbumValue from './ui/release-details-album-value/Release-details-album-value.tsx'
 import ReleaseDetailsAuthorComments from './ui/release-details-author-comments/Release-details-author-comments.tsx'
 import ReleaseDetailsHeader from './ui/Release-details-header.tsx'
 import ReleaseDetailsMedia from './ui/release-details-media/Release-details-media.tsx'
@@ -91,16 +93,17 @@ const ReleaseDetailsPage = observer(() => {
 			<>
 				<ReleaseDetailsHeader release={release} />
 
+				{release.releaseType === ReleaseTypesEnum.ALBUM && (
+					<ReleaseDetailsAlbumValue releaseId={release.id} />
+				)}
+
 				<ReleaseDetailsMedia releaseId={release.id} />
-
 				<ReleaseDetailsAuthorComments releaseId={release.id} />
-
 				{isUserAuthor ? (
 					<SendAuthorCommentForm releaseId={release.id} />
 				) : (
 					<SendReviewForm fetchReviews={fetchReviews} releaseId={release.id} />
 				)}
-
 				<ReleaseDetailsReviews
 					reviews={reviews}
 					selectedSort={selectedSort}

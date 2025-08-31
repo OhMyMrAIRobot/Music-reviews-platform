@@ -40,10 +40,10 @@ const AlbumValueCard: FC<IProps> = ({
 
 	return (
 		<div
-			className={`bg-zinc-900/40 hover:bg-zinc-900 p-2 lg:p-3 lg:pb-4 rounded-[25px] flex flex-col justify-start relative w-full h-full border duration-300 overflow-hidden ${config.borderColor}`}
+			className={`bg-zinc-900/40 hover:bg-zinc-900 p-2 lg:p-3 lg:pb-4 rounded-[25px] flex flex-col justify-start relative w-full h-full border duration-300 overflow-hidden ${config.borderColor}/30`}
 		>
 			<div
-				className={`absolute inset-0 opacity-15 bg-gradient-to-br pointer-events-none ${config.gradient}`}
+				className={`absolute inset-0 opacity-15 bg-gradient-to-br pointer-events-none ${config.gradientColor}`}
 			/>
 			<Link
 				to={navigateToReleaseDetails(value.release.id)}
@@ -95,7 +95,7 @@ const AlbumValueCard: FC<IProps> = ({
 				spanClassName='relative py-1 flex gap-2 w-full max-w-[140px] lg:max-w-[205px] mx-auto items-center justify-start pl-2.5 text-center mt-auto relative z-10 rounded-full'
 			>
 				<div
-					className={`absolute inset-0 rounded-full opacity-20 bg-gradient-to-br pointer-events-none ${config.gradient}`}
+					className={`absolute inset-0 rounded-full opacity-20 bg-gradient-to-br pointer-events-none ${config.gradientColor}`}
 				/>
 				<img
 					loading='lazy'

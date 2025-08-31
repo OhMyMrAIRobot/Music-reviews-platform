@@ -6,7 +6,8 @@ interface IAlbumValueConfig {
 	minPoints: number
 	maxPoints: number
 	borderColor: string
-	gradient: string
+	gradientColor: string
+	dimGradientColor: string
 }
 
 export const ALBUM_VALUES: {
@@ -20,8 +21,9 @@ export const ALBUM_VALUES: {
 			image: 'silver_album.gif',
 			minPoints: 0,
 			maxPoints: 5.99,
-			borderColor: 'border-[#C2C5C9]/30',
-			gradient: 'from-[#C0C0C0] to-[#C0C0C0]/0',
+			borderColor: 'border-[#C2C5C9]',
+			gradientColor: 'from-[#C0C0C0] to-[#C0C0C0]/0',
+			dimGradientColor: 'from-[#C0C0C0]/20 to-[#C0C0C0]/0',
 		},
 	},
 	{
@@ -31,8 +33,9 @@ export const ALBUM_VALUES: {
 			image: 'gold_album.gif',
 			minPoints: 6,
 			maxPoints: 11.99,
-			borderColor: 'border-[#B79A6C]/30',
-			gradient: 'from-[#FFD700] to-[#FFD700]/0',
+			borderColor: 'border-[#B79A6C]',
+			gradientColor: 'from-[#FFD700] to-[#FFD700]/0',
+			dimGradientColor: 'from-[#FFD700]/20 to-[#FFD700]/0',
 		},
 	},
 	{
@@ -42,8 +45,9 @@ export const ALBUM_VALUES: {
 			image: 'emerald_album.gif',
 			minPoints: 12,
 			maxPoints: 17.99,
-			borderColor: 'border-[#407E6A]/30',
-			gradient: 'from-[#0FAA77] to-[#0FAA77]/0',
+			borderColor: 'border-[#407E6A]',
+			gradientColor: 'from-[#0FAA77] to-[#0FAA77]/0',
+			dimGradientColor: 'from-[#0FAA77]/20 to-[#0FAA77]/0',
 		},
 	},
 	{
@@ -53,8 +57,9 @@ export const ALBUM_VALUES: {
 			image: 'sapphire_album.gif',
 			minPoints: 18,
 			maxPoints: 23.99,
-			borderColor: 'border-[#575FB0]/30',
-			gradient: 'from-[#5676ea] to-[#5676ea]/0',
+			borderColor: 'border-[#575FB0]',
+			gradientColor: 'from-[#5676ea] to-[#5676ea]/0',
+			dimGradientColor: 'from-[#5676ea]/20 to-[#5676ea]/0',
 		},
 	},
 	{
@@ -64,8 +69,9 @@ export const ALBUM_VALUES: {
 			image: 'ruby_album.gif',
 			minPoints: 24,
 			maxPoints: 31,
-			borderColor: 'border-[#954545]/30',
-			gradient: 'from-[#EA4343] to-[#EA4343]/0',
+			borderColor: 'border-[#954545]',
+			gradientColor: 'from-[#EA4343] to-[#EA4343]/0',
+			dimGradientColor: 'from-[#EA4343]/20 to-[#EA4343]/0',
 		},
 	},
 ]

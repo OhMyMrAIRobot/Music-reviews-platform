@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
+import { AlbumValueAPI } from '../../../api/album-value-api'
 import { AuthorCommentAPI } from '../../../api/author/author-comment-api'
 import { ReleaseAPI } from '../../../api/release/release-api'
 import { ReleaseMediaAPI } from '../../../api/release/release-media-api'
 import { UserFavReleaseAPI } from '../../../api/release/user-fav-release-api'
 import { ReviewAPI } from '../../../api/review/review-api'
+import { IAlbumValue } from '../../../models/album-value/album-value'
 import { IAuthorComment } from '../../../models/author/author-comment/author-comment'
 import { IReleaseDetails } from '../../../models/release/release-details/release-details'
 import { IReleaseMedia } from '../../../models/release/release-media/release-media'
@@ -33,6 +35,8 @@ class ReleaseDetailsPageStore {
 
 	authorComments: IAuthorComment[] = []
 
+	albumValue: IAlbumValue | null = null
+
 	setReviewDetails(data: IReleaseDetails | null) {
 		this.releaseDetails = data
 	}
@@ -58,6 +62,10 @@ class ReleaseDetailsPageStore {
 
 	setAuthorComments(data: IAuthorComment[]) {
 		this.authorComments = data
+	}
+
+	setAlbumValue(data: IAlbumValue | null) {
+		this.albumValue = data
 	}
 
 	fetchReleaseDetails = async (id: string) => {
@@ -128,6 +136,15 @@ class ReleaseDetailsPageStore {
 			this.setAuthorComments(data)
 		} catch (e) {
 			this.setAuthorComments([])
+		}
+	}
+
+	fetchAlbumValue = async (releaseId: string) => {
+		try {
+			const data = await AlbumValueAPI.fetchByReleaseId(releaseId)
+			this.setAlbumValue(data)
+		} catch {
+			this.setAlbumValue(null)
 		}
 	}
 

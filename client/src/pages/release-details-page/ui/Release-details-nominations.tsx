@@ -20,6 +20,7 @@ const ReleaseDetailsNominations: FC<IProps> = ({ nominations }) => {
 							tooltip={<Tooltip>{nomination}</Tooltip>}
 							spanClassName='text-white relative'
 							centered={idx !== nominations.length - 1}
+							key={nomination}
 						>
 							<div className='size-7 lg:size-10 flex items-center justify-center bg-zinc-950 border border-white/10 rounded-full'>
 								<NominationIconSvg

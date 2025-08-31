@@ -22,7 +22,7 @@ const AlbumValueTooltip: FC<IProps> = ({ value, className = '' }) => {
 			className={`text-left rounded-xl z-2000 px-2 py-1.5 relative overflow-hidden border ${config.borderColor} ${className} shadow-md opacity-95`}
 		>
 			<div
-				className={`absolute inset-0 opacity-20 bg-gradient-to-br pointer-events-none ${config.gradient}`}
+				className={`absolute inset-0 opacity-20 bg-gradient-to-br pointer-events-none ${config.gradientColor}`}
 			/>
 			<div className='font-semibold bg-black/20 p-1 text-center rounded-md border border-black/30 relative z-10 mb-2'>
 				{config.name}
