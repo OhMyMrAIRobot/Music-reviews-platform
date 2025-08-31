@@ -80,7 +80,7 @@ const MainPageAlbumValuesCarousel = observer(
 											className='flex-[0_0_180px]'
 											key={`skeleton-author-comment-${idx}`}
 										>
-											<AlbumValueCard isLoading={isLoading} />
+											<AlbumValueCard isLoading={isLoading} smallSize={true} />
 										</div>
 								  ))
 								: items.map(item => (

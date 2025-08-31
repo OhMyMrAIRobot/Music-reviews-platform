@@ -25,7 +25,11 @@ const AlbumValueCard: FC<IProps> = ({
 	const { navigateToReleaseDetails } = useNavigationPath()
 
 	if (isLoading || !value) {
-		return <SkeletonLoader className='rounded-[25px] w-full h-100' />
+		return (
+			<SkeletonLoader
+				className={`rounded-[25px] w-full ${smallSize ? 'h-85' : 'h-100'}`}
+			/>
+		)
 	}
 
 	const level = getAlbumValueTier(value.totalValue)

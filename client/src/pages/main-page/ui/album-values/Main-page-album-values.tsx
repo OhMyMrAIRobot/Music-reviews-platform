@@ -1,3 +1,4 @@
+import { observer } from 'mobx-react-lite'
 import { useEffect, useRef, useState } from 'react'
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
 import { useLoading } from '../../../../hooks/use-loading'
@@ -6,7 +7,7 @@ import { useStore } from '../../../../hooks/use-store'
 import { CarouselRef } from '../../../../types/carousel-ref'
 import MainPageAlbumValuesCarousel from './Main-page-album-values-carousel'
 
-const MainPageAlbumValues = () => {
+const MainPageAlbumValues = observer(() => {
 	const { mainPageStore } = useStore()
 
 	const { navigateToAlbumValues } = useNavigationPath()
@@ -45,6 +46,6 @@ const MainPageAlbumValues = () => {
 			canScrollPrev={canScrollPrev}
 		/>
 	)
-}
+})
 
 export default MainPageAlbumValues
