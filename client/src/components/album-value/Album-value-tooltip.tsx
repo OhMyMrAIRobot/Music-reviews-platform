@@ -28,23 +28,23 @@ const AlbumValueTooltip: FC<IProps> = ({ value, className = '' }) => {
 				{config.name}
 			</div>
 			<div className='flex flex-col gap-1'>
-				<div className='flex justify-between relative z-10'>
+				<div className='flex justify-between relative z-10 max-lg:space-x-2'>
 					<span>Редкость</span>
 					<span className='font-semibold'>{value.rarity.total}</span>
 				</div>
-				<div className='flex justify-between relative z-10'>
+				<div className='flex justify-between relative z-10 max-lg:space-x-2'>
 					<span>Целостность</span>
 					<span className='font-semibold'>{value.integrity.total}</span>
 				</div>
-				<div className='flex justify-between relative z-10'>
+				<div className='flex justify-between relative z-10 max-lg:space-x-2'>
 					<span>Глубина</span>
 					<span className='font-semibold'>{value.depth}</span>
 				</div>
-				<div className='flex justify-between relative z-10'>
+				<div className='flex justify-between relative z-10 max-lg:space-x-2'>
 					<span>Качество</span>
 					<span className='font-semibold'>{value.quality.factor * 100}%</span>
 				</div>
-				<div className='flex justify-between relative z-10'>
+				<div className='flex justify-between relative z-10 max-lg:space-x-2'>
 					<span>Влияние</span>
 					<span className='font-semibold'>{value.influence.multiplier}</span>
 				</div>

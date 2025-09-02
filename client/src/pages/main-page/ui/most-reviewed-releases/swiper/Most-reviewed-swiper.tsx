@@ -1,4 +1,4 @@
-import { FC, useLayoutEffect, useRef } from 'react'
+import { FC, useEffect, useLayoutEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { Keyboard } from 'swiper/modules'
 import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react'
@@ -40,9 +40,24 @@ const MostReviewedSwiper: FC<IProps> = ({ show, setShow, index, setIndex }) => {
 		}
 	}
 
+	useEffect(() => {
+		if (show) {
+			document.body.style.overflow = 'hidden'
+			document.body.style.height = '100vh'
+		} else {
+			document.body.style.overflow = 'unset'
+			document.body.style.height = 'unset'
+		}
+
+		return () => {
+			document.body.style.overflow = 'unset'
+			document.body.style.height = 'unset'
+		}
+	}, [show])
+
 	return createPortal(
 		<div
-			className={`fixed inset-0 z-[1000000] backdrop-blur-3xl overflow-y-auto h-[100vh] flex items-center justify-center transition-all duration-200 ${
+			className={`fixed inset-0 z-[1000000] backdrop-blur-3xl overflow-hidden h-[100vh] flex items-center justify-center transition-all duration-200 ${
 				show
 					? 'opacity-100 pointer-events-auto'
 					: 'opacity-0 pointer-events-none'
@@ -64,7 +79,7 @@ const MostReviewedSwiper: FC<IProps> = ({ show, setShow, index, setIndex }) => {
 			<button
 				onClick={handlePrev}
 				disabled={index === 0}
-				className='absolute left-4 xl:left-[33%] z-10 transform -translate-y-1/2 top-1/2 bg-zinc-950 rounded-full size-12 flex items-center justify-center border border-white/10 cursor-pointer p-2 disabled:opacity-30 disabled:cursor-not-allowed'
+				className='absolute left-0 xl:left-[33%] z-10 transform -translate-y-1/2 top-1/2 bg-zinc-950 rounded-full size-12 flex items-center justify-center border border-white/10 cursor-pointer p-2 disabled:opacity-30 disabled:cursor-not-allowed'
 			>
 				<PrevSvg className='size-6' />
 			</button>
@@ -87,12 +102,12 @@ const MostReviewedSwiper: FC<IProps> = ({ show, setShow, index, setIndex }) => {
 						},
 					}}
 					speed={500}
-					className='w-full h-full'
+					className='w-full h-[90%]'
 				>
 					{mainPageStore.mostReviewedReleases.map((release, i) => (
 						<SwiperSlide
 							key={i}
-							className='h-full flex items-center justify-center'
+							className='h-[90%] flex items-center justify-center'
 						>
 							<div
 								className={`h-full transition-all duration-500 xl:w-full w-full max-w-[350px] xl:max-w-full mx-auto ${
@@ -110,7 +125,7 @@ const MostReviewedSwiper: FC<IProps> = ({ show, setShow, index, setIndex }) => {
 			<button
 				onClick={handleNext}
 				disabled={index === mainPageStore.mostReviewedReleases.length - 1}
-				className='absolute right-4 xl:right-[33%] z-10 transform -translate-y-1/2 top-1/2 bg-zinc-950 rounded-full size-12 flex items-center justify-center border border-white/10 cursor-pointer p-2 disabled:opacity-30 disabled:cursor-not-allowed'
+				className='absolute right-0 xl:right-[33%] z-10 transform -translate-y-1/2 top-1/2 bg-zinc-950 rounded-full size-12 flex items-center justify-center border border-white/10 cursor-pointer p-2 disabled:opacity-30 disabled:cursor-not-allowed'
 			>
 				<NextSvg className='size-6' />
 			</button>

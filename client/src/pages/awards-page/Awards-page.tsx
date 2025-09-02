@@ -36,11 +36,11 @@ const AwardsPage = observer(() => {
 
 	return (
 		<>
-			<h1 className='text-lg md:text-xl lg:text-3xl font-semibold'>
+			<h1 className='text-2xl lg:text-3xl font-semibold'>
 				Победители номинаций
 			</h1>
 
-			<div className='flex justify-between items-center gap-5 h-15 mt-5'>
+			<div className='flex justify-between items-center gap-2 lg:gap-5 h-15 mt-5'>
 				<Link
 					to={navigateToVotes}
 					className='w-40 bg-white h-full rounded-lg text-black flex items-center justify-center font-medium text-sm px-3 py-2 hover:bg-white/80 transition-colors duration-200'
@@ -69,7 +69,7 @@ const AwardsPage = observer(() => {
 			{isLoading
 				? Array.from({ length: 2 }).map((_, idx) => (
 						<div
-							className='mt-10 border-b border-white/10 pb-10'
+							className='mt-5 lg:mt-10 border-b border-white/10 pb-5 lg:pb-10'
 							key={`Carousel-skeleton-${idx}`}
 						>
 							<NominationCarouselContainer isLoading={true} idx={idx} />

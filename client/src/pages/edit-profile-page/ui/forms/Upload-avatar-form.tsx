@@ -4,6 +4,7 @@ import FormButton from '../../../../components/form-elements/Form-button'
 import { useAuth } from '../../../../hooks/use-auth'
 import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
+import { generateUUID } from '../../../../utils/generate-uuid'
 import EditProfilePageSection from '../Edit-profile-page-section'
 import SelectImageLabel from '../labels/Select-image-label'
 import SelectedImageLabel from '../labels/Selected-image-label'
@@ -48,7 +49,7 @@ const UploadAvatarForm = observer(() => {
 		const result = await updateAvatar(formData)
 
 		notificationStore.addNotification({
-			id: self.crypto.randomUUID(),
+			id: generateUUID(),
 			text: result.message,
 			isError: !result.status,
 		})

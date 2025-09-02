@@ -20,8 +20,11 @@ const ReleasesColumnItem: FC<IProps> = ({ release, isLoading }) => {
 		<SkeletonLoader className='w-full h-[78px] lg:h-[92px] rounded-xl' />
 	) : (
 		release && (
-			<div className='flex items-center bg-white/[3%] border border-white/10 rounded-[10px] p-2 lg:p-[9px] group gap-4 select-none'>
-				<Link to={navigateToReleaseDetails(release.id)}>
+			<div className='flex items-center bg-white/[3%] border border-white/10 rounded-[10px] p-2 lg:p-[9px] group gap-2 lg:gap-4 select-none'>
+				<Link
+					to={navigateToReleaseDetails(release.id)}
+					className='flex-shrink-0'
+				>
 					<img
 						loading='lazy'
 						decoding='async'
@@ -61,7 +64,7 @@ const ReleasesColumnItem: FC<IProps> = ({ release, isLoading }) => {
 					/>
 				</div>
 
-				<div className='flex items-center gap-[5px] select-none ml-auto pr-5'>
+				<div className='flex items-center gap-[5px] select-none ml-auto'>
 					<ReleaseRatings
 						ratings={release.ratings}
 						className={'size-[30px] lg:size-[45px] text-sm lg:text-[22px]'}

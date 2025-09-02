@@ -7,6 +7,7 @@ import FormSubTitle from '../../../../components/form-elements/Form-subtitle'
 import FormTitle from '../../../../components/form-elements/Form-title'
 import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
+import { generateUUID } from '../../../../utils/generate-uuid'
 
 const ReqResetPasswordForm = observer(() => {
 	const { authStore, notificationStore } = useStore()
@@ -24,7 +25,7 @@ const ReqResetPasswordForm = observer(() => {
 			result.forEach(err => notificationStore.addErrorNotification(err))
 		} else {
 			notificationStore.addNotification({
-				id: self.crypto.randomUUID(),
+				id: generateUUID(),
 				text: result
 					? 'Письмо с инструкциями по восстановлению пароля отправлено на вашу почту!'
 					: 'Ошибка при отправке письма. Повторите попытку позже!',

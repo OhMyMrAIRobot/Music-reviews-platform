@@ -1,5 +1,6 @@
 import { makeAutoObservable } from 'mobx'
 import { INotification } from '../models/notification/notification'
+import { generateUUID } from '../utils/generate-uuid'
 
 class NotificationStore {
 	notifications: INotification[] = []
@@ -27,7 +28,7 @@ class NotificationStore {
 
 	addEmailSentNotification(isSent: boolean) {
 		this.addNotification({
-			id: self.crypto.randomUUID(),
+			id: generateUUID(),
 			text: isSent
 				? 'Письмо с активацией отправлено на вашу почту!'
 				: 'Ошибка при отправке письма с активацией. Повторите попытку позже!',
@@ -37,7 +38,7 @@ class NotificationStore {
 
 	addErrorNotification(text: string) {
 		this.addNotification({
-			id: self.crypto.randomUUID(),
+			id: generateUUID(),
 			text: text,
 			isError: true,
 		})
@@ -45,7 +46,7 @@ class NotificationStore {
 
 	addSuccessNotification(text: string) {
 		this.addNotification({
-			id: self.crypto.randomUUID(),
+			id: generateUUID(),
 			text: text,
 			isError: false,
 		})

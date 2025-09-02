@@ -29,11 +29,11 @@ const CarouselContainer: FC<IProps> = ({
 		<section className='2xl:container w-full flex flex-col items-center gap-y-2'>
 			<div className='flex w-full sm:items-center items-end justify-between'>
 				<h3 className='text-lg lg:text-2xl font-semibold'>{title}</h3>
-				<div className='flex flex-col-reverse sm:flex-row sm:gap-5 gap-2 items-center'>
+				<div className='flex flex-col-reverse sm:flex-row sm:gap-5 gap-2 items-end'>
 					{showButton && (
 						<Link
 							to={href}
-							className='inline-flex items-center justify-center whitespace-nowrap text-sm font-bold rounded-full px-4 h-10 bg-zinc-800 hover:bg-zinc-800/80 transition-all duration-200'
+							className='inline-flex items-center justify-center text-center text-sm font-bold rounded-full px-4 h-10 bg-zinc-800 hover:bg-zinc-800/80 transition-all duration-200'
 						>
 							{buttonTitle}
 						</Link>

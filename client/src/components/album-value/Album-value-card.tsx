@@ -40,7 +40,7 @@ const AlbumValueCard: FC<IProps> = ({
 
 	return (
 		<div
-			className={`bg-zinc-900/40 hover:bg-zinc-900 p-2 lg:p-3 lg:pb-4 rounded-[25px] flex flex-col justify-start relative w-full h-full border duration-300 overflow-hidden ${config.borderColor}/30`}
+			className={`bg-zinc-900/40 hover:bg-zinc-900 p-2 lg:p-3 lg:pb-4 rounded-[25px] flex flex-col justify-start relative w-full h-full border duration-300 overflow-hidden ${config.dimBorderColor}`}
 		>
 			<div
 				className={`absolute inset-0 opacity-15 bg-gradient-to-br pointer-events-none ${config.gradientColor}`}
@@ -88,7 +88,7 @@ const AlbumValueCard: FC<IProps> = ({
 				tooltip={
 					<AlbumValueTooltip
 						value={value}
-						className={`${smallSize ? 'min-w-42' : 'min-w-50'}`}
+						className={`${smallSize ? 'lg:min-w-42' : 'lg:min-w-50'}`}
 					/>
 				}
 				centered={true}

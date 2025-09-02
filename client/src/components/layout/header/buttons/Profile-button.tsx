@@ -5,6 +5,7 @@ import { useLoading } from '../../../../hooks/use-loading'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
 import { RolesEnum } from '../../../../models/role/roles-enum'
+import { generateUUID } from '../../../../utils/generate-uuid'
 import SettingsSvg from '../../../svg/Settings-svg'
 import ShieldSvg from '../../../svg/Shield-svg'
 import SkeletonLoader from '../../../utils/Skeleton-loader'
@@ -60,7 +61,7 @@ const ProfileButton = observer(() => {
 				navigate(navigateToMain)
 			}
 			notificationStore.addNotification({
-				id: self.crypto.randomUUID(),
+				id: generateUUID(),
 				text: !authStore.isAuth
 					? 'Вы успешно вышли из аккаунта!'
 					: 'Произошла ошибка при выходе!',
