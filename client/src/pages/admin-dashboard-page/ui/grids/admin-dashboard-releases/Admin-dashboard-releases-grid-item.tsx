@@ -75,7 +75,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 	}
 
 	return isLoading ? (
-		<SkeletonLoader className='w-full h-12 rounded-lg' />
+		<SkeletonLoader className='w-full h-80 lg:h-12 rounded-lg' />
 	) : (
 		<>
 			{release && (
@@ -102,17 +102,18 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 			)}
 
 			<div
-				className={`${className} text-[10px] md:text-sm h-10 md:h-12 w-full rounded-lg grid grid-cols-10 lg:grid-cols-12 items-center px-3 border border-white/10 text-nowrap`}
+				className={`${className} text-sm lg:h-12 w-full rounded-lg grid lg:grid-cols-12 grid-rows-8 lg:grid-rows-1 items-center px-3 max-lg:py-2 border border-white/10 text-nowrap font-medium`}
 			>
-				<div className='col-span-1 text-ellipsis line-clamp-1'>
+				<div className='lg:col-span-1 text-ellipsis line-clamp-1'>
+					<span className='lg:hidden'># </span>
 					{position ?? '#'}
 				</div>
 
-				<div className='col-span-2 h-full flex items-center mr-2'>
+				<div className='lg:col-span-2 h-full flex items-center mr-2'>
 					{release ? (
 						<Link
 							to={navigateToReleaseDetails(release.id)}
-							className='flex text-left gap-x-1.5 items-center hover:bg-white/5 rounded-lg px-1.5 py-0.5 w-full'
+							className='flex text-left gap-x-1.5 items-center hover:bg-white/5 rounded-lg lg:px-1.5 lg:py-0.5 w-full'
 						>
 							<img
 								loading='lazy'
@@ -123,9 +124,10 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 										: release.img
 								}`}
 								alt={release.title}
-								className='size-9 object-cover aspect-square rounded-full select-none'
+								className='hidden lg:block size-9 object-cover aspect-square rounded-full select-none'
 							/>
-							<span className='font-medium line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
+							<span className='lg:hidden'>Название: </span>
+							<span className=' line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
 								{release.title}
 							</span>
 						</Link>
@@ -134,27 +136,33 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='col-span-1 text-ellipsis line-clamp-1 font-medium'>
+				<div className='lg:col-span-1 flex items-center text-ellipsis line-clamp-1 '>
 					{release ? (
-						<div
-							className={`flex gap-x-1 items-center ${getReleaseTypeColor(
-								release.releaseType.type
-							)}`}
-						>
-							<ReleaseTypeIcon
-								type={release.releaseType.type}
-								className={'size-5'}
-							/>
-							<span>{release.releaseType.type}</span>
-						</div>
+						<>
+							<span className='lg:hidden'>Тип релиза: </span>
+							<div
+								className={`flex max-lg:ml-1 gap-x-1 items-center ${getReleaseTypeColor(
+									release.releaseType.type
+								)}`}
+							>
+								<ReleaseTypeIcon
+									type={release.releaseType.type}
+									className={'size-5'}
+								/>
+								<span>{release.releaseType.type}</span>
+							</div>
+						</>
 					) : (
 						<span>Тип релиза</span>
 					)}
 				</div>
 
-				<div className='col-span-2 text-ellipsis text-wrap font-medium'>
+				<div className='lg:col-span-2 text-ellipsis text-wrap '>
 					{release ? (
-						<span>{release.publishDate}</span>
+						<>
+							<span className='lg:hidden'>Дата создания: </span>
+							<span>{release.publishDate}</span>
+						</>
 					) : (
 						<button
 							onClick={toggle}
@@ -170,78 +178,87 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='col-span-2 line-clamp-2 text-wrap text-ellipsis font-medium mr-2'>
+				<div className='lg:col-span-2 line-clamp-2 text-wrap text-ellipsis  mr-2'>
 					{release ? (
-						release.releaseArtists.length === 0 ? (
-							<span className='opacity-50 font-medium'>Отсутствует</span>
-						) : (
-							release.releaseArtists.map((ra, idx) => (
-								<span key={ra.id}>
-									<span
-										className={`font-medium ${getAuthorTypeColor(
-											AuthorTypesEnum.ARTIST
-										)}`}
-									>
-										{ra.name}
+						<>
+							<span className='lg:hidden'>Артист: </span>
+							{release.releaseArtists.length === 0 ? (
+								<span className='opacity-50 '>Отсутствует</span>
+							) : (
+								release.releaseArtists.map((ra, idx) => (
+									<span key={ra.id}>
+										<span
+											className={` ${getAuthorTypeColor(
+												AuthorTypesEnum.ARTIST
+											)}`}
+										>
+											{ra.name}
+										</span>
+										{idx < release.releaseArtists.length - 1 && ', '}
 									</span>
-									{idx < release.releaseArtists.length - 1 && ', '}
-								</span>
-							))
-						)
+								))
+							)}
+						</>
 					) : (
 						<span>Артист</span>
 					)}
 				</div>
 
-				<div className='col-span-2 line-clamp-2 text-wrap text-ellipsis font-medium mr-2'>
+				<div className='lg:col-span-2 line-clamp-2 text-wrap text-ellipsis  mr-2'>
 					{release ? (
-						release.releaseProducers.length === 0 ? (
-							<span className='opacity-50 font-medium'>Отсутствует</span>
-						) : (
-							release.releaseProducers.map((rp, idx) => (
-								<span key={rp.id}>
-									<span
-										className={`font-medium ${getAuthorTypeColor(
-											AuthorTypesEnum.PRODUCER
-										)}`}
-									>
-										{rp.name}
+						<>
+							<span className='lg:hidden'>Продюссер: </span>
+							{release.releaseProducers.length === 0 ? (
+								<span className='opacity-50 '>Отсутствует</span>
+							) : (
+								release.releaseProducers.map((rp, idx) => (
+									<span key={rp.id}>
+										<span
+											className={` ${getAuthorTypeColor(
+												AuthorTypesEnum.PRODUCER
+											)}`}
+										>
+											{rp.name}
+										</span>
+										{idx < release.releaseProducers.length - 1 && ', '}
 									</span>
-									{idx < release.releaseProducers.length - 1 && ', '}
-								</span>
-							))
-						)
+								))
+							)}
+						</>
 					) : (
 						<span>Продюссер</span>
 					)}
 				</div>
 
-				<div className='col-span-1 line-clamp-2 text-wrap text-ellipsis font-medium mr-2'>
+				<div className='lg:col-span-1 line-clamp-2 text-wrap text-ellipsis  mr-2'>
 					{release ? (
-						release.releaseDesigners.length === 0 ? (
-							<span className='opacity-50 font-medium'>Отсутствует</span>
-						) : (
-							release.releaseDesigners.map((rd, idx) => (
-								<span key={rd.id}>
-									<span
-										className={`font-medium ${getAuthorTypeColor(
-											AuthorTypesEnum.DESIGNER
-										)}`}
-									>
-										{rd.name}
+						<>
+							<span className='lg:hidden'>Дизайнер: </span>
+							{release.releaseDesigners.length === 0 ? (
+								<span className='opacity-50 '>Отсутствует</span>
+							) : (
+								release.releaseDesigners.map((rd, idx) => (
+									<span key={rd.id}>
+										<span
+											className={` ${getAuthorTypeColor(
+												AuthorTypesEnum.DESIGNER
+											)}`}
+										>
+											{rd.name}
+										</span>
+										{idx < release.releaseDesigners.length - 1 && ', '}
 									</span>
-									{idx < release.releaseDesigners.length - 1 && ', '}
-								</span>
-							))
-						)
+								))
+							)}
+						</>
 					) : (
 						<span>Дизайнер</span>
 					)}
 				</div>
 
-				<div className='col-span-1'>
+				<div className='lg:col-span-1'>
 					{release ? (
-						<div className='flex gap-x-3 justify-end'>
+						<div className='flex gap-x-3 lg:justify-end'>
 							<AdminEditButton onClick={() => setEditModalOpen(true)} />
 							<AdminDeleteButton onClick={() => setConfModalOpen(true)} />
 						</div>
