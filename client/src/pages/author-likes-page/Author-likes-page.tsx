@@ -26,10 +26,7 @@ const AuthorLikesPage = observer(() => {
 		<>
 			<div className='flex items-center gap-x-2.5'>
 				<AuthorLikeColorSvg className='size-8' />
-				<h1
-					id='author-likes'
-					className='text-lg md:text-xl lg:text-3xl font-semibold'
-				>
+				<h1 id='author-likes' className='text-2xl lg:text-3xl font-semibold'>
 					Понравилось авторам
 				</h1>
 			</div>

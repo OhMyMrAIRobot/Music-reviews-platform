@@ -77,8 +77,8 @@ const UploadCoverForm = observer(() => {
 
 	return (
 		<EditProfilePageSection title='Обложка профиля'>
-			<div className='w-[144px] shrink-0'>
-				<div className='w-[250px]'>
+			<div className='w-full sm:w-[250px]'>
+				<div className='w-full'>
 					<SelectImageLabel htmlfor='cover' />
 				</div>
 
@@ -109,9 +109,9 @@ const UploadCoverForm = observer(() => {
 				/>
 			</div>
 
-			<div className='pt-6 border-t border-white/5 w-full'>
-				<div className='flex justify-between'>
-					<div className='w-38'>
+			<div className='pt-3 lg:pt-6 border-t border-white/5 w-full'>
+				<div className='grid grid-cols-1 sm:flex justify-between gap-2 w-full'>
+					<div className='w-full sm:w-38'>
 						<FormButton
 							title={isLoading ? 'Сохранение...' : 'Сохранить'}
 							isInvert={true}
@@ -121,7 +121,7 @@ const UploadCoverForm = observer(() => {
 						/>
 					</div>
 
-					<div className='w-42'>
+					<div className='w-full sm:w-42'>
 						<FormButton
 							title={isDeleting ? 'Удаление...' : 'Удалить обложку'}
 							isInvert={false}

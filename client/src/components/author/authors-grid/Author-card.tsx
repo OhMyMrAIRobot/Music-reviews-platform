@@ -45,14 +45,17 @@ const AuthorCard: FC<IProps> = ({ author, isLoading }) => {
 					{author.isRegistered ? (
 						<RegisteredAuthorTypes
 							types={author.authorTypes}
-							className='size-7'
+							className='size-6 lg:size-7'
 						/>
 					) : (
-						<AuthorTypes types={author.authorTypes} className='size-7' />
+						<AuthorTypes
+							types={author.authorTypes}
+							className='size-6 lg:size-7'
+						/>
 					)}
 				</div>
 
-				<LikesCount count={author.favCount} />
+				<LikesCount count={author.favCount} className='size-4 lg:size-5' />
 
 				<AuthorReleaseTypesRatings
 					releaseType={ReleaseTypesEnum.SINGLE}

@@ -15,7 +15,7 @@ const ProfileAuthorCardsGrid: FC<IProps> = ({ isLoading }) => {
 	const [emblaRef] = useEmblaCarousel(options)
 
 	return (
-		<div className='embla w-full mt-5'>
+		<div className='embla w-full'>
 			<div className='embla__viewport w-full' ref={emblaRef}>
 				<div className='grid grid-cols-2 lg:grid-cols-4 gap-1 lg:gap-3 w-full'>
 					{isLoading

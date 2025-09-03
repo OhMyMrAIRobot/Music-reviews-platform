@@ -38,7 +38,7 @@ const ReqResetPasswordForm = observer(() => {
 	}
 
 	return (
-		<div className='grid w-[330px] gap-4'>
+		<div className='grid w-full sm:w-[330px] gap-4'>
 			<div className='grid gap-1'>
 				<FormTitle title={'Забыли пароль?'} />
 				<FormSubTitle

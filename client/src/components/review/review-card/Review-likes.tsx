@@ -34,7 +34,7 @@ const ReviewLikes: FC<IProps> = ({
 				} ${toggling ? 'opacity-50' : 'opacity-100'}`}
 			>
 				{toggling ? (
-					<div className='size-5 lg:size-7 flex items-center justify-center'>
+					<div className='size-6 lg:size-7 flex items-center justify-center'>
 						<Loader className={'size-3 lg:size-5'} />
 					</div>
 				) : (
@@ -43,7 +43,7 @@ const ReviewLikes: FC<IProps> = ({
 						decoding='async'
 						alt={'heart'}
 						src={`${import.meta.env.VITE_SERVER_URL}/public/assets/heart.png`}
-						className={`w-5 lg:w-7 transition-opacity duration-300 ${
+						className={`w-6 lg:w-7 transition-opacity duration-300 ${
 							isLiked
 								? 'opacity-100'
 								: 'opacity-50 hover:opacity-100 group-hover:opacity-100'

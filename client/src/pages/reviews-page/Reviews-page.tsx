@@ -32,12 +32,12 @@ const ReviewsPage = observer(() => {
 
 	return (
 		<>
-			<h1 id='reviews' className='text-lg md:text-xl lg:text-3xl font-semibold'>
-				Рецензии и оценки
+			<h1 id='reviews' className='text-2xl lg:text-3xl font-semibold'>
+				Рецензии пользователей
 			</h1>
 
-			<div className='rounded-lg border border-white/10 bg-zinc-900 p-3 shadow-sm mt-5 flex gap-4 items-center'>
-				<span className='hidden sm:block text-white/70 font-bold '>
+			<div className='rounded-lg border border-white/10 bg-zinc-900 p-3 shadow-sm mt-5 grid md:flex gap-x-4 items-center'>
+				<span className='text-sm md:text-base text-white/70 font-bold max-md:pb-1'>
 					Сортировать по:
 				</span>
 				<div className='w-full sm:w-55'>

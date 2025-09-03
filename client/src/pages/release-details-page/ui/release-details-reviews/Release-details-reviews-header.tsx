@@ -23,8 +23,8 @@ const ReleaseDetailsReviewsHeader: FC<IProps> = ({
 				</div>
 			</div>
 
-			<div className='whitespace-nowrap rounded-lg border border-white/5 bg-zinc-900 p-3 lg:p-2 flex gap-4 items-center font-bold w-full sm:w-1/2 lg:w-1/3 select-none'>
-				<p className='hidden text-white/70 md:block text-sm md:text-base '>
+			<div className='whitespace-nowrap rounded-lg border border-white/5 bg-zinc-900 p-3 lg:p-2 grid md:flex gap-x-4 items-center font-bold w-full sm:w-1/2 lg:w-1/3 select-none'>
+				<p className='text-white/70 md:block text-sm md:text-base max-md:pb-1'>
 					Сортировать по:
 				</p>
 

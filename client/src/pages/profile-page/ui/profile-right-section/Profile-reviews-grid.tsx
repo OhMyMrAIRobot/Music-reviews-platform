@@ -25,7 +25,7 @@ const ProfileReviewsGrid: FC<IProps> = observer(
 		storeToggle,
 	}) => {
 		return (
-			<section className='mt-5'>
+			<section>
 				<div className='gap-5 grid grid-cols-1 select-none'>
 					{isLoading
 						? Array.from({ length: perPage }).map((_, idx) => (

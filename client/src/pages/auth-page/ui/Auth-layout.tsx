@@ -6,8 +6,10 @@ interface IProps {
 
 const AuthLayout: FC<IProps> = ({ children }) => {
 	return (
-		<div className='border border-white/15 rounded-[0.5rem] grid lg:grid-cols-2 min-h-[700px]'>
-			<div className='flex items-center justify-center h-full'>{children}</div>
+		<div className='border border-white/15 rounded-[0.5rem] grid lg:grid-cols-2 lg:min-h-[700px]'>
+			<div className='flex items-center justify-center h-full px-4 py-12'>
+				{children}
+			</div>
 			<div className='relative hidden lg:block h-full border-l border-white/15 overflow-hidden'>
 				<img
 					loading='lazy'

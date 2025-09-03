@@ -78,8 +78,8 @@ const ReleaseDetailsMedia: FC<IProps> = observer(({ releaseId }) => {
 			}`}
 		>
 			<div className='flex'>
-				<div className='font-bold shrink-0 flex items-center justify-between lg:space-x-5 col-span-2'>
-					<div className='text-xl xl:text-2xl font-semibold flex items-center gap-2.5'>
+				<div className='font-bold shrink-0 flex items-center justify-between space-x-2 lg:space-x-5 col-span-2'>
+					<div className='text-xl xl:text-2xl font-semibold'>
 						Медиаматериалы
 					</div>
 

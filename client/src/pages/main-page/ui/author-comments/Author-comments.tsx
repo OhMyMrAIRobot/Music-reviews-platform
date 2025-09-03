@@ -30,7 +30,9 @@ const AuthorComments = observer(() => {
 		<CarouselContainer
 			title={
 				<div className='flex items-center gap-x-2'>
-					<AuthorCommentColorSvg className='size-8' />
+					<div className='size-8'>
+						<AuthorCommentColorSvg className='size-8' />
+					</div>
 					Авторские комментарии
 				</div>
 			}

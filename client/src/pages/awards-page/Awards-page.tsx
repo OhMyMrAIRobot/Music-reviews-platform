@@ -43,7 +43,7 @@ const AwardsPage = observer(() => {
 			<div className='flex justify-between items-center gap-2 lg:gap-5 h-15 mt-5'>
 				<Link
 					to={navigateToVotes}
-					className='w-40 bg-white h-full rounded-lg text-black flex items-center justify-center font-medium text-sm px-3 py-2 hover:bg-white/80 transition-colors duration-200'
+					className='w-40 bg-white h-full rounded-lg text-black flex items-center justify-center font-medium text-sm px-3 py-2 hover:bg-white/80 transition-colors duration-200 text-center'
 				>
 					Голосование за {MonthEnum[new Date().getMonth() as MonthEnumType]}
 				</Link>

@@ -59,6 +59,7 @@ const ProfileButton = observer(() => {
 		authStore.logOut().then(() => {
 			if (!authStore.isAuth) {
 				navigate(navigateToMain)
+				setIsOpen(false)
 			}
 			notificationStore.addNotification({
 				id: generateUUID(),
@@ -106,6 +107,7 @@ const ProfileButton = observer(() => {
 
 				<Link
 					to={authStore.user?.id ? navigatoToProfile(authStore.user.id) : '#'}
+					onClick={() => setIsOpen(false)}
 				>
 					<PopupProfileButton
 						text='Моя страница'
@@ -113,7 +115,10 @@ const ProfileButton = observer(() => {
 					/>
 				</Link>
 
-				<Link to={authStore.user?.id ? navigateToEditProfile : '#'}>
+				<Link
+					to={authStore.user?.id ? navigateToEditProfile : '#'}
+					onClick={() => setIsOpen(false)}
+				>
 					<PopupProfileButton
 						text='Настройки профиля'
 						icon={<SettingsSvg className={'size-7'} />}
@@ -122,7 +127,10 @@ const ProfileButton = observer(() => {
 
 				{(authStore.user?.role.role === RolesEnum.ADMIN ||
 					authStore.user?.role.role === RolesEnum.ROOT_ADMIN) && (
-					<Link to={authStore.user?.id ? navigateToAdminReleases : '#'}>
+					<Link
+						to={authStore.user?.id ? navigateToAdminReleases : '#'}
+						onClick={() => setIsOpen(false)}
+					>
 						<PopupProfileButton
 							text='Админ. панель'
 							icon={<ShieldSvg className='size-6.5' />}

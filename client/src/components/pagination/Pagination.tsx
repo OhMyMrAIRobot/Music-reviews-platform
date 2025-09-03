@@ -80,7 +80,7 @@ const Pagination: FC<IProps> = ({
 				className='inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium h-7 md:h-10  px-4 py-2 gap-1 hover:bg-white/10 transition-colors duration-300 cursor-pointer'
 			>
 				<PrevSvg className={'size-4'} />
-				Предыдущая
+				<span className='hidden md:block'>Предыдущая</span>
 			</button>
 
 			{pageNumbers.map((page, idx) =>
@@ -116,7 +116,7 @@ const Pagination: FC<IProps> = ({
 				hidden={currentPage === totalPages}
 				className='inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium h-7 md:h-10  px-4 py-2 gap-1 hover:bg-white/10 transition-colors duration-300 cursor-pointer'
 			>
-				Следующая
+				<span className='hidden md:block'> Следующая</span>
 				<NextSvg className={'size-4'} />
 			</button>
 		</div>
