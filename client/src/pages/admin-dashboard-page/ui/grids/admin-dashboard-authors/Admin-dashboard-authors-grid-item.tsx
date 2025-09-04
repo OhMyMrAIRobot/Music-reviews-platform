@@ -23,7 +23,7 @@ interface IProps {
 }
 
 const AdminDashboardAuthorsGridItem: FC<IProps> = ({
-	className,
+	className = '',
 	author,
 	isLoading,
 	position,

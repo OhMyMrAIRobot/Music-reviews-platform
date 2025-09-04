@@ -27,7 +27,7 @@ interface IProps {
 }
 
 const AdminDashboardUsersGridItem: FC<IProps> = ({
-	className,
+	className = '',
 	user,
 	isLoading,
 	position,

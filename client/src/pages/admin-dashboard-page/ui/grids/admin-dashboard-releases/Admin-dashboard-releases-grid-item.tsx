@@ -28,7 +28,7 @@ interface IProps {
 }
 
 const AdminDashboardReleasesGridItem: FC<IProps> = ({
-	className,
+	className = '',
 	release,
 	order,
 	isLoading,

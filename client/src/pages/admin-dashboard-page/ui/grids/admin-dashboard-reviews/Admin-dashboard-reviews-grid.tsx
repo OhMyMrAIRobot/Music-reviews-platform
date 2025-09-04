@@ -50,7 +50,7 @@ const AdminDashboardReviewsGrid = observer(() => {
 				className='flex flex-col overflow-hidden p-5'
 			>
 				<AdminDashboardReviewsGridItem
-					className='bg-white/5 font-medium'
+					className='bg-white/5 font-medium max-lg:hidden'
 					isLoading={false}
 					order={order}
 					toggleOrder={() =>
@@ -62,7 +62,7 @@ const AdminDashboardReviewsGrid = observer(() => {
 					}
 				/>
 
-				<div className='flex-1 overflow-y-auto mt-5'>
+				<div className='flex-1 overflow-y-auto lg:mt-5'>
 					<div className='grid gap-y-5'>
 						{isLoading
 							? Array.from({ length: perPage }).map((_, idx) => (
