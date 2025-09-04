@@ -53,7 +53,7 @@ const AdminDashboardUsersGrid = observer(() => {
 			<AdminHeader title={'Пользователи'} setText={setSearchText} />
 
 			<div id='admin-users-grid' className='flex flex-col overflow-hidden p-5'>
-				<div className='flex mb-5 text-white/80 border-b border-white/10'>
+				<div className='flex flex-wrap lg:mb-5 gap-y-2 text-white/80 border-b border-white/10'>
 					{Object.values(RolesFilterOptions).map(option => (
 						<AdminFilterButton
 							key={option}
@@ -73,7 +73,7 @@ const AdminDashboardUsersGrid = observer(() => {
 				</div>
 
 				<AdminDashboardUsersGridItem
-					className='bg-white/5 font-medium'
+					className='bg-white/5 font-medium max-lg:hidden'
 					isLoading={false}
 					order={order}
 					toggleOrder={() =>

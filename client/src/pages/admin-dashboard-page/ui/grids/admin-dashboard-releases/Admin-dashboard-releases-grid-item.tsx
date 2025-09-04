@@ -102,12 +102,26 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 			)}
 
 			<div
-				className={`${className} text-sm lg:h-12 w-full rounded-lg grid lg:grid-cols-12 grid-rows-8 lg:grid-rows-1 items-center px-3 max-lg:py-2 border border-white/10 text-nowrap font-medium`}
+				className={`${className} text-sm lg:h-12 w-full rounded-lg grid lg:grid-cols-12 grid-rows-8 lg:grid-rows-1 items-center px-3 max-lg:py-2 border border-white/10 text-nowrap font-medium relative`}
 			>
 				<div className='lg:col-span-1 text-ellipsis line-clamp-1'>
 					<span className='lg:hidden'># </span>
 					{position ?? '#'}
 				</div>
+
+				{release && (
+					<img
+						loading='lazy'
+						decoding='async'
+						src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
+							release.img === ''
+								? import.meta.env.VITE_DEFAULT_COVER
+								: release.img
+						}`}
+						alt={release.title}
+						className='absolute right-0 top-0 lg:hidden size-22 object-cover aspect-square select-none rounded-lg'
+					/>
+				)}
 
 				<div className='lg:col-span-2 h-full flex items-center mr-2'>
 					{release ? (
@@ -256,7 +270,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='lg:col-span-1'>
+				<div className='lg:col-span-1 max-lg:mt-1'>
 					{release ? (
 						<div className='flex gap-x-3 lg:justify-end'>
 							<AdminEditButton onClick={() => setEditModalOpen(true)} />
