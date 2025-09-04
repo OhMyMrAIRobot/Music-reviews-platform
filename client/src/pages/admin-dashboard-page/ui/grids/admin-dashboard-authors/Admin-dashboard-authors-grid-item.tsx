@@ -59,7 +59,7 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 	}
 
 	return isLoading ? (
-		<SkeletonLoader className='w-full h-12 rounded-lg' />
+		<SkeletonLoader className='w-full h-40 lg:h-12 rounded-lg' />
 	) : (
 		<>
 			{author && (
@@ -85,13 +85,28 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 				</>
 			)}
 			<div
-				className={`${className} text-[10px] md:text-sm h-10 md:h-12 w-full rounded-lg grid grid-cols-10 lg:grid-cols-12 items-center px-3 border border-white/10 text-nowrap`}
+				className={`${className} relative text-sm lg:h-12 w-full rounded-lg grid grid-rows-4 lg:grid-rows-1 lg:grid-cols-12 items-center px-3 max-lg:py-2 border border-white/10 text-nowrap font-medium`}
 			>
-				<div className='col-span-1 text-ellipsis line-clamp-1'>
+				<div className='lg:col-span-1 text-ellipsis line-clamp-1'>
+					<span className='lg:hidden'># </span>
 					{position ?? '#'}
 				</div>
 
-				<div className='col-span-5 text-ellipsis line-clamp-1 h-full flex items-center gap-x-2'>
+				{author && (
+					<img
+						loading='lazy'
+						decoding='async'
+						src={`${import.meta.env.VITE_SERVER_URL}/public/authors/avatars/${
+							author.avatarImg === ''
+								? import.meta.env.VITE_DEFAULT_AVATAR
+								: author.avatarImg
+						}`}
+						alt={author.name}
+						className='absolute top-0 right-0 size-22 rounded-lg object-cover aspect-square select-none lg:hidden'
+					/>
+				)}
+
+				<div className='lg:col-span-5 text-ellipsis line-clamp-1 h-full flex items-center gap-x-2'>
 					{author ? (
 						<>
 							<img
@@ -105,21 +120,24 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 										: author.avatarImg
 								}`}
 								alt={author.name}
-								className='size-9 object-cover aspect-square rounded-full select-none'
+								className='size-9 object-cover aspect-square rounded-full select-none max-lg:hidden'
 							/>
-							<span className='font-medium'>{author.name}</span>
+							<span className='lg:hidden'>Имя: </span>
+							<span>{author.name}</span>
 						</>
 					) : (
 						'Имя автора'
 					)}
 				</div>
 
-				<div className='col-span-4 flex'>
-					{author
-						? author.types.map((type, idx) => (
+				<div className='lg:col-span-4 flex flex-wrap'>
+					{author ? (
+						<>
+							<span className='lg:hidden max-lg:pr-1'>Тип автора:</span>
+							{author.types.map((type, idx) => (
 								<span key={type.id} className='flex'>
 									<span
-										className={`font-medium flex items-center ${getAuthorTypeColor(
+										className={`flex items-center ${getAuthorTypeColor(
 											type.type
 										)}`}
 									>
@@ -130,13 +148,16 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 										<span className='mr-1 select-none'>,</span>
 									)}
 								</span>
-						  ))
-						: 'Тип автора'}
+							))}
+						</>
+					) : (
+						'Тип автора'
+					)}
 				</div>
 
-				<div className='col-span-2 text-center'>
+				<div className='lg:col-span-2 text-center max-lg:mt-1'>
 					{author ? (
-						<div className='flex gap-x-3 justify-end'>
+						<div className='flex gap-x-3 lg:justify-end'>
 							<Link to={navigateToAuthorDetails(author.id)}>
 								<AdminNavigateButton />
 							</Link>

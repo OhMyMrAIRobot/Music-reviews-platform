@@ -76,7 +76,7 @@ const AdminDashboardAuthorsGrid = observer(() => {
 			)}
 
 			<div id='admin-users-grid' className='flex flex-col overflow-hidden p-5'>
-				<div className='flex mb-5 text-white/80 border-b border-white/10'>
+				<div className='flex flex-wrap lg:mb-5 gap-y-2 text-white/80 border-b border-white/10'>
 					{isTypesLoading
 						? Array.from({ length: 5 }).map((_, idx) => (
 								<SkeletonLoader
@@ -100,7 +100,7 @@ const AdminDashboardAuthorsGrid = observer(() => {
 									onClick={() => setActiveType(option)}
 								/>
 						  ))}
-					<div className='ml-auto'>
+					<div className='lg:ml-auto'>
 						<AdminFilterButton
 							title={'Добавить автора'}
 							isActive={false}
@@ -110,7 +110,7 @@ const AdminDashboardAuthorsGrid = observer(() => {
 				</div>
 
 				<AdminDashboardAuthorsGridItem
-					className='bg-white/5 font-medium'
+					className='bg-white/5 font-medium max-lg:hidden'
 					isLoading={false}
 				/>
 

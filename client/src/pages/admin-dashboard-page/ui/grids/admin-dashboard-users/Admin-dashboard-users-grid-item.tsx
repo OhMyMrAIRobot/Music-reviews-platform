@@ -94,12 +94,25 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 			)}
 
 			<div
-				className={`${className} font-medium text-sm lg:h-12 w-full rounded-lg grid lg:grid-cols-12 grid-rows-7 lg:grid-rows-1 items-center px-3 max-lg:py-2 border border-white/10 text-nowrap`}
+				className={`${className} font-medium text-sm lg:h-12 w-full rounded-lg grid lg:grid-cols-12 grid-rows-7 lg:grid-rows-1 items-center px-3 max-lg:py-2 border border-white/10 text-nowrap relative`}
 			>
 				<div className='lg:col-span-1 text-ellipsis line-clamp-1'>
 					<span className='lg:hidden'># </span>
 					{position ?? '#'}
 				</div>
+
+				{user && (
+					<img
+						loading='lazy'
+						decoding='async'
+						src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
+							user.avatar === ''
+								? import.meta.env.VITE_DEFAULT_AVATAR
+								: user.avatar
+						}`}
+						className='absolute right-0 top-0 lg:hidden rounded-lg size-22 aspect-square select-none object-cover'
+					/>
+				)}
 
 				<div className='lg:col-span-2 text-ellipsis line-clamp-1 h-full flex items-center gap-x-2 mr-2'>
 					{user ? (
@@ -128,7 +141,7 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 				</div>
 
 				<div className='lg:col-span-2 text-ellipsis line-clamp-1'>
-					<span>Email: </span>
+					<span className='lg:hidden'>Email: </span>
 					{user?.email ?? 'Email'}
 				</div>
 
