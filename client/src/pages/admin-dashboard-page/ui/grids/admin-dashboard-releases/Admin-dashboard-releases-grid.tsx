@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
 import AdminHeader from '../../../../../components/layout/admin-header/Admin-header.tsx'
+import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg.tsx'
 import Pagination from '../../../../../components/pagination/Pagination.tsx'
 import ReleaseTypeIcon from '../../../../../components/release/Release-type-icon.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
@@ -80,7 +81,7 @@ const AdminDashboardReleasesGrid = observer(() => {
 			)}
 
 			<div id='admin-users-grid' className='flex flex-col overflow-hidden p-5'>
-				<div className='flex flex-wrap lg:mb-5 gap-y-2 text-white/80 border-b border-white/10'>
+				<div className='flex flex-wrap xl:mb-5 gap-y-2 text-white/80 border-b border-white/10'>
 					{isTypesLoading
 						? Array.from({ length: 5 }).map((_, idx) => (
 								<SkeletonLoader
@@ -102,7 +103,7 @@ const AdminDashboardReleasesGrid = observer(() => {
 								/>
 						  ))}
 
-					<div className='lg:ml-auto'>
+					<div className='ml-auto max-sm:hidden'>
 						<AdminFilterButton
 							title={'Добавить релиз'}
 							isActive={false}
@@ -111,8 +112,37 @@ const AdminDashboardReleasesGrid = observer(() => {
 					</div>
 				</div>
 
+				<div className='sm:hidden mt-2 text-white/80 border-b border-white/10'>
+					<AdminFilterButton
+						title={'Добавить релиз'}
+						isActive={false}
+						onClick={() => setAddModalOpen(true)}
+					/>
+				</div>
+
+				<div className='xl:hidden mt-2 md:mt-4 text-white/80 border-b border-white/10'>
+					<button
+						onClick={() =>
+							setOrder(
+								order === SortOrdersEnum.DESC
+									? SortOrdersEnum.ASC
+									: SortOrdersEnum.DESC
+							)
+						}
+						className='cursor-pointer text-sm px-2 pb-1 hover:text-white flex items-center gap-x-1.5'
+					>
+						<span className='pr-1'>Сортировать по: </span>
+						<span>Дата создания</span>
+						<ArrowBottomSvg
+							className={`size-3 ${
+								order === SortOrdersEnum.ASC ? 'rotate-180' : ''
+							}`}
+						/>
+					</button>
+				</div>
+
 				<AdminDashboardReleasesGridItem
-					className='bg-white/5 font-medium max-lg:hidden'
+					className='bg-white/5 font-medium max-xl:hidden'
 					isLoading={false}
 					order={order}
 					toggleOrder={() =>

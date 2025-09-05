@@ -47,18 +47,6 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
 
-	const toggle = () => {
-		if (toggleOrder) {
-			toggleOrder()
-		}
-	}
-
-	const handleRefetch = () => {
-		if (refetchReleases) {
-			refetchReleases()
-		}
-	}
-
 	const handleDelete = async (id: string) => {
 		if (isDeleting) return
 
@@ -66,7 +54,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 
 		if (errors.length === 0) {
 			notificationStore.addSuccessNotification('Вы успешно удалили релиз!')
-			handleRefetch()
+			refetchReleases?.()
 		} else {
 			errors.forEach(err => {
 				notificationStore.addErrorNotification(err)
@@ -75,7 +63,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 	}
 
 	return isLoading ? (
-		<SkeletonLoader className='w-full h-80 lg:h-12 rounded-lg' />
+		<SkeletonLoader className='w-full h-80 xl:h-12 rounded-lg' />
 	) : (
 		<>
 			{release && (
@@ -102,10 +90,10 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 			)}
 
 			<div
-				className={`${className} text-sm lg:h-12 w-full rounded-lg grid lg:grid-cols-12 grid-rows-8 lg:grid-rows-1 items-center px-3 max-lg:py-2 border border-white/10 text-nowrap font-medium relative`}
+				className={`${className} text-sm xl:h-12 w-full rounded-lg grid xl:grid-cols-12 grid-rows-8 xl:grid-rows-1 items-center px-3 max-xl:py-2 border border-white/10 text-nowrap font-medium relative`}
 			>
-				<div className='lg:col-span-1 text-ellipsis line-clamp-1'>
-					<span className='lg:hidden'># </span>
+				<div className='xl:col-span-1 text-ellipsis line-clamp-1'>
+					<span className='xl:hidden'># </span>
 					{position ?? '#'}
 				</div>
 
@@ -119,15 +107,15 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 								: release.img
 						}`}
 						alt={release.title}
-						className='absolute right-0 top-0 lg:hidden size-22 object-cover aspect-square select-none rounded-lg'
+						className='absolute right-2 top-2 size-22 object-cover aspect-square select-none rounded-lg xl:hidden'
 					/>
 				)}
 
-				<div className='lg:col-span-2 h-full flex items-center mr-2'>
+				<div className='xl:col-span-2 h-full flex items-center mr-2 max-xl:max-w-[calc(100%-90px)]'>
 					{release ? (
 						<Link
 							to={navigateToReleaseDetails(release.id)}
-							className='flex text-left gap-x-1.5 items-center hover:bg-white/5 rounded-lg lg:px-1.5 lg:py-0.5 w-full'
+							className='flex text-left gap-x-1.5 items-center hover:bg-white/5 rounded-lg xl:px-1.5 xl:py-0.5 w-full'
 						>
 							<img
 								loading='lazy'
@@ -138,11 +126,14 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 										: release.img
 								}`}
 								alt={release.title}
-								className='hidden lg:block size-9 object-cover aspect-square rounded-full select-none'
+								className='hidden xl:block size-9 object-cover aspect-square rounded-full select-none'
 							/>
-							<span className='lg:hidden'>Название: </span>
-							<span className=' line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
-								{release.title}
+
+							<span className='overflow-hidden text-ellipsis text-wrap'>
+								<span className='xl:hidden'>Название: </span>
+								<span className='max-xl:underline underline-offset-4'>
+									{release.title}
+								</span>
 							</span>
 						</Link>
 					) : (
@@ -150,12 +141,12 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='lg:col-span-1 flex items-center text-ellipsis line-clamp-1 '>
+				<div className='xl:col-span-1 flex items-center text-ellipsis line-clamp-1 '>
 					{release ? (
 						<>
-							<span className='lg:hidden'>Тип релиза: </span>
+							<span className='xl:hidden'>Тип релиза: </span>
 							<div
-								className={`flex max-lg:ml-1 gap-x-1 items-center ${getReleaseTypeColor(
+								className={`flex max-xl:ml-1 gap-x-1 items-center ${getReleaseTypeColor(
 									release.releaseType.type
 								)}`}
 							>
@@ -171,15 +162,15 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='lg:col-span-2 text-ellipsis text-wrap '>
+				<div className='xl:col-span-2 text-ellipsis text-wrap '>
 					{release ? (
 						<>
-							<span className='lg:hidden'>Дата создания: </span>
+							<span className='xl:hidden'>Дата создания: </span>
 							<span>{release.publishDate}</span>
 						</>
 					) : (
 						<button
-							onClick={toggle}
+							onClick={() => toggleOrder}
 							className='cursor-pointer hover:text-white flex items-center gap-x-1.5'
 						>
 							<span>Дата создания</span>
@@ -192,10 +183,10 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='lg:col-span-2 line-clamp-2 text-wrap text-ellipsis  mr-2'>
+				<div className='xl:col-span-2 line-clamp-2 text-wrap text-ellipsis  mr-2'>
 					{release ? (
 						<>
-							<span className='lg:hidden'>Артист: </span>
+							<span className='xl:hidden'>Артист: </span>
 							{release.releaseArtists.length === 0 ? (
 								<span className='opacity-50 '>Отсутствует</span>
 							) : (
@@ -218,10 +209,10 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='lg:col-span-2 line-clamp-2 text-wrap text-ellipsis  mr-2'>
+				<div className='xl:col-span-2 line-clamp-2 text-wrap text-ellipsis  mr-2'>
 					{release ? (
 						<>
-							<span className='lg:hidden'>Продюссер: </span>
+							<span className='xl:hidden'>Продюссер: </span>
 							{release.releaseProducers.length === 0 ? (
 								<span className='opacity-50 '>Отсутствует</span>
 							) : (
@@ -244,10 +235,10 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='lg:col-span-1 line-clamp-2 text-wrap text-ellipsis  mr-2'>
+				<div className='xl:col-span-1 line-clamp-2 text-wrap text-ellipsis  mr-2'>
 					{release ? (
 						<>
-							<span className='lg:hidden'>Дизайнер: </span>
+							<span className='xl:hidden'>Дизайнер: </span>
 							{release.releaseDesigners.length === 0 ? (
 								<span className='opacity-50 '>Отсутствует</span>
 							) : (
@@ -270,9 +261,9 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='lg:col-span-1 max-lg:mt-1'>
+				<div className='xl:col-span-1 max-xl:mt-1'>
 					{release ? (
-						<div className='flex gap-x-3 lg:justify-end'>
+						<div className='flex gap-x-3 xl:justify-end'>
 							<AdminEditButton onClick={() => setEditModalOpen(true)} />
 							<AdminDeleteButton onClick={() => setConfModalOpen(true)} />
 						</div>
