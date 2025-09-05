@@ -75,7 +75,7 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = observer(
 		}
 
 		return isLoading ? (
-			<SkeletonLoader className='w-full xl:h-12 rounded-lg' />
+			<SkeletonLoader className='w-full h-75 xl:h-12 rounded-lg' />
 		) : (
 			<>
 				{comment && (

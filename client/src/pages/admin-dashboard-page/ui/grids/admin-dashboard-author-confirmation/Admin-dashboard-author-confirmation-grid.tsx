@@ -77,7 +77,7 @@ const AdminDashboardAuthorConfirmationGrid = observer(() => {
 				id='admin-author-confirmations-grid'
 				className='flex flex-col overflow-hidden p-5'
 			>
-				<div className='flex mb-5 text-white/80 border-b border-white/10'>
+				<div className='flex flex-wrap gap-y-2 xl:mb-5 text-white/80 border-b border-white/10'>
 					{isStatusesLoading
 						? Array.from({ length: 5 }).map((_, idx) => (
 								<SkeletonLoader
@@ -106,7 +106,7 @@ const AdminDashboardAuthorConfirmationGrid = observer(() => {
 				</div>
 
 				<AdminDashboardAuthorConfirmationGridItem
-					className='bg-white/5 font-medium'
+					className='bg-white/5 font-medium max-xl:hidden'
 					isLoading={false}
 					order={order}
 					toggleOrder={() =>
