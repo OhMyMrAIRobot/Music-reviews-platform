@@ -50,7 +50,7 @@ const AdminDashboardAuthorCommentsGrid = observer(() => {
 				className='flex flex-col overflow-hidden p-5'
 			>
 				<AdminDashboardAuthorCommentsGridItem
-					className='bg-white/5 font-medium'
+					className='bg-white/5 font-medium max-xl:hidden'
 					isLoading={false}
 					order={order}
 					toggleOrder={() =>
@@ -62,7 +62,7 @@ const AdminDashboardAuthorCommentsGrid = observer(() => {
 					}
 				/>
 
-				<div className='flex-1 overflow-y-auto mt-5'>
+				<div className='flex-1 overflow-y-auto xl:mt-5'>
 					<div className='grid gap-y-5'>
 						{isLoading
 							? Array.from({ length: perPage }).map((_, idx) => (

@@ -76,7 +76,7 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 	}
 
 	return isLoading ? (
-		<SkeletonLoader className='w-full xl:h-12 rounded-lg' />
+		<SkeletonLoader className='w-full h-70 xl:h-12 rounded-lg' />
 	) : (
 		<>
 			{media && (

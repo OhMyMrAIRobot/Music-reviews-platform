@@ -32,7 +32,7 @@ const AdminHeader: FC<IProps> = observer(({ title, setText }) => {
 					{title}
 				</h1>
 
-				<div className='w-full flex items-center justify-end gap-x-2 md:gap-x-3 font-medium text-sm lg:text-base max-md:ml-2'>
+				<div className='w-fit flex items-center justify-end gap-x-2 md:gap-x-3 font-medium text-sm lg:text-base max-md:ml-2'>
 					<AdminSearchBar
 						searchText={searchText}
 						setSearchText={setSearchText}
