@@ -25,7 +25,7 @@ interface IProps {
 }
 
 const AdminDashboardFeedbackGridItem: FC<IProps> = ({
-	className,
+	className = '',
 	feedback,
 	position,
 	isLoading,
@@ -69,7 +69,7 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
 	}
 
 	return isLoading ? (
-		<SkeletonLoader className='w-full h-12 rounded-lg' />
+		<SkeletonLoader className='w-full xl:h-12 rounded-lg' />
 	) : (
 		<>
 			{feedback && (
@@ -95,19 +95,24 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
 			)}
 
 			<div
-				className={`${className} text-[10px] md:text-sm h-10 md:h-12 w-full rounded-lg grid grid-cols-10 lg:grid-cols-12 items-center px-3 border border-white/10 text-nowrap`}
+				className={`${className} text-sm font-medium xl:h-12 w-full rounded-lg grid grid-rows-7 xl:grid-rows-1 xl:grid-cols-12 items-center px-3 max-xl:py-2 border border-white/10 text-nowrap`}
 			>
-				<div className='col-span-1 text-ellipsis line-clamp-1'>
+				<div className='xl:col-span-1 text-ellipsis line-clamp-1'>
+					<span className='xl:hidden'># </span>
 					{position ?? '#'}
 				</div>
 
-				<div className='col-span-2 text-ellipsis line-clamp-1 mr-2'>
+				<div className='xl:col-span-2 text-ellipsis line-clamp-1 mr-2'>
+					<span className='xl:hidden'>Email: </span>
 					{feedback?.email ?? 'Email'}
 				</div>
 
-				<div className='col-span-2 text-ellipsis text-wrap font-medium'>
+				<div className='xl:col-span-2 text-ellipsis text-wrap '>
 					{feedback ? (
-						<span>{feedback.createdAt}</span>
+						<>
+							<span className='xl:hidden'>Дата отправки: </span>
+							<span>{feedback.createdAt}</span>
+						</>
 					) : (
 						<button
 							onClick={toggle}
@@ -123,35 +128,52 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='col-span-2 text-ellipsis line-clamp-1 font-medium'>
+				<div className='xl:col-span-2 flex gap-x-1 items-center text-ellipsis line-clamp-1 '>
 					{feedback ? (
-						<div
-							className={`flex gap-x-1 items-center ${getFeedbackStatusColor(
-								feedback.feedbackStatus.status
-							)}`}
-						>
-							<FeedbackStatusIcon
-								status={feedback.feedbackStatus.status}
-								className='size-5'
-							/>
-							<span>{feedback.feedbackStatus.status}</span>
-						</div>
+						<>
+							<span className='xl:hidden'>Статус: </span>
+							<div
+								className={`flex gap-x-1 items-center ${getFeedbackStatusColor(
+									feedback.feedbackStatus.status
+								)}`}
+							>
+								<FeedbackStatusIcon
+									status={feedback.feedbackStatus.status}
+									className='size-5'
+								/>
+								<span>{feedback.feedbackStatus.status}</span>
+							</div>
+						</>
 					) : (
 						<span>Статус</span>
 					)}
 				</div>
 
-				<div className='col-span-2 font-medium line-clamp-2 overflow-hidden text-ellipsis text-wrap mr-2'>
-					{feedback ? <span>{feedback.title}</span> : <span>Заголовок</span>}
-				</div>
-
-				<div className='col-span-2 font-medium line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
-					{feedback ? <span>{feedback.message}</span> : <span>Текст</span>}
-				</div>
-
-				<div className='col-span-1'>
+				<div className='xl:col-span-2  line-clamp-2 overflow-hidden text-ellipsis text-wrap mr-2'>
 					{feedback ? (
-						<div className='flex gap-x-3 justify-end'>
+						<>
+							<span className='xl:hidden'>Заголовок: </span>
+							<span>{feedback.title}</span>
+						</>
+					) : (
+						<span>Заголовок</span>
+					)}
+				</div>
+
+				<div className='xl:col-span-2  line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
+					{feedback ? (
+						<>
+							<span className='xl:hidden'>Текст: </span>
+							<span>{feedback.message}</span>
+						</>
+					) : (
+						<span>Текст</span>
+					)}
+				</div>
+
+				<div className='xl:col-span-1 max-xl:mt-1'>
+					{feedback ? (
+						<div className='flex gap-x-3 xl:justify-end'>
 							<AdminOpenButton onClick={() => setDetailsModalOpen(true)} />
 							<AdminDeleteButton onClick={() => setConfModalOpen(true)} />
 						</div>
