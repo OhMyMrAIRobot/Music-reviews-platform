@@ -100,7 +100,7 @@ const AdminDashboardMediaGrid = observer(() => {
 			)}
 
 			<div id='admin-media-grid' className='flex flex-col overflow-hidden p-5'>
-				<div className='flex mb-2 text-white/80 border-b border-white/10'>
+				<div className='flex flex-wrap mb-2 gap-y-2 text-white/80 border-b border-white/10'>
 					{isStatusesLoading
 						? Array.from({ length: 5 }).map((_, idx) => (
 								<SkeletonLoader
@@ -125,7 +125,7 @@ const AdminDashboardMediaGrid = observer(() => {
 								/>
 						  ))}
 
-					<div className='ml-auto'>
+					<div className='max-xl:hidden xl:ml-auto'>
 						<AdminFilterButton
 							title={'Добавить медиа'}
 							isActive={false}
@@ -134,7 +134,7 @@ const AdminDashboardMediaGrid = observer(() => {
 					</div>
 				</div>
 
-				<div className='flex mb-5 text-white/80 border-b border-white/10'>
+				<div className='flex flex-wrap gap-y-2 xl:mb-5 text-white/80 border-b border-white/10'>
 					{isTypesLoading
 						? Array.from({ length: 5 }).map((_, idx) => (
 								<SkeletonLoader
@@ -154,10 +154,17 @@ const AdminDashboardMediaGrid = observer(() => {
 									onClick={() => setActiveType(option)}
 								/>
 						  ))}
+					<div className='xl:hidden md:ml-auto'>
+						<AdminFilterButton
+							title={'Добавить медиа'}
+							isActive={false}
+							onClick={() => setAddModalOpen(true)}
+						/>
+					</div>
 				</div>
 
 				<AdminDashboardMediaGridItem
-					className='bg-white/5 font-medium'
+					className='bg-white/5 font-medium max-xl:hidden'
 					isLoading={false}
 					order={order}
 					toggleOrder={() =>

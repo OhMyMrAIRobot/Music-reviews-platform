@@ -76,7 +76,7 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 	}
 
 	return isLoading ? (
-		<SkeletonLoader className='w-full h-12 rounded-lg' />
+		<SkeletonLoader className='w-full xl:h-12 rounded-lg' />
 	) : (
 		<>
 			{media && (
@@ -101,17 +101,18 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 				</>
 			)}
 			<div
-				className={`${className} text-[10px] md:text-sm h-10 md:h-12 w-full rounded-lg grid grid-cols-10 lg:grid-cols-12 items-center px-3 border border-white/10 text-nowrap`}
+				className={`${className} text-sm font-medium xl:h-12 w-full rounded-lg grid grid-rows-7 xl:grid-rows-1 xl:grid-cols-12 items-center px-3 max-xl:py-2 border border-white/10 text-nowrap`}
 			>
-				<div className='col-span-1 text-ellipsis line-clamp-1'>
+				<div className='xl:col-span-1 text-ellipsis line-clamp-1'>
+					<span className='xl:hidden'># </span>
 					{position ?? '#'}
 				</div>
 
-				<div className='col-span-2 h-full flex items-center mr-2'>
+				<div className='xl:col-span-2 h-full flex items-center mr-2'>
 					{media ? (
 						<Link
 							to={navigateToReleaseDetails(media.release.id)}
-							className='flex text-left gap-x-1.5 items-center hover:bg-white/5 rounded-lg px-1.5 py-0.5 w-full'
+							className='flex text-left gap-x-1.5 items-center hover:bg-white/5 rounded-lg xl:px-1.5 xl:py-0.5 w-full'
 						>
 							<img
 								loading='lazy'
@@ -122,42 +123,52 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 										: media.release.img
 								}`}
 								alt={media.release.title}
-								className='size-9 object-cover aspect-square rounded-full select-none'
+								className='max-xl:hidden size-9 object-cover aspect-square rounded-full select-none'
 							/>
-							<span className='font-medium line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
+							<span className='xl:hidden'>Релиз: </span>
+							<span className=' line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
 								{media.release.title}
 							</span>
 						</Link>
 					) : (
-						<span className='px-2'>Название релиза</span>
+						<span className='px-2'>Релиз</span>
 					)}
 				</div>
 
-				<div className='col-span-2 font-medium line-clamp-2 overflow-hidden text-ellipsis text-wrap mr-2'>
-					{media ? <span>{media.title}</span> : <span>Заголовок</span>}
+				<div className='xl:col-span-2 line-clamp-2 overflow-hidden text-ellipsis text-wrap mr-2'>
+					{media ? (
+						<>
+							<span className='xl:hidden'>Заголовок: </span>
+							<span>{media.title}</span>
+						</>
+					) : (
+						<span>Заголовок</span>
+					)}
 				</div>
 
-				<div className='col-span-2 text-ellipsis line-clamp-1 font-medium'>
+				<div className='xl:col-span-2 flex items-center text-ellipsis line-clamp-1 '>
 					{media ? (
-						<div
-							className={`flex gap-x-1 items-center ${getReleaseMediaStatusColor(
-								media.releaseMediaType.type
-							)}`}
-						>
-							<span>{media.releaseMediaType.type}</span>
-						</div>
+						<>
+							<span className='xl:hidden pr-0.5'>Тип медиа: </span>
+							<div className={`flex gap-x-1 items-center`}>
+								<span>{media.releaseMediaType.type}</span>
+							</div>
+						</>
 					) : (
 						<span>Тип медиа</span>
 					)}
 				</div>
 
-				<div className='col-span-2 text-ellipsis text-wrap font-medium'>
+				<div className='xl:col-span-2 text-ellipsis text-wrap '>
 					{media ? (
-						<span>{media.createdAt}</span>
+						<>
+							<span className='xl:hidden'>Дата публикации: </span>
+							<span>{media.createdAt}</span>
+						</>
 					) : (
 						<button
 							onClick={toggle}
-							className='cursor-pointer hover:text-white flex items-center gap-x-1.5'
+							className='cursor-pointer hover:text-white text-left flex items-center gap-x-1.5'
 						>
 							<span>Дата публикации</span>
 							<ArrowBottomSvg
@@ -169,27 +180,30 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='col-span-1 text-ellipsis line-clamp-1 font-medium'>
+				<div className='xl:col-span-1 flex items-center text-ellipsis line-clamp-1 '>
 					{media ? (
-						<div
-							className={`flex gap-x-1 items-center ${getReleaseMediaStatusColor(
-								media.releaseMediaStatus.status
-							)}`}
-						>
-							<ReleaseMediaStatusIcon
-								status={media.releaseMediaStatus.status}
-								className={'size-5'}
-							/>
-							<span>{media.releaseMediaStatus.status}</span>
-						</div>
+						<>
+							<span className='xl:hidden pr-1'>Статус: </span>
+							<div
+								className={`flex gap-x-1 items-center ${getReleaseMediaStatusColor(
+									media.releaseMediaStatus.status
+								)}`}
+							>
+								<ReleaseMediaStatusIcon
+									status={media.releaseMediaStatus.status}
+									className={'size-5'}
+								/>
+								<span>{media.releaseMediaStatus.status}</span>
+							</div>
+						</>
 					) : (
 						<span>Статус медиа</span>
 					)}
 				</div>
 
-				<div className='col-span-2 text-center'>
+				<div className='xl:col-span-2 text-center max-xl:mt-1'>
 					{media ? (
-						<div className='flex gap-x-3 justify-end'>
+						<div className='flex gap-x-3 xl:justify-end'>
 							<Link to={media.url} target='_blank'>
 								<AdminNavigateButton onClick={() => {}} />
 							</Link>
