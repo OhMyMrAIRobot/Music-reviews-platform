@@ -11,6 +11,7 @@ import { ReleaseMediaTypesFilterOptions } from '../../../../../models/release/re
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
 import { SortOrder } from '../../../../../types/sort-order-type'
 import AdminFilterButton from '../../buttons/Admin-filter-button'
+import AdminToggleSortOrderButton from '../../buttons/Admin-toggle-sort-order-button'
 import AdminDashboardMediaGridItem from './Admin-dashboard-media-grid-item'
 import MediaFormModal from './Media-form-modal'
 
@@ -125,7 +126,7 @@ const AdminDashboardMediaGrid = observer(() => {
 								/>
 						  ))}
 
-					<div className='max-xl:hidden xl:ml-auto'>
+					<div className='max-sm:hidden ml-auto'>
 						<AdminFilterButton
 							title={'Добавить медиа'}
 							isActive={false}
@@ -154,14 +155,27 @@ const AdminDashboardMediaGrid = observer(() => {
 									onClick={() => setActiveType(option)}
 								/>
 						  ))}
-					<div className='xl:hidden md:ml-auto'>
-						<AdminFilterButton
-							title={'Добавить медиа'}
-							isActive={false}
-							onClick={() => setAddModalOpen(true)}
-						/>
-					</div>
 				</div>
+
+				<div className='sm:hidden mt-2 text-white/80 border-b border-white/10'>
+					<AdminFilterButton
+						title={'Добавить медиа'}
+						isActive={false}
+						onClick={() => setAddModalOpen(true)}
+					/>
+				</div>
+
+				<AdminToggleSortOrderButton
+					title={'Дата публикации'}
+					order={order}
+					toggleOrder={() =>
+						setOrder(
+							order === SortOrdersEnum.DESC
+								? SortOrdersEnum.ASC
+								: SortOrdersEnum.DESC
+						)
+					}
+				/>
 
 				<AdminDashboardMediaGridItem
 					className='bg-white/5 font-medium max-xl:hidden'

@@ -324,16 +324,8 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 
 								<FormDelimiter />
 
-								<div className='flex gap-5 justify-end'>
-									<div className='w-25'>
-										<FormButton
-											title={'Назад'}
-											isInvert={false}
-											onClick={onClose}
-											disabled={isUpdateUserDataLoading}
-										/>
-									</div>
-									<div className='w-30'>
+								<div className='grid w-full sm:flex gap-3 sm:justify-end sm:flex-row-reverse'>
+									<div className='w-full sm:w-30'>
 										<FormButton
 											title={'Сохранить'}
 											isInvert={true}
@@ -359,6 +351,15 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 															!user.isActive)))
 											}
 											isLoading={isUpdateUserDataLoading}
+										/>
+									</div>
+
+									<div className='w-full sm:w-25 sm:ml-auto'>
+										<FormButton
+											title={'Назад'}
+											isInvert={false}
+											onClick={onClose}
+											disabled={isUpdateUserDataLoading}
 										/>
 									</div>
 								</div>

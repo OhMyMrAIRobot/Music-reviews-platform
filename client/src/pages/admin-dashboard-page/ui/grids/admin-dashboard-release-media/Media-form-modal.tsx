@@ -171,13 +171,13 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media, refetch }) => {
 				<SkeletonLoader className='w-240 h-140 rounded-xl' />
 			) : (
 				<div
-					className={`relative rounded-xl w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6`}
+					className={`relative rounded-xl w-full lg:w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6`}
 				>
 					<h1 className='border-b border-white/10 text-3xl font-bold py-4 text-center'>
 						{formTitle}
 					</h1>
 
-					<div className='w-full grid grid-cols-2 p-6 border-b border-white/10 gap-6'>
+					<div className='w-full grid lg:grid-cols-2 p-6 border-b border-white/10 gap-3 lg:gap-6'>
 						<div className='grid gap-2 w-full'>
 							<FormLabel
 								name={'Заголовок'}
@@ -259,8 +259,8 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media, refetch }) => {
 						</div>
 					</div>
 
-					<div className='pt-6 px-6 flex gap-3 justify-start'>
-						<div className='w-30'>
+					<div className='pt-6 px-6 w-full grid sm:flex gap-3 sm:justify-start'>
+						<div className='w-full sm:w-30'>
 							<FormButton
 								title={buttonText}
 								isInvert={true}
@@ -272,7 +272,7 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media, refetch }) => {
 							/>
 						</div>
 
-						<div className='w-25'>
+						<div className='w-full sm:w-25'>
 							<FormButton
 								title={'Назад'}
 								isInvert={false}

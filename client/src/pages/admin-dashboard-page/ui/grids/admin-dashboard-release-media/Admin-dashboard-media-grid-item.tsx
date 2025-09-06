@@ -46,18 +46,6 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 		adminDashboardMediaStore.deleteReleaseMedia
 	)
 
-	const toggle = () => {
-		if (toggleOrder) {
-			toggleOrder()
-		}
-	}
-
-	const handleRefetch = () => {
-		if (refetch) {
-			refetch()
-		}
-	}
-
 	const handleDelete = async (id: string) => {
 		if (isDeleting) return
 
@@ -67,7 +55,7 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 			notificationStore.addSuccessNotification(
 				'Вы успешно удалили медиаматериал!'
 			)
-			handleRefetch()
+			refetch?.()
 		} else {
 			errors.forEach(err => {
 				notificationStore.addErrorNotification(err)
@@ -167,7 +155,7 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 						</>
 					) : (
 						<button
-							onClick={toggle}
+							onClick={toggleOrder}
 							className='cursor-pointer hover:text-white text-left flex items-center gap-x-1.5'
 						>
 							<span>Дата публикации</span>

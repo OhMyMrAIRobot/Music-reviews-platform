@@ -58,9 +58,9 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
 	return (
 		<ModalOverlay isOpen={isOpen} onCancel={onClose} isLoading={isLoading}>
 			<div
-				className={`relative rounded-xl w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 p-6 max-h-full overflow-y-scroll`}
+				className={`relative rounded-xl w-full lg:w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 p-6 max-h-full overflow-y-scroll`}
 			>
-				<div className='grid gap-6'>
+				<div className='grid gap-6 w-full'>
 					<h1 className='border-b border-white/10 text-3xl font-bold py-4 text-center'>
 						Редактирование рецензии
 					</h1>
@@ -95,8 +95,8 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
 						/>
 					</div>
 
-					<div className='flex gap-3 justify-start'>
-						<div className='w-30'>
+					<div className='w-full grid grid-rows-2 sm:flex gap-3 sm:justify-start'>
+						<div className='w-full sm:w-30'>
 							<FormButton
 								title={'Сохранить'}
 								isInvert={true}
@@ -106,7 +106,7 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
 							/>
 						</div>
 
-						<div className='w-25'>
+						<div className='w-full sm:w-25'>
 							<FormButton
 								title={'Назад'}
 								isInvert={false}

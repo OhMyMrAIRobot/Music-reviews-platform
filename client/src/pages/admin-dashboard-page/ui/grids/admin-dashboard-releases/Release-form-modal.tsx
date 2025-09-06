@@ -436,8 +436,8 @@ const ReleaseFormModal: FC<IProps> = observer(
 							</div>
 						</div>
 
-						<div className='pt-6 px-6 flex gap-3 justify-start'>
-							<div className='w-30'>
+						<div className='w-full pt-6 px-6 grid sm:flex gap-3 sm:justify-start'>
+							<div className='w-full sm:w-30'>
 								<FormButton
 									title={buttonText}
 									isInvert={true}
@@ -452,7 +452,7 @@ const ReleaseFormModal: FC<IProps> = observer(
 								/>
 							</div>
 
-							<div className='w-25'>
+							<div className='w-full sm:w-25'>
 								<FormButton
 									title={'Назад'}
 									isInvert={false}
