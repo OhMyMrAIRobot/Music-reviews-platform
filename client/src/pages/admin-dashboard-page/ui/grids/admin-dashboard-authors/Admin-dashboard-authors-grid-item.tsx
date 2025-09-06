@@ -36,12 +36,6 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [editModalOpen, setEditModelOpen] = useState<boolean>(false)
 
-	const handleRefetch = () => {
-		if (refetchAuthors) {
-			refetchAuthors()
-		}
-	}
-
 	const { execute: deleteAuthor, isLoading: isDeleting } = useLoading(
 		adminDashboardAuthorsStore.deleteAuthor
 	)
@@ -52,14 +46,14 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 		const result = await deleteAuthor(id)
 		if (result.length === 0) {
 			notificationStore.addSuccessNotification('Вы успешно удалили автора!')
-			handleRefetch()
+			refetchAuthors?.()
 		} else {
 			result.forEach(err => notificationStore.addErrorNotification(err))
 		}
 	}
 
 	return isLoading ? (
-		<SkeletonLoader className='w-full h-40 lg:h-12 rounded-lg' />
+		<SkeletonLoader className='w-full h-40 xl:h-12 rounded-lg' />
 	) : (
 		<>
 			{author && (
@@ -85,10 +79,10 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 				</>
 			)}
 			<div
-				className={`${className} relative text-sm lg:h-12 w-full rounded-lg grid grid-rows-4 lg:grid-rows-1 lg:grid-cols-12 items-center px-3 max-lg:py-2 border border-white/10 text-nowrap font-medium`}
+				className={`${className} relative text-sm xl:h-12 w-full rounded-lg grid grid-rows-4 xl:grid-rows-1 xl:grid-cols-12 items-center px-3 max-xl:py-2 border border-white/10 text-nowrap font-medium`}
 			>
-				<div className='lg:col-span-1 text-ellipsis line-clamp-1'>
-					<span className='lg:hidden'># </span>
+				<div className='xl:col-span-1 text-ellipsis line-clamp-1'>
+					<span className='xl:hidden'># </span>
 					{position ?? '#'}
 				</div>
 
@@ -102,11 +96,11 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 								: author.avatarImg
 						}`}
 						alt={author.name}
-						className='absolute top-0 right-0 size-22 rounded-lg object-cover aspect-square select-none lg:hidden'
+						className='absolute top-0 right-0 size-22 rounded-lg object-cover aspect-square select-none xl:hidden'
 					/>
 				)}
 
-				<div className='lg:col-span-5 text-ellipsis line-clamp-1 h-full flex items-center gap-x-2'>
+				<div className='xl:col-span-5 h-full flex items-center gap-x-2 max-xl:max-w-[calc(100%-90px)]'>
 					{author ? (
 						<>
 							<img
@@ -120,20 +114,21 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 										: author.avatarImg
 								}`}
 								alt={author.name}
-								className='size-9 object-cover aspect-square rounded-full select-none max-lg:hidden'
+								className='size-9 object-cover aspect-square rounded-full select-none max-xl:hidden'
 							/>
-							<span className='lg:hidden'>Имя: </span>
-							<span>{author.name}</span>
+							<span className='xl:hidden overflow-hidden text-ellipsis text-wrap'>
+								Имя: <span>{author.name}</span>
+							</span>
 						</>
 					) : (
 						'Имя автора'
 					)}
 				</div>
 
-				<div className='lg:col-span-4 flex flex-wrap'>
+				<div className='xl:col-span-4 flex flex-wrap'>
 					{author ? (
 						<>
-							<span className='lg:hidden max-lg:pr-1'>Тип автора:</span>
+							<span className='xl:hidden max-xl:pr-1'>Тип автора:</span>
 							{author.types.map((type, idx) => (
 								<span key={type.id} className='flex'>
 									<span
@@ -155,9 +150,9 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='lg:col-span-2 text-center max-lg:mt-1'>
+				<div className='xl:col-span-2 text-center max-xl:mt-1'>
 					{author ? (
-						<div className='flex gap-x-3 lg:justify-end'>
+						<div className='flex gap-x-3 xl:justify-end'>
 							<Link to={navigateToAuthorDetails(author.id)}>
 								<AdminNavigateButton />
 							</Link>
