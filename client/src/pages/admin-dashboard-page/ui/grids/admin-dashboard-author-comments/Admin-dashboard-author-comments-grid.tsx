@@ -6,6 +6,7 @@ import { useLoading } from '../../../../../hooks/use-loading'
 import { useStore } from '../../../../../hooks/use-store'
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
 import { SortOrder } from '../../../../../types/sort-order-type'
+import AdminToggleSortOrderButton from '../../buttons/Admin-toggle-sort-order-button'
 import AdminDashboardAuthorCommentsGridItem from './Admin-dashboard-author-comments-grid-item'
 
 const AdminDashboardAuthorCommentsGrid = observer(() => {
@@ -62,7 +63,19 @@ const AdminDashboardAuthorCommentsGrid = observer(() => {
 					}
 				/>
 
-				<div className='flex-1 overflow-y-auto xl:mt-5'>
+				<AdminToggleSortOrderButton
+					title={'Дата публикации'}
+					order={order}
+					toggleOrder={() =>
+						setOrder(
+							order === SortOrdersEnum.DESC
+								? SortOrdersEnum.ASC
+								: SortOrdersEnum.DESC
+						)
+					}
+				/>
+
+				<div className='flex-1 overflow-y-auto mt-5'>
 					<div className='grid gap-y-5'>
 						{isLoading
 							? Array.from({ length: perPage }).map((_, idx) => (

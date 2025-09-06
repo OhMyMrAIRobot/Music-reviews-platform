@@ -118,7 +118,7 @@ const FeedbackFormModal: FC<IProps> = observer(
 					<SkeletonLoader className='w-240 h-148 rounded-xl' />
 				) : (
 					<div
-						className={`relative rounded-xl w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6`}
+						className={`relative rounded-xl w-full lg:w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6`}
 					>
 						<h1 className='border-b border-white/10 text-3xl font-bold py-4 text-center'>
 							{`${!reply && showReply ? 'Написание' : 'Просмотр'} ${
@@ -189,14 +189,14 @@ const FeedbackFormModal: FC<IProps> = observer(
 							</div>
 						)}
 
-						<div className='pt-6 px-6 flex gap-3 justify-start border-t-1 border-white/10'>
+						<div className='pt-6 px-6 grid grid-rows-2 sm:flex gap-3 sm:justify-start border-t-1 border-white/10'>
 							{isStatusesLoading ? (
-								<SkeletonLoader className='w-35 h-10 rounded-md' />
+								<SkeletonLoader className='w-full sm:w-35 h-10 rounded-md' />
 							) : (
 								<>
 									{showReply && !reply ? (
 										<>
-											<div className='w-35'>
+											<div className='w-full sm:w-35'>
 												<FormButton
 													title={'Отправить'}
 													isInvert={true}
@@ -205,7 +205,7 @@ const FeedbackFormModal: FC<IProps> = observer(
 													isLoading={isReplyPosting}
 												/>
 											</div>
-											<div className='w-25'>
+											<div className='w-full sm:w-25'>
 												<FormButton
 													title={'Назад'}
 													isInvert={false}
@@ -219,7 +219,7 @@ const FeedbackFormModal: FC<IProps> = observer(
 										</>
 									) : feedback.feedbackStatus.status ===
 									  FeedbackStatusesEnum.NEW ? (
-										<div className='w-35'>
+										<div className='w-full sm:w-35'>
 											<FormButton
 												title={'Прочитано'}
 												isInvert={true}
@@ -232,7 +232,7 @@ const FeedbackFormModal: FC<IProps> = observer(
 											/>
 										</div>
 									) : (
-										<div className='w-35'>
+										<div className='w-full sm:w-35'>
 											<FormButton
 												title={
 													reply
@@ -248,7 +248,7 @@ const FeedbackFormModal: FC<IProps> = observer(
 								</>
 							)}
 
-							<div className='w-25 ml-auto'>
+							<div className='w-full sm:w-25 sm:ml-auto'>
 								<FormButton
 									title={'Закрыть'}
 									isInvert={false}

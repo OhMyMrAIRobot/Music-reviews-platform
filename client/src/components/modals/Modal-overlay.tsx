@@ -56,10 +56,7 @@ const ModalOverlay: FC<IProps> = ({
 				isVisible ? 'opacity-100' : 'opacity-0'
 			}`}
 		>
-			<div
-				onClick={e => e.stopPropagation()}
-				className='size-full flex items-center justify-center'
-			>
+			<div onClick={e => e.stopPropagation()} className='max-w-full'>
 				{children}
 			</div>
 		</div>,

@@ -64,7 +64,7 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
 	return (
 		<ModalOverlay isOpen={isOpen} onCancel={onClose} isLoading={isLoading}>
 			<div
-				className={`relative rounded-xl w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 p-6`}
+				className={`relative rounded-xl w-full lg:w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 p-6`}
 			>
 				<div className='grid gap-6'>
 					<h1 className='border-b border-white/10 text-3xl font-bold py-4 text-center'>
@@ -101,8 +101,8 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
 						/>
 					</div>
 
-					<div className='flex gap-3 justify-start'>
-						<div className='w-30'>
+					<div className='grid sm:flex gap-3 sm:justify-start'>
+						<div className='w-full sm:w-30'>
 							<FormButton
 								title={'Сохранить'}
 								isInvert={true}
@@ -112,7 +112,7 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
 							/>
 						</div>
 
-						<div className='w-25'>
+						<div className='w-full sm:w-25'>
 							<FormButton
 								title={'Назад'}
 								isInvert={false}
