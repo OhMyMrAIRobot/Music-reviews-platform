@@ -6,6 +6,7 @@ import { useLoading } from '../../../../../hooks/use-loading'
 import { useStore } from '../../../../../hooks/use-store'
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
 import { SortOrder } from '../../../../../types/sort-order-type'
+import AdminToggleSortOrderButton from '../../buttons/Admin-toggle-sort-order-button'
 import AdminDashboardReviewsGridItem from './Admin-dashboard-reviews-grid-item'
 
 const AdminDashboardReviewsGrid = observer(() => {
@@ -50,7 +51,7 @@ const AdminDashboardReviewsGrid = observer(() => {
 				className='flex flex-col overflow-hidden p-5'
 			>
 				<AdminDashboardReviewsGridItem
-					className='bg-white/5 font-medium max-lg:hidden'
+					className='bg-white/5 font-medium max-xl:hidden'
 					isLoading={false}
 					order={order}
 					toggleOrder={() =>
@@ -62,7 +63,19 @@ const AdminDashboardReviewsGrid = observer(() => {
 					}
 				/>
 
-				<div className='flex-1 overflow-y-auto lg:mt-5'>
+				<AdminToggleSortOrderButton
+					title={'Дата публикации'}
+					order={order}
+					toggleOrder={() =>
+						setOrder(
+							order === SortOrdersEnum.DESC
+								? SortOrdersEnum.ASC
+								: SortOrdersEnum.DESC
+						)
+					}
+				/>
+
+				<div className='flex-1 overflow-y-auto mt-5'>
 					<div className='grid gap-y-5'>
 						{isLoading
 							? Array.from({ length: perPage }).map((_, idx) => (

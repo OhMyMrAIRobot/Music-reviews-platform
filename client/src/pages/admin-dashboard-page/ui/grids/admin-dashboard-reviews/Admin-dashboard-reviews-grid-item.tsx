@@ -45,18 +45,6 @@ const AdminDashboardReviewsGridItem: FC<IProps> = observer(
 		const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 		const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
 
-		const toggle = () => {
-			if (toggleOrder) {
-				toggleOrder()
-			}
-		}
-
-		const handleRefetch = () => {
-			if (refetchReviews) {
-				refetchReviews()
-			}
-		}
-
 		const handleDelete = async (id: string, userId: string) => {
 			if (isDeleting) return
 
@@ -64,7 +52,7 @@ const AdminDashboardReviewsGridItem: FC<IProps> = observer(
 
 			if (errors.length === 0) {
 				notificationStore.addSuccessNotification('Вы успешно удалили рецензию!')
-				handleRefetch()
+				refetchReviews?.()
 			} else {
 				errors.forEach(err => {
 					notificationStore.addErrorNotification(err)
@@ -73,7 +61,7 @@ const AdminDashboardReviewsGridItem: FC<IProps> = observer(
 		}
 
 		return isLoading ? (
-			<SkeletonLoader className='w-full h-75 lg:h-12 rounded-lg' />
+			<SkeletonLoader className='w-full h-75 xl:h-12 rounded-lg' />
 		) : (
 			<>
 				{review && (
@@ -98,20 +86,20 @@ const AdminDashboardReviewsGridItem: FC<IProps> = observer(
 					</>
 				)}
 				<div
-					className={`${className} text-sm font-medium lg:h-12 w-full rounded-lg grid grid-rows-7 lg:grid-rows-1 lg:grid-cols-12 items-center px-3 max-lg:py-2 border border-white/10 text-nowrap`}
+					className={`${className} text-sm font-medium xl:h-12 w-full rounded-lg grid grid-rows-7 xl:grid-rows-1 xl:grid-cols-12 items-center px-3 max-xl:py-2 border border-white/10 text-nowrap`}
 				>
-					<div className='lg:col-span-1 text-ellipsis line-clamp-1'>
-						<span className='lg:hidden'># </span>
+					<div className='xl:col-span-1 text-ellipsis line-clamp-1'>
+						<span className='xl:hidden'># </span>
 						{position ?? '#'}
 					</div>
 
-					<div className='lg:col-span-2 h-full flex items-center mr-2'>
+					<div className='xl:col-span-2 h-full flex items-center mr-2'>
 						{review ? (
 							<>
-								<span className='lg:hidden max-lg:pr-1'>Пользователь: </span>
+								<span className='xl:hidden max-xl:pr-1'>Пользователь: </span>
 								<Link
 									to={navigatoToProfile(review.user.id)}
-									className='flex text-left gap-x-1.5 items-center cursor-pointer hover:bg-white/5 rounded-lg lg:px-1.5 py-0.5 w-full'
+									className='flex text-left gap-x-1.5 items-center cursor-pointer hover:bg-white/5 rounded-lg xl:px-1.5 py-0.5 w-full'
 								>
 									<img
 										loading='lazy'
@@ -124,7 +112,7 @@ const AdminDashboardReviewsGridItem: FC<IProps> = observer(
 										alt={review.user.nickname}
 										className='size-9 object-cover aspect-square rounded-full select-none'
 									/>
-									<span className='line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
+									<span className='max-xl:underline underline-offset-4 line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
 										{review.user.nickname}
 									</span>
 								</Link>
@@ -134,10 +122,10 @@ const AdminDashboardReviewsGridItem: FC<IProps> = observer(
 						)}
 					</div>
 
-					<div className='lg:col-span-2 h-full flex items-center mr-2'>
+					<div className='xl:col-span-2 h-full flex items-center mr-2'>
 						{review ? (
 							<>
-								<span className='lg:hidden max-lg:pr-1'>Релиз: </span>
+								<span className='xl:hidden max-xl:pr-1'>Релиз: </span>
 								<Link
 									to={navigateToReleaseDetails(review.release.id)}
 									className='flex text-left gap-x-1.5 items-center cursor-pointer hover:bg-white/5 rounded-lg px-1.5 py-0.5 w-full'
@@ -153,7 +141,7 @@ const AdminDashboardReviewsGridItem: FC<IProps> = observer(
 										alt={review.release.title}
 										className='size-9 object-cover aspect-square rounded-full select-none'
 									/>
-									<span className=' line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
+									<span className='max-xl:underline underline-offset-4 line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
 										{review.release.title}
 									</span>
 								</Link>
@@ -163,15 +151,15 @@ const AdminDashboardReviewsGridItem: FC<IProps> = observer(
 						)}
 					</div>
 
-					<div className='lg:col-span-2 text-ellipsis text-wrap '>
+					<div className='xl:col-span-2 text-ellipsis text-wrap '>
 						{review ? (
 							<>
-								<span className='lg:hidden'>Дата публикации: </span>
+								<span className='xl:hidden'>Дата публикации: </span>
 								<span>{review.createdAt}</span>
 							</>
 						) : (
 							<button
-								onClick={toggle}
+								onClick={toggleOrder}
 								className='cursor-pointer hover:text-white flex items-center gap-x-1.5'
 							>
 								<span>Дата публикации</span>
@@ -184,10 +172,10 @@ const AdminDashboardReviewsGridItem: FC<IProps> = observer(
 						)}
 					</div>
 
-					<div className='lg:col-span-2 lg:line-clamp-2 overflow-hidden text-ellipsis text-wrap mr-2'>
+					<div className='xl:col-span-2 xl:line-clamp-2 overflow-hidden text-ellipsis text-wrap mr-2'>
 						{review ? (
 							<>
-								<span className='lg:hidden'>Заголовок: </span>
+								<span className='xl:hidden'>Заголовок: </span>
 								<span>{review.title}</span>
 							</>
 						) : (
@@ -195,10 +183,10 @@ const AdminDashboardReviewsGridItem: FC<IProps> = observer(
 						)}
 					</div>
 
-					<div className='lg:col-span-2 line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
+					<div className='xl:col-span-2 line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
 						{review ? (
 							<>
-								<span className='lg:hidden'>Текст: </span>
+								<span className='xl:hidden'>Текст: </span>
 								<span>{review.text}</span>
 							</>
 						) : (
@@ -206,9 +194,9 @@ const AdminDashboardReviewsGridItem: FC<IProps> = observer(
 						)}
 					</div>
 
-					<div className='lg:col-span-1 max-lg:mt-1'>
+					<div className='xl:col-span-1 max-xl:mt-1'>
 						{review ? (
-							<div className='flex gap-x-3 lg:justify-end'>
+							<div className='flex gap-x-3 xl:justify-end'>
 								<AdminOpenButton
 									onClick={() => {
 										setEditModalOpen(true)
