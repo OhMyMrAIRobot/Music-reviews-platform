@@ -113,12 +113,13 @@ const FeedbackFormModal: FC<IProps> = observer(
 				isOpen={isOpen}
 				onCancel={onClose}
 				isLoading={isReplyPosting || isUpdatingStatus}
+				className='max-lg:size-full'
 			>
 				{isReplyLoading ? (
 					<SkeletonLoader className='w-240 h-148 rounded-xl' />
 				) : (
 					<div
-						className={`relative rounded-xl w-full lg:w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6`}
+						className={`relative rounded-xl w-full lg:w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6 max-h-full overflow-y-scroll`}
 					>
 						<h1 className='border-b border-white/10 text-3xl font-bold py-4 text-center'>
 							{`${!reply && showReply ? 'Написание' : 'Просмотр'} ${

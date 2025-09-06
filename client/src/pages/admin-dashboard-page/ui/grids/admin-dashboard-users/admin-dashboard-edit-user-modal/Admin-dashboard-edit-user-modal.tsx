@@ -154,13 +154,14 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 				isLoading={
 					isUpdateUserDataLoading || isDeletingAvatar || isDeletingCover
 				}
+				className='max-lg:size-full'
 			>
 				{isUserLoading || isRolesLoading ? (
-					<SkeletonLoader className='w-180 h-190 rounded-lg' />
+					<SkeletonLoader className='w-full lg:w-180 h-190 rounded-lg' />
 				) : (
 					user && (
 						<div
-							className={`relative rounded-xl w-full lg:w-180 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6 max-h-full overflow-y-scroll`}
+							className={`relative rounded-xl w-full lg:w-180 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6 max-h-full overflow-y-scroll overflow-x-hidden`}
 						>
 							<div className='w-full h-40 overflow-hidden p-1'>
 								<img

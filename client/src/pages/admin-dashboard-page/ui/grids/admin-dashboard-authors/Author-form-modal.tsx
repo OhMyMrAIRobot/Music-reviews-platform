@@ -193,13 +193,11 @@ const AuthorFormModal: FC<IProps> = ({
 	}, [isOpen, author])
 
 	const loadOptions = async (
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		search: string,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		limit: number | null
 	): Promise<IMultiSelectValue[]> => {
 		return metaStore.authorTypes.map(el => {
-			return { name: el.type, id: el.id }
+			return { name: el.type ?? search, id: el.id ?? limit }
 		})
 	}
 
@@ -214,9 +212,10 @@ const AuthorFormModal: FC<IProps> = ({
 			isOpen={isOpen}
 			onCancel={onClose}
 			isLoading={isUpdatingAuthor || isCreatingAuthor}
+			className='max-lg:size-full'
 		>
 			{isTypesLoading ? (
-				<SkeletonLoader className='w-240 h-140 rounded-xl' />
+				<SkeletonLoader className='w-full lg:w-240 h-140 rounded-xl' />
 			) : (
 				<div
 					className={`relative rounded-xl w-full lg:w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6 max-h-full overflow-y-scroll`}

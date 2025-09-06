@@ -166,119 +166,122 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media, refetch }) => {
 			isOpen={isOpen}
 			onCancel={onClose}
 			isLoading={isCreating || isUpdating}
+			className='max-lg:size-full'
 		>
 			{isTypesLoading || isStatusesLoading ? (
-				<SkeletonLoader className='w-240 h-140 rounded-xl' />
+				<SkeletonLoader className='w-full lg:w-240 h-140 rounded-xl' />
 			) : (
 				<div
-					className={`relative rounded-xl w-full lg:w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6`}
+					className={`relative rounded-xl w-full max-lg:h-full lg:w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 lg:pb-6 flex items-center`}
 				>
-					<h1 className='border-b border-white/10 text-3xl font-bold py-4 text-center'>
-						{formTitle}
-					</h1>
+					<div className='w-full'>
+						<h1 className='border-b border-white/10 text-3xl font-bold py-4 text-center'>
+							{formTitle}
+						</h1>
 
-					<div className='w-full grid lg:grid-cols-2 p-6 border-b border-white/10 gap-3 lg:gap-6'>
-						<div className='grid gap-2 w-full'>
-							<FormLabel
-								name={'Заголовок'}
-								htmlFor={'media-title-input'}
-								isRequired={true}
-							/>
-							<FormInput
-								id={'media-title-input'}
-								placeholder={'Заголовок...'}
-								type={'text'}
-								value={title}
-								setValue={setTitle}
-							/>
+						<div className='w-full grid lg:grid-cols-2 p-6 border-b border-white/10 gap-3 lg:gap-6'>
+							<div className='grid gap-2 w-full'>
+								<FormLabel
+									name={'Заголовок'}
+									htmlFor={'media-title-input'}
+									isRequired={true}
+								/>
+								<FormInput
+									id={'media-title-input'}
+									placeholder={'Заголовок...'}
+									type={'text'}
+									value={title}
+									setValue={setTitle}
+								/>
+							</div>
+
+							<div className='grid gap-2 w-full'>
+								<FormLabel
+									name={'Ссылка на медиа'}
+									htmlFor={'media-url-input'}
+									isRequired={true}
+								/>
+								<FormInput
+									id={'media-url-input'}
+									placeholder={'https://www.youtube.com/...'}
+									type={'text'}
+									value={url}
+									setValue={setUrl}
+								/>
+							</div>
+
+							<div className='grid gap-2 w-full'>
+								<FormLabel
+									name={'Тип медиа'}
+									htmlFor={'media-type'}
+									isRequired={true}
+								/>
+
+								<ComboBox
+									options={metaStore.releaseMediaTypes.map(entry => entry.type)}
+									value={type || undefined}
+									onChange={setType}
+									placeholder='Тип медиа'
+									className='border border-white/15'
+								/>
+							</div>
+
+							<div className='grid gap-2 w-full'>
+								<FormLabel
+									name={'Cтатус медиа'}
+									htmlFor={'media-status'}
+									isRequired={true}
+								/>
+
+								<ComboBox
+									options={metaStore.releaseMediaStatuses.map(
+										entry => entry.status
+									)}
+									value={status || undefined}
+									onChange={setStatus}
+									placeholder='Статус медиа'
+									className='border border-white/15'
+								/>
+							</div>
+
+							<div className='grid gap-2 w-full'>
+								<FormLabel
+									name={'Название релиза'}
+									htmlFor={'media-release-input'}
+									isRequired={true}
+								/>
+
+								<FormSingleSelect
+									id={'media-release-input'}
+									placeholder={'Введите название релиза...'}
+									value={release}
+									onChange={setRelease}
+									loadOptions={loadReleases}
+								/>
+							</div>
 						</div>
 
-						<div className='grid gap-2 w-full'>
-							<FormLabel
-								name={'Ссылка на медиа'}
-								htmlFor={'media-url-input'}
-								isRequired={true}
-							/>
-							<FormInput
-								id={'media-url-input'}
-								placeholder={'https://www.youtube.com/...'}
-								type={'text'}
-								value={url}
-								setValue={setUrl}
-							/>
-						</div>
+						<div className='pt-6 px-6 w-full grid sm:flex gap-3 sm:justify-start'>
+							<div className='w-full sm:w-30'>
+								<FormButton
+									title={buttonText}
+									isInvert={true}
+									onClick={handleSubmit}
+									disabled={
+										isCreating || !isFormValid || !hasChanges || isUpdating
+									}
+									isLoading={isCreating || isUpdating}
+								/>
+							</div>
 
-						<div className='grid gap-2 w-full'>
-							<FormLabel
-								name={'Тип медиа'}
-								htmlFor={'media-type'}
-								isRequired={true}
-							/>
-
-							<ComboBox
-								options={metaStore.releaseMediaTypes.map(entry => entry.type)}
-								value={type || undefined}
-								onChange={setType}
-								placeholder='Тип медиа'
-								className='border border-white/15'
-							/>
-						</div>
-
-						<div className='grid gap-2 w-full'>
-							<FormLabel
-								name={'Cтатус медиа'}
-								htmlFor={'media-status'}
-								isRequired={true}
-							/>
-
-							<ComboBox
-								options={metaStore.releaseMediaStatuses.map(
-									entry => entry.status
-								)}
-								value={status || undefined}
-								onChange={setStatus}
-								placeholder='Статус медиа'
-								className='border border-white/15'
-							/>
-						</div>
-
-						<div className='grid gap-2 w-full'>
-							<FormLabel
-								name={'Название релиза'}
-								htmlFor={'media-release-input'}
-								isRequired={true}
-							/>
-
-							<FormSingleSelect
-								id={'media-release-input'}
-								placeholder={'Введите название релиза...'}
-								value={release}
-								onChange={setRelease}
-								loadOptions={loadReleases}
-							/>
-						</div>
-					</div>
-
-					<div className='pt-6 px-6 w-full grid sm:flex gap-3 sm:justify-start'>
-						<div className='w-full sm:w-30'>
-							<FormButton
-								title={buttonText}
-								isInvert={true}
-								onClick={handleSubmit}
-								disabled={
-									isCreating || !isFormValid || !hasChanges || isUpdating
-								}
-								isLoading={isCreating || isUpdating}
-							/>
-						</div>
-
-						<div className='w-full sm:w-25'>
-							<FormButton
-								title={'Назад'}
-								isInvert={false}
-								onClick={onClose}
-								disabled={false}
-							/>
+							<div className='w-full sm:w-25'>
+								<FormButton
+									title={'Назад'}
+									isInvert={false}
+									onClick={onClose}
+									disabled={false}
+								/>
+							</div>
 						</div>
 					</div>
 				</div>

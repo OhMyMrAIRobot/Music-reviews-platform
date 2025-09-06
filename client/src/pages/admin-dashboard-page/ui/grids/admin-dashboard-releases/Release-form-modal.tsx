@@ -271,9 +271,10 @@ const ReleaseFormModal: FC<IProps> = observer(
 				isOpen={isOpen}
 				onCancel={onClose}
 				isLoading={isCreatingRelease || isUpdatingRelease}
+				className='max-lg:size-full'
 			>
 				{isTypesLoading ? (
-					<SkeletonLoader className='lg:w-240 lg:h-140 size-full rounded-xl' />
+					<SkeletonLoader className='w-full lg:w-240 h-140 size-full rounded-xl' />
 				) : (
 					<div
 						className={`relative rounded-xl w-full lg:w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6 overflow-y-scroll max-h-full`}
