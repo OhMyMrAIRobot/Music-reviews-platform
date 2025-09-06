@@ -13,11 +13,11 @@ import authStore from '../../stores/auth-store.ts'
 import { SortOrder } from '../../types/sort-order-type.ts'
 import ReleaseDetailsAlbumValue from './ui/release-details-album-value/Release-details-album-value.tsx'
 import ReleaseDetailsAuthorComments from './ui/release-details-author-comments/Release-details-author-comments.tsx'
+import ReleaseDetailsEstimation from './ui/release-details-estimation/Release-details-estimation.tsx'
 import ReleaseDetailsHeader from './ui/Release-details-header.tsx'
 import ReleaseDetailsMedia from './ui/release-details-media/Release-details-media.tsx'
 import ReleaseDetailsReviews from './ui/release-details-reviews/Release-details-reviews.tsx'
 import SendAuthorCommentForm from './ui/send-author-comment-form/Send-author-comment-form.tsx'
-import SendReviewForm from './ui/send-review-form/Send-review-form.tsx'
 
 const ReleaseDetailsPage = observer(() => {
 	const { releaseDetailsPageStore } = useStore()
@@ -60,7 +60,7 @@ const ReleaseDetailsPage = observer(() => {
 	}
 
 	useEffect(() => {
-		if (id) {
+		if (id && id !== releaseDetailsPageStore.releaseDetails?.id) {
 			fetchReleaseDetails(id).then(() => {
 				if (!releaseDetailsPageStore.releaseDetails) {
 					navigate(navigateToMain)
@@ -68,7 +68,7 @@ const ReleaseDetailsPage = observer(() => {
 			})
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [id])
+	}, [fetchReleaseDetails, id, releaseDetailsPageStore.releaseDetails])
 
 	useEffect(() => {
 		fetchReviews()
@@ -98,12 +98,18 @@ const ReleaseDetailsPage = observer(() => {
 				)}
 
 				<ReleaseDetailsMedia releaseId={release.id} />
+
 				<ReleaseDetailsAuthorComments releaseId={release.id} />
+
 				{isUserAuthor ? (
 					<SendAuthorCommentForm releaseId={release.id} />
 				) : (
-					<SendReviewForm fetchReviews={fetchReviews} releaseId={release.id} />
+					<ReleaseDetailsEstimation
+						release={release}
+						refetchReviews={fetchReviews}
+					/>
 				)}
+
 				<ReleaseDetailsReviews
 					reviews={reviews}
 					selectedSort={selectedSort}

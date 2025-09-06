@@ -6,6 +6,7 @@ import { IReleaseReviewsResponse } from '../../models/review/release-review/rele
 import { IReview } from '../../models/review/review'
 import { IReviewData } from '../../models/review/review-data'
 import { IReviewsResponse } from '../../models/review/reviews-response'
+import { IUserReview } from '../../models/review/user-review'
 import { SortOrder } from '../../types/sort-order-type'
 import { api } from '../api-instance'
 
@@ -111,5 +112,13 @@ export const ReviewAPI = {
 
 	async adminDeleteReview(userId: string, reviewId: string) {
 		return api.delete(`/reviews/${userId}/${reviewId}`)
+	},
+
+	async fetchUserReview(releaseId: string): Promise<IUserReview> {
+		const { data } = await api.get<IUserReview>(
+			`/reviews/user/release/${releaseId}`
+		)
+
+		return data
 	},
 }

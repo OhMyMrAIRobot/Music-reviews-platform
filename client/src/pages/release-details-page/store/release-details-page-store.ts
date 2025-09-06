@@ -15,6 +15,7 @@ import { IReleaseMediaList } from '../../../models/release/release-media/release
 import { IReleaseReview } from '../../../models/review/release-review/release-review'
 import { ReleaseReviewSortFieldsEnum } from '../../../models/review/release-review/release-review-sort-fields-enum'
 import { IReviewData } from '../../../models/review/review-data'
+import { IUserReview } from '../../../models/review/user-review'
 import { SortOrder } from '../../../types/sort-order-type'
 import { toggleFavMedia } from '../../../utils/toggle-fav-media'
 import { toggleFavReview } from '../../../utils/toggle-fav-review'
@@ -25,6 +26,9 @@ class ReleaseDetailsPageStore {
 	}
 
 	releaseDetails: IReleaseDetails | null = null
+
+	userReview: IUserReview | null = null
+
 	releaseReviews: IReleaseReview[] = []
 	reviewsCount: number = 0
 
@@ -47,6 +51,10 @@ class ReleaseDetailsPageStore {
 
 	setReviewsCount(data: number) {
 		this.reviewsCount = data
+	}
+
+	setUserReview(data: IUserReview | null) {
+		this.userReview = data
 	}
 
 	setReleaseMedia(data: IReleaseMediaList) {
@@ -148,6 +156,15 @@ class ReleaseDetailsPageStore {
 		}
 	}
 
+	fetchUserReview = async (releaseId: string) => {
+		try {
+			const data = await ReviewAPI.fetchUserReview(releaseId)
+			this.setUserReview(data)
+		} catch {
+			this.setUserReview(null)
+		}
+	}
+
 	postAuthorComment = async (
 		releaseId: string,
 		title: string,
@@ -222,6 +239,7 @@ class ReleaseDetailsPageStore {
 					this.releaseDetails.ratingDetails = data.ratingDetails
 				}
 			})
+			await this.fetchUserReview(releaseId)
 			return []
 		} catch (e: any) {
 			return Array.isArray(e.response?.data?.message)
@@ -253,14 +271,14 @@ class ReleaseDetailsPageStore {
 	): Promise<string[]> => {
 		try {
 			await ReviewAPI.updateReview(id, reviewData)
-			const data = await ReleaseAPI.fetchReleaseDetails(releaseId)
-
+			const releaseData = await ReleaseAPI.fetchReleaseDetails(releaseId)
 			runInAction(() => {
 				if (this.releaseDetails) {
-					this.releaseDetails.ratings = data.ratings
-					this.releaseDetails.ratingDetails = data.ratingDetails
+					this.releaseDetails.ratings = releaseData.ratings
+					this.releaseDetails.ratingDetails = releaseData.ratingDetails
 				}
 			})
+			await this.fetchUserReview(releaseId)
 			return []
 		} catch (e: any) {
 			return Array.isArray(e.response?.data?.message)
@@ -276,7 +294,6 @@ class ReleaseDetailsPageStore {
 	): Promise<string[]> => {
 		try {
 			const data = await ReleaseMediaAPI.updateReleaseMedia(id, { title, url })
-
 			this.setUserReleaseMedia(data)
 			return []
 		} catch (e: any) {
@@ -286,20 +303,24 @@ class ReleaseDetailsPageStore {
 		}
 	}
 
-	deleteReview = async (
-		id: string
-	): Promise<{ status: boolean; message: string }> => {
+	deleteReview = async (id: string, releaseId: string): Promise<string[]> => {
 		try {
 			await ReviewAPI.deleteReview(id)
-			return {
-				status: true,
-				message: 'Вы успешно удалили рецензию!',
+			if (this.releaseDetails) {
+				await this.fetchUserReview(this.releaseDetails.id)
 			}
-		} catch (_: any) {
-			return {
-				status: false,
-				message: 'Не удалось удалить рецензию!',
-			}
+			const releaseData = await ReleaseAPI.fetchReleaseDetails(releaseId)
+			runInAction(() => {
+				if (this.releaseDetails) {
+					this.releaseDetails.ratings = releaseData.ratings
+					this.releaseDetails.ratingDetails = releaseData.ratingDetails
+				}
+			})
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
 		}
 	}
 

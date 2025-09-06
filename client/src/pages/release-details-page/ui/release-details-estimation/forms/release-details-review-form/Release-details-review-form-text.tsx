@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import BrushSvg from '../../../../components/svg/Brush-svg'
+import BrushSvg from '../../../../../../components/svg/Brush-svg'
 
 interface IProps {
 	isReview: boolean
@@ -9,7 +9,7 @@ interface IProps {
 	setText: (val: string) => void
 }
 
-const SendReviewFormText: FC<IProps> = ({
+const ReleaseDetailsReviewFormText: FC<IProps> = ({
 	isReview,
 	title,
 	setTitle,
@@ -61,4 +61,4 @@ const SendReviewFormText: FC<IProps> = ({
 	)
 }
 
-export default SendReviewFormText
+export default ReleaseDetailsReviewFormText
