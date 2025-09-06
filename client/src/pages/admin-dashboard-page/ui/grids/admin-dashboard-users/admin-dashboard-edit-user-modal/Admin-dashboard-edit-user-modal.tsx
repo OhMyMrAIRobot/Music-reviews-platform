@@ -160,7 +160,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 				) : (
 					user && (
 						<div
-							className={`relative rounded-xl w-100 lg:w-180 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6`}
+							className={`relative rounded-xl w-full lg:w-180 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6 max-h-full overflow-y-scroll`}
 						>
 							<div className='w-full h-40 overflow-hidden p-1'>
 								<img
@@ -189,8 +189,8 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 									/>
 								</div>
 
-								<div className='absolute right-3 top-3 flex gap-3'>
-									<Link to={navigatoToProfile(userId)}>
+								<div className='lg:absolute right-3 top-3 grid lg:flex gap-3'>
+									<Link to={navigatoToProfile(userId)} className='md:w-45'>
 										<EditUserModalButton
 											title={'Профиль'}
 											svg={<MoveToSvg className={'size-4'} />}
@@ -198,23 +198,27 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 										/>
 									</Link>
 
-									<EditUserModalButton
-										disabled={user.profile?.avatar === '' || isDeletingAvatar}
-										title={'Удалить аватар'}
-										onClick={handleDeleteAvatar}
-										svg={<TrashSvg className={'size-4'} />}
-										isLoading={isDeletingAvatar}
-									/>
+									<div className='md:w-45'>
+										<EditUserModalButton
+											disabled={user.profile?.avatar === '' || isDeletingAvatar}
+											title={'Удалить аватар'}
+											onClick={handleDeleteAvatar}
+											svg={<TrashSvg className={'size-4'} />}
+											isLoading={isDeletingAvatar}
+										/>
+									</div>
 
-									<EditUserModalButton
-										disabled={
-											user.profile?.coverImage === '' || isDeletingCover
-										}
-										title={'Удалить обложку'}
-										onClick={handleDeleteCover}
-										svg={<TrashSvg className={'size-4'} />}
-										isLoading={isDeletingCover}
-									/>
+									<div className='md:w-45'>
+										<EditUserModalButton
+											disabled={
+												user.profile?.coverImage === '' || isDeletingCover
+											}
+											title={'Удалить обложку'}
+											onClick={handleDeleteCover}
+											svg={<TrashSvg className={'size-4'} />}
+											isLoading={isDeletingCover}
+										/>
+									</div>
 								</div>
 
 								<div className='grid gap-1'>
@@ -231,8 +235,8 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 
 								<FormDelimiter />
 
-								<div className='flex gap-x-5'>
-									<div className='w-1/2 h-full flex flex-col justify-between'>
+								<div className='grid md:flex gap-y-3 gap-x-5'>
+									<div className='w-full md:w-1/2 gap-y-3 h-full flex flex-col justify-between'>
 										<div className={`grid gap-2 w-full`}>
 											<FormLabel
 												name={'Никнейм'}
@@ -266,7 +270,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 										</div>
 									</div>
 
-									<div className={`w-1/2`}>
+									<div className={`w-full md:w-1/2`}>
 										<FormTextboxWithConfirmation
 											label={'Описание'}
 											initialValue={user.profile?.bio ?? ''}
@@ -290,8 +294,8 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 
 								<FormDelimiter />
 
-								<div className='w-full flex items-start gap-x-5'>
-									<div className='grid gap-2 w-1/2'>
+								<div className='w-full grid md:flex items-start gap-x-5 gap-y-3'>
+									<div className='grid gap-2 w-full md:w-1/2'>
 										<FormLabel name={'Роль'} htmlFor={''} isRequired={true} />
 
 										<ComboBox
@@ -302,7 +306,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 										/>
 									</div>
 
-									<div className='grid gap-2 w-1/2'>
+									<div className='grid gap-2 w-full md:w-1/2'>
 										<FormLabel name={'Статус'} htmlFor={''} isRequired={true} />
 
 										<ComboBox
@@ -319,6 +323,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 								<EditUserModalInputs user={user} />
 
 								<FormDelimiter />
+
 								<div className='flex gap-5 justify-end'>
 									<div className='w-25'>
 										<FormButton

@@ -8,7 +8,7 @@ interface IProps {
 
 const MostReviewedCarouselItem: FC<IProps> = ({ release, onClick }) => {
 	return (
-		<div className='embla__slide flex-[0_0_64px]'>
+		<div className='flex-[0_0_64px]'>
 			<button
 				onClick={onClick}
 				className='flex flex-col items-center space-y-1.5 lg:space-y-2.5 cursor-pointer select-none w-13 lg:w-17'

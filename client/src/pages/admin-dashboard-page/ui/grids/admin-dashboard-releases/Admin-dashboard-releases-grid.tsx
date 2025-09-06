@@ -1,7 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
 import AdminHeader from '../../../../../components/layout/admin-header/Admin-header.tsx'
-import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg.tsx'
 import Pagination from '../../../../../components/pagination/Pagination.tsx'
 import ReleaseTypeIcon from '../../../../../components/release/Release-type-icon.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
@@ -11,6 +10,7 @@ import { ReleaseTypesFilterOptions } from '../../../../../models/release/release
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum.ts'
 import { SortOrder } from '../../../../../types/sort-order-type.ts'
 import AdminFilterButton from '../../buttons/Admin-filter-button.tsx'
+import AdminToggleSortOrderButton from '../../buttons/Admin-toggle-sort-order-button.tsx'
 import AdminDashboardReleasesGridItem from './Admin-dashboard-releases-grid-item.tsx'
 import ReleaseFormModal from './Release-form-modal.tsx'
 
@@ -120,26 +120,17 @@ const AdminDashboardReleasesGrid = observer(() => {
 					/>
 				</div>
 
-				<div className='xl:hidden mt-2 md:mt-4 text-white/80 border-b border-white/10'>
-					<button
-						onClick={() =>
-							setOrder(
-								order === SortOrdersEnum.DESC
-									? SortOrdersEnum.ASC
-									: SortOrdersEnum.DESC
-							)
-						}
-						className='cursor-pointer text-sm px-2 pb-1 hover:text-white flex items-center gap-x-1.5'
-					>
-						<span className='pr-1'>Сортировать по: </span>
-						<span>Дата создания</span>
-						<ArrowBottomSvg
-							className={`size-3 ${
-								order === SortOrdersEnum.ASC ? 'rotate-180' : ''
-							}`}
-						/>
-					</button>
-				</div>
+				<AdminToggleSortOrderButton
+					title={'Дата создания'}
+					order={order}
+					toggleOrder={() =>
+						setOrder(
+							order === SortOrdersEnum.DESC
+								? SortOrdersEnum.ASC
+								: SortOrdersEnum.DESC
+						)
+					}
+				/>
 
 				<AdminDashboardReleasesGridItem
 					className='bg-white/5 font-medium max-xl:hidden'

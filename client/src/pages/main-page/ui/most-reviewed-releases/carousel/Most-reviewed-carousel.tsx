@@ -35,7 +35,7 @@ const MostReviewedCarousel: FC<IProps> = observer(({ setShow, setIndex }) => {
 						  Array.from({ length: 15 }).map((_, index) => (
 								<SkeletonLoader
 									key={`skeleton-${index}`}
-									className='rounded-full embla__slide flex-[0_0_64px] aspect-square'
+									className='rounded-full flex-[0_0_64px] aspect-square'
 								>
 									<div className='opacity-0 w-13 lg:w-17'>_</div>
 								</SkeletonLoader>

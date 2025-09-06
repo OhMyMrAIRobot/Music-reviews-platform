@@ -30,7 +30,7 @@ const EditUserModalInputs: FC<IProps> = ({ user }) => {
 
 	return (
 		<>
-			<div className='grid grid-cols-2 gap-x-5 gap-y-4'>
+			<div className='grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-3'>
 				{isSocialsLoading
 					? Array.from({ length: 4 }).map((_, idx) => (
 							<SkeletonLoader

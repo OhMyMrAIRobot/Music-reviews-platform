@@ -46,18 +46,6 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [editModelOpen, setEditModalOpen] = useState<boolean>(false)
 
-	const toggle = () => {
-		if (toggleOrder) {
-			toggleOrder()
-		}
-	}
-
-	const handleRefetch = () => {
-		if (refetchUsers) {
-			refetchUsers()
-		}
-	}
-
 	const handleDelete = async (id: string) => {
 		if (isDeleting) return
 		const errors = await deleteUser(id)
@@ -65,14 +53,14 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 			notificationStore.addSuccessNotification(
 				'Вы успешно удалили пользователя!'
 			)
-			handleRefetch()
+			refetchUsers?.()
 		} else {
 			errors.forEach(error => notificationStore.addErrorNotification(error))
 		}
 	}
 
 	return isLoading ? (
-		<SkeletonLoader className='w-full h-65 lg:h-12 rounded-lg' />
+		<SkeletonLoader className='w-full h-65 xl:h-12 rounded-lg' />
 	) : (
 		<>
 			{user && (
@@ -94,10 +82,10 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 			)}
 
 			<div
-				className={`${className} font-medium text-sm lg:h-12 w-full rounded-lg grid lg:grid-cols-12 grid-rows-7 lg:grid-rows-1 items-center px-3 max-lg:py-2 border border-white/10 text-nowrap relative`}
+				className={`${className} font-medium text-sm xl:h-12 w-full rounded-lg grid xl:grid-cols-12 grid-rows-7 xl:grid-rows-1 items-center px-3 max-xl:py-2 border border-white/10 text-nowrap relative`}
 			>
-				<div className='lg:col-span-1 text-ellipsis line-clamp-1'>
-					<span className='lg:hidden'># </span>
+				<div className='xl:col-span-1 text-ellipsis line-clamp-1'>
+					<span className='xl:hidden'># </span>
 					{position ?? '#'}
 				</div>
 
@@ -110,15 +98,15 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 								? import.meta.env.VITE_DEFAULT_AVATAR
 								: user.avatar
 						}`}
-						className='absolute right-0 top-0 lg:hidden rounded-lg size-22 aspect-square select-none object-cover'
+						className='absolute right-0 top-0 xl:hidden rounded-lg size-22 aspect-square select-none object-cover'
 					/>
 				)}
 
-				<div className='lg:col-span-2 text-ellipsis line-clamp-1 h-full flex items-center gap-x-2 mr-2'>
+				<div className='xl:col-span-2 xl:text-ellipsis xl:maxline-clamp-1 h-full flex items-center gap-x-2 mr-2 max-xl:max-w-[calc(100%-90px)]'>
 					{user ? (
 						<Link
 							to={navigatoToProfile(user.id)}
-							className='flex text-left gap-x-1.5 items-center cursor-pointer hover:bg-white/5 rounded-lg lg:px-1.5 lg:py-0.5 w-full'
+							className='flex text-left gap-x-1.5 items-center cursor-pointer hover:bg-white/5 rounded-lg xl:px-1.5 xl:py-0.5 w-full'
 						>
 							<img
 								loading='lazy'
@@ -128,11 +116,13 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 										? import.meta.env.VITE_DEFAULT_AVATAR
 										: user.avatar
 								}`}
-								className='max-lg:hidden size-9 aspect-square rounded-full select-none object-cover'
+								className='max-xl:hidden size-9 aspect-square rounded-full select-none object-cover'
 							/>
-							<span className='lg:hidden'>Никнейм: </span>
 							<span className=' line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
-								{user.nickname}
+								<span className='xl:hidden'>Никнейм: </span>
+								<span className='max-lg:underline underline-offset-4'>
+									{user.nickname}
+								</span>
 							</span>
 						</Link>
 					) : (
@@ -140,20 +130,20 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='lg:col-span-2 text-ellipsis line-clamp-1'>
-					<span className='lg:hidden'>Email: </span>
+				<div className='xl:col-span-2 text-ellipsis line-clamp-1'>
+					<span className='xl:hidden'>Email: </span>
 					{user?.email ?? 'Email'}
 				</div>
 
-				<div className='lg:col-span-2 text-ellipsis line-clamp-1 flex items-center h-full'>
+				<div className='xl:col-span-2 text-ellipsis line-clamp-1 flex items-center h-full'>
 					{user ? (
 						<>
-							<span className='lg:hidden'>Дата создания: </span>
-							<span className='max-lg:ml-0.5'>{user.createdAt}</span>
+							<span className='xl:hidden'>Дата создания: </span>
+							<span className='max-xl:ml-0.5'>{user.createdAt}</span>
 						</>
 					) : (
 						<button
-							onClick={toggle}
+							onClick={toggleOrder}
 							className='cursor-pointer hover:text-white flex items-center gap-x-1.5'
 						>
 							<span>Дата создания</span>
@@ -166,12 +156,12 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='lg:col-span-2 text-ellipsis line-clamp-1 flex items-center'>
+				<div className='xl:col-span-2 text-ellipsis line-clamp-1 flex items-center'>
 					{user?.role ? (
 						<>
-							<span className='lg:hidden'>Роль: </span>
+							<span className='xl:hidden'>Роль: </span>
 							<div
-								className={`flex max-lg:ml-0.5 gap-x-1 items-center ${getRoleColor(
+								className={`flex max-xl:ml-0.5 gap-x-1 items-center ${getRoleColor(
 									user.role
 								)}`}
 							>
@@ -187,12 +177,12 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='lg:col-span-2 text-ellipsis line-clamp-1 flex items-center h-full'>
+				<div className='xl:col-span-2 text-ellipsis line-clamp-1 flex items-center h-full'>
 					{user ? (
 						<>
-							<span className='lg:hidden'>Статус: </span>
+							<span className='xl:hidden'>Статус: </span>
 							<span
-								className={`max-lg:ml-0.5 px-2 py-0.5 rounded-full select-none text-[13px] ${
+								className={`max-xl:ml-0.5 px-2 py-0.5 rounded-full select-none text-[13px] ${
 									user.isActive
 										? 'text-green-500 bg-green-500/15'
 										: 'text-red-500 bg-red-500/15'
@@ -208,9 +198,9 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='lg:col-span-1 max-lg:mt-1'>
+				<div className='xl:col-span-1 max-xl:mt-1'>
 					{user ? (
-						<div className='flex gap-x-3 lg:justify-end'>
+						<div className='flex gap-x-3 xl:justify-end'>
 							<AdminEditButton onClick={() => setEditModalOpen(true)} />
 							<AdminDeleteButton onClick={() => setConfModalOpen(true)} />
 						</div>

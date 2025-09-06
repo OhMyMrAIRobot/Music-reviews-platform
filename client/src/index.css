@@ -68,22 +68,3 @@ body {
 .embla__container {
 	display: flex;
 }
-.embla__slide {
-	flex: 0 0 64;
-	min-width: 0;
-}
-
-@keyframes slideInFromTop {
-	0% {
-		transform: translateY(-10%);
-		opacity: 0;
-	}
-	100% {
-		transform: translateY(0);
-		opacity: 1;
-	}
-}
-
-.slide-in-top {
-	animation: slideInFromTop 0.7s ease-out forwards;
-}
