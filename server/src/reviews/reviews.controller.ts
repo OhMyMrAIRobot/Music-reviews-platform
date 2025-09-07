@@ -50,6 +50,15 @@ export class ReviewsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('user/release/:releaseId')
+  findByUserReleaseIds(
+    @Request() req: IAuthenticatedRequest,
+    @Param('releaseId') releaseId: string,
+  ) {
+    return this.reviewsService.findByUserReleaseIds(req.user.id, releaseId);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post()
   create(
     @Request() req: IAuthenticatedRequest,

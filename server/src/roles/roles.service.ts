@@ -23,7 +23,7 @@ export class RolesService {
     return role;
   }
 
-  async findByName(name: string = 'User'): Promise<Role> {
+  async findByName(name: string): Promise<Role> {
     const existingRole = await this.prisma.role.findFirst({
       where: { role: { equals: name, mode: 'insensitive' } },
     });

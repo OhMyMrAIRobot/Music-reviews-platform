@@ -6,6 +6,7 @@ import {
 import * as bcrypt from 'bcrypt';
 import { plainToInstance } from 'class-transformer';
 import { Response } from 'express';
+import { UserRoleEnum } from 'src/roles/types/user-role.enum';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { RolesService } from '../../roles/roles.service';
 import { InvalidCredentialsException } from '../../shared/exceptions/invalid-credentials.exception';
@@ -101,7 +102,7 @@ export class AuthService {
     const hashedPassword = await this.usersService.createPasswordHash(
       dto.password,
     );
-    const userRole = await this.rolesService.findByName();
+    const userRole = await this.rolesService.findByName(UserRoleEnum.USER);
 
     try {
       const user = await this.prisma.$transaction(async (prisma) => {

@@ -32,7 +32,6 @@ export class AlbumValuesService {
         releaseId,
       );
     } else {
-      console.log(data[0]);
       return data[0];
     }
   }
