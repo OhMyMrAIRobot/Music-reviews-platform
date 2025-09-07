@@ -1,16 +1,16 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useEffect, useMemo, useState } from 'react'
-import FormButton from '../../../../components/form-elements/Form-button'
-import FormInput from '../../../../components/form-elements/Form-input'
-import FormLabel from '../../../../components/form-elements/Form-label'
-import { useLoading } from '../../../../hooks/use-loading'
-import { useStore } from '../../../../hooks/use-store'
+import FormButton from '../../../../../../components/form-elements/Form-button'
+import FormInput from '../../../../../../components/form-elements/Form-input'
+import FormLabel from '../../../../../../components/form-elements/Form-label'
+import { useLoading } from '../../../../../../hooks/use-loading'
+import { useStore } from '../../../../../../hooks/use-store'
 
 interface IProps {
 	releaseId: string
 }
 
-const SendMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
+const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
 	const { releaseDetailsPageStore, notificationStore } = useStore()
 
 	const userReleaseMedia = releaseDetailsPageStore.userReleaseMedia
@@ -96,7 +96,14 @@ const SendMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
 
 	return (
 		<div className='border bg-zinc-900 rounded-xl p-4 border-white/10'>
-			<div className='grid grid-cols-2 gap-5'>
+			{userReleaseMedia && (
+				<div className='bg-gradient-to-br from-white/20 border border-white/5 rounded-lg text-sm lg:text-base text-center px-3 py-3 lg:py-5 mb-4 font-medium'>
+					Вы уже оставляли медиарецензию к данной работе. Вы можете изменить ее,
+					заполнив форму ниже!
+				</div>
+			)}
+
+			<div className='grid md:grid-cols-2 gap-y-3 gap-5'>
 				<div className='grid gap-2'>
 					<FormLabel
 						name={'Заголовок'}
@@ -128,8 +135,8 @@ const SendMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
 				</div>
 			</div>
 
-			<div className='flex items-center justify-between mt-4'>
-				<div className='w-40'>
+			<div className='grid sm:flex items-center gap-y-3 sm:justify-between mt-6'>
+				<div className='w-full sm:w-40'>
 					<FormButton
 						title={userReleaseMedia ? 'Обновить' : 'Отправить'}
 						isInvert={true}
@@ -140,7 +147,7 @@ const SendMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
 				</div>
 
 				{userReleaseMedia && (
-					<div className='w-40'>
+					<div className='w-full sm:w-40'>
 						<FormButton
 							title={'Удалить'}
 							isInvert={false}
@@ -155,4 +162,4 @@ const SendMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
 	)
 })
 
-export default SendMediaReviewForm
+export default ReleaseDetailsMediaReviewForm

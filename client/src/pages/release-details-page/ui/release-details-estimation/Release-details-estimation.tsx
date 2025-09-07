@@ -10,6 +10,7 @@ import { ReleaseTypesEnum } from '../../../../models/release/release-type/releas
 import { RolesEnum } from '../../../../models/role/roles-enum'
 import { ReleaseDetailsPageSections } from '../../types/release-details-page-sections'
 import ReleaseDetailsEstimationWarning from './Release-details-estimation-warning'
+import ReleaseDetailsMediaReviewForm from './forms/release-details-media-review-form/Release-details-media-review-form'
 import ReleaseDetailsReviewForm from './forms/release-details-review-form/Release-details-review-form'
 
 interface IProps {
@@ -106,6 +107,10 @@ const ReleaseDetailsEstimation: FC<IProps> = observer(
 								isReview={false}
 								refetchReviews={refetchReviews}
 							/>
+						)}
+
+						{section === ReleaseDetailsPageSections.MEDIAREVIEW && (
+							<ReleaseDetailsMediaReviewForm releaseId={release.id} />
 						)}
 					</div>
 				</div>
