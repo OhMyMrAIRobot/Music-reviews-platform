@@ -19,7 +19,7 @@ const Slider: FC<IProps> = ({
 	step = 1,
 	trackBeforeColor,
 	trackAfterColor,
-	thumbImage,
+	thumbImage = `${import.meta.env.VITE_SERVER_URL}/public/assets/rice.png`,
 }) => {
 	const sliderRef = useRef<HTMLDivElement>(null)
 	const [sliderWidth, setSliderWidth] = useState(0)
@@ -29,7 +29,8 @@ const Slider: FC<IProps> = ({
 	const range = max - min
 	const safeRange = range <= 0 ? 1 : range
 
-	const getStepDecimals = (n: number) => {
+	const getDecimals = (n: number) => {
+		if (!isFinite(n)) return 0
 		const s = n.toString()
 		if (s.includes('e-')) {
 			const [, exp] = s.split('e-')
@@ -39,13 +40,23 @@ const Slider: FC<IProps> = ({
 		return dec
 	}
 
-	const stepDecimals = getStepDecimals(step)
+	const decimals = Math.max(
+		getDecimals(step),
+		getDecimals(min),
+		getDecimals(max)
+	)
+
+	const roundTo = (val: number, dec: number) => {
+		const factor = Math.pow(10, dec)
+		return Math.round(val * factor) / factor
+	}
 
 	const snapToStep = (val: number) => {
 		const clamped = Math.min(Math.max(val, min), max)
-		const steps = Math.round((clamped - min) / step)
-		const snapped = min + steps * step
-		return parseFloat(snapped.toFixed(stepDecimals))
+		const stepsCount = Math.round((clamped - min) / step)
+		const snapped = min + stepsCount * step
+		const rounded = roundTo(snapped, decimals)
+		return Math.min(Math.max(rounded, min), max)
 	}
 
 	const percent = range > 0 ? (value - min) / safeRange : 0
@@ -105,44 +116,6 @@ const Slider: FC<IProps> = ({
 		updateValueFromPosition(e.clientX)
 	}
 
-	const handleKeyDown = (e: React.KeyboardEvent) => {
-		let next = value
-		const bigStep = step * 10
-
-		switch (e.key) {
-			case 'ArrowLeft':
-			case 'ArrowDown':
-				next = snapToStep(value - step)
-				e.preventDefault()
-				break
-			case 'ArrowRight':
-			case 'ArrowUp':
-				next = snapToStep(value + step)
-				e.preventDefault()
-				break
-			case 'PageDown':
-				next = snapToStep(value - bigStep)
-				e.preventDefault()
-				break
-			case 'PageUp':
-				next = snapToStep(value + bigStep)
-				e.preventDefault()
-				break
-			case 'Home':
-				next = snapToStep(min)
-				e.preventDefault()
-				break
-			case 'End':
-				next = snapToStep(max)
-				e.preventDefault()
-				break
-			default:
-				break
-		}
-
-		if (next !== value) onChange(next)
-	}
-
 	return (
 		<div
 			ref={sliderRef}
@@ -180,7 +153,6 @@ const Slider: FC<IProps> = ({
 					borderRadius: 4,
 				}}
 				onMouseDown={handleMouseDown}
-				onKeyDown={handleKeyDown}
 			/>
 		</div>
 	)

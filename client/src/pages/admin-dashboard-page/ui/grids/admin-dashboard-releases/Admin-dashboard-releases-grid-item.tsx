@@ -129,7 +129,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 								className='hidden xl:block size-9 object-cover aspect-square rounded-full select-none'
 							/>
 
-							<span className='overflow-hidden text-ellipsis text-wrap'>
+							<span className='overflow-hidden xl:line-clamp-2 text-ellipsis text-wrap'>
 								<span className='xl:hidden'>Название: </span>
 								<span className='max-xl:underline underline-offset-4'>
 									{release.title}
