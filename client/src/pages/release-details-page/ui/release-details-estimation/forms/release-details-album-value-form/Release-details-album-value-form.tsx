@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useState } from 'react'
+import ReleaseDetailsAlbumValueFormDepth from './Release-details-album-value-form-depth'
 import ReleaseDetailsAlbumValueFormIntegrity from './Release-details-album-value-form-integrity'
 import ReleaseDetailsAlbumValueFormRarity from './Release-details-album-value-form-rarity'
 
@@ -13,6 +14,7 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(() => {
 	const [formatRelease, setFormatRelease] = useState<number>(0)
 	const [integrityGenre, setIntegrityGenre] = useState<number>(0.5)
 	const [integritySemantic, setIntegritySemantic] = useState<number>(0.5)
+	const [depth, setDepth] = useState<number>(1)
 
 	return (
 		<div className='bg-zinc-900 rounded-xl border-white/10'>
@@ -32,6 +34,11 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(() => {
 						setIntegrityGenre={setIntegrityGenre}
 						integritySemantic={integritySemantic}
 						setIntegritySemantic={setIntegritySemantic}
+					/>
+
+					<ReleaseDetailsAlbumValueFormDepth
+						depth={depth}
+						setDepth={setDepth}
 					/>
 				</div>
 
