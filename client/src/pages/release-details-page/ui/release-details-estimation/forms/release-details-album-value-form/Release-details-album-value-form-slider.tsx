@@ -43,6 +43,7 @@ const ReleaseDetailsAlbumValueFormSlider: FC<IProps> = observer(
 						min={min}
 						step={step}
 						trackBeforeColor='bg-gradient-to-br from-[rgba(86,118,234,.5)] to-[rgba(86,118,234,1)]'
+						showTicks={true}
 					/>
 					<div className='text-base md:text-[20px] font-bold text-right w-[25px] shrink-0'>
 						{value}
@@ -59,7 +60,7 @@ const ReleaseDetailsAlbumValueFormSlider: FC<IProps> = observer(
 					) : (
 						<ul className='space-y-0.5 text-left'>
 							{valueDescription.map(vd => (
-								<li>
+								<li key={vd.title}>
 									<span className='text-white font-bold'>{vd.title}: </span>
 									{vd.text}
 								</li>

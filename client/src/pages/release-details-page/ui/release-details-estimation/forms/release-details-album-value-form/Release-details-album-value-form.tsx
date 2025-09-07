@@ -1,5 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useState } from 'react'
+import AlbumValue from '../../../../../../components/album-value/Album-value'
+import { getAlbumValueInfluenceMultiplier } from '../../../../../../utils/get-album-value-influence-multiplier'
 import ReleaseDetailsAlbumValueFormDepth from './Release-details-album-value-form-depth'
 import ReleaseDetailsAlbumValueFormInfluence from './Release-details-album-value-form-influence'
 import ReleaseDetailsAlbumValueFormIntegrity from './Release-details-album-value-form-integrity'
@@ -19,7 +21,7 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(() => {
 	const [depth, setDepth] = useState<number>(1)
 	const [rhymes, setRhymes] = useState<number>(5)
 	const [structure, setStructure] = useState<number>(5)
-	const [realization, setRealization] = useState<number>(5)
+	const [styleImplementation, setStyleImplementation] = useState<number>(5)
 	const [individuality, setIndividuality] = useState<number>(5)
 	const [authorPopularity, setAuthorPopularity] = useState<number>(0.5)
 	const [releaseAnticip, setReleaseAnticip] = useState(0.5)
@@ -54,8 +56,8 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(() => {
 						setRhymes={setRhymes}
 						structure={structure}
 						setStructure={setStructure}
-						realization={realization}
-						setRealization={setRealization}
+						realization={styleImplementation}
+						setRealization={setStyleImplementation}
 						individuality={individuality}
 						setIndividuality={setIndividuality}
 					/>
@@ -68,7 +70,53 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(() => {
 					/>
 				</div>
 
-				<div className='grid grid-cols-1 gap-1'></div>
+				<div className='grid grid-cols-1 gap-1'>
+					<AlbumValue
+						rarity={{
+							total: rarityGenre + rarityPerformance,
+							rarityGenre: rarityGenre,
+							rarityPerformance: rarityPerformance,
+						}}
+						integrity={{
+							total: formatRelease + integrityGenre + integritySemantic,
+							formatRelease: formatRelease,
+							integrityGenre: integrityGenre,
+							integritySemantic: integritySemantic,
+						}}
+						depth={depth}
+						quality={{
+							total: rhymes + structure + individuality + styleImplementation,
+							factor:
+								(rhymes + structure + individuality + styleImplementation) *
+								0.025,
+							rhymes: rhymes,
+							structure: structure,
+							individuality: individuality,
+							styleImplementation: styleImplementation,
+						}}
+						influence={{
+							total: releaseAnticip + authorPopularity,
+							multiplier: getAlbumValueInfluenceMultiplier(
+								releaseAnticip + authorPopularity
+							),
+							releaseAnticip: releaseAnticip,
+							authorPopularity: authorPopularity,
+						}}
+						totalValue={
+							(rarityGenre +
+								rarityPerformance +
+								formatRelease +
+								integrityGenre +
+								integritySemantic +
+								depth) *
+							(rhymes + structure + individuality + styleImplementation) *
+							0.025 *
+							getAlbumValueInfluenceMultiplier(
+								releaseAnticip + authorPopularity
+							)
+						}
+					/>
+				</div>
 			</div>
 		</div>
 	)

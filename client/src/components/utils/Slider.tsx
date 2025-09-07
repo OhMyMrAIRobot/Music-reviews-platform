@@ -9,6 +9,8 @@ interface IProps {
 	trackBeforeColor?: string
 	trackAfterColor?: string
 	thumbImage?: string
+	showTicks?: boolean
+	tickClassName?: string
 }
 
 const Slider: FC<IProps> = ({
@@ -20,6 +22,8 @@ const Slider: FC<IProps> = ({
 	trackBeforeColor,
 	trackAfterColor,
 	thumbImage = `${import.meta.env.VITE_SERVER_URL}/public/assets/rice.png`,
+	showTicks = false,
+	tickClassName = 'w-[1px] h-[10px] bg-white/30',
 }) => {
 	const sliderRef = useRef<HTMLDivElement>(null)
 	const [sliderWidth, setSliderWidth] = useState(0)
@@ -36,8 +40,7 @@ const Slider: FC<IProps> = ({
 			const [, exp] = s.split('e-')
 			return parseInt(exp || '0', 10)
 		}
-		const dec = s.split('.')[1]?.length ?? 0
-		return dec
+		return s.split('.')[1]?.length ?? 0
 	}
 
 	const decimals = Math.max(
@@ -60,7 +63,7 @@ const Slider: FC<IProps> = ({
 	}
 
 	const percent = range > 0 ? (value - min) / safeRange : 0
-	const thumbLeft = percent * (sliderWidth - thumbWidth)
+	const thumbLeft = percent * (sliderWidth - thumbWidth) - 4
 
 	useEffect(() => {
 		const updateSize = () => {
@@ -116,12 +119,51 @@ const Slider: FC<IProps> = ({
 		updateValueFromPosition(e.clientX)
 	}
 
+	const generateTicks = () => {
+		const ticks: number[] = []
+		if (!isFinite(step) || step <= 0 || !isFinite(min) || !isFinite(max)) {
+			return ticks
+		}
+		const epsilon = 1 / Math.pow(10, decimals + 2)
+		for (let i = 0; ; i++) {
+			const v = roundTo(min + i * step, decimals)
+			if (v > max + epsilon) break
+			ticks.push(Math.min(v, max))
+			if (v >= max - epsilon) break
+		}
+		return ticks
+	}
+
+	const ticks = showTicks ? generateTicks() : []
+
 	return (
 		<div
 			ref={sliderRef}
 			className='slider bg-white/10 h-[10px] flex-grow rounded-full cursor-grab relative select-none'
 			onClick={handleClick}
 		>
+			{showTicks && (
+				<div
+					className='absolute inset-0 pointer-events-none'
+					style={{ zIndex: 0 }}
+				>
+					{ticks.map(tick => {
+						const p = range > 0 ? (tick - min) / safeRange : 0
+						const x = p * (sliderWidth - thumbWidth) + thumbWidth / 2
+						return (
+							<div
+								key={tick}
+								className={`absolute top-3 ${tickClassName}`}
+								style={{
+									left: `${x - 0.5}px`,
+								}}
+								aria-hidden
+							/>
+						)
+					})}
+				</div>
+			)}
+
 			<div
 				className={`left-0 h-full rounded-l-full absolute ${trackBeforeColor}`}
 				style={{
