@@ -54,7 +54,7 @@ const ReleaseDetailsAlbumValueFormSlider: FC<IProps> = observer(
 					{valueTitle && (
 						<div className='font-bold text-white'>«{valueTitle}»</div>
 					)}
-					<div>{valueDescription}</div>
+					{valueDescription && <div>{valueDescription}</div>}
 				</div>
 			</div>
 		)
