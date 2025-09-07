@@ -2,6 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { FC } from 'react'
 import { makeStepLabeler } from '../../../../../../utils/make-step-labeler'
 import ReleaseDetailsAlbumValueFormSlider from './Release-details-album-value-form-slider'
+import ReleaseDetailsAlbumValueSection from './Release-details-album-value-section'
 
 interface IProps {
 	rarityGenre: number
@@ -54,43 +55,26 @@ const ReleaseDetailsAlbumValueFormRarity: FC<IProps> = observer(
 		setRarityPerformance,
 	}) => {
 		return (
-			<div className='relative'>
-				{/* HEADER */}
-				<div className='flex items-start space-x-3 mb-4'>
-					<div className='size-6 max-md:text-[11px] md:size-8 bg-white/10 rounded-full flex items-center justify-center text-center left-4 top-0'>
-						1
-					</div>
-
-					{/* HEADER TEXT */}
-					<div className='flex justify-between gap-3 items-start lg:items-center w-full'>
-						<div>
-							<div className='font-bold inline-flex lg:text-xl mb-1.5 cursor-default flex-wrap'>
-								<span className='mr-2'>Редкость</span>
-								<span className='opacity-60'>(от 1 до 5)</span>
-							</div>
-							<div className='text-xs lg:text-sm text-zinc-400'>
-								<p>
-									Распространенность музыкального жанра и формата его исполнения
-									в индустрии
-								</p>
-								<p>
-									Рассчитывается как совокупность подкритериев «Редкость жанра»
-									и «Редкость формата исполнения»
-								</p>
-							</div>
-						</div>
-
-						<div className='bg-zinc-800 shrink-0 border border-zinc-700 min-w-[55px] rounded-lg flex items-center text-center justify-center px-1.5 lg:px-3 py-1'>
-							<span className='lg:text-2xl font-bold mr-1 lg:mr-2'>
-								{rarityGenre + rarityPerformance}
-							</span>
-							<span className='opacity-60'>/ 5</span>
-						</div>
-					</div>
-				</div>
-
-				{/* SLIDERS */}
-				<div className='grid grid-cols-1 xl:grid-cols-2 gap-x-6 gap-y-2 lg:gap-y-4 lg:pl-10 mt-3'>
+			<ReleaseDetailsAlbumValueSection
+				pos={1}
+				title={'Редкость'}
+				minMaxText={'(от 1 до 5)'}
+				description={
+					<>
+						<p>
+							Распространенность музыкального жанра и формата его исполнения в
+							индустрии
+						</p>
+						<p>
+							Рассчитывается как совокупность подкритериев «Редкость жанра» и
+							«Редкость формата исполнения»
+						</p>
+					</>
+				}
+				value={`${rarityGenre + rarityPerformance}`}
+				maxValue={'5'}
+			>
+				<div className='grid grid-cols-1 xl:grid-cols-2 gap-x-6 gap-y-2 xl:gap-y-4 xl:pl-10 mt-3'>
 					<ReleaseDetailsAlbumValueFormSlider
 						value={rarityGenre}
 						setValue={setRarityGenre}
@@ -112,7 +96,7 @@ const ReleaseDetailsAlbumValueFormRarity: FC<IProps> = observer(
 						valueDescription={getRarityPerfomanceValueText(rarityPerformance)}
 					/>
 				</div>
-			</div>
+			</ReleaseDetailsAlbumValueSection>
 		)
 	}
 )

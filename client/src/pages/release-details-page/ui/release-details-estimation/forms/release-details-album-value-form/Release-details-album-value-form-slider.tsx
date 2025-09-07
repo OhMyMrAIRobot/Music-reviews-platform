@@ -27,7 +27,7 @@ const ReleaseDetailsAlbumValueFormSlider: FC<IProps> = observer(
 		return (
 			<div className='bg-zinc-800 rounded-lg px-5 py-1.5 lg:py-3 border border-zinc-700 text-center'>
 				{/* HEADER */}
-				<span className='text-sm lg:text-lg font-bold mb-0.5'>
+				<span className='text-sm grid lg:text-lg font-bold mb-0.5'>
 					{title}
 					<span className='ml-1 text-sm opacity-60'>
 						(от {min} до {max})
@@ -51,7 +51,9 @@ const ReleaseDetailsAlbumValueFormSlider: FC<IProps> = observer(
 
 				{/* TEXT */}
 				<div className='text-xs font-medium lg:text-sm text-zinc-400 flex flex-col gap-2 mt-2'>
-					<div className='font-bold text-white'>«{valueTitle}»</div>
+					{valueTitle && (
+						<div className='font-bold text-white'>«{valueTitle}»</div>
+					)}
 					<div>{valueDescription}</div>
 				</div>
 			</div>
