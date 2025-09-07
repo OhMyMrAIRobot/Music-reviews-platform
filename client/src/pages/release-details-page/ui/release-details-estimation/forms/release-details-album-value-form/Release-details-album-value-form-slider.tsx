@@ -10,7 +10,7 @@ interface IProps {
 	max: number
 	step: number
 	valueTitle: string
-	valueDescription: string
+	valueDescription: string | { title: string; text: string }[]
 }
 
 const ReleaseDetailsAlbumValueFormSlider: FC<IProps> = observer(
@@ -54,7 +54,18 @@ const ReleaseDetailsAlbumValueFormSlider: FC<IProps> = observer(
 					{valueTitle && (
 						<div className='font-bold text-white'>«{valueTitle}»</div>
 					)}
-					{valueDescription && <div>{valueDescription}</div>}
+					{typeof valueDescription === 'string' ? (
+						<div>{valueDescription}</div>
+					) : (
+						<ul className='space-y-0.5 text-left'>
+							{valueDescription.map(vd => (
+								<li>
+									<span className='text-white font-bold'>{vd.title}: </span>
+									{vd.text}
+								</li>
+							))}
+						</ul>
+					)}
 				</div>
 			</div>
 		)

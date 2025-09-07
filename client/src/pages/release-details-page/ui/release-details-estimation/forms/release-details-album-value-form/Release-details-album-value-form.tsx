@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useState } from 'react'
 import ReleaseDetailsAlbumValueFormDepth from './Release-details-album-value-form-depth'
+import ReleaseDetailsAlbumValueFormInfluence from './Release-details-album-value-form-influence'
 import ReleaseDetailsAlbumValueFormIntegrity from './Release-details-album-value-form-integrity'
 import ReleaseDetailsAlbumValueFormQuality from './Release-details-album-value-form-quality'
 import ReleaseDetailsAlbumValueFormRarity from './Release-details-album-value-form-rarity'
@@ -20,6 +21,8 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(() => {
 	const [structure, setStructure] = useState<number>(5)
 	const [realization, setRealization] = useState<number>(5)
 	const [individuality, setIndividuality] = useState<number>(5)
+	const [authorPopularity, setAuthorPopularity] = useState<number>(0.5)
+	const [releaseAnticip, setReleaseAnticip] = useState(0.5)
 
 	return (
 		<div className='bg-zinc-900 rounded-xl border-white/10'>
@@ -55,6 +58,13 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(() => {
 						setRealization={setRealization}
 						individuality={individuality}
 						setIndividuality={setIndividuality}
+					/>
+
+					<ReleaseDetailsAlbumValueFormInfluence
+						authorPopularity={authorPopularity}
+						setAuthorPopularity={setAuthorPopularity}
+						releaseAnticip={releaseAnticip}
+						setReleaseAnticip={setReleaseAnticip}
 					/>
 				</div>
 
