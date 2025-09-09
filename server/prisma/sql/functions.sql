@@ -600,7 +600,7 @@ BEGIN
                 SELECT * FROM album_value_vote_contrib(
                         OLD.rarity_genre, OLD.rarity_performance, OLD.format_release_score,
                         OLD.integrity_genre, OLD.integrity_semantic, OLD.depth_score,
-                        OLD.quality_rhymes_images, OLD.quality_structure_rhythm, OLD.uality_style_impl, OLD.quality_individuality,
+                        OLD.quality_rhymes_images, OLD.quality_structure_rhythm, OLD.quality_style_impl, OLD.quality_individuality,
                         OLD.influence_author_popularity, OLD.influence_release_anticip
                 )
         )

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   Patch,
   Post,
@@ -26,6 +27,18 @@ export class AlbumValueVotesController {
     @Request() req: IAuthenticatedRequest,
   ) {
     return this.albumValueVotesService.create(req.user.id, dto);
+  }
+
+  @Get('release/:releaseId')
+  @UseGuards(JwtAuthGuard)
+  findUserAlbumValueVote(
+    @Param('releaseId') releaseId: string,
+    @Request() req: IAuthenticatedRequest,
+  ) {
+    return this.albumValueVotesService.findUserAlbumValueVote(
+      req.user.id,
+      releaseId,
+    );
   }
 
   @Patch(':id')

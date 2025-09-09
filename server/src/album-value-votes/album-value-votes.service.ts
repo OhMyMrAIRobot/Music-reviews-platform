@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { AlbumValueVote } from '@prisma/client';
+import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
 import { ReleaseTypesEnum } from 'src/release-types/types/release-types.enum';
 import { ReleasesService } from 'src/releases/releases.service';
@@ -10,6 +11,7 @@ import { toDecimal } from 'src/shared/utils/to-decimal';
 import { UsersService } from 'src/users/users.service';
 import { CreateAlbumVoteRequestDto } from './dto/request/create-album-vote.request.dto';
 import { UpdateAlbumVoteRequestDto } from './dto/request/update-album-vote.request.dto';
+import { AlbumValueVoteResponseDto } from './dto/respone/album-value-vote.response.dto';
 
 @Injectable()
 export class AlbumValueVotesService {
@@ -22,7 +24,7 @@ export class AlbumValueVotesService {
   async create(
     userId: string,
     dto: CreateAlbumVoteRequestDto,
-  ): Promise<AlbumValueVote> {
+  ): Promise<AlbumValueVoteResponseDto> {
     const { releaseId } = dto;
     const release = await this.releasesService.findOne(releaseId);
     await this.usersService.findOne(userId);
@@ -43,7 +45,7 @@ export class AlbumValueVotesService {
       );
     }
 
-    return this.prisma.albumValueVote.create({
+    const created = await this.prisma.albumValueVote.create({
       data: {
         userId,
         releaseId,
@@ -65,6 +67,35 @@ export class AlbumValueVotesService {
         influenceReleaseAnticip: toDecimal(dto.influenceReleaseAnticip),
       },
     });
+
+    return plainToInstance(
+      AlbumValueVoteResponseDto,
+      JSON.parse(JSON.stringify(created)),
+      { excludeExtraneousValues: true },
+    );
+  }
+
+  async findUserAlbumValueVote(
+    userId: string,
+    releaseId: string,
+  ): Promise<AlbumValueVoteResponseDto> {
+    const exist = await this.prisma.albumValueVote.findUnique({
+      where: { userId_releaseId: { userId, releaseId } },
+    });
+
+    if (!exist) {
+      throw new EntityNotFoundException(
+        'Ценность альбома',
+        'userId_ReleaseId',
+        `${userId}_${releaseId}`,
+      );
+    }
+
+    return plainToInstance(
+      AlbumValueVoteResponseDto,
+      JSON.parse(JSON.stringify(exist)),
+      { excludeExtraneousValues: true },
+    );
   }
 
   async findByUserReleaseIds(
@@ -92,14 +123,15 @@ export class AlbumValueVotesService {
     id: string,
     dto: UpdateAlbumVoteRequestDto,
     userId: string,
-  ): Promise<AlbumValueVote> {
+  ): Promise<AlbumValueVoteResponseDto> {
     await this.checkBelongsToUser(id, userId);
 
     if (!dto || Object.keys(dto).length === 0) {
       throw new NoDataProvidedException();
     }
 
-    return this.prisma.albumValueVote.update({
+    console.log(dto);
+    const updated = await this.prisma.albumValueVote.update({
       where: { id },
       data: {
         rarityGenre: dto.rarityGenre ? toDecimal(dto.rarityGenre) : undefined,
@@ -130,6 +162,12 @@ export class AlbumValueVotesService {
           : undefined,
       },
     });
+
+    return plainToInstance(
+      AlbumValueVoteResponseDto,
+      JSON.parse(JSON.stringify(updated)),
+      { excludeExtraneousValues: true },
+    );
   }
 
   private async checkBelongsToUser(
