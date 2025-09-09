@@ -1,13 +1,13 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useEffect, useMemo, useState } from 'react'
 import TickSvg from '../../../../../../components/svg/Tick-svg'
-import TrashSvg from '../../../../../../components/svg/Trash-svg'
 import Loader from '../../../../../../components/utils/Loader'
 import { useAuth } from '../../../../../../hooks/use-auth'
 import { useLoading } from '../../../../../../hooks/use-loading'
 import { useStore } from '../../../../../../hooks/use-store'
 import { IUserReview } from '../../../../../../models/review/user-review'
 import { calculateTotalReviewMark } from '../../../../../../utils/calculate-total-review-mark'
+import ReleaseDetailsEstimationDeleteButton from '../../buttons/Release-details-estimation-delete-button'
 import ReleaseDetailsReviewFormMarks from './Release-details-review-form-marks'
 import ReleaseDetailsReviewFormText from './Release-details-review-form-text'
 
@@ -178,29 +178,15 @@ const ReleaseDetailsReviewForm: FC<IProps> = observer(
 
 				<div className='border bg-zinc-900 rounded-xl p-2 border-white/10 grid gap-y-4 lg:gap-y-5'>
 					{userReview && (
-						<div className='flex justify-end'>
-							<button
-								onClick={deleteReview}
+						<div className='flex max-sm:w-full justify-end'>
+							<ReleaseDetailsEstimationDeleteButton
+								title={
+									userReview.title && userReview.text ? ' рецензию' : ' оценку'
+								}
 								disabled={isDeleting || isUpdating}
-								className={`max-sm:w-full inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium bg-white/5 hover:bg-red-500 text-white h-10 px-6 py-2 space-x-2 text-xs lg:text-sm cursor-pointer transition-colors duration-200 ${
-									isDeleting || isUpdating
-										? 'opacity-60 pointer-events-none'
-										: ''
-								}`}
-							>
-								{isDeleting ? (
-									<Loader className={'size-4'} />
-								) : (
-									<TrashSvg className='size-4' />
-								)}
-
-								<span>
-									Удалить
-									{userReview.title && userReview.text
-										? ' рецензию'
-										: ' оценку'}
-								</span>
-							</button>
+								isLoading={isDeleting}
+								onClick={deleteReview}
+							/>
 						</div>
 					)}
 

@@ -314,6 +314,7 @@ class ReleaseDetailsPageStore {
 			)
 
 			this.setUserAlbumValueVote(data)
+			await this.fetchAlbumValue(releaseId)
 			return []
 		} catch (e: any) {
 			return Array.isArray(e.response?.data?.message)
@@ -323,6 +324,7 @@ class ReleaseDetailsPageStore {
 	}
 
 	updateAlbumValueVote = async (
+		releaseId: string,
 		id: string,
 		rarityGenre?: number,
 		rarityPerformance?: number,
@@ -355,6 +357,23 @@ class ReleaseDetailsPageStore {
 			)
 
 			this.setUserAlbumValueVote(data)
+			await this.fetchAlbumValue(releaseId)
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
+		}
+	}
+
+	deleteAlbumValueVote = async (
+		id: string,
+		releaseId: string
+	): Promise<string[]> => {
+		try {
+			await AlbumValueAPI.deleteAlbumValueVote(id)
+			this.setUserAlbumValueVote(null)
+			await this.fetchAlbumValue(releaseId)
 			return []
 		} catch (e: any) {
 			return Array.isArray(e.response?.data?.message)

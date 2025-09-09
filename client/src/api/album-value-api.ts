@@ -115,4 +115,8 @@ export const AlbumValueAPI = {
 
 		return data
 	},
+
+	async deleteAlbumValueVote(id: string) {
+		return api.delete(`/album-value-votes/${id}`)
+	},
 }

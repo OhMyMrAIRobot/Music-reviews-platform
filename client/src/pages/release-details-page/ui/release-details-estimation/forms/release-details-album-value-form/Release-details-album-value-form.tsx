@@ -7,6 +7,7 @@ import { useAuth } from '../../../../../../hooks/use-auth'
 import { useLoading } from '../../../../../../hooks/use-loading'
 import { useStore } from '../../../../../../hooks/use-store'
 import { getAlbumValueInfluenceMultiplier } from '../../../../../../utils/get-album-value-influence-multiplier'
+import ReleaseDetailsEstimationDeleteButton from '../../buttons/Release-details-estimation-delete-button'
 import ReleaseDetailsAlbumValueFormDepth from './Release-details-album-value-form-depth'
 import ReleaseDetailsAlbumValueFormInfluence from './Release-details-album-value-form-influence'
 import ReleaseDetailsAlbumValueFormIntegrity from './Release-details-album-value-form-integrity'
@@ -42,20 +43,18 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ releaseId }) => {
 	const userVote = releaseDetailsPageStore.userAlbumValueVote
 
 	useEffect(() => {
-		if (userVote) {
-			setRarityGenre(userVote.rarityGenre)
-			setRarityPerformance(userVote.rarityPerformance)
-			setFormatRelease(userVote.formatReleaseScore)
-			setIntegrityGenre(userVote.integrityGenre)
-			setIntegritySemantic(userVote.integritySemantic)
-			setDepth(userVote.depthScore)
-			setRhymes(userVote.qualityRhymesImages)
-			setStructure(userVote.qualityStructureRhythm)
-			setStyleImplementation(userVote.qualityStyleImpl)
-			setIndividuality(userVote.qualityIndividuality)
-			setAuthorPopularity(userVote.influenceAuthorPopularity)
-			setReleaseAnticip(userVote.influenceReleaseAnticip)
-		}
+		setRarityGenre(userVote?.rarityGenre ?? 0.5)
+		setRarityPerformance(userVote?.rarityPerformance ?? 0.5)
+		setFormatRelease(userVote?.formatReleaseScore ?? 0)
+		setIntegrityGenre(userVote?.integrityGenre ?? 0.5)
+		setIntegritySemantic(userVote?.integritySemantic ?? 0.5)
+		setDepth(userVote?.depthScore ?? 1)
+		setRhymes(userVote?.qualityRhymesImages ?? 5)
+		setStructure(userVote?.qualityStructureRhythm ?? 5)
+		setStyleImplementation(userVote?.qualityStyleImpl ?? 5)
+		setIndividuality(userVote?.qualityIndividuality ?? 5)
+		setAuthorPopularity(userVote?.influenceAuthorPopularity ?? 0.5)
+		setReleaseAnticip(userVote?.influenceReleaseAnticip ?? 0.5)
 	}, [userVote])
 
 	const { execute: post, isLoading: isPosting } = useLoading(
@@ -64,6 +63,10 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ releaseId }) => {
 
 	const { execute: update, isLoading: isUpdating } = useLoading(
 		releaseDetailsPageStore.updateAlbumValueVote
+	)
+
+	const { execute: _delete, isLoading: isDeleting } = useLoading(
+		releaseDetailsPageStore.deleteAlbumValueVote
 	)
 
 	const handlePost = async () => {
@@ -98,6 +101,7 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ releaseId }) => {
 		if (!checkAuth() || isUpdating || isPosting || !userVote) return
 
 		const errors = await update(
+			releaseId,
 			userVote.id,
 			rarityGenre !== userVote.rarityGenre ? rarityGenre : undefined,
 			rarityPerformance !== userVote.rarityPerformance
@@ -128,6 +132,21 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ releaseId }) => {
 		if (errors.length === 0) {
 			notificationStore.addSuccessNotification(
 				'Вы успешно изменили голос за ценность альбома!'
+			)
+		} else {
+			errors.forEach(err => notificationStore.addErrorNotification(err))
+		}
+	}
+
+	const handleDelete = async () => {
+		if (!checkAuth() || isUpdating || isPosting || isDeleting || !userVote)
+			return
+
+		const errors = await _delete(userVote.id, releaseId)
+
+		if (errors.length === 0) {
+			notificationStore.addSuccessNotification(
+				'Вы успешно удалили голос за ценность альбома!'
 			)
 		} else {
 			errors.forEach(err => notificationStore.addErrorNotification(err))
@@ -265,7 +284,16 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ releaseId }) => {
 					/>
 				</div>
 
-				<div className='flex items-center space-x-10 justify-end mt-3'>
+				<div className='grid sm:flex items-center space-y-3 space-x-10 sm:justify-between mt-3'>
+					<div className='w-full sm:w-45'>
+						<ReleaseDetailsEstimationDeleteButton
+							title={'Удалить'}
+							disabled={isDeleting || isUpdating}
+							isLoading={isDeleting}
+							onClick={handleDelete}
+						/>
+					</div>
+
 					<button
 						disabled={isPosting || isUpdating || !hasChanges}
 						onClick={() => (userVote ? handleUpdate() : handlePost())}
