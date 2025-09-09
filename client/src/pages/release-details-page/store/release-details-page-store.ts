@@ -8,6 +8,7 @@ import { ReleaseMediaAPI } from '../../../api/release/release-media-api'
 import { UserFavReleaseAPI } from '../../../api/release/user-fav-release-api'
 import { ReviewAPI } from '../../../api/review/review-api'
 import { IAlbumValue } from '../../../models/album-value/album-value'
+import { IAlbumValueVote } from '../../../models/album-value/album-value-vote'
 import { IAuthorComment } from '../../../models/author/author-comment/author-comment'
 import { IReleaseDetails } from '../../../models/release/release-details/release-details'
 import { IReleaseMedia } from '../../../models/release/release-media/release-media'
@@ -28,6 +29,8 @@ class ReleaseDetailsPageStore {
 	releaseDetails: IReleaseDetails | null = null
 
 	userReview: IUserReview | null = null
+
+	userAlbumValueVote: IAlbumValueVote | null = null
 
 	releaseReviews: IReleaseReview[] = []
 	reviewsCount: number = 0
@@ -74,6 +77,10 @@ class ReleaseDetailsPageStore {
 
 	setAlbumValue(data: IAlbumValue | null) {
 		this.albumValue = data
+	}
+
+	setUserAlbumValueVote(data: IAlbumValueVote | null) {
+		this.userAlbumValueVote = data
 	}
 
 	fetchReleaseDetails = async (id: string) => {
@@ -256,6 +263,98 @@ class ReleaseDetailsPageStore {
 		try {
 			const data = await ReleaseMediaAPI.postReleaseMedia(title, url, releaseId)
 			this.setUserReleaseMedia(data)
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
+		}
+	}
+
+	fetchUserAlbumValueVote = async (releaseId: string) => {
+		try {
+			const data = await AlbumValueAPI.fetchUserAlbumValueVote(releaseId)
+
+			this.setUserAlbumValueVote(data)
+		} catch {
+			this.setUserAlbumValueVote(null)
+		}
+	}
+
+	postAlbumValueVote = async (
+		releaseId: string,
+		rarityGenre: number,
+		rarityPerformance: number,
+		formatReleaseScore: number,
+		integrityGenre: number,
+		integritySemantic: number,
+		depthScore: number,
+		qualityRhymesImages: number,
+		qualityStructureRhythm: number,
+		qualityStyleImpl: number,
+		qualityIndividuality: number,
+		influenceAuthorPopularity: number,
+		influenceReleaseAnticip: number
+	): Promise<string[]> => {
+		try {
+			const data = await AlbumValueAPI.postAlbumValue(
+				releaseId,
+				rarityGenre,
+				rarityPerformance,
+				formatReleaseScore,
+				integrityGenre,
+				integritySemantic,
+				depthScore,
+				qualityRhymesImages,
+				qualityStructureRhythm,
+				qualityStyleImpl,
+				qualityIndividuality,
+				influenceAuthorPopularity,
+				influenceReleaseAnticip
+			)
+
+			this.setUserAlbumValueVote(data)
+			return []
+		} catch (e: any) {
+			return Array.isArray(e.response?.data?.message)
+				? e.response?.data?.message
+				: [e.response?.data?.message]
+		}
+	}
+
+	updateAlbumValueVote = async (
+		id: string,
+		rarityGenre?: number,
+		rarityPerformance?: number,
+		formatReleaseScore?: number,
+		integrityGenre?: number,
+		integritySemantic?: number,
+		depthScore?: number,
+		qualityRhymesImages?: number,
+		qualityStructureRhythm?: number,
+		qualityStyleImpl?: number,
+		qualityIndividuality?: number,
+		influenceAuthorPopularity?: number,
+		influenceReleaseAnticip?: number
+	): Promise<string[]> => {
+		try {
+			const data = await AlbumValueAPI.updateAlbumValue(
+				id,
+				rarityGenre,
+				rarityPerformance,
+				formatReleaseScore,
+				integrityGenre,
+				integritySemantic,
+				depthScore,
+				qualityRhymesImages,
+				qualityStructureRhythm,
+				qualityStyleImpl,
+				qualityIndividuality,
+				influenceAuthorPopularity,
+				influenceReleaseAnticip
+			)
+
+			this.setUserAlbumValueVote(data)
 			return []
 		} catch (e: any) {
 			return Array.isArray(e.response?.data?.message)

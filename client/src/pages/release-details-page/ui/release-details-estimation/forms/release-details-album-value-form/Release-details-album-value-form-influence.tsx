@@ -193,7 +193,7 @@ const ReleaseDetailsAlbumValueFormInfluence: FC<IProps> = observer(
 					<ReleaseDetailsAlbumValueFormSlider
 						value={authorPopularity}
 						setValue={setAuthorPopularity}
-						title='Редкость жанра'
+						title='Известность автора'
 						min={0.5}
 						max={4.5}
 						step={1}

@@ -27,6 +27,10 @@ const ReleaseDetailsEstimation: FC<IProps> = observer(
 			releaseDetailsPageStore.fetchUserReview
 		)
 
+		const { execute: fetchUserAlbumVote } = useLoading(
+			releaseDetailsPageStore.fetchUserAlbumValueVote
+		)
+
 		const { navigateToLogin } = useNavigationPath()
 
 		const [section, setSection] = useState<ReleaseDetailsPageSections>(
@@ -35,7 +39,8 @@ const ReleaseDetailsEstimation: FC<IProps> = observer(
 
 		useEffect(() => {
 			fetchUserReview(release.id)
-		}, [release, fetchUserReview])
+			fetchUserAlbumVote(release.id)
+		}, [release, fetchUserReview, fetchUserAlbumVote])
 
 		if (!authStore.isAuth)
 			return (

@@ -116,8 +116,9 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 								alt={author.name}
 								className='size-9 object-cover aspect-square rounded-full select-none max-xl:hidden'
 							/>
-							<span className='xl:hidden overflow-hidden text-ellipsis text-wrap'>
-								Имя: <span>{author.name}</span>
+							<span className='overflow-hidden text-ellipsis text-wrap'>
+								<span className='xl:hidden'>Имя: </span>
+								<span>{author.name}</span>
 							</span>
 						</>
 					) : (
