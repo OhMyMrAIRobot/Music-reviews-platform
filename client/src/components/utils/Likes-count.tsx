@@ -5,9 +5,10 @@ import TooltipSpan from '../tooltip/Tooltip-span'
 
 interface IProps {
 	count: number
+	className?: string
 }
 
-const LikesCount: FC<IProps> = ({ count }) => {
+const LikesCount: FC<IProps> = ({ count, className = '' }) => {
 	return (
 		<TooltipSpan
 			tooltip={<Tooltip>{'Количество добавлений в предпочтения'}</Tooltip>}
@@ -15,7 +16,7 @@ const LikesCount: FC<IProps> = ({ count }) => {
 			centered={true}
 		>
 			<div className='flex gap-x-1 items-center justify-center font-medium'>
-				<BookmarkSvg className={'size-5 fill-[rgba(35,101,199,1)]'} />
+				<BookmarkSvg className={`${className} fill-[rgba(35,101,199,1)]`} />
 				<span>{count}</span>
 			</div>
 		</TooltipSpan>

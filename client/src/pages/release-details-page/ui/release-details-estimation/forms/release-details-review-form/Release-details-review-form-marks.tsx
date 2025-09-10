@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import SliderGroup from './Slider-group'
+import ReleaseDetailsReviewFormSlider from './Release-details-review-form-slider'
 
 interface IProps {
 	rhymes: number
@@ -14,7 +14,7 @@ interface IProps {
 	setAtmosphere: (val: number) => void
 }
 
-const SendReviewFormMarks: FC<IProps> = ({
+const ReleaseDetailsReviewFormMarks: FC<IProps> = ({
 	rhymes,
 	setRhymes,
 	structure,
@@ -29,7 +29,7 @@ const SendReviewFormMarks: FC<IProps> = ({
 	return (
 		<div className='grid grid-cols-1 lg:grid-cols-2 gap-3'>
 			<div className='grid col-span-full px-5 pt-3 pb-5 w-full grid-cols-1 lg:grid-cols-2 2xl:grid-cols-4 gap-2 lg:gap-y-3 lg:gap-x-5 border border-[rgba(86,118,234)] bg-gradient-to-br from-[rgba(86,118,234)]/20 to-[rgba(86,118,234)]/5 rounded-xl'>
-				<SliderGroup
+				<ReleaseDetailsReviewFormSlider
 					title={'Рифмы / Образы'}
 					value={rhymes}
 					onChange={setRhymes}
@@ -38,7 +38,7 @@ const SendReviewFormMarks: FC<IProps> = ({
 					}
 					afterColor={''}
 				/>
-				<SliderGroup
+				<ReleaseDetailsReviewFormSlider
 					title={'Структра / Ритмика'}
 					value={structure}
 					onChange={setStructure}
@@ -47,7 +47,7 @@ const SendReviewFormMarks: FC<IProps> = ({
 					}
 					afterColor={''}
 				/>
-				<SliderGroup
+				<ReleaseDetailsReviewFormSlider
 					title={'Реализация стиля'}
 					value={realization}
 					onChange={setRealization}
@@ -56,7 +56,7 @@ const SendReviewFormMarks: FC<IProps> = ({
 					}
 					afterColor={''}
 				/>
-				<SliderGroup
+				<ReleaseDetailsReviewFormSlider
 					title={'Индивидуальность / Харизма'}
 					value={individuality}
 					onChange={setIndividuality}
@@ -67,7 +67,7 @@ const SendReviewFormMarks: FC<IProps> = ({
 				/>
 			</div>
 			<div className='col-span-full px-5 pt-3 pb-5 w-full rounded-xl border border-[rgba(160,80,222)] bg-gradient-to-br from-[rgba(160,80,222)]/20 to-[rgba(160,80,222)]/5'>
-				<SliderGroup
+				<ReleaseDetailsReviewFormSlider
 					title={'Атмосфера / Вайб'}
 					value={atmosphere}
 					onChange={setAtmosphere}
@@ -81,4 +81,4 @@ const SendReviewFormMarks: FC<IProps> = ({
 	)
 }
 
-export default SendReviewFormMarks
+export default ReleaseDetailsReviewFormMarks

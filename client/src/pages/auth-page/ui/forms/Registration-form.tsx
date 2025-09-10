@@ -104,7 +104,7 @@ const RegistrationForm = observer(() => {
 	}, [formData])
 
 	return (
-		<div className='grid w-[350px] gap-2 py-10'>
+		<div className='grid w-full sm:w-[350px] gap-2 py-10'>
 			<FormTitle title={'Создать аккаунт'} className='text-center mb-4' />
 			<div className='grid gap-3'>
 				{renderInput(

@@ -77,7 +77,7 @@ const ComboBox: FC<ComboBoxProps> = ({
 				{options.map(option => (
 					<li
 						key={option}
-						className={`flex items-center px-2 py-3 cursor-pointer text-sm font-medium hover:bg-white/10 transition-colors duration-300 ${
+						className={`flex items-center px-2 py-3 cursor-pointer text-sm font-medium hover:bg-white/10 transition-colors duration-300 text-nowrap ${
 							selected === option ? 'bg-white/10' : ''
 						} ${getRoleColor(option)}`}
 						onClick={() => {
@@ -86,11 +86,12 @@ const ComboBox: FC<ComboBoxProps> = ({
 						}}
 					>
 						{option}
-						<span className='w-full'>
-							{selected === option ? (
+
+						{selected === option ? (
+							<span className='w-full'>
 								<TickSvg className='size-3.5 ml-auto' />
-							) : null}
-						</span>
+							</span>
+						) : null}
 					</li>
 				))}
 			</ul>

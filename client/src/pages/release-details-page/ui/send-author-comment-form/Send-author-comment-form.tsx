@@ -5,7 +5,7 @@ import ConfirmationModal from '../../../../components/modals/Confirmation-modal'
 import { useAuth } from '../../../../hooks/use-auth'
 import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
-import SendReviewFormText from '../send-review-form/Send-review-form-text'
+import ReleaseDetailsReviewFormText from '../release-details-estimation/forms/release-details-review-form/Release-details-review-form-text'
 
 interface IProps {
 	releaseId: string
@@ -121,7 +121,7 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 					} авторский комментарий`}
 				</h3>
 				<div className='border bg-zinc-900 rounded-xl px-2.5 py-4 border-white/10 w-full max-w-200 mx-auto mt-5'>
-					<SendReviewFormText
+					<ReleaseDetailsReviewFormText
 						isReview={true}
 						title={title}
 						setTitle={setTitle}

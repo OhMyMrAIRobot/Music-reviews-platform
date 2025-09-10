@@ -23,7 +23,7 @@ interface IProps {
 }
 
 const AdminDashboardAuthorsGridItem: FC<IProps> = ({
-	className,
+	className = '',
 	author,
 	isLoading,
 	position,
@@ -36,12 +36,6 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [editModalOpen, setEditModelOpen] = useState<boolean>(false)
 
-	const handleRefetch = () => {
-		if (refetchAuthors) {
-			refetchAuthors()
-		}
-	}
-
 	const { execute: deleteAuthor, isLoading: isDeleting } = useLoading(
 		adminDashboardAuthorsStore.deleteAuthor
 	)
@@ -52,14 +46,14 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 		const result = await deleteAuthor(id)
 		if (result.length === 0) {
 			notificationStore.addSuccessNotification('Вы успешно удалили автора!')
-			handleRefetch()
+			refetchAuthors?.()
 		} else {
 			result.forEach(err => notificationStore.addErrorNotification(err))
 		}
 	}
 
 	return isLoading ? (
-		<SkeletonLoader className='w-full h-12 rounded-lg' />
+		<SkeletonLoader className='w-full h-40 xl:h-12 rounded-lg' />
 	) : (
 		<>
 			{author && (
@@ -85,13 +79,28 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 				</>
 			)}
 			<div
-				className={`${className} text-[10px] md:text-sm h-10 md:h-12 w-full rounded-lg grid grid-cols-10 lg:grid-cols-12 items-center px-3 border border-white/10 text-nowrap`}
+				className={`${className} relative text-sm xl:h-12 w-full rounded-lg grid grid-rows-4 xl:grid-rows-1 xl:grid-cols-12 items-center px-3 max-xl:py-2 border border-white/10 text-nowrap font-medium`}
 			>
-				<div className='col-span-1 text-ellipsis line-clamp-1'>
+				<div className='xl:col-span-1 text-ellipsis line-clamp-1'>
+					<span className='xl:hidden'># </span>
 					{position ?? '#'}
 				</div>
 
-				<div className='col-span-5 text-ellipsis line-clamp-1 h-full flex items-center gap-x-2'>
+				{author && (
+					<img
+						loading='lazy'
+						decoding='async'
+						src={`${import.meta.env.VITE_SERVER_URL}/public/authors/avatars/${
+							author.avatarImg === ''
+								? import.meta.env.VITE_DEFAULT_AVATAR
+								: author.avatarImg
+						}`}
+						alt={author.name}
+						className='absolute top-0 right-0 size-22 rounded-lg object-cover aspect-square select-none xl:hidden'
+					/>
+				)}
+
+				<div className='xl:col-span-5 h-full flex items-center gap-x-2 max-xl:max-w-[calc(100%-90px)]'>
 					{author ? (
 						<>
 							<img
@@ -105,21 +114,26 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 										: author.avatarImg
 								}`}
 								alt={author.name}
-								className='size-9 object-cover aspect-square rounded-full select-none'
+								className='size-9 object-cover aspect-square rounded-full select-none max-xl:hidden'
 							/>
-							<span className='font-medium'>{author.name}</span>
+							<span className='overflow-hidden text-ellipsis text-wrap'>
+								<span className='xl:hidden'>Имя: </span>
+								<span>{author.name}</span>
+							</span>
 						</>
 					) : (
 						'Имя автора'
 					)}
 				</div>
 
-				<div className='col-span-4 flex'>
-					{author
-						? author.types.map((type, idx) => (
+				<div className='xl:col-span-4 flex flex-wrap'>
+					{author ? (
+						<>
+							<span className='xl:hidden max-xl:pr-1'>Тип автора:</span>
+							{author.types.map((type, idx) => (
 								<span key={type.id} className='flex'>
 									<span
-										className={`font-medium flex items-center ${getAuthorTypeColor(
+										className={`flex items-center ${getAuthorTypeColor(
 											type.type
 										)}`}
 									>
@@ -130,13 +144,16 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 										<span className='mr-1 select-none'>,</span>
 									)}
 								</span>
-						  ))
-						: 'Тип автора'}
+							))}
+						</>
+					) : (
+						'Тип автора'
+					)}
 				</div>
 
-				<div className='col-span-2 text-center'>
+				<div className='xl:col-span-2 text-center max-xl:mt-1'>
 					{author ? (
-						<div className='flex gap-x-3 justify-end'>
+						<div className='flex gap-x-3 xl:justify-end'>
 							<Link to={navigateToAuthorDetails(author.id)}>
 								<AdminNavigateButton />
 							</Link>

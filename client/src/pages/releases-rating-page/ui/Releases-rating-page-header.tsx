@@ -45,9 +45,7 @@ const ReleasesRatingPageHeader: FC<IProps> = ({
 
 	return (
 		<>
-			<h1 className='text-lg mg:text-xl lg:text-3xl font-bold'>
-				Рейтинг релизов
-			</h1>
+			<h1 className='text-2xl lg:text-3xl font-semibold'>Рейтинг релизов</h1>
 
 			<div className='rounded-lg border border-white/10 p-3 bg-zinc-900 mt-4 lg:mt-8 md:flex md:items-center'>
 				<p className='font-bold text-gray-400 text-sm md:text-base md:mr-5 max-md:mb-2'>

@@ -20,7 +20,7 @@ const ProfilePreferencesGrid = () => {
 	}, [fetch, id])
 
 	return (
-		<div className='mt-5 grid lg:grid-cols-2 gap-y-4 lg:gap-y-8 gap-x-10'>
+		<div className='grid lg:grid-cols-2 gap-y-4 lg:gap-y-8 gap-x-10'>
 			<ProfilePreferencesGridRow
 				title={'Артисты'}
 				items={profilePageStore.preferred?.artists ?? []}

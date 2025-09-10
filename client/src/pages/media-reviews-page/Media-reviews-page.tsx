@@ -82,10 +82,7 @@ const MediaReviewsPage = () => {
 
 	return (
 		<>
-			<h1
-				id='media-reviews'
-				className='text-lg md:text-xl lg:text-3xl font-semibold'
-			>
+			<h1 id='media-reviews' className='text-2xl lg:text-3xl font-semibold'>
 				Медиарецензии
 			</h1>
 

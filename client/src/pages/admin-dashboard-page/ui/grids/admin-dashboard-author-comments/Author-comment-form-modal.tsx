@@ -62,11 +62,16 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
 	}
 
 	return (
-		<ModalOverlay isOpen={isOpen} onCancel={onClose} isLoading={isLoading}>
+		<ModalOverlay
+			isOpen={isOpen}
+			onCancel={onClose}
+			isLoading={isLoading}
+			className='max-lg:size-full'
+		>
 			<div
-				className={`relative rounded-xl w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 p-6`}
+				className={`relative rounded-xl w-full max-lg:h-full lg:w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 p-6 max-h-full overflow-y-scroll`}
 			>
-				<div className='grid gap-6'>
+				<div className='size-full flex flex-col gap-6'>
 					<h1 className='border-b border-white/10 text-3xl font-bold py-4 text-center'>
 						Редактирование авторского комментария
 					</h1>
@@ -86,7 +91,7 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
 						/>
 					</div>
 
-					<div className='grid gap-2'>
+					<div className='flex-1 flex flex-col gap-2'>
 						<FormLabel
 							name={'Комментарий'}
 							htmlFor={'comment-text-input'}
@@ -97,12 +102,12 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
 							placeholder={'Комментарий...'}
 							value={text}
 							setValue={setText}
-							className='h-60'
+							className='h-full min-h-30 lg:h-60'
 						/>
 					</div>
 
-					<div className='flex gap-3 justify-start'>
-						<div className='w-30'>
+					<div className='grid sm:flex gap-3 sm:justify-start'>
+						<div className='w-full sm:w-30'>
 							<FormButton
 								title={'Сохранить'}
 								isInvert={true}
@@ -112,7 +117,7 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
 							/>
 						</div>
 
-						<div className='w-25'>
+						<div className='w-full sm:w-25'>
 							<FormButton
 								title={'Назад'}
 								isInvert={false}

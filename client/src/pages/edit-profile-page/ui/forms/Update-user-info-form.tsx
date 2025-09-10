@@ -48,7 +48,7 @@ const UpdateUserInfoForm = () => {
 			title='Данные аккаунта'
 			description='Здесь Вы изменить данные своего аккаунта.'
 		>
-			<div className='grid gap-5'>
+			<div className='grid gap-3 lg:gap-5'>
 				<div className='grid gap-2'>
 					<FormLabel name={'Email'} htmlFor={'EditEmail'} isRequired={false} />
 
@@ -127,8 +127,8 @@ const UpdateUserInfoForm = () => {
 					/>
 				</div>
 
-				<div className='pt-6 border-t border-white/5 w-full'>
-					<div className='w-38'>
+				<div className='pt-3 lg:pt-6 border-t border-white/5 w-full'>
+					<div className='w-full sm:w-38'>
 						<FormButton
 							title={isLoading ? 'Сохранение...' : 'Сохранить'}
 							isInvert={true}

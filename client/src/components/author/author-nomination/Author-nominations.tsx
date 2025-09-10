@@ -35,14 +35,16 @@ const AuthorNominations: FC<IProps> = ({ winsCount, totalCount }) => {
 					/>
 				</>
 			)}
-			<TooltipSpan
-				tooltip={<Tooltip>Всего номинаций</Tooltip>}
-				spanClassName='text-white relative flex items-center space-x-1 text-xs lg:text-sm'
-				centered={true}
-			>
-				<AwardSvg className='w-5' />
-				<span>{totalCount}</span>
-			</TooltipSpan>
+			{totalCount > 0 && (
+				<TooltipSpan
+					tooltip={<Tooltip>Всего номинаций</Tooltip>}
+					spanClassName='text-white relative flex items-center space-x-1 text-xs lg:text-sm'
+					centered={true}
+				>
+					<AwardSvg className='w-5' />
+					<span>{totalCount}</span>
+				</TooltipSpan>
+			)}
 		</div>
 	)
 }

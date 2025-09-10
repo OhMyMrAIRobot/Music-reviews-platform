@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import Slider from './Slider'
+import Slider from '../../../../../../components/utils/Slider'
 
 interface IProps {
 	title: string
@@ -9,7 +9,7 @@ interface IProps {
 	onChange: (val: number) => void
 }
 
-const SliderGroup: FC<IProps> = ({
+const ReleaseDetailsReviewFormSlider: FC<IProps> = ({
 	title,
 	value,
 	beforeColor,
@@ -33,4 +33,4 @@ const SliderGroup: FC<IProps> = ({
 	)
 }
 
-export default SliderGroup
+export default ReleaseDetailsReviewFormSlider

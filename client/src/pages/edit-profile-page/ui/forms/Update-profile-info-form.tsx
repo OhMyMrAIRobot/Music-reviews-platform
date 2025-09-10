@@ -55,8 +55,8 @@ const UpdateProfileInfoForm = observer(() => {
 				</div>
 			</div>
 
-			<div className='pt-6 border-t border-white/5 w-full'>
-				<div className='w-38'>
+			<div className='pt-3 lg:pt-6 border-t border-white/5 w-full'>
+				<div className='w-full sm:w-38'>
 					<FormButton
 						title={isLoading ? 'Сохранение...' : 'Сохранить'}
 						isInvert={true}

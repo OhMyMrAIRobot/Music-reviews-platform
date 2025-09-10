@@ -1,20 +1,20 @@
-import { useEffect, useState } from 'react'
-import FormInfoContainer from '../../../../components/form-elements/Form-info-container'
-import FormInfoField from '../../../../components/form-elements/Form-info-field'
+import { useEffect } from 'react'
 import FormInputWithConfirmation from '../../../../components/form-elements/Form-input-with-confirmation'
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
+import { useAuth } from '../../../../hooks/use-auth'
 import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
+import { ISocialMedia } from '../../../../models/social-media/social-media'
 import EditProfilePageSection from '../Edit-profile-page-section'
 
 const UpdateProfileSocialsForm = () => {
 	const { profileStore, authStore, notificationStore, metaStore } = useStore()
 
+	const { checkAuth } = useAuth()
+
 	const { execute: fetchSocials, isLoading } = useLoading(
 		metaStore.fetchSocials
 	)
-
-	const [errors, setErrors] = useState<string[]>([])
 
 	const { execute: toggle, isLoading: isToggleLoading } = useLoading(
 		profileStore.toggleSocial
@@ -26,6 +26,23 @@ const UpdateProfileSocialsForm = () => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
+
+	const handleClick = async (
+		value: string,
+		initValue: string,
+		social: ISocialMedia
+	) => {
+		if (!checkAuth() || !authStore.user || isLoading) return
+		const errors = await toggle(social.id, value, initValue, authStore.user.id)
+
+		if (errors.length === 0) {
+			notificationStore.addSuccessNotification(
+				`Вы успешно обновили информацию о ${social.name}`
+			)
+		} else {
+			errors.forEach(err => notificationStore.addErrorNotification(err))
+		}
+	}
 
 	return (
 		<EditProfilePageSection
@@ -49,34 +66,11 @@ const UpdateProfileSocialsForm = () => {
 									key={social.id}
 									label={social.name}
 									initialValue={initialValue}
-									onClick={value => {
-										setErrors([])
-										toggle(
-											social.id,
-											value,
-											initialValue,
-											authStore.user?.id ?? ''
-										).then(result => {
-											setErrors(result)
-											notificationStore.addSuccessNotification(
-												`Вы успешно обновили информацию о ${social.name}`
-											)
-										})
-									}}
+									onClick={value => handleClick(value, initialValue, social)}
 									isLoading={isToggleLoading}
 								/>
 							)
 					  })}
-			</div>
-
-			<div className='w-full lg:w-1/2'>
-				{errors && (
-					<FormInfoContainer>
-						{errors.map(error => (
-							<FormInfoField key={error} text={error} isError={true} />
-						))}
-					</FormInfoContainer>
-				)}
 			</div>
 		</EditProfilePageSection>
 	)

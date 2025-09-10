@@ -17,9 +17,9 @@ const AuthorReleaseTypesRatings: FC<IProps> = ({ releaseType, stats }) => {
 		ratings && (
 			<div className='flex items-center justify-center text-sm gap-x-2'>
 				{releaseType === ReleaseTypesEnum.SINGLE ? (
-					<SingleSvg className={'size-5'} />
+					<SingleSvg className={'size-4 lg:size-5'} />
 				) : (
-					<AlbumSvg className={'size-5'} />
+					<AlbumSvg className={'size-4 lg:size-5'} />
 				)}
 				<AuthorRatingsItem
 					rating={ratings.ratings.media}

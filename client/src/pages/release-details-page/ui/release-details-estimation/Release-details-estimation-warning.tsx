@@ -1,6 +1,6 @@
 import WarningSvg from '../../../../components/svg/Warning-svg'
 
-const SendReviewFormWarning = () => {
+const ReleaseDetailsEstimationWarning = () => {
 	return (
 		<div className='rounded-lg w-full border p-4 border-red-500/50 text-white bg-white/5 mt-5 flex gap-x-2.5'>
 			<WarningSvg className='h-5 w-5 fill-red-600 mt-0.5' />
@@ -26,4 +26,4 @@ const SendReviewFormWarning = () => {
 	)
 }
 
-export default SendReviewFormWarning
+export default ReleaseDetailsEstimationWarning

@@ -4,6 +4,7 @@ import FormButton from '../../../../components/form-elements/Form-button'
 import { useAuth } from '../../../../hooks/use-auth'
 import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
+import { generateUUID } from '../../../../utils/generate-uuid'
 import EditProfilePageSection from '../Edit-profile-page-section'
 import SelectImageLabel from '../labels/Select-image-label'
 import SelectedImageLabel from '../labels/Selected-image-label'
@@ -48,7 +49,7 @@ const UploadAvatarForm = observer(() => {
 		const result = await updateAvatar(formData)
 
 		notificationStore.addNotification({
-			id: self.crypto.randomUUID(),
+			id: generateUUID(),
 			text: result.message,
 			isError: !result.status,
 		})
@@ -76,8 +77,8 @@ const UploadAvatarForm = observer(() => {
 
 	return (
 		<EditProfilePageSection title='Аватар'>
-			<div className='w-[144px]'>
-				<div className='w-[250px]'>
+			<div className='w-full sm:w-[250px]'>
+				<div className='w-full'>
 					<SelectImageLabel htmlfor='avatar' />
 				</div>
 
@@ -108,9 +109,9 @@ const UploadAvatarForm = observer(() => {
 				/>
 			</div>
 
-			<div className='pt-6 border-t border-white/5 w-full'>
-				<div className='flex justify-between'>
-					<div className='w-38'>
+			<div className='pt-3 lg:pt-6 border-t border-white/5 w-full'>
+				<div className='grid grid-cols-1 sm:flex justify-between gap-2 w-full'>
+					<div className='w-full sm:w-38'>
 						<FormButton
 							title={isLoading ? 'Сохранение...' : 'Сохранить'}
 							isInvert={true}
@@ -120,7 +121,7 @@ const UploadAvatarForm = observer(() => {
 						/>
 					</div>
 
-					<div className='w-42'>
+					<div className='w-full sm:w-42'>
 						<FormButton
 							title={isDeleting ? 'Удаление...' : 'Удалить аватар'}
 							isInvert={false}

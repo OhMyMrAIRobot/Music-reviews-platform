@@ -22,7 +22,7 @@ const ConfirmationModal: FC<IProps> = ({
 	return createPortal(
 		<ModalOverlay isOpen={isOpen} onCancel={onCancel} isLoading={isLoading}>
 			<div
-				className={`relative rounded-lg px-6 pb-6 pt-8 w-100 border border-white/10 bg-zinc-950 grid gap-6 transition-transform duration-300`}
+				className={`relative rounded-lg px-6 pb-6 pt-8 w-[90%] lg:w-100 border border-white/10 bg-zinc-950 grid gap-6 transition-transform duration-300`}
 			>
 				<button
 					onClick={onCancel}
@@ -34,7 +34,8 @@ const ConfirmationModal: FC<IProps> = ({
 					<CloseSvg className={'size-4'} />
 				</button>
 
-				<h3 className='text-lg text-center font-bold'>{title}</h3>
+				<h3 className='text-base lg:text-lg text-center font-bold'>{title}</h3>
+
 				<div className='grid gap-2'>
 					<FormButton
 						title={'Подтвердить'}

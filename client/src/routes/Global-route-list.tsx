@@ -1,4 +1,5 @@
 import { Route } from 'react-router'
+import AlbumValuesPage from '../pages/album-values-page/Album-values-page'
 import AuthorCommentsPage from '../pages/author-comments-page/Author-comments-page'
 import AuthorDetailsPage from '../pages/author-details-page/Author-details-page'
 import AuthorLikesPage from '../pages/author-likes-page/Author-likes-page'
@@ -46,6 +47,7 @@ const GlobalRouteList = () => {
 			<Route path={ROUTES.AWARDS} element={<AwardsPage />} />,
 			<Route path={ROUTES.NOMINATION_VOTES} element={<NominationVotesPage />} />
 			,
+			<Route path={ROUTES.ALBUM_VALUES} element={<AlbumValuesPage />} />
 			<Route path={ROUTES.NOT_DEFINED} element={<MainPage />} />,
 		</>
 	)

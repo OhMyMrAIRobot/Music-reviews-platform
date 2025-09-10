@@ -75,7 +75,7 @@ const ProfileMediaReviewsGrid: FC<IProps> = observer(({ profile }) => {
 	}, [currentPage])
 
 	return (
-		<section className='mt-5'>
+		<section>
 			<div className='gap-5 grid grid-cols-1 select-none'>
 				{isMediaLoading || isStatusesLoading || isTypesLoading
 					? Array.from({ length: perPage }).map((_, idx) => (

@@ -10,6 +10,7 @@ import { FeedbackStatusesFilterEnum } from '../../../../../models/feedback/feedb
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
 import { SortOrder } from '../../../../../types/sort-order-type'
 import AdminFilterButton from '../../buttons/Admin-filter-button'
+import AdminToggleSortOrderButton from '../../buttons/Admin-toggle-sort-order-button'
 import AdminDashboardFeedbackGridItem from './Admin-dashboard-feedback-grid-item'
 
 const AdminDashboardFeedbackGrid = observer(() => {
@@ -75,7 +76,7 @@ const AdminDashboardFeedbackGrid = observer(() => {
 				id='admin-feedback-grid'
 				className='flex flex-col overflow-hidden p-5'
 			>
-				<div className='flex mb-5 text-white/80 border-b border-white/10'>
+				<div className='flex flex-wrap gap-y-2 xl:mb-5 text-white/80 border-b border-white/10'>
 					{isFeedbackStatusesLoading
 						? Array.from({ length: 5 }).map((_, idx) => (
 								<SkeletonLoader
@@ -99,8 +100,20 @@ const AdminDashboardFeedbackGrid = observer(() => {
 				</div>
 
 				<AdminDashboardFeedbackGridItem
-					className='bg-white/5 font-medium'
+					className='bg-white/5 font-medium max-xl:hidden'
 					isLoading={false}
+					order={order}
+					toggleOrder={() =>
+						setOrder(
+							order === SortOrdersEnum.DESC
+								? SortOrdersEnum.ASC
+								: SortOrdersEnum.DESC
+						)
+					}
+				/>
+
+				<AdminToggleSortOrderButton
+					title={'Дата отправки'}
 					order={order}
 					toggleOrder={() =>
 						setOrder(

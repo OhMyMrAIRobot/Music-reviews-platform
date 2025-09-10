@@ -6,6 +6,7 @@ import AdminDashboardMediaStore from '../pages/admin-dashboard-page/store/admin-
 import AdminDashboardReleasesStore from '../pages/admin-dashboard-page/store/admin-dashboard-releases-store'
 import AdminDashboardReviewsStore from '../pages/admin-dashboard-page/store/admin-dashboard-reviews-store'
 import AdminDashboardUsersStore from '../pages/admin-dashboard-page/store/admin-dashboard-users-store'
+import AlbumValuesPageStore from '../pages/album-values-page/store/album-values-page-store'
 import AuthorCommentsPageStore from '../pages/author-comments-page/store/author-comments-page-store'
 import AuthorConfirmationPageStore from '../pages/author-confirmation-page/store/author-confirmation-page-store'
 import AuthorDetailsPageStore from '../pages/author-details-page/store/author-details-page-store'
@@ -47,6 +48,7 @@ class Store {
 	authorCommentsPageStore = AuthorCommentsPageStore
 	authorLikesPageStore = AuthorLikesPageStore
 	awardsPageStore = AwardsPageStore
+	albumValuesPageStore = AlbumValuesPageStore
 	nominationVotesPageStore = NominationVotesPageStore
 	adminDashboardUsersStore = AdminDashboardUsersStore
 	adminDashboardAuthorsStore = AdminDashboardAuthorsStore

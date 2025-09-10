@@ -31,7 +31,9 @@ const AuthorLikes = observer(() => {
 		<CarouselContainer
 			title={
 				<div className='flex items-center gap-x-2'>
-					<AuthorLikeColorSvg className='size-8' />
+					<div className='size-8'>
+						<AuthorLikeColorSvg className='size-8' />
+					</div>
 					Авторские комментарии
 				</div>
 			}

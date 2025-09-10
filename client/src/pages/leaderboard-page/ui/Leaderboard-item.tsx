@@ -110,7 +110,7 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 					centered={true}
 				>
 					<div className='flex xl:flex-col items-center justify-center gap-x-1.5 gap-y-0.5 font-medium size-full'>
-						<AuthorLikeColorSvg className='size-5 lg:size-6.5' />
+						<AuthorLikeColorSvg className='size-4 lg:size-6.5' />
 
 						<span className='font-semibold'>{item.receivedAuthorLikes}</span>
 					</div>
@@ -121,11 +121,15 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 						<Tooltip>
 							<div className='font-medium space-y-1'>
 								<div className='flex gap-x-1.5'>
-									<TextReviewSvg className='size-5' />
+									<div className='size-6'>
+										<TextReviewSvg className='size-4' />
+									</div>
 									Написано рецензий
 								</div>
 								<div className='flex gap-x-1.5'>
-									<NoTextReviewSvg className='size-5' />
+									<div className='size-6'>
+										<NoTextReviewSvg className='size-4' />
+									</div>
 									Поставлено оценок без рецензий
 								</div>
 							</div>
@@ -151,11 +155,15 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 						<Tooltip>
 							<div className='font-medium space-y-1'>
 								<div className='flex gap-x-2'>
-									<PixelHeartFillSvg className={'w-5 h-4.5'} />
+									<div className='w-5 h-4.5'>
+										<PixelHeartFillSvg className={'w-5 h-4.5'} />
+									</div>
 									Получено лайков на свои рецензии от пользователей
 								</div>
 								<div className='flex gap-x-2'>
-									<PixelHeartSvg className={'w-5 h-4.5'} />
+									<div className='w-5 h-4.5'>
+										<PixelHeartSvg className={'w-5 h-4.5'} />
+									</div>
 									Поставлено лайков на рецензии пользователей
 								</div>
 							</div>
@@ -167,14 +175,14 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 					centered={true}
 				>
 					<div className='flex items-center gap-1.5'>
-						<PixelHeartFillSvg className={'w-5 h-4.5]'} />
+						<PixelHeartFillSvg className={'w-4 h-3.5 lg:w-5 lg:h-4.5]'} />
 
 						<span className='font-semibold'>
 							{formatNumber(item.receivedLikes)}
 						</span>
 					</div>
 					<div className='flex items-center gap-1.5'>
-						<PixelHeartSvg className={'w-5 h-4.5'} />
+						<PixelHeartSvg className={'w-4 h-3.5 lg:w-5 lg:h-4.5]'} />
 
 						<span className='font-semibold'>
 							{formatNumber(item.givenLikes)}

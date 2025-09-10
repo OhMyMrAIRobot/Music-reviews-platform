@@ -1,4 +1,5 @@
 import { observer } from 'mobx-react-lite'
+import MainPageAlbumValues from './ui/album-values/Main-page-album-values'
 import AuthorComments from './ui/author-comments/Author-comments'
 import AuthorLikes from './ui/author-likes/Author-likes'
 import LastReleases from './ui/last-releases/Last-releases'
@@ -17,6 +18,7 @@ const MainPage = observer(() => {
 				<LastReleases />
 				<ReleaseMediaReviews />
 				<LastReviews />
+				<MainPageAlbumValues />
 				<PlatformStats />
 			</div>
 		</>

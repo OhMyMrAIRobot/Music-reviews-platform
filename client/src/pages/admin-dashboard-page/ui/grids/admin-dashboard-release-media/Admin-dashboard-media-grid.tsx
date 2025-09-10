@@ -11,6 +11,7 @@ import { ReleaseMediaTypesFilterOptions } from '../../../../../models/release/re
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
 import { SortOrder } from '../../../../../types/sort-order-type'
 import AdminFilterButton from '../../buttons/Admin-filter-button'
+import AdminToggleSortOrderButton from '../../buttons/Admin-toggle-sort-order-button'
 import AdminDashboardMediaGridItem from './Admin-dashboard-media-grid-item'
 import MediaFormModal from './Media-form-modal'
 
@@ -100,7 +101,7 @@ const AdminDashboardMediaGrid = observer(() => {
 			)}
 
 			<div id='admin-media-grid' className='flex flex-col overflow-hidden p-5'>
-				<div className='flex mb-2 text-white/80 border-b border-white/10'>
+				<div className='flex flex-wrap mb-2 gap-y-2 text-white/80 border-b border-white/10'>
 					{isStatusesLoading
 						? Array.from({ length: 5 }).map((_, idx) => (
 								<SkeletonLoader
@@ -125,7 +126,7 @@ const AdminDashboardMediaGrid = observer(() => {
 								/>
 						  ))}
 
-					<div className='ml-auto'>
+					<div className='max-sm:hidden ml-auto'>
 						<AdminFilterButton
 							title={'Добавить медиа'}
 							isActive={false}
@@ -134,7 +135,7 @@ const AdminDashboardMediaGrid = observer(() => {
 					</div>
 				</div>
 
-				<div className='flex mb-5 text-white/80 border-b border-white/10'>
+				<div className='flex flex-wrap gap-y-2 xl:mb-5 text-white/80 border-b border-white/10'>
 					{isTypesLoading
 						? Array.from({ length: 5 }).map((_, idx) => (
 								<SkeletonLoader
@@ -156,8 +157,28 @@ const AdminDashboardMediaGrid = observer(() => {
 						  ))}
 				</div>
 
+				<div className='sm:hidden mt-2 text-white/80 border-b border-white/10'>
+					<AdminFilterButton
+						title={'Добавить медиа'}
+						isActive={false}
+						onClick={() => setAddModalOpen(true)}
+					/>
+				</div>
+
+				<AdminToggleSortOrderButton
+					title={'Дата публикации'}
+					order={order}
+					toggleOrder={() =>
+						setOrder(
+							order === SortOrdersEnum.DESC
+								? SortOrdersEnum.ASC
+								: SortOrdersEnum.DESC
+						)
+					}
+				/>
+
 				<AdminDashboardMediaGridItem
-					className='bg-white/5 font-medium'
+					className='bg-white/5 font-medium max-xl:hidden'
 					isLoading={false}
 					order={order}
 					toggleOrder={() =>

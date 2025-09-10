@@ -10,6 +10,7 @@ import { ReleaseTypesFilterOptions } from '../../../../../models/release/release
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum.ts'
 import { SortOrder } from '../../../../../types/sort-order-type.ts'
 import AdminFilterButton from '../../buttons/Admin-filter-button.tsx'
+import AdminToggleSortOrderButton from '../../buttons/Admin-toggle-sort-order-button.tsx'
 import AdminDashboardReleasesGridItem from './Admin-dashboard-releases-grid-item.tsx'
 import ReleaseFormModal from './Release-form-modal.tsx'
 
@@ -80,7 +81,7 @@ const AdminDashboardReleasesGrid = observer(() => {
 			)}
 
 			<div id='admin-users-grid' className='flex flex-col overflow-hidden p-5'>
-				<div className='flex mb-5 text-white/80 border-b border-white/10'>
+				<div className='flex flex-wrap xl:mb-5 gap-y-2 text-white/80 border-b border-white/10'>
 					{isTypesLoading
 						? Array.from({ length: 5 }).map((_, idx) => (
 								<SkeletonLoader
@@ -102,7 +103,7 @@ const AdminDashboardReleasesGrid = observer(() => {
 								/>
 						  ))}
 
-					<div className='ml-auto'>
+					<div className='ml-auto max-sm:hidden'>
 						<AdminFilterButton
 							title={'Добавить релиз'}
 							isActive={false}
@@ -111,8 +112,28 @@ const AdminDashboardReleasesGrid = observer(() => {
 					</div>
 				</div>
 
+				<div className='sm:hidden mt-2 text-white/80 border-b border-white/10'>
+					<AdminFilterButton
+						title={'Добавить релиз'}
+						isActive={false}
+						onClick={() => setAddModalOpen(true)}
+					/>
+				</div>
+
+				<AdminToggleSortOrderButton
+					title={'Дата создания'}
+					order={order}
+					toggleOrder={() =>
+						setOrder(
+							order === SortOrdersEnum.DESC
+								? SortOrdersEnum.ASC
+								: SortOrdersEnum.DESC
+						)
+					}
+				/>
+
 				<AdminDashboardReleasesGridItem
-					className='bg-white/5 font-medium'
+					className='bg-white/5 font-medium max-xl:hidden'
 					isLoading={false}
 					order={order}
 					toggleOrder={() =>

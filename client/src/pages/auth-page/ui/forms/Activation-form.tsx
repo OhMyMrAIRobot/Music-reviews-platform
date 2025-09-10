@@ -49,7 +49,7 @@ const ActivationForm = () => {
 	}
 
 	return (
-		<div className='grid w-[350px] gap-6 text-center'>
+		<div className='grid w-full sm:w-[350px] gap-6 text-center'>
 			<div className='grid gap-2'>
 				<FormTitle title={'Активация аккаунта'} />
 				{!authStore.isAuth && (

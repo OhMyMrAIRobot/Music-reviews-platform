@@ -15,11 +15,16 @@ const TooltipSpan: FC<IProps> = ({
 }) => {
 	const [show, setShow] = useState(false)
 
+	const handleClick = (e: React.MouseEvent) => {
+		e.preventDefault()
+	}
+
 	return (
 		<span
 			className={spanClassName}
 			onMouseEnter={() => setShow(true)}
 			onMouseLeave={() => setShow(false)}
+			onClick={handleClick}
 		>
 			{children}
 			<div

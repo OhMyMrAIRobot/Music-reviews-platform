@@ -2,8 +2,6 @@ import { FC } from 'react'
 import { Link } from 'react-router'
 import useNavigationPath from '../../../hooks/use-navigation-path'
 import { IAuthorLike } from '../../../models/author/author-likes/author-like'
-import Tooltip from '../../tooltip/Tooltip'
-import TooltipSpan from '../../tooltip/Tooltip-span'
 
 interface IProps {
 	authorLike: IAuthorLike
@@ -41,23 +39,17 @@ const AuthorLikeCardHeader: FC<IProps> = ({ authorLike }) => {
 					to={navigateToReleaseDetails(authorLike.release.id)}
 					className='ml-auto z-100'
 				>
-					<TooltipSpan
-						tooltip={<Tooltip>{authorLike.release.title}</Tooltip>}
-						spanClassName='text-white relative'
-						centered={true}
-					>
-						<img
-							loading='lazy'
-							decoding='async'
-							alt={authorLike.release.title}
-							src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
-								authorLike.release.img === ''
-									? import.meta.env.VITE_DEFAULT_COVER
-									: authorLike.release.img
-							}`}
-							className='size-11.5 rounded-md object-cover aspect-square'
-						/>
-					</TooltipSpan>
+					<img
+						loading='lazy'
+						decoding='async'
+						alt={authorLike.release.title}
+						src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
+							authorLike.release.img === ''
+								? import.meta.env.VITE_DEFAULT_COVER
+								: authorLike.release.img
+						}`}
+						className='size-11.5 rounded-md object-cover aspect-square'
+					/>
 				</Link>
 			</div>
 		</div>

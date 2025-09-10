@@ -193,13 +193,11 @@ const AuthorFormModal: FC<IProps> = ({
 	}, [isOpen, author])
 
 	const loadOptions = async (
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		search: string,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		limit: number | null
 	): Promise<IMultiSelectValue[]> => {
 		return metaStore.authorTypes.map(el => {
-			return { name: el.type, id: el.id }
+			return { name: el.type ?? search, id: el.id ?? limit }
 		})
 	}
 
@@ -214,23 +212,25 @@ const AuthorFormModal: FC<IProps> = ({
 			isOpen={isOpen}
 			onCancel={onClose}
 			isLoading={isUpdatingAuthor || isCreatingAuthor}
+			className='max-lg:size-full'
 		>
 			{isTypesLoading ? (
-				<SkeletonLoader className='w-240 h-140 rounded-xl' />
+				<SkeletonLoader className='w-full lg:w-240 h-140 rounded-xl' />
 			) : (
 				<div
-					className={`relative rounded-xl w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6`}
+					className={`relative rounded-xl w-full lg:w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6 max-h-full overflow-y-scroll`}
 				>
 					<h1 className='border-b border-white/10 text-3xl font-bold py-4 text-center'>
 						{title}
 					</h1>
-					<div className='border-b border-white/10 p-6 flex gap-10 w-full'>
-						<div className='grid gap-2 max-w-[30%] overflow-hidden w-full'>
+
+					<div className='border-b border-white/10 p-6 grid lg:flex gap-10 w-full'>
+						<div className='grid gap-2 w-full lg:max-w-[30%] overflow-hidden'>
 							<h3 className='text-2xl font-semibold leading-none tracking-tight'>
 								Аватар
 							</h3>
 
-							<div className='w-[250px]'>
+							<div className='w-full sm:w-[250px]'>
 								<SelectImageLabel htmlfor='avatar' />
 							</div>
 
@@ -282,12 +282,12 @@ const AuthorFormModal: FC<IProps> = ({
 							)}
 						</div>
 
-						<div className='grid gap-2 max-w-[70%] w-full overflow-hidden'>
+						<div className='grid gap-2 lg:max-w-[70%] w-full overflow-hidden'>
 							<h3 className='text-2xl font-semibold leading-none tracking-tight'>
 								Обложка
 							</h3>
 
-							<div className='w-[250px]'>
+							<div className='w-full sm:w-[250px]'>
 								<SelectImageLabel htmlfor='cover' />
 							</div>
 
@@ -338,8 +338,8 @@ const AuthorFormModal: FC<IProps> = ({
 						</div>
 					</div>
 
-					<div className='w-full flex p-6 border-b border-white/10 gap-6'>
-						<div className='grid gap-2 w-1/2'>
+					<div className='w-full grid lg:flex p-6 border-b border-white/10 gap-6'>
+						<div className='grid gap-2 w-full lg:w-1/2'>
 							<FormLabel
 								name={'Имя автора'}
 								htmlFor={'author-name'}
@@ -354,7 +354,7 @@ const AuthorFormModal: FC<IProps> = ({
 							/>
 						</div>
 
-						<div className='grid gap-2 w-1/2'>
+						<div className='grid gap-2 w-full lg:w-1/2'>
 							<FormLabel
 								name={'Тип автора'}
 								htmlFor={'author-types'}
@@ -370,8 +370,8 @@ const AuthorFormModal: FC<IProps> = ({
 						</div>
 					</div>
 
-					<div className='pt-6 px-6 flex gap-3 justify-start'>
-						<div className='w-30'>
+					<div className='w-full pt-6 px-6 grid sm:flex gap-3 sm:justify-start'>
+						<div className='w-full sm:w-30'>
 							<FormButton
 								title={buttonText}
 								isInvert={true}
@@ -386,7 +386,7 @@ const AuthorFormModal: FC<IProps> = ({
 							/>
 						</div>
 
-						<div className='w-25'>
+						<div className='w-full sm:w-25'>
 							<FormButton
 								title={'Назад'}
 								isInvert={false}

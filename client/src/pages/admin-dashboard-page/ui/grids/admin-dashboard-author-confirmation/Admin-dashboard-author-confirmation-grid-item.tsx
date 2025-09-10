@@ -113,7 +113,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = observer(
 		}
 
 		return isLoading ? (
-			<SkeletonLoader className='w-full h-12 rounded-lg' />
+			<SkeletonLoader className='w-full h-65 xl:h-12 rounded-lg' />
 		) : (
 			<>
 				{item && (
@@ -156,17 +156,18 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = observer(
 				)}
 
 				<div
-					className={`${className} text-[10px] md:text-sm h-10 md:h-12 w-full rounded-lg grid grid-cols-10 lg:grid-cols-12 items-center px-3 border border-white/10 text-nowrap`}
+					className={`${className} font-medium text-sm xl:h-12 w-full rounded-lg grid grid-rows-7 xl:grid-rows-1 xl:grid-cols-12 items-center px-3 max-xl:py-2 border border-white/10 text-nowrap`}
 				>
-					<div className='col-span-1 text-ellipsis line-clamp-1'>
+					<div className='xl:col-span-1 text-ellipsis line-clamp-1'>
+						<span className='xl:hidden'># </span>
 						{position ?? '#'}
 					</div>
 
-					<div className='col-span-2 h-full flex items-center mr-2'>
+					<div className='xl:col-span-2 h-full flex items-center mr-2'>
 						{item ? (
 							<Link
 								to={navigatoToProfile(item.user.id)}
-								className='flex text-left gap-x-1.5 items-center cursor-pointer hover:bg-white/5 rounded-lg px-1.5 py-0.5 w-full'
+								className='flex text-left gap-x-1.5 items-center cursor-pointer hover:bg-white/5 rounded-lg xl:px-1.5 xl:py-0.5 w-full'
 							>
 								<img
 									loading='lazy'
@@ -177,9 +178,10 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = observer(
 											: item.user.avatar
 									}`}
 									alt={item.user.nickname}
-									className='size-9 object-cover aspect-square rounded-full select-none'
+									className='max-xl:hidden size-9 object-cover aspect-square rounded-full select-none'
 								/>
-								<span className='font-medium line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
+								<span className='xl:hidden'>Пользователь: </span>
+								<span className='line-clamp-2 max-xl:underline underline-offset-4 overflow-hidden text-ellipsis text-wrap'>
 									{item.user.nickname}
 								</span>
 							</Link>
@@ -188,11 +190,11 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = observer(
 						)}
 					</div>
 
-					<div className='col-span-2 h-full flex items-center mr-2'>
+					<div className='xl:col-span-2 h-full flex items-center mr-2'>
 						{item ? (
 							<Link
 								to={navigateToAuthorDetails(item.author.id)}
-								className='flex text-left gap-x-1.5 items-center cursor-pointer hover:bg-white/5 rounded-lg px-1.5 py-0.5 w-full'
+								className='flex text-left gap-x-1.5 items-center cursor-pointer hover:bg-white/5 rounded-lg xl:px-1.5 xl:py-0.5 w-full'
 							>
 								<img
 									loading='lazy'
@@ -205,9 +207,10 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = observer(
 											: item.author.avatarImg
 									}`}
 									alt={item.author.name}
-									className='size-9 object-cover aspect-square rounded-full select-none'
+									className='max-xl:hidden size-9 object-cover aspect-square rounded-full select-none'
 								/>
-								<span className='font-medium line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
+								<span className='xl:hidden'>Автор: </span>
+								<span className=' max-xl:underline underline-offset-4 line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
 									{item.author.name}
 								</span>
 							</Link>
@@ -216,27 +219,33 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = observer(
 						)}
 					</div>
 
-					<div className='col-span-1 text-ellipsis line-clamp-1 font-medium'>
+					<div className='xl:col-span-1 flex items-center gap-x-1 text-ellipsis line-clamp-1 '>
 						{item ? (
-							<div
-								className={`flex gap-x-1 items-center ${getReleaseMediaStatusColor(
-									item.status.status
-								)}`}
-							>
-								<AuthorConfirmationStatusIcon
-									status={item.status.status}
-									className={'size-5'}
-								/>
-								<span>{item.status.status}</span>
-							</div>
+							<>
+								<span className='xl:hidden'>Статус: </span>
+								<div
+									className={`flex gap-x-1 items-center ${getReleaseMediaStatusColor(
+										item.status.status
+									)}`}
+								>
+									<AuthorConfirmationStatusIcon
+										status={item.status.status}
+										className={'size-5'}
+									/>
+									<span>{item.status.status}</span>
+								</div>
+							</>
 						) : (
-							<span>Статус заявки</span>
+							<span>Статус</span>
 						)}
 					</div>
 
-					<div className='col-span-2 text-ellipsis text-wrap font-medium ml-4'>
+					<div className='xl:col-span-2 text-ellipsis text-wrap  xl:ml-4'>
 						{item ? (
-							<span>{item.createdAt}</span>
+							<>
+								<span className='xl:hidden'>Дата подачи заявки: </span>
+								<span>{item.createdAt}</span>
+							</>
 						) : (
 							<button
 								onClick={toggle}
@@ -252,17 +261,20 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = observer(
 						)}
 					</div>
 
-					<div className='col-span-2 font-medium line-clamp-2 break-words overflow-hidden text-ellipsis text-wrap mr-2'>
+					<div className='xl:col-span-2  line-clamp-2 break-words overflow-hidden text-ellipsis text-wrap mr-2'>
 						{item ? (
-							<span>{item.confirmation}</span>
+							<>
+								<span className='xl:hidden'>Подтверждение: </span>
+								<span>{item.confirmation}</span>
+							</>
 						) : (
 							<span className='text-center'>Подтверждение</span>
 						)}
 					</div>
 
-					<div className='col-span-2 text-center'>
+					<div className='xl:col-span-2 text-center max-xl:mt-1'>
 						{item ? (
-							<div className='flex gap-x-3 justify-end'>
+							<div className='flex gap-x-3 xl:justify-end'>
 								{item.status.status ===
 									AuthorConfirmationStatusesEnum.PENDING && (
 									<>

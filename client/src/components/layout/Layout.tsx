@@ -7,7 +7,7 @@ const Layout = () => {
 	return (
 		<>
 			<Sidebar />
-			<div className='lg:pl-14 w-full flex flex-col h-full min-h-screen items-center'>
+			<div className='lg:pl-14 w-full flex flex-col h-full min-h-screen items-center overflow-hidden'>
 				<Header />
 				<div className='2xl:container pb-8 h-full mt-5 px-4 w-full'>
 					<Outlet />

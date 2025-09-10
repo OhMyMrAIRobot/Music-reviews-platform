@@ -1,3 +1,4 @@
+import AlbumValueSvg from '../components/album-value/svg/Album-value-svg'
 import AuthorCommentSvg from '../components/author/author-comment/svg/Author-comment-svg'
 import AuthorLikeSvg from '../components/author/author-like/svg/Author-like-svg'
 import RegisteredAuthorSvg from '../components/author/registered-author/svg/Registered-author-svg'
@@ -37,6 +38,7 @@ export const useSidebarGroups = () => {
 		navigateToAuthorConfirmation,
 		navigateToAuthorLikes,
 		navigateToAwards,
+		navigateToAlbumValues,
 	} = useNavigationPath()
 
 	const { isActive } = useActivePath()
@@ -77,6 +79,12 @@ export const useSidebarGroups = () => {
 			icon: <LeaderboardSvg className='size-5 fill-white' />,
 			label: 'ТОП-90 пользователей',
 			active: isActive(`/${ROUTES.LEADERBOARD}`),
+		},
+		{
+			href: navigateToAlbumValues,
+			icon: <AlbumValueSvg className='size-5' />,
+			label: 'Ценность альбомов',
+			active: isActive(`/${ROUTES.ALBUM_VALUES}`),
 		},
 		{
 			href: navigateToRatings,

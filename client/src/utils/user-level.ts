@@ -13,7 +13,7 @@ interface ILevelConfig {
 	color: string
 }
 
-export const LEVELS: { level: UserLevelsEnum; config: ILevelConfig }[] = [
+export const USER_LEVELS: { level: UserLevelsEnum; config: ILevelConfig }[] = [
 	{
 		level: UserLevelsEnum.Silver,
 		config: {
@@ -62,16 +62,16 @@ export const LEVELS: { level: UserLevelsEnum; config: ILevelConfig }[] = [
 ]
 
 export function getUserLevel(points: number): UserLevelsEnum | null {
-	for (let i = LEVELS.length - 1; i >= 0; i--) {
-		if (points >= LEVELS[i].config.minPoints) {
-			return LEVELS[i].level
+	for (let i = USER_LEVELS.length - 1; i >= 0; i--) {
+		if (points >= USER_LEVELS[i].config.minPoints) {
+			return USER_LEVELS[i].level
 		}
 	}
 	return null
 }
 
 export function getLevelConfig(level: UserLevelsEnum): ILevelConfig {
-	const found = LEVELS.find(l => l.level === level)
+	const found = USER_LEVELS.find(l => l.level === level)
 	if (!found) throw new Error('Invalid user level')
 	return found.config
 }

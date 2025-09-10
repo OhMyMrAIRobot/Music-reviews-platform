@@ -26,7 +26,7 @@ interface IProps {
 
 const AdminDashboardAuthorCommentsGridItem: FC<IProps> = observer(
 	({
-		className,
+		className = '',
 		comment,
 		isLoading,
 		position,
@@ -75,7 +75,7 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = observer(
 		}
 
 		return isLoading ? (
-			<SkeletonLoader className='w-full h-12 rounded-lg' />
+			<SkeletonLoader className='w-full h-75 xl:h-12 rounded-lg' />
 		) : (
 			<>
 				{comment && (
@@ -101,17 +101,18 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = observer(
 				)}
 
 				<div
-					className={`${className} text-[10px] md:text-sm h-10 md:h-12 w-full rounded-lg grid grid-cols-10 lg:grid-cols-12 items-center px-3 border border-white/10 text-nowrap`}
+					className={`${className} text-sm font-medium xl:h-12 w-full rounded-lg grid grid-rows-7 xl:grid-rows-1 xl:grid-cols-12 items-center px-3 max-xl:py-2 border border-white/10 text-nowrap`}
 				>
-					<div className='col-span-1 text-ellipsis line-clamp-1'>
+					<div className='xl:col-span-1 text-ellipsis line-clamp-1'>
+						<span className='xl:hidden'># </span>
 						{position ?? '#'}
 					</div>
 
-					<div className='col-span-2 h-full flex items-center mr-2'>
+					<div className='xl:col-span-2 h-full flex items-center mr-2'>
 						{comment ? (
 							<Link
 								to={navigatoToProfile(comment.userId)}
-								className='flex text-left gap-x-1.5 items-center cursor-pointer hover:bg-white/5 rounded-lg px-1.5 py-0.5 w-full'
+								className='flex text-left gap-x-1.5 items-center cursor-pointer hover:bg-white/5 rounded-lg xl:px-1.5 xl:py-0.5 w-full'
 							>
 								<img
 									loading='lazy'
@@ -122,9 +123,10 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = observer(
 											: comment.avatar
 									}`}
 									alt={comment.nickname}
-									className='size-9 object-cover aspect-square rounded-full select-none'
+									className='max-xl:hidden size-9 object-cover aspect-square rounded-full select-none'
 								/>
-								<span className='font-medium line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
+								<span className='xl:hidden'>Автор</span>
+								<span className='line-clamp-2 max-xl:underline underline-offset-4 overflow-hidden text-ellipsis text-wrap'>
 									{comment.nickname}
 								</span>
 							</Link>
@@ -133,11 +135,11 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = observer(
 						)}
 					</div>
 
-					<div className='col-span-2 h-full flex items-center mr-2'>
+					<div className='xl:col-span-2 h-full flex items-center mr-2'>
 						{comment ? (
 							<Link
 								to={navigateToReleaseDetails(comment.releaseId)}
-								className='flex text-left gap-x-1.5 items-center cursor-pointer hover:bg-white/5 rounded-lg px-1.5 py-0.5 w-full'
+								className='flex text-left gap-x-1.5 items-center cursor-pointer hover:bg-white/5 rounded-lg xl:px-1.5 xl:py-0.5 w-full'
 							>
 								<img
 									loading='lazy'
@@ -148,20 +150,24 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = observer(
 											: comment.releaseImg
 									}`}
 									alt={comment.releaseTitle}
-									className='size-9 object-cover aspect-square rounded-full select-none'
+									className='max-xl:hidden size-9 object-cover aspect-square rounded-full select-none'
 								/>
-								<span className='font-medium line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
+								<span className='xl:hidden'>Релиз: </span>
+								<span className='line-clamp-2 max-xl:underline underline-offset-4 overflow-hidden text-ellipsis text-wrap'>
 									{comment.releaseTitle}
 								</span>
 							</Link>
 						) : (
-							<span className='px-2'>Название релиза</span>
+							<span className='px-2'>Релиз</span>
 						)}
 					</div>
 
-					<div className='col-span-2 text-ellipsis text-wrap font-medium'>
+					<div className='xl:col-span-2 text-ellipsis text-wrap xl:'>
 						{comment ? (
-							<span>{comment.createdAt}</span>
+							<>
+								<span className='xl:hidden'>Дата публикации: </span>
+								<span>{comment.createdAt}</span>
+							</>
 						) : (
 							<button
 								onClick={toggle}
@@ -177,17 +183,31 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = observer(
 						)}
 					</div>
 
-					<div className='col-span-2 font-medium line-clamp-2 overflow-hidden text-ellipsis text-wrap mr-2'>
-						{comment ? <span>{comment.title}</span> : <span>Заголовок</span>}
-					</div>
-
-					<div className='col-span-2 font-medium line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
-						{comment ? <span>{comment.text}</span> : <span>Комментарий</span>}
-					</div>
-
-					<div className='col-span-1'>
+					<div className='xl:col-span-2 line-clamp-2 overflow-hidden text-ellipsis text-wrap mr-2'>
 						{comment ? (
-							<div className='flex gap-x-3 justify-end'>
+							<>
+								<span className='xl:hidden'>Заголовок: </span>
+								<span>{comment.title}</span>
+							</>
+						) : (
+							<span>Заголовок</span>
+						)}
+					</div>
+
+					<div className='xl:col-span-2 line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
+						{comment ? (
+							<>
+								<span className='xl:hidden'>Комментарий: </span>
+								<span>{comment.text}</span>
+							</>
+						) : (
+							<span>Комментарий</span>
+						)}
+					</div>
+
+					<div className='xl:col-span-1 max-xl:mt-1'>
+						{comment ? (
+							<div className='flex gap-x-3 xl:justify-end'>
 								<AdminOpenButton
 									onClick={() => {
 										setEditModalOpen(true)

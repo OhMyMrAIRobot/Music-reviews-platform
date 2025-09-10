@@ -6,6 +6,7 @@ interface IProps {
 	children: ReactNode
 	onCancel: () => void
 	isLoading?: boolean
+	className?: string
 }
 
 const ModalOverlay: FC<IProps> = ({
@@ -13,6 +14,7 @@ const ModalOverlay: FC<IProps> = ({
 	onCancel,
 	children,
 	isLoading = false,
+	className = '',
 }) => {
 	const [isVisible, setIsVisible] = useState(false)
 	const [shouldRender, setShouldRender] = useState(false)
@@ -52,11 +54,16 @@ const ModalOverlay: FC<IProps> = ({
 	return createPortal(
 		<div
 			onClick={handleOverlayClick}
-			className={`fixed inset-0 h-screen bg-black/40 flex items-center justify-center select-none transition-opacity duration-300 z-1000 backdrop-blur-sm ${
+			className={`fixed inset-0 w-screen h-screen bg-black/40 flex items-center justify-center select-none transition-opacity duration-300 z-1000 backdrop-blur-sm ${
 				isVisible ? 'opacity-100' : 'opacity-0'
 			}`}
 		>
-			<div onClick={e => e.stopPropagation()}>{children}</div>
+			<div
+				onClick={e => e.stopPropagation()}
+				className={`flex items-center justify-center ${className}`}
+			>
+				{children}
+			</div>
 		</div>,
 		document.body
 	)

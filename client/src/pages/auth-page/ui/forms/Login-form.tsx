@@ -32,7 +32,7 @@ const LoginForm = observer(() => {
 	}
 
 	return (
-		<div className='grid w-[350px] gap-6'>
+		<div className='grid w-full sm:w-[350px] gap-6'>
 			<div className='grid gap-2 text-center'>
 				<FormTitle title={'Вход'} />
 				<FormSubTitle title={'Введите свои данные для входа в аккаунт'} />

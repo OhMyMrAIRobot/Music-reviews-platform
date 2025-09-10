@@ -271,24 +271,25 @@ const ReleaseFormModal: FC<IProps> = observer(
 				isOpen={isOpen}
 				onCancel={onClose}
 				isLoading={isCreatingRelease || isUpdatingRelease}
+				className='max-lg:size-full'
 			>
 				{isTypesLoading ? (
-					<SkeletonLoader className='w-240 h-140 rounded-xl' />
+					<SkeletonLoader className='w-full lg:w-240 h-140 size-full rounded-xl' />
 				) : (
 					<div
-						className={`relative rounded-xl w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6`}
+						className={`relative rounded-xl w-full lg:w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6 overflow-y-scroll max-h-full`}
 					>
 						<h1 className='border-b border-white/10 text-3xl font-bold py-4 text-center'>
 							{formTitle}
 						</h1>
 
 						<div className='border-b border-white/10 p-6 flex gap-10 w-full'>
-							<div className='grid gap-2 max-w-[30%] overflow-hidden w-full'>
+							<div className='grid gap-2 lg:max-w-[30%] overflow-hidden w-full'>
 								<h3 className='text-2xl font-semibold leading-none tracking-tight'>
 									Обложка релиза
 								</h3>
 
-								<div className='w-[250px]'>
+								<div className='w-full lg:w-[250px]'>
 									<SelectImageLabel htmlfor='cover' />
 								</div>
 
@@ -339,7 +340,7 @@ const ReleaseFormModal: FC<IProps> = observer(
 							</div>
 						</div>
 
-						<div className='grid grid-cols-2 p-6 border-b border-white/10 gap-6'>
+						<div className='grid grid-cols-1 lg:grid-cols-2 p-6 border-b border-white/10 gap-3 lg:gap-6'>
 							<div className='grid grid-rows-3 gap-y-3'>
 								<div className='grid gap-2 w-full'>
 									<FormLabel
@@ -436,8 +437,8 @@ const ReleaseFormModal: FC<IProps> = observer(
 							</div>
 						</div>
 
-						<div className='pt-6 px-6 flex gap-3 justify-start'>
-							<div className='w-30'>
+						<div className='w-full pt-6 px-6 grid sm:flex gap-3 sm:justify-start'>
+							<div className='w-full sm:w-30'>
 								<FormButton
 									title={buttonText}
 									isInvert={true}
@@ -452,7 +453,7 @@ const ReleaseFormModal: FC<IProps> = observer(
 								/>
 							</div>
 
-							<div className='w-25'>
+							<div className='w-full sm:w-25'>
 								<FormButton
 									title={'Назад'}
 									isInvert={false}

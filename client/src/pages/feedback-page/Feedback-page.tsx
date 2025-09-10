@@ -51,7 +51,7 @@ const FeedbackPage = () => {
 	}, [feedbackData])
 
 	return (
-		<div className='grid w-[400px] gap-5 mx-auto'>
+		<div className='grid w-full md:w-[400px] gap-5 mx-auto'>
 			<div className='grid gap-3 text-center'>
 				<FormTitle title={'Связаться с нами'} />
 				<FormSubTitle

@@ -52,7 +52,7 @@ const AuthorRatingsItem: FC<IProps> = ({ rating, ratingType, releaseType }) => {
 			spanClassName={'relative'}
 		>
 			<div
-				className={`flex size-8 text-xs items-center justify-center font-semibold rounded-full ${className}`}
+				className={`flex size-7 lg:size-8 text-xs items-center justify-center font-semibold rounded-full ${className}`}
 			>
 				{rating}
 			</div>

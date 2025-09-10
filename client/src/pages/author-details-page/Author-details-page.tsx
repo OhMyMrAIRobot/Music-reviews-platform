@@ -30,7 +30,7 @@ const AuthorDetailsPage = observer(() => {
 
 	return (
 		authorDetailsPageStore.author && (
-			<div className='flex flex-col gap-10'>
+			<div className='flex flex-col gap-5 lg:gap-10'>
 				<AuthorDetailsHeader
 					author={authorDetailsPageStore.author}
 					isLoading={isLoading}

@@ -80,7 +80,7 @@ const ResetPasswordForm = () => {
 	)
 
 	return (
-		<div className='grid gap-4 w-[330px]'>
+		<div className='grid gap-4 w-full sm:w-[330px]]'>
 			<div className='grid gap-1'>
 				<FormTitle title={'Сброс пароля'} />
 				<FormSubTitle title={'Введите новый пароль для аккаунта'} />

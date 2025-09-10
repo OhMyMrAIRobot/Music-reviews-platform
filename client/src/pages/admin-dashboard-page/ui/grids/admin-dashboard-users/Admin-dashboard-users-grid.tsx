@@ -9,6 +9,7 @@ import { RolesFilterOptions } from '../../../../../models/role/roles-filter-opti
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum.ts'
 import { SortOrder } from '../../../../../types/sort-order-type.ts'
 import AdminFilterButton from '../../buttons/Admin-filter-button.tsx'
+import AdminToggleSortOrderButton from '../../buttons/Admin-toggle-sort-order-button.tsx'
 import AdminDashboardUsersGridItem from './Admin-dashboard-users-grid-item.tsx'
 
 const AdminDashboardUsersGrid = observer(() => {
@@ -53,7 +54,7 @@ const AdminDashboardUsersGrid = observer(() => {
 			<AdminHeader title={'Пользователи'} setText={setSearchText} />
 
 			<div id='admin-users-grid' className='flex flex-col overflow-hidden p-5'>
-				<div className='flex mb-5 text-white/80 border-b border-white/10'>
+				<div className='flex flex-wrap xl:mb-5 gap-y-2 text-white/80 border-b border-white/10'>
 					{Object.values(RolesFilterOptions).map(option => (
 						<AdminFilterButton
 							key={option}
@@ -72,8 +73,20 @@ const AdminDashboardUsersGrid = observer(() => {
 					))}
 				</div>
 
+				<AdminToggleSortOrderButton
+					title={'Дата создания'}
+					order={order}
+					toggleOrder={() =>
+						setOrder(
+							order === SortOrdersEnum.DESC
+								? SortOrdersEnum.ASC
+								: SortOrdersEnum.DESC
+						)
+					}
+				/>
+
 				<AdminDashboardUsersGridItem
-					className='bg-white/5 font-medium'
+					className='bg-white/5 font-medium max-xl:hidden'
 					isLoading={false}
 					order={order}
 					toggleOrder={() =>
@@ -107,7 +120,7 @@ const AdminDashboardUsersGrid = observer(() => {
 				</div>
 
 				{!isLoading && adminDashboardUsersStore.count === 0 && (
-					<span className='font-medium mx-auto mt-5 text-lg'>
+					<span className='font-medium mx-auto mt-5 text-xl'>
 						Пользователи не найдены!
 					</span>
 				)}

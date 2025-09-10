@@ -66,7 +66,7 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 
 	return (
 		<div className='xl:col-span-7'>
-			<div className='relative max-h-[300px] h-full hidden xl:block select-none'>
+			<div className='aspect-video w-full relative max-h-[300px] h-full hidden xl:block select-none'>
 				<img
 					loading='lazy'
 					decoding='async'
@@ -75,12 +75,12 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 							? import.meta.env.VITE_DEFAULT_COVER
 							: profile.cover
 					}`}
-					className='object-cover rounded-xl size-full max-h-[300px] h-full'
+					className='object-cover rounded-xl size-full'
 				/>
 			</div>
 
 			<div
-				className='mt-5 flex gap-1 lg:gap-2 items-center'
+				className='mt-5 mb-2 lg:mb-5 flex gap-x-2 gap-y-2 items-center flex-wrap'
 				id='profile-sections'
 			>
 				{profile.isAuthor && (

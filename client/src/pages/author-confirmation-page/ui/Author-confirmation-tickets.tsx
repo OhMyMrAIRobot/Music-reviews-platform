@@ -16,8 +16,9 @@ const AuthorConfirmationTickets: FC<IProps> = ({ show }) => {
 
 	useEffect(() => {
 		fetch()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [show])
+	}, [show, fetch])
+
+	const items = authorConfirmationPageStore.authorConfirmations
 
 	return (
 		<div
@@ -32,13 +33,18 @@ const AuthorConfirmationTickets: FC<IProps> = ({ show }) => {
 							isLoading={true}
 						/>
 				  ))
-				: authorConfirmationPageStore.authorConfirmations.map(item => (
+				: items.map(item => (
 						<AuthorConfirmationItem
 							key={item.id}
 							isLoading={false}
 							item={item}
 						/>
 				  ))}
+			{!isLoading && items.length === 0 && (
+				<span className='text-center text-xl font-medium'>
+					Заявки не найдены!
+				</span>
+			)}
 		</div>
 	)
 }

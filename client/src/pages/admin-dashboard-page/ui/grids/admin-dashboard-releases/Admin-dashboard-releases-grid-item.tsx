@@ -28,7 +28,7 @@ interface IProps {
 }
 
 const AdminDashboardReleasesGridItem: FC<IProps> = ({
-	className,
+	className = '',
 	release,
 	order,
 	isLoading,
@@ -47,18 +47,6 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
 
-	const toggle = () => {
-		if (toggleOrder) {
-			toggleOrder()
-		}
-	}
-
-	const handleRefetch = () => {
-		if (refetchReleases) {
-			refetchReleases()
-		}
-	}
-
 	const handleDelete = async (id: string) => {
 		if (isDeleting) return
 
@@ -66,7 +54,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 
 		if (errors.length === 0) {
 			notificationStore.addSuccessNotification('Вы успешно удалили релиз!')
-			handleRefetch()
+			refetchReleases?.()
 		} else {
 			errors.forEach(err => {
 				notificationStore.addErrorNotification(err)
@@ -75,7 +63,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 	}
 
 	return isLoading ? (
-		<SkeletonLoader className='w-full h-12 rounded-lg' />
+		<SkeletonLoader className='w-full h-80 xl:h-12 rounded-lg' />
 	) : (
 		<>
 			{release && (
@@ -102,17 +90,32 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 			)}
 
 			<div
-				className={`${className} text-[10px] md:text-sm h-10 md:h-12 w-full rounded-lg grid grid-cols-10 lg:grid-cols-12 items-center px-3 border border-white/10 text-nowrap`}
+				className={`${className} text-sm xl:h-12 w-full rounded-lg grid xl:grid-cols-12 grid-rows-8 xl:grid-rows-1 items-center px-3 max-xl:py-2 border border-white/10 text-nowrap font-medium relative`}
 			>
-				<div className='col-span-1 text-ellipsis line-clamp-1'>
+				<div className='xl:col-span-1 text-ellipsis line-clamp-1'>
+					<span className='xl:hidden'># </span>
 					{position ?? '#'}
 				</div>
 
-				<div className='col-span-2 h-full flex items-center mr-2'>
+				{release && (
+					<img
+						loading='lazy'
+						decoding='async'
+						src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
+							release.img === ''
+								? import.meta.env.VITE_DEFAULT_COVER
+								: release.img
+						}`}
+						alt={release.title}
+						className='absolute right-2 top-2 size-22 object-cover aspect-square select-none rounded-lg xl:hidden'
+					/>
+				)}
+
+				<div className='xl:col-span-2 h-full flex items-center mr-2 max-xl:max-w-[calc(100%-90px)]'>
 					{release ? (
 						<Link
 							to={navigateToReleaseDetails(release.id)}
-							className='flex text-left gap-x-1.5 items-center hover:bg-white/5 rounded-lg px-1.5 py-0.5 w-full'
+							className='flex text-left gap-x-1.5 items-center hover:bg-white/5 rounded-lg xl:px-1.5 xl:py-0.5 w-full'
 						>
 							<img
 								loading='lazy'
@@ -123,10 +126,14 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 										: release.img
 								}`}
 								alt={release.title}
-								className='size-9 object-cover aspect-square rounded-full select-none'
+								className='hidden xl:block size-9 object-cover aspect-square rounded-full select-none'
 							/>
-							<span className='font-medium line-clamp-2 overflow-hidden text-ellipsis text-wrap'>
-								{release.title}
+
+							<span className='overflow-hidden xl:line-clamp-2 text-ellipsis text-wrap'>
+								<span className='xl:hidden'>Название: </span>
+								<span className='max-xl:underline underline-offset-4'>
+									{release.title}
+								</span>
 							</span>
 						</Link>
 					) : (
@@ -134,30 +141,36 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='col-span-1 text-ellipsis line-clamp-1 font-medium'>
+				<div className='xl:col-span-1 flex items-center text-ellipsis line-clamp-1 '>
 					{release ? (
-						<div
-							className={`flex gap-x-1 items-center ${getReleaseTypeColor(
-								release.releaseType.type
-							)}`}
-						>
-							<ReleaseTypeIcon
-								type={release.releaseType.type}
-								className={'size-5'}
-							/>
-							<span>{release.releaseType.type}</span>
-						</div>
+						<>
+							<span className='xl:hidden'>Тип релиза: </span>
+							<div
+								className={`flex max-xl:ml-1 gap-x-1 items-center ${getReleaseTypeColor(
+									release.releaseType.type
+								)}`}
+							>
+								<ReleaseTypeIcon
+									type={release.releaseType.type}
+									className={'size-5'}
+								/>
+								<span>{release.releaseType.type}</span>
+							</div>
+						</>
 					) : (
 						<span>Тип релиза</span>
 					)}
 				</div>
 
-				<div className='col-span-2 text-ellipsis text-wrap font-medium'>
+				<div className='xl:col-span-2 text-ellipsis text-wrap '>
 					{release ? (
-						<span>{release.publishDate}</span>
+						<>
+							<span className='xl:hidden'>Дата создания: </span>
+							<span>{release.publishDate}</span>
+						</>
 					) : (
 						<button
-							onClick={toggle}
+							onClick={() => toggleOrder}
 							className='cursor-pointer hover:text-white flex items-center gap-x-1.5'
 						>
 							<span>Дата создания</span>
@@ -170,78 +183,87 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 					)}
 				</div>
 
-				<div className='col-span-2 line-clamp-2 text-wrap text-ellipsis font-medium mr-2'>
+				<div className='xl:col-span-2 line-clamp-2 text-wrap text-ellipsis  mr-2'>
 					{release ? (
-						release.releaseArtists.length === 0 ? (
-							<span className='opacity-50 font-medium'>Отсутствует</span>
-						) : (
-							release.releaseArtists.map((ra, idx) => (
-								<span key={ra.id}>
-									<span
-										className={`font-medium ${getAuthorTypeColor(
-											AuthorTypesEnum.ARTIST
-										)}`}
-									>
-										{ra.name}
+						<>
+							<span className='xl:hidden'>Артист: </span>
+							{release.releaseArtists.length === 0 ? (
+								<span className='opacity-50 '>Отсутствует</span>
+							) : (
+								release.releaseArtists.map((ra, idx) => (
+									<span key={ra.id}>
+										<span
+											className={` ${getAuthorTypeColor(
+												AuthorTypesEnum.ARTIST
+											)}`}
+										>
+											{ra.name}
+										</span>
+										{idx < release.releaseArtists.length - 1 && ', '}
 									</span>
-									{idx < release.releaseArtists.length - 1 && ', '}
-								</span>
-							))
-						)
+								))
+							)}
+						</>
 					) : (
 						<span>Артист</span>
 					)}
 				</div>
 
-				<div className='col-span-2 line-clamp-2 text-wrap text-ellipsis font-medium mr-2'>
+				<div className='xl:col-span-2 line-clamp-2 text-wrap text-ellipsis  mr-2'>
 					{release ? (
-						release.releaseProducers.length === 0 ? (
-							<span className='opacity-50 font-medium'>Отсутствует</span>
-						) : (
-							release.releaseProducers.map((rp, idx) => (
-								<span key={rp.id}>
-									<span
-										className={`font-medium ${getAuthorTypeColor(
-											AuthorTypesEnum.PRODUCER
-										)}`}
-									>
-										{rp.name}
+						<>
+							<span className='xl:hidden'>Продюссер: </span>
+							{release.releaseProducers.length === 0 ? (
+								<span className='opacity-50 '>Отсутствует</span>
+							) : (
+								release.releaseProducers.map((rp, idx) => (
+									<span key={rp.id}>
+										<span
+											className={` ${getAuthorTypeColor(
+												AuthorTypesEnum.PRODUCER
+											)}`}
+										>
+											{rp.name}
+										</span>
+										{idx < release.releaseProducers.length - 1 && ', '}
 									</span>
-									{idx < release.releaseProducers.length - 1 && ', '}
-								</span>
-							))
-						)
+								))
+							)}
+						</>
 					) : (
 						<span>Продюссер</span>
 					)}
 				</div>
 
-				<div className='col-span-1 line-clamp-2 text-wrap text-ellipsis font-medium mr-2'>
+				<div className='xl:col-span-1 line-clamp-2 text-wrap text-ellipsis  mr-2'>
 					{release ? (
-						release.releaseDesigners.length === 0 ? (
-							<span className='opacity-50 font-medium'>Отсутствует</span>
-						) : (
-							release.releaseDesigners.map((rd, idx) => (
-								<span key={rd.id}>
-									<span
-										className={`font-medium ${getAuthorTypeColor(
-											AuthorTypesEnum.DESIGNER
-										)}`}
-									>
-										{rd.name}
+						<>
+							<span className='xl:hidden'>Дизайнер: </span>
+							{release.releaseDesigners.length === 0 ? (
+								<span className='opacity-50 '>Отсутствует</span>
+							) : (
+								release.releaseDesigners.map((rd, idx) => (
+									<span key={rd.id}>
+										<span
+											className={` ${getAuthorTypeColor(
+												AuthorTypesEnum.DESIGNER
+											)}`}
+										>
+											{rd.name}
+										</span>
+										{idx < release.releaseDesigners.length - 1 && ', '}
 									</span>
-									{idx < release.releaseDesigners.length - 1 && ', '}
-								</span>
-							))
-						)
+								))
+							)}
+						</>
 					) : (
 						<span>Дизайнер</span>
 					)}
 				</div>
 
-				<div className='col-span-1'>
+				<div className='xl:col-span-1 max-xl:mt-1'>
 					{release ? (
-						<div className='flex gap-x-3 justify-end'>
+						<div className='flex gap-x-3 xl:justify-end'>
 							<AdminEditButton onClick={() => setEditModalOpen(true)} />
 							<AdminDeleteButton onClick={() => setConfModalOpen(true)} />
 						</div>

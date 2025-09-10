@@ -40,6 +40,8 @@ const useNavigationPath = () => {
 
 	const navigateToVotes = `/${ROUTES.NOMINATION_VOTES}`
 
+	const navigateToAlbumValues = `/${ROUTES.ALBUM_VALUES}`
+
 	const navigateToAdminUsers = `/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.USERS}`
 
 	const navigateToAdminAuthors = `/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.AUTHORS}`
@@ -99,6 +101,7 @@ const useNavigationPath = () => {
 		navigateToAdminAuthorConfirmation,
 		navigateToAwards,
 		navigateToVotes,
+		navigateToAlbumValues,
 	}
 }
 

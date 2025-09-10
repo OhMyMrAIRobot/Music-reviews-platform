@@ -37,12 +37,12 @@ const ReleaseMediaReview: FC<IProps> = observer(
 		const handleClickFav = async () => {
 			setToggling(true)
 
-			if (!checkAuth()) {
+			if (!checkAuth() || !media) {
 				setToggling(false)
 				return
 			}
 
-			if (authStore.user?.id === media?.user?.id) {
+			if (authStore.user?.id === media.user?.id) {
 				notificationStore.addErrorNotification(
 					'Вы не можете отметить свою медиарецензию как понравившеюся!'
 				)
@@ -50,7 +50,7 @@ const ReleaseMediaReview: FC<IProps> = observer(
 				return
 			}
 
-			if (!toggleFav || !media) {
+			if (!toggleFav) {
 				notificationStore.addErrorNotification('Произошла ошибка!')
 				return
 			}

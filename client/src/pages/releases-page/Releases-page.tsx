@@ -91,16 +91,13 @@ const ReleasesPage = () => {
 
 	return (
 		<>
-			<h1
-				id='releases'
-				className='text-lg md:text-xl lg:text-3xl font-semibold'
-			>
+			<h1 id='releases' className='text-2xl lg:text-3xl font-semibold'>
 				Добавленные релизы
 			</h1>
 
-			<div className='rounded-lg border border-white/10 bg-zinc-900 p-3 shadow-sm mt-5 flex gap-4 items-center'>
-				<span className='hidden sm:block text-white/70 font-bold '>
-					Тип релизов:
+			<div className='rounded-lg border border-white/10 bg-zinc-900 p-3 shadow-sm mt-5 grid md:flex gap-x-4 items-center'>
+				<span className='text-sm md:text-base text-white/70 font-bold max-md:pb-1'>
+					Тип релиза:
 				</span>
 				<div className='w-full sm:w-55 h-10'>
 					{!isTypesLoading && metaStore.releaseTypes.length > 0 ? (
@@ -118,7 +115,7 @@ const ReleasesPage = () => {
 					)}
 				</div>
 
-				<span className='hidden sm:block text-white/70 font-bold '>
+				<span className='text-sm md:text-base text-white/70 font-bold max-md:mt-4 max-md:pb-1'>
 					Сортировать по:
 				</span>
 				<div className='w-full sm:w-82 h-10'>

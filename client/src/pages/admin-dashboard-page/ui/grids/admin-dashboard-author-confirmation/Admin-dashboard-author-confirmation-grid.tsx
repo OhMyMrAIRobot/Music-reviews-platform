@@ -10,6 +10,7 @@ import { AuthorConfirmationStatusesFilterOptions } from '../../../../../models/a
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
 import { SortOrder } from '../../../../../types/sort-order-type'
 import AdminFilterButton from '../../buttons/Admin-filter-button'
+import AdminToggleSortOrderButton from '../../buttons/Admin-toggle-sort-order-button'
 import AdminDashboardAuthorConfirmationGridItem from './Admin-dashboard-author-confirmation-grid-item'
 
 const AdminDashboardAuthorConfirmationGrid = observer(() => {
@@ -77,7 +78,7 @@ const AdminDashboardAuthorConfirmationGrid = observer(() => {
 				id='admin-author-confirmations-grid'
 				className='flex flex-col overflow-hidden p-5'
 			>
-				<div className='flex mb-5 text-white/80 border-b border-white/10'>
+				<div className='flex flex-wrap gap-y-2 xl:mb-5 text-white/80 border-b border-white/10'>
 					{isStatusesLoading
 						? Array.from({ length: 5 }).map((_, idx) => (
 								<SkeletonLoader
@@ -105,8 +106,20 @@ const AdminDashboardAuthorConfirmationGrid = observer(() => {
 						  )}
 				</div>
 
+				<AdminToggleSortOrderButton
+					title={'Дата подачи заявки'}
+					order={order}
+					toggleOrder={() =>
+						setOrder(
+							order === SortOrdersEnum.DESC
+								? SortOrdersEnum.ASC
+								: SortOrdersEnum.DESC
+						)
+					}
+				/>
+
 				<AdminDashboardAuthorConfirmationGridItem
-					className='bg-white/5 font-medium'
+					className='bg-white/5 font-medium max-xl:hidden'
 					isLoading={false}
 					order={order}
 					toggleOrder={() =>

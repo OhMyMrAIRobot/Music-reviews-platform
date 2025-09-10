@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import BrushSvg from '../../../../components/svg/Brush-svg'
+import BrushSvg from '../../../../../../components/svg/Brush-svg'
 
 interface IProps {
 	isReview: boolean
@@ -9,7 +9,7 @@ interface IProps {
 	setText: (val: string) => void
 }
 
-const SendReviewFormText: FC<IProps> = ({
+const ReleaseDetailsReviewFormText: FC<IProps> = ({
 	isReview,
 	title,
 	setTitle,
@@ -41,7 +41,7 @@ const SendReviewFormText: FC<IProps> = ({
 				className='min-h-35 max-h-125 w-full border border-white/15 px-3 py-2 text-base h-14 rounded-lg outline-none placeholder:text-sm lg:placeholder:text-base focus:border-white/85 transition-colors duration-200'
 			/>
 
-			<div className='flex w-full justify-between'>
+			<div className='flex sm:flex-row gap-y-2 flex-col-reverse w-full sm:justify-between'>
 				<button
 					onClick={() => {
 						setTitle('')
@@ -53,7 +53,7 @@ const SendReviewFormText: FC<IProps> = ({
 					<span>Очистить черновик</span>
 				</button>
 
-				<div className='flex items-center justify-center text-sm bg-zinc-950 h-10 px-2 rounded-md font-semibold border border-white/15'>
+				<div className='flex items-center justify-center text-sm bg-zinc-950 h-10 px-2 rounded-md font-semibold border border-white/15 w-fit'>
 					<span>{text.length}/8500</span>
 				</div>
 			</div>
@@ -61,4 +61,4 @@ const SendReviewFormText: FC<IProps> = ({
 	)
 }
 
-export default SendReviewFormText
+export default ReleaseDetailsReviewFormText

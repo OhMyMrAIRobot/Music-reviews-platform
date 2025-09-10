@@ -26,7 +26,7 @@ const EditUserModalButton: FC<IProps> = ({
 		<button
 			disabled={disabled}
 			onClick={handleClick}
-			className={`h-8 px-3 text-sm font-medium border border-white/10 rounded-lg flex items-center justify-center gap-1 text-white/90  transition-all duration-200 ${
+			className={`h-8 w-full px-3 text-sm font-medium border border-white/10 rounded-lg flex items-center text-nowrap justify-center gap-1 text-white/90 transition-all duration-200 ${
 				disabled || isLoading
 					? 'cursor-not-allowed opacity-70'
 					: 'hover:text-white hover:bg-white/5 hover:border-white/15 cursor-pointer'

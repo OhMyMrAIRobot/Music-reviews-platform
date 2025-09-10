@@ -21,7 +21,7 @@ const ReleaseDetailsAuthorCommentItem: FC<IProps> = ({
 			<div className='absolute h-full w-8/12 bg-gradient-to-bl from-blue-600 opacity-15 z-0 to-50% origin-top-right transition-all duration-500 right-0 top-0 rounded-[15px] lg:rounded-[20px]' />
 			<AuthorCommentHeader comment={comment} />
 
-			<div className='overflow-hidden px-1.5 mb-4'>
+			<div className='overflow-hidden z-10 px-1.5 mb-4'>
 				<h6 className='text-base lg:text-lg mt-3 mb-2 font-semibold break-words'>
 					{comment.title}
 				</h6>
