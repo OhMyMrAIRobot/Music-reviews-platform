@@ -8,15 +8,17 @@ model Release {
 
   releaseType ReleaseType @relation(fields: [releaseTypeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-  releaseProducer ReleaseProducer[]
-  releaseArtist   ReleaseArtist[]
-  releaseDesigner ReleaseDesigner[]
-  review          Review[]
-  releaseRating   ReleaseRating[]
-  userFavRelease  UserFavRelease[]
-  releaseMedia    ReleaseMedia[]
-  authorComment   AuthorComment[]
-  nominationVote  NominationVote[]
+  releaseProducer     ReleaseProducer[]
+  releaseArtist       ReleaseArtist[]
+  releaseDesigner     ReleaseDesigner[]
+  review              Review[]
+  releaseRating       ReleaseRating[]
+  userFavRelease      UserFavRelease[]
+  releaseMedia        ReleaseMedia[]
+  authorComment       AuthorComment[]
+  nominationVote      NominationVote[]
+  albumValueVote      AlbumValueVote[]
+  albumValueAggregate AlbumValueAggregate[]
 
   @@map("Releases")
 }

@@ -16,6 +16,7 @@ import {
   AdminFindReviewsResponseDto,
   AdminReview,
 } from './dto/response/admin-find-reviews.response.dto';
+import { FindReviewByUserReleaseIdsResponseDto } from './dto/response/find-review-by-user-release-ids.response.dto';
 import {
   FindReviewsByReleaseIdResponseDto,
   ReleaseReview,
@@ -61,15 +62,6 @@ export class ReviewsService {
 
     return this.prisma.review.create({
       data: { ...dto, total, userId },
-    });
-  }
-
-  async findByReleaseUserIds(
-    releaseId: string,
-    userId: string,
-  ): Promise<Review | null> {
-    return this.prisma.review.findUnique({
-      where: { userId_releaseId: { userId, releaseId } },
     });
   }
 
@@ -151,6 +143,30 @@ export class ReviewsService {
     }
 
     return existing;
+  }
+
+  async findByUserReleaseIds(
+    userId: string,
+    releaseId: string,
+  ): Promise<FindReviewByUserReleaseIdsResponseDto> {
+    await this.releasesService.findOne(releaseId);
+    await this.usersService.findOne(userId);
+
+    const exist = await this.prisma.review.findUnique({
+      where: { userId_releaseId: { userId, releaseId } },
+    });
+
+    if (!exist) {
+      throw new EntityNotFoundException(
+        'Рецензия/оценка',
+        'userId и releaseId',
+        `${userId} ${releaseId}`,
+      );
+    }
+
+    return plainToInstance(FindReviewByUserReleaseIdsResponseDto, exist, {
+      excludeExtraneousValues: true,
+    });
   }
 
   async update(

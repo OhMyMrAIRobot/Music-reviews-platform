@@ -3,7 +3,7 @@ import {
   ConflictException,
   Injectable,
 } from '@nestjs/common';
-import { Prisma, Review } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
 import { ReleaseMediaStatusesEnum } from 'src/release-media-statuses/types/release-media-statuses.enum';
@@ -35,7 +35,7 @@ export class ReleaseMediaService {
   async create(dto: CreateReleaseMediaDto): Promise<ReleaseMediaResponseDto> {
     await this.releasesService.findOne(dto.releaseId);
 
-    let review: Review | null = null;
+    let reviewId: string | null = null;
 
     if (dto.userId) {
       await this.usersService.findOne(dto.userId);
@@ -52,10 +52,12 @@ export class ReleaseMediaService {
         );
       }
 
-      review = await this.reviewsService.findByReleaseUserIds(
-        dto.releaseId,
+      const review = await this.reviewsService.findByUserReleaseIds(
         dto.userId,
+        dto.releaseId,
       );
+
+      reviewId = review.id;
 
       if (!review) {
         throw new BadRequestException(
@@ -71,7 +73,7 @@ export class ReleaseMediaService {
     const created = await this.prisma.releaseMedia.create({
       data: {
         ...dto,
-        reviewId: review?.id,
+        reviewId: reviewId,
       },
       include: {
         releaseMediaStatus: true,

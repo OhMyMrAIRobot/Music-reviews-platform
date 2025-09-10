@@ -23,6 +23,7 @@ model User {
   registeredAuthor    RegisteredAuthor[]
   authorConfirmation  AuthorConfirmation[]
   nominationVote      NominationVote[]
+  albumValueVote      AlbumValueVote[]
 
   @@map("Users")
 }
