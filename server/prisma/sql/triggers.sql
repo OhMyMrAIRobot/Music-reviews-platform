@@ -51,3 +51,8 @@ CREATE TRIGGER trg_album_value_votes_aggregate
     ON "Album_value_votes"
     FOR EACH ROW
 EXECUTE FUNCTION trg_album_value_votes_aggregate();
+
+CREATE TRIGGER author_comment_points_trigger
+    AFTER INSERT OR DELETE ON "Album_value_votes"
+    FOR EACH ROW
+EXECUTE FUNCTION handle_points(70);

@@ -130,7 +130,6 @@ export class AlbumValueVotesService {
       throw new NoDataProvidedException();
     }
 
-    console.log(dto);
     const updated = await this.prisma.albumValueVote.update({
       where: { id },
       data: {
@@ -168,6 +167,14 @@ export class AlbumValueVotesService {
       JSON.parse(JSON.stringify(updated)),
       { excludeExtraneousValues: true },
     );
+  }
+
+  async delete(id: string, userId: string) {
+    await this.checkBelongsToUser(id, userId);
+
+    return this.prisma.albumValueVote.deleteMany({
+      where: { id },
+    });
   }
 
   private async checkBelongsToUser(

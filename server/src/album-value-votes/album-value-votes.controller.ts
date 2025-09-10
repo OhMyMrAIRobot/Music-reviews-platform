@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -49,5 +50,11 @@ export class AlbumValueVotesController {
     @Request() req: IAuthenticatedRequest,
   ) {
     return this.albumValueVotesService.update(id, dto, req.user.id);
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  delete(@Param('id') id: string, @Request() req: IAuthenticatedRequest) {
+    return this.albumValueVotesService.delete(id, req.user.id);
   }
 }
