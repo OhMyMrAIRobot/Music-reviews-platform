@@ -1,11 +1,22 @@
-import { observer } from 'mobx-react-lite'
+import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
+import { ReleaseAPI } from '../../../../../api/release/release-api'
 import MostReviewedSwiper from '../swiper/Most-reviewed-swiper'
 import MostReviewedCarousel from './Most-reviewed-carousel'
 
-const MostReviewedReleases = observer(() => {
+const queryKey = ['releases'] as const
+
+const queryFn = () => ReleaseAPI.fetchMostReviewed()
+
+const MostReviewedReleases = () => {
 	const [index, setIndex] = useState<number>(0)
 	const [show, setShow] = useState<boolean>(false)
+
+	const { data: mostReviewedReleases = [], isPending } = useQuery({
+		queryKey,
+		queryFn,
+		staleTime: 1000 * 60 * 5,
+	})
 
 	return (
 		<section className='2xl:container flex flex-col items-center'>
@@ -19,10 +30,16 @@ const MostReviewedReleases = observer(() => {
 				setShow={setShow}
 				index={index}
 				setIndex={setIndex}
+				items={mostReviewedReleases}
 			/>
-			<MostReviewedCarousel setShow={setShow} setIndex={setIndex} />
+			<MostReviewedCarousel
+				setShow={setShow}
+				setIndex={setIndex}
+				items={mostReviewedReleases}
+				isLoading={isPending}
+			/>
 		</section>
 	)
-})
+}
 
 export default MostReviewedReleases

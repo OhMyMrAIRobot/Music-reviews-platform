@@ -12,17 +12,23 @@ import ReleaseMediaReview from '../../../../../components/release/release-media/
 import { IReleaseMedia } from '../../../../../models/release/release-media/release-media'
 import { CarouselRef } from '../../../../../types/carousel-ref'
 import { CarouselStateCallbacks } from '../../../../../types/carousel-state-callbacks'
-import mainPageStore from '../../../store/main-page-store'
 
 interface IProps extends CarouselStateCallbacks {
 	items: IReleaseMedia[]
 	isLoading: boolean
+	storeToggle: (mediaId: string, isFav: boolean) => Promise<string[]>
 }
 
 const ReleaseMediaReviewsCarousel = observer(
 	forwardRef<CarouselRef, IProps>(
 		(
-			{ items, isLoading, onCanScrollPrevChange, onCanScrollNextChange },
+			{
+				items,
+				isLoading,
+				onCanScrollPrevChange,
+				onCanScrollNextChange,
+				storeToggle,
+			},
 			ref
 		) => {
 			const options: EmblaOptionsType = {
@@ -92,7 +98,7 @@ const ReleaseMediaReviewsCarousel = observer(
 											<ReleaseMediaReview
 												isLoading={isLoading}
 												media={item}
-												toggleFav={mainPageStore.toggleFavMedia}
+												toggleFav={storeToggle}
 											/>
 										</div>
 								  ))}

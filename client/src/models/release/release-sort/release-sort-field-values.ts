@@ -1,4 +1,4 @@
-export enum ReleaseSortFieldValues {
+export enum ReleaseSortFieldValuesEnum {
 	PUBLISHED = 'published',
 	WITHOUT_TEXT_COUNT = 'withoutTextCount',
 	TEXT_COUNT = 'textCount',

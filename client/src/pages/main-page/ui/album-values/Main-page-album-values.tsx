@@ -1,27 +1,33 @@
-import { observer } from 'mobx-react-lite'
-import { useEffect, useRef, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useRef, useState } from 'react'
+import { AlbumValueAPI } from '../../../../api/album-value-api'
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
-import { useLoading } from '../../../../hooks/use-loading'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
-import { useStore } from '../../../../hooks/use-store'
 import { CarouselRef } from '../../../../types/carousel-ref'
 import MainPageAlbumValuesCarousel from './Main-page-album-values-carousel'
 
-const MainPageAlbumValues = observer(() => {
-	const { mainPageStore } = useStore()
+const LIMIT = 15
+const OFFSET = 0
 
+const queryKey = [
+	'albumValues',
+	{ limit: LIMIT, offset: OFFSET, authorId: null, releaseId: null },
+] as const
+
+const queryFn = () => AlbumValueAPI.fetchAlbumValues(LIMIT, OFFSET, null, null)
+
+const MainPageAlbumValues = () => {
 	const { navigateToAlbumValues } = useNavigationPath()
 
-	const { execute: fetch, isLoading } = useLoading(
-		mainPageStore.fetchAlbumValues
-	)
+	const { data, isPending } = useQuery({
+		queryKey,
+		queryFn,
+		staleTime: 1000 * 60 * 5,
+	})
 
-	useEffect(() => {
-		fetch()
-	}, [fetch])
+	const items = data?.values ?? []
 
 	const carouselRef = useRef<CarouselRef>(null)
-
 	const [canScrollPrev, setCanScrollPrev] = useState(false)
 	const [canScrollNext, setCanScrollNext] = useState(false)
 
@@ -36,8 +42,8 @@ const MainPageAlbumValues = observer(() => {
 			carousel={
 				<MainPageAlbumValuesCarousel
 					ref={carouselRef}
-					items={mainPageStore.albumValues}
-					isLoading={isLoading}
+					items={items}
+					isLoading={isPending}
 					onCanScrollPrevChange={setCanScrollPrev}
 					onCanScrollNextChange={setCanScrollNext}
 				/>
@@ -46,6 +52,6 @@ const MainPageAlbumValues = observer(() => {
 			canScrollPrev={canScrollPrev}
 		/>
 	)
-})
+}
 
 export default MainPageAlbumValues

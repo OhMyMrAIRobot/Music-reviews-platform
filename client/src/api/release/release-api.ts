@@ -3,6 +3,7 @@ import { IAdminRelease } from '../../models/release/admin-release/admin-release'
 import { IAdminReleasesResponse } from '../../models/release/admin-release/admin-releases-response'
 import { IRelease, IReleaseResponse } from '../../models/release/release'
 import { IReleaseDetails } from '../../models/release/release-details/release-details'
+import { ReleaseSortFieldValuesEnum } from '../../models/release/release-sort/release-sort-field-values'
 import { IReleaseType } from '../../models/release/release-type/release-type'
 import { ITopRatingReleases } from '../../models/release/top-rating-releases'
 import { SortOrder } from '../../types/sort-order-type'
@@ -27,8 +28,8 @@ export const ReleaseAPI = {
 	async fetchReleases(
 		typeId: string | null,
 		query: string | null,
-		field: string | null,
-		order: string | null,
+		field: ReleaseSortFieldValuesEnum | null,
+		order: SortOrder | null,
 		limit: number | null,
 		offset: number | null
 	): Promise<IReleaseResponse> {

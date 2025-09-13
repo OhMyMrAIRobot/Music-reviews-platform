@@ -1,5 +1,5 @@
-import { observer } from 'mobx-react-lite'
-import { useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { GlobalAppAPI } from '../../../../../api/global-app-api.ts'
 import AuthorCommentSvg from '../../../../../components/author/author-comment/svg/Author-comment-svg'
 import AuthorLikeSvg from '../../../../../components/author/author-like/svg/Author-like-svg'
 import RegisteredAuthorSvg from '../../../../../components/author/registered-author/svg/Registered-author-svg'
@@ -9,14 +9,14 @@ import NoTextReviewSvg from '../../../../../components/review/svg/No-text-review
 import TextReviewSvg from '../../../../../components/review/svg/Text-review-svg'
 import MediaPlayerSvg from '../../../../../components/svg/Media-player-svg'
 import UserSvg from '../../../../../components/svg/User-svg'
-import { useLoading } from '../../../../../hooks/use-loading'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
-import { useStore } from '../../../../../hooks/use-store'
 import PlatformStatisticsRow from './Platform-statistics-row'
 
-const PlatformStatistics = observer(() => {
-	const { mainPageStore } = useStore()
+const queryKey = ['platformStats'] as const
 
+const queryFn = () => GlobalAppAPI.fetchPlatformStats()
+
+const PlatformStatistics = () => {
 	const {
 		navigateToRegisteredAuthors,
 		navigateToAuthorLikes,
@@ -26,16 +26,11 @@ const PlatformStatistics = observer(() => {
 		navigateToMediaReviews,
 	} = useNavigationPath()
 
-	const { execute: fetchStats, isLoading: isStatsLoading } = useLoading(
-		mainPageStore.fetchPlatformStats
-	)
-
-	useEffect(() => {
-		fetchStats()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
-
-	const stats = mainPageStore.platformStats
+	const { data: stats, isPending } = useQuery({
+		queryKey,
+		queryFn,
+		staleTime: 1000 * 60 * 5,
+	})
 
 	return (
 		<div>
@@ -48,14 +43,14 @@ const PlatformStatistics = observer(() => {
 
 			<div className='grid gap-0.5 lg:gap-1.5 grid-cols-1'>
 				<PlatformStatisticsRow
-					isLoading={isStatsLoading}
+					isLoading={isPending}
 					title={'Всего пользователей'}
 					value={stats?.totalUsers ?? 0}
 					svg={<UserSvg className='size-5' />}
 				/>
 
 				<PlatformStatisticsRow
-					isLoading={isStatsLoading}
+					isLoading={isPending}
 					title={'Зарегистрированных авторов'}
 					value={stats?.registeredAuthors ?? 0}
 					svg={<RegisteredAuthorSvg className='size-5' />}
@@ -63,7 +58,7 @@ const PlatformStatistics = observer(() => {
 				/>
 
 				<PlatformStatisticsRow
-					isLoading={isStatsLoading}
+					isLoading={isPending}
 					title={'Авторских лайков'}
 					value={stats?.authorLikes ?? 0}
 					svg={<AuthorLikeSvg className='size-5' />}
@@ -71,7 +66,7 @@ const PlatformStatistics = observer(() => {
 				/>
 
 				<PlatformStatisticsRow
-					isLoading={isStatsLoading}
+					isLoading={isPending}
 					title={'Авторских комментариев'}
 					value={stats?.authorComments ?? 0}
 					svg={<AuthorCommentSvg className='size-5' />}
@@ -87,7 +82,7 @@ const PlatformStatistics = observer(() => {
 
 			<div className='grid gap-0.5 lg:gap-1.5 grid-cols-1'>
 				<PlatformStatisticsRow
-					isLoading={isStatsLoading}
+					isLoading={isPending}
 					title={'Всего треков'}
 					value={stats?.totalTracks ?? 0}
 					svg={<SingleSvg className='size-5' />}
@@ -95,7 +90,7 @@ const PlatformStatistics = observer(() => {
 				/>
 
 				<PlatformStatisticsRow
-					isLoading={isStatsLoading}
+					isLoading={isPending}
 					title={'Всего альбомов'}
 					value={stats?.totalAlbums ?? 0}
 					svg={<AlbumSvg className='size-5' />}
@@ -111,7 +106,7 @@ const PlatformStatistics = observer(() => {
 
 			<div className='grid gap-0.5 lg:gap-1.5 grid-cols-1'>
 				<PlatformStatisticsRow
-					isLoading={isStatsLoading}
+					isLoading={isPending}
 					title={'Рецензий'}
 					value={stats?.reviews ?? 0}
 					svg={<TextReviewSvg className='size-5' />}
@@ -119,14 +114,14 @@ const PlatformStatistics = observer(() => {
 				/>
 
 				<PlatformStatisticsRow
-					isLoading={isStatsLoading}
+					isLoading={isPending}
 					title={'Оценок без рецензий'}
 					value={stats?.withoutTextRatings ?? 0}
 					svg={<NoTextReviewSvg className='size-5' />}
 				/>
 
 				<PlatformStatisticsRow
-					isLoading={isStatsLoading}
+					isLoading={isPending}
 					title={'Медиарецензий'}
 					value={stats?.mediaReviews ?? 0}
 					svg={<MediaPlayerSvg className='size-5' />}
@@ -135,6 +130,6 @@ const PlatformStatistics = observer(() => {
 			</div>
 		</div>
 	)
-})
+}
 
 export default PlatformStatistics

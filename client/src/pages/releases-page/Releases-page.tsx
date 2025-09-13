@@ -4,7 +4,7 @@ import ReleasesGrid from '../../components/release/Releases-grid'
 import SkeletonLoader from '../../components/utils/Skeleton-loader'
 import { useLoading } from '../../hooks/use-loading'
 import { useStore } from '../../hooks/use-store'
-import { ReleaseSortFieldValues } from '../../models/release/release-sort/release-sort-field-values'
+import { ReleaseSortFieldValuesEnum } from '../../models/release/release-sort/release-sort-field-values'
 import { ReleaseSortFields } from '../../models/release/release-sort/release-sort-fields'
 import { SortOrder } from '../../types/sort-order-type'
 
@@ -45,31 +45,31 @@ const ReleasesPage = () => {
 
 		switch (selectedSort) {
 			case ReleaseSortFields.WITHOUT_TEXT_COUNT:
-				field = ReleaseSortFieldValues.WITHOUT_TEXT_COUNT
+				field = ReleaseSortFieldValuesEnum.WITHOUT_TEXT_COUNT
 				order = 'desc'
 				break
 			case ReleaseSortFields.TEXT_COUNT:
-				field = ReleaseSortFieldValues.TEXT_COUNT
+				field = ReleaseSortFieldValuesEnum.TEXT_COUNT
 				order = 'desc'
 				break
 			case ReleaseSortFields.PUBLISHED_NEW:
-				field = ReleaseSortFieldValues.PUBLISHED
+				field = ReleaseSortFieldValuesEnum.PUBLISHED
 				order = 'desc'
 				break
 			case ReleaseSortFields.PUBLISHED_OLD:
-				field = ReleaseSortFieldValues.PUBLISHED
+				field = ReleaseSortFieldValuesEnum.PUBLISHED
 				order = 'asc'
 				break
 			case ReleaseSortFields.MEDIA_RATING:
-				field = ReleaseSortFieldValues.MEDIA_RATING
+				field = ReleaseSortFieldValuesEnum.MEDIA_RATING
 				order = 'desc'
 				break
 			case ReleaseSortFields.WITH_TEXT_RATING:
-				field = ReleaseSortFieldValues.WITH_TEXT_RATING
+				field = ReleaseSortFieldValuesEnum.WITH_TEXT_RATING
 				order = 'desc'
 				break
 			case ReleaseSortFields.NO_TEXT_RATING:
-				field = ReleaseSortFieldValues.WITHOUT_TEXT_RATING
+				field = ReleaseSortFieldValuesEnum.WITHOUT_TEXT_RATING
 				order = 'desc'
 				break
 		}

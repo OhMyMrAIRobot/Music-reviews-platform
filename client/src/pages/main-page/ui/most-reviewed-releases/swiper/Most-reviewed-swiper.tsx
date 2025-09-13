@@ -5,18 +5,24 @@ import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react'
 import CloseSvg from '../../../../../components/svg/Close-svg'
 import NextSvg from '../../../../../components/svg/Next-svg'
 import PrevSvg from '../../../../../components/svg/Prev-svg'
-import { useStore } from '../../../../../hooks/use-store'
+import { IRelease } from '../../../../../models/release/release'
 import MostReviewedSwiperCard from './Most-reviewed-swiper-card'
 
 interface IProps {
+	items: IRelease[]
 	show: boolean
 	setShow: (val: boolean) => void
 	index: number
 	setIndex: (val: number) => void
 }
 
-const MostReviewedSwiper: FC<IProps> = ({ show, setShow, index, setIndex }) => {
-	const { mainPageStore } = useStore()
+const MostReviewedSwiper: FC<IProps> = ({
+	items,
+	show,
+	setShow,
+	index,
+	setIndex,
+}) => {
 	const swiperRef = useRef<SwiperRef>(null)
 
 	useLayoutEffect(() => {
@@ -32,10 +38,7 @@ const MostReviewedSwiper: FC<IProps> = ({ show, setShow, index, setIndex }) => {
 	}
 
 	const handleNext = () => {
-		if (
-			swiperRef.current?.swiper &&
-			index < mainPageStore.mostReviewedReleases.length - 1
-		) {
+		if (swiperRef.current?.swiper && index < items.length - 1) {
 			swiperRef.current.swiper.slideNext()
 		}
 	}
@@ -104,7 +107,7 @@ const MostReviewedSwiper: FC<IProps> = ({ show, setShow, index, setIndex }) => {
 					speed={500}
 					className='w-full h-[90%]'
 				>
-					{mainPageStore.mostReviewedReleases.map((release, i) => (
+					{items.map((release, i) => (
 						<SwiperSlide
 							key={i}
 							className='h-[90%] flex items-center justify-center'
@@ -124,7 +127,7 @@ const MostReviewedSwiper: FC<IProps> = ({ show, setShow, index, setIndex }) => {
 
 			<button
 				onClick={handleNext}
-				disabled={index === mainPageStore.mostReviewedReleases.length - 1}
+				disabled={index === items.length - 1}
 				className='absolute right-0 xl:right-[33%] z-10 transform -translate-y-1/2 top-1/2 bg-zinc-950 rounded-full size-12 flex items-center justify-center border border-white/10 cursor-pointer p-2 disabled:opacity-30 disabled:cursor-not-allowed'
 			>
 				<NextSvg className='size-6' />

@@ -1,37 +1,32 @@
 import { EmblaOptionsType } from 'embla-carousel'
 import useEmblaCarousel from 'embla-carousel-react'
-import { observer } from 'mobx-react-lite'
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
-import { useLoading } from '../../../../../hooks/use-loading'
-import { useStore } from '../../../../../hooks/use-store'
+import { IRelease } from '../../../../../models/release/release.ts'
 import MostReviewedCarouselItem from './Most-reviewed-carousel-item'
 
 interface IProps {
+	items: IRelease[]
+	isLoading: boolean
 	setShow: (val: boolean) => void
 	setIndex: (val: number) => void
 }
 
-const MostReviewedCarousel: FC<IProps> = observer(({ setShow, setIndex }) => {
+const MostReviewedCarousel: FC<IProps> = ({
+	setShow,
+	setIndex,
+	items,
+	isLoading,
+}) => {
 	const options: EmblaOptionsType = { dragFree: true, align: 'start' }
 	const [emblaRef] = useEmblaCarousel(options)
-
-	const { mainPageStore } = useStore()
-
-	const { execute: fetch, isLoading } = useLoading(
-		mainPageStore.fetchTopReleases
-	)
-
-	useEffect(() => {
-		fetch()
-	}, [fetch])
 
 	return (
 		<div className='embla w-full'>
 			<div className='embla__viewport pt-2 px-1.5' ref={emblaRef}>
 				<div className='embla__container justify-start gap-x-1 lg:gap-x-7'>
 					{isLoading
-						? // SCELETON VIEW
+						? // SKELETON VIEW
 						  Array.from({ length: 15 }).map((_, index) => (
 								<SkeletonLoader
 									key={`skeleton-${index}`}
@@ -41,7 +36,7 @@ const MostReviewedCarousel: FC<IProps> = observer(({ setShow, setIndex }) => {
 								</SkeletonLoader>
 						  ))
 						: // ITEM VIEW
-						  mainPageStore.mostReviewedReleases.map((release, index) => (
+						  items.map((release, index) => (
 								<MostReviewedCarouselItem
 									key={release.id}
 									release={release}
@@ -55,6 +50,6 @@ const MostReviewedCarousel: FC<IProps> = observer(({ setShow, setIndex }) => {
 			</div>
 		</div>
 	)
-})
+}
 
 export default MostReviewedCarousel

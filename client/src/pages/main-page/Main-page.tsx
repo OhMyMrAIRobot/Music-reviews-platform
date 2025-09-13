@@ -1,4 +1,3 @@
-import { observer } from 'mobx-react-lite'
 import MainPageAlbumValues from './ui/album-values/Main-page-album-values'
 import AuthorComments from './ui/author-comments/Author-comments'
 import AuthorLikes from './ui/author-likes/Author-likes'
@@ -8,7 +7,7 @@ import MostReviewedReleases from './ui/most-reviewed-releases/carousel/Most-revi
 import PlatformStats from './ui/platform-stats/Platform-stats'
 import ReleaseMediaReviews from './ui/release-media-reviews/Release-media-reviews'
 
-const MainPage = observer(() => {
+const MainPage = () => {
 	return (
 		<>
 			<div className='size-full xl:px-5 flex flex-col gap-y-4 lg:gap-y-8'>
@@ -23,6 +22,6 @@ const MainPage = observer(() => {
 			</div>
 		</>
 	)
-})
+}
 
 export default MainPage

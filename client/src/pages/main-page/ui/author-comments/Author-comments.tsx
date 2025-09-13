@@ -1,28 +1,36 @@
-import { observer } from 'mobx-react-lite'
-import { useEffect, useRef, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useRef, useState } from 'react'
+import { AuthorCommentAPI } from '../../../../api/author/author-comment-api'
 import AuthorCommentColorSvg from '../../../../components/author/author-comment/svg/Author-comment-color-svg'
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
-import { useLoading } from '../../../../hooks/use-loading'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
-import { useStore } from '../../../../hooks/use-store'
+import { SortOrdersEnum } from '../../../../models/sort/sort-orders-enum'
 import { CarouselRef } from '../../../../types/carousel-ref'
 import AuthorCommentsCarousel from './carousel/Author-comments-carousel'
 
-const AuthorComments = observer(() => {
-	const { mainPageStore } = useStore()
+const LIMIT = 15
+const OFFSET = 0
+const ORDER = SortOrdersEnum.DESC
 
+const queryKey = [
+	'authorComments',
+	{ limit: LIMIT, offset: OFFSET, order: ORDER, authorId: null },
+] as const
+
+const queryFn = () => AuthorCommentAPI.fetchAll(LIMIT, OFFSET, ORDER, null)
+
+const AuthorComments = () => {
 	const { navigateToAuthorComments } = useNavigationPath()
 
-	const { execute: fetch, isLoading } = useLoading(
-		mainPageStore.fetchAuthorComments
-	)
+	const { data, isPending } = useQuery({
+		queryKey,
+		queryFn,
+		staleTime: 1000 * 60 * 5,
+	})
 
-	useEffect(() => {
-		fetch()
-	}, [fetch])
+	const items = data?.comments ?? []
 
 	const carouselRef = useRef<CarouselRef>(null)
-
 	const [canScrollPrev, setCanScrollPrev] = useState(false)
 	const [canScrollNext, setCanScrollNext] = useState(false)
 
@@ -44,8 +52,8 @@ const AuthorComments = observer(() => {
 			carousel={
 				<AuthorCommentsCarousel
 					ref={carouselRef}
-					items={mainPageStore.authorComments}
-					isLoading={isLoading}
+					items={items}
+					isLoading={isPending}
 					onCanScrollPrevChange={setCanScrollPrev}
 					onCanScrollNextChange={setCanScrollNext}
 				/>
@@ -54,6 +62,6 @@ const AuthorComments = observer(() => {
 			canScrollPrev={canScrollPrev}
 		/>
 	)
-})
+}
 
 export default AuthorComments

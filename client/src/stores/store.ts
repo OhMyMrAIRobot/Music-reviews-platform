@@ -14,7 +14,6 @@ import AuthorLikesPageStore from '../pages/author-likes-page/store/author-likes-
 import AuthorsPageStore from '../pages/authors-page/store/authors-page-store'
 import AwardsPageStore from '../pages/awards-page/store/awards-page-store'
 import LeaderboardStore from '../pages/leaderboard-page/store/leaderboard-store'
-import MainPageStore from '../pages/main-page/store/main-page-store'
 import MediaReviewsPageStore from '../pages/media-reviews-page/store/media-reviews-page-store'
 import NominationVotesPageStore from '../pages/nomination-votes-page/store/nomination-votes-page-store'
 import ProfilePageStore from '../pages/profile-page/store/profile-page-store'
@@ -32,7 +31,6 @@ class Store {
 	metaStore = MetaStore
 	authStore = AuthStore
 	profileStore = ProfileStore
-	mainPageStore = MainPageStore
 	notificationStore = NotificationStore
 	releasesPageStore = ReleasesPageStore
 	reviewsPageStore = ReviewsPageStore

@@ -1,26 +1,25 @@
-import { observer } from 'mobx-react-lite'
-import { useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router'
-import { useLoading } from '../../../../../hooks/use-loading'
+import { LeaderboardAPI } from '../../../../../api/leaderboard-api'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
-import { useStore } from '../../../../../hooks/use-store'
 import PlatformStatsLeaderboardItem from './Platform-stats-leaderboard-item'
 import PlatformStatsLeaderboardLeaderItem from './Platform-stats-leaderboard-leader-item'
 
-const PlatformStatsLeaderboard = observer(() => {
-	const { mainPageStore } = useStore()
+const LIMIT = 10
+const OFFSET = 0
 
+const queryKey = ['leaderboard', { limit: LIMIT, offset: OFFSET }] as const
+
+const queryFn = () => LeaderboardAPI.fetchLeaderboard(LIMIT, OFFSET)
+
+const PlatformStatsLeaderboard = () => {
 	const { navigateToLeaderboard } = useNavigationPath()
 
-	const { execute: fetchLeaderboard, isLoading: isLeaderboardLoading } =
-		useLoading(mainPageStore.fetchLeaderboard)
-
-	useEffect(() => {
-		fetchLeaderboard()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
-
-	const items = mainPageStore.leaderboard
+	const { data: items = [], isPending } = useQuery({
+		queryKey,
+		queryFn: queryFn,
+		staleTime: 1000 * 60 * 15,
+	})
 
 	return (
 		<div>
@@ -39,19 +38,19 @@ const PlatformStatsLeaderboard = observer(() => {
 
 			<div className='grid grid-cols-3 gap-1 lg:gap-4 mt-3 items-end'>
 				<PlatformStatsLeaderboardLeaderItem
-					isLoading={isLeaderboardLoading}
+					isLoading={isPending}
 					position={1}
 					className='order-2 pt-6 pb-3'
 					item={items.length > 0 ? items[0] : undefined}
 				/>
 				<PlatformStatsLeaderboardLeaderItem
-					isLoading={isLeaderboardLoading}
+					isLoading={isPending}
 					position={2}
 					className='order-1 pt-3'
 					item={items.length > 1 ? items[1] : undefined}
 				/>
 				<PlatformStatsLeaderboardLeaderItem
-					isLoading={isLeaderboardLoading}
+					isLoading={isPending}
 					position={3}
 					className='order-3 pt-3'
 					item={items.length > 2 ? items[2] : undefined}
@@ -59,7 +58,7 @@ const PlatformStatsLeaderboard = observer(() => {
 			</div>
 
 			<div className='space-y-1.5 flex flex-col mt-2 lg:mt-4'>
-				{isLeaderboardLoading
+				{isPending
 					? Array.from({ length: 7 }).map((_, idx) => (
 							<PlatformStatsLeaderboardItem
 								key={`Skeleton-leaderboard-item-${idx}`}
@@ -81,6 +80,6 @@ const PlatformStatsLeaderboard = observer(() => {
 			</div>
 		</div>
 	)
-})
+}
 
 export default PlatformStatsLeaderboard
