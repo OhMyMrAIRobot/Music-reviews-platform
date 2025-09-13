@@ -1,6 +1,5 @@
 import { FC, useRef } from 'react'
 import { Link } from 'react-router'
-import LogoFullSvg from '../../../../components/svg/Logo-full-svg'
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { NominationTypesEnum } from '../../../../models/nomination/nomination-type/nomination-type-enum'
@@ -130,9 +129,9 @@ const AuthorDetailsNominationsCarouselItem: FC<IProps> = ({
 							</div>
 						</div>
 
-						<div className='max-w-[80px] lg:max-w-[115px] opacity-20'>
+						{/* <div className='max-w-[80px] lg:max-w-[115px] opacity-20'>
 							<LogoFullSvg className='w-full' />
-						</div>
+						</div> */}
 					</div>
 				</div>
 
