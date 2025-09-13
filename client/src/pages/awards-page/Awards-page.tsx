@@ -1,35 +1,44 @@
-import { observer } from 'mobx-react-lite'
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router'
+import { NominationAPI } from '../../api/nomination-api'
 import ComboBox from '../../components/buttons/Combo-box'
 import SkeletonLoader from '../../components/utils/Skeleton-loader'
-import { useLoading } from '../../hooks/use-loading'
 import useNavigationPath from '../../hooks/use-navigation-path'
-import { useStore } from '../../hooks/use-store'
+import { INominationMonthWinners } from '../../models/nomination/nomination-winner/nomination-month-winners'
 import { MonthEnum, MonthEnumType } from '../../types/month-enum-type'
 import NominationCarouselContainer from './ui/carousel/Nomination-carousel-container'
 
-const AwardsPage = observer(() => {
-	const { awardsPageStore } = useStore()
+type WinnersResponse = {
+	items: INominationMonthWinners[]
+	minYear: number
+	maxYear: number
+}
 
+const AwardsPage = () => {
 	const { navigateToVotes } = useNavigationPath()
 
-	const { execute: fetch, isLoading } = useLoading(awardsPageStore.fetchAwards)
+	const [year, setYear] = useState<string>(new Date().getFullYear().toString())
 
-	const [year, setYear] = useState<string>('2025')
-
-	useEffect(() => {
-		fetch(null, parseInt(year))
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+	const parsedYear = useMemo(() => {
+		const y = parseInt(year, 10)
+		return Number.isFinite(y) ? y : null
 	}, [year])
 
-	const items = awardsPageStore.awards
+	const { data, isPending } = useQuery<WinnersResponse>({
+		queryKey: ['nominationWinners', { month: null, year: parsedYear }],
+		queryFn: () => NominationAPI.fetchWinners(null, parsedYear),
+		enabled: parsedYear !== null,
+		staleTime: 1000 * 60 * 5,
+	})
 
-	const { minYear, maxYear } = awardsPageStore
+	const items = data?.items ?? []
+	const minYear = data?.minYear ?? null
+	const maxYear = data?.maxYear ?? null
 
 	const yearOptions =
 		minYear && maxYear
-			? Array.from({ length: minYear ? maxYear - minYear + 1 : 0 }, (_, i) =>
+			? Array.from({ length: maxYear - minYear + 1 }, (_, i) =>
 					(maxYear - i).toString()
 			  )
 			: []
@@ -59,14 +68,14 @@ const AwardsPage = observer(() => {
 								onChange={setYear}
 								className='border border-white/10'
 								value={year}
-								isLoading={isLoading}
+								isLoading={isPending}
 							/>
 						)}
 					</div>
 				</div>
 			</div>
 
-			{isLoading
+			{isPending
 				? Array.from({ length: 2 }).map((_, idx) => (
 						<div
 							className='mt-5 lg:mt-10 border-b border-white/10 pb-5 lg:pb-10'
@@ -89,6 +98,6 @@ const AwardsPage = observer(() => {
 				  ))}
 		</>
 	)
-})
+}
 
 export default AwardsPage
