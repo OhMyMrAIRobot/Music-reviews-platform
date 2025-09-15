@@ -6,6 +6,7 @@ import ComboBox from '../../components/buttons/Combo-box'
 import SkeletonLoader from '../../components/utils/Skeleton-loader'
 import { useAuthorMeta } from '../../hooks/use-author-meta'
 import { AuthorTypesFilterEnum } from '../../models/author/author-type/author-types-filter-enum'
+import { authorsKeys } from '../../query-keys/authors-keys'
 
 interface IProps {
 	onlyRegistered: boolean
@@ -29,11 +30,15 @@ const AuthorsPage: FC<IProps> = ({ onlyRegistered }) => {
 	const limit = PER_PAGE
 	const offset = (currentPage - 1) * PER_PAGE
 
+	const queryKey = authorsKeys.list({
+		typeId: selectedTypeId,
+		limit,
+		offset,
+		onlyRegistered,
+	})
+
 	const { data, isPending: isAuthorsLoading } = useQuery({
-		queryKey: [
-			'authors',
-			{ typeId: selectedTypeId, limit, offset, onlyRegistered },
-		],
+		queryKey,
 		queryFn: () =>
 			AuthorAPI.fetchAuthors(
 				selectedTypeId,
