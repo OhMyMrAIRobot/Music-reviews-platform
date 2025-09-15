@@ -4,6 +4,7 @@ import { ReleaseAPI } from '../../api/release/release-api'
 import ReleasesColumn from '../../components/release/releases-column/Releases-column'
 import { IRelease } from '../../models/release/release'
 import { ReleaseTypesEnum } from '../../models/release/release-type/release-types-enum'
+import { releasesKeys } from '../../query-keys/releases-keys'
 import ReleasesRatingPageHeader from './ui/Releases-rating-page-header'
 
 type TopRatingResponse = {
@@ -16,8 +17,10 @@ const ReleasesRatingPage = () => {
 	const [month, setMonth] = useState<number>(new Date().getMonth() + 1)
 	const [year, setYear] = useState<number | null>(new Date().getFullYear())
 
+	const queryKey = releasesKeys.topRating({ year, month })
+
 	const { data, isPending } = useQuery<TopRatingResponse>({
-		queryKey: ['topRatingReleases', { year, month }],
+		queryKey,
 		queryFn: () => ReleaseAPI.fetchTopRatingReleases(year, month),
 		enabled: true,
 		staleTime: 1000 * 60 * 5,

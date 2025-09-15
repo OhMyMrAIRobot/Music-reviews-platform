@@ -1,34 +1,59 @@
-import { observer } from 'mobx-react-lite'
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useMemo, useState } from 'react'
+import { ReviewAPI } from '../../api/review/review-api'
 import ComboBox from '../../components/buttons/Combo-box'
 import Pagination from '../../components/pagination/Pagination'
 import ReviewCard from '../../components/review/review-card/Review-card'
-import { useLoading } from '../../hooks/use-loading'
-import { useStore } from '../../hooks/use-store'
+import { useQueryListFavToggleAll } from '../../hooks/use-query-list-fav-toggle'
+import { IReview } from '../../models/review/review'
 import { ReviewSortFields } from '../../models/review/review-sort-fields'
 import { SortOrdersEnum } from '../../models/sort/sort-orders-enum'
-import { SortOrder } from '../../types/sort-order-type'
+import { reviewsKeys } from '../../query-keys/reviews-keys'
+import { toggleFavReview } from '../../utils/toggle-fav-review'
 
-const ReviewsPage = observer(() => {
-	const perPage = 12
-	const { reviewsPageStore } = useStore()
+const PER_PAGE = 12
 
+const ReviewsPage = () => {
 	const [selectedOrder, setSelectedOrder] = useState<string>(
 		ReviewSortFields.NEW
 	)
 	const [currentPage, setCurrentPage] = useState<number>(1)
 
-	const { execute: fetch, isLoading } = useLoading(
-		reviewsPageStore.fetchReviews
-	)
-
-	useEffect(() => {
-		const order: SortOrder =
+	const order = useMemo(
+		() =>
 			selectedOrder === ReviewSortFields.NEW
 				? SortOrdersEnum.DESC
-				: SortOrdersEnum.ASC
-		fetch(order, perPage, (currentPage - 1) * perPage)
-	}, [currentPage, fetch, selectedOrder])
+				: SortOrdersEnum.ASC,
+		[selectedOrder]
+	)
+
+	const limit = PER_PAGE
+	const offset = (currentPage - 1) * PER_PAGE
+
+	const queryKey = reviewsKeys.list({
+		order,
+		limit,
+		offset,
+		authorId: null,
+		releaseId: null,
+	})
+
+	const { data, isPending } = useQuery({
+		queryKey,
+		queryFn: () => ReviewAPI.fetchReviews(order, limit, offset, null, null),
+		staleTime: 1000 * 60 * 5,
+	})
+
+	const items = data?.reviews ?? []
+	const total = data?.count ?? 0
+
+	const skeletonCount =
+		total > 0 ? Math.min(PER_PAGE, Math.max(0, total - offset)) : PER_PAGE
+
+	const { storeToggle } = useQueryListFavToggleAll<
+		IReview,
+		{ reviews: IReview[] }
+	>(reviewsKeys.all, 'reviews', toggleFavReview)
 
 	return (
 		<>
@@ -43,7 +68,10 @@ const ReviewsPage = observer(() => {
 				<div className='w-full sm:w-55'>
 					<ComboBox
 						options={Object.values(ReviewSortFields)}
-						onChange={setSelectedOrder}
+						onChange={val => {
+							setSelectedOrder(val)
+							setCurrentPage(1)
+						}}
 						className='border border-white/10'
 						value={selectedOrder}
 					/>
@@ -52,28 +80,19 @@ const ReviewsPage = observer(() => {
 
 			<section className='mt-5 overflow-hidden'>
 				<div className='gap-3 xl:gap-5 grid md:grid-cols-2 xl:grid-cols-3'>
-					{isLoading
-						? Array.from({
-								length:
-									reviewsPageStore.reviewsCount > 0
-										? reviewsPageStore.reviewsCount -
-										  (currentPage - 1) * perPage
-										: perPage,
-						  }).map((_, idx) => (
-								<ReviewCard
-									key={`reviews-skeleton-${idx}`}
-									isLoading={isLoading}
-								/>
+					{isPending
+						? Array.from({ length: skeletonCount }).map((_, idx) => (
+								<ReviewCard key={`reviews-skeleton-${idx}`} isLoading={true} />
 						  ))
-						: reviewsPageStore.reviews.map(review => (
+						: items.map(review => (
 								<ReviewCard
 									key={review.id}
 									review={review}
-									storeToggle={reviewsPageStore.toggleFavReview}
-									isLoading={isLoading}
+									storeToggle={storeToggle}
+									isLoading={false}
 								/>
 						  ))}
-					{reviewsPageStore.reviews.length === 0 && !isLoading && (
+					{items.length === 0 && !isPending && (
 						<p className='text-center text-2xl font-semibold mt-10 w-full absolute'>
 							Рецензии не найдены!
 						</p>
@@ -81,12 +100,12 @@ const ReviewsPage = observer(() => {
 				</div>
 			</section>
 
-			{reviewsPageStore.reviews.length > 0 && (
+			{items.length > 0 && (
 				<div className='mt-20'>
 					<Pagination
 						currentPage={currentPage}
-						totalItems={reviewsPageStore.reviewsCount}
-						itemsPerPage={perPage}
+						totalItems={total}
+						itemsPerPage={PER_PAGE}
 						setCurrentPage={setCurrentPage}
 						idToScroll={'reviews'}
 					/>
@@ -94,6 +113,6 @@ const ReviewsPage = observer(() => {
 			)}
 		</>
 	)
-})
+}
 
 export default ReviewsPage

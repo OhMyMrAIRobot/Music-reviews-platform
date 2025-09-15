@@ -2,14 +2,14 @@ import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router'
 import { LeaderboardAPI } from '../../../../../api/leaderboard-api'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
+import { leaderboardKeys } from '../../../../../query-keys/leaderboard-keys'
 import PlatformStatsLeaderboardItem from './Platform-stats-leaderboard-item'
 import PlatformStatsLeaderboardLeaderItem from './Platform-stats-leaderboard-leader-item'
 
 const LIMIT = 10
 const OFFSET = 0
 
-const queryKey = ['leaderboard', { limit: LIMIT, offset: OFFSET }] as const
-
+const queryKey = leaderboardKeys.list({ limit: LIMIT, offset: OFFSET })
 const queryFn = () => LeaderboardAPI.fetchLeaderboard(LIMIT, OFFSET)
 
 const PlatformStatsLeaderboard = () => {

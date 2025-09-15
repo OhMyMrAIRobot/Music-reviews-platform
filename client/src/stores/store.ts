@@ -8,11 +8,8 @@ import AdminDashboardReviewsStore from '../pages/admin-dashboard-page/store/admi
 import AdminDashboardUsersStore from '../pages/admin-dashboard-page/store/admin-dashboard-users-store'
 import AuthorConfirmationPageStore from '../pages/author-confirmation-page/store/author-confirmation-page-store'
 import AuthorDetailsPageStore from '../pages/author-details-page/store/author-details-page-store'
-import MediaReviewsPageStore from '../pages/media-reviews-page/store/media-reviews-page-store'
 import ProfilePageStore from '../pages/profile-page/store/profile-page-store'
 import ReleaseDetailsPageStore from '../pages/release-details-page/store/release-details-page-store'
-import ReleasesPageStore from '../pages/releases-page/store/releases-page-store'
-import ReviewsPageStore from '../pages/reviews-page/store/reviews-page-store'
 import SearchPageStore from '../pages/search-page/store/search-page-store'
 import AuthStore from './auth-store'
 import MetaStore from './meta-store'
@@ -24,13 +21,10 @@ class Store {
 	authStore = AuthStore
 	profileStore = ProfileStore
 	notificationStore = NotificationStore
-	releasesPageStore = ReleasesPageStore
-	reviewsPageStore = ReviewsPageStore
 	releaseDetailsPageStore = ReleaseDetailsPageStore
 	authorDetailsPageStore = AuthorDetailsPageStore
 	searchPageStore = SearchPageStore
 	profilePageStore = ProfilePageStore
-	mediaReviewPageStore = MediaReviewsPageStore
 	authorConfirmationPageStore = AuthorConfirmationPageStore
 	adminDashboardUsersStore = AdminDashboardUsersStore
 	adminDashboardAuthorsStore = AdminDashboardAuthorsStore

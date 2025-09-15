@@ -3,6 +3,8 @@ import { AuthorAPI } from '../../../api/author/author-api'
 import { ReleaseAPI } from '../../../api/release/release-api'
 import { IAuthor } from '../../../models/author/author'
 import { IRelease } from '../../../models/release/release'
+import { ReleaseSortFieldValuesEnum } from '../../../models/release/release-sort/release-sort-field-values'
+import { SortOrdersEnum } from '../../../models/sort/sort-orders-enum'
 
 class SearchPageStore {
 	constructor() {
@@ -61,8 +63,8 @@ class SearchPageStore {
 			const data = await ReleaseAPI.fetchReleases(
 				null,
 				query,
-				'published',
-				'desc',
+				ReleaseSortFieldValuesEnum.PUBLISHED,
+				SortOrdersEnum.DESC,
 				limit,
 				offset
 			)

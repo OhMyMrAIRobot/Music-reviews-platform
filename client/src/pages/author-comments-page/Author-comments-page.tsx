@@ -7,6 +7,7 @@ import ComboBox from '../../components/buttons/Combo-box'
 import Pagination from '../../components/pagination/Pagination'
 import { ReviewSortFields } from '../../models/review/review-sort-fields'
 import { SortOrdersEnum } from '../../models/sort/sort-orders-enum'
+import { authorCommentsKeys } from '../../query-keys/author-comments-keys'
 
 const PER_PAGE = 12
 
@@ -24,7 +25,12 @@ const AuthorCommentsPage = () => {
 			: SortOrdersEnum.ASC
 
 	const { data, isPending } = useQuery({
-		queryKey: ['authorComments', { limit, offset, order: orderParam }],
+		queryKey: authorCommentsKeys.list({
+			limit,
+			offset,
+			order: orderParam,
+			authorId: null,
+		}),
 		queryFn: () => AuthorCommentAPI.fetchAll(limit, offset, orderParam, null),
 		staleTime: 1000 * 60 * 5,
 	})

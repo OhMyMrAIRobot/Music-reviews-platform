@@ -4,14 +4,14 @@ import { UserFavReviewAPI } from '../../../../api/review/user-fav-review-api'
 import AuthorLikeColorSvg from '../../../../components/author/author-like/svg/Author-like-color-svg'
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
+import { authorLikesKeys } from '../../../../query-keys/author-likes-keys'
 import { CarouselRef } from '../../../../types/carousel-ref'
 import AuthorLikesCarousel from './carousel/Author-likes-carousel'
 
 const LIMIT = 20
 const OFFSET = 0
 
-const queryKey = ['authorLikes', { limit: LIMIT, offset: OFFSET }] as const
-
+const queryKey = authorLikesKeys.list({ limit: LIMIT, offset: OFFSET })
 const queryFn = () => UserFavReviewAPI.fetchAuthorLikes(LIMIT, OFFSET)
 
 const AuthorLikes = () => {

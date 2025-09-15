@@ -78,9 +78,12 @@ const AuthorLikesCarousel = forwardRef<CarouselRef, IProps>(
 										<AuthorLikeCard isLoading={isLoading} />
 									</div>
 							  ))
-							: items.map((item, idx) => (
-									<div className='flex-[0_0_270px] max-w-[270px]' key={idx}>
-										<AuthorLikeCard isLoading={isLoading} authorLike={item} />
+							: items.map(like => (
+									<div
+										className='flex-[0_0_270px] max-w-[270px]'
+										key={`${like.author.id}-${like.reviewAuthor.id}-${like.release.id}`}
+									>
+										<AuthorLikeCard isLoading={isLoading} authorLike={like} />
 									</div>
 							  ))}
 					</div>

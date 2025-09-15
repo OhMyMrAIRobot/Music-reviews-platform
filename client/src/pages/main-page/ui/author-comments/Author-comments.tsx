@@ -5,6 +5,7 @@ import AuthorCommentColorSvg from '../../../../components/author/author-comment/
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { SortOrdersEnum } from '../../../../models/sort/sort-orders-enum'
+import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys'
 import { CarouselRef } from '../../../../types/carousel-ref'
 import AuthorCommentsCarousel from './carousel/Author-comments-carousel'
 
@@ -12,10 +13,12 @@ const LIMIT = 15
 const OFFSET = 0
 const ORDER = SortOrdersEnum.DESC
 
-const queryKey = [
-	'authorComments',
-	{ limit: LIMIT, offset: OFFSET, order: ORDER, authorId: null },
-] as const
+const queryKey = authorCommentsKeys.list({
+	limit: LIMIT,
+	offset: OFFSET,
+	order: ORDER,
+	authorId: null,
+})
 
 const queryFn = () => AuthorCommentAPI.fetchAll(LIMIT, OFFSET, ORDER, null)
 

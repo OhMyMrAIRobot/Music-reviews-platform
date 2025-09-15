@@ -5,6 +5,7 @@ import CarouselContainer from '../../../../components/carousel/Carousel-containe
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { ReleaseSortFieldValuesEnum } from '../../../../models/release/release-sort/release-sort-field-values'
 import { SortOrdersEnum } from '../../../../models/sort/sort-orders-enum'
+import { releasesKeys } from '../../../../query-keys/releases-keys'
 import { CarouselRef } from '../../../../types/carousel-ref'
 import LastReleasesCarousel from './carousel/Last-releases-carousel'
 
@@ -13,15 +14,13 @@ const OFFSET = 0
 const FIELD = ReleaseSortFieldValuesEnum.PUBLISHED
 const ORDER = SortOrdersEnum.DESC
 
-const queryKey = [
-	'releases',
-	{
-		field: FIELD,
-		order: ORDER,
-		limit: LIMIT,
-		offset: OFFSET,
-	},
-] as const
+const queryKey = releasesKeys.list({
+	typeId: null,
+	sortField: FIELD,
+	sortOrder: ORDER,
+	limit: LIMIT,
+	offset: OFFSET,
+})
 
 const queryFn = () =>
 	ReleaseAPI.fetchReleases(null, null, FIELD, ORDER, LIMIT, OFFSET)

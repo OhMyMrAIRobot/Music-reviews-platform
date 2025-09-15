@@ -10,10 +10,10 @@ import TextReviewSvg from '../../../../../components/review/svg/Text-review-svg'
 import MediaPlayerSvg from '../../../../../components/svg/Media-player-svg'
 import UserSvg from '../../../../../components/svg/User-svg'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
+import { platformStatsKeys } from '../../../../../query-keys/platform-stats-keys'
 import PlatformStatisticsRow from './Platform-statistics-row'
 
-const queryKey = ['platformStats'] as const
-
+const queryKey = platformStatsKeys.all
 const queryFn = () => GlobalAppAPI.fetchPlatformStats()
 
 const PlatformStatistics = () => {

@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
-import { ReleaseAPI } from '../../../../../api/release/release-api'
-import MostReviewedSwiper from '../swiper/Most-reviewed-swiper'
-import MostReviewedCarousel from './Most-reviewed-carousel'
+import { ReleaseAPI } from '../../../../api/release/release-api'
+import { releasesKeys } from '../../../../query-keys/releases-keys'
+import MostReviewedCarousel from './carousel/Most-reviewed-carousel'
+import MostReviewedSwiper from './swiper/Most-reviewed-swiper'
 
-const queryKey = ['releases'] as const
-
+const queryKey = releasesKeys.mostReviewed()
 const queryFn = () => ReleaseAPI.fetchMostReviewed()
 
 const MostReviewedReleases = () => {

@@ -4,8 +4,9 @@ import { UserFavReviewAPI } from '../../api/review/user-fav-review-api'
 import AuthorLikeCard from '../../components/author/author-like/Author-like-card'
 import AuthorLikeColorSvg from '../../components/author/author-like/svg/Author-like-color-svg'
 import Pagination from '../../components/pagination/Pagination'
+import { authorLikesKeys } from '../../query-keys/author-likes-keys'
 
-const PER_PAGE = 18
+const PER_PAGE = 9
 
 const AuthorLikesPage = () => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
@@ -14,7 +15,7 @@ const AuthorLikesPage = () => {
 	const offset = (currentPage - 1) * PER_PAGE
 
 	const { data, isPending } = useQuery({
-		queryKey: ['authorLikes', { limit, offset }],
+		queryKey: authorLikesKeys.list({ limit, offset }),
 		queryFn: () => UserFavReviewAPI.fetchAuthorLikes(limit, offset),
 		staleTime: 1000 * 60 * 5,
 	})
@@ -43,7 +44,7 @@ const AuthorLikesPage = () => {
 						: items.map(like => (
 								<div
 									className='overflow-hidden'
-									key={like.author.id + like.reviewAuthor.id}
+									key={`${like.author.id}-${like.reviewAuthor.id}-${like.release.id}`}
 								>
 									<AuthorLikeCard authorLike={like} isLoading={false} />
 								</div>

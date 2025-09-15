@@ -9,6 +9,7 @@ import Pagination from '../../components/pagination/Pagination'
 import { AlbumValueSortOptions } from '../../models/album-value/album-value-sort-options'
 import { AlbumValueTiersEnum } from '../../models/album-value/album-value-tiers-enum'
 import { SortOrdersEnum } from '../../models/sort/sort-orders-enum'
+import { albumValuesKeys } from '../../query-keys/album-values-keys'
 import { ALBUM_VALUES } from '../../utils/album-value-config'
 
 const PER_PAGE = 12
@@ -29,11 +30,17 @@ const AlbumValuesPage = () => {
 	const offset = (currentPage - 1) * PER_PAGE
 	const tiersParam = selectedTiers.length > 0 ? selectedTiers : null
 
+	const queryKey = albumValuesKeys.list({
+		limit,
+		offset,
+		order: orderParam,
+		tiers: tiersParam,
+		authorId: null,
+		releaseId: null,
+	})
+
 	const { data, isPending } = useQuery({
-		queryKey: [
-			'albumValues',
-			{ limit, offset, order: orderParam, tiers: tiersParam },
-		],
+		queryKey,
 		queryFn: () =>
 			AlbumValueAPI.fetchAlbumValues(limit, offset, orderParam, tiersParam),
 		staleTime: 1000 * 60 * 5,

@@ -1,11 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { LeaderboardAPI } from '../../api/leaderboard-api'
 import { ILeaderboardItem } from '../../models/leaderboard/leaderboard-item'
+import { leaderboardKeys } from '../../query-keys/leaderboard-keys'
 import LeaderboardHeader from './ui/Leaderboard-header'
 import LeaderboardItem from './ui/Leaderboard-item'
 import LeaderboardTitle from './ui/Leaderboard-title'
 
-const queryKey = ['leaderboard', { limit: null, offset: null }] as const
+const queryKey = leaderboardKeys.list({ limit: null, offset: null })
 const queryFn = () => LeaderboardAPI.fetchLeaderboard(null, null)
 
 const LeaderboardPage = () => {
