@@ -30,4 +30,18 @@ export const releasesKeys = {
 				month: params.month,
 			},
 		] as const,
+	search: (params: {
+		query: string | null
+		limit: number | null
+		offset: number
+	}) =>
+		[
+			'releases',
+			'search',
+			{
+				query: params.query ?? null,
+				limit: params.limit ?? null,
+				offset: params.offset,
+			},
+		] as const,
 }

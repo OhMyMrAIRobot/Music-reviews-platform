@@ -9,7 +9,6 @@ import AdminDashboardUsersStore from '../pages/admin-dashboard-page/store/admin-
 import AuthorDetailsPageStore from '../pages/author-details-page/store/author-details-page-store'
 import ProfilePageStore from '../pages/profile-page/store/profile-page-store'
 import ReleaseDetailsPageStore from '../pages/release-details-page/store/release-details-page-store'
-import SearchPageStore from '../pages/search-page/store/search-page-store'
 import AuthStore from './auth-store'
 import MetaStore from './meta-store'
 import NotificationStore from './notification-store'
@@ -22,7 +21,6 @@ class Store {
 	notificationStore = NotificationStore
 	releaseDetailsPageStore = ReleaseDetailsPageStore
 	authorDetailsPageStore = AuthorDetailsPageStore
-	searchPageStore = SearchPageStore
 	profilePageStore = ProfilePageStore
 	adminDashboardUsersStore = AdminDashboardUsersStore
 	adminDashboardAuthorsStore = AdminDashboardAuthorsStore
