@@ -1,30 +1,29 @@
-import { useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'react-router'
+import { ProfileAPI } from '../../api/user/profile-api'
 import Loader from '../../components/utils/Loader.tsx'
-import { useLoading } from '../../hooks/use-loading.ts'
-import { useStore } from '../../hooks/use-store.ts'
+import { profileKeys } from '../../query-keys/profile-keys'
 import ProfileLeftSection from './ui/profile-left-section/Profile-left-section.tsx'
 import ProfileRightSection from './ui/profile-right-section/Profile-right-section.tsx'
 
 const ProfilePage = () => {
 	const { id } = useParams()
 
-	const { profilePageStore } = useStore()
+	const { data: profile, isPending: isLoading } = useQuery({
+		queryKey: id ? profileKeys.profile(id) : ['profile', 'unknown'],
+		queryFn: async () => {
+			if (!id) throw new Error('No profile id provided!')
+			return ProfileAPI.fetchProfile(id)
+		},
+		enabled: !!id,
+		staleTime: 1000 * 60 * 5,
+	})
 
-	const { execute: fetchProfile, isLoading: isProfileLoading } = useLoading(
-		profilePageStore.fetchProfile
-	)
+	if (isLoading) {
+		return <Loader className={'mx-auto size-20 border-white'} />
+	}
 
-	useEffect(() => {
-		if (!id) return
-		fetchProfile(id)
-	}, [fetchProfile, id])
-
-	const profile = profilePageStore.profile
-
-	return isProfileLoading ? (
-		<Loader className={'mx-auto size-20 border-white'} />
-	) : (
+	return (
 		profile && (
 			<div className='grid grid-cols-1 xl:grid-cols-10 gap-5'>
 				<ProfileLeftSection profile={profile} />

@@ -1,10 +1,15 @@
-import { FC, useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { FC, useState } from 'react'
 import { useParams } from 'react-router'
-import { useLoading } from '../../../../hooks/use-loading'
-import { useStore } from '../../../../hooks/use-store'
+import { ReviewAPI } from '../../../../api/review/review-api'
+import { useQueryListFavToggleAll } from '../../../../hooks/use-query-list-fav-toggle'
 import { IProfile } from '../../../../models/profile/profile'
 import { ProfileDetailsPageSections } from '../../../../models/profile/profile-details-page-sections'
+import { IReview } from '../../../../models/review/review'
 import { RolesEnum } from '../../../../models/role/roles-enum'
+import { SortOrdersEnum } from '../../../../models/sort/sort-orders-enum'
+import { profileKeys } from '../../../../query-keys/profile-keys'
+import { toggleFavReview } from '../../../../utils/toggle-fav-review'
 import ProfileAuthorCardsGrid from './Profile-author-cards-grid'
 import ProfileMediaReviewsGrid from './Profile-media-reviews-grid'
 import ProfilePreferencesGrid from './profile-preferences/Profile-preferences-grid'
@@ -15,54 +20,77 @@ interface IProps {
 	profile: IProfile
 }
 
-const ProfileRightSection: FC<IProps> = ({ profile }) => {
-	const perPage = 5
+const perPage = 5
 
+const ProfileRightSection: FC<IProps> = ({ profile }) => {
 	const { id } = useParams()
 
-	const { profilePageStore } = useStore()
-
 	const [selectedSection, setSelectedSection] = useState<string>(
-		profilePageStore.profile?.isAuthor === true
+		profile.isAuthor === true
 			? ProfileDetailsPageSections.AUTHOR_CARDS
 			: ProfileDetailsPageSections.PREFER
 	)
 	const [reviewsCurrentPage, setReviewsCurrentPage] = useState<number>(1)
 	const [favCurrentPage, setFavCurrentPage] = useState<number>(1)
 
-	const { execute: fetchReviews, isLoading: isReviewsLoading } = useLoading(
-		profilePageStore.fetchReviews
-	)
-	const { execute: fetchFavReviews, isLoading: isFavReviewsLoading } =
-		useLoading(profilePageStore.fetchFavReviews)
-	const { execute: fetchCards, isLoading: isCardsLoading } = useLoading(
-		profilePageStore.fetchAuthorCards
-	)
+	const reviewsQueryKey = profileKeys.reviews({
+		userId: id ?? '',
+		limit: perPage,
+		offset: (reviewsCurrentPage - 1) * perPage,
+	})
+	const { data: reviewsData, isPending: isReviewsPending } = useQuery({
+		queryKey: reviewsQueryKey,
+		queryFn: () =>
+			id
+				? ReviewAPI.fetchReviews(
+						SortOrdersEnum.DESC,
+						perPage,
+						(reviewsCurrentPage - 1) * perPage,
+						id,
+						null
+				  )
+				: Promise.resolve({ reviews: [], count: 0 }),
+		enabled: !!id && selectedSection === ProfileDetailsPageSections.REVIEWS,
+		staleTime: 1000 * 60 * 5,
+	})
 
-	useEffect(() => {
-		if (id) {
-			switch (selectedSection) {
-				case ProfileDetailsPageSections.REVIEWS:
-					fetchReviews(perPage, (reviewsCurrentPage - 1) * perPage, id)
-					break
-				case ProfileDetailsPageSections.LIKES:
-					fetchFavReviews(perPage, (favCurrentPage - 1) * perPage, id)
-					break
-				case ProfileDetailsPageSections.AUTHOR_CARDS:
-					if (profilePageStore.profile?.isAuthor === true) fetchCards(id)
-					break
-			}
-		}
-	}, [
-		reviewsCurrentPage,
-		favCurrentPage,
-		id,
-		selectedSection,
-		fetchReviews,
-		fetchFavReviews,
-		profilePageStore.profile?.isAuthor,
-		fetchCards,
-	])
+	const favReviewsQueryKey = profileKeys.favReviews({
+		favUserId: id ?? '',
+		limit: perPage,
+		offset: (favCurrentPage - 1) * perPage,
+	})
+	const { data: favReviewsData, isPending: isFavReviewsPending } = useQuery({
+		queryKey: favReviewsQueryKey,
+		queryFn: () =>
+			id
+				? ReviewAPI.fetchReviews(
+						SortOrdersEnum.DESC,
+						perPage,
+						(favCurrentPage - 1) * perPage,
+						null,
+						id
+				  )
+				: Promise.resolve({ reviews: [], count: 0 }),
+		enabled: !!id && selectedSection === ProfileDetailsPageSections.LIKES,
+		staleTime: 1000 * 60 * 5,
+	})
+
+	const { storeToggle: storeToggleReviews } = useQueryListFavToggleAll<
+		IReview,
+		{ reviews: IReview[] }
+	>(['profile', 'reviews'], 'reviews', toggleFavReview)
+
+	const { storeToggle: storeToggleFavReviews } = useQueryListFavToggleAll<
+		IReview,
+		{ reviews: IReview[] }
+	>(['profile', 'favReviews'], 'reviews', toggleFavReview)
+
+	if (!id) return null
+
+	const reviews = reviewsData?.reviews || []
+	const reviewsCount = reviewsData?.count || 0
+	const favReviews = favReviewsData?.reviews || []
+	const favReviewsCount = favReviewsData?.count || 0
 
 	return (
 		<div className='xl:col-span-7'>
@@ -127,39 +155,39 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 			</div>
 
 			{selectedSection === ProfileDetailsPageSections.AUTHOR_CARDS && (
-				<ProfileAuthorCardsGrid isLoading={isCardsLoading} />
+				<ProfileAuthorCardsGrid userId={id} />
 			)}
 
 			{selectedSection === ProfileDetailsPageSections.PREFER && (
-				<ProfilePreferencesGrid />
+				<ProfilePreferencesGrid userId={id} />
 			)}
 
 			{selectedSection === ProfileDetailsPageSections.REVIEWS && (
 				<ProfileReviewsGrid
-					items={profilePageStore.reviews}
-					total={profilePageStore.reviewsCount}
+					items={reviews}
+					total={reviewsCount}
 					currentPage={reviewsCurrentPage}
 					setCurrentPage={setReviewsCurrentPage}
-					isLoading={isReviewsLoading}
+					isLoading={isReviewsPending}
 					perPage={perPage}
-					storeToggle={profilePageStore.toggleReview}
+					storeToggle={storeToggleReviews}
 				/>
 			)}
 
 			{profile.role === RolesEnum.MEDIA &&
 				selectedSection === ProfileDetailsPageSections.MEDIA_REVIEWS && (
-					<ProfileMediaReviewsGrid profile={profile} />
+					<ProfileMediaReviewsGrid userId={id} />
 				)}
 
 			{selectedSection === ProfileDetailsPageSections.LIKES && (
 				<ProfileReviewsGrid
-					items={profilePageStore.favReviews}
-					total={profilePageStore.favReviewsCount}
+					items={favReviews}
+					total={favReviewsCount}
 					currentPage={favCurrentPage}
 					setCurrentPage={setFavCurrentPage}
-					isLoading={isFavReviewsLoading}
+					isLoading={isFavReviewsPending}
 					perPage={perPage}
-					storeToggle={profilePageStore.toggleFavReview}
+					storeToggle={storeToggleFavReviews}
 				/>
 			)}
 		</div>

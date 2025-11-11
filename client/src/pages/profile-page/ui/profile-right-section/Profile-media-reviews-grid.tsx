@@ -1,113 +1,99 @@
-import { observer } from 'mobx-react-lite'
-import { FC, useCallback, useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { FC, useState } from 'react'
+import { ReleaseMediaAPI } from '../../../../api/release/release-media-api'
 import Pagination from '../../../../components/pagination/Pagination'
 import ReleaseMediaReview from '../../../../components/release/release-media/Release-media-review'
-import { useLoading } from '../../../../hooks/use-loading'
-import { useStore } from '../../../../hooks/use-store'
-import { IProfile } from '../../../../models/profile/profile'
+import { useQueryListFavToggleAll } from '../../../../hooks/use-query-list-fav-toggle'
+import { useReleaseMediaMeta } from '../../../../hooks/use-release-media-meta'
+import { IReleaseMedia } from '../../../../models/release/release-media/release-media'
 import { ReleaseMediaStatusesEnum } from '../../../../models/release/release-media/release-media-status/release-media-statuses-enum'
 import { ReleaseMediaTypesEnum } from '../../../../models/release/release-media/release-media-type/release-media-types-enum'
+import { profileKeys } from '../../../../query-keys/profile-keys'
+import { toggleFavMedia } from '../../../../utils/toggle-fav-media'
 
 interface IProps {
-	profile: IProfile
+	userId: string
 }
 
-const ProfileMediaReviewsGrid: FC<IProps> = observer(({ profile }) => {
-	const perPage = 5
+const perPage = 5
 
-	const { metaStore, profilePageStore } = useStore()
-
-	const { execute: fetchStatuses, isLoading: isStatusesLoading } = useLoading(
-		metaStore.fetchReleaseMediaStatuses
-	)
-
-	const { execute: fetchTypes, isLoading: isTypesLoading } = useLoading(
-		metaStore.fetchReleaseMediaTypes
-	)
-
-	const { execute: fetchMedia, isLoading: isMediaLoading } = useLoading(
-		profilePageStore.fetchMedia
-	)
-
+const ProfileMediaReviewsGrid: FC<IProps> = ({ userId }) => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
 
-	const fetch = useCallback(() => {
-		if (isStatusesLoading || isTypesLoading) return
+	const { statuses, types, isLoading: isMetaLoading } = useReleaseMediaMeta()
 
-		const typeId = metaStore.releaseMediaTypes.find(
-			t => t.type === ReleaseMediaTypesEnum.MEDIA_REVIEW
-		)?.id
-		const statusId = metaStore.releaseMediaStatuses.find(
-			s => s.status === ReleaseMediaStatusesEnum.APPROVED
-		)?.id
+	const typeId = types.find(
+		t => t.type === ReleaseMediaTypesEnum.MEDIA_REVIEW
+	)?.id
+	const statusId = statuses.find(
+		s => s.status === ReleaseMediaStatusesEnum.APPROVED
+	)?.id
 
-		if (!typeId || !statusId) return
+	const queryKey = profileKeys.media({
+		userId,
+		statusId: statusId ?? null,
+		typeId: typeId ?? null,
+		limit: perPage,
+		offset: (currentPage - 1) * perPage,
+	})
 
-		return fetchMedia(
-			profile.id,
-			statusId,
-			typeId,
-			perPage,
-			(currentPage - 1) * perPage
-		)
-	}, [
-		isStatusesLoading,
-		isTypesLoading,
-		metaStore.releaseMediaTypes,
-		metaStore.releaseMediaStatuses,
-		fetchMedia,
-		profile.id,
-		currentPage,
-	])
+	const { data: mediaData, isPending: isMediaLoading } = useQuery({
+		queryKey,
+		queryFn: () =>
+			typeId && statusId
+				? ReleaseMediaAPI.fetchReleaseMedia(
+						perPage,
+						(currentPage - 1) * perPage,
+						statusId,
+						typeId,
+						null,
+						userId,
+						null,
+						null
+				  )
+				: Promise.resolve({ releaseMedia: [], count: 0 }),
+		enabled: !isMetaLoading && !!typeId && !!statusId,
+		staleTime: 1000 * 60 * 5,
+	})
 
-	useEffect(() => {
-		const promises = []
-		if (metaStore.releaseMediaStatuses.length === 0) {
-			promises.push(fetchStatuses())
-		}
-		if (metaStore.releaseMediaTypes.length === 0) {
-			promises.push(fetchTypes())
-		}
-		Promise.all(promises).then(() => {
-			fetch()
-		})
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentPage])
+	const { storeToggle } = useQueryListFavToggleAll<
+		IReleaseMedia,
+		{ releaseMedia: IReleaseMedia[] }
+	>(['profile', 'media'], 'releaseMedia', toggleFavMedia)
 
 	return (
 		<section>
 			<div className='gap-5 grid grid-cols-1 select-none'>
-				{isMediaLoading || isStatusesLoading || isTypesLoading
+				{isMediaLoading || isMediaLoading
 					? Array.from({ length: perPage }).map((_, idx) => (
 							<ReleaseMediaReview
 								key={`Skeleton-media-review-${idx}`}
 								isLoading={true}
 							/>
 					  ))
-					: profilePageStore.media.map(media => (
+					: mediaData?.releaseMedia.map(media => (
 							<ReleaseMediaReview
 								key={media.id}
 								media={media}
-								toggleFav={profilePageStore.toggleFavMedia}
+								toggleFav={storeToggle}
 								isLoading={false}
 							/>
 					  ))}
 			</div>
 
 			{!isMediaLoading &&
-				!isStatusesLoading &&
-				!isTypesLoading &&
-				profilePageStore.media.length === 0 && (
+				!isMediaLoading &&
+				mediaData?.releaseMedia.length === 0 && (
 					<p className='text-center text-2xl font-semibold mt-10'>
 						Медиарецензии не найдены!
 					</p>
 				)}
 
-			{profilePageStore.media.length > 0 && (
+			{mediaData && mediaData.releaseMedia.length > 0 && (
 				<div className='mt-10'>
 					<Pagination
 						currentPage={currentPage}
-						totalItems={profilePageStore.mediaCount}
+						totalItems={mediaData.count ?? 0}
 						itemsPerPage={perPage}
 						setCurrentPage={setCurrentPage}
 						idToScroll={'profile-sections'}
@@ -116,6 +102,6 @@ const ProfileMediaReviewsGrid: FC<IProps> = observer(({ profile }) => {
 			)}
 		</section>
 	)
-})
+}
 
 export default ProfileMediaReviewsGrid

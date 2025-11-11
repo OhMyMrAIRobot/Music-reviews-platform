@@ -1,52 +1,54 @@
-import { useEffect } from 'react'
-import { useParams } from 'react-router'
-import { useLoading } from '../../../../../hooks/use-loading.ts'
-import { useStore } from '../../../../../hooks/use-store.ts'
+import { useQuery } from '@tanstack/react-query'
+import { FC } from 'react'
+import { ProfileAPI } from '../../../../../api/user/profile-api.ts'
+import { profileKeys } from '../../../../../query-keys/profile-keys'
 import ProfilePreferencesGridRow from './Profile-preferences-grid-row.tsx'
 
-const ProfilePreferencesGrid = () => {
-	const { id } = useParams()
+interface IProps {
+	userId: string
+}
 
-	const { profilePageStore } = useStore()
+const ProfilePreferencesGrid: FC<IProps> = ({ userId }) => {
+	const queryKey = profileKeys.preferences(userId)
+	const { data, isPending } = useQuery({
+		queryKey,
+		queryFn: () => ProfileAPI.fetchProfilePreferences(userId),
+		staleTime: 1000 * 60 * 5,
+	})
 
-	const { execute: fetch, isLoading } = useLoading(
-		profilePageStore.fetchPreferred
-	)
-
-	useEffect(() => {
-		if (id) {
-			fetch(id)
-		}
-	}, [fetch, id])
+	const artists = data?.artists || []
+	const albums = data?.albums || []
+	const tracks = data?.tracks || []
+	const producers = data?.producers || []
 
 	return (
 		<div className='grid lg:grid-cols-2 gap-y-4 lg:gap-y-8 gap-x-10'>
 			<ProfilePreferencesGridRow
 				title={'Артисты'}
-				items={profilePageStore.preferred?.artists ?? []}
+				items={artists}
 				isAuthor={true}
-				isLoading={isLoading}
+				isLoading={isPending}
 			/>
 
 			<ProfilePreferencesGridRow
 				title={'Альбомы'}
-				items={profilePageStore.preferred?.albums ?? []}
+				items={albums}
 				isAuthor={false}
-				isLoading={isLoading}
+				isLoading={isPending}
 			/>
 
 			<ProfilePreferencesGridRow
 				title={'Треки'}
-				items={profilePageStore.preferred?.tracks ?? []}
+				items={tracks}
 				isAuthor={false}
-				isLoading={isLoading}
+				isLoading={isPending}
 			/>
 
 			<ProfilePreferencesGridRow
 				title={'Продюсеры'}
-				items={profilePageStore.preferred?.producers ?? []}
+				items={producers}
 				isAuthor={true}
-				isLoading={isLoading}
+				isLoading={isPending}
 			/>
 		</div>
 	)
