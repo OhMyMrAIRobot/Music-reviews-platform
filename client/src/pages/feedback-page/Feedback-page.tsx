@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { FeedbackAPI } from '../../api/feedback/feedback-api'
 import FormButton from '../../components/form-elements/Form-button'
@@ -6,9 +8,9 @@ import FormLabel from '../../components/form-elements/Form-label'
 import FormSubTitle from '../../components/form-elements/Form-subtitle'
 import FormTextbox from '../../components/form-elements/Form-textbox'
 import FormTitle from '../../components/form-elements/Form-title'
-import { useLoading } from '../../hooks/use-loading'
 import { useStore } from '../../hooks/use-store'
 import { IFeedbackData } from '../../models/feedback/feedback-data'
+import { feedbackKeys } from '../../query-keys/feedback-keys'
 
 const FeedbackPage = () => {
 	const { notificationStore } = useStore()
@@ -23,24 +25,29 @@ const FeedbackPage = () => {
 		setFeedbackData(prev => ({ ...prev, [field]: value }))
 	}
 
-	const sendFeedback = async () => {
-		if (!isFormValid) return
-		try {
-			await FeedbackAPI.sendFeedback(feedbackData)
-			notificationStore.addSuccessNotification('Отзыв успешно отправлен!')
-			setFeedbackData({ email: '', title: '', message: '' })
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		} catch (e: any) {
-			const errors: string[] = Array.isArray(e.response?.data?.message)
-				? e.response?.data?.message
-				: [e.response?.data?.message]
-			errors.forEach(error => {
-				notificationStore.addErrorNotification(error)
-			})
-		}
-	}
+	const queryClient = useQueryClient()
 
-	const { execute: send, isLoading } = useLoading(sendFeedback)
+	const { mutateAsync: sendFeedbackMutate, isPending: isSending } = useMutation(
+		{
+			mutationFn: (payload: IFeedbackData) => FeedbackAPI.sendFeedback(payload),
+			onSuccess: () => {
+				notificationStore.addSuccessNotification('Отзыв успешно отправлен!')
+				setFeedbackData({ email: '', title: '', message: '' })
+				queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
+			},
+			onError: (e: any) => {
+				const messages: string[] = Array.isArray(e?.response?.data?.message)
+					? e.response.data.message
+					: [e?.response?.data?.message || 'Не удалось отправить отзыв']
+				messages.forEach(m => notificationStore.addErrorNotification(m))
+			},
+		}
+	)
+
+	const send = async () => {
+		if (!isFormValid || isSending) return
+		await sendFeedbackMutate(feedbackData)
+	}
 
 	const isFormValid = useMemo(() => {
 		return (
@@ -95,11 +102,11 @@ const FeedbackPage = () => {
 			</div>
 
 			<FormButton
-				title={isLoading ? 'Отправка...' : 'Отправить'}
+				title={isSending ? 'Отправка...' : 'Отправить'}
 				isInvert={true}
 				onClick={send}
-				disabled={isLoading || !isFormValid}
-				isLoading={isLoading}
+				disabled={isSending || !isFormValid}
+				isLoading={isSending}
 			/>
 		</div>
 	)

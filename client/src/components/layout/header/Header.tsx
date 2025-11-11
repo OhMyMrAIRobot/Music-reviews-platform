@@ -4,6 +4,7 @@ import useNavigationPath from '../../../hooks/use-navigation-path'
 import { useSidebarOverlay } from '../../../hooks/use-sidebar-overlay'
 import { useStore } from '../../../hooks/use-store'
 import ActivationSvg from '../../svg/Activation-svg'
+import LogoFullSvg from '../../svg/Logo-full-svg'
 import PencilSvg from '../../svg/Pencil-svg'
 import BurgerMenuButton from './buttons/Burger-menu-button'
 import HeaderButton from './buttons/Header-button'
@@ -32,7 +33,7 @@ const Header = observer(() => {
 					to={navigateToMain}
 					className='w-[150px] h-[50px] mr-10 shrink-0 flex items-center justify-center cursor-pointer'
 				>
-					{/* <LogoFullSvg /> */}LOGO
+					<LogoFullSvg />
 				</Link>
 
 				<SearchBar className={'hidden lg:flex lg:w-[400px]'} />

@@ -34,7 +34,6 @@ const LastReviews = () => {
 
 	const items = data?.reviews ?? []
 
-	// Обновляем все кэши с корнем ['reviews']
 	const { storeToggle } = useQueryListFavToggleAll<
 		IReview,
 		{ reviews: IReview[] }

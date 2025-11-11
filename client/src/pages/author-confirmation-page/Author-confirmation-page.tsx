@@ -27,7 +27,7 @@ const AuthorConfirmationPage = () => {
 					/>
 				</div>
 
-				<div className='h-120 overflow-y-scroll'>
+				<div className='h-110 overflow-y-scroll'>
 					{formShow ? (
 						<SendAuthorConfirmationForm show={formShow} />
 					) : (
