@@ -1,27 +1,23 @@
-import { observer } from 'mobx-react-lite'
-import { FC, useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { FC } from 'react'
+import { AuthorCommentAPI } from '../../../../api/author/author-comment-api'
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
-import { useLoading } from '../../../../hooks/use-loading'
-import { useStore } from '../../../../hooks/use-store'
+import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys'
 import ReleaseDetailsAuthorCommentItem from './Release-details-author-comment-item'
 
 interface IProps {
 	releaseId: string
 }
 
-const ReleaseDetailsAuthorComments: FC<IProps> = observer(({ releaseId }) => {
-	const { releaseDetailsPageStore } = useStore()
-
-	const { execute: fetchComments, isLoading: isFetching } = useLoading(
-		releaseDetailsPageStore.fetchAuthorComments
-	)
-
-	useEffect(() => {
-		fetchComments(releaseId)
-	}, [fetchComments, releaseId])
+const ReleaseDetailsAuthorComments: FC<IProps> = ({ releaseId }) => {
+	const { data: authorComments, isPending: isFetching } = useQuery({
+		queryKey: authorCommentsKeys.byRelease(releaseId),
+		queryFn: () => AuthorCommentAPI.fetchByReleaseId(releaseId),
+		staleTime: 1000 * 60 * 5,
+	})
 
 	return (
-		(isFetching || releaseDetailsPageStore.authorComments.length > 0) && (
+		(isFetching || (authorComments && authorComments.length > 0)) && (
 			<section className='w-full grid grid-cols-1 mt-5 lg:mt-10'>
 				<div className='font-bold flex items-center gap-x-5 h-full'>
 					<p className='text-xl xl:text-2xl '>Комментарии авторов</p>
@@ -30,7 +26,7 @@ const ReleaseDetailsAuthorComments: FC<IProps> = observer(({ releaseId }) => {
 						<SkeletonLoader className={'rounded-full size-10 lg:size-12'} />
 					) : (
 						<div className='inline-flex items-center justify-center rounded-full size-10 lg:size-12 bg-white/5 select-none'>
-							{releaseDetailsPageStore.authorComments.length}
+							{authorComments?.length || 0}
 						</div>
 					)}
 				</div>
@@ -43,7 +39,7 @@ const ReleaseDetailsAuthorComments: FC<IProps> = observer(({ releaseId }) => {
 									isLoading={true}
 								/>
 						  ))
-						: releaseDetailsPageStore.authorComments.map(comment => (
+						: authorComments?.map(comment => (
 								<ReleaseDetailsAuthorCommentItem
 									key={comment.id}
 									isLoading={false}
@@ -54,6 +50,6 @@ const ReleaseDetailsAuthorComments: FC<IProps> = observer(({ releaseId }) => {
 			</section>
 		)
 	)
-})
+}
 
 export default ReleaseDetailsAuthorComments

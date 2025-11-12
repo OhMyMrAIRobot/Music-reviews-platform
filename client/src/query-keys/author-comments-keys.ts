@@ -17,4 +17,6 @@ export const authorCommentsKeys = {
 				authorId: params.authorId ?? null,
 			},
 		] as const,
+	byRelease: (releaseId: string) =>
+		['authorComments', 'byRelease', { releaseId }] as const,
 }

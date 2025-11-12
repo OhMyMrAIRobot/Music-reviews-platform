@@ -1,77 +1,156 @@
-import { observer } from 'mobx-react-lite'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { AxiosError } from 'axios'
 import { FC, useEffect, useMemo, useState } from 'react'
+import { ReleaseMediaAPI } from '../../../../../../api/release/release-media-api'
 import FormButton from '../../../../../../components/form-elements/Form-button'
 import FormInput from '../../../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../../../components/form-elements/Form-label'
-import { useLoading } from '../../../../../../hooks/use-loading'
+import { useAuth } from '../../../../../../hooks/use-auth'
 import { useStore } from '../../../../../../hooks/use-store'
+import { releaseMediaKeys } from '../../../../../../query-keys/release-media-keys'
+import authStore from '../../../../../../stores/auth-store'
 
 interface IProps {
 	releaseId: string
 }
 
-const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
-	const { releaseDetailsPageStore, notificationStore } = useStore()
+const ReleaseDetailsMediaReviewForm: FC<IProps> = ({ releaseId }) => {
+	const { notificationStore } = useStore()
 
-	const userReleaseMedia = releaseDetailsPageStore.userReleaseMedia
+	const { checkAuth } = useAuth()
+	const queryClient = useQueryClient()
+
+	const invalidateRelatedQueries = () => {
+		const keys = [
+			releaseMediaKeys.userByRelease(releaseId, authStore.user?.id || ''),
+			releaseMediaKeys.all,
+		]
+		keys.forEach(key => queryClient.invalidateQueries({ queryKey: key }))
+	}
+
+	const createMutation = useMutation({
+		mutationFn: (data: { title: string; url: string }) =>
+			ReleaseMediaAPI.postReleaseMedia(data.title, data.url, releaseId),
+		onSuccess: data => {
+			invalidateRelatedQueries()
+			queryClient.setQueryData(
+				releaseMediaKeys.userByRelease(releaseId, authStore.user?.id || ''),
+				data
+			)
+		},
+	})
+
+	const updateMutation = useMutation({
+		mutationFn: (data: {
+			id: string
+			updateData: { title?: string; url?: string }
+		}) => ReleaseMediaAPI.updateReleaseMedia(data.id, data.updateData),
+		onSuccess: data => {
+			invalidateRelatedQueries()
+			queryClient.setQueryData(
+				releaseMediaKeys.userByRelease(releaseId, authStore.user?.id || ''),
+				data
+			)
+		},
+	})
+
+	const deleteMutation = useMutation({
+		mutationFn: (id: string) => ReleaseMediaAPI.deleteReleaseMedia(id),
+		onSuccess: () => {
+			invalidateRelatedQueries()
+			queryClient.setQueryData(
+				releaseMediaKeys.userByRelease(releaseId, authStore.user?.id || ''),
+				undefined
+			)
+		},
+	})
+
+	const { data: userReleaseMedia } = useQuery({
+		queryKey: releaseMediaKeys.userByRelease(
+			releaseId,
+			authStore.user?.id || ''
+		),
+		queryFn: () =>
+			ReleaseMediaAPI.fetchUserReleaseMedia(
+				releaseId,
+				authStore.user?.id || ''
+			),
+		enabled: authStore.isAuth,
+		staleTime: 1000 * 60 * 5,
+		retry: false,
+	})
 
 	const [title, setTitle] = useState<string>('')
 	const [url, setUrl] = useState<string>('')
 
-	const { execute: postReleaseMedia, isLoading: isPosting } = useLoading(
-		releaseDetailsPageStore.postMediaReview
-	)
-
-	const { execute: updateReleaseMedia, isLoading: isUpdating } = useLoading(
-		releaseDetailsPageStore.updateReleaseMedia
-	)
-
-	const { execute: deleteReleaseMedia, isLoading: isDeleting } = useLoading(
-		releaseDetailsPageStore.deleteReleaseMedia
-	)
-
 	const handleSubmit = async () => {
-		if (isPosting || !isValid || isDeleting || isUpdating) return
+		if (
+			!checkAuth() ||
+			createMutation.isPending ||
+			updateMutation.isPending ||
+			deleteMutation.isPending ||
+			!isValid ||
+			!hasChanges
+		)
+			return
 
-		let errors: string[] = []
-		if (userReleaseMedia) {
-			if (hasChanges) {
-				errors = await updateReleaseMedia(
-					userReleaseMedia.id,
-					title !== userReleaseMedia.title ? title.trim() : undefined,
-					url !== userReleaseMedia.url ? url.trim() : undefined
-				)
+		try {
+			if (userReleaseMedia) {
+				await updateMutation.mutateAsync({
+					id: userReleaseMedia.id,
+					updateData: {
+						title: title !== userReleaseMedia.title ? title.trim() : undefined,
+						url: url !== userReleaseMedia.url ? url.trim() : undefined,
+					},
+				})
 			} else {
-				return
+				await createMutation.mutateAsync({
+					title: title.trim(),
+					url: url.trim(),
+				})
 			}
-		} else {
-			errors = await postReleaseMedia(releaseId, title, url)
-		}
 
-		if (errors.length === 0) {
 			notificationStore.addSuccessNotification(
 				`Вы успешно ${
 					userReleaseMedia ? 'обновили' : 'добавили'
 				} медиарецензию. Ожидайте подтверждения!`
 			)
-		} else {
-			errors.forEach(err => notificationStore.addErrorNotification(err))
+		} catch (error: unknown) {
+			const axiosError = error as AxiosError<{ message: string | string[] }>
+			const errors = Array.isArray(axiosError.response?.data?.message)
+				? axiosError.response?.data?.message
+				: [axiosError.response?.data?.message]
+			errors
+				.filter((err): err is string => typeof err === 'string')
+				.forEach((err: string) => notificationStore.addErrorNotification(err))
 		}
 	}
 
 	const handleDelete = async () => {
-		if (isPosting || isDeleting || isUpdating || !userReleaseMedia) return
+		if (
+			!checkAuth() ||
+			createMutation.isPending ||
+			updateMutation.isPending ||
+			deleteMutation.isPending ||
+			!userReleaseMedia
+		)
+			return
 
-		const errors = await deleteReleaseMedia(userReleaseMedia.id)
-
-		if (errors.length === 0) {
+		try {
+			await deleteMutation.mutateAsync(userReleaseMedia.id)
 			notificationStore.addSuccessNotification(
 				'Вы успешно удалили медиарецензию!'
 			)
 			setUrl('')
 			setTitle('')
-		} else {
-			errors.forEach(err => notificationStore.addErrorNotification(err))
+		} catch (error: unknown) {
+			const axiosError = error as AxiosError<{ message: string | string[] }>
+			const errors = Array.isArray(axiosError.response?.data?.message)
+				? axiosError.response?.data?.message
+				: [axiosError.response?.data?.message]
+			errors
+				.filter((err): err is string => typeof err === 'string')
+				.forEach((err: string) => notificationStore.addErrorNotification(err))
 		}
 	}
 
@@ -141,8 +220,13 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
 						title={userReleaseMedia ? 'Обновить' : 'Отправить'}
 						isInvert={true}
 						onClick={handleSubmit}
-						disabled={!isValid || isPosting || !hasChanges}
-						isLoading={isPosting}
+						disabled={
+							!isValid ||
+							createMutation.isPending ||
+							updateMutation.isPending ||
+							!hasChanges
+						}
+						isLoading={createMutation.isPending || updateMutation.isPending}
 					/>
 				</div>
 
@@ -152,14 +236,14 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
 							title={'Удалить'}
 							isInvert={false}
 							onClick={handleDelete}
-							disabled={!userReleaseMedia || isDeleting}
-							isLoading={isDeleting}
+							disabled={!userReleaseMedia || deleteMutation.isPending}
+							isLoading={deleteMutation.isPending}
 						/>
 					</div>
 				)}
 			</div>
 		</div>
 	)
-})
+}
 
 export default ReleaseDetailsMediaReviewForm

@@ -23,4 +23,8 @@ export const releaseMediaKeys = {
 				releaseId: params.releaseId ?? null,
 			},
 		] as const,
+	byRelease: (releaseId: string, statusId: string | null) =>
+		['releaseMedia', 'byRelease', { releaseId, statusId }] as const,
+	userByRelease: (releaseId: string, userId: string) =>
+		['releaseMedia', 'userByRelease', { releaseId, userId }] as const,
 }

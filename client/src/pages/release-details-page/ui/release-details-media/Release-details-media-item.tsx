@@ -3,20 +3,45 @@ import { FC, useState } from 'react'
 import HourglassSvg from '../../../../components/svg/Hourglass-svg'
 import RejectSvg from '../../../../components/svg/Reject-svg'
 import { useAuth } from '../../../../hooks/use-auth'
+import { useQueryListFavToggleAll } from '../../../../hooks/use-query-list-fav-toggle'
 import { useStore } from '../../../../hooks/use-store'
 import { IReleaseMedia } from '../../../../models/release/release-media/release-media'
 import { ReleaseMediaStatusesEnum } from '../../../../models/release/release-media/release-media-status/release-media-statuses-enum'
 import { ReleaseMediaTypesEnum } from '../../../../models/release/release-media/release-media-type/release-media-types-enum'
+import { releaseMediaKeys } from '../../../../query-keys/release-media-keys'
 import { parseYoutubeId } from '../../../../utils/parse-youtube-id'
+import { toggleFavMedia } from '../../../../utils/toggle-fav-media'
 
 interface IProps {
 	releaseMedia: IReleaseMedia
 }
 
 const ReleaseDetailsMediaItem: FC<IProps> = observer(({ releaseMedia }) => {
-	const { authStore, notificationStore, releaseDetailsPageStore } = useStore()
+	const { authStore, notificationStore } = useStore()
 
 	const { checkAuth } = useAuth()
+
+	const { storeToggle } = useQueryListFavToggleAll(
+		releaseMediaKeys.all,
+		'releaseMedia',
+		toggleFavMedia
+	)
+
+	const handleToggleFav = async (mediaId: string, isFav: boolean) => {
+		const errors = await storeToggle(mediaId, isFav)
+
+		if (errors.length === 0) {
+			notificationStore.addSuccessNotification(
+				isFav
+					? 'Вы успешно убрали медиарецензию из списка понравившихся!'
+					: 'Вы успешно отметили медиарецензию как понравившеюся!'
+			)
+		} else {
+			errors.forEach((err: string) =>
+				notificationStore.addErrorNotification(err)
+			)
+		}
+	}
 
 	const isApproved =
 		releaseMedia.releaseMediaStatus.status === ReleaseMediaStatusesEnum.APPROVED
@@ -46,20 +71,8 @@ const ReleaseDetailsMediaItem: FC<IProps> = observer(({ releaseMedia }) => {
 			return
 		}
 
-		const errors = await releaseDetailsPageStore.toggleFavMedia(
-			releaseMedia.id,
-			isFav
-		)
+		await handleToggleFav(releaseMedia.id, isFav)
 
-		if (errors.length === 0) {
-			notificationStore.addSuccessNotification(
-				isFav
-					? 'Вы успешно убрали медиарецензию из списка понравившихся!'
-					: 'Вы успешно отметили медиарецензию как понравившеюся!'
-			)
-		} else {
-			errors.forEach(err => notificationStore.addErrorNotification(err))
-		}
 		setToggling(false)
 	}
 

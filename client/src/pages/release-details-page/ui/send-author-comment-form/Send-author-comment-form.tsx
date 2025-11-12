@@ -1,85 +1,142 @@
-import { observer } from 'mobx-react-lite'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { FC, useEffect, useMemo, useState } from 'react'
+import { AuthorCommentAPI } from '../../../../api/author/author-comment-api'
 import FormButton from '../../../../components/form-elements/Form-button'
 import ConfirmationModal from '../../../../components/modals/Confirmation-modal'
 import { useAuth } from '../../../../hooks/use-auth'
-import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
+import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys'
+import { leaderboardKeys } from '../../../../query-keys/leaderboard-keys'
+import { platformStatsKeys } from '../../../../query-keys/platform-stats-keys'
+import { profileKeys } from '../../../../query-keys/profile-keys'
+import { releasesKeys } from '../../../../query-keys/releases-keys'
 import ReleaseDetailsReviewFormText from '../release-details-estimation/forms/release-details-review-form/Release-details-review-form-text'
 
 interface IProps {
 	releaseId: string
 }
 
-const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
-	const { releaseDetailsPageStore, notificationStore, authStore } = useStore()
+const SendAuthorCommentForm: FC<IProps> = ({ releaseId }) => {
+	const { notificationStore, authStore } = useStore()
 	const { checkAuth } = useAuth()
-
-	const authorComment = releaseDetailsPageStore.authorComments.find(
-		c => c.userId === authStore.user?.id
-	)
+	const queryClient = useQueryClient()
 
 	const [title, setTitle] = useState<string>('')
 	const [text, setText] = useState<string>('')
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 
-	const { execute: postComment, isLoading: isPosting } = useLoading(
-		releaseDetailsPageStore.postAuthorComment
+	const { data: authorComments } = useQuery({
+		queryKey: authorCommentsKeys.byRelease(releaseId),
+		queryFn: () => AuthorCommentAPI.fetchByReleaseId(releaseId),
+		staleTime: 1000 * 60 * 5,
+	})
+
+	const authorComment = authorComments?.find(
+		c => c.userId === authStore.user?.id
 	)
-	const { execute: updateComment, isLoading: isUpdating } = useLoading(
-		releaseDetailsPageStore.updateAuthorComment
-	)
-	const { execute: deleteComment, isLoading: isDeleting } = useLoading(
-		releaseDetailsPageStore.deleteAuthorComment
-	)
+
+	const invalidateRelatedQueries = () => {
+		const keys = [
+			authorCommentsKeys.all,
+			authorCommentsKeys.byRelease(releaseId),
+			releasesKeys.all,
+			profileKeys.profile(authStore.user?.id || 'unknown'),
+			platformStatsKeys.all,
+			leaderboardKeys.all,
+		]
+		keys.forEach(key => queryClient.invalidateQueries({ queryKey: key }))
+	}
+
+	const createMutation = useMutation({
+		mutationFn: ({ title, text }: { title: string; text: string }) =>
+			AuthorCommentAPI.create(releaseId, title, text),
+		onSuccess: invalidateRelatedQueries,
+	})
+
+	const updateMutation = useMutation({
+		mutationFn: ({
+			id,
+			title,
+			text,
+		}: {
+			id: string
+			title?: string
+			text?: string
+		}) => AuthorCommentAPI.update(id, title, text),
+		onSuccess: invalidateRelatedQueries,
+	})
+
+	const deleteMutation = useMutation({
+		mutationFn: (id: string) => AuthorCommentAPI.delete(id),
+		onSuccess: invalidateRelatedQueries,
+	})
 
 	const handleSubmit = async () => {
 		if (
 			!checkAuth() ||
-			isPosting ||
+			createMutation.isPending ||
 			!isFormValid ||
 			!hasChanges ||
-			isUpdating ||
-			isDeleting
+			updateMutation.isPending ||
+			deleteMutation.isPending
 		)
 			return
 
-		let errors = []
-		if (authorComment) {
-			errors = await updateComment(
-				authorComment.id,
-				title.trim() !== authorComment.title ? title.trim() : undefined,
-				text.trim() !== authorComment.text ? text.trim() : undefined
-			)
-		} else {
-			errors = await postComment(releaseId, title.trim(), text.trim())
-		}
+		try {
+			if (authorComment) {
+				await updateMutation.mutateAsync({
+					id: authorComment.id,
+					title:
+						title.trim() !== authorComment.title ? title.trim() : undefined,
+					text: text.trim() !== authorComment.text ? text.trim() : undefined,
+				})
+			} else {
+				await createMutation.mutateAsync({
+					title: title.trim(),
+					text: text.trim(),
+				})
+			}
 
-		if (errors.length === 0) {
 			notificationStore.addSuccessNotification(
 				`Вы успешно ${
 					authorComment ? 'изменили' : 'добавили'
 				} авторский комментарий!`
 			)
-		} else {
-			errors.forEach(err => notificationStore.addErrorNotification(err))
+		} catch (error: unknown) {
+			const errors = Array.isArray((error as any).response?.data?.message)
+				? (error as any).response?.data?.message
+				: [(error as any).response?.data?.message]
+			errors.forEach((err: string) =>
+				notificationStore.addErrorNotification(err)
+			)
 		}
 	}
 
 	const handleDelete = async () => {
-		if (!checkAuth() || !authorComment || isDeleting || isPosting || isUpdating)
+		if (
+			!checkAuth() ||
+			!authorComment ||
+			deleteMutation.isPending ||
+			createMutation.isPending ||
+			updateMutation.isPending
+		)
 			return
 
-		const errors = await deleteComment(authorComment.id)
-
-		if (errors.length === 0) {
+		try {
+			await deleteMutation.mutateAsync(authorComment.id)
 			notificationStore.addSuccessNotification(
 				`Вы успешно удалили авторский комментарий!`
 			)
 			setTitle('')
 			setText('')
-		} else {
-			errors.forEach(err => notificationStore.addErrorNotification(err))
+		} catch (error: unknown) {
+			const errors = Array.isArray((error as any).response?.data?.message)
+				? (error as any).response?.data?.message
+				: [(error as any).response?.data?.message]
+			errors.forEach((err: string) =>
+				notificationStore.addErrorNotification(err)
+			)
 		}
 	}
 
@@ -111,7 +168,7 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 					isOpen={confModalOpen}
 					onConfirm={handleDelete}
 					onCancel={() => setConfModalOpen(false)}
-					isLoading={isDeleting}
+					isLoading={deleteMutation.isPending}
 				/>
 			)}
 			<div className='mt-10 mx-auto w-full'>
@@ -137,9 +194,16 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 									isInvert={false}
 									onClick={() => setConfModalOpen(true)}
 									disabled={
-										!authorComment || isPosting || isUpdating || isDeleting
+										!authorComment ||
+										createMutation.isPending ||
+										updateMutation.isPending ||
+										deleteMutation.isPending
 									}
-									isLoading={isPosting || isUpdating || isDeleting}
+									isLoading={
+										createMutation.isPending ||
+										updateMutation.isPending ||
+										deleteMutation.isPending
+									}
 								/>
 							</div>
 						)}
@@ -150,13 +214,17 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 								isInvert={true}
 								onClick={handleSubmit}
 								disabled={
-									isPosting ||
-									isUpdating ||
-									isDeleting ||
+									createMutation.isPending ||
+									updateMutation.isPending ||
+									deleteMutation.isPending ||
 									!isFormValid ||
 									!hasChanges
 								}
-								isLoading={isPosting || isUpdating || isDeleting}
+								isLoading={
+									createMutation.isPending ||
+									updateMutation.isPending ||
+									deleteMutation.isPending
+								}
 							/>
 						</div>
 					</div>
@@ -164,6 +232,6 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 			</div>
 		</>
 	)
-})
+}
 
 export default SendAuthorCommentForm

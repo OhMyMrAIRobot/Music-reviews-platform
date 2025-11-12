@@ -1,11 +1,12 @@
-import { observer } from 'mobx-react-lite'
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import ToggleFavButton from '../../../components/buttons/Toggle-fav-button'
 import LikesCount from '../../../components/utils/Likes-count'
 import { useAuth } from '../../../hooks/use-auth'
-import { useLoading } from '../../../hooks/use-loading'
+import { useQueryListFavToggleAll } from '../../../hooks/use-query-list-fav-toggle'
 import { useStore } from '../../../hooks/use-store'
 import { IReleaseDetails } from '../../../models/release/release-details/release-details'
+import { releaseDetailsKeys } from '../../../query-keys/release-details-keys'
+import { toggleFavRelease } from '../../../utils/toggle-fav-release'
 import ReleaseDetailsAuthors from './release-details-authors/Release-details-authors'
 import ReleaseDetailsNominations from './Release-details-nominations'
 import ReleaseDetailsRatings from './release-details-ratings/Release-details-ratings'
@@ -14,23 +15,27 @@ interface IProps {
 	release: IReleaseDetails
 }
 
-const ReleaseDetailsHeader: FC<IProps> = observer(({ release }) => {
+const ReleaseDetailsHeader: FC<IProps> = ({ release }) => {
 	const { checkAuth } = useAuth()
 
-	const { authStore, releaseDetailsPageStore, notificationStore } = useStore()
+	const { authStore, notificationStore } = useStore()
 
-	const { execute: toggle, isLoading: isToggling } = useLoading(
-		releaseDetailsPageStore.toggleFavRelease
-	)
+	const [toggling, setToggling] = useState(false)
+
+	const { storeToggle } = useQueryListFavToggleAll<
+		IReleaseDetails,
+		IReleaseDetails
+	>(releaseDetailsKeys.all, null, toggleFavRelease)
 
 	const isFav = release.userFavRelease?.some(
 		fav => fav.userId === authStore.user?.id
 	)
 
-	const toggleFavRelease = async () => {
+	const toggle = async () => {
 		if (!checkAuth()) return
+		setToggling(true)
 
-		const errors = await toggle(release.id, isFav)
+		const errors = await storeToggle(release.id, isFav)
 
 		if (errors.length === 0) {
 			notificationStore.addSuccessNotification(
@@ -39,8 +44,12 @@ const ReleaseDetailsHeader: FC<IProps> = observer(({ release }) => {
 					: 'Вы успешно добавили релиз в список понравившихся!'
 			)
 		} else {
-			errors.forEach(err => notificationStore.addErrorNotification(err))
+			errors.forEach((err: string) =>
+				notificationStore.addErrorNotification(err)
+			)
 		}
+
+		setToggling(false)
 	}
 
 	return (
@@ -93,14 +102,14 @@ const ReleaseDetailsHeader: FC<IProps> = observer(({ release }) => {
 				)}
 
 				<ToggleFavButton
-					onClick={toggleFavRelease}
+					onClick={toggle}
 					isLiked={isFav}
 					className='size-10 lg:size-12'
-					toggling={isToggling}
+					toggling={toggling}
 				/>
 			</div>
 		</div>
 	)
-})
+}
 
 export default ReleaseDetailsHeader

@@ -1,30 +1,64 @@
-import { FC } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { FC, useState } from 'react'
+import { ReviewAPI } from '../../../../api/review/review-api.ts'
 import Pagination from '../../../../components/pagination/Pagination.tsx'
-import { IReleaseReview } from '../../../../models/review/release-review/release-review.ts'
+import { ReleaseReviewSortFieldsEnum } from '../../../../models/review/release-review/release-review-sort-fields-enum.ts'
+import { ReleaseReviewSortField } from '../../../../models/review/release-review/release-review-sort-fields.ts'
+import { IReleaseReviewsResponse } from '../../../../models/review/release-review/release-reviews-response.ts'
+import { SortOrdersEnum } from '../../../../models/sort/sort-orders-enum.ts'
+import { releaseDetailsKeys } from '../../../../query-keys/release-details-keys.ts'
+import { SortOrder } from '../../../../types/sort-order-type.ts'
 import ReleaseDetailsReviewsHeader from './Release-details-reviews-header.tsx'
 import ReleaseDetailsReviewsItem from './Release-details-reviews-item.tsx'
 
 interface IProps {
-	reviews: IReleaseReview[] | null
-	selectedSort: string
-	setSelectedSort: (val: string) => void
-	currentPage: number
-	setCurrentPage: (val: number) => void
-	totalItems: number
-	perPage: number
-	isLoading: boolean
+	releaseId: string
 }
 
-const ReleaseDetailsReviews: FC<IProps> = ({
-	reviews,
-	selectedSort,
-	setSelectedSort,
-	currentPage,
-	setCurrentPage,
-	totalItems,
-	perPage,
-	isLoading,
-}) => {
+const perPage = 5
+
+const ReleaseDetailsReviews: FC<IProps> = ({ releaseId }) => {
+	const [currentPage, setCurrentPage] = useState<number>(1)
+	const [selectedSort, setSelectedSort] = useState<string>(
+		ReleaseReviewSortField.NEW
+	)
+
+	let field: ReleaseReviewSortFieldsEnum = ReleaseReviewSortFieldsEnum.CREATED
+	let order: SortOrder = SortOrdersEnum.DESC
+
+	if (selectedSort === ReleaseReviewSortField.OLD) {
+		order = SortOrdersEnum.ASC
+	} else if (selectedSort === ReleaseReviewSortField.POPULAR) {
+		field = ReleaseReviewSortFieldsEnum.LIKES
+	}
+
+	const queryKey = releaseDetailsKeys.reviews({
+		releaseId,
+		field,
+		order,
+		limit: perPage,
+		offset: (currentPage - 1) * perPage,
+	})
+
+	const queryFn = () =>
+		ReviewAPI.fetchReviewsByReleaseId(
+			releaseId,
+			field,
+			order,
+			perPage,
+			(currentPage - 1) * perPage
+		)
+
+	const { data: reviewsData, isPending: isLoading } =
+		useQuery<IReleaseReviewsResponse>({
+			queryKey,
+			queryFn,
+			staleTime: 1000 * 60 * 5,
+		})
+
+	const reviews = reviewsData?.reviews ?? []
+	const totalItems = reviewsData?.count ?? 0
+
 	return (
 		<section
 			id='release-reviews'

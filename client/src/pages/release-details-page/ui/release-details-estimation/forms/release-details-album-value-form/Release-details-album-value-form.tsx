@@ -1,11 +1,19 @@
-import { observer } from 'mobx-react-lite'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { AxiosError } from 'axios'
 import { FC, useEffect, useMemo, useState } from 'react'
+import { AlbumValueAPI } from '../../../../../../api/album-value-api'
 import AlbumValue from '../../../../../../components/album-value/Album-value'
 import TickSvg from '../../../../../../components/svg/Tick-svg'
 import Loader from '../../../../../../components/utils/Loader'
 import { useAuth } from '../../../../../../hooks/use-auth'
-import { useLoading } from '../../../../../../hooks/use-loading'
 import { useStore } from '../../../../../../hooks/use-store'
+import { IReleaseDetails } from '../../../../../../models/release/release-details/release-details'
+import { ReleaseTypesEnum } from '../../../../../../models/release/release-type/release-types-enum'
+import { albumValuesKeys } from '../../../../../../query-keys/album-values-keys'
+import { leaderboardKeys } from '../../../../../../query-keys/leaderboard-keys'
+import { profileKeys } from '../../../../../../query-keys/profile-keys'
+import { releaseDetailsKeys } from '../../../../../../query-keys/release-details-keys'
+import authStore from '../../../../../../stores/auth-store'
 import { getAlbumValueInfluenceMultiplier } from '../../../../../../utils/get-album-value-influence-multiplier'
 import ReleaseDetailsEstimationDeleteButton from '../../buttons/Release-details-estimation-delete-button'
 import ReleaseDetailsAlbumValueFormDepth from './Release-details-album-value-form-depth'
@@ -15,17 +23,124 @@ import ReleaseDetailsAlbumValueFormQuality from './Release-details-album-value-f
 import ReleaseDetailsAlbumValueFormRarity from './Release-details-album-value-form-rarity'
 
 interface IProps {
-	releaseId: string
+	release: IReleaseDetails
 }
 
 function round2(value: number): number {
 	return Math.round((value + Number.EPSILON) * 100) / 100
 }
 
-const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ releaseId }) => {
-	const { releaseDetailsPageStore, notificationStore } = useStore()
+const ReleaseDetailsAlbumValueForm: FC<IProps> = ({ release }) => {
+	const { notificationStore } = useStore()
 
 	const { checkAuth } = useAuth()
+	const queryClient = useQueryClient()
+
+	const invalidateRelatedQueries = () => {
+		const keys = [
+			releaseDetailsKeys.userAlbumValueVote(release.id),
+			albumValuesKeys.all,
+			albumValuesKeys.byRelease(release.id),
+			profileKeys.profile(authStore.user?.id || 'unknown'),
+			leaderboardKeys.all,
+		]
+		keys.forEach(key => queryClient.invalidateQueries({ queryKey: key }))
+	}
+
+	const createMutation = useMutation({
+		mutationFn: (data: {
+			rarityGenre: number
+			rarityPerformance: number
+			formatReleaseScore: number
+			integrityGenre: number
+			integritySemantic: number
+			depthScore: number
+			qualityRhymesImages: number
+			qualityStructureRhythm: number
+			qualityStyleImpl: number
+			qualityIndividuality: number
+			influenceAuthorPopularity: number
+			influenceReleaseAnticip: number
+		}) =>
+			AlbumValueAPI.postAlbumValue(
+				release.id,
+				data.rarityGenre,
+				data.rarityPerformance,
+				data.formatReleaseScore,
+				data.integrityGenre,
+				data.integritySemantic,
+				data.depthScore,
+				data.qualityRhymesImages,
+				data.qualityStructureRhythm,
+				data.qualityStyleImpl,
+				data.qualityIndividuality,
+				data.influenceAuthorPopularity,
+				data.influenceReleaseAnticip
+			),
+		onSuccess: data => {
+			invalidateRelatedQueries()
+			queryClient.setQueryData(
+				releaseDetailsKeys.userAlbumValueVote(release.id),
+				data
+			)
+		},
+	})
+
+	const updateMutation = useMutation({
+		mutationFn: ({
+			id,
+			data,
+		}: {
+			id: string
+			data: Partial<{
+				rarityGenre: number
+				rarityPerformance: number
+				formatReleaseScore: number
+				integrityGenre: number
+				integritySemantic: number
+				depthScore: number
+				qualityRhymesImages: number
+				qualityStructureRhythm: number
+				qualityStyleImpl: number
+				qualityIndividuality: number
+				influenceAuthorPopularity: number
+				influenceReleaseAnticip: number
+			}>
+		}) =>
+			AlbumValueAPI.updateAlbumValue(
+				id,
+				data.rarityGenre,
+				data.rarityPerformance,
+				data.formatReleaseScore,
+				data.integrityGenre,
+				data.integritySemantic,
+				data.depthScore,
+				data.qualityRhymesImages,
+				data.qualityStructureRhythm,
+				data.qualityStyleImpl,
+				data.qualityIndividuality,
+				data.influenceAuthorPopularity,
+				data.influenceReleaseAnticip
+			),
+		onSuccess: data => {
+			invalidateRelatedQueries()
+			queryClient.setQueryData(
+				releaseDetailsKeys.userAlbumValueVote(release.id),
+				data
+			)
+		},
+	})
+
+	const deleteMutation = useMutation({
+		mutationFn: (id: string) => AlbumValueAPI.deleteAlbumValueVote(id),
+		onSuccess: () => {
+			invalidateRelatedQueries()
+			queryClient.setQueryData(
+				releaseDetailsKeys.userAlbumValueVote(release.id),
+				undefined
+			)
+		},
+	})
 
 	const [rarityGenre, setRarityGenre] = useState<number>(0.5)
 	const [rarityPerformance, setRarityPerformance] = useState<number>(0.5)
@@ -40,7 +155,15 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ releaseId }) => {
 	const [authorPopularity, setAuthorPopularity] = useState<number>(0.5)
 	const [releaseAnticip, setReleaseAnticip] = useState(0.5)
 
-	const userVote = releaseDetailsPageStore.userAlbumValueVote
+	const { data: userAlbumValueVote } = useQuery({
+		queryKey: releaseDetailsKeys.userAlbumValueVote(release.id),
+		queryFn: () => AlbumValueAPI.fetchUserAlbumValueVote(release.id),
+		enabled: authStore.isAuth && release.releaseType === ReleaseTypesEnum.ALBUM,
+		staleTime: 1000 * 60 * 5,
+		retry: false,
+	})
+
+	const userVote = userAlbumValueVote
 
 	useEffect(() => {
 		setRarityGenre(userVote?.rarityGenre ?? 0.5)
@@ -57,99 +180,140 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ releaseId }) => {
 		setReleaseAnticip(userVote?.influenceReleaseAnticip ?? 0.5)
 	}, [userVote])
 
-	const { execute: post, isLoading: isPosting } = useLoading(
-		releaseDetailsPageStore.postAlbumValueVote
-	)
-
-	const { execute: update, isLoading: isUpdating } = useLoading(
-		releaseDetailsPageStore.updateAlbumValueVote
-	)
-
-	const { execute: _delete, isLoading: isDeleting } = useLoading(
-		releaseDetailsPageStore.deleteAlbumValueVote
-	)
-
 	const handlePost = async () => {
-		if (!checkAuth() || isUpdating || isPosting) return
-
-		const errors = await post(
-			releaseId,
-			rarityGenre,
-			rarityPerformance,
-			formatRelease,
-			integrityGenre,
-			integritySemantic,
-			depth,
-			rhymes,
-			structure,
-			styleImplementation,
-			individuality,
-			authorPopularity,
-			releaseAnticip
+		if (
+			!checkAuth() ||
+			createMutation.isPending ||
+			updateMutation.isPending ||
+			deleteMutation.isPending
 		)
+			return
 
-		if (errors.length === 0) {
+		try {
+			await createMutation.mutateAsync({
+				rarityGenre,
+				rarityPerformance,
+				formatReleaseScore: formatRelease,
+				integrityGenre,
+				integritySemantic,
+				depthScore: depth,
+				qualityRhymesImages: rhymes,
+				qualityStructureRhythm: structure,
+				qualityStyleImpl: styleImplementation,
+				qualityIndividuality: individuality,
+				influenceAuthorPopularity: authorPopularity,
+				influenceReleaseAnticip: releaseAnticip,
+			})
+
 			notificationStore.addSuccessNotification(
 				'Вы успешно оставили голос за ценность альбома!'
 			)
-		} else {
-			errors.forEach(err => notificationStore.addErrorNotification(err))
+		} catch (error: unknown) {
+			const axiosError = error as AxiosError<{ message: string | string[] }>
+			const errors = Array.isArray(axiosError.response?.data?.message)
+				? axiosError.response?.data?.message
+				: [axiosError.response?.data?.message]
+			errors
+				.filter((err): err is string => typeof err === 'string')
+				.forEach((err: string) => notificationStore.addErrorNotification(err))
 		}
 	}
 
 	const handleUpdate = async () => {
-		if (!checkAuth() || isUpdating || isPosting || !userVote) return
-
-		const errors = await update(
-			releaseId,
-			userVote.id,
-			rarityGenre !== userVote.rarityGenre ? rarityGenre : undefined,
-			rarityPerformance !== userVote.rarityPerformance
-				? rarityPerformance
-				: undefined,
-			formatRelease !== userVote.formatReleaseScore ? formatRelease : undefined,
-			integrityGenre !== userVote.integrityGenre ? integrityGenre : undefined,
-			integritySemantic !== userVote.integritySemantic
-				? integritySemantic
-				: undefined,
-			depth !== userVote.depthScore ? depth : undefined,
-			rhymes !== userVote.qualityRhymesImages ? rhymes : undefined,
-			structure !== userVote.qualityStructureRhythm ? structure : undefined,
-			styleImplementation !== userVote.qualityStyleImpl
-				? styleImplementation
-				: undefined,
-			individuality !== userVote.qualityIndividuality
-				? individuality
-				: undefined,
-			authorPopularity !== userVote.influenceAuthorPopularity
-				? authorPopularity
-				: undefined,
-			releaseAnticip !== userVote.influenceReleaseAnticip
-				? releaseAnticip
-				: undefined
+		if (
+			!checkAuth() ||
+			createMutation.isPending ||
+			updateMutation.isPending ||
+			deleteMutation.isPending ||
+			!userVote
 		)
+			return
 
-		if (errors.length === 0) {
+		try {
+			await updateMutation.mutateAsync({
+				id: userVote.id,
+				data: {
+					rarityGenre:
+						rarityGenre !== userVote.rarityGenre ? rarityGenre : undefined,
+					rarityPerformance:
+						rarityPerformance !== userVote.rarityPerformance
+							? rarityPerformance
+							: undefined,
+					formatReleaseScore:
+						formatRelease !== userVote.formatReleaseScore
+							? formatRelease
+							: undefined,
+					integrityGenre:
+						integrityGenre !== userVote.integrityGenre
+							? integrityGenre
+							: undefined,
+					integritySemantic:
+						integritySemantic !== userVote.integritySemantic
+							? integritySemantic
+							: undefined,
+					depthScore: depth !== userVote.depthScore ? depth : undefined,
+					qualityRhymesImages:
+						rhymes !== userVote.qualityRhymesImages ? rhymes : undefined,
+					qualityStructureRhythm:
+						structure !== userVote.qualityStructureRhythm
+							? structure
+							: undefined,
+					qualityStyleImpl:
+						styleImplementation !== userVote.qualityStyleImpl
+							? styleImplementation
+							: undefined,
+					qualityIndividuality:
+						individuality !== userVote.qualityIndividuality
+							? individuality
+							: undefined,
+					influenceAuthorPopularity:
+						authorPopularity !== userVote.influenceAuthorPopularity
+							? authorPopularity
+							: undefined,
+					influenceReleaseAnticip:
+						releaseAnticip !== userVote.influenceReleaseAnticip
+							? releaseAnticip
+							: undefined,
+				},
+			})
+
 			notificationStore.addSuccessNotification(
 				'Вы успешно изменили голос за ценность альбома!'
 			)
-		} else {
-			errors.forEach(err => notificationStore.addErrorNotification(err))
+		} catch (error: unknown) {
+			const axiosError = error as AxiosError<{ message: string | string[] }>
+			const errors = Array.isArray(axiosError.response?.data?.message)
+				? axiosError.response?.data?.message
+				: [axiosError.response?.data?.message]
+			errors
+				.filter((err): err is string => typeof err === 'string')
+				.forEach((err: string) => notificationStore.addErrorNotification(err))
 		}
 	}
 
 	const handleDelete = async () => {
-		if (!checkAuth() || isUpdating || isPosting || isDeleting || !userVote)
+		if (
+			!checkAuth() ||
+			createMutation.isPending ||
+			updateMutation.isPending ||
+			deleteMutation.isPending ||
+			!userVote
+		)
 			return
 
-		const errors = await _delete(userVote.id, releaseId)
-
-		if (errors.length === 0) {
+		try {
+			await deleteMutation.mutateAsync(userVote.id)
 			notificationStore.addSuccessNotification(
 				'Вы успешно удалили голос за ценность альбома!'
 			)
-		} else {
-			errors.forEach(err => notificationStore.addErrorNotification(err))
+		} catch (error: unknown) {
+			const axiosError = error as AxiosError<{ message: string | string[] }>
+			const errors = Array.isArray(axiosError.response?.data?.message)
+				? axiosError.response?.data?.message
+				: [axiosError.response?.data?.message]
+			errors
+				.filter((err): err is string => typeof err === 'string')
+				.forEach((err: string) => notificationStore.addErrorNotification(err))
 		}
 	}
 
@@ -288,22 +452,30 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ releaseId }) => {
 					<div className='w-full sm:w-45'>
 						<ReleaseDetailsEstimationDeleteButton
 							title={'Удалить'}
-							disabled={isDeleting || isUpdating}
-							isLoading={isDeleting}
+							disabled={
+								!userVote ||
+								createMutation.isPending ||
+								updateMutation.isPending ||
+								deleteMutation.isPending
+							}
+							isLoading={deleteMutation.isPending}
 							onClick={handleDelete}
 						/>
 					</div>
 
 					<button
-						disabled={isPosting || isUpdating || !hasChanges}
+						disabled={deleteMutation.isPending || !hasChanges}
 						onClick={() => (userVote ? handleUpdate() : handlePost())}
 						className={`inline-flex items-center justify-center whitespace-nowrap text-sm font-medium rounded-full size-16 text-black transition-colors duration-200 ${
-							isPosting || !hasChanges || isUpdating
+							deleteMutation.isPending ||
+							updateMutation.isPending ||
+							createMutation.isPending ||
+							!hasChanges
 								? 'bg-white/60 pointer-events-none'
 								: 'cursor-pointer hover:bg-white/70 bg-white'
 						}`}
 					>
-						{isPosting || isUpdating ? (
+						{updateMutation.isPending || createMutation.isPending ? (
 							<Loader className={'size-8'} />
 						) : (
 							<TickSvg className='size-8' />
@@ -313,6 +485,6 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ releaseId }) => {
 			</div>
 		</div>
 	)
-})
+}
 
 export default ReleaseDetailsAlbumValueForm

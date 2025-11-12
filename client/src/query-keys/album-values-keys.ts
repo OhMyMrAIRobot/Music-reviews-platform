@@ -3,6 +3,8 @@ import type { SortOrder } from '../types/sort-order-type'
 
 export const albumValuesKeys = {
 	all: ['albumValues'] as const,
+	byRelease: (releaseId: string) =>
+		['albumValues', 'byRelease', { releaseId }] as const,
 	list: (params: {
 		limit: number
 		offset: number
