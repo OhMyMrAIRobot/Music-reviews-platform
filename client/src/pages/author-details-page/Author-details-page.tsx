@@ -1,8 +1,8 @@
-import { observer } from 'mobx-react-lite'
-import { useEffect } from 'react'
-import { useParams } from 'react-router'
-import { useLoading } from '../../hooks/use-loading'
-import { useStore } from '../../hooks/use-store'
+import { useQuery } from '@tanstack/react-query'
+import { useNavigate, useParams } from 'react-router'
+import { AuthorAPI } from '../../api/author/author-api'
+import useNavigationPath from '../../hooks/use-navigation-path'
+import { authorsKeys } from '../../query-keys/authors-keys'
 import AuthorDetailsHeader from './ui/Author-details-header'
 import AuthorDetailsReleases from './ui/Author-details-releases'
 import AuthorDetailsReleasesCarousel from './ui/Author-details-releases-carousel'
@@ -10,35 +10,31 @@ import AuthorDetailsReviewsCarousel from './ui/Author-details-reviews-carousel'
 import AuthorDetailsStats from './ui/Author-details-stats'
 import AuthorDetailsNominations from './ui/author-details-nominations/Author-details-nominations'
 
-const AuthorDetailsPage = observer(() => {
+const AuthorDetailsPage = () => {
 	const { id } = useParams()
+	const navigate = useNavigate()
+	const { navigateToMain } = useNavigationPath()
 
-	const { authorDetailsPageStore } = useStore()
+	const queryKey = id ? authorsKeys.details(id) : ['authors', { id: 'unknown' }]
+	const queryFn = id
+		? () => AuthorAPI.fetchAuthorById(id)
+		: () => Promise.resolve(null)
+	const { data: author, isPending } = useQuery({
+		queryKey,
+		queryFn,
+		enabled: !!id,
+		staleTime: 1000 * 60 * 5,
+	})
 
-	const { execute: fetchAuthor, isLoading } = useLoading(
-		authorDetailsPageStore.fetchAuthorById
-	)
-
-	useEffect(() => {
-		if (id) {
-			window.scrollTo(0, 0)
-			fetchAuthor(id)
-		}
-	}, [fetchAuthor, id])
-
-	if (!id) return null
+	if (!id || (!author && !isPending)) {
+		return navigate(navigateToMain)
+	}
 
 	return (
-		authorDetailsPageStore.author && (
+		author && (
 			<div className='flex flex-col gap-5 lg:gap-10'>
-				<AuthorDetailsHeader
-					author={authorDetailsPageStore.author}
-					isLoading={isLoading}
-				/>
-				<AuthorDetailsStats
-					author={authorDetailsPageStore.author}
-					isLoading={isLoading}
-				/>
+				<AuthorDetailsHeader author={author} isLoading={isPending} />
+				<AuthorDetailsStats author={author} isLoading={isPending} />
 				<AuthorDetailsReleasesCarousel id={id} />
 				<AuthorDetailsReviewsCarousel id={id} />
 				<AuthorDetailsNominations id={id} />
@@ -46,6 +42,6 @@ const AuthorDetailsPage = observer(() => {
 			</div>
 		)
 	)
-})
+}
 
 export default AuthorDetailsPage

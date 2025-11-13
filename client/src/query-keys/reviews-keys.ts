@@ -1,5 +1,7 @@
 export const reviewsKeys = {
 	all: ['reviews'] as const,
+	byAuthor: (authorId: string, limit: number, offset: number) =>
+		['reviews', 'byAuthor', authorId, limit, offset] as const,
 	list: (params: {
 		order: string
 		limit: number

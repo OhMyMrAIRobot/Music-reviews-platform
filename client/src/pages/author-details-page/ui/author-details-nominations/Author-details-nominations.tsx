@@ -1,8 +1,8 @@
-import { observer } from 'mobx-react-lite'
-import { FC, useEffect, useRef, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { FC, useRef, useState } from 'react'
+import { NominationAPI } from '../../../../api/nomination-api'
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
-import { useLoading } from '../../../../hooks/use-loading'
-import { useStore } from '../../../../hooks/use-store'
+import { nominationsKeys } from '../../../../query-keys/nominations-keys'
 import { CarouselRef } from '../../../../types/carousel-ref'
 import AuthorDetailsNominationsCarousel from './Author-details-nominations-carousel'
 
@@ -10,25 +10,22 @@ interface IProps {
 	id: string
 }
 
-const AuthorDetailsNominations: FC<IProps> = observer(({ id }) => {
-	const { authorDetailsPageStore } = useStore()
-
+const AuthorDetailsNominations: FC<IProps> = ({ id }) => {
 	const carouselRef = useRef<CarouselRef>(null)
 
 	const [canScrollPrev, setCanScrollPrev] = useState(false)
 	const [canScrollNext, setCanScrollNext] = useState(false)
 
-	const { execute: fetch, isLoading } = useLoading(
-		authorDetailsPageStore.fetchNominations
-	)
+	const { data, isPending } = useQuery({
+		queryKey: nominationsKeys.byAuthor(id),
+		queryFn: () => NominationAPI.fetchWinnersByAuthorId(id),
+		staleTime: 1000 * 60 * 5,
+	})
 
-	useEffect(() => {
-		fetch(id)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [id])
+	const items = data?.nominations ?? []
 
 	return (
-		(isLoading || authorDetailsPageStore.nominations.length > 0) && (
+		(isPending || items.length > 0) && (
 			<CarouselContainer
 				title={'Победитель номинаций'}
 				buttonTitle={'#'}
@@ -41,15 +38,15 @@ const AuthorDetailsNominations: FC<IProps> = observer(({ id }) => {
 				carousel={
 					<AuthorDetailsNominationsCarousel
 						ref={carouselRef}
-						isLoading={isLoading}
+						isLoading={isPending}
 						onCanScrollPrevChange={setCanScrollPrev}
 						onCanScrollNextChange={setCanScrollNext}
-						items={authorDetailsPageStore.nominations}
+						items={items}
 					/>
 				}
 			/>
 		)
 	)
-})
+}
 
 export default AuthorDetailsNominations

@@ -1,5 +1,6 @@
 export const authorsKeys = {
 	all: ['authors'] as const,
+	details: (id: string) => ['authors', { id }] as const,
 	list: (params: {
 		typeId: string | null
 		limit: number

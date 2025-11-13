@@ -1,5 +1,4 @@
-import { observer } from 'mobx-react-lite'
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import AuthorNominations from '../../../components/author/author-nomination/Author-nominations'
 import AuthorTypes from '../../../components/author/author-types/Author-types'
 import RegisteredAuthorTypes from '../../../components/author/registered-author/Registered-author-types'
@@ -7,34 +6,40 @@ import ToggleFavButton from '../../../components/buttons/Toggle-fav-button'
 import LikesCount from '../../../components/utils/Likes-count'
 import SkeletonLoader from '../../../components/utils/Skeleton-loader'
 import { useAuth } from '../../../hooks/use-auth'
-import { useLoading } from '../../../hooks/use-loading'
+import { useQueryListFavToggleAll } from '../../../hooks/use-query-list-fav-toggle'
 import { useStore } from '../../../hooks/use-store'
 import { IAuthor } from '../../../models/author/author'
+import { authorsKeys } from '../../../query-keys/authors-keys'
+import { toggleFavAuthor } from '../../../utils/toggle-fav-author'
 
 interface IProps {
 	author?: IAuthor
 	isLoading: boolean
 }
 
-const AuthorDetailsHeader: FC<IProps> = observer(({ author, isLoading }) => {
+const AuthorDetailsHeader: FC<IProps> = ({ author, isLoading }) => {
 	const { checkAuth } = useAuth()
 
-	const { authorDetailsPageStore, authStore, notificationStore } = useStore()
+	const { authStore, notificationStore } = useStore()
 
-	const { execute: toggle, isLoading: isToggling } = useLoading(
-		authorDetailsPageStore.toggleFavAuthor
+	const [toggling, setToggling] = useState(false)
+	const { storeToggle } = useQueryListFavToggleAll<IAuthor, IAuthor>(
+		authorsKeys.all,
+		null,
+		toggleFavAuthor
 	)
 
 	const isFav =
 		author?.userFavAuthor?.some(val => val.userId === authStore.user?.id) ??
 		false
 
-	const toggleFavAuthor = async () => {
+	const toggle = async () => {
 		if (!checkAuth() || !author) {
 			return
 		}
+		setToggling(true)
 
-		const errors = await toggle(author.id, isFav)
+		const errors = await storeToggle(author.id, isFav)
 
 		if (errors.length === 0) {
 			notificationStore.addSuccessNotification(
@@ -43,8 +48,11 @@ const AuthorDetailsHeader: FC<IProps> = observer(({ author, isLoading }) => {
 					: 'Вы добавили автора в список понравившихся!'
 			)
 		} else {
-			errors.forEach(err => notificationStore.addErrorNotification(err))
+			errors.forEach((err: string) =>
+				notificationStore.addErrorNotification(err)
+			)
 		}
+		setToggling(false)
 	}
 
 	return isLoading ? (
@@ -85,10 +93,10 @@ const AuthorDetailsHeader: FC<IProps> = observer(({ author, isLoading }) => {
 						)}
 
 						<ToggleFavButton
-							onClick={toggleFavAuthor}
+							onClick={toggle}
 							isLiked={isFav}
 							className='absolute top-3 right-3 z-300 size-10 lg:size-12'
-							toggling={isToggling}
+							toggling={toggling}
 						/>
 
 						<div className='flex absolute bottom-5 lg:bottom-10 gap-3 z-300 w-full px-4 lg:px-10'>
@@ -128,6 +136,6 @@ const AuthorDetailsHeader: FC<IProps> = observer(({ author, isLoading }) => {
 			</section>
 		)
 	)
-})
+}
 
 export default AuthorDetailsHeader

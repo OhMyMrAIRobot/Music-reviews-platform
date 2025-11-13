@@ -1,31 +1,27 @@
-import { observer } from 'mobx-react-lite'
-import { FC, useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { FC } from 'react'
+import { ReleaseAPI } from '../../../api/release/release-api'
 import ReleasesColumn from '../../../components/release/releases-column/Releases-column'
-import { useLoading } from '../../../hooks/use-loading'
-import { useStore } from '../../../hooks/use-store'
 import { ReleaseTypesEnum } from '../../../models/release/release-type/release-types-enum'
+import { releasesKeys } from '../../../query-keys/releases-keys'
 
 interface IProps {
 	id: string
 }
 
-const AuthorDetailsReleases: FC<IProps> = observer(({ id }) => {
-	const { authorDetailsPageStore } = useStore()
+const AuthorDetailsReleases: FC<IProps> = ({ id }) => {
+	const { data, isPending } = useQuery({
+		queryKey: releasesKeys.byAuthor(id, true),
+		queryFn: () => ReleaseAPI.fetchByAuthorId(id, true),
+		staleTime: 1000 * 60 * 5,
+	})
+	const releases = data || []
 
-	const { execute: fetch, isLoading } = useLoading(
-		authorDetailsPageStore.fetchAllReleases
-	)
-
-	useEffect(() => {
-		fetch(id)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [id])
-
-	const tracks = authorDetailsPageStore.allReleases.filter(
+	const tracks = releases.filter(
 		val => val.releaseType === ReleaseTypesEnum.SINGLE
 	)
 
-	const albums = authorDetailsPageStore.allReleases.filter(
+	const albums = releases.filter(
 		val => val.releaseType === ReleaseTypesEnum.ALBUM
 	)
 
@@ -36,17 +32,17 @@ const AuthorDetailsReleases: FC<IProps> = observer(({ id }) => {
 				<ReleasesColumn
 					title={'Треки'}
 					releases={tracks}
-					isLoading={isLoading}
+					isLoading={isPending}
 				/>
 
 				<ReleasesColumn
 					title={'Альбомы'}
 					releases={albums}
-					isLoading={isLoading}
+					isLoading={isPending}
 				/>
 			</div>
 		</section>
 	)
-})
+}
 
 export default AuthorDetailsReleases
