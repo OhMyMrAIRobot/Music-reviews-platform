@@ -1,15 +1,18 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { AxiosError } from 'axios'
 import { FC, useState } from 'react'
 import { Link } from 'react-router'
+import { ReleaseAPI } from '../../../../../api/release/release-api.ts'
 import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg.tsx'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal.tsx'
 import ReleaseTypeIcon from '../../../../../components/release/Release-type-icon.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
-import { useLoading } from '../../../../../hooks/use-loading.ts'
 import useNavigationPath from '../../../../../hooks/use-navigation-path.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
 import { AuthorTypesEnum } from '../../../../../models/author/author-type/author-types-enum.ts'
 import { IAdminRelease } from '../../../../../models/release/admin-release/admin-release.ts'
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum.ts'
+import { releasesKeys } from '../../../../../query-keys/releases-keys.ts'
 import { SortOrder } from '../../../../../types/sort-order-type.ts'
 import { getAuthorTypeColor } from '../../../../../utils/get-author-type-color.ts'
 import { getReleaseTypeColor } from '../../../../../utils/get-release-type-color.ts'
@@ -24,7 +27,6 @@ interface IProps {
 	position?: number
 	order?: SortOrder
 	toggleOrder?: () => void
-	refetchReleases?: () => void
 }
 
 const AdminDashboardReleasesGridItem: FC<IProps> = ({
@@ -34,32 +36,36 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 	isLoading,
 	position,
 	toggleOrder,
-	refetchReleases,
 }) => {
-	const { adminDashboardReleasesStore, notificationStore } = useStore()
-
-	const { navigateToReleaseDetails } = useNavigationPath()
-
-	const { execute: deleteRelease, isLoading: isDeleting } = useLoading(
-		adminDashboardReleasesStore.deleteRelease
-	)
-
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
 
-	const handleDelete = async (id: string) => {
-		if (isDeleting) return
+	const { notificationStore } = useStore()
+	const queryClient = useQueryClient()
 
-		const errors = await deleteRelease(id)
+	const { navigateToReleaseDetails } = useNavigationPath()
 
-		if (errors.length === 0) {
+	const deleteMutation = useMutation({
+		mutationFn: (id: string) => ReleaseAPI.deleteRelease(id),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: releasesKeys.all })
 			notificationStore.addSuccessNotification('Вы успешно удалили релиз!')
-			refetchReleases?.()
-		} else {
-			errors.forEach(err => {
-				notificationStore.addErrorNotification(err)
-			})
-		}
+			setConfModalOpen(false)
+		},
+		onError: (error: unknown) => {
+			const axiosError = error as AxiosError<{ message: string | string[] }>
+			const errors = Array.isArray(axiosError.response?.data?.message)
+				? axiosError.response?.data?.message
+				: [axiosError.response?.data?.message]
+			errors
+				.filter((err): err is string => typeof err === 'string')
+				.forEach((err: string) => notificationStore.addErrorNotification(err))
+		},
+	})
+
+	const handleDelete = async () => {
+		if (deleteMutation.isPending || !release) return
+		await deleteMutation.mutateAsync(release.id)
 	}
 
 	return isLoading ? (
@@ -72,9 +78,9 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 						<ConfirmationModal
 							title={'Вы действительно хотите удалить релиз?'}
 							isOpen={confModalOpen}
-							onConfirm={() => handleDelete(release.id)}
+							onConfirm={() => handleDelete()}
 							onCancel={() => setConfModalOpen(false)}
-							isLoading={isDeleting}
+							isLoading={deleteMutation.isPending}
 						/>
 					)}
 
@@ -83,7 +89,6 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 							isOpen={editModalOpen}
 							onClose={() => setEditModalOpen(false)}
 							release={release}
-							refetchReleases={() => {}}
 						/>
 					)}
 				</>

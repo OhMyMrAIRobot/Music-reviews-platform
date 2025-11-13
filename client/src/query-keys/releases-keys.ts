@@ -3,6 +3,24 @@ import type { SortOrder } from '../types/sort-order-type'
 
 export const releasesKeys = {
 	all: ['releases'] as const,
+	adminList: (params: {
+		typeId: string | null
+		query: string | null
+		order: SortOrder | null
+		limit: number | null
+		offset: number | null
+	}) =>
+		[
+			'releases',
+			'admin',
+			{
+				typeId: params.typeId ?? null,
+				query: params.query ?? null,
+				order: params.order ?? null,
+				limit: params.limit ?? null,
+				offset: params.offset ?? null,
+			},
+		] as const,
 	byAuthor: (authorId: string, all: boolean) =>
 		['releases', 'byAuthor', authorId, all] as const,
 	mostReviewed: () => ['releases', 'mostReviewed'] as const,
