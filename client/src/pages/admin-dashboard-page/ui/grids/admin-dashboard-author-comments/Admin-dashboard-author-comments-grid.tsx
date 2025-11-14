@@ -1,45 +1,47 @@
-import { observer } from 'mobx-react-lite'
+import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
+import { AuthorCommentAPI } from '../../../../../api/author/author-comment-api'
 import AdminHeader from '../../../../../components/layout/admin-header/Admin-header'
 import Pagination from '../../../../../components/pagination/Pagination'
-import { useLoading } from '../../../../../hooks/use-loading'
-import { useStore } from '../../../../../hooks/use-store'
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
+import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys'
 import { SortOrder } from '../../../../../types/sort-order-type'
 import AdminToggleSortOrderButton from '../../buttons/Admin-toggle-sort-order-button'
 import AdminDashboardAuthorCommentsGridItem from './Admin-dashboard-author-comments-grid-item'
 
-const AdminDashboardAuthorCommentsGrid = observer(() => {
-	const perPage = 10
+const perPage = 10
 
-	const { adminDashboardAuthorCommentsStore } = useStore()
-
+const AdminDashboardAuthorCommentsGrid = () => {
 	const [searchText, setSearchText] = useState<string>('')
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC)
 
-	const { execute: fetch, isLoading } = useLoading(
-		adminDashboardAuthorCommentsStore.fetchComments
-	)
+	const queryKey = authorCommentsKeys.list({
+		limit: perPage,
+		offset: (currentPage - 1) * perPage,
+		order,
+		query: searchText.trim() || null,
+	})
 
-	const fetchComments = async () => {
-		return fetch(
+	const queryFn = () =>
+		AuthorCommentAPI.fetchAll(
 			perPage,
 			(currentPage - 1) * perPage,
 			order,
-			searchText.trim().length > 0 ? searchText.trim() : null
+			searchText.trim() || null
 		)
-	}
 
-	useEffect(() => {
-		fetchComments()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentPage, order])
+	const { data: commentsData, isLoading } = useQuery({
+		queryKey,
+		queryFn,
+		staleTime: 1000 * 60 * 5,
+	})
+
+	const comments = commentsData?.comments || []
+	const count = commentsData?.count || 0
 
 	useEffect(() => {
 		setCurrentPage(1)
-		fetchComments()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [searchText])
 
 	return (
@@ -80,44 +82,41 @@ const AdminDashboardAuthorCommentsGrid = observer(() => {
 						{isLoading
 							? Array.from({ length: perPage }).map((_, idx) => (
 									<AdminDashboardAuthorCommentsGridItem
-										key={`Review-skeleton-${idx}`}
+										key={`Comment-skeleton-${idx}`}
 										isLoading={true}
 									/>
 							  ))
-							: adminDashboardAuthorCommentsStore.comments.map(
-									(comment, idx) => (
-										<AdminDashboardAuthorCommentsGridItem
-											key={comment.id}
-											comment={comment}
-											isLoading={isLoading}
-											position={(currentPage - 1) * perPage + idx + 1}
-											refetch={fetchComments}
-										/>
-									)
-							  )}
+							: comments.map((comment, idx) => (
+									<AdminDashboardAuthorCommentsGridItem
+										key={comment.id}
+										comment={comment}
+										isLoading={isLoading}
+										position={(currentPage - 1) * perPage + idx + 1}
+									/>
+							  ))}
 					</div>
 				</div>
 
-				{!isLoading && adminDashboardAuthorCommentsStore.count === 0 && (
+				{!isLoading && count === 0 && (
 					<span className='font-medium mx-auto mt-5 text-lg'>
 						Авторские Комментарии не найдены!
 					</span>
 				)}
 
-				{!isLoading && adminDashboardAuthorCommentsStore.count > 0 && (
+				{!isLoading && count > 0 && (
 					<div className='mt-5'>
 						<Pagination
 							currentPage={currentPage}
-							totalItems={adminDashboardAuthorCommentsStore.count}
+							totalItems={count}
 							itemsPerPage={perPage}
 							setCurrentPage={setCurrentPage}
-							idToScroll={'admin-reviews-grid'}
+							idToScroll={'admin-author-comments-grid'}
 						/>
 					</div>
 				)}
 			</div>
 		</div>
 	)
-})
+}
 
 export default AdminDashboardAuthorCommentsGrid

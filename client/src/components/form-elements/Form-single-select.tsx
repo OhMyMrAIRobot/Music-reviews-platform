@@ -11,6 +11,7 @@ interface IProps {
 	isLoading?: boolean
 }
 
+// TODO: переделать на дженерик
 const FormSingleSelect: FC<IProps> = ({
 	id,
 	placeholder,

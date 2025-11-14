@@ -1,12 +1,14 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { FC, useEffect, useMemo, useState } from 'react'
+import { AuthorCommentAPI } from '../../../../../api/author/author-comment-api'
 import FormButton from '../../../../../components/form-elements/Form-button'
 import FormInput from '../../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../../components/form-elements/Form-label'
 import FormTextbox from '../../../../../components/form-elements/Form-textbox'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay'
-import { useLoading } from '../../../../../hooks/use-loading'
 import { useStore } from '../../../../../hooks/use-store'
 import { IAuthorComment } from '../../../../../models/author/author-comment/author-comment'
+import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys'
 
 interface IProps {
 	isOpen: boolean
@@ -15,11 +17,39 @@ interface IProps {
 }
 
 const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
-	const { adminDashboardAuthorCommentsStore, notificationStore } = useStore()
+	const { notificationStore } = useStore()
 
-	const { execute: update, isLoading } = useLoading(
-		adminDashboardAuthorCommentsStore.updateComment
-	)
+	const queryClient = useQueryClient()
+
+	const updateMutation = useMutation({
+		mutationFn: ({
+			id,
+			title,
+			text,
+		}: {
+			id: string
+			title?: string
+			text?: string
+		}) => AuthorCommentAPI.adminUpdate(id, title, text),
+		onSuccess: () => {
+			notificationStore.addSuccessNotification(
+				'Авторский комментарий успешно обновлен!'
+			)
+			queryClient.invalidateQueries({ queryKey: authorCommentsKeys.all })
+			onClose()
+		},
+		onError: (error: unknown) => {
+			const axiosError = error as {
+				response?: { data?: { message?: string[] } }
+			}
+			const errors = axiosError?.response?.data?.message || [
+				'Ошибка при обновлении комментария',
+			]
+			errors.forEach((err: string) =>
+				notificationStore.addErrorNotification(err)
+			)
+		},
+	})
 
 	const [title, setTitle] = useState<string>(comment.title)
 	const [text, setText] = useState<string>(comment.text)
@@ -42,30 +72,20 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
 	}, [text, title])
 
 	const updateComment = async () => {
-		if (!isFormValid) return
+		if (!isFormValid || updateMutation.isPending) return
 
-		const errors = await update(
-			comment.id,
-			title.trim() !== '' ? title.trim() : undefined,
-			text.trim() !== '' ? text.trim() : undefined
-		)
-		if (errors.length === 0) {
-			notificationStore.addSuccessNotification(
-				'Авторский комментарий успешно обновлен!'
-			)
-			onClose()
-		} else {
-			errors.forEach(error => {
-				notificationStore.addErrorNotification(error)
-			})
-		}
+		updateMutation.mutate({
+			id: comment.id,
+			title: title.trim() !== comment.title ? title.trim() : undefined,
+			text: text.trim() !== comment.text ? text.trim() : undefined,
+		})
 	}
 
 	return (
 		<ModalOverlay
 			isOpen={isOpen}
 			onCancel={onClose}
-			isLoading={isLoading}
+			isLoading={updateMutation.isPending}
 			className='max-lg:size-full'
 		>
 			<div
@@ -112,8 +132,10 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
 								title={'Сохранить'}
 								isInvert={true}
 								onClick={updateComment}
-								disabled={!hasChanges || isLoading || !isFormValid}
-								isLoading={isLoading}
+								disabled={
+									!hasChanges || updateMutation.isPending || !isFormValid
+								}
+								isLoading={updateMutation.isPending}
 							/>
 						</div>
 
@@ -122,7 +144,7 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
 								title={'Назад'}
 								isInvert={false}
 								onClick={onClose}
-								disabled={isLoading}
+								disabled={updateMutation.isPending}
 							/>
 						</div>
 					</div>

@@ -6,6 +6,7 @@ export const authorCommentsKeys = {
 		limit: number
 		offset: number
 		order: SortOrder
+		query?: string | null
 		authorId?: string | null
 	}) =>
 		[
@@ -14,6 +15,7 @@ export const authorCommentsKeys = {
 				limit: params.limit,
 				offset: params.offset,
 				order: params.order,
+				query: params.query ?? null,
 				authorId: params.authorId ?? null,
 			},
 		] as const,
