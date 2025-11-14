@@ -1,14 +1,17 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { AxiosError } from 'axios'
 import { FC, useState } from 'react'
 import { Link } from 'react-router'
+import { ReleaseMediaAPI } from '../../../../../api/release/release-media-api'
 import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal'
 import ReleaseMediaStatusIcon from '../../../../../components/release/release-media/Release-media-status-icon'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
-import { useLoading } from '../../../../../hooks/use-loading'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../../hooks/use-store'
 import { IReleaseMedia } from '../../../../../models/release/release-media/release-media'
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
+import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys'
 import { SortOrder } from '../../../../../types/sort-order-type'
 import { getReleaseMediaStatusColor } from '../../../../../utils/get-release-media-status-color'
 import AdminDeleteButton from '../../buttons/Admin-delete-button'
@@ -23,45 +26,45 @@ interface IProps {
 	isLoading: boolean
 	order?: SortOrder
 	toggleOrder?: () => void
-	refetch?: () => void
 }
 
 const AdminDashboardMediaGridItem: FC<IProps> = ({
 	position,
 	isLoading,
-	className,
+	className = '',
 	media,
 	order,
 	toggleOrder,
-	refetch,
 }) => {
-	const { adminDashboardMediaStore, notificationStore } = useStore()
+	const { notificationStore } = useStore()
+
+	const queryClient = useQueryClient()
 
 	const { navigateToReleaseDetails } = useNavigationPath()
 
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
 
-	const { execute: deleteMedia, isLoading: isDeleting } = useLoading(
-		adminDashboardMediaStore.deleteReleaseMedia
-	)
-
-	const handleDelete = async (id: string) => {
-		if (isDeleting) return
-
-		const errors = await deleteMedia(id)
-
-		if (errors.length === 0) {
+	const deleteMutation = useMutation({
+		mutationFn: (id: string) => ReleaseMediaAPI.adminDeleteReleaseMedia(id),
+		onSuccess: () => {
 			notificationStore.addSuccessNotification(
 				'Вы успешно удалили медиаматериал!'
 			)
-			refetch?.()
-		} else {
-			errors.forEach(err => {
-				notificationStore.addErrorNotification(err)
-			})
-		}
-	}
+			queryClient.invalidateQueries({ queryKey: releaseMediaKeys.all })
+			setConfModalOpen(false)
+		},
+		onError: (error: unknown) => {
+			const axiosError = error as AxiosError<{ message: string | string[] }>
+			const errors = Array.isArray(axiosError.response?.data?.message)
+				? axiosError.response?.data?.message
+				: [axiosError.response?.data?.message]
+			errors
+				.filter((err): err is string => typeof err === 'string')
+				.forEach((err: string) => notificationStore.addErrorNotification(err))
+			setConfModalOpen(false)
+		},
+	})
 
 	return isLoading ? (
 		<SkeletonLoader className='w-full h-70 xl:h-12 rounded-lg' />
@@ -73,9 +76,9 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 						<ConfirmationModal
 							title={'Вы действительно хотите удалить медиаматериал?'}
 							isOpen={confModalOpen}
-							onConfirm={() => handleDelete(media.id)}
+							onConfirm={() => deleteMutation.mutate(media.id)}
 							onCancel={() => setConfModalOpen(false)}
-							isLoading={isDeleting}
+							isLoading={deleteMutation.isPending}
 						/>
 					)}
 

@@ -8,6 +8,7 @@ interface IProps {
 	value?: string
 	onChange: (value: string) => void
 	loadOptions: (search: string) => Promise<string[]>
+	isLoading?: boolean
 }
 
 const FormSingleSelect: FC<IProps> = ({
@@ -16,11 +17,11 @@ const FormSingleSelect: FC<IProps> = ({
 	value,
 	onChange,
 	loadOptions,
+	isLoading,
 }) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const [search, setSearch] = useState('')
 	const [options, setOptions] = useState<string[]>([])
-	const [isLoading, setIsLoading] = useState(false)
 	const containerRef = useRef<HTMLDivElement>(null)
 	const inputRef = useRef<HTMLInputElement>(null)
 	const prevSearchRef = useRef<string>('')
@@ -36,15 +37,12 @@ const FormSingleSelect: FC<IProps> = ({
 			clearTimeout(timerRef.current)
 		}
 
-		setIsLoading(true)
 		timerRef.current = setTimeout(async () => {
 			try {
 				const data = await loadOptions(search)
 				setOptions(data)
 			} catch {
 				setOptions([])
-			} finally {
-				setIsLoading(false)
 			}
 		}, 300)
 	}, [isOpen, search, loadOptions])
