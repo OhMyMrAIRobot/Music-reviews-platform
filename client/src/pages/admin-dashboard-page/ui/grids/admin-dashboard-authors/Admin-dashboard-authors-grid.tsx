@@ -1,21 +1,20 @@
-import { observer } from 'mobx-react-lite'
+import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
+import { AuthorAPI } from '../../../../../api/author/author-api.ts'
 import AuthorTypeSvg from '../../../../../components/author/author-types/Author-type-svg.tsx'
 import AdminHeader from '../../../../../components/layout/admin-header/Admin-header.tsx'
 import Pagination from '../../../../../components/pagination/Pagination.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
-import { useLoading } from '../../../../../hooks/use-loading.ts'
-import { useStore } from '../../../../../hooks/use-store.ts'
+import { useAuthorMeta } from '../../../../../hooks/use-author-meta.ts'
 import { AuthorTypesFilterEnum } from '../../../../../models/author/author-type/author-types-filter-enum.ts'
+import { authorsKeys } from '../../../../../query-keys/authors-keys.ts'
 import AdminFilterButton from '../../buttons/Admin-filter-button.tsx'
 import AdminDashboardAuthorsGridItem from './Admin-dashboard-authors-grid-item.tsx'
 import AuthorFormModal from './Author-form-modal.tsx'
 
-const AdminDashboardAuthorsGrid = observer(() => {
-	const perPage = 10
+const perPage = 10
 
-	const { adminDashboardAuthorsStore, metaStore } = useStore()
-
+const AdminDashboardAuthorsGrid = () => {
 	const [searchText, setSearchText] = useState<string>('')
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [activeType, setActiveType] = useState<string>(
@@ -23,45 +22,41 @@ const AdminDashboardAuthorsGrid = observer(() => {
 	)
 	const [addModalOpen, setAddModalOpen] = useState<boolean>(false)
 
-	const { execute: fetch, isLoading } = useLoading(
-		adminDashboardAuthorsStore.fetchAuthors
-	)
+	const { types, isLoading: isTypesLoading } = useAuthorMeta()
 
-	const { execute: fetchTypes, isLoading: isTypesLoading } = useLoading(
-		metaStore.fetchAuthorTypes
-	)
+	const typeId =
+		activeType !== AuthorTypesFilterEnum.ALL && types
+			? types.find(type => type.type === activeType)?.id ?? null
+			: null
 
-	const fetchAuthors = () => {
-		let typeId: string | null = null
-		if (activeType !== AuthorTypesFilterEnum.ALL) {
-			const type = metaStore.authorTypes.find(type => type.type === activeType)
-			typeId = type?.id ?? null
-		}
-		return fetch(
+	const queryKey = authorsKeys.adminList({
+		typeId,
+		query: searchText.trim().length > 0 ? searchText.trim() : null,
+		limit: perPage,
+		offset: (currentPage - 1) * perPage,
+	})
+
+	const queryFn = () =>
+		AuthorAPI.adminFetchAuthors(
 			typeId,
-			searchText.trim() ? searchText.trim() : null,
+			searchText.trim().length > 0 ? searchText.trim() : null,
 			perPage,
 			(currentPage - 1) * perPage
 		)
-	}
 
-	useEffect(() => {
-		if (metaStore.authorTypes.length === 0) {
-			fetchTypes()
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	const { data: authorsData, isPending } = useQuery({
+		queryKey,
+		queryFn,
+		enabled: !isTypesLoading,
+		staleTime: 1000 * 60 * 5,
+	})
+
+	const authors = authorsData?.authors || []
+	const count = authorsData?.count || 0
 
 	useEffect(() => {
 		setCurrentPage(1)
-		fetchAuthors()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [searchText, activeType])
-
-	useEffect(() => {
-		fetchAuthors()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentPage])
 
 	return (
 		<div className='flex flex-col h-screen' id='admin-authors'>
@@ -71,7 +66,6 @@ const AdminDashboardAuthorsGrid = observer(() => {
 				<AuthorFormModal
 					isOpen={addModalOpen}
 					onClose={() => setAddModalOpen(false)}
-					refetchAuthors={fetchAuthors}
 				/>
 			)}
 
@@ -122,7 +116,7 @@ const AdminDashboardAuthorsGrid = observer(() => {
 					isLoading={false}
 				/>
 
-				{!isLoading && adminDashboardAuthorsStore.count === 0 && (
+				{!isPending && count === 0 && (
 					<span className='font-medium mx-auto mt-5 text-lg'>
 						Авторы не найдены!
 					</span>
@@ -130,30 +124,29 @@ const AdminDashboardAuthorsGrid = observer(() => {
 
 				<div className='flex-1 overflow-y-auto mt-5'>
 					<div className='grid gap-y-5'>
-						{isLoading
+						{isPending
 							? Array.from({ length: perPage }).map((_, idx) => (
 									<AdminDashboardAuthorsGridItem
 										key={`Author-skeleton-${idx}`}
-										isLoading={isLoading}
+										isLoading={isPending}
 									/>
 							  ))
-							: adminDashboardAuthorsStore.authors.map((author, idx) => (
+							: authors.map((author, idx) => (
 									<AdminDashboardAuthorsGridItem
 										key={author.id}
 										author={author}
-										isLoading={isLoading}
+										isLoading={isPending}
 										position={(currentPage - 1) * perPage + idx + 1}
-										refetchAuthors={fetchAuthors}
 									/>
 							  ))}
 					</div>
 				</div>
 
-				{!isLoading && adminDashboardAuthorsStore.count > 0 && (
+				{!isPending && count > 0 && (
 					<div className='mt-5'>
 						<Pagination
 							currentPage={currentPage}
-							totalItems={adminDashboardAuthorsStore.count}
+							totalItems={count}
 							itemsPerPage={perPage}
 							setCurrentPage={setCurrentPage}
 							idToScroll={'admin-authors-grid'}
@@ -163,6 +156,6 @@ const AdminDashboardAuthorsGrid = observer(() => {
 			</div>
 		</div>
 	)
-})
+}
 
 export default AdminDashboardAuthorsGrid

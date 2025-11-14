@@ -1,13 +1,16 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { AxiosError } from 'axios'
 import { FC, useState } from 'react'
 import { Link } from 'react-router'
+import { AuthorAPI } from '../../../../../api/author/author-api.ts'
 import AuthorTypeSvg from '../../../../../components/author/author-types/Author-type-svg.tsx'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
-import { useLoading } from '../../../../../hooks/use-loading.ts'
 import useNavigationPath from '../../../../../hooks/use-navigation-path.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
 import { IAdminAuthor } from '../../../../../models/author/admin-author/admin-author.ts'
 import {} from '../../../../../models/author/admin-author/admin-authors-response.ts'
+import { authorsKeys } from '../../../../../query-keys/authors-keys.ts'
 import { getAuthorTypeColor } from '../../../../../utils/get-author-type-color.ts'
 import AdminDeleteButton from '../../buttons/Admin-delete-button.tsx'
 import AdminEditButton from '../../buttons/Admin-edit-button.tsx'
@@ -19,7 +22,6 @@ interface IProps {
 	author?: IAdminAuthor
 	isLoading: boolean
 	position?: number
-	refetchAuthors?: () => void
 }
 
 const AdminDashboardAuthorsGridItem: FC<IProps> = ({
@@ -27,30 +29,35 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 	author,
 	isLoading,
 	position,
-	refetchAuthors,
 }) => {
-	const { adminDashboardAuthorsStore, notificationStore } = useStore()
+	const { notificationStore } = useStore()
+
+	const queryClient = useQueryClient()
 
 	const { navigateToAuthorDetails } = useNavigationPath()
 
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [editModalOpen, setEditModelOpen] = useState<boolean>(false)
 
-	const { execute: deleteAuthor, isLoading: isDeleting } = useLoading(
-		adminDashboardAuthorsStore.deleteAuthor
-	)
-
-	const handleDelete = async (id: string) => {
-		if (isDeleting) return
-
-		const result = await deleteAuthor(id)
-		if (result.length === 0) {
+	const deleteMutation = useMutation({
+		mutationFn: (id: string) => AuthorAPI.deleteAuthor(id),
+		onSuccess: () => {
 			notificationStore.addSuccessNotification('Вы успешно удалили автора!')
-			refetchAuthors?.()
-		} else {
-			result.forEach(err => notificationStore.addErrorNotification(err))
-		}
-	}
+			queryClient.invalidateQueries({ queryKey: authorsKeys.all })
+			setConfModalOpen(false)
+		},
+		onError: (error: unknown) => {
+			const axiosError = error as AxiosError<{ message: string | string[] }>
+			const errors = Array.isArray(axiosError.response?.data?.message)
+				? axiosError.response?.data?.message
+				: [axiosError.response?.data?.message]
+			errors
+				.filter((err): err is string => typeof err === 'string')
+				.forEach((err: string) => notificationStore.addErrorNotification(err))
+
+			setConfModalOpen(false)
+		},
+	})
 
 	return isLoading ? (
 		<SkeletonLoader className='w-full h-40 xl:h-12 rounded-lg' />
@@ -62,9 +69,9 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 						<ConfirmationModal
 							title={'Вы действительно хотите удалить автора?'}
 							isOpen={confModalOpen}
-							onConfirm={() => handleDelete(author.id)}
+							onConfirm={() => deleteMutation.mutate(author.id)}
 							onCancel={() => setConfModalOpen(false)}
-							isLoading={isDeleting}
+							isLoading={deleteMutation.isPending}
 						/>
 					)}
 
@@ -72,7 +79,6 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 						<AuthorFormModal
 							isOpen={editModalOpen}
 							onClose={() => setEditModelOpen(false)}
-							refetchAuthors={() => {}}
 							author={author}
 						/>
 					)}

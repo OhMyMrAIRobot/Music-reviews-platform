@@ -1,4 +1,7 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { AxiosError } from 'axios'
 import { FC, useEffect, useMemo, useState } from 'react'
+import { AuthorAPI } from '../../../../../api/author/author-api.ts'
 import FormButton from '../../../../../components/form-elements/Form-button.tsx'
 import FormCheckbox from '../../../../../components/form-elements/Form-checkbox.tsx'
 import FormInput from '../../../../../components/form-elements/Form-input.tsx'
@@ -8,10 +11,11 @@ import FormMultiSelect, {
 } from '../../../../../components/form-elements/Form-multi-select.tsx'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
-import { useLoading } from '../../../../../hooks/use-loading.ts'
+import { useAuthorMeta } from '../../../../../hooks/use-author-meta.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
 import { IAdminAuthor } from '../../../../../models/author/admin-author/admin-author.ts'
 import {} from '../../../../../models/author/admin-author/admin-authors-response.ts'
+import { authorsKeys } from '../../../../../query-keys/authors-keys.ts'
 import { arraysEqual } from '../../../../../utils/arrays-equal.ts'
 import SelectImageLabel from '../../../../edit-profile-page/ui/labels/Select-image-label.tsx'
 import SelectedImageLabel from '../../../../edit-profile-page/ui/labels/Selected-image-label.tsx'
@@ -19,18 +23,15 @@ import SelectedImageLabel from '../../../../edit-profile-page/ui/labels/Selected
 interface IProps {
 	isOpen: boolean
 	onClose: () => void
-	refetchAuthors: () => void
 	author?: IAdminAuthor
 }
 
-const AuthorFormModal: FC<IProps> = ({
-	isOpen,
-	onClose,
-	refetchAuthors,
-	author,
-}) => {
-	const { metaStore, notificationStore, adminDashboardAuthorsStore } =
-		useStore()
+const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
+	const { notificationStore } = useStore()
+
+	const { types, isLoading: isTypesLoading } = useAuthorMeta()
+
+	const queryClient = useQueryClient()
 
 	const [avatar, setAvatar] = useState<File | null>(null)
 	const [cover, setCover] = useState<File | null>(null)
@@ -42,13 +43,44 @@ const AuthorFormModal: FC<IProps> = ({
 	const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string | null>(null)
 	const [coverPreviewUrl, setCoverPreviewUrl] = useState<string | null>(null)
 
-	const { execute: createAuthor, isLoading: isCreatingAuthor } = useLoading(
-		adminDashboardAuthorsStore.createAuthor
-	)
+	const createMutation = useMutation({
+		mutationFn: (formData: FormData) => AuthorAPI.createAuthor(formData),
+		onSuccess: () => {
+			notificationStore.addSuccessNotification('Автор успешно добавлен!')
+			queryClient.invalidateQueries({ queryKey: authorsKeys.all })
+			resetForm()
+			onClose()
+		},
+		onError: (error: unknown) => {
+			const axiosError = error as AxiosError<{ message: string | string[] }>
+			const errors = Array.isArray(axiosError.response?.data?.message)
+				? axiosError.response?.data?.message
+				: [axiosError.response?.data?.message]
+			errors
+				.filter((err): err is string => typeof err === 'string')
+				.forEach((err: string) => notificationStore.addErrorNotification(err))
+		},
+	})
 
-	const { execute: updateAuthor, isLoading: isUpdatingAuthor } = useLoading(
-		adminDashboardAuthorsStore.updateAuthor
-	)
+	const updateMutation = useMutation({
+		mutationFn: ({ id, formData }: { id: string; formData: FormData }) =>
+			AuthorAPI.updateAuthor(id, formData),
+		onSuccess: () => {
+			notificationStore.addSuccessNotification('Автор успешно обновлен!')
+			queryClient.invalidateQueries({ queryKey: authorsKeys.all })
+			resetForm()
+			onClose()
+		},
+		onError: (error: unknown) => {
+			const axiosError = error as AxiosError<{ message: string | string[] }>
+			const errors = Array.isArray(axiosError.response?.data?.message)
+				? axiosError.response?.data?.message
+				: [axiosError.response?.data?.message]
+			errors
+				.filter((err): err is string => typeof err === 'string')
+				.forEach((err: string) => notificationStore.addErrorNotification(err))
+		},
+	})
 
 	const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (event.target.files && event.target.files[0]) {
@@ -71,7 +103,8 @@ const AuthorFormModal: FC<IProps> = ({
 	}
 
 	const handleSubmit = async () => {
-		if (!isFormValid || isUpdatingAuthor || isCreatingAuthor) return
+		if (!isFormValid || updateMutation.isPending || createMutation.isPending)
+			return
 
 		const formData = new FormData()
 
@@ -99,25 +132,10 @@ const AuthorFormModal: FC<IProps> = ({
 		if (deleteCover && !cover)
 			formData.append('clearCover', JSON.stringify(true))
 
-		let errors: string[] = []
-
 		if (author) {
-			errors = await updateAuthor(author.id, formData)
+			updateMutation.mutate({ id: author.id, formData })
 		} else {
-			errors = await createAuthor(formData)
-		}
-
-		if (errors.length > 0) {
-			errors.forEach(err => notificationStore.addErrorNotification(err))
-		} else {
-			const message = author
-				? 'Автор успешно обновлен!'
-				: 'Автор успешно добавлен!'
-
-			notificationStore.addSuccessNotification(message)
-			resetForm()
-			onClose()
-			refetchAuthors()
+			createMutation.mutate(formData)
 		}
 	}
 
@@ -152,17 +170,6 @@ const AuthorFormModal: FC<IProps> = ({
 		setDeleteCover(false)
 	}
 
-	const { execute: fetchTypes, isLoading: isTypesLoading } = useLoading(
-		metaStore.fetchAuthorTypes
-	)
-
-	useEffect(() => {
-		if (metaStore.authorTypes.length === 0) {
-			fetchTypes()
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
-
 	useEffect(() => {
 		if (author && isOpen) {
 			setName(author.name)
@@ -196,7 +203,7 @@ const AuthorFormModal: FC<IProps> = ({
 		search: string,
 		limit: number | null
 	): Promise<IMultiSelectValue[]> => {
-		return metaStore.authorTypes.map(el => {
+		return types.map(el => {
 			return { name: el.type ?? search, id: el.id ?? limit }
 		})
 	}
@@ -211,7 +218,7 @@ const AuthorFormModal: FC<IProps> = ({
 		<ModalOverlay
 			isOpen={isOpen}
 			onCancel={onClose}
-			isLoading={isUpdatingAuthor || isCreatingAuthor}
+			isLoading={updateMutation.isPending || createMutation.isPending}
 			className='max-lg:size-full'
 		>
 			{isTypesLoading ? (
@@ -379,10 +386,10 @@ const AuthorFormModal: FC<IProps> = ({
 								disabled={
 									!isFormValid ||
 									(!!author && !hasChanges) ||
-									isUpdatingAuthor ||
-									isCreatingAuthor
+									updateMutation.isPending ||
+									createMutation.isPending
 								}
-								isLoading={isUpdatingAuthor || isCreatingAuthor}
+								isLoading={updateMutation.isPending || createMutation.isPending}
 							/>
 						</div>
 
@@ -391,7 +398,7 @@ const AuthorFormModal: FC<IProps> = ({
 								title={'Назад'}
 								isInvert={false}
 								onClick={onClose}
-								disabled={isUpdatingAuthor || isCreatingAuthor}
+								disabled={updateMutation.isPending || createMutation.isPending}
 							/>
 						</div>
 					</div>
