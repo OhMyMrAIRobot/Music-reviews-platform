@@ -1,6 +1,9 @@
-import { observer } from 'mobx-react-lite'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { AxiosError } from 'axios'
 import { FC, useEffect, useState } from 'react'
 import { Link } from 'react-router'
+import { ProfileAPI } from '../../../../../../api/user/profile-api.ts'
+import { UserAPI } from '../../../../../../api/user/user-api.ts'
 import ComboBox from '../../../../../../components/buttons/Combo-box.tsx'
 import FormButton from '../../../../../../components/form-elements/Form-button.tsx'
 import FormDelimiter from '../../../../../../components/form-elements/Form-delimiter.tsx'
@@ -11,15 +14,18 @@ import ModalOverlay from '../../../../../../components/modals/Modal-overlay.tsx'
 import MoveToSvg from '../../../../../../components/svg/Move-to-svg.tsx'
 import TrashSvg from '../../../../../../components/svg/Trash-svg.tsx'
 import SkeletonLoader from '../../../../../../components/utils/Skeleton-loader.tsx'
-import { useLoading } from '../../../../../../hooks/use-loading.ts'
 import useNavigationPath from '../../../../../../hooks/use-navigation-path.ts'
+import { useRoleMeta } from '../../../../../../hooks/use-role-meta.ts'
 import { useStore } from '../../../../../../hooks/use-store.ts'
+import { IUpdateProfileData } from '../../../../../../models/profile/update-profile-data.ts'
 import {
 	AdminAvailableRolesEnum,
 	RolesEnum,
 	RootAdminAvalaibleRolesEnum,
 } from '../../../../../../models/role/roles-enum.ts'
+import { IUpdateUserData } from '../../../../../../models/user/update-user-data.ts'
 import { UserStatusesEnum } from '../../../../../../models/user/user-statuses-enum.ts'
+import { usersKeys } from '../../../../../../query-keys/users-keys.ts'
 import { getRoleColor } from '../../../../../../utils/get-role-color.ts'
 import EditUserModalButton from './Edit-user-modal-button.tsx'
 import EditUserModalInputs from './Edit-user-social-inputs.tsx'
@@ -30,347 +36,380 @@ interface IProps {
 	onClose: () => void
 }
 
-const AdminDashboardEditUserModal: FC<IProps> = observer(
-	({ userId, isOpen, onClose }) => {
-		const {
-			adminDashboardUsersStore,
-			authStore,
-			notificationStore,
-			metaStore,
-		} = useStore()
+const AdminDashboardEditUserModal: FC<IProps> = ({
+	userId,
+	isOpen,
+	onClose,
+}) => {
+	const { authStore, notificationStore } = useStore()
 
-		const user = adminDashboardUsersStore.user
+	const { navigatoToProfile } = useNavigationPath()
 
-		const { navigatoToProfile } = useNavigationPath()
+	const { roles, isLoading: isRolesLoading } = useRoleMeta()
 
-		const { execute: fetchUser, isLoading: isUserLoading } = useLoading(
-			adminDashboardUsersStore.fetchUser
-		)
+	const [nickname, setNickname] = useState<string>('')
+	const [email, setEmail] = useState<string>('')
+	const [role, setRole] = useState<string>('')
+	const [availableRoles, setAvailableRoles] = useState<Record<string, string>>(
+		AdminAvailableRolesEnum
+	)
+	const [status, setStatus] = useState<string>('')
 
-		const { execute: fetchRoles, isLoading: isRolesLoading } = useLoading(
-			metaStore.fetchRoles
-		)
+	const queryClient = useQueryClient()
 
-		const { execute: updateUserData, isLoading: isUpdateUserDataLoading } =
-			useLoading(adminDashboardUsersStore.updateUser)
+	const { data: user, isLoading: isUserLoading } = useQuery({
+		queryKey: usersKeys.id(userId),
+		queryFn: () => UserAPI.fetchUserDetails(userId),
+		enabled: isOpen,
+	})
 
-		const { execute: updateProfile, isLoading: isUpdateProfileLoading } =
-			useLoading(adminDashboardUsersStore.updateProfile)
-
-		const { execute: deleteAvatar, isLoading: isDeletingAvatar } = useLoading(
-			adminDashboardUsersStore.updateProfile
-		)
-
-		const { execute: deleteCover, isLoading: isDeletingCover } = useLoading(
-			adminDashboardUsersStore.updateProfile
-		)
-
-		useEffect(() => {
-			if (isOpen) {
-				fetchUser(userId).then(() => {
-					setNickname(adminDashboardUsersStore.user?.nickname ?? '')
-					setEmail(adminDashboardUsersStore.user?.email ?? '')
-					setRole(adminDashboardUsersStore.user?.role.role ?? '')
-					setStatus(
-						adminDashboardUsersStore.user?.isActive
-							? UserStatusesEnum.ACTIVE
-							: UserStatusesEnum.NON_ACTIVE
-					)
-					if (authStore.user?.role.role === RolesEnum.ADMIN)
-						setAvailableRoles(AdminAvailableRolesEnum)
-					if (authStore.user?.role.role === RolesEnum.ROOT_ADMIN)
-						setAvailableRoles(RootAdminAvalaibleRolesEnum)
-				})
-				if (metaStore.roles.length === 0) {
-					fetchRoles()
-				}
-			}
-			// eslint-disable-next-line react-hooks/exhaustive-deps
-		}, [isOpen, userId])
-
-		const [nickname, setNickname] = useState<string>('')
-		const [email, setEmail] = useState<string>('')
-		const [role, setRole] = useState<string>('')
-		const [availableRoles, setAvailableRoles] = useState<
-			Record<string, string>
-		>({})
-		const [status, setStatus] = useState<string>('')
-
-		const update = async () => {
-			const isActive = status === UserStatusesEnum.ACTIVE ? true : false
-			const roleId = metaStore.roles.find(el => el.role === role)
-			const updResult = await updateUserData(
-				nickname,
-				email,
-				roleId?.id,
-				status.length > 0 ? isActive : undefined
+	const updateUserMutation = useMutation({
+		mutationFn: (data: { id: string; updateData: IUpdateUserData }) =>
+			UserAPI.adminUpdateUser(data.id, data.updateData),
+		onSuccess: () => {
+			notificationStore.addSuccessNotification(
+				'Информация о пользователе успешно обновлена'
 			)
+			queryClient.invalidateQueries({ queryKey: usersKeys.all })
+			queryClient.invalidateQueries({ queryKey: usersKeys.id(userId) })
+		},
+		onError: (error: unknown) => {
+			const axiosError = error as AxiosError<{ message: string | string[] }>
+			const errors = Array.isArray(axiosError.response?.data?.message)
+				? axiosError.response?.data?.message
+				: [axiosError.response?.data?.message]
+			errors
+				.filter((err): err is string => typeof err === 'string')
+				.forEach((err: string) => notificationStore.addErrorNotification(err))
+		},
+	})
 
-			if (updResult.length === 0) {
-				notificationStore.addSuccessNotification(
-					'Информация о пользователе успешно обновлена'
-				)
-			} else {
-				updResult.forEach(err => {
-					notificationStore.addErrorNotification(err)
-				})
-			}
+	const updateProfileMutation = useMutation({
+		mutationFn: (data: { id: string; updateData: IUpdateProfileData }) =>
+			ProfileAPI.adminUpdateProfile(data.id, data.updateData),
+		onSuccess: () => {
+			notificationStore.addSuccessNotification(
+				'Вы успешно обновили описание профиля!'
+			)
+			queryClient.invalidateQueries({ queryKey: usersKeys.all })
+			queryClient.invalidateQueries({ queryKey: usersKeys.id(userId) })
+		},
+		onError: (error: unknown) => {
+			const axiosError = error as AxiosError<{ message: string | string[] }>
+			const errors = Array.isArray(axiosError.response?.data?.message)
+				? axiosError.response?.data?.message
+				: [axiosError.response?.data?.message]
+			errors
+				.filter((err): err is string => typeof err === 'string')
+				.forEach((err: string) => notificationStore.addErrorNotification(err))
+		},
+	})
+
+	const deleteAvatarMutation = useMutation({
+		mutationFn: () =>
+			ProfileAPI.adminUpdateProfile(userId, { clearAvatar: true }),
+		onSuccess: () => {
+			notificationStore.addSuccessNotification(
+				'Вы успешно удалили аватар профиля!'
+			)
+			queryClient.invalidateQueries({ queryKey: usersKeys.all })
+			queryClient.invalidateQueries({ queryKey: usersKeys.id(userId) })
+		},
+		onError: (error: unknown) => {
+			const axiosError = error as AxiosError<{ message: string | string[] }>
+			const errors = Array.isArray(axiosError.response?.data?.message)
+				? axiosError.response?.data?.message
+				: [axiosError.response?.data?.message]
+			errors
+				.filter((err): err is string => typeof err === 'string')
+				.forEach((err: string) => notificationStore.addErrorNotification(err))
+		},
+	})
+
+	const deleteCoverMutation = useMutation({
+		mutationFn: () =>
+			ProfileAPI.adminUpdateProfile(userId, { clearCover: true }),
+		onSuccess: () => {
+			notificationStore.addSuccessNotification(
+				'Вы успешно удалили обложку профиля!'
+			)
+			queryClient.invalidateQueries({ queryKey: usersKeys.all })
+			queryClient.invalidateQueries({ queryKey: usersKeys.id(userId) })
+		},
+		onError: (error: unknown) => {
+			const axiosError = error as AxiosError<{ message: string | string[] }>
+			const errors = Array.isArray(axiosError.response?.data?.message)
+				? axiosError.response?.data?.message
+				: [axiosError.response?.data?.message]
+			errors
+				.filter((err): err is string => typeof err === 'string')
+				.forEach((err: string) => notificationStore.addErrorNotification(err))
+		},
+	})
+
+	useEffect(() => {
+		if (isOpen && user) {
+			setNickname(user.nickname ?? '')
+			setEmail(user.email ?? '')
+			setRole(user.role.role ?? '')
+			setStatus(
+				user.isActive ? UserStatusesEnum.ACTIVE : UserStatusesEnum.NON_ACTIVE
+			)
+			if (authStore.user?.role.role === RolesEnum.ADMIN)
+				setAvailableRoles(AdminAvailableRolesEnum)
+			if (authStore.user?.role.role === RolesEnum.ROOT_ADMIN)
+				setAvailableRoles(RootAdminAvalaibleRolesEnum)
 		}
+	}, [isOpen, user, authStore.user?.role.role])
 
-		const handleDeleteCover = async () => {
-			if (!user || isDeletingCover) return
-			const errors = await deleteCover(user.id, { clearCover: true })
-			if (errors.length === 0) {
-				notificationStore.addSuccessNotification(
-					'Вы успешно удалили обложку профиля!'
-				)
-			} else {
-				errors.forEach(err => {
-					notificationStore.addErrorNotification(err)
-				})
+	const update = () => {
+		const isActive = status === UserStatusesEnum.ACTIVE ? true : false
+		const roleObj = roles.find(el => el.role === role)
+		updateUserMutation.mutate({
+			id: userId,
+			updateData: {
+				nickname:
+					nickname.trim() === user?.nickname ? undefined : nickname.trim(),
+				email: email.trim() === user?.email ? undefined : email.trim(),
+				roleId: roleObj?.id,
+				isActive: status.length > 0 ? isActive : undefined,
+			},
+		})
+	}
+
+	const handleDeleteCover = () => {
+		if (!user) return
+		deleteCoverMutation.mutate()
+	}
+
+	const handleDeleteAvatar = () => {
+		if (!user) return
+		deleteAvatarMutation.mutate()
+	}
+
+	if (!isOpen) return null
+	return (
+		<ModalOverlay
+			isOpen={isOpen}
+			onCancel={onClose}
+			isLoading={
+				updateUserMutation.isPending ||
+				deleteAvatarMutation.isPending ||
+				deleteCoverMutation.isPending
 			}
-		}
+			className='max-lg:size-full'
+		>
+			{isUserLoading || isRolesLoading ? (
+				<SkeletonLoader className='w-full lg:w-180 h-190 rounded-lg' />
+			) : (
+				user && (
+					<div
+						className={`relative rounded-xl w-full lg:w-180 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6 max-h-full overflow-y-scroll overflow-x-hidden`}
+					>
+						<div className='w-full h-40 overflow-hidden p-1'>
+							<img
+								loading='lazy'
+								decoding='async'
+								src={`${import.meta.env.VITE_SERVER_URL}/public/covers/${
+									user.profile?.coverImage === ''
+										? import.meta.env.VITE_DEFAULT_COVER
+										: user.profile?.coverImage
+								}`}
+								className='aspect-video size-full'
+							/>
+						</div>
 
-		const handleDeleteAvatar = async () => {
-			if (!user || isDeletingAvatar) return
-
-			const errors = await deleteAvatar(user.id, { clearAvatar: true })
-			if (errors.length === 0) {
-				notificationStore.addSuccessNotification(
-					'Вы успешно удалили аватар профиля!'
-				)
-			} else {
-				errors.forEach(err => {
-					notificationStore.addErrorNotification(err)
-				})
-			}
-		}
-
-		if (!isOpen) return null
-		return (
-			<ModalOverlay
-				isOpen={isOpen}
-				onCancel={onClose}
-				isLoading={
-					isUpdateUserDataLoading || isDeletingAvatar || isDeletingCover
-				}
-				className='max-lg:size-full'
-			>
-				{isUserLoading || isRolesLoading ? (
-					<SkeletonLoader className='w-full lg:w-180 h-190 rounded-lg' />
-				) : (
-					user && (
-						<div
-							className={`relative rounded-xl w-full lg:w-180 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6 max-h-full overflow-y-scroll overflow-x-hidden`}
-						>
-							<div className='w-full h-40 overflow-hidden p-1'>
+						<div className='grid px-6 gap-3 relative'>
+							<div className='size-26 rounded-full overflow-hidden -mt-13 border-2 border-white/10 bg-zinc-950'>
 								<img
 									loading='lazy'
 									decoding='async'
-									src={`${import.meta.env.VITE_SERVER_URL}/public/covers/${
-										user.profile?.coverImage === ''
-											? import.meta.env.VITE_DEFAULT_COVER
-											: user.profile?.coverImage
+									src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
+										user.profile?.avatar === ''
+											? import.meta.env.VITE_DEFAULT_AVATAR
+											: user.profile?.avatar
 									}`}
-									className='aspect-video size-full'
+									className='aspect-square object-cover'
 								/>
 							</div>
 
-							<div className='grid px-6 gap-3 relative'>
-								<div className='size-26 rounded-full overflow-hidden -mt-13 border-2 border-white/10 bg-zinc-950'>
-									<img
-										loading='lazy'
-										decoding='async'
-										src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-											user.profile?.avatar === ''
-												? import.meta.env.VITE_DEFAULT_AVATAR
-												: user.profile?.avatar
-										}`}
-										className='aspect-square object-cover'
+							<div className='lg:absolute right-3 top-3 grid lg:flex gap-3'>
+								<Link to={navigatoToProfile(userId)} className='md:w-45'>
+									<EditUserModalButton
+										title={'Профиль'}
+										svg={<MoveToSvg className={'size-4'} />}
+										disabled={false}
+									/>
+								</Link>
+
+								<div className='md:w-45'>
+									<EditUserModalButton
+										disabled={
+											user.profile?.avatar === '' ||
+											deleteAvatarMutation.isPending
+										}
+										title={'Удалить аватар'}
+										onClick={handleDeleteAvatar}
+										svg={<TrashSvg className={'size-4'} />}
+										isLoading={deleteAvatarMutation.isPending}
 									/>
 								</div>
 
-								<div className='lg:absolute right-3 top-3 grid lg:flex gap-3'>
-									<Link to={navigatoToProfile(userId)} className='md:w-45'>
-										<EditUserModalButton
-											title={'Профиль'}
-											svg={<MoveToSvg className={'size-4'} />}
-											disabled={false}
-										/>
-									</Link>
+								<div className='md:w-45'>
+									<EditUserModalButton
+										disabled={
+											user.profile?.coverImage === '' ||
+											deleteCoverMutation.isPending
+										}
+										title={'Удалить обложку'}
+										onClick={handleDeleteCover}
+										svg={<TrashSvg className={'size-4'} />}
+										isLoading={deleteCoverMutation.isPending}
+									/>
+								</div>
+							</div>
 
-									<div className='md:w-45'>
-										<EditUserModalButton
-											disabled={user.profile?.avatar === '' || isDeletingAvatar}
-											title={'Удалить аватар'}
-											onClick={handleDeleteAvatar}
-											svg={<TrashSvg className={'size-4'} />}
-											isLoading={isDeletingAvatar}
+							<div className='grid gap-1'>
+								<h3 className='font-bold text-lg'>{user.nickname}</h3>
+								<h6 className='font-medium text-sm'>{user.email}</h6>
+								<span
+									className={`${getRoleColor(
+										user.role.role
+									)} font-medium text-sm`}
+								>
+									{user.role.role}
+								</span>
+							</div>
+
+							<FormDelimiter />
+
+							<div className='grid md:flex gap-y-3 gap-x-5'>
+								<div className='w-full md:w-1/2 gap-y-3 h-full flex flex-col justify-between'>
+									<div className={`grid gap-2 w-full`}>
+										<FormLabel
+											name={'Никнейм'}
+											htmlFor={`admin-edit-user-nickname`}
+											isRequired={true}
+										/>
+
+										<FormInput
+											id={`admin-edit-user-nickname`}
+											placeholder={'Никнейм...'}
+											type={'text'}
+											value={nickname}
+											setValue={setNickname}
 										/>
 									</div>
 
-									<div className='md:w-45'>
-										<EditUserModalButton
-											disabled={
-												user.profile?.coverImage === '' || isDeletingCover
-											}
-											title={'Удалить обложку'}
-											onClick={handleDeleteCover}
-											svg={<TrashSvg className={'size-4'} />}
-											isLoading={isDeletingCover}
+									<div className={`grid gap-2 w-full`}>
+										<FormLabel
+											name={'Email'}
+											htmlFor={`admin-edit-user-email`}
+											isRequired={true}
+										/>
+
+										<FormInput
+											id={`admin-edit-user-email`}
+											placeholder={'Email@exaple.com'}
+											type={'text'}
+											value={email}
+											setValue={setEmail}
 										/>
 									</div>
 								</div>
 
-								<div className='grid gap-1'>
-									<h3 className='font-bold text-lg'>{user.nickname}</h3>
-									<h6 className='font-medium text-sm'>{user.email}</h6>
-									<span
-										className={`${getRoleColor(
-											user.role.role
-										)} font-medium text-sm`}
-									>
-										{user.role.role}
-									</span>
+								<div className={`w-full md:w-1/2`}>
+									<FormTextboxWithConfirmation
+										label={'Описание'}
+										initialValue={user.profile?.bio ?? ''}
+										onClick={val => {
+											updateProfileMutation.mutate({
+												id: user.id,
+												updateData: { bio: val },
+											})
+										}}
+										isLoading={updateProfileMutation.isPending}
+									/>
+								</div>
+							</div>
+
+							<FormDelimiter />
+
+							<div className='w-full grid md:flex items-start gap-x-5 gap-y-3'>
+								<div className='grid gap-2 w-full md:w-1/2'>
+									<FormLabel name={'Роль'} htmlFor={''} isRequired={true} />
+
+									<ComboBox
+										options={Object.values(availableRoles)}
+										value={role}
+										onChange={setRole}
+										className='border border-white/15'
+									/>
 								</div>
 
-								<FormDelimiter />
+								<div className='grid gap-2 w-full md:w-1/2'>
+									<FormLabel name={'Статус'} htmlFor={''} isRequired={true} />
 
-								<div className='grid md:flex gap-y-3 gap-x-5'>
-									<div className='w-full md:w-1/2 gap-y-3 h-full flex flex-col justify-between'>
-										<div className={`grid gap-2 w-full`}>
-											<FormLabel
-												name={'Никнейм'}
-												htmlFor={`admin-edit-user-nickname`}
-												isRequired={true}
-											/>
+									<ComboBox
+										options={Object.values(UserStatusesEnum)}
+										value={status}
+										onChange={setStatus}
+										className='border border-white/15'
+									/>
+								</div>
+							</div>
 
-											<FormInput
-												id={`admin-edit-user-nickname`}
-												placeholder={'Никнейм...'}
-												type={'text'}
-												value={nickname}
-												setValue={setNickname}
-											/>
-										</div>
+							<FormDelimiter />
 
-										<div className={`grid gap-2 w-full`}>
-											<FormLabel
-												name={'Email'}
-												htmlFor={`admin-edit-user-email`}
-												isRequired={true}
-											/>
+							<EditUserModalInputs user={user} />
 
-											<FormInput
-												id={`admin-edit-user-email`}
-												placeholder={'Email@exaple.com'}
-												type={'text'}
-												value={email}
-												setValue={setEmail}
-											/>
-										</div>
-									</div>
+							<FormDelimiter />
 
-									<div className={`w-full md:w-1/2`}>
-										<FormTextboxWithConfirmation
-											label={'Описание'}
-											initialValue={user.profile?.bio ?? ''}
-											onClick={val => {
-												updateProfile(user.id, { bio: val }).then(errors => {
-													if (errors.length === 0) {
-														notificationStore.addSuccessNotification(
-															'Вы успешно обновили описание профиля!'
-														)
-													} else {
-														errors.forEach(err => {
-															notificationStore.addErrorNotification(err)
-														})
-													}
-												})
-											}}
-											isLoading={isUpdateProfileLoading}
-										/>
-									</div>
+							<div className='grid w-full sm:flex gap-3 sm:justify-end sm:flex-row-reverse'>
+								<div className='w-full sm:w-30'>
+									<FormButton
+										title={'Сохранить'}
+										isInvert={true}
+										onClick={update}
+										disabled={
+											authStore.user?.id === user.id ||
+											updateUserMutation.isPending ||
+											isUserLoading ||
+											isRolesLoading ||
+											nickname.length === 0 ||
+											email.length === 0 ||
+											role.length === 0 ||
+											status.length === 0 ||
+											((nickname === user.nickname ||
+												nickname.toLowerCase() ===
+													user.nickname.toLowerCase()) &&
+												(email === user.email ||
+													email.toLowerCase() === user.email.toLowerCase()) &&
+												role === user.role.role &&
+												((status === UserStatusesEnum.ACTIVE &&
+													user.isActive) ||
+													(status === UserStatusesEnum.NON_ACTIVE &&
+														!user.isActive)))
+										}
+										isLoading={updateUserMutation.isPending}
+									/>
 								</div>
 
-								<FormDelimiter />
-
-								<div className='w-full grid md:flex items-start gap-x-5 gap-y-3'>
-									<div className='grid gap-2 w-full md:w-1/2'>
-										<FormLabel name={'Роль'} htmlFor={''} isRequired={true} />
-
-										<ComboBox
-											options={Object.values(availableRoles)}
-											value={role}
-											onChange={setRole}
-											className='border border-white/15'
-										/>
-									</div>
-
-									<div className='grid gap-2 w-full md:w-1/2'>
-										<FormLabel name={'Статус'} htmlFor={''} isRequired={true} />
-
-										<ComboBox
-											options={Object.values(UserStatusesEnum)}
-											value={status}
-											onChange={setStatus}
-											className='border border-white/15'
-										/>
-									</div>
-								</div>
-
-								<FormDelimiter />
-
-								<EditUserModalInputs user={user} />
-
-								<FormDelimiter />
-
-								<div className='grid w-full sm:flex gap-3 sm:justify-end sm:flex-row-reverse'>
-									<div className='w-full sm:w-30'>
-										<FormButton
-											title={'Сохранить'}
-											isInvert={true}
-											onClick={update}
-											disabled={
-												authStore.user?.id === user.id ||
-												isUpdateUserDataLoading ||
-												isUserLoading ||
-												isRolesLoading ||
-												nickname.length === 0 ||
-												email.length === 0 ||
-												role.length === 0 ||
-												status.length === 0 ||
-												((nickname === user.nickname ||
-													nickname.toLowerCase() ===
-														user.nickname.toLowerCase()) &&
-													(email === user.email ||
-														email.toLowerCase() === user.email.toLowerCase()) &&
-													role === user.role.role &&
-													((status === UserStatusesEnum.ACTIVE &&
-														user.isActive) ||
-														(status === UserStatusesEnum.NON_ACTIVE &&
-															!user.isActive)))
-											}
-											isLoading={isUpdateUserDataLoading}
-										/>
-									</div>
-
-									<div className='w-full sm:w-25 sm:ml-auto'>
-										<FormButton
-											title={'Назад'}
-											isInvert={false}
-											onClick={onClose}
-											disabled={isUpdateUserDataLoading}
-										/>
-									</div>
+								<div className='w-full sm:w-25 sm:ml-auto'>
+									<FormButton
+										title={'Назад'}
+										isInvert={false}
+										onClick={onClose}
+										disabled={updateUserMutation.isPending}
+									/>
 								</div>
 							</div>
 						</div>
-					)
-				)}
-			</ModalOverlay>
-		)
-	}
-)
+					</div>
+				)
+			)}
+		</ModalOverlay>
+	)
+}
 
 export default AdminDashboardEditUserModal

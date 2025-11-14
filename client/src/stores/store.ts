@@ -4,7 +4,6 @@ import AdminDashboardAuthorsStore from '../pages/admin-dashboard-page/store/admi
 import AdminDashboardFeedbackStore from '../pages/admin-dashboard-page/store/admin-dashboard-feedback-store'
 import AdminDashboardMediaStore from '../pages/admin-dashboard-page/store/admin-dashboard-media-store'
 import AdminDashboardReviewsStore from '../pages/admin-dashboard-page/store/admin-dashboard-reviews-store'
-import AdminDashboardUsersStore from '../pages/admin-dashboard-page/store/admin-dashboard-users-store'
 import AuthStore from './auth-store'
 import MetaStore from './meta-store'
 import NotificationStore from './notification-store'
@@ -15,7 +14,6 @@ class Store {
 	authStore = AuthStore
 	profileStore = ProfileStore
 	notificationStore = NotificationStore
-	adminDashboardUsersStore = AdminDashboardUsersStore
 	adminDashboardAuthorsStore = AdminDashboardAuthorsStore
 	adminDashboardReviewsStore = AdminDashboardReviewsStore
 	adminDashboardFeedbackStore = AdminDashboardFeedbackStore

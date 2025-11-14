@@ -1,32 +1,60 @@
-import { FC, useEffect } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { FC } from 'react'
+import { SocialMediaAPI } from '../../../../../../api/social-media-api.ts'
 import FormInputWithConfirmation from '../../../../../../components/form-elements/Form-input-with-confirmation.tsx'
 import SkeletonLoader from '../../../../../../components/utils/Skeleton-loader.tsx'
-import { useLoading } from '../../../../../../hooks/use-loading.ts'
+import { useSocialMeta } from '../../../../../../hooks/use-social-meta.ts'
 import { useStore } from '../../../../../../hooks/use-store.ts'
 import { IUserInfo } from '../../../../../../models/user/user-info.ts'
-import adminDashboardUsersStore from '../../../../store/admin-dashboard-users-store.ts'
+import { usersKeys } from '../../../../../../query-keys/users-keys.ts'
 
 interface IProps {
 	user: IUserInfo
 }
 
 const EditUserModalInputs: FC<IProps> = ({ user }) => {
-	const { notificationStore, metaStore } = useStore()
+	const { notificationStore } = useStore()
 
-	const { execute: fetchSocials, isLoading: isSocialsLoading } = useLoading(
-		metaStore.fetchSocials
-	)
+	const { socials, isLoading: isSocialsLoading } = useSocialMeta()
 
-	const { execute: toggleSocial, isLoading: isTogglingSocial } = useLoading(
-		adminDashboardUsersStore.toggleSocial
-	)
+	const queryClient = useQueryClient()
 
-	useEffect(() => {
-		if (metaStore.socials.length === 0) {
-			fetchSocials()
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	const toggleSocialMutation = useMutation({
+		mutationFn: async ({
+			userId,
+			socialId,
+			value,
+			initialValue,
+		}: {
+			userId: string
+			socialId: string
+			value: string
+			initialValue: string
+		}) => {
+			if (value.trim() === '' && initialValue.trim() !== '') {
+				// delete
+				return SocialMediaAPI.adminDeleteSocial(userId, socialId)
+			} else if (value.trim() !== '' && initialValue.trim() === '') {
+				// add
+				return SocialMediaAPI.adminAddSocial(userId, socialId, value)
+			} else if (value.trim() !== '' && initialValue.trim() !== '') {
+				// edit
+				return SocialMediaAPI.adminEditSocial(userId, socialId, value)
+			}
+		},
+		onSuccess: () => {
+			notificationStore.addSuccessNotification(
+				'Вы успешно обновили информацию о социальной сети'
+			)
+			queryClient.invalidateQueries({ queryKey: usersKeys.all })
+			queryClient.invalidateQueries({ queryKey: usersKeys.id(user.id) })
+		},
+		onError: () => {
+			notificationStore.addErrorNotification(
+				'Ошибка при обновлении социальной сети'
+			)
+		},
+	})
 
 	return (
 		<>
@@ -38,7 +66,7 @@ const EditUserModalInputs: FC<IProps> = ({ user }) => {
 								className='w-full h-10 rounded-md'
 							/>
 					  ))
-					: metaStore.socials.map(social => {
+					: socials.map(social => {
 							const initialValue =
 								user.profile?.socialMedia.find(el => el.id === social.id)
 									?.url ?? ''
@@ -47,21 +75,14 @@ const EditUserModalInputs: FC<IProps> = ({ user }) => {
 									key={social.id}
 									label={social.name}
 									initialValue={initialValue}
-									isLoading={isTogglingSocial}
+									isLoading={toggleSocialMutation.isPending}
 									onClick={value => {
-										toggleSocial(user.id, social.id, value, initialValue).then(
-											errors => {
-												if (errors.length === 0) {
-													notificationStore.addSuccessNotification(
-														`Вы успешно обновили информацию о ${social.name}`
-													)
-												} else {
-													errors.forEach(err => {
-														notificationStore.addErrorNotification(err)
-													})
-												}
-											}
-										)
+										toggleSocialMutation.mutate({
+											userId: user.id,
+											socialId: social.id,
+											value,
+											initialValue,
+										})
 									}}
 								/>
 							)

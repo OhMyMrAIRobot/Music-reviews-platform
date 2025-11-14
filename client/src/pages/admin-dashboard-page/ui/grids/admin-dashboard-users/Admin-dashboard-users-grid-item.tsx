@@ -1,15 +1,18 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { AxiosError } from 'axios'
 import { FC, useState } from 'react'
 import { Link } from 'react-router'
+import { UserAPI } from '../../../../../api/user/user-api.ts'
 import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg.tsx'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal.tsx'
 import UserRoleSvg from '../../../../../components/user/User-role-svg.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
-import { useLoading } from '../../../../../hooks/use-loading.ts'
 import useNavigationPath from '../../../../../hooks/use-navigation-path.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum.ts'
 import { UserStatusesEnum } from '../../../../../models/user/user-statuses-enum.ts'
 import { IUser } from '../../../../../models/user/user.ts'
+import { usersKeys } from '../../../../../query-keys/users-keys.ts'
 import { SortOrder } from '../../../../../types/sort-order-type.ts'
 import { getRoleColor } from '../../../../../utils/get-role-color.ts'
 import AdminDeleteButton from '../../buttons/Admin-delete-button.tsx'
@@ -23,7 +26,6 @@ interface IProps {
 	position?: number
 	order?: SortOrder
 	toggleOrder?: () => void
-	refetchUsers?: () => void
 }
 
 const AdminDashboardUsersGridItem: FC<IProps> = ({
@@ -33,31 +35,37 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 	position,
 	order,
 	toggleOrder,
-	refetchUsers,
 }) => {
-	const { adminDashboardUsersStore, notificationStore } = useStore()
+	const { notificationStore } = useStore()
 
 	const { navigatoToProfile } = useNavigationPath()
-
-	const { execute: deleteUser, isLoading: isDeleting } = useLoading(
-		adminDashboardUsersStore.deleteUser
-	)
 
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [editModelOpen, setEditModalOpen] = useState<boolean>(false)
 
-	const handleDelete = async (id: string) => {
-		if (isDeleting) return
-		const errors = await deleteUser(id)
-		if (errors.length === 0) {
+	const queryClient = useQueryClient()
+
+	const deleteMutation = useMutation({
+		mutationFn: (id: string) => UserAPI.adminDeleteUser(id),
+		onSuccess: () => {
 			notificationStore.addSuccessNotification(
 				'Вы успешно удалили пользователя!'
 			)
-			refetchUsers?.()
-		} else {
-			errors.forEach(error => notificationStore.addErrorNotification(error))
-		}
-	}
+			queryClient.invalidateQueries({ queryKey: usersKeys.all })
+			setConfModalOpen(false)
+		},
+		onError: (error: unknown) => {
+			const axiosError = error as AxiosError<{ message: string | string[] }>
+			const errors = Array.isArray(axiosError.response?.data?.message)
+				? axiosError.response?.data?.message
+				: [axiosError.response?.data?.message]
+			errors
+				.filter((err): err is string => typeof err === 'string')
+				.forEach((err: string) => notificationStore.addErrorNotification(err))
+
+			setConfModalOpen(false)
+		},
+	})
 
 	return isLoading ? (
 		<SkeletonLoader className='w-full h-65 xl:h-12 rounded-lg' />
@@ -68,9 +76,9 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 					<ConfirmationModal
 						title={'Вы действительно хотите удалить пользователя?'}
 						isOpen={confModalOpen}
-						onConfirm={() => handleDelete(user.id)}
+						onConfirm={() => deleteMutation.mutate(user.id)}
 						onCancel={() => setConfModalOpen(false)}
-						isLoading={isDeleting}
+						isLoading={deleteMutation.isPending}
 					/>
 
 					<AdminDashboardEditUserModal
