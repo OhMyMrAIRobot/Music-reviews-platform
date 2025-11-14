@@ -1,12 +1,15 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { FC, useEffect, useMemo, useState } from 'react'
+import { ReviewAPI } from '../../../../../api/review/review-api'
 import FormButton from '../../../../../components/form-elements/Form-button'
 import FormInput from '../../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../../components/form-elements/Form-label'
 import FormTextbox from '../../../../../components/form-elements/Form-textbox'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay'
-import { useLoading } from '../../../../../hooks/use-loading'
 import { useStore } from '../../../../../hooks/use-store'
 import { IAdminReview } from '../../../../../models/review/admin-review/admin-review'
+import { IAdminUpdateReviewData } from '../../../../../models/review/admin-review/admin-update-review-data'
+import { reviewsKeys } from '../../../../../query-keys/reviews-keys'
 
 interface IProps {
 	isOpen: boolean
@@ -15,11 +18,37 @@ interface IProps {
 }
 
 const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
-	const { adminDashboardReviewsStore, notificationStore } = useStore()
+	const { notificationStore } = useStore()
 
-	const { execute: updateReview, isLoading } = useLoading(
-		adminDashboardReviewsStore.updateReview
-	)
+	const queryClient = useQueryClient()
+
+	const updateMutation = useMutation({
+		mutationFn: ({
+			userId,
+			reviewId,
+			reviewData,
+		}: {
+			userId: string
+			reviewId: string
+			reviewData: IAdminUpdateReviewData
+		}) => ReviewAPI.adminUpdateReview(userId, reviewId, reviewData),
+		onSuccess: () => {
+			notificationStore.addSuccessNotification('Рецензия успешно обновлена!')
+			queryClient.invalidateQueries({ queryKey: reviewsKeys.all })
+			onClose()
+		},
+		onError: (error: unknown) => {
+			const axiosError = error as {
+				response?: { data?: { message?: string[] } }
+			}
+			const errors = axiosError?.response?.data?.message || [
+				'Ошибка при обновлении рецензии',
+			]
+			errors.forEach((err: string) =>
+				notificationStore.addErrorNotification(err)
+			)
+		},
+	})
 
 	const [title, setTitle] = useState<string>(review.title)
 	const [text, setText] = useState<string>(review.text)
@@ -40,26 +69,22 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
 		)
 	}, [text, title])
 
-	const handleSubmit = async () => {
-		const errors = await updateReview(review.user.id, review.id, {
-			title: title.trim() !== '' ? title.trim() : undefined,
-			text: text.trim() !== '' ? text.trim() : undefined,
+	const handleSubmit = () => {
+		updateMutation.mutate({
+			userId: review.user.id,
+			reviewId: review.id,
+			reviewData: {
+				title: title.trim() !== '' ? title.trim() : undefined,
+				text: text.trim() !== '' ? text.trim() : undefined,
+			},
 		})
-		if (errors.length === 0) {
-			notificationStore.addSuccessNotification('Рецензия успешно обновлена!')
-			onClose()
-		} else {
-			errors.forEach(error => {
-				notificationStore.addErrorNotification(error)
-			})
-		}
 	}
 
 	return (
 		<ModalOverlay
 			isOpen={isOpen}
 			onCancel={onClose}
-			isLoading={isLoading}
+			isLoading={updateMutation.isPending}
 			className='max-lg:size-full'
 		>
 			<div
@@ -106,8 +131,12 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
 								title={'Сохранить'}
 								isInvert={true}
 								onClick={handleSubmit}
-								disabled={!hasChanges || !textAndTitleTogether || isLoading}
-								isLoading={isLoading}
+								disabled={
+									!hasChanges ||
+									!textAndTitleTogether ||
+									updateMutation.isPending
+								}
+								isLoading={updateMutation.isPending}
 							/>
 						</div>
 
@@ -116,7 +145,7 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
 								title={'Назад'}
 								isInvert={false}
 								onClick={onClose}
-								disabled={isLoading}
+								disabled={updateMutation.isPending}
 							/>
 						</div>
 					</div>

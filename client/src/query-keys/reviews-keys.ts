@@ -1,5 +1,21 @@
 export const reviewsKeys = {
 	all: ['reviews'] as const,
+	adminList: (params: {
+		query: string | null
+		order: string
+		limit: number
+		offset: number
+	}) =>
+		[
+			'reviews',
+			'admin',
+			{
+				query: params.query ?? null,
+				order: params.order,
+				limit: params.limit,
+				offset: params.offset,
+			},
+		] as const,
 	byAuthor: (authorId: string, limit: number, offset: number) =>
 		['reviews', 'byAuthor', authorId, limit, offset] as const,
 	list: (params: {

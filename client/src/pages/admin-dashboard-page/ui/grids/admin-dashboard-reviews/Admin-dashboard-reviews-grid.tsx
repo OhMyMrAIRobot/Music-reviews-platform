@@ -1,46 +1,47 @@
-import { observer } from 'mobx-react-lite'
+import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
-import AdminHeader from '../../../../../components/layout/admin-header/Admin-header'
-import Pagination from '../../../../../components/pagination/Pagination'
-import { useLoading } from '../../../../../hooks/use-loading'
-import { useStore } from '../../../../../hooks/use-store'
-import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
-import { SortOrder } from '../../../../../types/sort-order-type'
-import AdminToggleSortOrderButton from '../../buttons/Admin-toggle-sort-order-button'
-import AdminDashboardReviewsGridItem from './Admin-dashboard-reviews-grid-item'
+import { ReviewAPI } from '../../../../../api/review/review-api.ts'
+import AdminHeader from '../../../../../components/layout/admin-header/Admin-header.tsx'
+import Pagination from '../../../../../components/pagination/Pagination.tsx'
+import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum.ts'
+import { reviewsKeys } from '../../../../../query-keys/reviews-keys.ts'
+import { SortOrder } from '../../../../../types/sort-order-type.ts'
+import AdminDashboardReviewsGridItem from './Admin-dashboard-reviews-grid-item.tsx'
 
-const AdminDashboardReviewsGrid = observer(() => {
-	const perPage = 10
+const perPage = 10
 
-	const { adminDashboardReviewsStore } = useStore()
-
+const AdminDashboardReviewsGrid = () => {
 	const [searchText, setSearchText] = useState<string>('')
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC)
 
-	const { execute: fetch, isLoading } = useLoading(
-		adminDashboardReviewsStore.fetchReviews
-	)
+	const queryKey = reviewsKeys.adminList({
+		query: searchText.trim().length > 0 ? searchText.trim() : null,
+		order,
+		limit: perPage,
+		offset: (currentPage - 1) * perPage,
+	})
 
-	const fetchReviews = async () => {
-		return fetch(
+	const queryFn = () =>
+		ReviewAPI.adminFetchReviews(
 			searchText.trim().length > 0 ? searchText.trim() : null,
 			order,
 			perPage,
 			(currentPage - 1) * perPage
 		)
-	}
 
-	useEffect(() => {
-		fetchReviews()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentPage, order])
+	const { data, isPending: isLoading } = useQuery({
+		queryKey,
+		queryFn,
+		staleTime: 1000 * 60 * 5,
+	})
+
+	const reviews = data?.reviews || []
+	const count = data?.count || 0
 
 	useEffect(() => {
 		setCurrentPage(1)
-		fetchReviews()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [searchText])
+	}, [searchText, order])
 
 	return (
 		<div className='flex flex-col h-screen' id='admin-reviews'>
@@ -63,18 +64,6 @@ const AdminDashboardReviewsGrid = observer(() => {
 					}
 				/>
 
-				<AdminToggleSortOrderButton
-					title={'Дата публикации'}
-					order={order}
-					toggleOrder={() =>
-						setOrder(
-							order === SortOrdersEnum.DESC
-								? SortOrdersEnum.ASC
-								: SortOrdersEnum.DESC
-						)
-					}
-				/>
-
 				<div className='flex-1 overflow-y-auto mt-5'>
 					<div className='grid gap-y-5'>
 						{isLoading
@@ -84,29 +73,28 @@ const AdminDashboardReviewsGrid = observer(() => {
 										isLoading={true}
 									/>
 							  ))
-							: adminDashboardReviewsStore.reviews.map((review, idx) => (
+							: reviews.map((review, idx) => (
 									<AdminDashboardReviewsGridItem
 										key={review.id}
 										review={review}
 										isLoading={isLoading}
 										position={(currentPage - 1) * perPage + idx + 1}
-										refetchReviews={fetchReviews}
 									/>
 							  ))}
 					</div>
 				</div>
 
-				{!isLoading && adminDashboardReviewsStore.count === 0 && (
+				{!isLoading && count === 0 && (
 					<span className='font-medium mx-auto mt-5 text-lg'>
 						Рецензии не найдены!
 					</span>
 				)}
 
-				{!isLoading && adminDashboardReviewsStore.count > 0 && (
+				{!isLoading && count > 0 && (
 					<div className='mt-5'>
 						<Pagination
 							currentPage={currentPage}
-							totalItems={adminDashboardReviewsStore.count}
+							totalItems={count}
 							itemsPerPage={perPage}
 							setCurrentPage={setCurrentPage}
 							idToScroll={'admin-reviews-grid'}
@@ -116,6 +104,6 @@ const AdminDashboardReviewsGrid = observer(() => {
 			</div>
 		</div>
 	)
-})
+}
 
 export default AdminDashboardReviewsGrid
