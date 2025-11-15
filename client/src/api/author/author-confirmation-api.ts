@@ -36,7 +36,7 @@ export const AuthorConfirmationAPI = {
 		offset: number | null,
 		statusId: number | null,
 		order: SortOrder | null,
-		query: number | null
+		query: string | null
 	): Promise<IAuthorConfirmationsResponse> {
 		const { data } = await api.get<IAuthorConfirmationsResponse>(
 			`/author-confirmations?

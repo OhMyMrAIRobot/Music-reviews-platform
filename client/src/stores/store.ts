@@ -1,4 +1,3 @@
-import AdminDashboardAuthorConfirmationStore from '../pages/admin-dashboard-page/store/admin-dashboard-author-confirmation-store'
 import AdminDashboardFeedbackStore from '../pages/admin-dashboard-page/store/admin-dashboard-feedback-store'
 import AuthStore from './auth-store'
 import MetaStore from './meta-store'
@@ -11,7 +10,6 @@ class Store {
 	profileStore = ProfileStore
 	notificationStore = NotificationStore
 	adminDashboardFeedbackStore = AdminDashboardFeedbackStore
-	adminDashboardAuthorConfirmationStore = AdminDashboardAuthorConfirmationStore
 }
 
 export default Store
