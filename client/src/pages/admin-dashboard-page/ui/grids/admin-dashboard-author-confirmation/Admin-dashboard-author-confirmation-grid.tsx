@@ -11,7 +11,6 @@ import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
 import { authorConfirmationsKeys } from '../../../../../query-keys/author-confirmation-keys'
 import { SortOrder } from '../../../../../types/sort-order-type'
 import AdminFilterButton from '../../buttons/Admin-filter-button'
-import AdminToggleSortOrderButton from '../../buttons/Admin-toggle-sort-order-button'
 import AdminDashboardAuthorConfirmationGridItem from './Admin-dashboard-author-confirmation-grid-item'
 
 const perPage = 10
@@ -98,18 +97,6 @@ const AdminDashboardAuthorConfirmationGrid = () => {
 								)
 						  )}
 				</div>
-
-				<AdminToggleSortOrderButton
-					title={'Дата подачи заявки'}
-					order={order}
-					toggleOrder={() =>
-						setOrder(
-							order === SortOrdersEnum.DESC
-								? SortOrdersEnum.ASC
-								: SortOrdersEnum.DESC
-						)
-					}
-				/>
 
 				<AdminDashboardAuthorConfirmationGridItem
 					className='bg-white/5 font-medium max-xl:hidden'

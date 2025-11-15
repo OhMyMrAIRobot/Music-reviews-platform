@@ -6,7 +6,6 @@ import Pagination from '../../../../../components/pagination/Pagination'
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
 import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys'
 import { SortOrder } from '../../../../../types/sort-order-type'
-import AdminToggleSortOrderButton from '../../buttons/Admin-toggle-sort-order-button'
 import AdminDashboardAuthorCommentsGridItem from './Admin-dashboard-author-comments-grid-item'
 
 const perPage = 10
@@ -55,18 +54,6 @@ const AdminDashboardAuthorCommentsGrid = () => {
 				<AdminDashboardAuthorCommentsGridItem
 					className='bg-white/5 font-medium max-xl:hidden'
 					isLoading={false}
-					order={order}
-					toggleOrder={() =>
-						setOrder(
-							order === SortOrdersEnum.DESC
-								? SortOrdersEnum.ASC
-								: SortOrdersEnum.DESC
-						)
-					}
-				/>
-
-				<AdminToggleSortOrderButton
-					title={'Дата публикации'}
 					order={order}
 					toggleOrder={() =>
 						setOrder(

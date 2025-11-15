@@ -1,4 +1,3 @@
-import AdminDashboardFeedbackStore from '../pages/admin-dashboard-page/store/admin-dashboard-feedback-store'
 import AuthStore from './auth-store'
 import MetaStore from './meta-store'
 import NotificationStore from './notification-store'
@@ -9,7 +8,6 @@ class Store {
 	authStore = AuthStore
 	profileStore = ProfileStore
 	notificationStore = NotificationStore
-	adminDashboardFeedbackStore = AdminDashboardFeedbackStore
 }
 
 export default Store

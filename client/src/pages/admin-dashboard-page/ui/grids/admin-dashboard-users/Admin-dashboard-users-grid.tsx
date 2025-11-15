@@ -9,7 +9,6 @@ import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum.ts'
 import { usersKeys } from '../../../../../query-keys/users-keys.ts'
 import { SortOrder } from '../../../../../types/sort-order-type.ts'
 import AdminFilterButton from '../../buttons/Admin-filter-button.tsx'
-import AdminToggleSortOrderButton from '../../buttons/Admin-toggle-sort-order-button.tsx'
 import AdminDashboardUsersGridItem from './Admin-dashboard-users-grid-item.tsx'
 
 const perPage = 10
@@ -74,18 +73,6 @@ const AdminDashboardUsersGrid = () => {
 						/>
 					))}
 				</div>
-
-				<AdminToggleSortOrderButton
-					title={'Дата создания'}
-					order={order}
-					toggleOrder={() =>
-						setOrder(
-							order === SortOrdersEnum.DESC
-								? SortOrdersEnum.ASC
-								: SortOrdersEnum.DESC
-						)
-					}
-				/>
 
 				<AdminDashboardUsersGridItem
 					className='bg-white/5 font-medium max-xl:hidden'

@@ -11,7 +11,6 @@ import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum.ts'
 import { releasesKeys } from '../../../../../query-keys/releases-keys.ts'
 import { SortOrder } from '../../../../../types/sort-order-type.ts'
 import AdminFilterButton from '../../buttons/Admin-filter-button.tsx'
-import AdminToggleSortOrderButton from '../../buttons/Admin-toggle-sort-order-button.tsx'
 import AdminDashboardReleasesGridItem from './Admin-dashboard-releases-grid-item.tsx'
 import ReleaseFormModal from './Release-form-modal.tsx'
 
@@ -114,18 +113,6 @@ const AdminDashboardReleasesGrid = () => {
 						onClick={() => setAddModalOpen(true)}
 					/>
 				</div>
-
-				<AdminToggleSortOrderButton
-					title={'Дата создания'}
-					order={order}
-					toggleOrder={() =>
-						setOrder(
-							order === SortOrdersEnum.DESC
-								? SortOrdersEnum.ASC
-								: SortOrdersEnum.DESC
-						)
-					}
-				/>
 
 				<AdminDashboardReleasesGridItem
 					className='bg-white/5 font-medium max-xl:hidden'

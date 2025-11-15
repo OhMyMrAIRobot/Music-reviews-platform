@@ -1,12 +1,15 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { AxiosError } from 'axios'
 import { FC, useState } from 'react'
+import { FeedbackAPI } from '../../../../../api/feedback/feedback-api'
 import FeedbackStatusIcon from '../../../../../components/feedback/Feedback-status-icon'
 import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
-import { useLoading } from '../../../../../hooks/use-loading'
 import { useStore } from '../../../../../hooks/use-store'
 import { IFeedback } from '../../../../../models/feedback/feedback'
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
+import { feedbackKeys } from '../../../../../query-keys/feedback-keys'
 import { SortOrder } from '../../../../../types/sort-order-type'
 import { getFeedbackStatusColor } from '../../../../../utils/get-feedback-status-color'
 import AdminDeleteButton from '../../buttons/Admin-delete-button'
@@ -21,7 +24,6 @@ interface IProps {
 	order?: SortOrder
 	toggleOrder?: () => void
 	isDeleteLoading?: boolean
-	refetchFeedbacks?: () => void
 }
 
 const AdminDashboardFeedbackGridItem: FC<IProps> = ({
@@ -31,42 +33,32 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
 	isLoading,
 	order,
 	toggleOrder,
-	refetchFeedbacks,
 }) => {
-	const { adminDashboardFeedbackStore, notificationStore } = useStore()
+	const { notificationStore } = useStore()
+
+	const queryClient = useQueryClient()
 
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [detailsModalOpen, setDetailsModalOpen] = useState<boolean>(false)
 
-	const { execute: deleteFeedback, isLoading: isDeletingFeedback } = useLoading(
-		adminDashboardFeedbackStore.deleteFeedback
-	)
-
-	const toggle = () => {
-		if (toggleOrder) {
-			toggleOrder()
-		}
-	}
-
-	const handleRefetch = () => {
-		if (refetchFeedbacks) {
-			refetchFeedbacks()
-		}
-	}
-
-	const handleDelete = async (feedbackId: string) => {
-		if (isDeletingFeedback) return
-
-		const errors = await deleteFeedback(feedbackId)
-		if (errors.length === 0) {
+	const deleteMutation = useMutation({
+		mutationFn: (id: string) => FeedbackAPI.deleteFeedback(id),
+		onSuccess: () => {
 			notificationStore.addSuccessNotification('Сообщение успешно удалено!')
-			handleRefetch()
-		} else {
-			errors.forEach(error => {
-				notificationStore.addErrorNotification(error)
-			})
-		}
-	}
+			queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
+			setConfModalOpen(false)
+		},
+		onError: (error: unknown) => {
+			const axiosError = error as AxiosError<{ message: string | string[] }>
+			const errors = Array.isArray(axiosError.response?.data?.message)
+				? axiosError.response?.data?.message
+				: [axiosError.response?.data?.message]
+			errors
+				.filter((err): err is string => typeof err === 'string')
+				.forEach((err: string) => notificationStore.addErrorNotification(err))
+			setConfModalOpen(false)
+		},
+	})
 
 	return isLoading ? (
 		<SkeletonLoader className='w-full xl:h-12 rounded-lg' />
@@ -78,9 +70,9 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
 						<ConfirmationModal
 							title={'Вы действительно хотите удалить сообщение?'}
 							isOpen={confModalOpen}
-							onConfirm={() => handleDelete(feedback.id)}
+							onConfirm={() => deleteMutation.mutate(feedback.id)}
 							onCancel={() => setConfModalOpen(false)}
-							isLoading={isDeletingFeedback}
+							isLoading={deleteMutation.isPending}
 						/>
 					)}
 
@@ -115,7 +107,7 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
 						</>
 					) : (
 						<button
-							onClick={toggle}
+							onClick={toggleOrder}
 							className='cursor-pointer hover:text-white flex items-center gap-x-1.5'
 						>
 							<span>Дата отправки</span>

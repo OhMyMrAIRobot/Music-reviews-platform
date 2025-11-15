@@ -12,7 +12,6 @@ import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
 import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys'
 import { SortOrder } from '../../../../../types/sort-order-type'
 import AdminFilterButton from '../../buttons/Admin-filter-button'
-import AdminToggleSortOrderButton from '../../buttons/Admin-toggle-sort-order-button'
 import AdminDashboardMediaGridItem from './Admin-dashboard-media-grid-item'
 import MediaFormModal from './Media-form-modal'
 
@@ -151,18 +150,6 @@ const AdminDashboardMediaGrid = () => {
 						onClick={() => setAddModalOpen(true)}
 					/>
 				</div>
-
-				<AdminToggleSortOrderButton
-					title={'Дата публикации'}
-					order={order}
-					toggleOrder={() =>
-						setOrder(
-							order === SortOrdersEnum.DESC
-								? SortOrdersEnum.ASC
-								: SortOrdersEnum.DESC
-						)
-					}
-				/>
 
 				<AdminDashboardMediaGridItem
 					className='bg-white/5 font-medium max-xl:hidden'
