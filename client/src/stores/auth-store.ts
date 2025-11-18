@@ -48,17 +48,6 @@ class AuthStore {
 		}
 	}
 
-	sendReqResetPassword = async (email: string): Promise<string[] | boolean> => {
-		try {
-			const { emailSent } = await AuthAPI.reqResetPassword(email)
-			return emailSent
-		} catch (e: any) {
-			return Array.isArray(e.response?.data?.message)
-				? e.response?.data?.message
-				: [e.response?.data?.message]
-		}
-	}
-
 	resetPassword = async (
 		formData: IResetPasswordRequest,
 		token: string

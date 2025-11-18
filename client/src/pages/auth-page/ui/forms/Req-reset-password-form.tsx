@@ -1,40 +1,48 @@
-import { observer } from 'mobx-react-lite'
+import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
+import { AuthAPI } from '../../../../api/auth-api'
 import FormButton from '../../../../components/form-elements/Form-button'
 import FormInput from '../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../components/form-elements/Form-label'
 import FormSubTitle from '../../../../components/form-elements/Form-subtitle'
 import FormTitle from '../../../../components/form-elements/Form-title'
-import { useLoading } from '../../../../hooks/use-loading'
+import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import { useStore } from '../../../../hooks/use-store'
 import { generateUUID } from '../../../../utils/generate-uuid'
 
-const ReqResetPasswordForm = observer(() => {
-	const { authStore, notificationStore } = useStore()
+const ReqResetPasswordForm = () => {
+	const { notificationStore } = useStore()
 
 	const [email, setEmail] = useState<string>('')
 
-	const { execute: sendRequest, isLoading } = useLoading(
-		authStore.sendReqResetPassword
-	)
+	const handleApiError = useApiErrorHandler()
+
+	const { mutateAsync: sendRequest, isPending: isLoading } = useMutation({
+		mutationFn: (email: string) => AuthAPI.reqResetPassword(email),
+		onSuccess: data => {
+			if (data.emailSent) {
+				notificationStore.addNotification({
+					id: generateUUID(),
+					text: 'Письмо с инструкциями по восстановлению пароля отправлено на вашу почту!',
+					isError: false,
+				})
+				setEmail('')
+			} else {
+				notificationStore.addNotification({
+					id: generateUUID(),
+					text: 'Ошибка при отправке письма. Повторите попытку позже!',
+					isError: true,
+				})
+			}
+		},
+		onError: (error: unknown) => {
+			handleApiError(error, 'Ошибка при отправке письма!')
+		},
+	})
 
 	const onSubmit = async () => {
 		if (isLoading || !email.trim()) return
-		const result = await sendRequest(email)
-		if (Array.isArray(result)) {
-			result.forEach(err => notificationStore.addErrorNotification(err))
-		} else {
-			notificationStore.addNotification({
-				id: generateUUID(),
-				text: result
-					? 'Письмо с инструкциями по восстановлению пароля отправлено на вашу почту!'
-					: 'Ошибка при отправке письма. Повторите попытку позже!',
-				isError: !result,
-			})
-			if (result) {
-				setEmail('')
-			}
-		}
+		await sendRequest(email.trim())
 	}
 
 	return (
@@ -67,6 +75,6 @@ const ReqResetPasswordForm = observer(() => {
 			/>
 		</div>
 	)
-})
+}
 
 export default ReqResetPasswordForm
