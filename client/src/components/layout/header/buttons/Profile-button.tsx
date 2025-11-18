@@ -7,6 +7,7 @@ import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
 import { RolesEnum } from '../../../../models/role/roles-enum'
+import { authKeys } from '../../../../query-keys/auth-keys'
 import { profileKeys } from '../../../../query-keys/profile-keys'
 import { generateUUID } from '../../../../utils/generate-uuid'
 import SettingsSvg from '../../../svg/Settings-svg'
@@ -60,7 +61,7 @@ const ProfileButton = observer(() => {
 			if (userId) {
 				queryClient.invalidateQueries({ queryKey: profileKeys.profile(userId) })
 			}
-			queryClient.invalidateQueries({ queryKey: ['auth'] })
+			queryClient.invalidateQueries({ queryKey: authKeys.auth })
 			navigate(navigateToMain)
 			setIsOpen(false)
 			notificationStore.addNotification({

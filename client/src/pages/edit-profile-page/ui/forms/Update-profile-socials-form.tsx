@@ -1,47 +1,67 @@
-import { useEffect } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { observer } from 'mobx-react-lite'
+import { SocialMediaAPI } from '../../../../api/social-media-api'
 import FormInputWithConfirmation from '../../../../components/form-elements/Form-input-with-confirmation'
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
+import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../../hooks/use-auth'
-import { useLoading } from '../../../../hooks/use-loading'
+import { useSocialMeta } from '../../../../hooks/use-social-meta'
 import { useStore } from '../../../../hooks/use-store'
 import { ISocialMedia } from '../../../../models/social-media/social-media'
+import { profileKeys } from '../../../../query-keys/profile-keys'
 import EditProfilePageSection from '../Edit-profile-page-section'
 
-const UpdateProfileSocialsForm = () => {
-	const { profileStore, authStore, notificationStore, metaStore } = useStore()
+const UpdateProfileSocialsForm = observer(() => {
+	const { authStore, notificationStore } = useStore()
 
 	const { checkAuth } = useAuth()
 
-	const { execute: fetchSocials, isLoading } = useLoading(
-		metaStore.fetchSocials
-	)
+	const { socials, isLoading } = useSocialMeta()
 
-	const { execute: toggle, isLoading: isToggleLoading } = useLoading(
-		profileStore.toggleSocial
-	)
+	const queryClient = useQueryClient()
+	const handleApiError = useApiErrorHandler()
 
-	useEffect(() => {
-		if (metaStore.socials.length === 0) {
-			fetchSocials()
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	const toggleMutation = useMutation({
+		mutationFn: async ({
+			socialId,
+			value,
+			initValue,
+		}: {
+			socialId: string
+			value: string
+			initValue: string
+		}) => {
+			if (value === '' && initValue !== '') {
+				return SocialMediaAPI.deleteSocial(socialId)
+			} else if (value !== '' && initValue === '') {
+				return SocialMediaAPI.addSocial(socialId, value)
+			} else if (value !== '' && initValue !== '') {
+				return SocialMediaAPI.editSocial(socialId, value)
+			}
+		},
+		onSuccess: (_, { socialId }) => {
+			const social = socials.find(s => s.id === socialId)
+			const userId = authStore.user?.id
+			if (userId) {
+				queryClient.invalidateQueries({ queryKey: profileKeys.profile(userId) })
+			}
+			notificationStore.addSuccessNotification(
+				`Вы успешно обновили информацию о ${social?.name || 'социальной сети'}`
+			)
+		},
+		onError: (error: unknown) => {
+			handleApiError(error, 'Ошибка при обновлении социальной сети!')
+		},
+	})
 
 	const handleClick = async (
 		value: string,
 		initValue: string,
 		social: ISocialMedia
 	) => {
-		if (!checkAuth() || !authStore.user || isLoading) return
-		const errors = await toggle(social.id, value, initValue, authStore.user.id)
+		if (!checkAuth() || !authStore.user || toggleMutation.isPending) return
 
-		if (errors.length === 0) {
-			notificationStore.addSuccessNotification(
-				`Вы успешно обновили информацию о ${social.name}`
-			)
-		} else {
-			errors.forEach(err => notificationStore.addErrorNotification(err))
-		}
+		toggleMutation.mutate({ socialId: social.id, value, initValue })
 	}
 
 	return (
@@ -57,9 +77,9 @@ const UpdateProfileSocialsForm = () => {
 								className='w-full h-10 rounded-md'
 							/>
 					  ))
-					: metaStore.socials.map(social => {
+					: socials.map(social => {
 							const initialValue =
-								profileStore.profile?.social.find(el => el.id === social.id)
+								authStore.profile?.social.find(el => el.id === social.id)
 									?.url ?? ''
 							return (
 								<FormInputWithConfirmation
@@ -67,13 +87,13 @@ const UpdateProfileSocialsForm = () => {
 									label={social.name}
 									initialValue={initialValue}
 									onClick={value => handleClick(value, initialValue, social)}
-									isLoading={isToggleLoading}
+									isLoading={toggleMutation.isPending}
 								/>
 							)
 					  })}
 			</div>
 		</EditProfilePageSection>
 	)
-}
+})
 
 export default UpdateProfileSocialsForm

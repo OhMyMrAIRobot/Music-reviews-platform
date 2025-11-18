@@ -1,36 +1,46 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
+import { ProfileAPI } from '../../../../api/user/profile-api'
 import FormButton from '../../../../components/form-elements/Form-button'
 import FormLabel from '../../../../components/form-elements/Form-label'
 import FormTextbox from '../../../../components/form-elements/Form-textbox'
+import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../../hooks/use-auth'
-import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
-import notificationStore from '../../../../stores/notification-store'
+import { profileKeys } from '../../../../query-keys/profile-keys'
 import EditProfilePageSection from '../Edit-profile-page-section'
 
 const UpdateProfileInfoForm = observer(() => {
-	const { profileStore } = useStore()
+	const { authStore, notificationStore } = useStore()
 
 	const { checkAuth } = useAuth()
 
-	const [bio, setBio] = useState<string>(profileStore.profile?.bio ?? '')
+	const [bio, setBio] = useState<string>(authStore.profile?.bio ?? '')
 
-	const { execute: updateBio, isLoading } = useLoading(
-		profileStore.updateProfileBio
-	)
+	const queryClient = useQueryClient()
+	const handleApiError = useApiErrorHandler()
 
-	const handleSubmit = async () => {
-		if (!checkAuth() || isLoading) return
-
-		const errors = await updateBio(bio)
-		if (errors.length === 0) {
+	const updateMutation = useMutation({
+		mutationFn: (bio: string) => ProfileAPI.updateProfile({ bio }),
+		onSuccess: () => {
+			const userId = authStore.user?.id
+			if (userId) {
+				queryClient.invalidateQueries({ queryKey: profileKeys.profile(userId) })
+			}
 			notificationStore.addSuccessNotification(
 				'Описание профиля успешно обновлено!'
 			)
-		} else {
-			errors.forEach(err => notificationStore.addErrorNotification(err))
-		}
+		},
+		onError: (error: unknown) => {
+			handleApiError(error, 'Ошибка при обновлении описания профиля!')
+		},
+	})
+
+	const handleSubmit = async () => {
+		if (!checkAuth() || updateMutation.isPending) return
+
+		updateMutation.mutate(bio)
 	}
 
 	return (
@@ -58,11 +68,13 @@ const UpdateProfileInfoForm = observer(() => {
 			<div className='pt-3 lg:pt-6 border-t border-white/5 w-full'>
 				<div className='w-full sm:w-38'>
 					<FormButton
-						title={isLoading ? 'Сохранение...' : 'Сохранить'}
+						title={updateMutation.isPending ? 'Сохранение...' : 'Сохранить'}
 						isInvert={true}
 						onClick={handleSubmit}
-						disabled={bio === profileStore.profile?.bio || isLoading}
-						isLoading={isLoading}
+						disabled={
+							bio === authStore.profile?.bio || updateMutation.isPending
+						}
+						isLoading={updateMutation.isPending}
 					/>
 				</div>
 			</div>

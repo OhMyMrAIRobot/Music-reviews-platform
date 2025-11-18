@@ -47,7 +47,7 @@ const AdminHeader: FC<IProps> = observer(({ title, setText }) => {
 								className='aspect-square rounded-full size-10 select-none object-cover'
 							/>
 
-							<span>{authStore.profile?.nickname}</span>
+							<span>{authStore.user?.nickname}</span>
 						</>
 					)}
 				</div>

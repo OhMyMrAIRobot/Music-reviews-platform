@@ -1,9 +1,12 @@
+import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
+import { UserAPI } from '../../../../api/user/user-api'
 import FormButton from '../../../../components/form-elements/Form-button'
 import FormInput from '../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../components/form-elements/Form-label'
-import { useLoading } from '../../../../hooks/use-loading'
+import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import { useStore } from '../../../../hooks/use-store'
+import { IUpdateUserData } from '../../../../models/user/update-user-data'
 import EditProfilePageSection from '../Edit-profile-page-section'
 
 const UpdateUserInfoForm = () => {
@@ -17,30 +20,39 @@ const UpdateUserInfoForm = () => {
 	const [newPasswordConfirm, setNewPasswordConfirm] = useState<string>('')
 	const [password, setPassword] = useState<string>('')
 
-	const { execute: update, isLoading } = useLoading(authStore.updateUserData)
+	const handleApiError = useApiErrorHandler()
 
-	const handleSubmit = async () => {
-		const result = await update(
-			email,
-			nickname,
-			newPassword,
-			newPasswordConfirm,
-			password
-		)
-
-		if (Array.isArray(result)) {
-			result.forEach(err => notificationStore.addErrorNotification(err))
-		} else {
+	const updateMutation = useMutation({
+		mutationFn: (data: IUpdateUserData) => UserAPI.updateUser(data),
+		onSuccess: data => {
+			const { user, accessToken, emailSent } = data
+			authStore.setAuthorization(user, accessToken)
 			notificationStore.addSuccessNotification(
 				'Вы успешно обновили данные об аккаунте!'
 			)
-			if (result) {
-				notificationStore.addEmailSentNotification(result)
+			if (emailSent) {
+				notificationStore.addEmailSentNotification(emailSent)
 			}
 			setPassword('')
 			setNewPassword('')
 			setNewPasswordConfirm('')
+		},
+		onError: (error: unknown) => {
+			handleApiError(error, 'Ошибка при обновлении данных аккаунта!')
+		},
+	})
+
+	const handleSubmit = async () => {
+		const data = {
+			email: email.trim() === authStore.user?.email ? undefined : email.trim(),
+			nickname:
+				nickname.trim() === authStore.user?.nickname
+					? undefined
+					: nickname.trim(),
+			newPassword: newPassword.trim() === '' ? undefined : newPassword.trim(),
+			password,
 		}
+		updateMutation.mutate(data)
 	}
 
 	return (
@@ -130,17 +142,17 @@ const UpdateUserInfoForm = () => {
 				<div className='pt-3 lg:pt-6 border-t border-white/5 w-full'>
 					<div className='w-full sm:w-38'>
 						<FormButton
-							title={isLoading ? 'Сохранение...' : 'Сохранить'}
+							title={updateMutation.isPending ? 'Сохранение...' : 'Сохранить'}
 							isInvert={true}
 							onClick={handleSubmit}
 							disabled={
 								password.length < 6 ||
-								isLoading ||
+								updateMutation.isPending ||
 								email.length === 0 ||
 								nickname.length === 0 ||
 								newPassword !== newPasswordConfirm
 							}
-							isLoading={isLoading}
+							isLoading={updateMutation.isPending}
 						/>
 					</div>
 				</div>
