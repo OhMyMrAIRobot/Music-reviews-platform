@@ -1,11 +1,17 @@
-import { useEffect, useLayoutEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { observer } from 'mobx-react-lite'
+import { useEffect, useLayoutEffect } from 'react'
 import { Route, Routes, useLocation } from 'react-router'
+import { AuthAPI } from './api/auth-api'
+import { ProfileAPI } from './api/user/profile-api'
 import Layout from './components/layout/Layout'
 import NotificationsContainer from './components/notifications/Notifications-container'
 import Loader from './components/utils/Loader'
 import { useStore } from './hooks/use-store'
 import AuthPage from './pages/auth-page/Auth-page'
 import ActivationForm from './pages/auth-page/ui/forms/Activation-form'
+import { authKeys } from './query-keys/auth-keys'
+import { profileKeys } from './query-keys/profile-keys'
 import AdminRoute from './routes/Admin-route'
 import AdminRouteList from './routes/Admin-route-list'
 import AuthRoute from './routes/Auth-route'
@@ -15,18 +21,41 @@ import NonAuthRoute from './routes/Non-auth-route'
 import NonAuthRouteList from './routes/Non-auth-route-list'
 import { ROUTES } from './routes/routes-enum'
 
-export function App() {
+export const App = observer(() => {
 	const { authStore } = useStore()
-	const [isLoading, setIsLoading] = useState<boolean>(true)
+
+	const { data, error, isFetching } = useQuery({
+		queryKey: authKeys.auth,
+		queryFn: AuthAPI.checkAuth,
+		enabled: !!localStorage.getItem('token') && !authStore.isAuth,
+		staleTime: Infinity,
+	})
+
+	const userId = authStore.user?.id
+
+	const { data: profileData } = useQuery({
+		queryKey: userId ? profileKeys.profile(userId) : ['profile', 'null'],
+		queryFn: userId
+			? () => ProfileAPI.fetchProfile(userId)
+			: () => Promise.resolve(null),
+		enabled: authStore.isAuth && !!userId && !authStore.profile,
+		staleTime: Infinity,
+	})
 
 	useEffect(() => {
-		if (localStorage.getItem('token')) {
-			authStore.checkAuth().then(() => setIsLoading(false))
-		} else {
-			setIsLoading(false)
+		if (data) {
+			authStore.setAuthorization(data.user, data.accessToken)
+		} else if (error) {
+			authStore.setAuth(false)
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	}, [data, error, authStore])
+
+	useEffect(() => {
+		if (profileData) {
+			authStore.setProfile(profileData)
+			authStore.setProfileLoading(false)
+		}
+	}, [profileData, authStore])
 
 	const { pathname } = useLocation()
 
@@ -34,7 +63,7 @@ export function App() {
 		window.scrollTo(0, 0)
 	}, [pathname])
 
-	return isLoading ? (
+	return isFetching ? (
 		<div className='min-w-screen min-h-screen flex items-center justify-center'>
 			<Loader className={'mx-auto size-20 border-white'} />
 		</div>
@@ -67,4 +96,4 @@ export function App() {
 			<NotificationsContainer />
 		</>
 	)
-}
+})

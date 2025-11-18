@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from 'mobx'
-import { AuthAPI } from '../api/auth-api'
 import { UserAPI } from '../api/user/user-api'
 import { IAuthUser } from '../models/auth/auth-user'
+import { IProfile } from '../models/profile/profile'
 import { IUpdateUserData } from '../models/user/update-user-data'
 
 class AuthStore {
 	isAuth: boolean = false
 	user: IAuthUser | null = null
+	profile: IProfile | null = null
+	isProfileLoading: boolean = false
 
 	constructor() {
 		makeAutoObservable(this)
@@ -17,34 +19,35 @@ class AuthStore {
 		this.isAuth = value
 	}
 
+	setProfile(profile: IProfile | null) {
+		this.profile = profile
+	}
+
+	setProfileLoading(value: boolean) {
+		this.isProfileLoading = value
+	}
+
+	setUser(user: IAuthUser | null) {
+		this.user = user
+	}
+
 	setAuthorization(user: IAuthUser, token: string) {
 		runInAction(() => {
 			this.isAuth = true
 			this.user = user
+			this.isProfileLoading = true
 			localStorage.setItem('token', token)
 		})
 	}
 
-	checkAuth = async () => {
-		try {
-			const { user, accessToken } = await AuthAPI.checkAuth()
-			this.setAuthorization(user, accessToken)
-		} catch {
-			this.setAuth(false)
-		}
-	}
-
-	logOut = async () => {
-		try {
-			await AuthAPI.logout()
-			runInAction(() => {
-				this.isAuth = false
-				this.user = null
-			})
+	unsetAuthorization() {
+		runInAction(() => {
+			this.isAuth = false
+			this.user = null
+			this.profile = null
+			this.isProfileLoading = false
 			localStorage.removeItem('token')
-		} catch (e) {
-			console.log(e)
-		}
+		})
 	}
 
 	updateUserData = async (
