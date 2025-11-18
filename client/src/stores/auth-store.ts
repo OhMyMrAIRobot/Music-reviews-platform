@@ -3,7 +3,6 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { AuthAPI } from '../api/auth-api'
 import { UserAPI } from '../api/user/user-api'
 import { IAuthUser } from '../models/auth/auth-user'
-import { IResetPasswordRequest } from '../models/auth/request/reset-password-request'
 import { IUpdateUserData } from '../models/user/update-user-data'
 
 class AuthStore {
@@ -45,28 +44,6 @@ class AuthStore {
 			localStorage.removeItem('token')
 		} catch (e) {
 			console.log(e)
-		}
-	}
-
-	resetPassword = async (
-		formData: IResetPasswordRequest,
-		token: string
-	): Promise<string[]> => {
-		if (formData.password !== formData.passwordConfirm) {
-			return ['Пароли не совпадают!']
-		}
-
-		try {
-			const { user, accessToken } = await AuthAPI.resetPassword(
-				formData.password,
-				token
-			)
-			this.setAuthorization(user, accessToken)
-			return []
-		} catch (e: any) {
-			return Array.isArray(e.response?.data?.message)
-				? e.response?.data?.message
-				: [e.response?.data?.message]
 		}
 	}
 
