@@ -36,18 +36,6 @@ class AuthStore {
 		}
 	}
 
-	login = async (email: string, password: string): Promise<string[]> => {
-		try {
-			const { user, accessToken } = await AuthAPI.login(email, password)
-			this.setAuthorization(user, accessToken)
-			return []
-		} catch (e: any) {
-			return Array.isArray(e.response?.data?.message)
-				? e.response?.data?.message
-				: [e.response?.data?.message]
-		}
-	}
-
 	logOut = async () => {
 		try {
 			await AuthAPI.logout()

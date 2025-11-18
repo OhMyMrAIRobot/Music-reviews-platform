@@ -1,16 +1,17 @@
-import { observer } from 'mobx-react-lite'
+import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
+import { AuthAPI } from '../../../../api/auth-api'
 import FormButton from '../../../../components/form-elements/Form-button'
 import FormInput from '../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../components/form-elements/Form-label'
 import FormSubTitle from '../../../../components/form-elements/Form-subtitle'
 import FormTitle from '../../../../components/form-elements/Form-title'
 import PreventableLink from '../../../../components/utils/Preventable-link'
-import { useLoading } from '../../../../hooks/use-loading'
+import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
 
-const LoginForm = observer(() => {
+const LoginForm = () => {
 	const [email, setEmail] = useState<string>('')
 	const [password, setPassword] = useState<string>('')
 
@@ -18,17 +19,24 @@ const LoginForm = observer(() => {
 
 	const { authStore, notificationStore } = useStore()
 
-	const { execute: login, isLoading } = useLoading(authStore.login)
+	const handleApiError = useApiErrorHandler()
+
+	const { mutateAsync: login, isPending: isLoading } = useMutation({
+		mutationFn: ({ email, password }: { email: string; password: string }) =>
+			AuthAPI.login(email, password),
+		onSuccess: data => {
+			const { user, accessToken } = data
+			authStore.setAuthorization(user, accessToken)
+			notificationStore.addSuccessNotification('Вы успешно вошли!')
+		},
+		onError: (error: unknown) => {
+			handleApiError(error, 'Ошибка при выполнении входа!')
+		},
+	})
 
 	const handleLogin = async () => {
 		if (!email.trim() || !password || isLoading) return
-
-		const errors = await login(email, password)
-		if (errors.length === 0) {
-			notificationStore.addSuccessNotification('Вы успешно вошли!')
-		} else {
-			errors.forEach(err => notificationStore.addErrorNotification(err))
-		}
+		await login({ email: email.trim(), password })
 	}
 
 	return (
@@ -95,6 +103,6 @@ const LoginForm = observer(() => {
 			</div>
 		</div>
 	)
-})
+}
 
 export default LoginForm
