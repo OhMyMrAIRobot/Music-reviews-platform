@@ -1,20 +1,23 @@
-import { observer } from 'mobx-react-lite'
+import { useMutation } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
+import { AuthAPI } from '../../../../api/auth-api'
 import FormButton from '../../../../components/form-elements/Form-button'
 import FormCheckbox from '../../../../components/form-elements/Form-checkbox'
 import FormInput from '../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../components/form-elements/Form-label'
 import FormTitle from '../../../../components/form-elements/Form-title'
 import PreventableLink from '../../../../components/utils/Preventable-link'
-import { useLoading } from '../../../../hooks/use-loading'
+import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
 import { IRegistrationRequest } from '../../../../models/auth/request/registration-request'
 
-const RegistrationForm = observer(() => {
+const RegistrationForm = () => {
 	const { authStore, notificationStore } = useStore()
 
 	const { navigateToLogin } = useNavigationPath()
+
+	const handleApiError = useApiErrorHandler()
 
 	const [formData, setFormData] = useState<IRegistrationRequest>({
 		email: '',
@@ -25,7 +28,21 @@ const RegistrationForm = observer(() => {
 		policyChecked: false,
 	})
 
-	const { execute: register, isLoading } = useLoading(authStore.register)
+	const { mutateAsync: register, isPending: isLoading } = useMutation({
+		mutationFn: (data: IRegistrationRequest) =>
+			AuthAPI.register(data.email, data.nickname, data.password),
+		onSuccess: data => {
+			const { user, accessToken, emailSent } = data
+			authStore.setAuthorization(user, accessToken)
+			notificationStore.addSuccessNotification('Вы успешно зарегистрировались!')
+			if (emailSent) {
+				notificationStore.addEmailSentNotification(emailSent)
+			}
+		},
+		onError: (error: unknown) => {
+			handleApiError(error, 'Ошибка при регистрации!')
+		},
+	})
 
 	const handleChange = (
 		field: keyof typeof formData,
@@ -83,13 +100,25 @@ const RegistrationForm = observer(() => {
 
 	const handleRegistration = async () => {
 		if (!isFormValid || isLoading) return
-		const result = await register(formData)
-		if (Array.isArray(result)) {
-			result.forEach(err => notificationStore.addErrorNotification(err))
-		} else {
-			notificationStore.addSuccessNotification('Вы успешно зарегистрировались!')
-			notificationStore.addEmailSentNotification(result)
+
+		if (formData.password !== formData.passwordConfirm) {
+			notificationStore.addErrorNotification('Пароли не совпадают!')
+			return
 		}
+		if (!formData.agreementChecked) {
+			notificationStore.addErrorNotification(
+				'Вы должны принять условия пользовательского соглашения!'
+			)
+			return
+		}
+		if (!formData.policyChecked) {
+			notificationStore.addErrorNotification(
+				'Вы должны принять условия политики обработки персональных данных!'
+			)
+			return
+		}
+
+		await register(formData)
 	}
 
 	const isFormValid = useMemo(() => {
@@ -155,6 +184,6 @@ const RegistrationForm = observer(() => {
 			</div>
 		</div>
 	)
-})
+}
 
 export default RegistrationForm

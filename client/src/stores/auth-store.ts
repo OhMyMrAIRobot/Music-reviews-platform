@@ -3,7 +3,6 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { AuthAPI } from '../api/auth-api'
 import { UserAPI } from '../api/user/user-api'
 import { IAuthUser } from '../models/auth/auth-user'
-import { IRegistrationRequest } from '../models/auth/request/registration-request'
 import { IResetPasswordRequest } from '../models/auth/request/reset-password-request'
 import { IUpdateUserData } from '../models/user/update-user-data'
 
@@ -46,41 +45,6 @@ class AuthStore {
 			localStorage.removeItem('token')
 		} catch (e) {
 			console.log(e)
-		}
-	}
-
-	register = async (
-		formData: IRegistrationRequest
-	): Promise<string[] | boolean> => {
-		const errors: string[] = []
-
-		if (formData.password !== formData.passwordConfirm) {
-			errors.push('Пароли не совпадают!')
-		}
-		if (!formData.agreementChecked) {
-			errors.push('Вы должны принять условия пользовательского соглашения!')
-		}
-		if (!formData.policyChecked) {
-			errors.push(
-				'Вы должны принять условия политики обработки персональных данных!'
-			)
-		}
-
-		if (errors.length !== 0) {
-			return errors
-		}
-		try {
-			const { user, accessToken, emailSent } = await AuthAPI.register(
-				formData.email,
-				formData.nickname,
-				formData.password
-			)
-			this.setAuthorization(user, accessToken)
-			return emailSent
-		} catch (e: any) {
-			return Array.isArray(e.response?.data?.message)
-				? e.response?.data?.message
-				: [e.response?.data?.message]
 		}
 	}
 
