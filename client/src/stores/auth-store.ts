@@ -59,29 +59,6 @@ class AuthStore {
 		}
 	}
 
-	activate = async (token: string): Promise<string[]> => {
-		try {
-			const { user, accessToken } = await AuthAPI.activate(token)
-			this.setAuthorization(user, accessToken)
-			return []
-		} catch (e: any) {
-			return Array.isArray(e.response?.data?.message)
-				? e.response?.data?.message
-				: [e.response?.data?.message]
-		}
-	}
-
-	resendActivation = async (): Promise<boolean | string[]> => {
-		try {
-			const { emailSent } = await AuthAPI.resendActivation()
-			return emailSent
-		} catch (e: any) {
-			return Array.isArray(e.response?.data?.message)
-				? e.response?.data?.message
-				: [e.response?.data?.message]
-		}
-	}
-
 	resetPassword = async (
 		formData: IResetPasswordRequest,
 		token: string
