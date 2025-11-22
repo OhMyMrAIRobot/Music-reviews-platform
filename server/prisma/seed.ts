@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { AuthorConfirmationStatusesEnum } from '../src/author-confirmation-statuses/types/author-confirmation-statuses.enum';
-import { AuthorTypesEnum } from '../src/author-types/entities/author-types.enum';
+import { AuthorTypesEnum } from '../src/author-types/types/author-types.enum';
 import { FeedbackStatusesEnum } from '../src/feedback-statuses/types/feedback-statuses.enum';
 import { NominationTypesEnum } from '../src/nomination-types/types/nomination-types.enum';
 import { ReleaseMediaStatusesEnum } from '../src/release-media-statuses/types/release-media-statuses.enum';

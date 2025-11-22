@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { NominationVote } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
-import { AuthorTypesEnum } from 'src/author-types/entities/author-types.enum';
+import { AuthorTypesEnum } from 'src/author-types/types/author-types.enum';
 import { AuthorsService } from 'src/authors/authors.service';
 import { NominationTypesService } from 'src/nomination-types/nomination-types.service';
 import { ReleasesService } from 'src/releases/releases.service';

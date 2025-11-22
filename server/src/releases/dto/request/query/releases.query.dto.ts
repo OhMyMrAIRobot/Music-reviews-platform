@@ -41,7 +41,7 @@ export class ReleasesQueryDto {
 
   /**
    * Field to sort by. Allowed values are defined in
-   * `ReleaseSortFieldsEnum` (e.g. 'published', 'mediaRating').
+   * `ReleaseSortFieldsEnum`.
    */
   @IsOptional()
   @IsIn(Object.values(ReleaseSortFieldsEnum), {
