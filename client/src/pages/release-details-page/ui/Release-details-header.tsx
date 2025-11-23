@@ -4,15 +4,15 @@ import LikesCount from '../../../components/utils/Likes-count'
 import { useAuth } from '../../../hooks/use-auth'
 import { useQueryListFavToggleAll } from '../../../hooks/use-query-list-fav-toggle'
 import { useStore } from '../../../hooks/use-store'
-import { IReleaseDetails } from '../../../models/release/release-details/release-details'
 import { releaseDetailsKeys } from '../../../query-keys/release-details-keys'
+import { Release } from '../../../types/release'
 import { toggleFavRelease } from '../../../utils/toggle-fav-release'
 import ReleaseDetailsAuthors from './release-details-authors/Release-details-authors'
 import ReleaseDetailsNominations from './Release-details-nominations'
 import ReleaseDetailsRatings from './release-details-ratings/Release-details-ratings'
 
 interface IProps {
-	release: IReleaseDetails
+	release: Release
 }
 
 const ReleaseDetailsHeader: FC<IProps> = ({ release }) => {
@@ -22,10 +22,11 @@ const ReleaseDetailsHeader: FC<IProps> = ({ release }) => {
 
 	const [toggling, setToggling] = useState(false)
 
-	const { storeToggle } = useQueryListFavToggleAll<
-		IReleaseDetails,
-		IReleaseDetails
-	>(releaseDetailsKeys.all, null, toggleFavRelease)
+	const { storeToggle } = useQueryListFavToggleAll<Release, Release>(
+		releaseDetailsKeys.all,
+		null,
+		toggleFavRelease
+	)
 
 	const isFav = release.userFavRelease?.some(
 		fav => fav.userId === authStore.user?.id
@@ -80,7 +81,7 @@ const ReleaseDetailsHeader: FC<IProps> = ({ release }) => {
 			<div className='lg:pl-8 gap-3 lg:h-62 flex justify-between lg:text-left flex-col text-center w-full'>
 				<div>
 					<p className='text-white opacity-70 text-xs font-semibold'>
-						{release.releaseType}
+						{release.releaseType.type}
 					</p>
 					<p className='text-2xl lg:text-3xl xl:text-5xl font-extrabold mt-2'>
 						{release.title}
@@ -95,9 +96,12 @@ const ReleaseDetailsHeader: FC<IProps> = ({ release }) => {
 			</div>
 
 			<div className='absolute right-2 top-0 lg:right-3 lg:top-3 z-20 flex items-center gap-x-3 overflow-x-hidden'>
-				{release.favCount > 0 && (
+				{release.userFavRelease.length > 0 && (
 					<div className='bg-zinc-950 px-2 py-1 lg:px-3 lg:py-2 flex rounded-xl items-center select-none'>
-						<LikesCount count={release.favCount} className='size-5' />
+						<LikesCount
+							count={release.userFavRelease.length}
+							className='size-5'
+						/>
 					</div>
 				)}
 

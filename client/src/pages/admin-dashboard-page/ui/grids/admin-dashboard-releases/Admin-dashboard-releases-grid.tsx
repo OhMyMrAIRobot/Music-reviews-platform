@@ -6,9 +6,9 @@ import Pagination from '../../../../../components/pagination/Pagination.tsx'
 import ReleaseTypeIcon from '../../../../../components/release/Release-type-icon.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
 import { useReleaseMeta } from '../../../../../hooks/use-release-meta.ts'
-import { ReleaseTypesFilterOptions } from '../../../../../models/release/release-type/release-types-filter-options.ts'
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum.ts'
 import { releasesKeys } from '../../../../../query-keys/releases-keys.ts'
+import { ReleaseTypesFilterOptions } from '../../../../../types/release/index.ts'
 import { SortOrder } from '../../../../../types/sort-order-type.ts'
 import AdminFilterButton from '../../buttons/Admin-filter-button.tsx'
 import AdminDashboardReleasesGridItem from './Admin-dashboard-releases-grid-item.tsx'
@@ -32,22 +32,24 @@ const AdminDashboardReleasesGrid = () => {
 			? null
 			: types.find(type => type.type === activeType)?.id || null
 
+	const offset = (currentPage - 1) * perPage
+
 	const queryKey = releasesKeys.adminList({
 		typeId,
 		query: searchText.trim() || null,
 		order,
 		limit: perPage,
-		offset: (currentPage - 1) * perPage,
+		offset,
 	})
 
 	const queryFn = () =>
-		ReleaseAPI.adminFetchReleases(
-			typeId,
-			searchText.trim() || null,
-			order,
-			perPage,
-			(currentPage - 1) * perPage
-		)
+		ReleaseAPI.fetchAll({
+			typeId: typeId ?? undefined,
+			search: searchText.trim() || undefined,
+			sortOrder: order,
+			limit: perPage,
+			offset,
+		})
 
 	const { data, isPending: isReleasesLoading } = useQuery({
 		queryKey,
@@ -56,8 +58,8 @@ const AdminDashboardReleasesGrid = () => {
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const releases = data?.releases || []
-	const count = data?.count || 0
+	const releases = data?.items || []
+	const count = data?.meta.count || 0
 
 	useEffect(() => {
 		setCurrentPage(1)

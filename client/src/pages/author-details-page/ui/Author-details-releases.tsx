@@ -2,8 +2,12 @@ import { useQuery } from '@tanstack/react-query'
 import { FC } from 'react'
 import { ReleaseAPI } from '../../../api/release/release-api'
 import ReleasesColumn from '../../../components/release/releases-column/Releases-column'
-import { ReleaseTypesEnum } from '../../../models/release/release-type/release-types-enum'
+import { SortOrdersEnum } from '../../../models/sort/sort-orders-enum'
 import { releasesKeys } from '../../../query-keys/releases-keys'
+import {
+	ReleasesSortFieldsEnum,
+	ReleaseTypesEnum,
+} from '../../../types/release'
 
 interface IProps {
 	id: string
@@ -12,17 +16,22 @@ interface IProps {
 const AuthorDetailsReleases: FC<IProps> = ({ id }) => {
 	const { data, isPending } = useQuery({
 		queryKey: releasesKeys.byAuthor(id, true),
-		queryFn: () => ReleaseAPI.fetchByAuthorId(id, true),
+		queryFn: () =>
+			ReleaseAPI.fetchAll({
+				authorId: id,
+				sortField: ReleasesSortFieldsEnum.PUBLISHED,
+				sortOrder: SortOrdersEnum.DESC,
+			}),
 		staleTime: 1000 * 60 * 5,
 	})
-	const releases = data || []
+	const releases = data?.items || []
 
 	const tracks = releases.filter(
-		val => val.releaseType === ReleaseTypesEnum.SINGLE
+		val => val.releaseType.type === ReleaseTypesEnum.SINGLE
 	)
 
 	const albums = releases.filter(
-		val => val.releaseType === ReleaseTypesEnum.ALBUM
+		val => val.releaseType.type === ReleaseTypesEnum.ALBUM
 	)
 
 	return (

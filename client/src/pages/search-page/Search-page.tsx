@@ -51,14 +51,12 @@ const SearchPage = () => {
 			offset: (currentPage - 1) * perPage,
 		}),
 		queryFn: () =>
-			ReleaseAPI.fetchReleases(
-				null,
-				query || null,
-				null,
-				null,
-				perPage,
-				(currentPage - 1) * perPage
-			),
+			ReleaseAPI.fetchAll({
+				search: query || undefined,
+				limit: perPage,
+				offset: (currentPage - 1) * perPage,
+			}),
+
 		enabled: query.length > 0 && type === SearchTypesEnum.RELEASES,
 		staleTime: 1000 * 60 * 5,
 	})
@@ -88,11 +86,11 @@ const SearchPage = () => {
 				)}
 				{type === SearchTypesEnum.RELEASES && (
 					<ReleasesGrid
-						items={releasesQuery.data?.releases ?? []}
+						items={releasesQuery.data?.items ?? []}
 						isLoading={releasesQuery.isPending}
 						currentPage={currentPage}
 						setCurrentPage={setCurrentPage}
-						total={releasesQuery.data?.count ?? 0}
+						total={releasesQuery.data?.meta.count ?? 0}
 						perPage={perPage}
 					/>
 				)}

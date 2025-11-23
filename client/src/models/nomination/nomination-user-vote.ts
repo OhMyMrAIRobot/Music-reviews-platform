@@ -1,5 +1,5 @@
+import { INominationType } from '../../types/nomination/entities/nomination-type'
 import { NominationEntityKind } from './nomination-entity-kind'
-import { INominationType } from './nomination-type/nomination-type'
 
 export interface INominationUserVote {
 	id: string

@@ -2,9 +2,9 @@ import { FC, useRef } from 'react'
 import { Link } from 'react-router'
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
-import { NominationTypesEnum } from '../../../../models/nomination/nomination-type/nomination-type-enum'
 import { INominationWinnerParticipationItem } from '../../../../models/nomination/nomination-winner-participation/nomination-winner-participation-item'
 import { MonthEnum, MonthEnumType } from '../../../../types/month-enum-type'
+import { NominationTypesEnum } from '../../../../types/nomination'
 
 interface IProps {
 	item?: INominationWinnerParticipationItem

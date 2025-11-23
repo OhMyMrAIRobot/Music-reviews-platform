@@ -5,11 +5,11 @@ import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react'
 import CloseSvg from '../../../../../components/svg/Close-svg'
 import NextSvg from '../../../../../components/svg/Next-svg'
 import PrevSvg from '../../../../../components/svg/Prev-svg'
-import { IRelease } from '../../../../../models/release/release'
+import { Release } from '../../../../../types/release'
 import MostReviewedSwiperCard from './Most-reviewed-swiper-card'
 
 interface IProps {
-	items: IRelease[]
+	items: Release[]
 	show: boolean
 	setShow: (val: boolean) => void
 	index: number

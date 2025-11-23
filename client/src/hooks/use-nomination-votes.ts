@@ -2,8 +2,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { NominationAPI } from '../api/nomination-api'
 import { INominationCandidatesResponse } from '../models/nomination/nomination-candidate/nomination-candidates-response'
 import { NominationEntityKind } from '../models/nomination/nomination-entity-kind'
-import { INominationType } from '../models/nomination/nomination-type/nomination-type'
 import { INominationUserVote } from '../models/nomination/nomination-user-vote'
+import { INominationType } from '../types/nomination/entities/nomination-type'
 
 export function useNominationVotes(isAuth: boolean) {
 	const queryClient = useQueryClient()

@@ -2,16 +2,10 @@ import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { ReleaseAPI } from '../../api/release/release-api'
 import ReleasesColumn from '../../components/release/releases-column/Releases-column'
-import { IRelease } from '../../models/release/release'
-import { ReleaseTypesEnum } from '../../models/release/release-type/release-types-enum'
+import { SortOrdersEnum } from '../../models/sort/sort-orders-enum'
 import { releasesKeys } from '../../query-keys/releases-keys'
+import { ReleasesSortFieldsEnum, ReleaseTypesEnum } from '../../types/release'
 import ReleasesRatingPageHeader from './ui/Releases-rating-page-header'
-
-type TopRatingResponse = {
-	releases: IRelease[]
-	minYear: number
-	maxYear: number
-}
 
 const ReleasesRatingPage = () => {
 	const [month, setMonth] = useState<number>(new Date().getMonth() + 1)
@@ -19,20 +13,26 @@ const ReleasesRatingPage = () => {
 
 	const queryKey = releasesKeys.topRating({ year, month })
 
-	const { data, isPending } = useQuery<TopRatingResponse>({
+	const { data, isPending } = useQuery({
 		queryKey,
-		queryFn: () => ReleaseAPI.fetchTopRatingReleases(year, month),
+		queryFn: () =>
+			ReleaseAPI.fetchAll({
+				year: year ?? undefined,
+				month: month,
+				sortField: ReleasesSortFieldsEnum.ALL_RATING,
+				sortOrder: SortOrdersEnum.DESC,
+			}),
 		enabled: true,
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const releases = data?.releases ?? []
+	const releases = data?.items ?? []
 
 	const tracks = releases.filter(
-		val => val.releaseType === ReleaseTypesEnum.SINGLE
+		val => val.releaseType.type === ReleaseTypesEnum.SINGLE
 	)
 	const albums = releases.filter(
-		val => val.releaseType === ReleaseTypesEnum.ALBUM
+		val => val.releaseType.type === ReleaseTypesEnum.ALBUM
 	)
 
 	return (
@@ -42,8 +42,8 @@ const ReleasesRatingPage = () => {
 				setSelectedMonth={setMonth}
 				selectedYear={year}
 				setSelectedYear={setYear}
-				minYear={data?.minYear ?? null}
-				maxYear={data?.maxYear ?? new Date().getFullYear()}
+				minYear={data?.meta.minYearRelease ?? null}
+				maxYear={data?.meta.maxYearRelease ?? new Date().getFullYear()}
 				isLoading={isPending}
 			/>
 			<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mt-5 space-y-5'>

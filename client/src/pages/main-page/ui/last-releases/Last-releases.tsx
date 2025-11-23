@@ -3,15 +3,15 @@ import { useRef, useState } from 'react'
 import { ReleaseAPI } from '../../../../api/release/release-api'
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
-import { ReleaseSortFieldValuesEnum } from '../../../../models/release/release-sort/release-sort-field-values'
 import { SortOrdersEnum } from '../../../../models/sort/sort-orders-enum'
 import { releasesKeys } from '../../../../query-keys/releases-keys'
 import { CarouselRef } from '../../../../types/carousel-ref'
+import { ReleasesSortFieldsEnum } from '../../../../types/release'
 import LastReleasesCarousel from './carousel/Last-releases-carousel'
 
 const LIMIT = 20
 const OFFSET = 0
-const FIELD = ReleaseSortFieldValuesEnum.PUBLISHED
+const FIELD = ReleasesSortFieldsEnum.PUBLISHED
 const ORDER = SortOrdersEnum.DESC
 
 const queryKey = releasesKeys.list({
@@ -23,7 +23,12 @@ const queryKey = releasesKeys.list({
 })
 
 const queryFn = () =>
-	ReleaseAPI.fetchReleases(null, null, FIELD, ORDER, LIMIT, OFFSET)
+	ReleaseAPI.fetchAll({
+		limit: LIMIT,
+		offset: OFFSET,
+		sortField: FIELD,
+		sortOrder: ORDER,
+	})
 
 const LastReleases = () => {
 	const { navigateToReleases } = useNavigationPath()
@@ -34,7 +39,7 @@ const LastReleases = () => {
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const items = data?.releases ?? []
+	const items = data?.items ?? []
 
 	const carouselRef = useRef<CarouselRef>(null)
 	const [canScrollPrev, setCanScrollPrev] = useState(false)

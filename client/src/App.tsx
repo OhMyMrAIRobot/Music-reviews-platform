@@ -47,6 +47,7 @@ export const App = observer(() => {
 			authStore.setAuthorization(data.user, data.accessToken)
 		} else if (error) {
 			authStore.setAuth(false)
+			localStorage.removeItem('token')
 		}
 	}, [data, error, authStore])
 

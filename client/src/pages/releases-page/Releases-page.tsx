@@ -5,12 +5,15 @@ import ComboBox from '../../components/buttons/Combo-box'
 import ReleasesGrid from '../../components/release/Releases-grid'
 import SkeletonLoader from '../../components/utils/Skeleton-loader'
 import { useReleaseMeta } from '../../hooks/use-release-meta'
-import { ReleaseSortFieldValuesEnum } from '../../models/release/release-sort/release-sort-field-values'
-import { ReleaseSortFields } from '../../models/release/release-sort/release-sort-fields'
-import { ReleaseTypesFilterOptions } from '../../models/release/release-type/release-types-filter-options'
-import { SortOrdersEnum } from '../../models/sort/sort-orders-enum'
 import { releasesKeys } from '../../query-keys/releases-keys'
-import { SortOrder } from '../../types/sort-order-type'
+import {
+	ReleaseSortFields,
+	ReleaseSortKey,
+	ReleaseTypesFilterOptions,
+	getKeyByLabel,
+	getSortParams,
+	getTypeIdByOption,
+} from '../../types/release'
 
 const PER_PAGE = 12
 
@@ -25,49 +28,16 @@ const ReleasesPage = () => {
 
 	const { types: releaseTypes, isLoading: isTypesLoading } = useReleaseMeta()
 
-	const selectedTypeId = useMemo(() => {
-		if (selectedType === ReleaseTypesFilterOptions.ALL) return null
-		const type = releaseTypes.find(t => t.type === selectedType)
-		return type ? type.id : null
-	}, [releaseTypes, selectedType])
+	const selectedTypeId = useMemo(
+		() => getTypeIdByOption(selectedType, releaseTypes),
+		[releaseTypes, selectedType]
+	)
 
 	const { sortField, sortOrder } = useMemo(() => {
-		let field = '' as ReleaseSortFieldValuesEnum
-		let order: SortOrder = SortOrdersEnum.DESC
-		switch (selectedSort) {
-			case ReleaseSortFields.WITHOUT_TEXT_COUNT:
-				field = ReleaseSortFieldValuesEnum.WITHOUT_TEXT_COUNT
-				order = SortOrdersEnum.DESC
-				break
-			case ReleaseSortFields.TEXT_COUNT:
-				field = ReleaseSortFieldValuesEnum.TEXT_COUNT
-				order = SortOrdersEnum.DESC
-				break
-			case ReleaseSortFields.PUBLISHED_NEW:
-				field = ReleaseSortFieldValuesEnum.PUBLISHED
-				order = SortOrdersEnum.DESC
-				break
-			case ReleaseSortFields.PUBLISHED_OLD:
-				field = ReleaseSortFieldValuesEnum.PUBLISHED
-				order = SortOrdersEnum.ASC
-				break
-			case ReleaseSortFields.MEDIA_RATING:
-				field = ReleaseSortFieldValuesEnum.MEDIA_RATING
-				order = SortOrdersEnum.DESC
-				break
-			case ReleaseSortFields.WITH_TEXT_RATING:
-				field = ReleaseSortFieldValuesEnum.WITH_TEXT_RATING
-				order = SortOrdersEnum.DESC
-				break
-			case ReleaseSortFields.NO_TEXT_RATING:
-				field = ReleaseSortFieldValuesEnum.WITHOUT_TEXT_RATING
-				order = SortOrdersEnum.DESC
-				break
-			default:
-				field = ReleaseSortFieldValuesEnum.PUBLISHED
-				order = SortOrdersEnum.DESC
-		}
-		return { sortField: field, sortOrder: order }
+		const key =
+			getKeyByLabel(selectedSort) ?? ('PUBLISHED_NEW' as ReleaseSortKey)
+		const params = getSortParams(key)
+		return { sortField: params.field, sortOrder: params.order }
 	}, [selectedSort])
 
 	useEffect(() => {
@@ -88,20 +58,19 @@ const ReleasesPage = () => {
 	const { data, isPending: isReleasesLoading } = useQuery({
 		queryKey,
 		queryFn: () =>
-			ReleaseAPI.fetchReleases(
-				selectedTypeId,
-				null,
+			ReleaseAPI.fetchAll({
+				typeId: selectedTypeId ?? undefined,
 				sortField,
 				sortOrder,
 				limit,
-				offset
-			),
+				offset,
+			}),
 		staleTime: 1000 * 60 * 5,
 		enabled: Boolean(releaseTypes),
 	})
 
-	const items = data?.releases ?? []
-	const total = data?.count ?? 0
+	const items = data?.items ?? []
+	const count = data?.meta.count ?? 0
 
 	return (
 		<>
@@ -144,7 +113,7 @@ const ReleasesPage = () => {
 				isLoading={isReleasesLoading}
 				currentPage={currentPage}
 				setCurrentPage={setCurrentPage}
-				total={total}
+				total={count}
 				perPage={PER_PAGE}
 			/>
 		</>

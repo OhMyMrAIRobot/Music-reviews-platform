@@ -1,10 +1,10 @@
 import { FC } from 'react'
-import { IRelease } from '../../models/release/release'
+import { Release } from '../../types/release'
 import Pagination from '../pagination/Pagination'
 import ReleaseCard from './Release-card'
 
 interface IProps {
-	items: IRelease[]
+	items: Release[]
 	isLoading: boolean
 	currentPage: number
 	setCurrentPage: (val: number) => void

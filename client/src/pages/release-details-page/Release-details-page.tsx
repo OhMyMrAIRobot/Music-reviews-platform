@@ -4,10 +4,9 @@ import { useNavigate, useParams } from 'react-router'
 import { ReleaseAPI } from '../../api/release/release-api'
 import Loader from '../../components/utils/Loader.tsx'
 import useNavigationPath from '../../hooks/use-navigation-path'
-import { IReleaseDetails } from '../../models/release/release-details/release-details'
-import { ReleaseTypesEnum } from '../../models/release/release-type/release-types-enum.ts'
 import { releaseDetailsKeys } from '../../query-keys/release-details-keys'
 import authStore from '../../stores/auth-store.ts'
+import { ReleaseTypesEnum } from '../../types/release'
 import ReleaseDetailsAlbumValue from './ui/release-details-album-value/Release-details-album-value.tsx'
 import ReleaseDetailsAuthorComments from './ui/release-details-author-comments/Release-details-author-comments.tsx'
 import ReleaseDetailsEstimation from './ui/release-details-estimation/Release-details-estimation.tsx'
@@ -22,16 +21,14 @@ const ReleaseDetailsPage = () => {
 	const navigate = useNavigate()
 	const { navigateToMain } = useNavigationPath()
 
-	const { data: release, isPending: isReleaseLoading } =
-		useQuery<IReleaseDetails | null>({
-			queryKey: id
-				? releaseDetailsKeys.details(id)
-				: releaseDetailsKeys.unknown(),
-			queryFn: () =>
-				id ? ReleaseAPI.fetchReleaseDetails(id) : Promise.resolve(null),
-			enabled: !!id,
-			staleTime: 1000 * 60 * 5,
-		})
+	const { data: release, isPending: isReleaseLoading } = useQuery({
+		queryKey: id
+			? releaseDetailsKeys.details(id)
+			: releaseDetailsKeys.unknown(),
+		queryFn: () => (id ? ReleaseAPI.fetchById(id) : Promise.resolve(null)),
+		enabled: !!id,
+		staleTime: 1000 * 60 * 5,
+	})
 
 	useEffect(() => {
 		if (!release && !isReleaseLoading) {
@@ -48,9 +45,11 @@ const ReleaseDetailsPage = () => {
 		: []
 
 	const isUserAuthor =
-		release?.artists?.some(ra => registeredAuthorIds.includes(ra.id)) ||
-		release?.producers?.some(rp => registeredAuthorIds.includes(rp.id)) ||
-		release?.designers?.some(rd => registeredAuthorIds.includes(rd.id))
+		release?.authors.artists?.some(ra => registeredAuthorIds.includes(ra.id)) ||
+		release?.authors.producers?.some(rp =>
+			registeredAuthorIds.includes(rp.id)
+		) ||
+		release?.authors.designers?.some(rd => registeredAuthorIds.includes(rd.id))
 
 	if (isReleaseLoading) {
 		return (
@@ -65,7 +64,7 @@ const ReleaseDetailsPage = () => {
 			<>
 				<ReleaseDetailsHeader release={release} />
 
-				{release.releaseType === ReleaseTypesEnum.ALBUM && (
+				{release.releaseType.type === ReleaseTypesEnum.ALBUM && (
 					<ReleaseDetailsAlbumValue releaseId={release.id} />
 				)}
 

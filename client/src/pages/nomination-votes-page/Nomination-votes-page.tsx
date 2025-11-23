@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 import { useNominationVotes } from '../../hooks/use-nomination-votes'
 import { useStore } from '../../hooks/use-store'
-import { NominationTypesEnum } from '../../models/nomination/nomination-type/nomination-type-enum'
 import { MonthEnum, MonthEnumType } from '../../types/month-enum-type'
+import { NominationTypesEnum } from '../../types/nomination'
 import NominationVotesSection from './ui/Nomination-votes-section'
 
 const NominationVotesPage = () => {

@@ -2,11 +2,11 @@ import { EmblaOptionsType } from 'embla-carousel'
 import useEmblaCarousel from 'embla-carousel-react'
 import { FC } from 'react'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
-import { IRelease } from '../../../../../models/release/release.ts'
+import { Release } from '../../../../../types/release'
 import MostReviewedCarouselItem from './Most-reviewed-carousel-item'
 
 interface IProps {
-	items: IRelease[]
+	items: Release[]
 	isLoading: boolean
 	setShow: (val: boolean) => void
 	setIndex: (val: number) => void

@@ -7,10 +7,10 @@ import ReleaseRatings from '../../../../../components/release/Release-ratings'
 import ReleaseTypeIcon from '../../../../../components/release/Release-type-icon'
 import TextReviewSvg from '../../../../../components/review/svg/Text-review-svg'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
-import { IRelease } from '../../../../../models/release/release'
+import { Release } from '../../../../../types/release'
 
 interface IProps {
-	release: IRelease | null
+	release: Release | null
 	index: number
 }
 
@@ -27,7 +27,7 @@ const MostReviewedSwiperCard: FC<IProps> = ({ release, index }) => {
 					</span>
 
 					<ReleaseTypeIcon
-						type={release.releaseType}
+						type={release.releaseType.type}
 						className={
 							'absolute size-9 bottom-4 right-4 bg-zinc-900 rounded-full flex items-center justify-center p-2'
 						}
@@ -53,14 +53,14 @@ const MostReviewedSwiperCard: FC<IProps> = ({ release, index }) => {
 						</span>
 
 						<ReleaseAuthors
-							authors={release.authors}
+							authors={release.authors.artists}
 							className='font-semibold mt-2 leading-3'
 						/>
 					</div>
 
 					<div className='flex shrink-0 gap-[5px] items-center'>
 						<ReleaseRatings
-							ratings={release.ratings}
+							ratings={release.ratings.total}
 							className={'size-9 2xl:size-11 text-base'}
 							showHint={false}
 						/>
@@ -110,7 +110,9 @@ const MostReviewedSwiperCard: FC<IProps> = ({ release, index }) => {
 						className='border border-white/0 px-3 h-full bg-white/10 flex items-center rounded-full min-w-20 lg:min-w-25 justify-center text-center gap-1 hover:bg-white/15 hover:border-white/10 transition-colors duration-200'
 					>
 						<TextReviewSvg className={'size-5 mr-1'} />
-						<span>{release.textCount + release.withoutTextCount}</span>
+						<span>
+							{release.reviewsInfo.withText + release.reviewsInfo.withoutText}
+						</span>
 					</Link>
 				</div>
 			</div>

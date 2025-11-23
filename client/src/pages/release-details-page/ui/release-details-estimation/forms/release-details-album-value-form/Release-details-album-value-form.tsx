@@ -7,13 +7,12 @@ import TickSvg from '../../../../../../components/svg/Tick-svg'
 import Loader from '../../../../../../components/utils/Loader'
 import { useAuth } from '../../../../../../hooks/use-auth'
 import { useStore } from '../../../../../../hooks/use-store'
-import { IReleaseDetails } from '../../../../../../models/release/release-details/release-details'
-import { ReleaseTypesEnum } from '../../../../../../models/release/release-type/release-types-enum'
 import { albumValuesKeys } from '../../../../../../query-keys/album-values-keys'
 import { leaderboardKeys } from '../../../../../../query-keys/leaderboard-keys'
 import { profileKeys } from '../../../../../../query-keys/profile-keys'
 import { releaseDetailsKeys } from '../../../../../../query-keys/release-details-keys'
 import authStore from '../../../../../../stores/auth-store'
+import { Release, ReleaseTypesEnum } from '../../../../../../types/release'
 import { getAlbumValueInfluenceMultiplier } from '../../../../../../utils/get-album-value-influence-multiplier'
 import ReleaseDetailsEstimationDeleteButton from '../../buttons/Release-details-estimation-delete-button'
 import ReleaseDetailsAlbumValueFormDepth from './Release-details-album-value-form-depth'
@@ -23,7 +22,7 @@ import ReleaseDetailsAlbumValueFormQuality from './Release-details-album-value-f
 import ReleaseDetailsAlbumValueFormRarity from './Release-details-album-value-form-rarity'
 
 interface IProps {
-	release: IReleaseDetails
+	release: Release
 }
 
 function round2(value: number): number {
@@ -158,7 +157,8 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = ({ release }) => {
 	const { data: userAlbumValueVote } = useQuery({
 		queryKey: releaseDetailsKeys.userAlbumValueVote(release.id),
 		queryFn: () => AlbumValueAPI.fetchUserAlbumValueVote(release.id),
-		enabled: authStore.isAuth && release.releaseType === ReleaseTypesEnum.ALBUM,
+		enabled:
+			authStore.isAuth && release.releaseType.type === ReleaseTypesEnum.ALBUM,
 		staleTime: 1000 * 60 * 5,
 		retry: false,
 	})

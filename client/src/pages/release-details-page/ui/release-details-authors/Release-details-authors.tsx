@@ -1,25 +1,25 @@
 import { FC } from 'react'
 import { AuthorTypesEnum } from '../../../../models/author/author-type/author-types-enum'
-import { IReleaseDetails } from '../../../../models/release/release-details/release-details'
+import { Release } from '../../../../types/release'
 import ReleaseDetailsAuthorsItem from './Release-details-authors-item'
 
 interface IProps {
-	release: IReleaseDetails
+	release: Release
 }
 
 const ReleaseDetailsAuthors: FC<IProps> = ({ release }) => {
 	return (
 		<div className='select-none mt-5 flex flex-wrap justify-center lg:justify-start gap-x-2 lg:gap-x-5 items-center lg:-ml-3'>
-			{!release.artists.length &&
-				!release.producers.length &&
-				!release.designers.length && (
+			{!release.authors.artists.length &&
+				!release.authors.producers.length &&
+				!release.authors.designers.length && (
 					<span className='text-sm opacity-50 font-medium ml-3'>
 						Автор не указан!
 					</span>
 				)}
 
-			{release.artists.length > 0 &&
-				release.artists.map(artist => (
+			{release.authors.artists.length > 0 &&
+				release.authors.artists.map(artist => (
 					<ReleaseDetailsAuthorsItem
 						author={artist}
 						type={AuthorTypesEnum.ARTIST}
@@ -27,10 +27,10 @@ const ReleaseDetailsAuthors: FC<IProps> = ({ release }) => {
 					/>
 				))}
 
-			{release.producers.length > 0 && (
+			{release.authors.producers.length > 0 && (
 				<div className='flex gap-x-1.5 items-center'>
 					<span className='opacity-70 font-medium'>prod.</span>
-					{release.producers.map(producer => (
+					{release.authors.producers.map(producer => (
 						<ReleaseDetailsAuthorsItem
 							author={producer}
 							type={AuthorTypesEnum.PRODUCER}
@@ -40,10 +40,10 @@ const ReleaseDetailsAuthors: FC<IProps> = ({ release }) => {
 				</div>
 			)}
 
-			{release.designers.length > 0 && (
+			{release.authors.designers.length > 0 && (
 				<div className='flex gap-x-1.5 items-center'>
 					<span className='opacity-70 font-medium'>cover by</span>
-					{release.designers.map(designer => (
+					{release.authors.designers.map(designer => (
 						<ReleaseDetailsAuthorsItem
 							author={designer}
 							type={AuthorTypesEnum.DESIGNER}
@@ -55,7 +55,7 @@ const ReleaseDetailsAuthors: FC<IProps> = ({ release }) => {
 
 			<div className='bg-white/10 w-[1px] h-5 max-lg:mx-2' />
 			<div className='text-white font-medium max-lg:text-sm'>
-				{release.year}
+				{release.publishDate}
 			</div>
 		</div>
 	)

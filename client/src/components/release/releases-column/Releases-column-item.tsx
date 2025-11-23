@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { Link } from 'react-router'
 import useNavigationPath from '../../../hooks/use-navigation-path'
-import { IRelease } from '../../../models/release/release'
+import { Release } from '../../../types/release'
 import SkeletonLoader from '../../utils/Skeleton-loader'
 import ReleaseAuthorActions from '../Release-author-actions'
 import ReleaseAuthors from '../Release-authors'
@@ -9,7 +9,7 @@ import ReleaseRatings from '../Release-ratings'
 import ReleaseReviewsCount from '../Release-reviews-count'
 
 interface IProps {
-	release?: IRelease
+	release?: Release
 	isLoading: boolean
 }
 
@@ -38,11 +38,12 @@ const ReleasesColumnItem: FC<IProps> = ({ release, isLoading }) => {
 				</Link>
 
 				<div className='w-full max-w-1/2 grid grid-rows-3 h-[60px] lg:h-[72px] text-ellipsis'>
-					{(release.textCount !== 0 || release.withoutTextCount !== 0) && (
+					{(release.reviewsInfo.withText !== 0 ||
+						release.reviewsInfo.withoutText !== 0) && (
 						<div className='flex items-center gap-2'>
 							<ReleaseReviewsCount
-								textCount={release.textCount}
-								noTextCount={release.withoutTextCount}
+								textCount={release.reviewsInfo.withText}
+								noTextCount={release.reviewsInfo.withoutText}
 							/>
 							<ReleaseAuthorActions
 								hasAuthorComments={release.hasAuthorComments}
@@ -59,14 +60,14 @@ const ReleasesColumnItem: FC<IProps> = ({ release, isLoading }) => {
 					</Link>
 
 					<ReleaseAuthors
-						authors={release.authors}
+						authors={release.authors.artists}
 						className='font-medium leading-3 text-sm lg:text-base'
 					/>
 				</div>
 
 				<div className='flex items-center gap-[5px] select-none ml-auto'>
 					<ReleaseRatings
-						ratings={release.ratings}
+						ratings={release.ratings.total}
 						className={'size-[30px] lg:size-[45px] text-sm lg:text-[22px]'}
 						showHint={true}
 					/>

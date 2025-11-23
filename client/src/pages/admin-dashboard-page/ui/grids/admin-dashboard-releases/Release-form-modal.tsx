@@ -15,17 +15,18 @@ import ModalOverlay from '../../../../../components/modals/Modal-overlay.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
 import { useReleaseMeta } from '../../../../../hooks/use-release-meta.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
-import { IAdminRelease } from '../../../../../models/release/admin-release/admin-release.ts'
 import { authorsKeys } from '../../../../../query-keys/authors-keys.ts'
 import { releasesKeys } from '../../../../../query-keys/releases-keys.ts'
+import { IReleaseFormValues, Release } from '../../../../../types/release'
 import { arraysEqual } from '../../../../../utils/arrays-equal.ts'
+import buildReleaseFormData from '../../../../../utils/build-release-form-data'
 import SelectImageLabel from '../../../../edit-profile-page/ui/labels/Select-image-label.tsx'
 import SelectedImageLabel from '../../../../edit-profile-page/ui/labels/Selected-image-label.tsx'
 
 interface IProps {
 	isOpen: boolean
 	onClose: () => void
-	release?: IAdminRelease
+	release?: Release
 }
 
 const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
@@ -50,7 +51,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 	const [deleteCover, setDeleteCover] = useState<boolean>(false)
 
 	const createMutation = useMutation({
-		mutationFn: (formData: FormData) => ReleaseAPI.createRelease(formData),
+		mutationFn: (formData: FormData) => ReleaseAPI.create(formData),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: releasesKeys.all })
 			notificationStore.addSuccessNotification('Релиз успешно добавлен!')
@@ -70,7 +71,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 
 	const updateMutation = useMutation({
 		mutationFn: ({ id, formData }: { id: string; formData: FormData }) =>
-			ReleaseAPI.updateRelease(id, formData),
+			ReleaseAPI.update(id, formData),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: releasesKeys.all })
 			notificationStore.addSuccessNotification('Релиз успешно обновлен')
@@ -92,75 +93,19 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 		if (!isFormValid || createMutation.isPending || updateMutation.isPending)
 			return
 
-		const formData = new FormData()
-
-		if (cover) {
-			formData.append('coverImg', cover)
+		const values: IReleaseFormValues = {
+			cover,
+			coverPreviewUrl,
+			title,
+			type,
+			publishDate: date,
+			selectedArtists,
+			selectedProducers,
+			selectedDesigners,
+			deleteCover,
 		}
 
-		if (deleteCover && !cover)
-			formData.append('clearCover', JSON.stringify(true))
-
-		if (!release || title !== release.title) {
-			formData.append('title', title)
-		}
-
-		if (!release || date !== release.publishDate) {
-			formData.append('publishDate', date)
-		}
-
-		const releaseType = types.find(entry => entry.type === type)
-		if ((!release || release.releaseType.type !== type) && releaseType) {
-			formData.append('releaseTypeId', releaseType.id)
-		}
-
-		if (
-			!release ||
-			!arraysEqual(
-				release.releaseArtists.map(entry => entry.name).sort(),
-				selectedArtists.map(sa => sa.name).sort()
-			)
-		) {
-			if (selectedArtists.length === 0) {
-				formData.append('releaseArtists[]', '[]')
-			} else {
-				selectedArtists.forEach(sa => {
-					formData.append('releaseArtists[]', sa.id)
-				})
-			}
-		}
-
-		if (
-			!release ||
-			!arraysEqual(
-				release.releaseProducers.map(entry => entry.name).sort(),
-				selectedProducers.map(sp => sp.name).sort()
-			)
-		) {
-			if (selectedProducers.length === 0) {
-				formData.append('releaseProducers[]', '[]')
-			} else {
-				selectedProducers.forEach(sp => {
-					formData.append('releaseProducers[]', sp.id)
-				})
-			}
-		}
-
-		if (
-			!release ||
-			!arraysEqual(
-				release.releaseDesigners.map(entry => entry.name).sort(),
-				selectedDesigners.map(sd => sd.name).sort()
-			)
-		) {
-			if (selectedDesigners.length === 0) {
-				formData.append('releaseDesigners[]', '[]')
-			} else {
-				selectedDesigners.forEach(sd => {
-					formData.append('releaseDesigners[]', sd.id)
-				})
-			}
-		}
+		const formData = buildReleaseFormData(values, types, release)
 
 		if (release) {
 			await updateMutation.mutateAsync({ id: release.id, formData })
@@ -190,7 +135,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 
 		if (
 			!arraysEqual(
-				release.releaseArtists.map(entry => entry.name).sort(),
+				release.authors.artists.map(entry => entry.name).sort(),
 				selectedArtists.map(sa => sa.name).sort()
 			)
 		)
@@ -198,7 +143,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 
 		if (
 			!arraysEqual(
-				release.releaseProducers.map(entry => entry.name).sort(),
+				release.authors.producers.map(entry => entry.name).sort(),
 				selectedProducers.map(sp => sp.name).sort()
 			)
 		)
@@ -206,7 +151,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 
 		if (
 			!arraysEqual(
-				release.releaseDesigners.map(entry => entry.name).sort(),
+				release.authors.designers.map(entry => entry.name).sort(),
 				selectedDesigners.map(sd => sd.name).sort()
 			)
 		)
@@ -271,9 +216,9 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 					`${import.meta.env.VITE_SERVER_URL}/public/releases/${release.img}`
 				)
 			}
-			setSelectedArtists(release.releaseArtists)
-			setSelectedProducers(release.releaseProducers)
-			setSelectedDesigners(release.releaseDesigners)
+			setSelectedArtists(release.authors.artists)
+			setSelectedProducers(release.authors.producers)
+			setSelectedDesigners(release.authors.designers)
 		} else {
 			resetForm()
 		}

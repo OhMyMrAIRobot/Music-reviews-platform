@@ -10,13 +10,13 @@ import useNavigationPath from '../../../hooks/use-navigation-path'
 import { useStore } from '../../../hooks/use-store'
 import { NominationCandidate } from '../../../models/nomination/nomination-candidate/nomination-candidate'
 import { NominationEntityKind } from '../../../models/nomination/nomination-entity-kind'
-import { INominationType } from '../../../models/nomination/nomination-type/nomination-type'
 import { INominationUserVote } from '../../../models/nomination/nomination-user-vote'
+import { NominationType } from '../../../types/nomination'
 
 interface IProps {
 	isLoading: boolean
 	candidate?: NominationCandidate
-	nominationType?: INominationType
+	nominationType?: NominationType
 	voted?: boolean
 	setVoted?: (val: boolean) => void
 	userVotes?: INominationUserVote[]

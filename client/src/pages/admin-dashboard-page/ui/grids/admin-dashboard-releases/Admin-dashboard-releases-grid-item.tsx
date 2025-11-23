@@ -10,9 +10,9 @@ import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
 import useNavigationPath from '../../../../../hooks/use-navigation-path.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
 import { AuthorTypesEnum } from '../../../../../models/author/author-type/author-types-enum.ts'
-import { IAdminRelease } from '../../../../../models/release/admin-release/admin-release.ts'
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum.ts'
 import { releasesKeys } from '../../../../../query-keys/releases-keys.ts'
+import { Release } from '../../../../../types/release/index.ts'
 import { SortOrder } from '../../../../../types/sort-order-type.ts'
 import { getAuthorTypeColor } from '../../../../../utils/get-author-type-color.ts'
 import { getReleaseTypeColor } from '../../../../../utils/get-release-type-color.ts'
@@ -22,7 +22,7 @@ import ReleaseFormModal from './Release-form-modal.tsx'
 
 interface IProps {
 	className?: string
-	release?: IAdminRelease
+	release?: Release
 	isLoading: boolean
 	position?: number
 	order?: SortOrder
@@ -46,7 +46,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 	const { navigateToReleaseDetails } = useNavigationPath()
 
 	const deleteMutation = useMutation({
-		mutationFn: (id: string) => ReleaseAPI.deleteRelease(id),
+		mutationFn: (id: string) => ReleaseAPI.delete(id),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: releasesKeys.all })
 			notificationStore.addSuccessNotification('Вы успешно удалили релиз!')
@@ -192,10 +192,10 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 					{release ? (
 						<>
 							<span className='xl:hidden'>Артист: </span>
-							{release.releaseArtists.length === 0 ? (
+							{release.authors.artists.length === 0 ? (
 								<span className='opacity-50 '>Отсутствует</span>
 							) : (
-								release.releaseArtists.map((ra, idx) => (
+								release.authors.artists.map((ra, idx) => (
 									<span key={ra.id}>
 										<span
 											className={` ${getAuthorTypeColor(
@@ -204,7 +204,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 										>
 											{ra.name}
 										</span>
-										{idx < release.releaseArtists.length - 1 && ', '}
+										{idx < release.authors.artists.length - 1 && ', '}
 									</span>
 								))
 							)}
@@ -218,10 +218,10 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 					{release ? (
 						<>
 							<span className='xl:hidden'>Продюссер: </span>
-							{release.releaseProducers.length === 0 ? (
+							{release.authors.producers.length === 0 ? (
 								<span className='opacity-50 '>Отсутствует</span>
 							) : (
-								release.releaseProducers.map((rp, idx) => (
+								release.authors.producers.map((rp, idx) => (
 									<span key={rp.id}>
 										<span
 											className={` ${getAuthorTypeColor(
@@ -230,7 +230,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 										>
 											{rp.name}
 										</span>
-										{idx < release.releaseProducers.length - 1 && ', '}
+										{idx < release.authors.producers.length - 1 && ', '}
 									</span>
 								))
 							)}
@@ -244,10 +244,10 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 					{release ? (
 						<>
 							<span className='xl:hidden'>Дизайнер: </span>
-							{release.releaseDesigners.length === 0 ? (
+							{release.authors.designers.length === 0 ? (
 								<span className='opacity-50 '>Отсутствует</span>
 							) : (
-								release.releaseDesigners.map((rd, idx) => (
+								release.authors.designers.map((rd, idx) => (
 									<span key={rd.id}>
 										<span
 											className={` ${getAuthorTypeColor(
@@ -256,7 +256,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 										>
 											{rd.name}
 										</span>
-										{idx < release.releaseDesigners.length - 1 && ', '}
+										{idx < release.authors.designers.length - 1 && ', '}
 									</span>
 								))
 							)}

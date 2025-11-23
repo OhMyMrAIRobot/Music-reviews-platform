@@ -3,9 +3,8 @@ import { Link } from 'react-router'
 import SwitchButton from '../../../../components/buttons/Switch-button'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
-import { IReleaseDetails } from '../../../../models/release/release-details/release-details'
-import { ReleaseTypesEnum } from '../../../../models/release/release-type/release-types-enum'
 import { RolesEnum } from '../../../../models/role/roles-enum'
+import { Release, ReleaseTypesEnum } from '../../../../types/release'
 import { ReleaseDetailsPageSections } from '../../types/release-details-page-sections'
 import ReleaseDetailsEstimationWarning from './Release-details-estimation-warning'
 import ReleaseDetailsAlbumValueForm from './forms/release-details-album-value-form/Release-details-album-value-form'
@@ -13,7 +12,7 @@ import ReleaseDetailsMediaReviewForm from './forms/release-details-media-review-
 import ReleaseDetailsReviewForm from './forms/release-details-review-form/Release-details-review-form'
 
 interface IProps {
-	release: IReleaseDetails
+	release: Release
 }
 
 const ReleaseDetailsEstimation: FC<IProps> = ({ release }) => {
@@ -67,7 +66,7 @@ const ReleaseDetailsEstimation: FC<IProps> = ({ release }) => {
 							/>
 						)}
 
-						{release.releaseType === ReleaseTypesEnum.ALBUM && (
+						{release.releaseType.type === ReleaseTypesEnum.ALBUM && (
 							<SwitchButton
 								title={ReleaseDetailsPageSections.ALBUM_VALUE}
 								isActive={section === ReleaseDetailsPageSections.ALBUM_VALUE}

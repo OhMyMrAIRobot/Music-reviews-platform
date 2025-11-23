@@ -1,12 +1,10 @@
 import axios from 'axios'
-import { IAdminRelease } from '../../models/release/admin-release/admin-release'
-import { IAdminReleasesResponse } from '../../models/release/admin-release/admin-releases-response'
-import { IRelease, IReleaseResponse } from '../../models/release/release'
-import { IReleaseDetails } from '../../models/release/release-details/release-details'
-import { ReleaseSortFieldValuesEnum } from '../../models/release/release-sort/release-sort-field-values'
-import { IReleaseType } from '../../models/release/release-type/release-type'
-import { ITopRatingReleases } from '../../models/release/top-rating-releases'
-import { SortOrder } from '../../types/sort-order-type'
+import {
+	Release,
+	ReleasesQuery,
+	ReleasesResponse,
+	ReleaseType,
+} from '../../types/release'
 import { api } from '../api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
@@ -17,85 +15,70 @@ const _api = axios.create({
 	},
 })
 
+/**
+ * ReleaseAPI
+ *
+ * Thin wrapper around HTTP requests related to releases.
+ * Each method returns the `data` part of the Axios response and
+ * maps to the corresponding backend endpoint.
+ */
 export const ReleaseAPI = {
-	async fetchReleaseTypes(): Promise<IReleaseType[]> {
-		const { data } = await axios.get<IReleaseType[]>(
+	/**
+	 * Fetch available release types from the server.
+	 *
+	 * @returns {Promise<ReleaseType[]>} - array of release type objects
+	 */
+	async fetchReleaseTypes(): Promise<ReleaseType[]> {
+		const { data } = await axios.get<ReleaseType[]>(
 			`${SERVER_URL}/release-types`
 		)
 		return data
 	},
 
-	async fetchReleases(
-		typeId: string | null,
-		query: string | null,
-		field: ReleaseSortFieldValuesEnum | null,
-		order: SortOrder | null,
-		limit: number | null,
-		offset: number | null
-	): Promise<IReleaseResponse> {
-		const { data } = await _api.get<IReleaseResponse>(
-			`public?
-			${typeId ? `typeId=${typeId}&` : ''}
-			${query ? `query=${query}&` : ''}
-			${field ? `field=${field}&` : ''}
-			${order ? `order=${order}&` : ''}
-			${limit ? `limit=${limit}&` : ''}
-			${offset ? `offset=${offset}&` : ''}
-			`
-		)
+	/**
+	 * Fetch paginated releases with query parameters.
+	 *
+	 * The `query` parameter is converted into query string parameters;
+	 * empty values are passed.
+	 *
+	 * @param {ReleasesQuery} query - filtering, sorting and pagination options
+	 * @returns {Promise<ReleasesResponse>} - object with `items` and `total` fields
+	 */
+	async fetchAll(query: ReleasesQuery): Promise<ReleasesResponse> {
+		const { data } = await _api.get<ReleasesResponse>(`?
+			${query.authorId ? `authorId=${query.authorId}&` : ''}
+			${query.typeId ? `typeId=${query.typeId}&` : ''}
+			${query.search ? `search=${query.search}&` : ''}
+			${query.sortField ? `sortField=${query.sortField}&` : ''}
+			${query.sortOrder ? `sortOrder=${query.sortOrder}&` : ''}
+			${query.last24h ? `last24h=${query.last24h}&` : ''}
+			${query.year ? `year=${query.year}&` : ''}
+			${query.month ? `month=${query.month}&` : ''}
+			${query.limit ? `limit=${query.limit}&` : ''}
+			${query.offset ? `offset=${query.offset}&` : ''}
+		`)
 		return data
 	},
 
-	async fetchReleaseDetails(id: string): Promise<IReleaseDetails> {
-		const { data } = await _api.get<IReleaseDetails>(`/details/${id}`)
+	/**
+	 * Fetch a single release by its id.
+	 *
+	 * @param {string} id - release identifier
+	 * @returns {Promise<Release>} - the release object
+	 */
+	async fetchById(id: string): Promise<Release> {
+		const { data } = await _api.get<Release>(`${id}`)
 		return data
 	},
 
-	async fetchMostReviewed(): Promise<IRelease[]> {
-		const { data } = await _api.get<IRelease[]>('public/most-commented')
-		return data
-	},
-
-	async fetchByAuthorId(
-		authorId: string,
-		findAll: boolean
-	): Promise<IRelease[]> {
-		const { data } = await _api.get<IRelease[]>(
-			`author/${authorId}?findAll=${findAll}`
-		)
-		return data
-	},
-
-	async fetchTopRatingReleases(
-		year: number | null,
-		month: number | null
-	): Promise<ITopRatingReleases> {
-		const { data } = await _api.get<ITopRatingReleases>(`top-rating?
-			${year ? `year=${year}` : ''}&
-			${month ? `month=${month}` : ''}
-			`)
-		return data
-	},
-
-	async adminFetchReleases(
-		typeId: string | null,
-		query: string | null,
-		order: SortOrder | null,
-		limit: number | null,
-		offset: number | null
-	): Promise<IAdminReleasesResponse> {
-		const { data } = await api.get<IAdminReleasesResponse>(`/releases/admin
-			?${typeId !== null ? `typeId=${typeId}&` : ''}
-			${query !== null ? `query=${query}&` : ''}
-			${order !== null ? `order=${order}&` : ''}
-			${limit !== null ? `limit=${limit}&` : ''}
-			${offset !== null ? `offset=${offset}&` : ''}`)
-
-		return data
-	},
-
-	async createRelease(formData: FormData): Promise<IAdminRelease> {
-		const { data } = await api.post<IAdminRelease>('/releases', formData, {
+	/**
+	 * Create a new release using multipart/form-data.
+	 *
+	 * @param {FormData} formData - form payload containing release fields and files
+	 * @returns {Promise<Release>} - created release object
+	 */
+	async create(formData: FormData): Promise<Release> {
+		const { data } = await api.post<Release>('/releases', formData, {
 			headers: {
 				'Content-Type': 'multipart/form-data',
 			},
@@ -103,20 +86,29 @@ export const ReleaseAPI = {
 		return data
 	},
 
-	async updateRelease(id: string, formData: FormData): Promise<IAdminRelease> {
-		const { data } = await api.patch<IAdminRelease>(
-			`/releases/${id}`,
-			formData,
-			{
-				headers: {
-					'Content-Type': 'multipart/form-data',
-				},
-			}
-		)
+	/**
+	 * Update an existing release. Uses `PATCH` with multipart/form-data.
+	 *
+	 * @param {string} id - id of the release to update
+	 * @param {FormData} formData - updated fields and files
+	 * @returns {Promise<Release>} - updated release object
+	 */
+	async update(id: string, formData: FormData): Promise<Release> {
+		const { data } = await api.patch<Release>(`/releases/${id}`, formData, {
+			headers: {
+				'Content-Type': 'multipart/form-data',
+			},
+		})
 		return data
 	},
 
-	async deleteRelease(id: string) {
+	/**
+	 * Delete a release by id.
+	 *
+	 * @param {string} id - id of the release to delete
+	 * @returns {Promise<void>} - resolves when deletion completes
+	 */
+	async delete(id: string): Promise<void> {
 		await api.delete(`/releases/${id}`)
 	},
 }

@@ -1,4 +1,4 @@
-import type { ReleaseSortFieldValuesEnum } from '../models/release/release-sort/release-sort-field-values'
+import { ReleasesSortFieldsEnum } from '../types/release'
 import type { SortOrder } from '../types/sort-order-type'
 
 export const releasesKeys = {
@@ -26,7 +26,7 @@ export const releasesKeys = {
 	mostReviewed: () => ['releases', 'mostReviewed'] as const,
 	list: (params: {
 		typeId: string | null
-		sortField: ReleaseSortFieldValuesEnum
+		sortField: ReleasesSortFieldsEnum
 		sortOrder: SortOrder
 		limit: number
 		offset: number

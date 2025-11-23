@@ -1,3 +1,5 @@
+import { ReleaseAuthor } from '../../types/release'
+
 export interface IAlbumValue {
 	rarity: {
 		total: number
@@ -30,6 +32,6 @@ export interface IAlbumValue {
 		id: string
 		img: string
 		title: string
-		authors: { id: string; name: string }[]
+		authors: ReleaseAuthor[]
 	}
 }

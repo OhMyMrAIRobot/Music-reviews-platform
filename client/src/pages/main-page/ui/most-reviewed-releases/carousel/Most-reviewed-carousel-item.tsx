@@ -1,8 +1,8 @@
 import { FC } from 'react'
-import { IRelease } from '../../../../../models/release/release'
+import { Release } from '../../../../../types/release'
 
 interface IProps {
-	release: IRelease
+	release: Release
 	onClick: () => void
 }
 

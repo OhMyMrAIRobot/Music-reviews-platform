@@ -1,10 +1,10 @@
 import axios from 'axios'
 import { INominationCandidatesResponse } from '../models/nomination/nomination-candidate/nomination-candidates-response'
 import { NominationEntityKind } from '../models/nomination/nomination-entity-kind'
-import { INominationType } from '../models/nomination/nomination-type/nomination-type'
 import { INominationUserVote } from '../models/nomination/nomination-user-vote'
 import { INominationWinnerParticipation } from '../models/nomination/nomination-winner-participation/nomination-winner-participation'
 import { INominationWinnersResponse } from '../models/nomination/nomination-winner/nomination-winners-response'
+import { INominationType } from '../types/nomination/entities/nomination-type'
 import { api } from './api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL

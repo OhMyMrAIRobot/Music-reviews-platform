@@ -2,20 +2,34 @@ import { useQuery } from '@tanstack/react-query'
 import { FC, useRef, useState } from 'react'
 import { ReleaseAPI } from '../../../api/release/release-api'
 import CarouselContainer from '../../../components/carousel/Carousel-container'
+import { SortOrdersEnum } from '../../../models/sort/sort-orders-enum'
 import { releasesKeys } from '../../../query-keys/releases-keys'
 import { CarouselRef } from '../../../types/carousel-ref'
+import { ReleasesSortFieldsEnum } from '../../../types/release'
 import LastReleasesCarousel from '../../main-page/ui/last-releases/carousel/Last-releases-carousel'
 
 interface IProps {
 	id: string
 }
 
+const LIMIT = 15
+const OFFSET = 0
+
 const AuthorDetailsReleasesCarousel: FC<IProps> = ({ id }) => {
-	const { data: topReleases, isPending } = useQuery({
+	const { data, isPending } = useQuery({
 		queryKey: releasesKeys.byAuthor(id, false),
-		queryFn: () => ReleaseAPI.fetchByAuthorId(id, false),
+		queryFn: () =>
+			ReleaseAPI.fetchAll({
+				authorId: id,
+				sortField: ReleasesSortFieldsEnum.ALL_RATING,
+				sortOrder: SortOrdersEnum.DESC,
+				limit: LIMIT,
+				offset: OFFSET,
+			}),
 		staleTime: 1000 * 60 * 5,
 	})
+
+	const topReleases = data?.items || []
 
 	const carouselRef = useRef<CarouselRef>(null)
 	const [canScrollPrev, setCanScrollPrev] = useState(false)
