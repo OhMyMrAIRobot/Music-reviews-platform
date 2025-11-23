@@ -9,7 +9,7 @@ export enum ReleaseSortFieldsEnum {
   /** Number of reviews without text */
   WITHOUT_TEXT_COUNT = 'withoutTextCount',
   /** Number of reviews with text */
-  TEXT_COUNT = 'textCount',
+  TEXT_COUNT = 'withTextCount',
   /** Rating by media reviews */
   MEDIA_RATING = 'mediaRating',
   /** Total count (withText + withoutText) */

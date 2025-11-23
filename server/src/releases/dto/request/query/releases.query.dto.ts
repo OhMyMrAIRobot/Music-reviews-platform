@@ -57,7 +57,7 @@ export class ReleasesQueryDto {
   sortOrder?: SortOrder;
 
   /**
-   * When true, limit results to releases created in the last 24 hours.
+   * When true return most reviewed releases in the last 24h (optional).
    */
   @IsOptional()
   @Type(() => Boolean)

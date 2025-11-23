@@ -706,7 +706,7 @@ export class ReleasesService {
       FROM (
               SELECT COALESCE(
                           JSONB_AGG(
-                              release_json ORDER BY (release_json->>'id')
+                              release_json
                           ) FILTER (WHERE release_json IS NOT NULL),
                           '[]'::jsonb
               ) AS items

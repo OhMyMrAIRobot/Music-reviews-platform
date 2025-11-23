@@ -1,4 +1,5 @@
 import { NominationTypesEnum } from 'src/nomination-types/types/nomination-types.enum';
+import { ReleaseRatingTypesEnum } from 'src/shared/types/release-rating-types.enum';
 
 /**
  * ReleaseType: brief information about the release type.
@@ -29,7 +30,7 @@ type UserFavRelease = {
  * TotalRatings: aggregated rating counts per rating type.
  */
 type TotalRatings = {
-  type: string;
+  type: ReleaseRatingTypesEnum;
   total: number;
 };
 
@@ -37,7 +38,7 @@ type TotalRatings = {
  * DetailRatings: detailed rating values by criteria.
  */
 type DetailRatings = {
-  type: string;
+  type: ReleaseRatingTypesEnum;
   details: {
     rhymes: number;
     structure: number;

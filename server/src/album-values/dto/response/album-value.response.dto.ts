@@ -30,6 +30,6 @@ export class AlbumValueResponseDto {
     id: string;
     img: string;
     title: string;
-    authors: { id: string; name: string }[];
+    authors: { id: string; name: string; img: string }[];
   };
 }
