@@ -11,16 +11,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { IAuthenticatedRequest } from 'src/auth/types/authenticated-request.interface';
-import { UserRoleEnum } from 'src/roles/types/user-role.enum';
-import { Roles } from 'src/shared/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/shared/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/shared/guards/roles.guard';
 import { CreateReviewRequestDto } from './dto/request/create-review.request.dto';
-import { FindReviewsByAuthorIdParams } from './dto/request/params/find-reviews-by-author-id.params.dto';
-import { FindReviewsByReleaseIdParams } from './dto/request/params/find-reviews-by-release-id.params.dto';
-import { FindReviewsByAuthorIdQuery } from './dto/request/query/find-reviews-by-author-id.query.dto';
-import { FindReviewsByReleaseIdQuery } from './dto/request/query/find-reviews-by-release-id.query.dto';
-import { FindReviewsQuery } from './dto/request/query/find-reviews.query.dto';
+import { ReviewsQueryDto } from './dto/request/query/reviews.query.dto';
 import { UpdateReviewRequestDto } from './dto/request/update-review.request.dto';
 import { ReviewsService } from './reviews.service';
 
@@ -28,38 +21,38 @@ import { ReviewsService } from './reviews.service';
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
+  /**
+   * GET /reviews/:id
+   *
+   * Returns a single review by id. Delegates to `ReviewsService.findById`.
+   * If the review is not found the service will throw a EntityNotFoundException.
+   */
+  @Get(':id')
+  findById(@Param('id') id: string) {
+    return this.reviewsService.findById(id);
+  }
+
+  /**
+   * GET /reviews
+   *
+   * Returns a paginated list of reviews according to provided query
+   * filters. Delegates to `ReviewsService.findAll` which performs the
+   * actual filtering/aggregation.
+   */
   @Get()
-  findReleases(@Query() query: FindReviewsQuery) {
-    return this.reviewsService.findReviews(query);
+  findAll(@Query() query: ReviewsQueryDto) {
+    return this.reviewsService.findAll(query);
   }
 
-  @Get('release/:releaseId')
-  findByReleaseId(
-    @Param() params: FindReviewsByReleaseIdParams,
-    @Query() query: FindReviewsByReleaseIdQuery,
-  ) {
-    return this.reviewsService.findByReleaseId(params.releaseId, query);
-  }
-
-  @Get('author/:authorId')
-  findByAuthorId(
-    @Param() params: FindReviewsByAuthorIdParams,
-    @Query() query: FindReviewsByAuthorIdQuery,
-  ) {
-    return this.reviewsService.findByAuthorId(params.authorId, query);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('user/release/:releaseId')
-  findByUserReleaseIds(
-    @Request() req: IAuthenticatedRequest,
-    @Param('releaseId') releaseId: string,
-  ) {
-    return this.reviewsService.findByUserReleaseIds(req.user.id, releaseId);
-  }
-
-  @UseGuards(JwtAuthGuard)
+  /**
+   * POST /reviews
+   *
+   * Create a new review. Requires an authenticated user. The request body
+   * is validated by `CreateReviewRequestDto`. Returns the created review
+   * mapped to `ReviewDto`.
+   */
   @Post()
+  @UseGuards(JwtAuthGuard)
   create(
     @Request() req: IAuthenticatedRequest,
     @Body() dto: CreateReviewRequestDto,
@@ -67,8 +60,14 @@ export class ReviewsController {
     return this.reviewsService.create(dto, req.user.id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  /**
+   * PATCH /reviews/:id
+   *
+   * Update an existing review. Requires the authenticated owner of the
+   * review. Returns the updated review mapped to `ReviewDto`.
+   */
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   update(
     @Request() req: IAuthenticatedRequest,
     @Body() dto: UpdateReviewRequestDto,
@@ -77,34 +76,14 @@ export class ReviewsController {
     return this.reviewsService.update(id, dto, req.user.id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  /**
+   * DELETE /reviews/:id
+   *
+   * Delete a review. Requires the authenticated owner of the review.
+   */
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   remove(@Request() req: IAuthenticatedRequest, @Param('id') id: string) {
     return this.reviewsService.remove(id, req.user.id);
-  }
-
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
-  @Get('admin')
-  findAll(@Query() query: FindReviewsQuery) {
-    return this.reviewsService.findAll(query);
-  }
-
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Patch(':userId/:id')
-  updateById(
-    @Param('userId') userId: string,
-    @Param('id') id: string,
-    @Body() dto: UpdateReviewRequestDto,
-  ) {
-    return this.reviewsService.update(id, dto, userId);
-  }
-
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
-  @Delete(':userId/:id')
-  adminDelete(@Param('id') id: string, @Param('userId') userId: string) {
-    return this.reviewsService.remove(id, userId);
   }
 }

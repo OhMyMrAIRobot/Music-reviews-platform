@@ -16,7 +16,10 @@ import { ReleasesQueryDto } from './dto/request/query/releases.query.dto';
 import { UpdateReleaseRequestDto } from './dto/request/update-release.request.dto';
 import { ReleaseDto } from './dto/response/release.dto';
 import { ReleasesResponseDto } from './dto/response/releases.response.dto';
-import { ReleaseRawQueryArrayResponseDto } from './types/release-raw-query-response.dto';
+import {
+  ReleaseRawQueryArrayResponseDto,
+  ReleaseRawQueryResponseDto,
+} from './types/release-raw-query-response.dto';
 import { ReleaseSortFieldsEnum } from './types/release-sort-fields.enum';
 
 @Injectable()
@@ -349,7 +352,7 @@ export class ReleasesService {
     last24Only?: boolean;
     limit?: number;
     offset?: number;
-  }) {
+  }): Promise<ReleaseRawQueryResponseDto> {
     const {
       id = null,
       authorId = null,
