@@ -12,7 +12,8 @@ const LIMIT = 20
 const OFFSET = 0
 
 const queryKey = authorLikesKeys.list({ limit: LIMIT, offset: OFFSET })
-const queryFn = () => UserFavReviewAPI.fetchAuthorLikes(LIMIT, OFFSET)
+const queryFn = () =>
+	UserFavReviewAPI.findAuthorLikes({ limit: LIMIT, offset: OFFSET })
 
 const AuthorLikes = () => {
 	const { navigateToAuthorLikes } = useNavigationPath()

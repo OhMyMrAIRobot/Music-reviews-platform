@@ -8,12 +8,12 @@ import {
 	useState,
 } from 'react'
 import AuthorLikeCard from '../../../../../components/author/author-like/Author-like-card'
-import { IAuthorLike } from '../../../../../models/author/author-likes/author-like'
 import { CarouselRef } from '../../../../../types/carousel-ref'
 import { CarouselStateCallbacks } from '../../../../../types/carousel-state-callbacks'
+import { AuthorLike } from '../../../../../types/review'
 
 interface IProps extends CarouselStateCallbacks {
-	items: IAuthorLike[]
+	items: AuthorLike[]
 	isLoading: boolean
 }
 
@@ -81,7 +81,7 @@ const AuthorLikesCarousel = forwardRef<CarouselRef, IProps>(
 							: items.map(like => (
 									<div
 										className='flex-[0_0_270px] max-w-[270px]'
-										key={`${like.author.id}-${like.reviewAuthor.id}-${like.release.id}`}
+										key={`${like.author.id}-${like.review.user.id}-${like.release.id}`}
 									>
 										<AuthorLikeCard isLoading={isLoading} authorLike={like} />
 									</div>

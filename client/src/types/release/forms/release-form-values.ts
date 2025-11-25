@@ -1,7 +1,4 @@
-export interface IMultiSelectValue {
-	id: string
-	name: string
-}
+import { IMultiSelectValue } from '../../../components/form-elements/Form-multi-select'
 
 export interface IReleaseFormValues {
 	cover: File | null

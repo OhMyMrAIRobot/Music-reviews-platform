@@ -3,11 +3,8 @@ import { FC, useRef, useState } from 'react'
 import { ReviewAPI } from '../../../api/review/review-api'
 import CarouselContainer from '../../../components/carousel/Carousel-container'
 import LastReviewsCarousel from '../../../components/carousel/Last-reviews-carousel'
-import { useQueryListFavToggleAll } from '../../../hooks/use-query-list-fav-toggle'
-import { IReview } from '../../../models/review/review'
 import { reviewsKeys } from '../../../query-keys/reviews-keys'
 import { CarouselRef } from '../../../types/carousel-ref'
-import { toggleFavReview } from '../../../utils/toggle-fav-review'
 
 interface IProps {
 	id: string
@@ -16,17 +13,19 @@ interface IProps {
 const COUNT = 25
 
 const AuthorDetailsReviewsCarousel: FC<IProps> = ({ id }) => {
-	const { data: lastReviews, isPending } = useQuery({
+	const { data, isPending } = useQuery({
 		queryKey: reviewsKeys.byAuthor(id, COUNT, 0),
-		queryFn: () => ReviewAPI.fetchReviewsByAuthorId(id, COUNT, 0),
+		queryFn: () => ReviewAPI.findAll({ authorId: id, limit: COUNT, offset: 0 }),
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const { storeToggle } = useQueryListFavToggleAll<IReview, IReview[]>(
-		reviewsKeys.all,
-		null,
-		toggleFavReview
-	)
+	const lastReviews = data?.items
+
+	// const { storeToggle } = useQueryListFavToggleAll<IReview, IReview[]>(
+	// 	reviewsKeys.all,
+	// 	null,
+	// 	toggleFavReview
+	// )
 
 	const carouselRef = useRef<CarouselRef>(null)
 
@@ -48,9 +47,16 @@ const AuthorDetailsReviewsCarousel: FC<IProps> = ({ id }) => {
 						isLoading={isPending}
 						items={lastReviews || []}
 						rowCount={1}
-						storeToggle={storeToggle}
 						onCanScrollPrevChange={setCanScrollPrev}
 						onCanScrollNextChange={setCanScrollNext}
+						storeToggle={function (
+							// eslint-disable-next-line @typescript-eslint/no-unused-vars
+							reviewId: string,
+							// eslint-disable-next-line @typescript-eslint/no-unused-vars
+							isFav: boolean
+						): Promise<string[]> {
+							throw new Error('Function not implemented.')
+						}} // TODO: Fix toggle
 					/>
 				}
 				canScrollNext={canScrollNext}

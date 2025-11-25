@@ -6,14 +6,13 @@ import TickSvg from '../../../../../../components/svg/Tick-svg'
 import Loader from '../../../../../../components/utils/Loader'
 import { useAuth } from '../../../../../../hooks/use-auth'
 import { useStore } from '../../../../../../hooks/use-store'
-import { IUserReview } from '../../../../../../models/review/user-review'
 import { leaderboardKeys } from '../../../../../../query-keys/leaderboard-keys'
 import { platformStatsKeys } from '../../../../../../query-keys/platform-stats-keys'
 import { profileKeys } from '../../../../../../query-keys/profile-keys'
 import { releaseDetailsKeys } from '../../../../../../query-keys/release-details-keys'
 import { releasesKeys } from '../../../../../../query-keys/releases-keys'
 import { reviewsKeys } from '../../../../../../query-keys/reviews-keys'
-import authStore from '../../../../../../stores/auth-store'
+import { Review } from '../../../../../../types/review'
 import { calculateTotalReviewMark } from '../../../../../../utils/calculate-total-review-mark'
 import ReleaseDetailsEstimationDeleteButton from '../../buttons/Release-details-estimation-delete-button'
 import ReleaseDetailsReviewFormMarks from './Release-details-review-form-marks'
@@ -25,23 +24,32 @@ interface IProps {
 }
 
 const ReleaseDetailsReviewForm: FC<IProps> = ({ isReview, releaseId }) => {
-	const { notificationStore } = useStore()
+	const { authStore, notificationStore } = useStore()
 
 	const { checkAuth } = useAuth()
 	const queryClient = useQueryClient()
 
-	const { data: userReview } = useQuery({
-		queryKey: releaseDetailsKeys.userReview(releaseId),
-		queryFn: () => ReviewAPI.fetchUserReview(releaseId),
-		enabled: authStore.isAuth,
+	const { data: reviewsData } = useQuery({
+		queryKey: releaseDetailsKeys.userReview({
+			userId: authStore.user?.id ?? 'unknown',
+			releaseId,
+		}),
+		queryFn: () => ReviewAPI.findAll({ releaseId, userId: authStore.user?.id }),
+		enabled: authStore.isAuth && authStore.user?.id !== undefined,
 		staleTime: 1000 * 60 * 5,
 		retry: false,
 	})
 
+	const userReview =
+		reviewsData && reviewsData?.items.length > 0 ? reviewsData?.items[0] : null
+
 	const invalidateRelatedQueries = () => {
 		const keys = [
 			releaseDetailsKeys.details(releaseId),
-			releaseDetailsKeys.userReview(releaseId),
+			releaseDetailsKeys.userReview({
+				releaseId,
+				userId: authStore.user?.id ?? 'unknown',
+			}),
 			reviewsKeys.all,
 			releasesKeys.all,
 			profileKeys.profile(authStore.user?.id || 'unknown'),
@@ -67,7 +75,8 @@ const ReleaseDetailsReviewForm: FC<IProps> = ({ isReview, releaseId }) => {
 			realization: number
 			individuality: number
 			atmosphere: number
-		}) => ReviewAPI.postReview(releaseId, data),
+			releaseId: string
+		}) => ReviewAPI.create(data),
 		onSuccess: invalidateRelatedQueries,
 	})
 
@@ -86,12 +95,12 @@ const ReleaseDetailsReviewForm: FC<IProps> = ({ isReview, releaseId }) => {
 				individuality: number
 				atmosphere: number
 			}
-		}) => ReviewAPI.updateReview(id, data),
+		}) => ReviewAPI.update(id, data),
 		onSuccess: invalidateRelatedQueries,
 	})
 
 	const deleteMutation = useMutation({
-		mutationFn: (id: string) => ReviewAPI.deleteReview(id),
+		mutationFn: (id: string) => ReviewAPI.delete(id),
 		onSuccess: invalidateRelatedQueries,
 	})
 
@@ -120,14 +129,14 @@ const ReleaseDetailsReviewForm: FC<IProps> = ({ isReview, releaseId }) => {
 		setDefaultValues(userReview || null)
 	}, [userReview])
 
-	const setDefaultValues = (review: IUserReview | null) => {
+	const setDefaultValues = (review: Review | null) => {
 		setTitle(review?.title ?? '')
 		setText(review?.text ?? '')
-		setRhymes(review?.rhymes ?? 5)
-		setStructure(review?.structure ?? 5)
-		setRealization(review?.realization ?? 5)
-		setIndividuality(review?.individuality ?? 5)
-		setAtmosphere(review?.atmosphere ?? 1)
+		setRhymes(review?.values.rhymes ?? 5)
+		setStructure(review?.values.structure ?? 5)
+		setRealization(review?.values.realization ?? 5)
+		setIndividuality(review?.values.individuality ?? 5)
+		setAtmosphere(review?.values.atmosphere ?? 1)
 	}
 
 	const hasChanges = useMemo(() => {
@@ -136,19 +145,19 @@ const ReleaseDetailsReviewForm: FC<IProps> = ({ isReview, releaseId }) => {
 				return (
 					title !== userReview.title ||
 					text !== userReview.text ||
-					rhymes !== userReview.rhymes ||
-					structure !== userReview.structure ||
-					realization !== userReview.realization ||
-					individuality !== userReview.individuality ||
-					atmosphere !== userReview.atmosphere
+					rhymes !== userReview.values.rhymes ||
+					structure !== userReview.values.structure ||
+					realization !== userReview.values.realization ||
+					individuality !== userReview.values.individuality ||
+					atmosphere !== userReview.values.atmosphere
 				)
 			} else {
 				return (
-					rhymes !== userReview.rhymes ||
-					structure !== userReview.structure ||
-					realization !== userReview.realization ||
-					individuality !== userReview.individuality ||
-					atmosphere !== userReview.atmosphere
+					rhymes !== userReview.values.rhymes ||
+					structure !== userReview.values.structure ||
+					realization !== userReview.values.realization ||
+					individuality !== userReview.values.individuality ||
+					atmosphere !== userReview.values.atmosphere
 				)
 			}
 		}
@@ -212,6 +221,7 @@ const ReleaseDetailsReviewForm: FC<IProps> = ({ isReview, releaseId }) => {
 					realization,
 					individuality,
 					atmosphere,
+					releaseId,
 				})
 			}
 

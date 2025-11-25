@@ -20,10 +20,14 @@ const AuthorCommentHeader: FC<IProps> = ({ comment, showRelease = false }) => {
 		<div className='bg-white/7 p-2 rounded-[12px] flex w-full items-center'>
 			<div className='flex items-center gap-x-3 w-full'>
 				<Link to={navigatoToProfile(comment.userId)}>
-					<ReviewUserImage
-						nickname={comment.nickname}
-						img={comment.avatar}
-						points={comment.points}
+					<ReviewUserImage // TODO: fix commment user
+						user={{
+							id: '',
+							nickname: '',
+							avatar: '',
+							points: 0,
+							rank: null,
+						}}
 					/>
 				</Link>
 				<div className='flex items-center gap-1.5'>
@@ -31,9 +35,14 @@ const AuthorCommentHeader: FC<IProps> = ({ comment, showRelease = false }) => {
 						to={navigatoToProfile(comment.userId)}
 						className='text-sm lg:text-lg font-semibold max-w-42 text-ellipsis whitespace-nowrap overflow-hidden'
 					>
-						<ReviewAuthor
-							nickname={comment.nickname}
-							position={comment.position}
+						<ReviewAuthor // TODO: fix commment user
+							user={{
+								id: '',
+								nickname: '',
+								avatar: '',
+								points: 0,
+								rank: null,
+							}}
 						/>
 					</Link>
 					<RegisteredAuthorTypes

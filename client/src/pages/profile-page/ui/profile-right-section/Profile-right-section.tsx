@@ -2,14 +2,12 @@ import { useQuery } from '@tanstack/react-query'
 import { FC, useState } from 'react'
 import { useParams } from 'react-router'
 import { ReviewAPI } from '../../../../api/review/review-api'
-import { useQueryListFavToggleAll } from '../../../../hooks/use-query-list-fav-toggle'
 import { IProfile } from '../../../../models/profile/profile'
 import { ProfileDetailsPageSections } from '../../../../models/profile/profile-details-page-sections'
-import { IReview } from '../../../../models/review/review'
 import { RolesEnum } from '../../../../models/role/roles-enum'
 import { SortOrdersEnum } from '../../../../models/sort/sort-orders-enum'
 import { profileKeys } from '../../../../query-keys/profile-keys'
-import { toggleFavReview } from '../../../../utils/toggle-fav-review'
+import { ReviewsSortFieldsEnum } from '../../../../types/review'
 import ProfileAuthorCardsGrid from './Profile-author-cards-grid'
 import ProfileMediaReviewsGrid from './Profile-media-reviews-grid'
 import ProfilePreferencesGrid from './profile-preferences/Profile-preferences-grid'
@@ -42,14 +40,14 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 		queryKey: reviewsQueryKey,
 		queryFn: () =>
 			id
-				? ReviewAPI.fetchReviews(
-						SortOrdersEnum.DESC,
-						perPage,
-						(reviewsCurrentPage - 1) * perPage,
-						id,
-						null
-				  )
-				: Promise.resolve({ reviews: [], count: 0 }),
+				? ReviewAPI.findAll({
+						limit: perPage,
+						offset: (reviewsCurrentPage - 1) * perPage,
+						sortField: ReviewsSortFieldsEnum.CREATED,
+						sortOrder: SortOrdersEnum.DESC,
+						userId: id,
+				  })
+				: Promise.resolve({ items: [], meta: { count: 0 } }),
 		enabled: !!id && selectedSection === ProfileDetailsPageSections.REVIEWS,
 		staleTime: 1000 * 60 * 5,
 	})
@@ -63,34 +61,34 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 		queryKey: favReviewsQueryKey,
 		queryFn: () =>
 			id
-				? ReviewAPI.fetchReviews(
-						SortOrdersEnum.DESC,
-						perPage,
-						(favCurrentPage - 1) * perPage,
-						null,
-						id
-				  )
-				: Promise.resolve({ reviews: [], count: 0 }),
+				? ReviewAPI.findAll({
+						sortField: ReviewsSortFieldsEnum.CREATED,
+						favUserId: id,
+						limit: perPage,
+						offset: (favCurrentPage - 1) * perPage,
+						sortOrder: SortOrdersEnum.DESC,
+				  })
+				: Promise.resolve({ items: [], meta: { count: 0 } }),
 		enabled: !!id && selectedSection === ProfileDetailsPageSections.LIKES,
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const { storeToggle: storeToggleReviews } = useQueryListFavToggleAll<
-		IReview,
-		{ reviews: IReview[] }
-	>(['profile', 'reviews'], 'reviews', toggleFavReview)
+	// const { storeToggle: storeToggleReviews } = useQueryListFavToggleAll<
+	// 	IReview,
+	// 	{ reviews: IReview[] }
+	// >(['profile', 'reviews'], 'reviews', toggleFavReview)
 
-	const { storeToggle: storeToggleFavReviews } = useQueryListFavToggleAll<
-		IReview,
-		{ reviews: IReview[] }
-	>(['profile', 'favReviews'], 'reviews', toggleFavReview)
+	// const { storeToggle: storeToggleFavReviews } = useQueryListFavToggleAll<
+	// 	IReview,
+	// 	{ reviews: IReview[] }
+	// >(['profile', 'favReviews'], 'reviews', toggleFavReview)
 
 	if (!id) return null
 
-	const reviews = reviewsData?.reviews || []
-	const reviewsCount = reviewsData?.count || 0
-	const favReviews = favReviewsData?.reviews || []
-	const favReviewsCount = favReviewsData?.count || 0
+	const reviews = reviewsData?.items || []
+	const reviewsCount = reviewsData?.meta.count || 0
+	const favReviews = favReviewsData?.items || []
+	const favReviewsCount = favReviewsData?.meta.count || 0
 
 	return (
 		<div className='xl:col-span-7'>
@@ -170,7 +168,7 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 					setCurrentPage={setReviewsCurrentPage}
 					isLoading={isReviewsPending}
 					perPage={perPage}
-					storeToggle={storeToggleReviews}
+					// TODO: Fix toggle
 				/>
 			)}
 
@@ -187,7 +185,7 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 					setCurrentPage={setFavCurrentPage}
 					isLoading={isFavReviewsPending}
 					perPage={perPage}
-					storeToggle={storeToggleFavReviews}
+					// TODO: Fix toggle
 				/>
 			)}
 		</div>

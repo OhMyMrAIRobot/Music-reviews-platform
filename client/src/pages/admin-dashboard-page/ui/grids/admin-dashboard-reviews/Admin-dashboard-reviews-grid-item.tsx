@@ -8,10 +8,10 @@ import ConfirmationModal from '../../../../../components/modals/Confirmation-mod
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
 import useNavigationPath from '../../../../../hooks/use-navigation-path.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
-import { IAdminReview } from '../../../../../models/review/admin-review/admin-review.ts'
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum.ts'
 import { releasesKeys } from '../../../../../query-keys/releases-keys.ts'
 import { reviewsKeys } from '../../../../../query-keys/reviews-keys.ts'
+import { Review } from '../../../../../types/review/index.ts'
 import { SortOrder } from '../../../../../types/sort-order-type.ts'
 import AdminDeleteButton from '../../buttons/Admin-delete-button.tsx'
 import AdminOpenButton from '../../buttons/Admin-open-button.tsx'
@@ -19,7 +19,7 @@ import ReviewFormModal from './Review-form-modal.tsx'
 
 interface IProps {
 	className?: string
-	review?: IAdminReview
+	review?: Review
 	isLoading: boolean
 	position?: number
 	order?: SortOrder
@@ -44,8 +44,7 @@ const AdminDashboardReviewsGridItem: FC<IProps> = ({
 	const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
 
 	const deleteMutation = useMutation({
-		mutationFn: ({ id, userId }: { id: string; userId: string }) =>
-			ReviewAPI.adminDeleteReview(userId, id),
+		mutationFn: ({ id }: { id: string }) => ReviewAPI.adminDelete(id),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification('Вы успешно удалили рецензию!')
 			queryClient.invalidateQueries({ queryKey: reviewsKeys.all })
@@ -75,9 +74,7 @@ const AdminDashboardReviewsGridItem: FC<IProps> = ({
 						<ConfirmationModal
 							title={'Вы действительно хотите удалить рецензию?'}
 							isOpen={confModalOpen}
-							onConfirm={() =>
-								deleteMutation.mutate({ id: review.id, userId: review.user.id })
-							}
+							onConfirm={() => deleteMutation.mutate({ id: review.id })}
 							onCancel={() => setConfModalOpen(false)}
 							isLoading={deleteMutation.isPending}
 						/>

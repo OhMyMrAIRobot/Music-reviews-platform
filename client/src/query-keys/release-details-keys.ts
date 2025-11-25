@@ -1,17 +1,21 @@
-import type { ReleaseReviewSortFieldsEnum } from '../models/review/release-review/release-review-sort-fields-enum'
+import { ReviewsSortFieldsEnum } from '../types/review'
 import type { SortOrder } from '../types/sort-order-type'
 
 export const releaseDetailsKeys = {
 	all: ['releaseDetails'] as const,
 	unknown: () => ['releaseDetails', 'unknown'] as const,
 	details: (id: string) => ['releaseDetails', { id }] as const,
-	userReview: (releaseId: string) =>
-		['releaseDetails', 'userReview', releaseId] as const,
+	userReview: (params: { releaseId: string; userId: string }) =>
+		[
+			'releaseDetails',
+			'userReview',
+			{ releaseId: params.releaseId, userId: params.userId },
+		] as const,
 	userAlbumValueVote: (releaseId: string) =>
 		['releaseDetails', 'userAlbumValueVote', releaseId] as const,
 	reviews: (params: {
 		releaseId: string
-		field: ReleaseReviewSortFieldsEnum
+		field: ReviewsSortFieldsEnum
 		order: SortOrder
 		limit: number
 		offset: number

@@ -7,14 +7,13 @@ import FormLabel from '../../../../../components/form-elements/Form-label'
 import FormTextbox from '../../../../../components/form-elements/Form-textbox'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay'
 import { useStore } from '../../../../../hooks/use-store'
-import { IAdminReview } from '../../../../../models/review/admin-review/admin-review'
-import { IAdminUpdateReviewData } from '../../../../../models/review/admin-review/admin-update-review-data'
 import { reviewsKeys } from '../../../../../query-keys/reviews-keys'
+import { Review, UpdateReviewData } from '../../../../../types/review'
 
 interface IProps {
 	isOpen: boolean
 	onClose: () => void
-	review: IAdminReview
+	review: Review
 }
 
 const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
@@ -24,14 +23,12 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
 
 	const updateMutation = useMutation({
 		mutationFn: ({
-			userId,
 			reviewId,
 			reviewData,
 		}: {
-			userId: string
 			reviewId: string
-			reviewData: IAdminUpdateReviewData
-		}) => ReviewAPI.adminUpdateReview(userId, reviewId, reviewData),
+			reviewData: UpdateReviewData
+		}) => ReviewAPI.adminUpdate(reviewId, reviewData),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification('Рецензия успешно обновлена!')
 			queryClient.invalidateQueries({ queryKey: reviewsKeys.all })
@@ -71,7 +68,6 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
 
 	const handleSubmit = () => {
 		updateMutation.mutate({
-			userId: review.user.id,
 			reviewId: review.id,
 			reviewData: {
 				title: title.trim() !== '' ? title.trim() : undefined,

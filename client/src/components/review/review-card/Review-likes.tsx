@@ -2,7 +2,7 @@ import { FC } from 'react'
 import { Link } from 'react-router'
 import useNavigationPath from '../../../hooks/use-navigation-path'
 import { IAuthorFavMedia } from '../../../models/release/release-media/user-fav-media/author-fav-media'
-import { IAuthorFavReview } from '../../../models/review/user-fav-review/author-fav-review'
+import { AuthorFavReview } from '../../../types/review'
 import Tooltip from '../../tooltip/Tooltip'
 import TooltipSpan from '../../tooltip/Tooltip-span'
 import Loader from '../../utils/Loader'
@@ -12,7 +12,7 @@ interface IProps {
 	isLiked: boolean
 	likesCount: number
 	toggleFavReview: () => void
-	authorLikes: IAuthorFavReview[] | IAuthorFavMedia[]
+	authorLikes: AuthorFavReview[] | IAuthorFavMedia[]
 }
 
 const ReviewLikes: FC<IProps> = ({

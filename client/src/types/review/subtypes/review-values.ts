@@ -1,6 +1,8 @@
-export interface IReviewData {
-	title?: string
-	text?: string
+/**
+ * Aggregated numeric values inside a review
+ * */
+export type ReviewValues = {
+	total: number
 	rhymes: number
 	structure: number
 	realization: number

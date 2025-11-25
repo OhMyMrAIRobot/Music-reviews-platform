@@ -4,12 +4,10 @@ import { ReviewAPI } from '../../api/review/review-api'
 import ComboBox from '../../components/buttons/Combo-box'
 import Pagination from '../../components/pagination/Pagination'
 import ReviewCard from '../../components/review/review-card/Review-card'
-import { useQueryListFavToggleAll } from '../../hooks/use-query-list-fav-toggle'
-import { IReview } from '../../models/review/review'
 import { ReviewSortFields } from '../../models/review/review-sort-fields'
 import { SortOrdersEnum } from '../../models/sort/sort-orders-enum'
 import { reviewsKeys } from '../../query-keys/reviews-keys'
-import { toggleFavReview } from '../../utils/toggle-fav-review'
+import { ReviewsSortFieldsEnum } from '../../types/review'
 
 const PER_PAGE = 12
 
@@ -40,20 +38,26 @@ const ReviewsPage = () => {
 
 	const { data, isPending } = useQuery({
 		queryKey,
-		queryFn: () => ReviewAPI.fetchReviews(order, limit, offset, null, null),
+		queryFn: () =>
+			ReviewAPI.findAll({
+				limit,
+				offset,
+				sortOrder: order,
+				sortField: ReviewsSortFieldsEnum.CREATED,
+			}),
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const items = data?.reviews ?? []
-	const total = data?.count ?? 0
+	const items = data?.items ?? []
+	const total = data?.meta.count ?? 0
 
 	const skeletonCount =
 		total > 0 ? Math.min(PER_PAGE, Math.max(0, total - offset)) : PER_PAGE
 
-	const { storeToggle } = useQueryListFavToggleAll<
-		IReview,
-		{ reviews: IReview[] }
-	>(reviewsKeys.all, 'reviews', toggleFavReview)
+	// const { storeToggle } = useQueryListFavToggleAll<
+	// 	IReview,
+	// 	{ reviews: IReview[] }
+	// >(reviewsKeys.all, 'reviews', toggleFavReview)
 
 	return (
 		<>
@@ -88,7 +92,7 @@ const ReviewsPage = () => {
 								<ReviewCard
 									key={review.id}
 									review={review}
-									storeToggle={storeToggle}
+									storeToggle={undefined} // TODO: add toggle
 									isLoading={false}
 								/>
 						  ))}

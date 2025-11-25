@@ -78,20 +78,29 @@ const ReleaseMediaReview: FC<IProps> = observer(
 						to={navigatoToProfile(media.user.id)}
 						className='flex items-center space-x-2 lg:space-x-3 w-full'
 					>
-						<ReviewUserImage
-							nickname={media.user.nickname}
-							img={media.user.avatar}
-							points={media.user.points}
+						<ReviewUserImage // TODO: fix user
+							user={{
+								id: '',
+								nickname: '',
+								avatar: '',
+								points: 0,
+								rank: null,
+							}}
 						/>
 
-						<ReviewAuthor
-							nickname={media.user.nickname}
-							position={media.user.position}
+						<ReviewAuthor // TODO: fix user
+							user={{
+								id: '',
+								nickname: '',
+								avatar: '',
+								points: 0,
+								rank: null,
+							}}
 						/>
 					</Link>
 
 					<div className='flex items-center justify-end gap-2 lg:gap-4'>
-						{media.review && <ReviewMarks {...media.review} />}
+						{media.review && <ReviewMarks values={media.review} />}
 
 						<Link
 							to={navigateToReleaseDetails(media.release.id)}

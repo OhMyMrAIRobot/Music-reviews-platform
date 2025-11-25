@@ -4,14 +4,14 @@ import { Link } from 'react-router'
 import { useAuth } from '../../../hooks/use-auth'
 import useNavigationPath from '../../../hooks/use-navigation-path.ts'
 import { useStore } from '../../../hooks/use-store'
-import { IReview } from '../../../models/review/review.ts'
+import { Review } from '../../../types/review'
 import MoveToSvg from '../../svg/Move-to-svg.tsx'
 import SkeletonLoader from '../../utils/Skeleton-loader.tsx'
 import ReviewHeader from './Review-header'
 import ReviewLikes from './Review-likes'
 
 interface IProps {
-	review?: IReview
+	review?: Review
 	isLoading: boolean
 	storeToggle?: (reviewId: string, isFav: boolean) => Promise<string[]>
 }
@@ -38,7 +38,7 @@ const ReviewCard: FC<IProps> = observer(
 				return
 			}
 
-			if (authStore.user?.id === review?.userId) {
+			if (authStore.user?.id === review?.user.id) {
 				notificationStore.addErrorNotification(
 					'Вы не можете отметить свою рецензию как понравившеюся!'
 				)
@@ -86,13 +86,13 @@ const ReviewCard: FC<IProps> = observer(
 						<ReviewLikes
 							toggling={toggling}
 							isLiked={isFav}
-							likesCount={review.favCount}
+							likesCount={review.userFavReview.length}
 							toggleFavReview={toggleFavReview}
 							authorLikes={review.authorFavReview}
 						/>
 
 						<Link
-							to={navigateToReleaseDetails(review.releaseId)}
+							to={navigateToReleaseDetails(review.release.id)}
 							className='cursor-pointer hover:bg-white/10 size-8 lg:size-10 rounded-md flex items-center justify-center transition-all duration-200 relative'
 							onMouseEnter={() => setShow(true)}
 							onMouseLeave={() => setShow(false)}

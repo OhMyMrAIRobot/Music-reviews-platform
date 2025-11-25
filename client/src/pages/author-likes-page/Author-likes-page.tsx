@@ -16,12 +16,12 @@ const AuthorLikesPage = () => {
 
 	const { data, isPending } = useQuery({
 		queryKey: authorLikesKeys.list({ limit, offset }),
-		queryFn: () => UserFavReviewAPI.fetchAuthorLikes(limit, offset),
+		queryFn: () => UserFavReviewAPI.findAuthorLikes({ limit, offset }),
 		staleTime: 1000 * 60 * 5,
 	})
 
 	const items = data?.items ?? []
-	const totalCount = data?.count ?? 0
+	const totalCount = data?.meta.count ?? 0
 
 	return (
 		<>
@@ -44,7 +44,7 @@ const AuthorLikesPage = () => {
 						: items.map(like => (
 								<div
 									className='overflow-hidden'
-									key={`${like.author.id}-${like.reviewAuthor.id}-${like.release.id}`}
+									key={`${like.author.id}-${like.review.user.id}-${like.release.id}`}
 								>
 									<AuthorLikeCard authorLike={like} isLoading={false} />
 								</div>

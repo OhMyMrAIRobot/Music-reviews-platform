@@ -5,6 +5,7 @@ import AdminHeader from '../../../../../components/layout/admin-header/Admin-hea
 import Pagination from '../../../../../components/pagination/Pagination.tsx'
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum.ts'
 import { reviewsKeys } from '../../../../../query-keys/reviews-keys.ts'
+import { ReviewsSortFieldsEnum } from '../../../../../types/review/index.ts'
 import { SortOrder } from '../../../../../types/sort-order-type.ts'
 import AdminDashboardReviewsGridItem from './Admin-dashboard-reviews-grid-item.tsx'
 
@@ -15,20 +16,23 @@ const AdminDashboardReviewsGrid = () => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC)
 
+	const offset = (currentPage - 1) * perPage
+
 	const queryKey = reviewsKeys.adminList({
 		query: searchText.trim().length > 0 ? searchText.trim() : null,
 		order,
 		limit: perPage,
-		offset: (currentPage - 1) * perPage,
+		offset,
 	})
 
 	const queryFn = () =>
-		ReviewAPI.adminFetchReviews(
-			searchText.trim().length > 0 ? searchText.trim() : null,
-			order,
-			perPage,
-			(currentPage - 1) * perPage
-		)
+		ReviewAPI.findAll({
+			search: searchText.trim().length > 0 ? searchText.trim() : undefined,
+			sortOrder: order,
+			sortField: ReviewsSortFieldsEnum.CREATED,
+			limit: perPage,
+			offset,
+		})
 
 	const { data, isPending: isLoading } = useQuery({
 		queryKey,
@@ -36,8 +40,8 @@ const AdminDashboardReviewsGrid = () => {
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const reviews = data?.reviews || []
-	const count = data?.count || 0
+	const reviews = data?.items || []
+	const count = data?.meta.count || 0
 
 	useEffect(() => {
 		setCurrentPage(1)

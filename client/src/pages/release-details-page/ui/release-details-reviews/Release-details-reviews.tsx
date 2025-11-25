@@ -2,11 +2,10 @@ import { useQuery } from '@tanstack/react-query'
 import { FC, useState } from 'react'
 import { ReviewAPI } from '../../../../api/review/review-api.ts'
 import Pagination from '../../../../components/pagination/Pagination.tsx'
-import { ReleaseReviewSortFieldsEnum } from '../../../../models/review/release-review/release-review-sort-fields-enum.ts'
 import { ReleaseReviewSortField } from '../../../../models/review/release-review/release-review-sort-fields.ts'
-import { IReleaseReviewsResponse } from '../../../../models/review/release-review/release-reviews-response.ts'
 import { SortOrdersEnum } from '../../../../models/sort/sort-orders-enum.ts'
 import { releaseDetailsKeys } from '../../../../query-keys/release-details-keys.ts'
+import { ReviewsSortFieldsEnum } from '../../../../types/review/index.ts'
 import { SortOrder } from '../../../../types/sort-order-type.ts'
 import ReleaseDetailsReviewsHeader from './Release-details-reviews-header.tsx'
 import ReleaseDetailsReviewsItem from './Release-details-reviews-item.tsx'
@@ -15,7 +14,7 @@ interface IProps {
 	releaseId: string
 }
 
-const perPage = 5
+const PER_PAGE = 5
 
 const ReleaseDetailsReviews: FC<IProps> = ({ releaseId }) => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
@@ -23,41 +22,40 @@ const ReleaseDetailsReviews: FC<IProps> = ({ releaseId }) => {
 		ReleaseReviewSortField.NEW
 	)
 
-	let field: ReleaseReviewSortFieldsEnum = ReleaseReviewSortFieldsEnum.CREATED
+	let field: ReviewsSortFieldsEnum = ReviewsSortFieldsEnum.CREATED
 	let order: SortOrder = SortOrdersEnum.DESC
 
 	if (selectedSort === ReleaseReviewSortField.OLD) {
 		order = SortOrdersEnum.ASC
 	} else if (selectedSort === ReleaseReviewSortField.POPULAR) {
-		field = ReleaseReviewSortFieldsEnum.LIKES
+		field = ReviewsSortFieldsEnum.LIKES
 	}
 
 	const queryKey = releaseDetailsKeys.reviews({
 		releaseId,
 		field,
 		order,
-		limit: perPage,
-		offset: (currentPage - 1) * perPage,
+		limit: PER_PAGE,
+		offset: (currentPage - 1) * PER_PAGE,
 	})
 
 	const queryFn = () =>
-		ReviewAPI.fetchReviewsByReleaseId(
+		ReviewAPI.findAll({
 			releaseId,
-			field,
-			order,
-			perPage,
-			(currentPage - 1) * perPage
-		)
-
-	const { data: reviewsData, isPending: isLoading } =
-		useQuery<IReleaseReviewsResponse>({
-			queryKey,
-			queryFn,
-			staleTime: 1000 * 60 * 5,
+			sortField: field,
+			sortOrder: order,
+			limit: PER_PAGE,
+			offset: (currentPage - 1) * PER_PAGE,
 		})
 
-	const reviews = reviewsData?.reviews ?? []
-	const totalItems = reviewsData?.count ?? 0
+	const { data: reviewsData, isPending: isLoading } = useQuery({
+		queryKey,
+		queryFn,
+		staleTime: 1000 * 60 * 5,
+	})
+
+	const reviews = reviewsData?.items ?? []
+	const totalItems = reviewsData?.meta.count ?? 0
 
 	return (
 		<section
@@ -84,7 +82,7 @@ const ReleaseDetailsReviews: FC<IProps> = ({ releaseId }) => {
 							review =>
 								review.text && (
 									<ReleaseDetailsReviewsItem
-										key={review.userId}
+										key={review.user.id}
 										review={review}
 										isLoading={isLoading}
 									/>
@@ -97,7 +95,7 @@ const ReleaseDetailsReviews: FC<IProps> = ({ releaseId }) => {
 					<Pagination
 						currentPage={currentPage}
 						totalItems={totalItems}
-						itemsPerPage={perPage}
+						itemsPerPage={PER_PAGE}
 						setCurrentPage={setCurrentPage}
 						idToScroll='release-reviews'
 					/>
