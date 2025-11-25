@@ -14,9 +14,9 @@ import { UpdateReviewRequestDto } from './dto/request/update-review.request.dto'
 import { ReviewDto } from './dto/response/review.dto';
 import { ReviewsResponseDto } from './dto/response/reviews.response.dto';
 import {
-  ReviewRawQueryArrayResponseDto,
-  ReviewRawQueryResponseDto,
-} from './types/review-raw-query-response.dto';
+  ReviewRawQueryArrayDto,
+  ReviewRawQueryDto,
+} from './types/review-raw-query.dto';
 import { ReviewSortFieldsEnum } from './types/review-sort-fields.enum';
 
 @Injectable()
@@ -264,6 +264,7 @@ export class ReviewsService {
     id?: string;
     userId?: string;
     authorId?: string;
+    releaseId?: string;
     favUserId?: string;
     search?: string;
     sortField?: ReviewSortFieldsEnum;
@@ -271,11 +272,12 @@ export class ReviewsService {
     authorLikesOnly?: boolean;
     limit?: number;
     offset?: number;
-  }): Promise<ReviewRawQueryResponseDto> {
+  }): Promise<ReviewRawQueryDto> {
     const {
       id = null,
       userId = null,
       authorId = null,
+      releaseId = null,
       favUserId = null,
       search = null,
       sortField = null,
@@ -305,6 +307,7 @@ export class ReviewsService {
 							${id}::text as id_,
 							${userId}::text AS user_id,
 							${authorId}::text AS author_id,
+              ${releaseId}::text AS release_id,
 							${favUserId}::text AS fav_user_id,
 							${search}::text AS search,
 							${sortField}::text AS sort_field,
@@ -320,6 +323,7 @@ export class ReviewsService {
 									JOIN params p ON TRUE
 							WHERE (p.id_ IS NULL OR rev.id = p.id_)
 									AND (p.user_id IS NULL OR rev.user_id = p.user_id)
+                  AND (p.release_id IS NULL OR rev.release_id = p.release_id)
 									AND (p.fav_user_id IS NULL OR EXISTS (
 											SELECT 1
 											FROM "User_fav_reviews" ufr
@@ -491,8 +495,7 @@ export class ReviewsService {
 			CROSS JOIN agg_stats agg;
 		`;
 
-    const [response] =
-      await this.prisma.$queryRaw<ReviewRawQueryArrayResponseDto>(sql);
+    const [response] = await this.prisma.$queryRaw<ReviewRawQueryArrayDto>(sql);
 
     return response;
   }

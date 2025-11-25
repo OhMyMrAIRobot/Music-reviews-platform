@@ -17,9 +17,9 @@ import { UpdateReleaseRequestDto } from './dto/request/update-release.request.dt
 import { ReleaseDto } from './dto/response/release.dto';
 import { ReleasesResponseDto } from './dto/response/releases.response.dto';
 import {
-  ReleaseRawQueryArrayResponseDto,
-  ReleaseRawQueryResponseDto,
-} from './types/release-raw-query-response.dto';
+  ReleaseRawQueryArrayDto,
+  ReleaseRawQueryDto,
+} from './types/release-raw-query.dto';
 import { ReleaseSortFieldsEnum } from './types/release-sort-fields.enum';
 
 @Injectable()
@@ -352,7 +352,7 @@ export class ReleasesService {
     last24Only?: boolean;
     limit?: number;
     offset?: number;
-  }): Promise<ReleaseRawQueryResponseDto> {
+  }): Promise<ReleaseRawQueryDto> {
     const {
       id = null,
       authorId = null,
@@ -720,7 +720,7 @@ export class ReleasesService {
     // ----------- END QUERY -----------
 
     const [response] =
-      await this.prisma.$queryRaw<ReleaseRawQueryArrayResponseDto>(sql);
+      await this.prisma.$queryRaw<ReleaseRawQueryArrayDto>(sql);
 
     return response;
   }

@@ -69,9 +69,9 @@ export class ReviewsController {
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   update(
+    @Param('id') id: string,
     @Request() req: IAuthenticatedRequest,
     @Body() dto: UpdateReviewRequestDto,
-    @Param('id') id: string,
   ) {
     return this.reviewsService.update(id, dto, req.user.id);
   }

@@ -1,5 +1,3 @@
-import { UserFavReview } from '@prisma/client';
-
 /**
  * ReviewDto
  *
@@ -48,6 +46,12 @@ type ReviewValues = {
   realization: number;
   individuality: number;
   atmosphere: number;
+};
+
+/** Representing a user favoriting a review. */
+type UserFavReview = {
+  userId: string;
+  reviewId: string;
 };
 
 /** Short user summary returned with a review */

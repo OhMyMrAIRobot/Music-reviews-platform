@@ -52,14 +52,18 @@ export class ReleaseMediaService {
         );
       }
 
-      const review = await this.reviewsService.findByUserReleaseIds(
-        dto.userId,
-        dto.releaseId,
-      );
+      const review = await this.prisma.review.findUnique({
+        where: {
+          userId_releaseId: {
+            userId: dto.userId,
+            releaseId: dto.releaseId,
+          },
+        },
+      });
 
-      reviewId = review.id;
+      reviewId = review?.id ?? null;
 
-      if (!review) {
+      if (!reviewId) {
         throw new BadRequestException(
           'Чтобы добавить медиарецензию требуется оставить оценку/рецензию к релизу!',
         );

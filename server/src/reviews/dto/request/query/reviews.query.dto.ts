@@ -25,6 +25,11 @@ export class ReviewsQueryDto {
   @IsEntityId()
   authorId?: string;
 
+  /** Filter reviews by a release id. */
+  @IsOptional()
+  @IsEntityId()
+  releaseId?: string;
+
   /** Filter reviews favourited by the provided user id. */
   @IsOptional()
   @IsEntityId()

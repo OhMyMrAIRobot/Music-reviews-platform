@@ -7,9 +7,9 @@ import { ReviewsResponseDto } from '../dto/response/reviews.response.dto';
  * aggregator used by `ReviewsService`. The `result` field contains the
  * standardized `ReviewsResponseDto` with `items` and `meta`.
  */
-export type ReviewRawQueryResponseDto = {
+export type ReviewRawQueryDto = {
   result: ReviewsResponseDto;
 };
 
 /** Array form returned by Prisma's `$queryRaw` for this query. */
-export type ReviewRawQueryArrayResponseDto = Array<ReviewRawQueryResponseDto>;
+export type ReviewRawQueryArrayDto = Array<ReviewRawQueryDto>;
