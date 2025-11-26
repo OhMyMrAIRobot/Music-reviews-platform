@@ -7,9 +7,9 @@ import { AuthorLikesResponseDto } from '../response/author-likes.response.dto';
  * The raw query returns a single `result` object containing `meta` and
  * `items`, so this wrapper mirrors that structure for type-safety.
  */
-export type AuthorLikeRawQueryDto = {
+export type AuthorLikesRawQueryDto = {
   result: AuthorLikesResponseDto;
 };
 
-/** Array shape returned by some raw query helpers which produce multiple rows. */
-export type AuthorLikeRawQueryArrayDto = Array<AuthorLikeRawQueryDto>;
+/** Array form returned by Prisma's `$queryRaw` for this query. */
+export type AuthorLikesRawQueryArrayDto = Array<AuthorLikesRawQueryDto>;

@@ -10,9 +10,9 @@ import { UsersService } from 'src/users/users.service';
 import { AuthorLikeQueryDto } from './dto/query/author-like.query.dto';
 import { AuthorLikesResponseDto } from './dto/response/author-likes.response.dto';
 import {
-  AuthorLikeRawQueryArrayDto,
-  AuthorLikeRawQueryDto,
-} from './dto/types/author-like-raw-query.dto';
+  AuthorLikesRawQueryArrayDto,
+  AuthorLikesRawQueryDto,
+} from './dto/types/author-likes-raw-query.dto';
 
 @Injectable()
 export class UserFavReviewsService {
@@ -139,7 +139,7 @@ export class UserFavReviewsService {
   private async executeAuthorLikesRawQuery(params: {
     limit?: number;
     offset?: number;
-  }): Promise<AuthorLikeRawQueryDto> {
+  }): Promise<AuthorLikesRawQueryDto> {
     const { limit = null, offset = null } = params;
 
     const sql = Prisma.sql`
@@ -245,7 +245,7 @@ export class UserFavReviewsService {
     `;
 
     const [result] =
-      await this.prisma.$queryRaw<AuthorLikeRawQueryArrayDto>(sql);
+      await this.prisma.$queryRaw<AuthorLikesRawQueryArrayDto>(sql);
 
     return result;
   }

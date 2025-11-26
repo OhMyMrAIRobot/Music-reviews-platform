@@ -13,11 +13,11 @@ import { ReviewsQueryDto } from './dto/request/query/reviews.query.dto';
 import { UpdateReviewRequestDto } from './dto/request/update-review.request.dto';
 import { ReviewDto } from './dto/response/review.dto';
 import { ReviewsResponseDto } from './dto/response/reviews.response.dto';
-import {
-  ReviewRawQueryArrayDto,
-  ReviewRawQueryDto,
-} from './types/review-raw-query.dto';
 import { ReviewSortFieldsEnum } from './types/review-sort-fields.enum';
+import {
+  ReviewsRawQueryArrayDto,
+  ReviewsRawQueryDto,
+} from './types/reviews-raw-query.dto';
 
 @Injectable()
 export class ReviewsService {
@@ -119,6 +119,9 @@ export class ReviewsService {
    * @returns `ReviewsResponseDto` containing `items` and `meta`
    */
   async findAll(query: ReviewsQueryDto): Promise<ReviewsResponseDto> {
+    if (query.favUserId) await this.usersService.findOne(query.favUserId);
+    if (query.authorId) await this.authorsService.findOne(query.authorId);
+
     const response = await this.executeRawQuery({
       userId: query.userId,
       authorId: query.authorId,
@@ -129,6 +132,7 @@ export class ReviewsService {
       authorLikesOnly: query.hasAuthorLikes,
       limit: query.limit,
       offset: query.offset,
+      releaseId: query.releaseId,
     });
 
     return response.result;
@@ -272,7 +276,7 @@ export class ReviewsService {
     authorLikesOnly?: boolean;
     limit?: number;
     offset?: number;
-  }): Promise<ReviewRawQueryDto> {
+  }): Promise<ReviewsRawQueryDto> {
     const {
       id = null,
       userId = null,
@@ -283,13 +287,9 @@ export class ReviewsService {
       sortField = null,
       sortOrder = null,
       authorLikesOnly = null,
-      limit,
-      offset,
+      limit = null,
+      offset = null,
     } = params;
-
-    if (id !== null) await this.findOne(id);
-    if (favUserId !== null) await this.usersService.findOne(favUserId);
-    if (authorId !== null) await this.authorsService.findOne(authorId);
 
     /**
      * Centralized raw SQL for listing and aggregating reviews.
@@ -322,6 +322,8 @@ export class ReviewsService {
 							FROM "Reviews" rev
 									JOIN params p ON TRUE
 							WHERE (p.id_ IS NULL OR rev.id = p.id_)
+                  AND rev.title IS NOT NULL 
+                  AND rev.text IS NOT NULL
 									AND (p.user_id IS NULL OR rev.user_id = p.user_id)
                   AND (p.release_id IS NULL OR rev.release_id = p.release_id)
 									AND (p.fav_user_id IS NULL OR EXISTS (
@@ -495,7 +497,8 @@ export class ReviewsService {
 			CROSS JOIN agg_stats agg;
 		`;
 
-    const [response] = await this.prisma.$queryRaw<ReviewRawQueryArrayDto>(sql);
+    const [response] =
+      await this.prisma.$queryRaw<ReviewsRawQueryArrayDto>(sql);
 
     return response;
   }

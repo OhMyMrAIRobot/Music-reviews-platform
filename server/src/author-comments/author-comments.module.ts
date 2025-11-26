@@ -3,6 +3,7 @@ import { PrismaModule } from 'prisma/prisma.module';
 import { RegisteredAuthorsModule } from 'src/registered-authors/registered-authors.module';
 import { ReleasesModule } from 'src/releases/releases.module';
 import { ReviewsModule } from 'src/reviews/reviews.module';
+import { AdminAuthorCommentsController } from './admin-author-comments.controller';
 import { AuthorCommentsController } from './author-comments.controller';
 import { AuthorCommentsService } from './author-comments.service';
 
@@ -13,7 +14,7 @@ import { AuthorCommentsService } from './author-comments.service';
     ReviewsModule,
     RegisteredAuthorsModule,
   ],
-  controllers: [AuthorCommentsController],
+  controllers: [AuthorCommentsController, AdminAuthorCommentsController],
   providers: [AuthorCommentsService],
   exports: [AuthorCommentsService],
 })

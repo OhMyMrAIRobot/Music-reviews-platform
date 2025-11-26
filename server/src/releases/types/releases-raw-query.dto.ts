@@ -4,9 +4,9 @@ import { ReleasesResponseDto } from '../dto/response/releases.response.dto';
  * ReleaseRawQueryResponseDto — wrapper for the raw SQL query result.
  * The `result` field contains the assembled JSON with `items` and `meta`.
  */
-export type ReleaseRawQueryDto = {
+export type ReleasesRawQueryDto = {
   result: ReleasesResponseDto;
 };
 
-/** Array of such responses (Prisma returns an array of rows) */
-export type ReleaseRawQueryArrayDto = Array<ReleaseRawQueryDto>;
+/** Array form returned by Prisma's `$queryRaw` for this query. */
+export type ReleasesRawQueryArrayDto = Array<ReleasesRawQueryDto>;
