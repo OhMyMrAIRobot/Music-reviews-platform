@@ -1,5 +1,5 @@
 /**
- * CreateReviewRequestDto
+ * CreateReviewData
  *
  * Request body for creating a review.
  */

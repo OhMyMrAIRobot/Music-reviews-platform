@@ -1,8 +1,12 @@
 import axios from 'axios'
 import { IAlbumValue } from '../models/album-value/album-value'
 import { AlbumValueTiersEnum } from '../models/album-value/album-value-tiers-enum'
-import { IAlbumValueVote } from '../models/album-value/album-value-vote'
 import { IAlbumValuesResponse } from '../models/album-value/album-values-response'
+import {
+	AlbumValueVote,
+	CreateAlbumValueVoteData,
+	UpdateAlbumValueVoteData,
+} from '../types/album-value'
 import { SortOrder } from '../types/sort-order-type'
 import { api } from './api-instance'
 
@@ -38,79 +42,32 @@ export const AlbumValueAPI = {
 		return data
 	},
 
+	async fetchUserAlbumValueVote(releaseId: string): Promise<AlbumValueVote> {
+		const { data } = await api.get<AlbumValueVote>(
+			`/album-value-votes/release/${releaseId}`
+		)
+
+		return data
+	},
+
 	async postAlbumValue(
-		releaseId: string,
-		rarityGenre: number,
-		rarityPerformance: number,
-		formatReleaseScore: number,
-		integrityGenre: number,
-		integritySemantic: number,
-		depthScore: number,
-		qualityRhymesImages: number,
-		qualityStructureRhythm: number,
-		qualityStyleImpl: number,
-		qualityIndividuality: number,
-		influenceAuthorPopularity: number,
-		influenceReleaseAnticip: number
-	): Promise<IAlbumValueVote> {
-		const { data } = await api.post<IAlbumValueVote>('/album-value-votes', {
-			releaseId,
-			rarityGenre,
-			rarityPerformance,
-			formatReleaseScore,
-			integrityGenre,
-			integritySemantic,
-			depthScore,
-			qualityRhymesImages,
-			qualityStructureRhythm,
-			qualityStyleImpl,
-			qualityIndividuality,
-			influenceReleaseAnticip,
-			influenceAuthorPopularity,
-		})
+		formData: CreateAlbumValueVoteData
+	): Promise<AlbumValueVote> {
+		const { data } = await api.post<AlbumValueVote>(
+			'/album-value-votes',
+			formData
+		)
 
 		return data
 	},
 
 	async updateAlbumValue(
 		id: string,
-		rarityGenre?: number,
-		rarityPerformance?: number,
-		formatReleaseScore?: number,
-		integrityGenre?: number,
-		integritySemantic?: number,
-		depthScore?: number,
-		qualityRhymesImages?: number,
-		qualityStructureRhythm?: number,
-		qualityStyleImpl?: number,
-		qualityIndividuality?: number,
-		influenceAuthorPopularity?: number,
-		influenceReleaseAnticip?: number
-	): Promise<IAlbumValueVote> {
-		const { data } = await api.patch<IAlbumValueVote>(
+		formData: UpdateAlbumValueVoteData
+	): Promise<AlbumValueVote> {
+		const { data } = await api.patch<AlbumValueVote>(
 			`/album-value-votes/${id}`,
-			{
-				rarityGenre,
-				rarityPerformance,
-				formatReleaseScore,
-				integrityGenre,
-				integritySemantic,
-				depthScore,
-				qualityRhymesImages,
-				qualityStructureRhythm,
-				qualityStyleImpl,
-				qualityIndividuality,
-				influenceReleaseAnticip,
-				influenceAuthorPopularity,
-			}
-		)
-
-		return data
-	},
-
-	async fetchUserAlbumValueVote(releaseId: string): Promise<IAlbumValueVote> {
-		const { data } = await api.get<IAlbumValueVote>(
-			`/album-value-votes/release/${releaseId}`
+			formData
 		)
 
 		return data

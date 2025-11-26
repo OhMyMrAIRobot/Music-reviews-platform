@@ -1,6 +1,9 @@
-export interface IAlbumValueVote {
-	id: string
-	createdAt: Date
+/**
+ * CreateAlbumValueVoteData
+ *
+ * Request body for creating an album value vote.
+ */
+export type CreateAlbumValueVoteData = {
 	releaseId: string
 	rarityGenre: number
 	rarityPerformance: number
@@ -14,5 +17,4 @@ export interface IAlbumValueVote {
 	qualityIndividuality: number
 	influenceAuthorPopularity: number
 	influenceReleaseAnticip: number
-	userId: string
 }

@@ -5,6 +5,7 @@ import { AlbumValueAPI } from '../../../../../../api/album-value-api'
 import AlbumValue from '../../../../../../components/album-value/Album-value'
 import TickSvg from '../../../../../../components/svg/Tick-svg'
 import Loader from '../../../../../../components/utils/Loader'
+import { useApiErrorHandler } from '../../../../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../../../../hooks/use-auth'
 import { useStore } from '../../../../../../hooks/use-store'
 import { albumValuesKeys } from '../../../../../../query-keys/album-values-keys'
@@ -12,6 +13,10 @@ import { leaderboardKeys } from '../../../../../../query-keys/leaderboard-keys'
 import { profileKeys } from '../../../../../../query-keys/profile-keys'
 import { releaseDetailsKeys } from '../../../../../../query-keys/release-details-keys'
 import authStore from '../../../../../../stores/auth-store'
+import {
+	CreateAlbumValueVoteData,
+	UpdateAlbumValueVoteData,
+} from '../../../../../../types/album-value'
 import { Release, ReleaseTypesEnum } from '../../../../../../types/release'
 import { getAlbumValueInfluenceMultiplier } from '../../../../../../utils/get-album-value-influence-multiplier'
 import ReleaseDetailsEstimationDeleteButton from '../../buttons/Release-details-estimation-delete-button'
@@ -34,6 +39,7 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = ({ release }) => {
 
 	const { checkAuth } = useAuth()
 	const queryClient = useQueryClient()
+	const handleApiError = useApiErrorHandler()
 
 	const invalidateRelatedQueries = () => {
 		const keys = [
@@ -47,35 +53,8 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = ({ release }) => {
 	}
 
 	const createMutation = useMutation({
-		mutationFn: (data: {
-			rarityGenre: number
-			rarityPerformance: number
-			formatReleaseScore: number
-			integrityGenre: number
-			integritySemantic: number
-			depthScore: number
-			qualityRhymesImages: number
-			qualityStructureRhythm: number
-			qualityStyleImpl: number
-			qualityIndividuality: number
-			influenceAuthorPopularity: number
-			influenceReleaseAnticip: number
-		}) =>
-			AlbumValueAPI.postAlbumValue(
-				release.id,
-				data.rarityGenre,
-				data.rarityPerformance,
-				data.formatReleaseScore,
-				data.integrityGenre,
-				data.integritySemantic,
-				data.depthScore,
-				data.qualityRhymesImages,
-				data.qualityStructureRhythm,
-				data.qualityStyleImpl,
-				data.qualityIndividuality,
-				data.influenceAuthorPopularity,
-				data.influenceReleaseAnticip
-			),
+		mutationFn: (data: CreateAlbumValueVoteData) =>
+			AlbumValueAPI.postAlbumValue(data),
 		onSuccess: data => {
 			invalidateRelatedQueries()
 			queryClient.setQueryData(
@@ -91,36 +70,8 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = ({ release }) => {
 			data,
 		}: {
 			id: string
-			data: Partial<{
-				rarityGenre: number
-				rarityPerformance: number
-				formatReleaseScore: number
-				integrityGenre: number
-				integritySemantic: number
-				depthScore: number
-				qualityRhymesImages: number
-				qualityStructureRhythm: number
-				qualityStyleImpl: number
-				qualityIndividuality: number
-				influenceAuthorPopularity: number
-				influenceReleaseAnticip: number
-			}>
-		}) =>
-			AlbumValueAPI.updateAlbumValue(
-				id,
-				data.rarityGenre,
-				data.rarityPerformance,
-				data.formatReleaseScore,
-				data.integrityGenre,
-				data.integritySemantic,
-				data.depthScore,
-				data.qualityRhymesImages,
-				data.qualityStructureRhythm,
-				data.qualityStyleImpl,
-				data.qualityIndividuality,
-				data.influenceAuthorPopularity,
-				data.influenceReleaseAnticip
-			),
+			data: UpdateAlbumValueVoteData
+		}) => AlbumValueAPI.updateAlbumValue(id, data),
 		onSuccess: data => {
 			invalidateRelatedQueries()
 			queryClient.setQueryData(
@@ -191,6 +142,7 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = ({ release }) => {
 
 		try {
 			await createMutation.mutateAsync({
+				releaseId: release.id,
 				rarityGenre,
 				rarityPerformance,
 				formatReleaseScore: formatRelease,
@@ -209,13 +161,7 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = ({ release }) => {
 				'Вы успешно оставили голос за ценность альбома!'
 			)
 		} catch (error: unknown) {
-			const axiosError = error as AxiosError<{ message: string | string[] }>
-			const errors = Array.isArray(axiosError.response?.data?.message)
-				? axiosError.response?.data?.message
-				: [axiosError.response?.data?.message]
-			errors
-				.filter((err): err is string => typeof err === 'string')
-				.forEach((err: string) => notificationStore.addErrorNotification(err))
+			handleApiError(error)
 		}
 	}
 
@@ -281,13 +227,7 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = ({ release }) => {
 				'Вы успешно изменили голос за ценность альбома!'
 			)
 		} catch (error: unknown) {
-			const axiosError = error as AxiosError<{ message: string | string[] }>
-			const errors = Array.isArray(axiosError.response?.data?.message)
-				? axiosError.response?.data?.message
-				: [axiosError.response?.data?.message]
-			errors
-				.filter((err): err is string => typeof err === 'string')
-				.forEach((err: string) => notificationStore.addErrorNotification(err))
+			handleApiError(error)
 		}
 	}
 
