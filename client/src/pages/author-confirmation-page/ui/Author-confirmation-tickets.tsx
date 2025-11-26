@@ -11,13 +11,13 @@ interface IProps {
 const AuthorConfirmationTickets: FC<IProps> = ({ show }) => {
 	const { data, isPending } = useQuery({
 		queryKey: authorConfirmationsKeys.byCurrentUser(),
-		queryFn: () => AuthorConfirmationAPI.fetchByUserId(),
+		queryFn: () => AuthorConfirmationAPI.findMyConfirmations(),
 		staleTime: 1000 * 60 * 5,
 		enabled: show,
 		refetchOnMount: 'always',
 	})
 
-	const items = data ?? []
+	const items = data?.items ?? []
 
 	return (
 		<div

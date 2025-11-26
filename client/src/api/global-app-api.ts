@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { IPlatformStats } from '../models/platform-stats/platform-stats'
+import { PlatformStats } from '../types/platform'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
 const _api = axios.create({
@@ -10,8 +10,8 @@ const _api = axios.create({
 })
 
 export const GlobalAppAPI = {
-	async fetchPlatformStats(): Promise<IPlatformStats> {
-		const { data } = await _api.get<IPlatformStats>(`stats`)
+	async fetchPlatformStats(): Promise<PlatformStats> {
+		const { data } = await _api.get<PlatformStats>(`stats`)
 
 		return data
 	},

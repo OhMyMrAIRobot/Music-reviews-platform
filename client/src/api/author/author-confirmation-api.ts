@@ -1,62 +1,66 @@
 import axios from 'axios'
-import { IAuthorConfirmation } from '../../models/author/author-confirmation/author-confirmation'
-import { IAuthorConfirmationStatus } from '../../models/author/author-confirmation/author-confirmation-status'
-import { IAuthorConfirmationsResponse } from '../../models/author/author-confirmation/author-confirmations-response'
-import { SortOrder } from '../../types/sort-order-type'
+import {
+	AuthorConfirmation,
+	AuthorConfirmationsResponse,
+	AuthorConfirmationStatus,
+	CreateAuthorConfirmationData,
+	UpdateAuthorConfirmationData,
+} from '../../types/author'
+import { AuthorConfirmationsQuery } from '../../types/author/queries/author-confirmations-query'
 import { api } from '../api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
 
 export const AuthorConfirmationAPI = {
-	async fetchStatuses(): Promise<IAuthorConfirmationStatus[]> {
-		const { data } = await axios.get<IAuthorConfirmationStatus[]>(
+	async fetchStatuses(): Promise<AuthorConfirmationStatus[]> {
+		const { data } = await axios.get<AuthorConfirmationStatus[]>(
 			`${SERVER_URL}/author-confirmation-statuses/`
 		)
 
 		return data
 	},
 
-	async create(confirmation: string, authorIds: string[]) {
-		return api.post('/author-confirmations', {
-			confirmation,
-			authorIds,
-		})
-	},
-
-	async fetchByUserId(): Promise<IAuthorConfirmation[]> {
-		const { data } = await api.get<IAuthorConfirmation[]>(
-			'/author-confirmations/user'
+	async findMyConfirmations(): Promise<AuthorConfirmationsResponse> {
+		const { data } = await api.get<AuthorConfirmationsResponse>(
+			'/author-confirmations/my-confirmations'
 		)
 
 		return data
 	},
 
-	async fetchAll(
-		limit: number | null,
-		offset: number | null,
-		statusId: number | null,
-		order: SortOrder | null,
-		query: string | null
-	): Promise<IAuthorConfirmationsResponse> {
-		const { data } = await api.get<IAuthorConfirmationsResponse>(
+	async findAll(
+		query: AuthorConfirmationsQuery
+	): Promise<AuthorConfirmationsResponse> {
+		const { userId, statusId, search, order, limit, offset } = query
+		const { data } = await api.get<AuthorConfirmationsResponse>(
 			`/author-confirmations?
-			${limit !== null ? `limit=${limit}&` : ''}
-			${offset !== null ? `offset=${offset}&` : ''}
-			${statusId !== null ? `statusId=${statusId}&` : ''}
-			${order !== null ? `order=${order}&` : ''}
-			${query !== null ? `query=${query}&` : ''}
+			${userId ? `userId=${userId}&` : ''}
+			${statusId ? `statusId=${statusId}&` : ''}
+			${order ? `order=${order}&` : ''}
+			${search ? `search=${search}&` : ''}
+			${limit ? `limit=${limit}&` : ''}
+			${offset ? `offset=${offset}&` : ''}
 			`
 		)
 
 		return data
 	},
 
-	async update(id: string, statusId: string): Promise<IAuthorConfirmation> {
-		const { data } = await api.patch<IAuthorConfirmation>(
+	async create(
+		formData: CreateAuthorConfirmationData
+	): Promise<AuthorConfirmation> {
+		const { data } = await api.post('/author-confirmations', formData)
+
+		return data
+	},
+
+	async update(
+		id: string,
+		formData: UpdateAuthorConfirmationData
+	): Promise<AuthorConfirmation> {
+		const { data } = await api.patch<AuthorConfirmation>(
 			`/author-confirmations/${id}`,
-			{
-				statusId,
-			}
+			formData
 		)
 
 		return data

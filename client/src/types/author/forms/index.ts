@@ -1,2 +1,4 @@
 export * from './create-author-comment-data'
+export * from './create-author-confirmation-data'
 export * from './update-author-comment-data'
+export * from './update-author-confirmation-data'

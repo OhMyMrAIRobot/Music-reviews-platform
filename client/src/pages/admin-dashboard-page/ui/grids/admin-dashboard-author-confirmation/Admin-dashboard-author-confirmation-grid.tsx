@@ -6,9 +6,9 @@ import AdminHeader from '../../../../../components/layout/admin-header/Admin-hea
 import Pagination from '../../../../../components/pagination/Pagination'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import { useAuthorConfirmationMeta } from '../../../../../hooks/use-author-confirmation-meta'
-import { AuthorConfirmationStatusesFilterOptions } from '../../../../../models/author/author-confirmation/author-confirmation-statuses-filter-options'
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
 import { authorConfirmationsKeys } from '../../../../../query-keys/author-confirmation-keys'
+import { AuthorConfirmationStatusesFilterOptions } from '../../../../../types/author'
 import { SortOrder } from '../../../../../types/sort-order-type'
 import AdminFilterButton from '../../buttons/Admin-filter-button'
 import AdminDashboardAuthorConfirmationGridItem from './Admin-dashboard-author-confirmation-grid-item'
@@ -39,13 +39,13 @@ const AdminDashboardAuthorConfirmationGrid = () => {
 	})
 
 	const queryFn = () =>
-		AuthorConfirmationAPI.fetchAll(
-			perPage,
-			(currentPage - 1) * perPage,
-			statusId ? parseInt(statusId) : null,
+		AuthorConfirmationAPI.findAll({
+			limit: perPage,
+			offset: (currentPage - 1) * perPage,
 			order,
-			searchText.trim() || null
-		)
+			statusId: statusId ?? undefined,
+			search: searchText.trim() || undefined,
+		})
 
 	const { data: confirmationsData, isPending: isConfirmationsLoading } =
 		useQuery({
@@ -56,7 +56,7 @@ const AdminDashboardAuthorConfirmationGrid = () => {
 		})
 
 	const confirmations = confirmationsData?.items || []
-	const count = confirmationsData?.count || 0
+	const count = confirmationsData?.meta.count || 0
 
 	useEffect(() => {
 		setCurrentPage(1)

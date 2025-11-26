@@ -4,7 +4,7 @@ import { NominationEntityKind } from '../models/nomination/nomination-entity-kin
 import { INominationUserVote } from '../models/nomination/nomination-user-vote'
 import { INominationWinnerParticipation } from '../models/nomination/nomination-winner-participation/nomination-winner-participation'
 import { INominationWinnersResponse } from '../models/nomination/nomination-winner/nomination-winners-response'
-import { INominationType } from '../types/nomination/entities/nomination-type'
+import { NominationType } from '../types/nomination'
 import { api } from './api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
@@ -18,8 +18,8 @@ const _api = axios.create({
 })
 
 export const NominationAPI = {
-	async fetchNominationTypes(): Promise<INominationType[]> {
-		const { data } = await axios.get<INominationType[]>(
+	async fetchNominationTypes(): Promise<NominationType[]> {
+		const { data } = await axios.get<NominationType[]>(
 			`${SERVER_URL}/nomination-types`
 		)
 

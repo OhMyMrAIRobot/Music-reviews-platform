@@ -11,10 +11,12 @@ import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import { useAuthorConfirmationMeta } from '../../../../../hooks/use-author-confirmation-meta'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../../hooks/use-store'
-import { IAuthorConfirmation } from '../../../../../models/author/author-confirmation/author-confirmation'
-import { AuthorConfirmationStatusesEnum } from '../../../../../models/author/author-confirmation/author-confirmation-statuses-enum'
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
 import { authorConfirmationsKeys } from '../../../../../query-keys/author-confirmation-keys'
+import {
+	AuthorConfirmation,
+	AuthorConfirmationStatusesEnum,
+} from '../../../../../types/author'
 import { SortOrder } from '../../../../../types/sort-order-type'
 import { getReleaseMediaStatusColor } from '../../../../../utils/get-release-media-status-color'
 import AdminDeleteButton from '../../buttons/Admin-delete-button'
@@ -22,7 +24,7 @@ import AdminSvgButton from '../../buttons/Admin-svg-button'
 
 interface IProps {
 	className?: string
-	item?: IAuthorConfirmation
+	item?: AuthorConfirmation
 	isLoading: boolean
 	position?: number
 	order?: SortOrder
@@ -74,7 +76,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
 
 	const updateMutation = useMutation({
 		mutationFn: ({ id, statusId }: { id: string; statusId: string }) =>
-			AuthorConfirmationAPI.update(id, statusId),
+			AuthorConfirmationAPI.update(id, { statusId }),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification(
 				'Вы успешно обновили статус заявки на верификацию!'
@@ -204,9 +206,9 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
 								src={`${
 									import.meta.env.VITE_SERVER_URL
 								}/public/authors/avatars/${
-									item.author.avatarImg === ''
+									item.author.img === ''
 										? import.meta.env.VITE_DEFAULT_AVATAR
-										: item.author.avatarImg
+										: item.author.img
 								}`}
 								alt={item.author.name}
 								className='max-xl:hidden size-9 object-cover aspect-square rounded-full select-none'

@@ -1,5 +1,5 @@
 /**
- * Represents an AuthorType entity.
+ * Represents an `AuthorType` entity.
  */
 export type AuthorType = {
 	id: string

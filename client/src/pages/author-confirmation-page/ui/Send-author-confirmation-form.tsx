@@ -14,6 +14,7 @@ import { useAuth } from '../../../hooks/use-auth'
 import { useStore } from '../../../hooks/use-store'
 import { authorConfirmationsKeys } from '../../../query-keys/author-confirmation-keys'
 import { authorsKeys } from '../../../query-keys/authors-keys'
+import { CreateAuthorConfirmationData } from '../../../types/author'
 
 interface IProps {
 	show: boolean
@@ -51,8 +52,8 @@ const SendAuthorConfirmationForm: FC<IProps> = ({ show }) => {
 
 	const { mutateAsync: createConfirmation, isPending: isCreating } =
 		useMutation({
-			mutationFn: (payload: { confirmation: string; authorIds: string[] }) =>
-				AuthorConfirmationAPI.create(payload.confirmation, payload.authorIds),
+			mutationFn: (payload: CreateAuthorConfirmationData) =>
+				AuthorConfirmationAPI.create(payload),
 			onSuccess: async () => {
 				notificationStore.addSuccessNotification(
 					'Вы успешно оставили заявку на подтверждение!'

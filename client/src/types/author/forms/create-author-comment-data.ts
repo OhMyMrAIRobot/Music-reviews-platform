@@ -1,7 +1,5 @@
 /**
  * CreateAuthorCommentData — payload for creating an author comment.
- *
- * Validation rules are applied via class-validator decorators.
  */
 export type CreateAuthorCommentData = {
 	/** Comment title; required, 5–100 characters. */

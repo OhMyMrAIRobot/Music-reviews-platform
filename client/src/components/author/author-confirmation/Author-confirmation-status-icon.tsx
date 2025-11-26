@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { AuthorConfirmationStatusesEnum } from '../../../models/author/author-confirmation/author-confirmation-statuses-enum'
+import { AuthorConfirmationStatusesEnum } from '../../../types/author'
 import HourglassSvg from '../../svg/Hourglass-svg'
 import RejectSvg from '../../svg/Reject-svg'
 import TickRoundedSvg from '../../svg/Tick-rounded-svg'

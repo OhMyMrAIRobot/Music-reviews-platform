@@ -1,4 +1,4 @@
-export interface IPlatformStats {
+export type PlatformStats = {
 	totalUsers: number
 	registeredAuthors: number
 	authorLikes: number
