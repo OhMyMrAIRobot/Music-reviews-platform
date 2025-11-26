@@ -69,6 +69,5 @@ export class AlbumValueVoteResponseDto {
 
   /** ISO timestamp when the vote was created. */
   @Expose()
-  @Transform(({ value }: { value: Date }) => value.toISOString())
   createdAt: string;
 }
