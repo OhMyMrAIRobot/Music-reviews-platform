@@ -7,10 +7,10 @@ import { AuthorConfirmationStatusesEnum } from 'src/author-confirmation-statuses
 import { EntityNotFoundException } from 'src/shared/exceptions/entity-not-found.exception';
 import { UsersService } from 'src/users/users.service';
 import { CreateAuthorConfirmationDto } from './dto/create-author-confirmation.dto';
-import { FindAuthorConfirmationsQuery } from './dto/query/find-author-confirmations-query.dto';
+import { AuthorConfirmationsQueryDto } from './dto/query/author-confirmations.query.dto';
 import { UpdateAuthorConfirmationRequestDto } from './dto/request/update-author-confirmation.request.dto';
-import { AuthorConfirmationResponseDto } from './dto/response/author-confirmation.response.dto';
-import { FindAuthorConfirmationResponseDto } from './dto/response/find-author-confirmations.response.dto';
+import { AuthorConfirmationDto } from './dto/response/author-confirmation.dto';
+import { AuthorConfirmationsResponseDto } from './dto/response/author-confirmations.response.dto';
 
 @Injectable()
 export class AuthorConfirmationsService {
@@ -20,6 +20,12 @@ export class AuthorConfirmationsService {
     private readonly authorConfirmationStatusesService: AuthorConfirmationStatusesService,
   ) {}
 
+  /**
+   * Create multiple author confirmation records in bulk.
+   *
+   * Uses `createMany` with `skipDuplicates` so repeated submissions for the
+   * same user/author pair are ignored. Returns the Prisma createMany result.
+   */
   create(data: CreateAuthorConfirmationDto[]) {
     return this.prisma.authorConfirmation.createMany({
       data,
@@ -27,31 +33,23 @@ export class AuthorConfirmationsService {
     });
   }
 
-  async findByUserId(userId: string): Promise<AuthorConfirmationResponseDto[]> {
-    await this.usersService.findOne(userId);
-    const result = await this.prisma.authorConfirmation.findMany({
-      where: { userId },
-      include: {
-        user: { select: { id: true, nickname: true, profile: true } },
-        author: { select: { id: true, name: true, avatarImg: true } },
-        status: true,
-      },
-    });
-
-    return plainToInstance(AuthorConfirmationResponseDto, result, {
-      excludeExtraneousValues: true,
-    });
-  }
-
+  /**
+   * Find confirmations matching the provided query.
+   *
+   * Supports filtering by `userId`, `statusId`, free-text `search` across
+   * author name and user nickname, ordering and pagination. Validates
+   * referenced status existence when `statusId` is provided.
+   */
   async findAll(
-    query: FindAuthorConfirmationsQuery,
-  ): Promise<FindAuthorConfirmationResponseDto> {
+    query: AuthorConfirmationsQueryDto,
+  ): Promise<AuthorConfirmationsResponseDto> {
     const {
       limit,
       offset = 0,
-      query: searchQuery,
+      search: searchQuery,
       statusId,
       order = 'desc',
+      userId,
     } = query;
 
     if (statusId) {
@@ -60,6 +58,7 @@ export class AuthorConfirmationsService {
 
     const where: Prisma.AuthorConfirmationWhereInput = {
       AND: [
+        userId ? { userId } : {},
         statusId ? { statusId } : {},
         searchQuery
           ? {
@@ -102,17 +101,30 @@ export class AuthorConfirmationsService {
     ]);
 
     return {
-      count,
-      items: plainToInstance(AuthorConfirmationResponseDto, result, {
+      meta: { count },
+      items: plainToInstance(AuthorConfirmationDto, result, {
         excludeExtraneousValues: true,
       }),
     };
   }
 
+  /**
+   * Update the status of a confirmation.
+   *
+   * Preconditions:
+   * - The confirmation must exist.
+   * - The current status must be `PENDING` (otherwise update is blocked).
+   *
+   * Side effects:
+   * - When the new status is `APPROVED`, a `registeredAuthor` record is
+   *   created linking the user and the author.
+   *
+   * Returns the updated `AuthorConfirmationDto`.
+   */
   async update(
     id: string,
     dto: UpdateAuthorConfirmationRequestDto,
-  ): Promise<AuthorConfirmationResponseDto> {
+  ): Promise<AuthorConfirmationDto> {
     const exist = await this.findOne(id);
     const newStatus = await this.authorConfirmationStatusesService.findOne(
       dto.statusId,
@@ -151,20 +163,32 @@ export class AuthorConfirmationsService {
       });
     });
 
-    return plainToInstance(AuthorConfirmationResponseDto, result, {
+    return plainToInstance(AuthorConfirmationDto, result, {
       excludeExtraneousValues: true,
     });
   }
 
+  /**
+   * Delete a confirmation by id.
+   *
+   * Ensures the entity exists and then performs a deletion.
+   */
   async delete(id: string) {
     await this.findOne(id);
 
-    return this.prisma.authorConfirmation.delete({
+    await this.prisma.authorConfirmation.delete({
       where: { id },
     });
+
+    return;
   }
 
-  async findOne(id: string) {
+  /**
+   * Internal helper to fetch a confirmation by id including its status.
+   *
+   * Throws `EntityNotFoundException` when the confirmation does not exist.
+   */
+  private async findOne(id: string) {
     const exist = await this.prisma.authorConfirmation.findUnique({
       where: { id },
       include: { status: true },
