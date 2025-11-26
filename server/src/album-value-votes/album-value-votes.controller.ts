@@ -21,6 +21,13 @@ export class AlbumValueVotesController {
     private readonly albumValueVotesService: AlbumValueVotesService,
   ) {}
 
+  /**
+   * Create a new album value vote.
+   *
+   * Requires an authenticated user. Accepts the full set of rating fields
+   * defined in `CreateAlbumVoteRequestDto`. Returns the created vote
+   * representation.
+   */
   @Post()
   @UseGuards(JwtAuthGuard)
   create(
@@ -30,6 +37,12 @@ export class AlbumValueVotesController {
     return this.albumValueVotesService.create(req.user.id, dto);
   }
 
+  /**
+   * Retrieve the authenticated user's album value vote for a given release.
+   *
+   * Returns the user's vote for the specified `releaseId` or throws when
+   * not found.
+   */
   @Get('release/:releaseId')
   @UseGuards(JwtAuthGuard)
   findUserAlbumValueVote(
@@ -42,6 +55,12 @@ export class AlbumValueVotesController {
     );
   }
 
+  /**
+   * Update an existing album value vote.
+   *
+   * The authenticated user must be the owner of the vote. Only provided
+   * fields will be updated; the DTO is partial.
+   */
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   update(
@@ -52,6 +71,11 @@ export class AlbumValueVotesController {
     return this.albumValueVotesService.update(id, dto, req.user.id);
   }
 
+  /**
+   * Delete an album value vote by id.
+   *
+   * The authenticated user must be the owner of the vote.
+   */
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   delete(@Param('id') id: string, @Request() req: IAuthenticatedRequest) {
