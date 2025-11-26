@@ -23,7 +23,7 @@ const queryKey = releasesKeys.list({
 })
 
 const queryFn = () =>
-	ReleaseAPI.fetchAll({
+	ReleaseAPI.findAll({
 		limit: LIMIT,
 		offset: OFFSET,
 		sortField: FIELD,

@@ -12,7 +12,7 @@ const OFFSET = 0
 
 const queryKey = releasesKeys.mostReviewed()
 const queryFn = () =>
-	ReleaseAPI.fetchAll({
+	ReleaseAPI.findAll({
 		sortField: ReleasesSortFieldsEnum.TOTAL_COUNT,
 		sortOrder: SortOrdersEnum.DESC,
 		last24h: true,

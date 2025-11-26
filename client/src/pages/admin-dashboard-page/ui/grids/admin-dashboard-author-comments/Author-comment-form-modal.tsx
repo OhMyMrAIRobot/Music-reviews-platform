@@ -7,13 +7,13 @@ import FormLabel from '../../../../../components/form-elements/Form-label'
 import FormTextbox from '../../../../../components/form-elements/Form-textbox'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay'
 import { useStore } from '../../../../../hooks/use-store'
-import { IAuthorComment } from '../../../../../models/author/author-comment/author-comment'
 import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys'
+import { AuthorComment } from '../../../../../types/author'
 
 interface IProps {
 	isOpen: boolean
 	onClose: () => void
-	comment: IAuthorComment
+	comment: AuthorComment
 }
 
 const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
@@ -30,7 +30,7 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
 			id: string
 			title?: string
 			text?: string
-		}) => AuthorCommentAPI.adminUpdate(id, title, text),
+		}) => AuthorCommentAPI.adminUpdate(id, { title, text }),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification(
 				'Авторский комментарий успешно обновлен!'

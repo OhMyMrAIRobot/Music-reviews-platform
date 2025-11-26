@@ -17,7 +17,7 @@ const AuthorDetailsReleases: FC<IProps> = ({ id }) => {
 	const { data, isPending } = useQuery({
 		queryKey: releasesKeys.byAuthor(id, true),
 		queryFn: () =>
-			ReleaseAPI.fetchAll({
+			ReleaseAPI.findAll({
 				authorId: id,
 				sortField: ReleasesSortFieldsEnum.PUBLISHED,
 				sortOrder: SortOrdersEnum.DESC,

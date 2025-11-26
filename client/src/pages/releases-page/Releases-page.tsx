@@ -58,7 +58,7 @@ const ReleasesPage = () => {
 	const { data, isPending: isReleasesLoading } = useQuery({
 		queryKey,
 		queryFn: () =>
-			ReleaseAPI.fetchAll({
+			ReleaseAPI.findAll({
 				typeId: selectedTypeId ?? undefined,
 				sortField,
 				sortOrder,

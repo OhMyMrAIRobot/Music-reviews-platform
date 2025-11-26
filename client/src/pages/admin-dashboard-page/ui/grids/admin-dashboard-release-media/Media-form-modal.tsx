@@ -44,18 +44,16 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 			offset: 0,
 		}),
 		queryFn: () =>
-			ReleaseAPI.adminFetchReleases(
-				null,
-				searchReleases.trim() || null,
-				null,
-				20,
-				0
-			),
+			ReleaseAPI.findAll({
+				search: searchReleases.trim() ?? undefined,
+				limit: 20,
+				offset: 0,
+			}),
 		enabled: !!searchReleases.trim() && isOpen,
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const releases = releasesData?.releases || []
+	const releases = releasesData?.items || []
 
 	const createMutation = useMutation({
 		mutationFn: ({

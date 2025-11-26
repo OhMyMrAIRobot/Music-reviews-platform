@@ -1,11 +1,11 @@
 import { FC } from 'react'
 import AuthorCommentHeader from '../../../../components/author/author-comment/Author-comment-header'
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
-import { IAuthorComment } from '../../../../models/author/author-comment/author-comment'
+import { AuthorComment } from '../../../../types/author'
 
 interface IProps {
 	isLoading: boolean
-	comment?: IAuthorComment
+	comment?: AuthorComment
 }
 
 const ReleaseDetailsAuthorCommentItem: FC<IProps> = ({

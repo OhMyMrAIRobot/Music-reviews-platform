@@ -43,7 +43,7 @@ const AdminDashboardReleasesGrid = () => {
 	})
 
 	const queryFn = () =>
-		ReleaseAPI.fetchAll({
+		ReleaseAPI.findAll({
 			typeId: typeId ?? undefined,
 			search: searchText.trim() || undefined,
 			sortOrder: order,

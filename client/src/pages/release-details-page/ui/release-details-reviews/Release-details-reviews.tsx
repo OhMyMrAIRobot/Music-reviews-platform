@@ -2,10 +2,12 @@ import { useQuery } from '@tanstack/react-query'
 import { FC, useState } from 'react'
 import { ReviewAPI } from '../../../../api/review/review-api.ts'
 import Pagination from '../../../../components/pagination/Pagination.tsx'
-import { ReleaseReviewSortField } from '../../../../models/review/release-review/release-review-sort-fields.ts'
 import { SortOrdersEnum } from '../../../../models/sort/sort-orders-enum.ts'
 import { releaseDetailsKeys } from '../../../../query-keys/release-details-keys.ts'
-import { ReviewsSortFieldsEnum } from '../../../../types/review/index.ts'
+import {
+	ReleaseReviewSortFields,
+	ReviewsSortFieldsEnum,
+} from '../../../../types/review/index.ts'
 import { SortOrder } from '../../../../types/sort-order-type.ts'
 import ReleaseDetailsReviewsHeader from './Release-details-reviews-header.tsx'
 import ReleaseDetailsReviewsItem from './Release-details-reviews-item.tsx'
@@ -19,15 +21,15 @@ const PER_PAGE = 5
 const ReleaseDetailsReviews: FC<IProps> = ({ releaseId }) => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [selectedSort, setSelectedSort] = useState<string>(
-		ReleaseReviewSortField.NEW
+		ReleaseReviewSortFields.NEW
 	)
 
 	let field: ReviewsSortFieldsEnum = ReviewsSortFieldsEnum.CREATED
 	let order: SortOrder = SortOrdersEnum.DESC
 
-	if (selectedSort === ReleaseReviewSortField.OLD) {
+	if (selectedSort === ReleaseReviewSortFields.OLD) {
 		order = SortOrdersEnum.ASC
-	} else if (selectedSort === ReleaseReviewSortField.POPULAR) {
+	} else if (selectedSort === ReleaseReviewSortFields.POPULAR) {
 		field = ReviewsSortFieldsEnum.LIKES
 	}
 

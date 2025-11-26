@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { AuthorCommentAPI } from '../../../../api/author/author-comment-api'
 import FormButton from '../../../../components/form-elements/Form-button'
 import ConfirmationModal from '../../../../components/modals/Confirmation-modal'
+import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../../hooks/use-auth'
 import { useStore } from '../../../../hooks/use-store'
 import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys'
@@ -11,6 +11,10 @@ import { leaderboardKeys } from '../../../../query-keys/leaderboard-keys'
 import { platformStatsKeys } from '../../../../query-keys/platform-stats-keys'
 import { profileKeys } from '../../../../query-keys/profile-keys'
 import { releasesKeys } from '../../../../query-keys/releases-keys'
+import {
+	CreateAuthorCommentData,
+	UpdateAuthorCommentData,
+} from '../../../../types/author'
 import ReleaseDetailsReviewFormText from '../release-details-estimation/forms/release-details-review-form/Release-details-review-form-text'
 
 interface IProps {
@@ -21,19 +25,22 @@ const SendAuthorCommentForm: FC<IProps> = ({ releaseId }) => {
 	const { notificationStore, authStore } = useStore()
 	const { checkAuth } = useAuth()
 	const queryClient = useQueryClient()
+	const handleApiError = useApiErrorHandler()
 
 	const [title, setTitle] = useState<string>('')
 	const [text, setText] = useState<string>('')
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 
-	const { data: authorComments } = useQuery({
+	const { data } = useQuery({
 		queryKey: authorCommentsKeys.byRelease(releaseId),
-		queryFn: () => AuthorCommentAPI.fetchByReleaseId(releaseId),
+		queryFn: () => AuthorCommentAPI.findAll({ releaseId }),
 		staleTime: 1000 * 60 * 5,
 	})
 
+	const authorComments = data?.items
+
 	const authorComment = authorComments?.find(
-		c => c.userId === authStore.user?.id
+		c => c.user.id === authStore.user?.id
 	)
 
 	const invalidateRelatedQueries = () => {
@@ -49,8 +56,8 @@ const SendAuthorCommentForm: FC<IProps> = ({ releaseId }) => {
 	}
 
 	const createMutation = useMutation({
-		mutationFn: ({ title, text }: { title: string; text: string }) =>
-			AuthorCommentAPI.create(releaseId, title, text),
+		mutationFn: ({ title, text, releaseId }: CreateAuthorCommentData) =>
+			AuthorCommentAPI.create({ releaseId, title, text }),
 		onSuccess: invalidateRelatedQueries,
 	})
 
@@ -59,11 +66,8 @@ const SendAuthorCommentForm: FC<IProps> = ({ releaseId }) => {
 			id,
 			title,
 			text,
-		}: {
-			id: string
-			title?: string
-			text?: string
-		}) => AuthorCommentAPI.update(id, title, text),
+		}: UpdateAuthorCommentData & { id: string }) =>
+			AuthorCommentAPI.update(id, { title, text }),
 		onSuccess: invalidateRelatedQueries,
 	})
 
@@ -95,6 +99,7 @@ const SendAuthorCommentForm: FC<IProps> = ({ releaseId }) => {
 				await createMutation.mutateAsync({
 					title: title.trim(),
 					text: text.trim(),
+					releaseId: releaseId,
 				})
 			}
 
@@ -104,12 +109,7 @@ const SendAuthorCommentForm: FC<IProps> = ({ releaseId }) => {
 				} авторский комментарий!`
 			)
 		} catch (error: unknown) {
-			const errors = Array.isArray((error as any).response?.data?.message)
-				? (error as any).response?.data?.message
-				: [(error as any).response?.data?.message]
-			errors.forEach((err: string) =>
-				notificationStore.addErrorNotification(err)
-			)
+			handleApiError(error)
 		}
 	}
 
@@ -131,12 +131,7 @@ const SendAuthorCommentForm: FC<IProps> = ({ releaseId }) => {
 			setTitle('')
 			setText('')
 		} catch (error: unknown) {
-			const errors = Array.isArray((error as any).response?.data?.message)
-				? (error as any).response?.data?.message
-				: [(error as any).response?.data?.message]
-			errors.forEach((err: string) =>
-				notificationStore.addErrorNotification(err)
-			)
+			handleApiError(error)
 		}
 	}
 

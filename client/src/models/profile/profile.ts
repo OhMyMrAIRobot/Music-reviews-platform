@@ -1,4 +1,4 @@
-import { IAuthorType } from '../author/author-type/author-type'
+import { AuthorType } from '../../types/author'
 
 export interface IProfile {
 	id: string
@@ -16,7 +16,7 @@ export interface IProfile {
 	givenLikes: number
 	social: { id: string; url: string; name: string }[]
 	isAuthor: boolean
-	authorTypes: IAuthorType[]
+	authorTypes: AuthorType[]
 	authorCommentsCount: number
 	receivedAuthorLikes: number
 	givenAuthorLikes: number

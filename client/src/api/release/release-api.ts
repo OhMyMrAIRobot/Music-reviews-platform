@@ -44,7 +44,7 @@ export const ReleaseAPI = {
 	 * @param {ReleasesQuery} query - filtering, sorting and pagination options
 	 * @returns {Promise<ReleasesResponse>} - object with `items` and `total` fields
 	 */
-	async fetchAll(query: ReleasesQuery): Promise<ReleasesResponse> {
+	async findAll(query: ReleasesQuery): Promise<ReleasesResponse> {
 		const { data } = await _api.get<ReleasesResponse>(`?
 			${query.authorId ? `authorId=${query.authorId}&` : ''}
 			${query.typeId ? `typeId=${query.typeId}&` : ''}

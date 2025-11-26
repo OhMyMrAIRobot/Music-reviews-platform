@@ -1,14 +1,14 @@
 import { FC } from 'react'
-import { IAuthorComment } from '../../../models/author/author-comment/author-comment'
+import { AuthorComment } from '../../../types/author'
 import SkeletonLoader from '../../utils/Skeleton-loader'
 import AuthorCommentHeader from './Author-comment-header'
 
 interface IProps {
-	comment?: IAuthorComment
+	comment?: AuthorComment
 	isLoading: boolean
 }
 
-const AuthorComment: FC<IProps> = ({ comment, isLoading }) => {
+const AuthorCommentCard: FC<IProps> = ({ comment, isLoading }) => {
 	return isLoading || !comment ? (
 		<SkeletonLoader
 			className={'w-full rounded-[15px] lg:rounded-[20px] h-62'}
@@ -32,4 +32,4 @@ const AuthorComment: FC<IProps> = ({ comment, isLoading }) => {
 	)
 }
 
-export default AuthorComment
+export default AuthorCommentCard

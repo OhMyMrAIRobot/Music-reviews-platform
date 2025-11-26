@@ -7,9 +7,9 @@ import ConfirmationModal from '../../../../../components/modals/Confirmation-mod
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../../hooks/use-store'
-import { IAuthorComment } from '../../../../../models/author/author-comment/author-comment'
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
 import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys'
+import { AuthorComment } from '../../../../../types/author'
 import { SortOrder } from '../../../../../types/sort-order-type'
 import AdminDeleteButton from '../../buttons/Admin-delete-button'
 import AdminOpenButton from '../../buttons/Admin-open-button'
@@ -17,7 +17,7 @@ import AuthorCommentFormModal from './Author-comment-form-modal'
 
 interface IProps {
 	className?: string
-	comment?: IAuthorComment
+	comment?: AuthorComment
 	isLoading: boolean
 	position?: number
 	order?: SortOrder
@@ -101,23 +101,23 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = ({
 				<div className='xl:col-span-2 h-full flex items-center mr-2'>
 					{comment ? (
 						<Link
-							to={navigatoToProfile(comment.userId)}
+							to={navigatoToProfile(comment.user.id)}
 							className='flex text-left gap-x-1.5 items-center cursor-pointer hover:bg-white/5 rounded-lg xl:px-1.5 xl:py-0.5 w-full'
 						>
 							<img
 								loading='lazy'
 								decoding='async'
 								src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-									comment.avatar === ''
+									comment.user.avatar === ''
 										? import.meta.env.VITE_DEFAULT_AVATAR
-										: comment.avatar
+										: comment.user.avatar
 								}`}
-								alt={comment.nickname}
+								alt={comment.user.nickname}
 								className='max-xl:hidden size-9 object-cover aspect-square rounded-full select-none'
 							/>
 							<span className='xl:hidden'>Автор</span>
 							<span className='line-clamp-2 max-xl:underline underline-offset-4 overflow-hidden text-ellipsis text-wrap'>
-								{comment.nickname}
+								{comment.user.nickname}
 							</span>
 						</Link>
 					) : (
@@ -128,23 +128,23 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = ({
 				<div className='xl:col-span-2 h-full flex items-center mr-2'>
 					{comment ? (
 						<Link
-							to={navigateToReleaseDetails(comment.releaseId)}
+							to={navigateToReleaseDetails(comment.release.id)}
 							className='flex text-left gap-x-1.5 items-center cursor-pointer hover:bg-white/5 rounded-lg xl:px-1.5 xl:py-0.5 w-full'
 						>
 							<img
 								loading='lazy'
 								decoding='async'
 								src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
-									comment.releaseImg === ''
+									comment.release.img === ''
 										? import.meta.env.VITE_DEFAULT_COVER
-										: comment.releaseImg
+										: comment.release.img
 								}`}
-								alt={comment.releaseTitle}
+								alt={comment.release.title}
 								className='max-xl:hidden size-9 object-cover aspect-square rounded-full select-none'
 							/>
 							<span className='xl:hidden'>Релиз: </span>
 							<span className='line-clamp-2 max-xl:underline underline-offset-4 overflow-hidden text-ellipsis text-wrap'>
-								{comment.releaseTitle}
+								{comment.release.title}
 							</span>
 						</Link>
 					) : (

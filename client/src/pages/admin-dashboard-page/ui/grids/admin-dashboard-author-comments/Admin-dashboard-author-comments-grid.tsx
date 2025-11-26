@@ -23,12 +23,12 @@ const AdminDashboardAuthorCommentsGrid = () => {
 	})
 
 	const queryFn = () =>
-		AuthorCommentAPI.fetchAll(
-			perPage,
-			(currentPage - 1) * perPage,
-			order,
-			searchText.trim() || null
-		)
+		AuthorCommentAPI.findAll({
+			limit: perPage,
+			offset: (currentPage - 1) * perPage,
+			sortOrder: order,
+			search: searchText.trim() ?? undefined,
+		})
 
 	const { data: commentsData, isLoading } = useQuery({
 		queryKey,
@@ -36,8 +36,8 @@ const AdminDashboardAuthorCommentsGrid = () => {
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const comments = commentsData?.comments || []
-	const count = commentsData?.count || 0
+	const comments = commentsData?.items || []
+	const count = commentsData?.meta.count || 0
 
 	useEffect(() => {
 		setCurrentPage(1)

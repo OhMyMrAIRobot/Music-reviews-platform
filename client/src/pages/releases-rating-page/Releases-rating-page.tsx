@@ -16,7 +16,7 @@ const ReleasesRatingPage = () => {
 	const { data, isPending } = useQuery({
 		queryKey,
 		queryFn: () =>
-			ReleaseAPI.fetchAll({
+			ReleaseAPI.findAll({
 				year: year ?? undefined,
 				month: month,
 				sortField: ReleasesSortFieldsEnum.ALL_RATING,

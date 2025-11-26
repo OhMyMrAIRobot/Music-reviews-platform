@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { FC } from 'react'
 import { AuthorCommentAPI } from '../../../../api/author/author-comment-api'
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
+import { SortOrdersEnum } from '../../../../models/sort/sort-orders-enum'
 import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys'
 import ReleaseDetailsAuthorCommentItem from './Release-details-author-comment-item'
 
@@ -10,11 +11,14 @@ interface IProps {
 }
 
 const ReleaseDetailsAuthorComments: FC<IProps> = ({ releaseId }) => {
-	const { data: authorComments, isPending: isFetching } = useQuery({
+	const { data, isPending: isFetching } = useQuery({
 		queryKey: authorCommentsKeys.byRelease(releaseId),
-		queryFn: () => AuthorCommentAPI.fetchByReleaseId(releaseId),
+		queryFn: () =>
+			AuthorCommentAPI.findAll({ releaseId, sortOrder: SortOrdersEnum.DESC }),
 		staleTime: 1000 * 60 * 5,
 	})
+
+	const authorComments = data?.items
 
 	return (
 		(isFetching || (authorComments && authorComments.length > 0)) && (

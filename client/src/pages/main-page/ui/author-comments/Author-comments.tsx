@@ -9,18 +9,19 @@ import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys'
 import { CarouselRef } from '../../../../types/carousel-ref'
 import AuthorCommentsCarousel from './carousel/Author-comments-carousel'
 
-const LIMIT = 15
-const OFFSET = 0
-const ORDER = SortOrdersEnum.DESC
+const limit = 15
+const offset = 0
+const order = SortOrdersEnum.DESC
 
 const queryKey = authorCommentsKeys.list({
-	limit: LIMIT,
-	offset: OFFSET,
-	order: ORDER,
+	limit,
+	offset,
+	order,
 	authorId: null,
 })
 
-const queryFn = () => AuthorCommentAPI.fetchAll(LIMIT, OFFSET, ORDER, null)
+const queryFn = () =>
+	AuthorCommentAPI.findAll({ limit, offset, sortOrder: order })
 
 const AuthorComments = () => {
 	const { navigateToAuthorComments } = useNavigationPath()
@@ -31,7 +32,7 @@ const AuthorComments = () => {
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const items = data?.comments ?? []
+	const items = data?.items ?? []
 
 	const carouselRef = useRef<CarouselRef>(null)
 	const [canScrollPrev, setCanScrollPrev] = useState(false)

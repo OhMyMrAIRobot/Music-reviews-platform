@@ -7,13 +7,13 @@ import {
 	useImperativeHandle,
 	useState,
 } from 'react'
-import AuthorComment from '../../../../../components/author/author-comment/Author-comment'
-import { IAuthorComment } from '../../../../../models/author/author-comment/author-comment'
+import AuthorCommentCard from '../../../../../components/author/author-comment/Author-comment-card'
+import { AuthorComment } from '../../../../../types/author'
 import { CarouselRef } from '../../../../../types/carousel-ref'
 import { CarouselStateCallbacks } from '../../../../../types/carousel-state-callbacks'
 
 interface IProps extends CarouselStateCallbacks {
-	items: IAuthorComment[]
+	items: AuthorComment[]
 	isLoading: boolean
 }
 
@@ -75,7 +75,7 @@ const AuthorCommentsCarousel = forwardRef<CarouselRef, IProps>(
 										className='flex-[0_0_100%] md:flex-[0_0_450px] md:max-w-[450px] max-w-full'
 										key={`skeleton-author-comment-${idx}`}
 									>
-										<AuthorComment isLoading={isLoading} />
+										<AuthorCommentCard isLoading={isLoading} />
 									</div>
 							  ))
 							: items.map(item => (
@@ -83,7 +83,7 @@ const AuthorCommentsCarousel = forwardRef<CarouselRef, IProps>(
 										className='flex-[0_0_100%] md:flex-[0_0_450px] md:max-w-[450px] max-w-full'
 										key={item.id}
 									>
-										<AuthorComment isLoading={isLoading} comment={item} />
+										<AuthorCommentCard isLoading={isLoading} comment={item} />
 									</div>
 							  ))}
 					</div>

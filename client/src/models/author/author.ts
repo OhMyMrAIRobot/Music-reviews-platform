@@ -1,4 +1,4 @@
-import { IAuthorType } from './author-type/author-type'
+import { AuthorType } from '../../types/author'
 import { IReleaseTypeRatings } from './authors-response'
 import { IFavAuthor } from './fav-author'
 
@@ -9,7 +9,7 @@ export interface IAuthor {
 	name: string
 	favCount: number
 	userFavAuthor: IFavAuthor[]
-	authorTypes: IAuthorType[]
+	authorTypes: AuthorType[]
 	isRegistered: boolean
 	releaseTypeRatings: IReleaseTypeRatings[]
 	nominationsCount: number

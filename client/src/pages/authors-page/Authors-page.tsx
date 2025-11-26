@@ -5,8 +5,8 @@ import AuthorsGrid from '../../components/author/authors-grid/Authors-grid'
 import ComboBox from '../../components/buttons/Combo-box'
 import SkeletonLoader from '../../components/utils/Skeleton-loader'
 import { useAuthorMeta } from '../../hooks/use-author-meta'
-import { AuthorTypesFilterEnum } from '../../models/author/author-type/author-types-filter-enum'
 import { authorsKeys } from '../../query-keys/authors-keys'
+import { AuthorTypesFilterOptions } from '../../types/author'
 
 interface IProps {
 	onlyRegistered: boolean
@@ -16,7 +16,7 @@ const PER_PAGE = 10
 
 const AuthorsPage: FC<IProps> = ({ onlyRegistered }) => {
 	const [selectedAuthorType, setSelectedAuthorType] = useState<string>(
-		AuthorTypesFilterEnum.ALL
+		AuthorTypesFilterOptions.ALL
 	)
 	const [currentPage, setCurrentPage] = useState<number>(1)
 
@@ -55,7 +55,7 @@ const AuthorsPage: FC<IProps> = ({ onlyRegistered }) => {
 	const total = data?.count ?? 0
 
 	useEffect(() => {
-		setSelectedAuthorType(AuthorTypesFilterEnum.ALL)
+		setSelectedAuthorType(AuthorTypesFilterOptions.ALL)
 		setCurrentPage(1)
 	}, [onlyRegistered])
 
@@ -73,7 +73,7 @@ const AuthorsPage: FC<IProps> = ({ onlyRegistered }) => {
 				<div className='w-full sm:w-55 h-10'>
 					{!isTypesLoading && authorTypes.length > 0 ? (
 						<ComboBox
-							options={Object.values(AuthorTypesFilterEnum)}
+							options={Object.values(AuthorTypesFilterOptions)}
 							onChange={setSelectedAuthorType}
 							className='border border-white/10'
 							placeholder='Выберите тип автора'

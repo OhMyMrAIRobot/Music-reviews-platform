@@ -19,7 +19,7 @@ const AuthorDetailsReleasesCarousel: FC<IProps> = ({ id }) => {
 	const { data, isPending } = useQuery({
 		queryKey: releasesKeys.byAuthor(id, false),
 		queryFn: () =>
-			ReleaseAPI.fetchAll({
+			ReleaseAPI.findAll({
 				authorId: id,
 				sortField: ReleasesSortFieldsEnum.ALL_RATING,
 				sortOrder: SortOrdersEnum.DESC,

@@ -1,11 +1,11 @@
 import { FC } from 'react'
-import { IAuthorType } from '../../../models/author/author-type/author-type'
+import { AuthorType } from '../../../types/author'
 import Tooltip from '../../tooltip/Tooltip'
 import TooltipSpan from '../../tooltip/Tooltip-span'
 import AuthorTypeSvg from './Author-type-svg'
 
 interface IProps {
-	types: IAuthorType[]
+	types: AuthorType[]
 	className: string
 }
 

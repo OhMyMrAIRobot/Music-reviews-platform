@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { AuthorCommentAPI } from '../../api/author/author-comment-api'
-import AuthorComment from '../../components/author/author-comment/Author-comment'
+import AuthorCommentCard from '../../components/author/author-comment/Author-comment-card'
 import AuthorCommentColorSvg from '../../components/author/author-comment/svg/Author-comment-color-svg'
 import ComboBox from '../../components/buttons/Combo-box'
 import Pagination from '../../components/pagination/Pagination'
-import { ReviewSortFields } from '../../models/review/review-sort-fields'
 import { SortOrdersEnum } from '../../models/sort/sort-orders-enum'
 import { authorCommentsKeys } from '../../query-keys/author-comments-keys'
+import { ReviewSortFields } from '../../types/review'
 
 const PER_PAGE = 12
 
@@ -31,12 +31,13 @@ const AuthorCommentsPage = () => {
 			order: orderParam,
 			authorId: null,
 		}),
-		queryFn: () => AuthorCommentAPI.fetchAll(limit, offset, orderParam, null),
+		queryFn: () =>
+			AuthorCommentAPI.findAll({ limit, offset, sortOrder: orderParam }),
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const comments = data?.comments ?? []
-	const totalCount = data?.count ?? 0
+	const comments = data?.items ?? []
+	const totalCount = data?.meta.count ?? 0
 
 	return (
 		<>
@@ -65,13 +66,13 @@ const AuthorCommentsPage = () => {
 				<div className='gap-3 xl:gap-5 grid md:grid-cols-2 xl:grid-cols-3 grid-cols-1'>
 					{isPending
 						? Array.from({ length: PER_PAGE }).map((_, idx) => (
-								<AuthorComment
+								<AuthorCommentCard
 									key={`skeleton-author-comment-${idx}`}
 									isLoading={true}
 								/>
 						  ))
 						: comments.map(comment => (
-								<AuthorComment
+								<AuthorCommentCard
 									key={comment.id}
 									comment={comment}
 									isLoading={false}

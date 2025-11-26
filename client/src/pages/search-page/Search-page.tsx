@@ -51,7 +51,7 @@ const SearchPage = () => {
 			offset: (currentPage - 1) * perPage,
 		}),
 		queryFn: () =>
-			ReleaseAPI.fetchAll({
+			ReleaseAPI.findAll({
 				search: query || undefined,
 				limit: perPage,
 				offset: (currentPage - 1) * perPage,

@@ -1,7 +1,11 @@
 import axios from 'axios'
-import { IAuthorComment } from '../../models/author/author-comment/author-comment'
-import { IAuthorCommentsResponse } from '../../models/author/author-comment/author-comments-response'
-import { SortOrder } from '../../types/sort-order-type'
+import {
+	AuthorComment,
+	AuthorCommentsQuery,
+	AuthorCommentsResponse,
+	CreateAuthorCommentData,
+	UpdateAuthorCommentData,
+} from '../../types/author'
 import { api } from '../api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
@@ -15,37 +19,21 @@ const _api = axios.create({
 })
 
 export const AuthorCommentAPI = {
-	async create(
-		releaseId: string,
-		title: string,
-		text: string
-	): Promise<IAuthorComment> {
-		const { data } = await api.post<IAuthorComment>('author-comments', {
-			title,
-			text,
-			releaseId,
-		})
+	async create(formData: CreateAuthorCommentData): Promise<AuthorComment> {
+		const { data } = await api.post<AuthorComment>('author-comments', formData)
 
 		return data
 	},
 
-	async fetchByReleaseId(releaseId: string): Promise<IAuthorComment[]> {
-		const { data } = await _api.get<IAuthorComment[]>(`/release/${releaseId}`)
+	async findAll(query: AuthorCommentsQuery): Promise<AuthorCommentsResponse> {
+		const { releaseId, search, sortOrder, limit, offset } = query
 
-		return data
-	},
-
-	async fetchAll(
-		limit: number | null,
-		offset: number | null,
-		order: SortOrder | null,
-		query: string | null
-	): Promise<IAuthorCommentsResponse> {
-		const { data } = await _api.get<IAuthorCommentsResponse>(`?
-			${limit !== null ? `limit=${limit}&` : ''}
-			${offset !== null ? `offset=${offset}&` : ''}	
-			${order !== null ? `order=${order}&` : ''}	
-			${query !== null ? `query=${query}&` : ''}	
+		const { data } = await _api.get<AuthorCommentsResponse>(`?
+			${releaseId ? `releaseId=${releaseId}&` : ''}
+			${search ? `search=${search}&` : ''}	
+			${sortOrder ? `sortOrder=${sortOrder}&` : ''}	
+			${limit ? `limit=${limit}&` : ''}
+			${offset ? `offset=${offset}&` : ''}	
 		`)
 
 		return data
@@ -53,13 +41,12 @@ export const AuthorCommentAPI = {
 
 	async update(
 		id: string,
-		title?: string,
-		text?: string
-	): Promise<IAuthorComment> {
-		const { data } = await api.patch<IAuthorComment>(`author-comments/${id}`, {
-			title,
-			text,
-		})
+		formData: UpdateAuthorCommentData
+	): Promise<AuthorComment> {
+		const { data } = await api.patch<AuthorComment>(
+			`author-comments/${id}`,
+			formData
+		)
 
 		return data
 	},
@@ -70,21 +57,17 @@ export const AuthorCommentAPI = {
 
 	async adminUpdate(
 		id: string,
-		title?: string,
-		text?: string
-	): Promise<IAuthorComment> {
-		const { data } = await api.patch<IAuthorComment>(
-			`author-comments/admin/${id}`,
-			{
-				title,
-				text,
-			}
+		formData: UpdateAuthorCommentData
+	): Promise<AuthorComment> {
+		const { data } = await api.patch<AuthorComment>(
+			`admin/author-comments/${id}`,
+			formData
 		)
 
 		return data
 	},
 
 	async adminDelete(id: string) {
-		return api.delete(`author-comments/admin/${id}`)
+		return api.delete(`admin/author-comments/${id}`)
 	},
 }
