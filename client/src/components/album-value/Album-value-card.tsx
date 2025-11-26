@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { Link } from 'react-router'
 import useNavigationPath from '../../hooks/use-navigation-path'
-import { IAlbumValue } from '../../models/album-value/album-value'
+import { AlbumValue } from '../../types/album-value'
 import {
 	getAlbumValueTier,
 	getAlbumValueTierConfig,
@@ -13,7 +13,7 @@ import AlbumValueTooltip from './Album-value-tooltip'
 
 interface IProps {
 	isLoading: boolean
-	value?: IAlbumValue
+	value?: AlbumValue
 	smallSize?: boolean
 }
 

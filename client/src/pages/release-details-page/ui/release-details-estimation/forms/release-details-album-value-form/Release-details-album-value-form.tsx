@@ -54,7 +54,7 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = ({ release }) => {
 
 	const createMutation = useMutation({
 		mutationFn: (data: CreateAlbumValueVoteData) =>
-			AlbumValueAPI.postAlbumValue(data),
+			AlbumValueAPI.postAlbumValueVote(data),
 		onSuccess: data => {
 			invalidateRelatedQueries()
 			queryClient.setQueryData(
@@ -71,7 +71,7 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = ({ release }) => {
 		}: {
 			id: string
 			data: UpdateAlbumValueVoteData
-		}) => AlbumValueAPI.updateAlbumValue(id, data),
+		}) => AlbumValueAPI.updateAlbumValueVote(id, data),
 		onSuccess: data => {
 			invalidateRelatedQueries()
 			queryClient.setQueryData(
@@ -107,7 +107,7 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = ({ release }) => {
 
 	const { data: userAlbumValueVote } = useQuery({
 		queryKey: releaseDetailsKeys.userAlbumValueVote(release.id),
-		queryFn: () => AlbumValueAPI.fetchUserAlbumValueVote(release.id),
+		queryFn: () => AlbumValueAPI.findUserAlbumValueVote(release.id),
 		enabled:
 			authStore.isAuth && release.releaseType.type === ReleaseTypesEnum.ALBUM,
 		staleTime: 1000 * 60 * 5,

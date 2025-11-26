@@ -8,13 +8,13 @@ import {
 	useState,
 } from 'react'
 import AlbumValueCard from '../../../../components/album-value/Album-value-card'
-import { IAlbumValue } from '../../../../models/album-value/album-value'
+import { AlbumValue } from '../../../../types/album-value'
 import { CarouselRef } from '../../../../types/carousel-ref'
 import { CarouselStateCallbacks } from '../../../../types/carousel-state-callbacks'
 
 interface IProps extends CarouselStateCallbacks {
 	isLoading: boolean
-	items: IAlbumValue[]
+	items: AlbumValue[]
 }
 
 const MainPageAlbumValuesCarousel = forwardRef<CarouselRef, IProps>(

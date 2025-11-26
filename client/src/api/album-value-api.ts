@@ -1,13 +1,12 @@
 import axios from 'axios'
-import { IAlbumValue } from '../models/album-value/album-value'
-import { AlbumValueTiersEnum } from '../models/album-value/album-value-tiers-enum'
-import { IAlbumValuesResponse } from '../models/album-value/album-values-response'
 import {
+	AlbumValue,
+	AlbumValuesQuery,
+	AlbumValuesResponse,
 	AlbumValueVote,
 	CreateAlbumValueVoteData,
 	UpdateAlbumValueVoteData,
 } from '../types/album-value'
-import { SortOrder } from '../types/sort-order-type'
 import { api } from './api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
@@ -21,28 +20,25 @@ const _api = axios.create({
 })
 
 export const AlbumValueAPI = {
-	async fetchAlbumValues(
-		limit: number | null,
-		offset: number | null,
-		order: SortOrder | null,
-		tiers: AlbumValueTiersEnum[] | null
-	): Promise<IAlbumValuesResponse> {
-		const { data } = await _api.get<IAlbumValuesResponse>(`/?
-			${limit !== null ? `limit=${limit}&` : ''}
-			${offset !== null ? `offset=${offset}&` : ''}
-			${order !== null ? `order=${order}&` : ''}
-			${tiers !== null ? `tiers=${tiers.join(',')}&` : ''}
+	async findAll(query: AlbumValuesQuery): Promise<AlbumValuesResponse> {
+		const { sortOrder, tiers, limit, offset } = query
+
+		const { data } = await _api.get<AlbumValuesResponse>(`/?
+			${sortOrder ? `sortOrder=${sortOrder}&` : ''}
+			${tiers ? `tiers=${tiers.join(',')}&` : ''}
+			${limit ? `limit=${limit}&` : ''}
+			${offset ? `offset=${offset}&` : ''}
 			`)
 		return data
 	},
 
-	async fetchByReleaseId(releaseId: string): Promise<IAlbumValue> {
-		const { data } = await _api.get<IAlbumValue>(`/${releaseId}`)
+	async findByReleaseId(releaseId: string): Promise<AlbumValue> {
+		const { data } = await _api.get<AlbumValue>(`/${releaseId}`)
 
 		return data
 	},
 
-	async fetchUserAlbumValueVote(releaseId: string): Promise<AlbumValueVote> {
+	async findUserAlbumValueVote(releaseId: string): Promise<AlbumValueVote> {
 		const { data } = await api.get<AlbumValueVote>(
 			`/album-value-votes/release/${releaseId}`
 		)
@@ -50,7 +46,7 @@ export const AlbumValueAPI = {
 		return data
 	},
 
-	async postAlbumValue(
+	async postAlbumValueVote(
 		formData: CreateAlbumValueVoteData
 	): Promise<AlbumValueVote> {
 		const { data } = await api.post<AlbumValueVote>(
@@ -61,7 +57,7 @@ export const AlbumValueAPI = {
 		return data
 	},
 
-	async updateAlbumValue(
+	async updateAlbumValueVote(
 		id: string,
 		formData: UpdateAlbumValueVoteData
 	): Promise<AlbumValueVote> {

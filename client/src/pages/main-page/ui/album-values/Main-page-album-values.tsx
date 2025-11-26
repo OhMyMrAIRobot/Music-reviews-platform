@@ -7,19 +7,17 @@ import { albumValuesKeys } from '../../../../query-keys/album-values-keys'
 import { CarouselRef } from '../../../../types/carousel-ref'
 import MainPageAlbumValuesCarousel from './Main-page-album-values-carousel'
 
-const LIMIT = 15
-const OFFSET = 0
+const limit = 15
+const offset = 0
 
 const queryKey = albumValuesKeys.list({
-	limit: LIMIT,
-	offset: OFFSET,
-	order: null,
-	tiers: null,
-	authorId: null,
-	releaseId: null,
+	limit,
+	offset,
+	order: undefined,
+	tiers: undefined,
 })
 
-const queryFn = () => AlbumValueAPI.fetchAlbumValues(LIMIT, OFFSET, null, null)
+const queryFn = () => AlbumValueAPI.findAll({ limit, offset })
 
 const MainPageAlbumValues = () => {
 	const { navigateToAlbumValues } = useNavigationPath()
@@ -30,7 +28,7 @@ const MainPageAlbumValues = () => {
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const items = data?.values ?? []
+	const items = data?.items ?? []
 
 	const carouselRef = useRef<CarouselRef>(null)
 	const [canScrollPrev, setCanScrollPrev] = useState(false)

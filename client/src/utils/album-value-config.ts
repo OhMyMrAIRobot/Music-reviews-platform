@@ -1,4 +1,4 @@
-import { AlbumValueTiersEnum } from '../models/album-value/album-value-tiers-enum'
+import { AlbumValueTiersEnum } from '../types/album-value/enums/album-value-tiers-enum'
 
 interface IAlbumValueConfig {
 	name: string

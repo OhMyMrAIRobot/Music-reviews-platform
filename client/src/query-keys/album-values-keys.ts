@@ -1,4 +1,4 @@
-import type { AlbumValueTiersEnum } from '../models/album-value/album-value-tiers-enum'
+import { AlbumValueTiersEnum } from '../types/album-value'
 import type { SortOrder } from '../types/sort-order-type'
 
 export const albumValuesKeys = {
@@ -8,8 +8,8 @@ export const albumValuesKeys = {
 	list: (params: {
 		limit: number
 		offset: number
-		order: SortOrder | null
-		tiers: AlbumValueTiersEnum[] | null
+		order: SortOrder | undefined
+		tiers: AlbumValueTiersEnum[] | undefined
 		authorId?: string | null
 		releaseId?: string | null
 	}) => {

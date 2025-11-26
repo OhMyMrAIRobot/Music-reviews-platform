@@ -6,10 +6,12 @@ import ComboBox from '../../components/buttons/Combo-box'
 import FormCheckbox from '../../components/form-elements/Form-checkbox'
 import FormLabel from '../../components/form-elements/Form-label'
 import Pagination from '../../components/pagination/Pagination'
-import { AlbumValueSortOptions } from '../../models/album-value/album-value-sort-options'
-import { AlbumValueTiersEnum } from '../../models/album-value/album-value-tiers-enum'
 import { SortOrdersEnum } from '../../models/sort/sort-orders-enum'
 import { albumValuesKeys } from '../../query-keys/album-values-keys'
+import {
+	AlbumValueSortOptions,
+	AlbumValueTiersEnum,
+} from '../../types/album-value'
 import { ALBUM_VALUES } from '../../utils/album-value-config'
 
 const PER_PAGE = 12
@@ -24,11 +26,11 @@ const AlbumValuesPage = () => {
 			? sortOrder === AlbumValueSortOptions.ASC
 				? SortOrdersEnum.ASC
 				: SortOrdersEnum.DESC
-			: null
+			: undefined
 
 	const limit = PER_PAGE
 	const offset = (currentPage - 1) * PER_PAGE
-	const tiersParam = selectedTiers.length > 0 ? selectedTiers : null
+	const tiersParam = selectedTiers.length > 0 ? selectedTiers : undefined
 
 	const queryKey = albumValuesKeys.list({
 		limit,
@@ -42,12 +44,17 @@ const AlbumValuesPage = () => {
 	const { data, isPending } = useQuery({
 		queryKey,
 		queryFn: () =>
-			AlbumValueAPI.fetchAlbumValues(limit, offset, orderParam, tiersParam),
+			AlbumValueAPI.findAll({
+				limit,
+				offset,
+				sortOrder: orderParam,
+				tiers: tiersParam,
+			}),
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const values = data?.values ?? []
-	const totalCount = data?.count ?? 0
+	const values = data?.items ?? []
+	const totalCount = data?.meta.count ?? 0
 
 	useEffect(() => {
 		setCurrentPage(1)

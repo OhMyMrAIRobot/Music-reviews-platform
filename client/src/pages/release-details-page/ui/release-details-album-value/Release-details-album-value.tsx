@@ -14,7 +14,7 @@ const ReleaseDetailsAlbumValue: FC<IProps> = ({ releaseId }) => {
 
 	const { data, isPending } = useQuery({
 		queryKey,
-		queryFn: () => AlbumValueAPI.fetchByReleaseId(releaseId),
+		queryFn: () => AlbumValueAPI.findByReleaseId(releaseId),
 		staleTime: 1000 * 60 * 5,
 		retry: false,
 	})
