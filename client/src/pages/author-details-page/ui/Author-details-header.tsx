@@ -1,59 +1,57 @@
-import { FC, useState } from 'react'
+import { FC, useEffect } from 'react'
 import AuthorNominations from '../../../components/author/author-nomination/Author-nominations'
 import AuthorTypes from '../../../components/author/author-types/Author-types'
 import RegisteredAuthorTypes from '../../../components/author/registered-author/Registered-author-types'
 import ToggleFavButton from '../../../components/buttons/Toggle-fav-button'
 import LikesCount from '../../../components/utils/Likes-count'
 import SkeletonLoader from '../../../components/utils/Skeleton-loader'
-import { useAuth } from '../../../hooks/use-auth'
-import { useQueryListFavToggleAll } from '../../../hooks/use-query-list-fav-toggle'
 import { useStore } from '../../../hooks/use-store'
-import { IAuthor } from '../../../models/author/author'
-import { authorsKeys } from '../../../query-keys/authors-keys'
-import { toggleFavAuthor } from '../../../utils/toggle-fav-author'
+import { Author } from '../../../types/author'
 
 interface IProps {
-	author?: IAuthor
+	author?: Author
 	isLoading: boolean
 }
 
 const AuthorDetailsHeader: FC<IProps> = ({ author, isLoading }) => {
-	const { checkAuth } = useAuth()
+	const { authStore } = useStore()
 
-	const { authStore, notificationStore } = useStore()
-
-	const [toggling, setToggling] = useState(false)
-	const { storeToggle } = useQueryListFavToggleAll<IAuthor, IAuthor>(
-		authorsKeys.all,
-		null,
-		toggleFavAuthor
-	)
+	// const [toggling, setToggling] = useState(false)
+	// const { storeToggle } = useQueryListFavToggleAll<IAuthor, IAuthor>(
+	// 	authorsKeys.all,
+	// 	null,
+	// 	toggleFavAuthor
+	// )
 
 	const isFav =
 		author?.userFavAuthor?.some(val => val.userId === authStore.user?.id) ??
 		false
 
-	const toggle = async () => {
-		if (!checkAuth() || !author) {
-			return
-		}
-		setToggling(true)
+	// const toggle = async () => {
+	// 	if (!checkAuth() || !author) {
+	// 		return
+	// 	}
+	// 	setToggling(true)
 
-		const errors = await storeToggle(author.id, isFav)
+	// 	const errors = await storeToggle(author.id, isFav)
 
-		if (errors.length === 0) {
-			notificationStore.addSuccessNotification(
-				isFav
-					? 'Вы убрали автора из списка понравившихся'
-					: 'Вы добавили автора в список понравившихся!'
-			)
-		} else {
-			errors.forEach((err: string) =>
-				notificationStore.addErrorNotification(err)
-			)
-		}
-		setToggling(false)
-	}
+	// 	if (errors.length === 0) {
+	// 		notificationStore.addSuccessNotification(
+	// 			isFav
+	// 				? 'Вы убрали автора из списка понравившихся'
+	// 				: 'Вы добавили автора в список понравившихся!'
+	// 		)
+	// 	} else {
+	// 		errors.forEach((err: string) =>
+	// 			notificationStore.addErrorNotification(err)
+	// 		)
+	// 	}
+	// 	setToggling(false)
+	// }
+
+	useEffect(() => {
+		console.log(author)
+	}, [author])
 
 	return isLoading ? (
 		<SkeletonLoader className='relative w-full h-45 md:h-62 lg:h-125 rounded-2xl overflow-hidden' />
@@ -83,9 +81,9 @@ const AuthorDetailsHeader: FC<IProps> = ({ author, isLoading }) => {
 									src={`${
 										import.meta.env.VITE_SERVER_URL
 									}/public/authors/avatars/${
-										author.img === ''
+										author.avatar === ''
 											? import.meta.env.VITE_DEFAULT_AVATAR
-											: author.img
+											: author.avatar
 									}`}
 									className='size-full object-cover object-center select-none'
 								/>
@@ -93,10 +91,10 @@ const AuthorDetailsHeader: FC<IProps> = ({ author, isLoading }) => {
 						)}
 
 						<ToggleFavButton
-							onClick={toggle}
+							onClick={() => {}} // todo: fix toggle
 							isLiked={isFav}
 							className='absolute top-3 right-3 z-300 size-10 lg:size-12'
-							toggling={toggling}
+							toggling={false}
 						/>
 
 						<div className='flex absolute bottom-5 lg:bottom-10 gap-3 z-300 w-full px-4 lg:px-10'>
@@ -117,16 +115,17 @@ const AuthorDetailsHeader: FC<IProps> = ({ author, isLoading }) => {
 
 							<div className='bg-zinc-950 px-3 py-1 lg:px-5 lg:py-3 rounded-xl items-center inline-flex'>
 								<LikesCount
-									count={author.favCount}
+									count={author.userFavAuthor.length}
 									className='size-4 lg:size-5'
 								/>
 							</div>
 
-							{(author.nominationsCount > 0 || author.winsCount > 0) && (
+							{(author.nominations.totalCount > 0 ||
+								author.nominations.winsCount > 0) && (
 								<div className='bg-zinc-800 border border-zinc-700 rounded-full flex space-x-1.5 lg:space-x-3 items-center py-[6px] px-3 mt-auto justify-center ml-auto'>
 									<AuthorNominations
-										winsCount={author.winsCount}
-										totalCount={author.nominationsCount}
+										winsCount={author.nominations.winsCount}
+										totalCount={author.nominations.totalCount}
 									/>
 								</div>
 							)}

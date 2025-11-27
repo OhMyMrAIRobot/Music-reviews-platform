@@ -191,16 +191,13 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 				offset: 0,
 			}),
 			queryFn: () =>
-				AuthorAPI.fetchAuthors(
-					null,
-					search.trim() !== '' ? search.trim() : null,
-					limit,
-					0,
-					null,
-					null
-				),
+				AuthorAPI.findAll({
+					search: search.trim() !== '' ? search.trim() : undefined,
+					limit: limit ?? undefined,
+					offset: 0,
+				}),
 		})
-		return data.authors.map(a => ({
+		return data?.items.map(a => ({
 			id: a.id,
 			name: a.name,
 		}))

@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { Link } from 'react-router'
 import useNavigationPath from '../../../hooks/use-navigation-path'
-import { IAuthor } from '../../../models/author/author'
+import { Author } from '../../../types/author'
 import { ReleaseTypesEnum } from '../../../types/release'
 import LikesCount from '../../utils/Likes-count'
 import SkeletonLoader from '../../utils/Skeleton-loader'
@@ -11,7 +11,7 @@ import AuthorTypes from '../author-types/Author-types'
 import RegisteredAuthorTypes from '../registered-author/Registered-author-types'
 
 interface IProps {
-	author?: IAuthor
+	author?: Author
 	isLoading: boolean
 }
 
@@ -32,9 +32,9 @@ const AuthorCard: FC<IProps> = ({ author, isLoading }) => {
 						decoding='async'
 						loading='lazy'
 						src={`${import.meta.env.VITE_SERVER_URL}/public/authors/avatars/${
-							author.img === ''
+							author.avatar === ''
 								? import.meta.env.VITE_DEFAULT_AVATAR
-								: author.img
+								: author.avatar
 						}`}
 						className='size-full object-cover object-center'
 					/>
@@ -55,7 +55,10 @@ const AuthorCard: FC<IProps> = ({ author, isLoading }) => {
 					)}
 				</div>
 
-				<LikesCount count={author.favCount} className='size-4 lg:size-5' />
+				<LikesCount
+					count={author.userFavAuthor.length}
+					className='size-4 lg:size-5'
+				/>
 
 				<AuthorReleaseTypesRatings
 					releaseType={ReleaseTypesEnum.SINGLE}
@@ -67,11 +70,11 @@ const AuthorCard: FC<IProps> = ({ author, isLoading }) => {
 					stats={author.releaseTypeRatings}
 				/>
 
-				{author.nominationsCount > 0 && (
+				{author.nominations.totalCount > 0 && (
 					<div className='bg-zinc-800 border border-zinc-700 rounded-full flex items-center py-[6px] px-3 mt-3 justify-center'>
 						<AuthorNominations
-							winsCount={author.winsCount}
-							totalCount={author.nominationsCount}
+							winsCount={author.nominations.winsCount}
+							totalCount={author.nominations.totalCount}
 						/>
 					</div>
 				)}

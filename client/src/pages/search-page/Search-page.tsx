@@ -32,14 +32,11 @@ const SearchPage = () => {
 			offset: (currentPage - 1) * perPage,
 		}),
 		queryFn: () =>
-			AuthorAPI.fetchAuthors(
-				null,
-				query || null,
-				perPage,
-				(currentPage - 1) * perPage,
-				false,
-				null
-			),
+			AuthorAPI.findAll({
+				search: query.trim() || undefined,
+				limit: perPage,
+				offset: (currentPage - 1) * perPage,
+			}),
 		enabled: query.length > 0 && type === SearchTypesEnum.AUTHORS,
 		staleTime: 1000 * 60 * 5,
 	})
@@ -76,11 +73,11 @@ const SearchPage = () => {
 			<>
 				{type === SearchTypesEnum.AUTHORS && (
 					<AuthorsGrid
-						items={authorsQuery.data?.authors ?? []}
+						items={authorsQuery.data?.items ?? []}
 						isLoading={authorsQuery.isPending}
 						currentPage={currentPage}
 						setCurrentPage={setCurrentPage}
-						total={authorsQuery.data?.count ?? 0}
+						total={authorsQuery.data?.meta.count ?? 0}
 						perPage={perPage}
 					/>
 				)}

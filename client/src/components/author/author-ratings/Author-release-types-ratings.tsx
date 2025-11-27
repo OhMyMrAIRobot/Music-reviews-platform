@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { IReleaseTypeRatings } from '../../../models/author/authors-response'
+import { AuthorReleaseTypeRating } from '../../../types/author'
 import {
 	ReleaseRatingTypesEnum,
 	ReleaseTypesEnum,
@@ -10,11 +10,12 @@ import AuthorRatingsItem from './Author-ratings-item'
 
 interface IProps {
 	releaseType: ReleaseTypesEnum
-	stats: IReleaseTypeRatings[]
+	stats: AuthorReleaseTypeRating[]
 }
 
 const AuthorReleaseTypesRatings: FC<IProps> = ({ releaseType, stats }) => {
 	const ratings = stats.find(r => r.type === releaseType)
+
 	return (
 		ratings && (
 			<div className='flex items-center justify-center text-sm gap-x-2'>

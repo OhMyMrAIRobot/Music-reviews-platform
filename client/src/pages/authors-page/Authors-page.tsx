@@ -40,19 +40,17 @@ const AuthorsPage: FC<IProps> = ({ onlyRegistered }) => {
 	const { data, isPending: isAuthorsLoading } = useQuery({
 		queryKey,
 		queryFn: () =>
-			AuthorAPI.fetchAuthors(
-				selectedTypeId,
-				null,
+			AuthorAPI.findAll({
+				typeId: selectedTypeId ?? undefined,
 				limit,
 				offset,
 				onlyRegistered,
-				null
-			),
+			}),
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const authors = data?.authors ?? []
-	const total = data?.count ?? 0
+	const authors = data?.items ?? []
+	const total = data?.meta.count ?? 0
 
 	useEffect(() => {
 		setSelectedAuthorType(AuthorTypesFilterOptions.ALL)

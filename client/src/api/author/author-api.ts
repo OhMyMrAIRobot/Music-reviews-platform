@@ -1,9 +1,10 @@
 import axios from 'axios'
-import { IAdminAuthor } from '../../models/author/admin-author/admin-author'
-import { IAdminAuthorsResponse } from '../../models/author/admin-author/admin-authors-response'
-import { IAuthor } from '../../models/author/author'
-import { IAuthorsResponse } from '../../models/author/authors-response'
-import { AuthorType } from '../../types/author'
+import {
+	Author,
+	AuthorsQuery,
+	AuthorsResponse,
+	AuthorType,
+} from '../../types/author'
 import { api } from '../api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
@@ -22,50 +23,31 @@ export const AuthorAPI = {
 		return data
 	},
 
-	async fetchAuthors(
-		typeId: string | null,
-		query: string | null,
-		limit: number | null,
-		offset: number | null,
-		onlyRegistered: boolean | null,
-		userId: string | null
-	): Promise<IAuthorsResponse> {
-		const { data } = await _api.get<IAuthorsResponse>(
-			`/public?
-			${typeId !== null ? `typeId=${typeId}&` : ''}
-			${query !== null ? `query=${query}&` : ''}
-			${limit !== null ? `limit=${limit}&` : ''}
-			${offset !== null ? `offset=${offset}&` : ''}
-			${onlyRegistered !== null ? `onlyRegistered=${onlyRegistered}&` : ''}
-			${userId !== null ? `userId=${userId}` : ''}
+	async findAll(query: AuthorsQuery): Promise<AuthorsResponse> {
+		const { typeId, search, limit, offset, onlyRegistered, userId } = query
+
+		const { data } = await _api.get<AuthorsResponse>(
+			`/?
+			${typeId ? `typeId=${typeId}&` : ''}
+			${search ? `query=${search}&` : ''}
+			${limit ? `limit=${limit}&` : ''}
+			${offset ? `offset=${offset}&` : ''}
+			${onlyRegistered ? `onlyRegistered=${onlyRegistered}&` : ''}
+			${userId ? `userId=${userId}` : ''}
 			`
 		)
+
 		return data
 	},
 
-	async adminFetchAuthors(
-		typeId: string | null,
-		query: string | null,
-		limit: number | null,
-		offset: number | null
-	): Promise<IAdminAuthorsResponse> {
-		const { data } = await _api.get<IAdminAuthorsResponse>(
-			`/?
-			${typeId !== null ? `typeId=${typeId}&` : ''}
-			${query !== null ? `query=${query}&` : ''}
-			${limit !== null ? `limit=${limit}&` : ''}
-			${offset !== null ? `offset=${offset}&` : ''}`
-		)
+	async findById(id: string): Promise<Author> {
+		const { data } = await _api.get<Author>(`/${id}`)
+
 		return data
 	},
 
-	async fetchAuthorById(id: string): Promise<IAuthor> {
-		const { data } = await _api.get<IAuthor>(`/details/${id}`)
-		return data
-	},
-
-	async createAuthor(formData: FormData): Promise<IAdminAuthor> {
-		const { data } = await api.post<IAdminAuthor>('/authors', formData, {
+	async createAuthor(formData: FormData): Promise<Author> {
+		const { data } = await api.post<Author>('/authors', formData, {
 			headers: {
 				'Content-Type': 'multipart/form-data',
 			},
@@ -73,8 +55,8 @@ export const AuthorAPI = {
 		return data
 	},
 
-	async updateAuthor(id: string, formData: FormData): Promise<IAdminAuthor> {
-		const { data } = await api.patch<IAdminAuthor>(`/authors/${id}`, formData, {
+	async updateAuthor(id: string, formData: FormData): Promise<Author> {
+		const { data } = await api.patch<Author>(`/authors/${id}`, formData, {
 			headers: {
 				'Content-Type': 'multipart/form-data',
 			},

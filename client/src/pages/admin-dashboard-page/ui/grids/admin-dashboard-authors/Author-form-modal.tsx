@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { AxiosError } from 'axios'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { AuthorAPI } from '../../../../../api/author/author-api.ts'
 import FormButton from '../../../../../components/form-elements/Form-button.tsx'
@@ -11,25 +10,27 @@ import FormMultiSelect, {
 } from '../../../../../components/form-elements/Form-multi-select.tsx'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
+import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler.ts'
 import { useAuthorMeta } from '../../../../../hooks/use-author-meta.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
-import { IAdminAuthor } from '../../../../../models/author/admin-author/admin-author.ts'
-import {} from '../../../../../models/author/admin-author/admin-authors-response.ts'
 import { authorsKeys } from '../../../../../query-keys/authors-keys.ts'
+import { Author } from '../../../../../types/author/index.ts'
 import { arraysEqual } from '../../../../../utils/arrays-equal.ts'
+import buildAuthorFormData from '../../../../../utils/build-author-form-data'
 import SelectImageLabel from '../../../../edit-profile-page/ui/labels/Select-image-label.tsx'
 import SelectedImageLabel from '../../../../edit-profile-page/ui/labels/Selected-image-label.tsx'
 
 interface IProps {
 	isOpen: boolean
 	onClose: () => void
-	author?: IAdminAuthor
+	author?: Author
 }
 
 const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 	const { notificationStore } = useStore()
 
 	const { types, isLoading: isTypesLoading } = useAuthorMeta()
+	const handleApiError = useApiErrorHandler()
 
 	const queryClient = useQueryClient()
 
@@ -52,13 +53,7 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 			onClose()
 		},
 		onError: (error: unknown) => {
-			const axiosError = error as AxiosError<{ message: string | string[] }>
-			const errors = Array.isArray(axiosError.response?.data?.message)
-				? axiosError.response?.data?.message
-				: [axiosError.response?.data?.message]
-			errors
-				.filter((err): err is string => typeof err === 'string')
-				.forEach((err: string) => notificationStore.addErrorNotification(err))
+			handleApiError(error)
 		},
 	})
 
@@ -72,13 +67,7 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 			onClose()
 		},
 		onError: (error: unknown) => {
-			const axiosError = error as AxiosError<{ message: string | string[] }>
-			const errors = Array.isArray(axiosError.response?.data?.message)
-				? axiosError.response?.data?.message
-				: [axiosError.response?.data?.message]
-			errors
-				.filter((err): err is string => typeof err === 'string')
-				.forEach((err: string) => notificationStore.addErrorNotification(err))
+			handleApiError(error)
 		},
 	})
 
@@ -106,31 +95,16 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 		if (!isFormValid || updateMutation.isPending || createMutation.isPending)
 			return
 
-		const formData = new FormData()
-
-		if (!author || author.name !== name) {
-			formData.append('name', name)
+		const values = {
+			name,
+			selectedTypes,
+			avatar,
+			cover,
+			deleteAvatar,
+			deleteCover,
 		}
 
-		if (
-			!author ||
-			!arraysEqual(
-				author.types.map(t => t.type).sort(),
-				selectedTypes.map(st => st.name).sort()
-			)
-		) {
-			selectedTypes.forEach(st => {
-				formData.append('types[]', st.id)
-			})
-		}
-
-		if (avatar) formData.append('avatarImg', avatar)
-		if (cover) formData.append('coverImg', cover)
-
-		if (deleteAvatar && !avatar)
-			formData.append('clearAvatar', JSON.stringify(true))
-		if (deleteCover && !cover)
-			formData.append('clearCover', JSON.stringify(true))
+		const formData = buildAuthorFormData(values, author)
 
 		if (author) {
 			updateMutation.mutate({ id: author.id, formData })
@@ -146,7 +120,7 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 
 		if (
 			!arraysEqual(
-				author.types.map(t => t.type).sort(),
+				author.authorTypes.map(t => t.type).sort(),
 				selectedTypes.map(st => st.name).sort()
 			)
 		)
@@ -174,23 +148,23 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 		if (author && isOpen) {
 			setName(author.name)
 			setSelectedTypes(
-				author.types.map(t => {
+				author.authorTypes.map(t => {
 					return { name: t.type, id: t.id }
 				})
 			)
 
-			if (author.avatarImg) {
+			if (author.avatar) {
 				setAvatarPreviewUrl(
 					`${import.meta.env.VITE_SERVER_URL}/public/authors/avatars/${
-						author.avatarImg
+						author.avatar
 					}`
 				)
 			}
 
-			if (author.coverImg) {
+			if (author.cover) {
 				setCoverPreviewUrl(
 					`${import.meta.env.VITE_SERVER_URL}/public/authors/covers/${
-						author.coverImg
+						author.cover
 					}`
 				)
 			}
@@ -270,7 +244,7 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 							{author && (
 								<div
 									className={`flex gap-2 items-center mt-2 ${
-										author.avatarImg === '' || avatar
+										author.avatar === '' || avatar
 											? 'opacity-50 pointer-events-none'
 											: ''
 									}`}
@@ -325,7 +299,7 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 							{author && (
 								<div
 									className={`flex gap-2 items-center mt-2 ${
-										author.coverImg === '' || cover
+										author.cover === '' || cover
 											? 'opacity-50 pointer-events-none'
 											: ''
 									}`}

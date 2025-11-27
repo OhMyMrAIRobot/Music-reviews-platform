@@ -17,7 +17,7 @@ const AuthorDetailsPage = () => {
 
 	const queryKey = id ? authorsKeys.details(id) : ['authors', { id: 'unknown' }]
 	const queryFn = id
-		? () => AuthorAPI.fetchAuthorById(id)
+		? () => AuthorAPI.findById(id)
 		: () => Promise.resolve(null)
 	const { data: author, isPending } = useQuery({
 		queryKey,

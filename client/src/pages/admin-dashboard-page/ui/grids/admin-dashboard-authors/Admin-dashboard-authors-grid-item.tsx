@@ -8,9 +8,8 @@ import ConfirmationModal from '../../../../../components/modals/Confirmation-mod
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
 import useNavigationPath from '../../../../../hooks/use-navigation-path.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
-import { IAdminAuthor } from '../../../../../models/author/admin-author/admin-author.ts'
-import {} from '../../../../../models/author/admin-author/admin-authors-response.ts'
 import { authorsKeys } from '../../../../../query-keys/authors-keys.ts'
+import { Author } from '../../../../../types/author/'
 import { getAuthorTypeColor } from '../../../../../utils/get-author-type-color.ts'
 import AdminDeleteButton from '../../buttons/Admin-delete-button.tsx'
 import AdminEditButton from '../../buttons/Admin-edit-button.tsx'
@@ -19,7 +18,7 @@ import AuthorFormModal from './Author-form-modal.tsx'
 
 interface IProps {
 	className?: string
-	author?: IAdminAuthor
+	author?: Author
 	isLoading: boolean
 	position?: number
 }
@@ -97,9 +96,9 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 						loading='lazy'
 						decoding='async'
 						src={`${import.meta.env.VITE_SERVER_URL}/public/authors/avatars/${
-							author.avatarImg === ''
+							author.avatar === ''
 								? import.meta.env.VITE_DEFAULT_AVATAR
-								: author.avatarImg
+								: author.avatar
 						}`}
 						alt={author.name}
 						className='absolute top-0 right-0 size-22 rounded-lg object-cover aspect-square select-none xl:hidden'
@@ -115,9 +114,9 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 								src={`${
 									import.meta.env.VITE_SERVER_URL
 								}/public/authors/avatars/${
-									author.avatarImg === ''
+									author.avatar === ''
 										? import.meta.env.VITE_DEFAULT_AVATAR
-										: author.avatarImg
+										: author.avatar
 								}`}
 								alt={author.name}
 								className='size-9 object-cover aspect-square rounded-full select-none max-xl:hidden'
@@ -136,7 +135,7 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 					{author ? (
 						<>
 							<span className='xl:hidden max-xl:pr-1'>Тип автора:</span>
-							{author.types.map((type, idx) => (
+							{author.authorTypes.map((type, idx) => (
 								<span key={type.id} className='flex'>
 									<span
 										className={`flex items-center ${getAuthorTypeColor(
@@ -146,7 +145,7 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 										<AuthorTypeSvg type={type} className={'size-5 mr-0.5'} />
 										{type.type}
 									</span>
-									{idx < author.types.length - 1 && (
+									{idx < author.authorTypes.length - 1 && (
 										<span className='mr-1 select-none'>,</span>
 									)}
 								</span>

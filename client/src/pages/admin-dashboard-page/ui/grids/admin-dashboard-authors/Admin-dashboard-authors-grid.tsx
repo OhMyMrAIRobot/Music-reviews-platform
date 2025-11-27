@@ -37,12 +37,12 @@ const AdminDashboardAuthorsGrid = () => {
 	})
 
 	const queryFn = () =>
-		AuthorAPI.adminFetchAuthors(
-			typeId,
-			searchText.trim().length > 0 ? searchText.trim() : null,
-			perPage,
-			(currentPage - 1) * perPage
-		)
+		AuthorAPI.findAll({
+			typeId: typeId ?? undefined,
+			search: searchText.trim().length > 0 ? searchText.trim() : undefined,
+			limit: perPage,
+			offset: (currentPage - 1) * perPage,
+		})
 
 	const { data: authorsData, isPending } = useQuery({
 		queryKey,
@@ -51,8 +51,8 @@ const AdminDashboardAuthorsGrid = () => {
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const authors = authorsData?.authors || []
-	const count = authorsData?.count || 0
+	const authors = authorsData?.items || []
+	const count = authorsData?.meta.count || 0
 
 	useEffect(() => {
 		setCurrentPage(1)
