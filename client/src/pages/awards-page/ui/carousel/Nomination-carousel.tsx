@@ -7,9 +7,9 @@ import {
 	useImperativeHandle,
 	useState,
 } from 'react'
-import { NominationWinner } from '../../../../models/nomination/nomination-winner/nomination-winner'
 import { CarouselRef } from '../../../../types/carousel-ref'
 import { CarouselStateCallbacks } from '../../../../types/carousel-state-callbacks'
+import { NominationWinner } from '../../../../types/nomination'
 import NominationWinnerCard from './Nomination-winner'
 
 interface IProps extends CarouselStateCallbacks {

@@ -18,7 +18,7 @@ const AuthorDetailsNominations: FC<IProps> = ({ id }) => {
 
 	const { data, isPending } = useQuery({
 		queryKey: nominationsKeys.byAuthor(id),
-		queryFn: () => NominationAPI.fetchWinnersByAuthorId(id),
+		queryFn: () => NominationAPI.findAuthorNominationWins(id),
 		staleTime: 1000 * 60 * 5,
 	})
 

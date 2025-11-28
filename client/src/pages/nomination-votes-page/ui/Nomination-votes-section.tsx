@@ -1,8 +1,10 @@
 import { FC, useEffect, useState } from 'react'
-import { NominationCandidate } from '../../../models/nomination/nomination-candidate/nomination-candidate'
-import { NominationEntityKind } from '../../../models/nomination/nomination-entity-kind'
-import { INominationUserVote } from '../../../models/nomination/nomination-user-vote'
-import { NominationType } from '../../../types/nomination'
+import {
+	NominationCandidate,
+	NominationEntityKind,
+	NominationType,
+	NominationUserVote,
+} from '../../../types/nomination'
 import NominationVotesSectionItem from './Nomination-votes-section-item'
 
 interface IProps {
@@ -10,12 +12,12 @@ interface IProps {
 	isLoading: boolean
 	candidates?: NominationCandidate[]
 	nominationType?: NominationType
-	userVotes: INominationUserVote[]
+	userVotes: NominationUserVote[]
 	postVote: (
 		nominationTypeId: string,
 		entityKind: NominationEntityKind,
 		entityId: string
-	) => Promise<string[]>
+	) => void
 }
 
 const NominationVotesSection: FC<IProps> = ({

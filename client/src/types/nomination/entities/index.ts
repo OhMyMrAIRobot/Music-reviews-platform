@@ -1,1 +1,5 @@
+export * from './author-nomination-win'
+export * from './nomination-candidate'
 export * from './nomination-type'
+export * from './nomination-user-vote'
+export * from './nomination-winner'

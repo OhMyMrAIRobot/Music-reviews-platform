@@ -8,10 +8,12 @@ import SkeletonLoader from '../../../components/utils/Skeleton-loader'
 import { useAuth } from '../../../hooks/use-auth'
 import useNavigationPath from '../../../hooks/use-navigation-path'
 import { useStore } from '../../../hooks/use-store'
-import { NominationCandidate } from '../../../models/nomination/nomination-candidate/nomination-candidate'
-import { NominationEntityKind } from '../../../models/nomination/nomination-entity-kind'
-import { INominationUserVote } from '../../../models/nomination/nomination-user-vote'
-import { NominationType } from '../../../types/nomination'
+import {
+	NominationCandidate,
+	NominationEntityKind,
+	NominationType,
+	NominationUserVote,
+} from '../../../types/nomination'
 
 interface IProps {
 	isLoading: boolean
@@ -19,12 +21,12 @@ interface IProps {
 	nominationType?: NominationType
 	voted?: boolean
 	setVoted?: (val: boolean) => void
-	userVotes?: INominationUserVote[]
+	userVotes?: NominationUserVote[]
 	postVote?: (
 		nominationTypeId: string,
 		entityKind: NominationEntityKind,
 		entityId: string
-	) => Promise<string[]>
+	) => void
 }
 
 const NominationVotesSectionItem: FC<IProps> = ({
@@ -57,17 +59,13 @@ const NominationVotesSectionItem: FC<IProps> = ({
 			return
 		try {
 			setIsPosting(true)
-			const errors = await postVote(
+			await postVote(
 				nominationType.id,
 				candidate.entityKind as NominationEntityKind,
 				candidate.id
 			)
-			if (errors.length === 0) {
-				notificationStore.addSuccessNotification('Вы успешно проголосовали!')
-				setVoted?.(true)
-			} else {
-				errors.forEach(err => notificationStore.addErrorNotification(err))
-			}
+			notificationStore.addSuccessNotification('Вы успешно проголосовали!')
+			setVoted?.(true)
 		} finally {
 			setIsPosting(false)
 		}

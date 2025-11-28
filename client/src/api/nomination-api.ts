@@ -1,10 +1,12 @@
 import axios from 'axios'
-import { INominationCandidatesResponse } from '../models/nomination/nomination-candidate/nomination-candidates-response'
-import { NominationEntityKind } from '../models/nomination/nomination-entity-kind'
-import { INominationUserVote } from '../models/nomination/nomination-user-vote'
-import { INominationWinnerParticipation } from '../models/nomination/nomination-winner-participation/nomination-winner-participation'
-import { INominationWinnersResponse } from '../models/nomination/nomination-winner/nomination-winners-response'
-import { NominationType } from '../types/nomination'
+import {
+	AuthorNominationWinsResponse,
+	NominationCandidatesResponse,
+	NominationEntityKind,
+	NominationType,
+	NominationUserVote,
+	NominationWinnersResponse,
+} from '../types/nomination'
 import { api } from './api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
@@ -26,11 +28,11 @@ export const NominationAPI = {
 		return data
 	},
 
-	async fetchWinners(
+	async findWinners(
 		month: number | null,
 		year: number | null
-	): Promise<INominationWinnersResponse> {
-		const { data } = await _api.get<INominationWinnersResponse>(`?
+	): Promise<NominationWinnersResponse> {
+		const { data } = await _api.get<NominationWinnersResponse>(`?
 			${month !== null ? `month=${month}&` : ''}
 			${year !== null ? `year=${year}&` : ''}
 		`)
@@ -38,20 +40,18 @@ export const NominationAPI = {
 		return data
 	},
 
-	async fetchWinnersByAuthorId(
+	async findAuthorNominationWins(
 		authorId: string
-	): Promise<INominationWinnerParticipation> {
-		const { data } = await _api.get<INominationWinnerParticipation>(
+	): Promise<AuthorNominationWinsResponse> {
+		const { data } = await _api.get<AuthorNominationWinsResponse>(
 			`author/${authorId}`
 		)
 
 		return data
 	},
 
-	async fetchCandidates(): Promise<INominationCandidatesResponse> {
-		const { data } = await _api.get<INominationCandidatesResponse>(
-			`/candidates`
-		)
+	async findCandidates(): Promise<NominationCandidatesResponse> {
+		const { data } = await _api.get<NominationCandidatesResponse>(`/candidates`)
 
 		return data
 	},
@@ -60,8 +60,8 @@ export const NominationAPI = {
 		nominationTypeId: string,
 		entityKind: NominationEntityKind,
 		entityId: string
-	): Promise<INominationUserVote> {
-		const { data } = await api.post<INominationUserVote>(`/nominations`, {
+	): Promise<NominationUserVote> {
+		const { data } = await api.post<NominationUserVote>(`/nominations`, {
 			nominationTypeId,
 			entityKind,
 			entityId,
@@ -70,8 +70,8 @@ export const NominationAPI = {
 		return data
 	},
 
-	async fetchUserVotes(): Promise<INominationUserVote[]> {
-		const { data } = await api.get<INominationUserVote[]>(`/nominations/votes`)
+	async findUserVotes(): Promise<NominationUserVote[]> {
+		const { data } = await api.get<NominationUserVote[]>(`/nominations/votes`)
 
 		return data
 	},

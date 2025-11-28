@@ -5,15 +5,8 @@ import { NominationAPI } from '../../api/nomination-api'
 import ComboBox from '../../components/buttons/Combo-box'
 import SkeletonLoader from '../../components/utils/Skeleton-loader'
 import useNavigationPath from '../../hooks/use-navigation-path'
-import { INominationMonthWinners } from '../../models/nomination/nomination-winner/nomination-month-winners'
 import { MonthEnum, MonthEnumType } from '../../types/month-enum-type'
 import NominationCarouselContainer from './ui/carousel/Nomination-carousel-container'
-
-type WinnersResponse = {
-	items: INominationMonthWinners[]
-	minYear: number
-	maxYear: number
-}
 
 const AwardsPage = () => {
 	const { navigateToVotes } = useNavigationPath()
@@ -25,9 +18,9 @@ const AwardsPage = () => {
 		return Number.isFinite(y) ? y : null
 	}, [year])
 
-	const { data, isPending } = useQuery<WinnersResponse>({
+	const { data, isPending } = useQuery({
 		queryKey: ['nominationWinners', { month: null, year: parsedYear }],
-		queryFn: () => NominationAPI.fetchWinners(null, parsedYear),
+		queryFn: () => NominationAPI.findWinners(null, parsedYear),
 		enabled: parsedYear !== null,
 		staleTime: 1000 * 60 * 5,
 	})

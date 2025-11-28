@@ -1,40 +1,35 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { NominationAPI } from '../api/nomination-api'
-import { INominationCandidatesResponse } from '../models/nomination/nomination-candidate/nomination-candidates-response'
-import { NominationEntityKind } from '../models/nomination/nomination-entity-kind'
-import { INominationUserVote } from '../models/nomination/nomination-user-vote'
-import { NominationType } from '../types/nomination'
+import { NominationEntityKind, NominationUserVote } from '../types/nomination'
+import { useApiErrorHandler } from './use-api-error-handler'
 
 export function useNominationVotes(isAuth: boolean) {
+	const handleApiError = useApiErrorHandler()
+
 	const queryClient = useQueryClient()
 
-	const { data: nominationTypes = [], isPending: isTypesLoading } = useQuery<
-		NominationType[]
-	>({
+	const { data: nominationTypes = [], isPending: isTypesLoading } = useQuery({
 		queryKey: ['nominationTypes'],
 		queryFn: () => NominationAPI.fetchNominationTypes(),
 		staleTime: Infinity,
 		gcTime: 1000 * 60 * 60 * 24,
 	})
 
-	const { data: candidates, isPending: isCandidatesLoading } =
-		useQuery<INominationCandidatesResponse>({
-			queryKey: ['nominationCandidates'],
-			queryFn: () => NominationAPI.fetchCandidates(),
-			staleTime: 1000 * 60 * 5,
-		})
+	const { data: candidates, isPending: isCandidatesLoading } = useQuery({
+		queryKey: ['nominationCandidates'],
+		queryFn: () => NominationAPI.findCandidates(),
+		staleTime: 1000 * 60 * 5,
+	})
 
-	const { data: userVotes = [], isPending: isVotesLoading } = useQuery<
-		INominationUserVote[]
-	>({
+	const { data: userVotes = [], isPending: isVotesLoading } = useQuery({
 		queryKey: ['nominationUserVotes'],
-		queryFn: () => NominationAPI.fetchUserVotes(),
+		queryFn: () => NominationAPI.findUserVotes(),
 		enabled: isAuth,
 		staleTime: 1000 * 60,
 	})
 
 	const voteMutation = useMutation<
-		INominationUserVote,
+		NominationUserVote,
 		unknown,
 		{
 			nominationTypeId: string
@@ -49,7 +44,7 @@ export function useNominationVotes(isAuth: boolean) {
 				vars.entityId
 			),
 		onSuccess: newVote => {
-			queryClient.setQueryData<INominationUserVote[] | undefined>(
+			queryClient.setQueryData<NominationUserVote[] | undefined>(
 				['nominationUserVotes'],
 				prev => (prev ? [...prev, newVote] : [newVote])
 			)
@@ -60,15 +55,11 @@ export function useNominationVotes(isAuth: boolean) {
 		nominationTypeId: string,
 		entityKind: NominationEntityKind,
 		entityId: string
-	): Promise<string[]> => {
+	) => {
 		try {
 			await voteMutation.mutateAsync({ nominationTypeId, entityKind, entityId })
-			return []
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		} catch (e: any) {
-			return Array.isArray(e?.response?.data?.message)
-				? e.response.data.message
-				: [e?.response?.data?.message ?? 'Не удалось отправить голос']
+		} catch (error: unknown) {
+			handleApiError(error, 'Не удалось отправить голос!')
 		}
 	}
 
