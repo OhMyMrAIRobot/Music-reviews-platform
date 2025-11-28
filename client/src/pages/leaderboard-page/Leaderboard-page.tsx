@@ -1,16 +1,17 @@
 import { useQuery } from '@tanstack/react-query'
 import { LeaderboardAPI } from '../../api/leaderboard-api'
-import { ILeaderboardItem } from '../../models/leaderboard/leaderboard-item'
 import { leaderboardKeys } from '../../query-keys/leaderboard-keys'
 import LeaderboardHeader from './ui/Leaderboard-header'
 import LeaderboardItem from './ui/Leaderboard-item'
 import LeaderboardTitle from './ui/Leaderboard-title'
 
-const queryKey = leaderboardKeys.list({ limit: null, offset: null })
-const queryFn = () => LeaderboardAPI.fetchLeaderboard(null, null)
+const limit = 90
+const offset = 0
+const queryKey = leaderboardKeys.list({ limit, offset })
+const queryFn = () => LeaderboardAPI.fetchLeaderboard({ limit, offset })
 
 const LeaderboardPage = () => {
-	const { data, isPending } = useQuery<ILeaderboardItem[]>({
+	const { data, isPending } = useQuery({
 		queryKey,
 		queryFn,
 		staleTime: 1000 * 60 * 5,
@@ -34,7 +35,7 @@ const LeaderboardPage = () => {
 					  ))
 					: items.map(item => (
 							<LeaderboardItem
-								key={item.userId}
+								key={item.user.id}
 								item={item}
 								isLoading={isPending}
 							/>

@@ -6,11 +6,11 @@ import { leaderboardKeys } from '../../../../../query-keys/leaderboard-keys'
 import PlatformStatsLeaderboardItem from './Platform-stats-leaderboard-item'
 import PlatformStatsLeaderboardLeaderItem from './Platform-stats-leaderboard-leader-item'
 
-const LIMIT = 10
-const OFFSET = 0
+const limit = 10
+const offset = 0
 
-const queryKey = leaderboardKeys.list({ limit: LIMIT, offset: OFFSET })
-const queryFn = () => LeaderboardAPI.fetchLeaderboard(LIMIT, OFFSET)
+const queryKey = leaderboardKeys.list({ limit, offset })
+const queryFn = () => LeaderboardAPI.fetchLeaderboard({ limit, offset })
 
 const PlatformStatsLeaderboard = () => {
 	const { navigateToLeaderboard } = useNavigationPath()
@@ -70,7 +70,7 @@ const PlatformStatsLeaderboard = () => {
 							if (idx < 3) return null
 							return (
 								<PlatformStatsLeaderboardItem
-									key={item.userId}
+									key={item.user.id}
 									isLoading={false}
 									item={item}
 									position={idx + 1}

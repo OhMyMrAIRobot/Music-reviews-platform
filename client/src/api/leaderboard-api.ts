@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { ILeaderboardItem } from '../models/leaderboard/leaderboard-item'
+import { LeaderboardItem, LeaderboardQuery } from '../types/leaderboard'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
 
@@ -12,13 +12,12 @@ const _api = axios.create({
 })
 
 export const LeaderboardAPI = {
-	async fetchLeaderboard(
-		limit: number | null,
-		offset: number | null
-	): Promise<ILeaderboardItem[]> {
-		const { data } = await _api.get<ILeaderboardItem[]>(`?
-			${limit !== null ? `limit=${limit}&` : ''}
-			${offset !== null ? `offset=${offset}&` : ''}
+	async fetchLeaderboard(query: LeaderboardQuery): Promise<LeaderboardItem[]> {
+		const { limit, offset } = query
+
+		const { data } = await _api.get<LeaderboardItem[]>(`?
+			${limit ? `limit=${limit}&` : ''}
+			${offset ? `offset=${offset}&` : ''}
 		`)
 
 		return data

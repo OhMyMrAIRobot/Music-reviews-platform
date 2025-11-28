@@ -10,19 +10,19 @@ import Tooltip from '../../../components/tooltip/Tooltip'
 import TooltipSpan from '../../../components/tooltip/Tooltip-span'
 import SkeletonLoader from '../../../components/utils/Skeleton-loader'
 import useNavigationPath from '../../../hooks/use-navigation-path'
-import { ILeaderboardItem } from '../../../models/leaderboard/leaderboard-item'
+import { LeaderboardItem as LeaderboardItemType } from '../../../types/leaderboard'
 import { formatNumber } from '../../../utils/format-number'
 import { getLevelConfig, getUserLevel } from '../../../utils/user-level'
 
 interface IProps {
-	item?: ILeaderboardItem
+	item?: LeaderboardItemType
 	isLoading: boolean
 }
 
 const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 	const { navigatoToProfile } = useNavigationPath()
 
-	const level = getUserLevel(item?.points ?? 0)
+	const level = getUserLevel(item?.user.points ?? 0)
 
 	return isLoading ? (
 		<SkeletonLoader className='w-full h-25 lg:h-31 xl:h-19 rounded-lg' />
@@ -30,7 +30,7 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 		item && (
 			<div className='bg-zinc-900 border border-white/10 flex max-xl:flex-wrap p-[3px] xl:pr-2 xl:h-[75px] max-xl:gap-y-2 rounded-lg items-stretch relative group xl:hover:bg-zinc-800 transition-all'>
 				<div className='absolute max-xl:order-11 size-5 lg:size-8 xl:size-auto max-xl:text-[10px] z-20 max-xl:rounded-full max-xl:-top-2 max-xl:-left-2 bg-zinc-950 xl:relative border border-white/10 flex items-center justify-center aspect-square rounded-lg mr-1'>
-					{item.rank}
+					{item.user.rank}
 				</div>
 
 				<div className='h-full relative max-xl:order-3'>
@@ -38,13 +38,13 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 						<LogoSmallSvg className={'w-[30px] h-[20px] size-5'} />
 
 						<span className='leading-3 font-bold xl:text-lg'>
-							{formatNumber(item.points)}
+							{formatNumber(item.user.points)}
 						</span>
 					</div>
 				</div>
 
 				<Link
-					to={navigatoToProfile(item.userId)}
+					to={navigatoToProfile(item.user.id)}
 					className='flex shrink-0 space-x-4 items-center relative max-xl:w-1/2 max-xl:order-1 pl-3'
 				>
 					<div className='relative z-20'>
@@ -52,12 +52,12 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 							<img
 								loading='lazy'
 								decoding='async'
-								alt={item.nickname}
+								alt={item.user.nickname}
 								className='aspect-square h-full w-full object-cover'
 								src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-									item.avatar === ''
+									item.user.avatar === ''
 										? import.meta.env.VITE_DEFAULT_AVATAR
-										: item.avatar
+										: item.user.avatar
 								}`}
 							/>
 						</span>
@@ -65,7 +65,7 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 						{level && (
 							<div className='absolute -bottom-0.5 -right-2'>
 								<img
-									alt={item.avatar + level}
+									alt={item.user.avatar + level}
 									loading='lazy'
 									decoding='async'
 									width='38'
@@ -81,7 +81,7 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 
 					<div className='w-[100px] xl:w-[200px]'>
 						<div className='text-ellipsis max-w-full whitespace-nowrap overflow-hidden text-[12px] sm:text-lg font-semibold'>
-							{item.nickname}
+							{item.user.nickname}
 						</div>
 					</div>
 				</Link>
@@ -95,9 +95,9 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 						className='object-cover'
 						sizes='100vw'
 						src={`${import.meta.env.VITE_SERVER_URL}/public/covers/${
-							item.cover === ''
+							item.user.cover === ''
 								? import.meta.env.VITE_DEFAULT_COVER
-								: item.cover
+								: item.user.cover
 						}`}
 					/>
 				</div>
@@ -112,7 +112,9 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 					<div className='flex xl:flex-col items-center justify-center gap-x-1.5 gap-y-0.5 font-medium size-full'>
 						<AuthorLikeColorSvg className='size-4 lg:size-6.5' />
 
-						<span className='font-semibold'>{item.receivedAuthorLikes}</span>
+						<span className='font-semibold'>
+							{item.stats.receivedAuthorLikes}
+						</span>
 					</div>
 				</TooltipSpan>
 
@@ -142,11 +144,11 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 				>
 					<div className='flex items-center gap-1.5'>
 						<TextReviewSvg className='size-4 xl:size-5' />
-						<span className='font-semibold'>{item.textCount}</span>
+						<span className='font-semibold'>{item.stats.textCount}</span>
 					</div>
 					<div className='flex items-center gap-1.5'>
 						<NoTextReviewSvg className='size-4 xl:size-5' />
-						<span className='font-semibold'>{item.withoutTextCount}</span>
+						<span className='font-semibold'>{item.stats.withoutTextCount}</span>
 					</div>
 				</TooltipSpan>
 
@@ -178,14 +180,14 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 						<PixelHeartFillSvg className={'w-4 h-3.5 lg:w-5 lg:h-4.5]'} />
 
 						<span className='font-semibold'>
-							{formatNumber(item.receivedLikes)}
+							{formatNumber(item.stats.receivedLikes)}
 						</span>
 					</div>
 					<div className='flex items-center gap-1.5'>
 						<PixelHeartSvg className={'w-4 h-3.5 lg:w-5 lg:h-4.5]'} />
 
 						<span className='font-semibold'>
-							{formatNumber(item.givenLikes)}
+							{formatNumber(item.stats.givenLikes)}
 						</span>
 					</div>
 				</TooltipSpan>
@@ -193,12 +195,12 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 				<div className='hidden xl:flex ml-auto items-center gap-2.5'>
 					{item.topAuthorLikers.map(author => (
 						<Link
-							to={navigatoToProfile(author.userId)}
+							to={navigatoToProfile(author.user.id)}
 							className='relative'
-							key={author.userId}
+							key={author.user.id}
 						>
 							<TooltipSpan
-								tooltip={<Tooltip>{author.nickname}</Tooltip>}
+								tooltip={<Tooltip>{author.user.nickname}</Tooltip>}
 								spanClassName=''
 							>
 								<span className='relative flex overflow-hidden rounded-full size-[38px] xl:size-[45px] border border-white/10'>
@@ -206,9 +208,9 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 										loading='lazy'
 										decoding='async'
 										src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-											author.avatar === ''
+											author.user.avatar === ''
 												? import.meta.env.VITE_DEFAULT_AVATAR
-												: author.avatar
+												: author.user.avatar
 										}`}
 										className='object-cover object-center size-full'
 									/>
