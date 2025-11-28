@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { FeedbackAPI } from '../../api/feedback/feedback-api'
@@ -8,20 +7,23 @@ import FormLabel from '../../components/form-elements/Form-label'
 import FormSubTitle from '../../components/form-elements/Form-subtitle'
 import FormTextbox from '../../components/form-elements/Form-textbox'
 import FormTitle from '../../components/form-elements/Form-title'
+import { useApiErrorHandler } from '../../hooks/use-api-error-handler'
 import { useStore } from '../../hooks/use-store'
-import { IFeedbackData } from '../../models/feedback/feedback-data'
 import { feedbackKeys } from '../../query-keys/feedback-keys'
+import { CreateFeedbackData } from '../../types/feedback'
 
 const FeedbackPage = () => {
 	const { notificationStore } = useStore()
 
-	const [feedbackData, setFeedbackData] = useState<IFeedbackData>({
+	const handleApiError = useApiErrorHandler()
+
+	const [feedbackData, setFeedbackData] = useState<CreateFeedbackData>({
 		email: '',
 		title: '',
 		message: '',
 	})
 
-	const handleChange = (field: keyof IFeedbackData, value: string) => {
+	const handleChange = (field: keyof CreateFeedbackData, value: string) => {
 		setFeedbackData(prev => ({ ...prev, [field]: value }))
 	}
 
@@ -29,17 +31,14 @@ const FeedbackPage = () => {
 
 	const { mutateAsync: sendFeedbackMutate, isPending: isSending } = useMutation(
 		{
-			mutationFn: (payload: IFeedbackData) => FeedbackAPI.sendFeedback(payload),
+			mutationFn: (payload: CreateFeedbackData) => FeedbackAPI.create(payload),
 			onSuccess: () => {
 				notificationStore.addSuccessNotification('Отзыв успешно отправлен!')
 				setFeedbackData({ email: '', title: '', message: '' })
 				queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
 			},
-			onError: (e: any) => {
-				const messages: string[] = Array.isArray(e?.response?.data?.message)
-					? e.response.data.message
-					: [e?.response?.data?.message || 'Не удалось отправить отзыв']
-				messages.forEach(m => notificationStore.addErrorNotification(m))
+			onError: (error: unknown) => {
+				handleApiError(error)
 			},
 		}
 	)

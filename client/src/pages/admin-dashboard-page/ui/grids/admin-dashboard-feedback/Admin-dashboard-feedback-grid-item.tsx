@@ -1,15 +1,15 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { AxiosError } from 'axios'
 import { FC, useState } from 'react'
 import { FeedbackAPI } from '../../../../../api/feedback/feedback-api'
 import FeedbackStatusIcon from '../../../../../components/feedback/Feedback-status-icon'
 import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
+import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler'
 import { useStore } from '../../../../../hooks/use-store'
-import { IFeedback } from '../../../../../models/feedback/feedback'
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
 import { feedbackKeys } from '../../../../../query-keys/feedback-keys'
+import { Feedback } from '../../../../../types/feedback'
 import { SortOrder } from '../../../../../types/sort-order-type'
 import { getFeedbackStatusColor } from '../../../../../utils/get-feedback-status-color'
 import AdminDeleteButton from '../../buttons/Admin-delete-button'
@@ -18,7 +18,7 @@ import FeedbackFormModal from './Feedback-form-modal'
 
 interface IProps {
 	className?: string
-	feedback?: IFeedback
+	feedback?: Feedback
 	position?: number
 	isLoading: boolean
 	order?: SortOrder
@@ -41,21 +41,17 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [detailsModalOpen, setDetailsModalOpen] = useState<boolean>(false)
 
+	const handleApiError = useApiErrorHandler()
+
 	const deleteMutation = useMutation({
-		mutationFn: (id: string) => FeedbackAPI.deleteFeedback(id),
+		mutationFn: (id: string) => FeedbackAPI.delete(id),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification('Сообщение успешно удалено!')
 			queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
 			setConfModalOpen(false)
 		},
 		onError: (error: unknown) => {
-			const axiosError = error as AxiosError<{ message: string | string[] }>
-			const errors = Array.isArray(axiosError.response?.data?.message)
-				? axiosError.response?.data?.message
-				: [axiosError.response?.data?.message]
-			errors
-				.filter((err): err is string => typeof err === 'string')
-				.forEach((err: string) => notificationStore.addErrorNotification(err))
+			handleApiError(error)
 			setConfModalOpen(false)
 		},
 	})

@@ -7,18 +7,22 @@ import FormLabel from '../../../../../components/form-elements/Form-label'
 import FormTextbox from '../../../../../components/form-elements/Form-textbox'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
+import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler'
 import { useFeedbackMeta } from '../../../../../hooks/use-feedback-meta'
 import { useStore } from '../../../../../hooks/use-store'
-import { IFeedback } from '../../../../../models/feedback/feedback'
-import { IFeedbackReply } from '../../../../../models/feedback/feedback-reply/feedback-reply'
-import { FeedbackStatusesEnum } from '../../../../../models/feedback/feedback-status/feedback-statuses-enum'
 import { feedbackKeys } from '../../../../../query-keys/feedback-keys'
+import {
+	CreateFeedbackReplyData,
+	Feedback,
+	FeedbackReply,
+	FeedbackStatusesEnum,
+} from '../../../../../types/feedback'
 import { getFeedbackStatusColor } from '../../../../../utils/get-feedback-status-color'
 
 interface IProps {
 	isOpen: boolean
 	onClose: () => void
-	feedback: IFeedback
+	feedback: Feedback
 }
 
 const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
@@ -26,15 +30,17 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
 
 	const { statuses, isLoading: isMetaLoading } = useFeedbackMeta()
 
+	const handleApiError = useApiErrorHandler()
+
 	const queryClient = useQueryClient()
 
-	const [reply, setReply] = useState<IFeedbackReply | null>(null)
+	const [reply, setReply] = useState<FeedbackReply | null>(null)
 	const [showReply, setShowReply] = useState<boolean>(false)
 	const [replyText, setReplyText] = useState<string>('')
 
 	const { data: replyData, isPending: isReplyLoading } = useQuery({
 		queryKey: feedbackKeys.reply(feedback.id),
-		queryFn: () => FeedbackReplyAPI.fetchFeedbackReply(feedback.id),
+		queryFn: () => FeedbackReplyAPI.findByFeedbackId(feedback.id),
 		enabled:
 			isOpen &&
 			feedback.feedbackStatus.status === FeedbackStatusesEnum.ANSWERED,
@@ -43,7 +49,7 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
 
 	const updateStatusMutation = useMutation({
 		mutationFn: (statusId: string) =>
-			FeedbackAPI.updateFeedbackStatus(feedback.id, statusId),
+			FeedbackAPI.update(feedback.id, { feedbackStatusId: statusId }),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification(
 				'Вы успешно отметили сообщение как прочитанное!'
@@ -51,46 +57,27 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
 			queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
 		},
 		onError: (error: unknown) => {
-			const axiosError = error as {
-				response?: { data?: { message?: string[] } }
-			}
-			const errors = axiosError?.response?.data?.message || [
-				'Ошибка при обновлении статуса',
-			]
-			errors.forEach((err: string) =>
-				notificationStore.addErrorNotification(err)
-			)
+			handleApiError(error)
 		},
 	})
 
 	const createReplyMutation = useMutation({
-		mutationFn: (replyData: { message: string; feedbackId: string }) =>
-			FeedbackReplyAPI.createFeedbackReply(replyData),
+		mutationFn: (replyData: CreateFeedbackReplyData) =>
+			FeedbackReplyAPI.create(replyData),
 		onSuccess: data => {
-			if (data.isSent) {
-				notificationStore.addSuccessNotification('Ответ успешно отправлен!')
-				setReply(data.feedbackReply)
-				setShowReply(false)
-				setReplyText('')
-				queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
-				queryClient.invalidateQueries({
-					queryKey: feedbackKeys.reply(feedback.id),
-				})
-			} else {
-				notificationStore.addErrorNotification('Не удалось отправить ответ!')
-			}
+			notificationStore.addSuccessNotification('Ответ успешно отправлен!')
+			setReply(data)
+			setShowReply(false)
+			setReplyText('')
+			queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
+			queryClient.invalidateQueries({
+				queryKey: feedbackKeys.reply(feedback.id),
+			})
+
 			onClose()
 		},
 		onError: (error: unknown) => {
-			const axiosError = error as {
-				response?: { data?: { message?: string[] } }
-			}
-			const errors = axiosError?.response?.data?.message || [
-				'Ошибка при отправке ответа',
-			]
-			errors.forEach((err: string) =>
-				notificationStore.addErrorNotification(err)
-			)
+			handleApiError(error)
 		},
 	})
 

@@ -6,9 +6,9 @@ import AdminHeader from '../../../../../components/layout/admin-header/Admin-hea
 import Pagination from '../../../../../components/pagination/Pagination'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import { useFeedbackMeta } from '../../../../../hooks/use-feedback-meta'
-import { FeedbackStatusesFilterEnum } from '../../../../../models/feedback/feedback-status/feedback-statuses-filter-enum'
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
 import { feedbackKeys } from '../../../../../query-keys/feedback-keys'
+import { FeedbackStatusesFilterEnum } from '../../../../../types/feedback'
 import { SortOrder } from '../../../../../types/sort-order-type'
 import AdminFilterButton from '../../buttons/Admin-filter-button'
 import AdminDashboardFeedbackGridItem from './Admin-dashboard-feedback-grid-item'
@@ -39,13 +39,13 @@ const AdminDashboardFeedbackGrid = () => {
 	})
 
 	const queryFn = () =>
-		FeedbackAPI.fetchFeedback(
-			searchText.trim().length > 0 ? searchText.trim() : null,
-			statusId,
+		FeedbackAPI.findAll({
+			search: searchText.trim().length > 0 ? searchText.trim() : undefined,
+			statusId: statusId ?? undefined,
 			order,
-			perPage,
-			(currentPage - 1) * perPage
-		)
+			limit: perPage,
+			offset: (currentPage - 1) * perPage,
+		})
 
 	const { data: feedbackData, isPending: isFeedbackLoading } = useQuery({
 		queryKey,
@@ -54,8 +54,8 @@ const AdminDashboardFeedbackGrid = () => {
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const feedback = feedbackData?.feedback || []
-	const count = feedbackData?.count || 0
+	const feedback = feedbackData?.items || []
+	const count = feedbackData?.meta.count || 0
 
 	useEffect(() => {
 		setCurrentPage(1)
