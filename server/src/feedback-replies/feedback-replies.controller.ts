@@ -22,9 +22,24 @@ export class FeedbackRepliesController {
     private readonly feedbackResponsesService: FeedbackRepliesService,
   ) {}
 
+  /**
+   * POST /feedback-replies
+   *
+   * Create and send a reply to a feedback message. Admin-only endpoint.
+   *
+   * Behaviour:
+   * - Persists the reply in the database.
+   * - Attempts to send the reply email to the feedback's author.
+   * - On email delivery failure the persisted reply is deleted and an
+   *   error is returned.
+   *
+   * @param dto Reply creation payload
+   * @param req Authenticated request (provides `req.user.id` as author)
+   * @returns Serialized `FeedbackReplyDto` for the created reply
+   */
+  @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
-  @Post()
   async create(
     @Body() dto: CreateFeedbackReplyRequestDto,
     @Request() req: IAuthenticatedRequest,
@@ -32,9 +47,19 @@ export class FeedbackRepliesController {
     return this.feedbackResponsesService.create(dto, req.user.id);
   }
 
+  /**
+   * GET /feedback-replies/feedback/:id
+   *
+   * Load the reply for a specific feedback message. Admin-only.
+   * Returns 404 (`EntityNotFoundException`) when no reply exists for the
+   * provided feedback id.
+   *
+   * @param id Parent feedback id
+   * @returns `FeedbackReplyDto` for the requested feedback
+   */
+  @Get('feedback/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
-  @Get('feedback/:id')
   async findByFeedbackId(@Param('id') id: string) {
     const response = await this.feedbackResponsesService.findByFeedbackId(id);
 
