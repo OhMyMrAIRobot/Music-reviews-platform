@@ -4,6 +4,19 @@ import * as path from 'path';
 
 @Injectable()
 export class FileService {
+  /**
+   * Save a file buffer to disk under `public/<folder>[/<subfolder>]`.
+   *
+   * The method ensures the destination directory exists, generates a
+   * unique filename and writes the file buffer to disk. It returns the
+   * generated filename (not the full path) which callers can store in the
+   * database.
+   *
+   * @param file Multer file object with `buffer` and original filename
+   * @param folder Top-level folder under `public` to store the file
+   * @param subfolder Optional nested folder under `folder`
+   * @returns Generated filename (string)
+   */
   async saveFile(
     file: Express.Multer.File,
     folder: string,
@@ -26,6 +39,15 @@ export class FileService {
     return filename;
   }
 
+  /**
+   * Delete a file previously saved under `public`.
+   *
+   * The `filePath` is expected to be a relative path (for example
+   * `authors/avatars/filename.jpg`) and the method ignores missing
+   * files (no error thrown when file does not exist).
+   *
+   * @param filePath Relative path under `public` to delete
+   */
   async deleteFile(filePath: string): Promise<void> {
     const fullPath = path.join('public', filePath);
     if (fs.existsSync(fullPath)) {
