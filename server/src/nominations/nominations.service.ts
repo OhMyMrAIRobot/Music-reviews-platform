@@ -6,15 +6,15 @@ import { AuthorTypesEnum } from 'src/author-types/types/author-types.enum';
 import { AuthorsService } from 'src/authors/authors.service';
 import { NominationTypesService } from 'src/nomination-types/nomination-types.service';
 import { ReleasesService } from 'src/releases/releases.service';
-import { FindNominationWinnersQueryDto } from './dto/query/find-nomination-winners.query.dto';
-import { AddNominationVoteRequestDto } from './dto/request/add-nomination-vote.request.dto';
-import { FindNominationCandidatesResponseDto } from './dto/response/find-nomination-candidates.response.dto';
-import {
-  FindNominationWinnersResponseDto,
-  NominationMonthWinnerItemDto,
-} from './dto/response/find-nomination-winners.response.dto';
-import { FindNominationWinnersByAuthorIdResponseDto } from './dto/response/find-nominations-winners-by-author-id.response.dto';
+import { NominationWinnersQueryDto } from './dto/query/nomination-winners.query.dto';
+import { CreateNominationVoteRequestDto } from './dto/request/create-nomination-vote.request.dto';
+import { AuthorNominationWinsResponseDto } from './dto/response/author-nomination-wins.response.dto';
+import { FindNominationCandidatesResponseDto } from './dto/response/nomination-candidates.response.dto';
 import { NominationUserVoteResponseDto } from './dto/response/nomination-user-vote.response.dto';
+import {
+  NominationMonthWinnerItemDto,
+  NominationWinnersResponseDto,
+} from './dto/response/nomination-winners.response.dto';
 import { NominationPeriod } from './types/nomination-period.type';
 
 @Injectable()
@@ -26,9 +26,20 @@ export class NominationsService {
     private readonly authorsService: AuthorsService,
   ) {}
 
+  /**
+   * Service method returning nomination winners aggregated by month.
+   *
+   * The method optionally accepts `year` and `month` filters which are
+   * applied directly to the underlying materialized view `Nomination_winners_monthly_json`.
+   * It also queries the min/max available years to populate the response
+   * meta fields.
+   *
+   * @param query DTO with optional `year` and `month` filters
+   * @returns Winners response containing `minYear`, `maxYear` and `items`
+   */
   async findNominationWinners(
-    query: FindNominationWinnersQueryDto,
-  ): Promise<FindNominationWinnersResponseDto> {
+    query: NominationWinnersQueryDto,
+  ): Promise<NominationWinnersResponseDto> {
     const { year, month } = query;
     const dataQuery = `
 			SELECT * FROM "Nomination_winners_monthly_json"
@@ -53,8 +64,14 @@ export class NominationsService {
     return { ...yearRange, items: data };
   }
 
-  async addNominationVote(
-    dto: AddNominationVoteRequestDto,
+  /**
+   * Validate nomination type existence and the nominated entity's
+   * eligibility for the current nomination period, then persist the vote.
+   *
+   * The method enforces a single vote per user / nomination type / period.
+   */
+  async createNominationVote(
+    dto: CreateNominationVoteRequestDto,
     userId: string,
   ): Promise<NominationUserVoteResponseDto> {
     await this.nominationTypesService.findOne(dto.nominationTypeId);
@@ -109,9 +126,20 @@ export class NominationsService {
     });
   }
 
-  async findNominationWinnersByAuthorId(
+  /**
+   * Return nomination participations/wins for a single author.
+   *
+   * The method queries a precomputed/enriched JSON view that contains
+   * nomination participations. If no records are found an empty
+   * response object is returned.
+   *
+   * @param authorId Author id to lookup
+   * @returns Author nominations payload with an empty `nominations`
+   *   array when no participations are found.
+   */
+  async findAuthorNominationWins(
     authorId: string,
-  ): Promise<FindNominationWinnersByAuthorIdResponseDto> {
+  ): Promise<AuthorNominationWinsResponseDto> {
     const rawQuery = `
       SELECT *
       FROM "Nomination_winner_participations_enriched_json"
@@ -119,9 +147,9 @@ export class NominationsService {
     `;
 
     const data =
-      await this.prisma.$queryRawUnsafe<
-        FindNominationWinnersByAuthorIdResponseDto[]
-      >(rawQuery);
+      await this.prisma.$queryRawUnsafe<AuthorNominationWinsResponseDto[]>(
+        rawQuery,
+      );
 
     if (data.length === 0) {
       return {
@@ -133,6 +161,18 @@ export class NominationsService {
     return data[0];
   }
 
+  /**
+   * Return votes placed by the specified user during the current
+   * nomination period.
+   *
+   * The method calculates the active nomination period (previous
+   * month in UTC) and queries the `NominationVote` table for votes
+   * matching the user and period. The result is transformed into
+   * `NominationUserVoteResponseDto` instances.
+   *
+   * @param userId User unique identifier
+   * @returns Array of the user's nomination votes for the current period
+   */
   async findUserVotes(
     userId: string,
   ): Promise<NominationUserVoteResponseDto[]> {
@@ -154,6 +194,14 @@ export class NominationsService {
     });
   }
 
+  /**
+   * Find a single NominationVote by its compound unique key
+   * (userId, nominationTypeId, year, month).
+   *
+   * Used to enforce one-vote-per-user-per-nomination-per-period.
+   *
+   * @returns The found `NominationVote` or `null` when not present.
+   */
   async findOne(
     userId: string,
     nominationTypeId: string,
@@ -172,6 +220,16 @@ export class NominationsService {
     });
   }
 
+  /**
+   * Build and return nomination candidate lists for the current
+   * nomination period.
+   *
+   * The method executes a raw SQL query that collects candidate
+   * releases and authors grouped by nomination categories and
+   * returns a single DTO describing the period and candidate arrays.
+   *
+   * @returns Candidate lists and period metadata for the previous month
+   */
   async findCandidates(): Promise<FindNominationCandidatesResponseDto> {
     const rawQuery = `
       WITH period AS (
@@ -320,6 +378,16 @@ export class NominationsService {
     return result;
   }
 
+  /**
+   * Compute the active nomination period in UTC.
+   *
+   * The nomination window is defined as the previous calendar month
+   * relative to the current UTC date. The method returns the year,
+   * month (1-12) and `start`/`nextMonthStart` Date objects that can be
+   * used to compare publish dates.
+   *
+   * @returns NominationPeriod for the previous month in UTC
+   */
   private getNominationPeriodUTC(): NominationPeriod {
     const now = new Date();
     const currentMonthStart = new Date(
@@ -343,6 +411,13 @@ export class NominationsService {
     };
   }
 
+  /**
+   * Ensure the release exists, its publish date falls inside the
+   * nomination period and its release type is allowed for the
+   * nomination type.
+   *
+   * Throws a `BadRequestException` when the checks fail.
+   */
   private async assertReleaseIsEligible(
     nominationTypeId: string,
     releaseId: string,
@@ -375,6 +450,13 @@ export class NominationsService {
     }
   }
 
+  /**
+   * Check that the author exists and has at least one release in the
+   * nomination period matching allowed author types (artist, producer,
+   * designer) for the nomination type.
+   *
+   * Throws `BadRequestException` when the author is not eligible.
+   */
   private async assertAuthorIsEligible(
     nominationTypeId: string,
     authorId: string,

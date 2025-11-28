@@ -14,10 +14,10 @@ export type AuthorDto = {
   /** Display name */
   name: string;
 
-  /** Public avatar URL or empty string */
+  /** Public avatar or empty string */
   avatar: string;
 
-  /** Public cover URL or empty string */
+  /** Public cover or empty string */
   cover: string;
 
   /** Whether the author is a registered user in the system */

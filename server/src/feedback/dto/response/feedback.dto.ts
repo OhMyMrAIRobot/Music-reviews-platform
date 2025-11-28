@@ -1,6 +1,17 @@
 import { Exclude, Expose, Type } from 'class-transformer';
 
 /**
+ * Simple DTO describing the feedback status nested object.
+ */
+class FeedbackStatus {
+  @Expose()
+  id: string;
+
+  @Expose()
+  status: string;
+}
+
+/**
  * Serialized feedback item returned by feedback endpoints.
  */
 export class FeedbackDto {
@@ -32,15 +43,4 @@ export class FeedbackDto {
   /** Internal FK to status entity (excluded from serialized output) */
   @Exclude()
   feedbackStatusId: string;
-}
-
-/**
- * Simple DTO describing the feedback status nested object.
- */
-class FeedbackStatus {
-  @Expose()
-  id: string;
-
-  @Expose()
-  status: string;
 }
