@@ -13,7 +13,7 @@ const ProfilePage = () => {
 		queryKey: id ? profileKeys.profile(id) : ['profile', 'unknown'],
 		queryFn: async () => {
 			if (!id) throw new Error('No profile id provided!')
-			return ProfileAPI.fetchProfile(id)
+			return ProfileAPI.findByUserId(id)
 		},
 		enabled: !!id,
 		staleTime: 1000 * 60 * 5,

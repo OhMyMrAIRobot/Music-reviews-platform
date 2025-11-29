@@ -8,7 +8,7 @@ export function useSocialMeta() {
 		isError,
 	} = useQuery({
 		queryKey: ['socials'],
-		queryFn: () => SocialMediaAPI.fetchSocials(),
+		queryFn: () => SocialMediaAPI.findAll(),
 		staleTime: Infinity,
 		gcTime: 1000 * 60 * 60 * 24,
 	})

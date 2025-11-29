@@ -7,6 +7,7 @@ import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../../hooks/use-auth'
 import { useStore } from '../../../../hooks/use-store'
 import { profileKeys } from '../../../../query-keys/profile-keys'
+import buildProfileFormData from '../../../../utils/build-profile-form-data'
 import EditProfilePageSection from '../Edit-profile-page-section'
 import SelectImageLabel from '../labels/Select-image-label'
 import SelectedImageLabel from '../labels/Selected-image-label'
@@ -23,8 +24,7 @@ const UploadCoverForm = observer(() => {
 	const handleApiError = useApiErrorHandler()
 
 	const uploadMutation = useMutation({
-		mutationFn: (formData: FormData) =>
-			ProfileAPI.uploadProfileImages(formData),
+		mutationFn: (formData: FormData) => ProfileAPI.update(formData),
 		onSuccess: () => {
 			const userId = authStore.user?.id
 			if (userId) {
@@ -43,7 +43,10 @@ const UploadCoverForm = observer(() => {
 	})
 
 	const deleteMutation = useMutation({
-		mutationFn: () => ProfileAPI.updateProfile({ clearCover: true }),
+		mutationFn: () => {
+			const formData = buildProfileFormData({ clearCover: true })
+			return ProfileAPI.update(formData)
+		},
 		onSuccess: () => {
 			const userId = authStore.user?.id
 			if (userId) {
@@ -82,8 +85,7 @@ const UploadCoverForm = observer(() => {
 			return
 		}
 
-		const formData = new FormData()
-		formData.append('coverImg', file)
+		const formData = buildProfileFormData({ cover: file })
 
 		uploadMutation.mutate(formData)
 	}

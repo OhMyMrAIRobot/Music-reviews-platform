@@ -1,10 +1,10 @@
 import { FC } from 'react'
-import { IProfile } from '../../../../models/profile/profile'
+import { Profile } from '../../../../types/profile'
 import ProfileInfo from './Profile-info'
 import ProfileStats from './profile-stats/Profile-stats'
 
 interface IProps {
-	profile: IProfile
+	profile: Profile
 }
 
 const ProfileLeftSection: FC<IProps> = ({ profile }) => {

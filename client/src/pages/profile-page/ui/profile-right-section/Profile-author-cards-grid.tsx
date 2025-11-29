@@ -16,12 +16,18 @@ const ProfileAuthorCardsGrid: FC<IProps> = ({ userId }) => {
 	const [emblaRef] = useEmblaCarousel(options)
 
 	const queryKey = profileKeys.authorCards(userId)
-	const { data: authorCards, isLoading } = useQuery({
+	const { data, isLoading } = useQuery({
 		queryKey,
-		queryFn: () => AuthorAPI.fetchAuthors(null, null, null, null, true, userId),
+		queryFn: () =>
+			AuthorAPI.findAll({
+				onlyRegistered: true,
+				userId,
+			}),
 		enabled: !!userId,
 		staleTime: 1000 * 60 * 5,
 	})
+
+	const authorCards = data?.items || []
 
 	return (
 		<div className='embla w-full'>
@@ -34,7 +40,7 @@ const ProfileAuthorCardsGrid: FC<IProps> = ({ userId }) => {
 									isLoading={true}
 								/>
 						  ))
-						: authorCards?.authors.map(author => (
+						: authorCards?.map(author => (
 								<AuthorCard key={author.id} author={author} isLoading={false} />
 						  ))}
 				</div>

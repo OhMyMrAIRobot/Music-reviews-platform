@@ -12,7 +12,7 @@ const ProfilePreferencesGrid: FC<IProps> = ({ userId }) => {
 	const queryKey = profileKeys.preferences(userId)
 	const { data, isPending } = useQuery({
 		queryKey,
-		queryFn: () => ProfileAPI.fetchProfilePreferences(userId),
+		queryFn: () => ProfileAPI.findPreferences(userId),
 		staleTime: 1000 * 60 * 5,
 	})
 

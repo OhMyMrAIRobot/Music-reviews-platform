@@ -1,5 +1,4 @@
 import UpdateProfileInfoForm from './ui/forms/Update-profile-info-form'
-import UpdateProfileSocialsForm from './ui/forms/Update-profile-socials-form'
 import UpdateUserInfoForm from './ui/forms/Update-user-info-form'
 import UploadAvatarForm from './ui/forms/Upload-avatar-form'
 import UploadCoverForm from './ui/forms/Upload-cover-form'
@@ -12,7 +11,6 @@ const EditProfilePage = () => {
 			<UploadCoverForm />
 			<UpdateUserInfoForm />
 			<UpdateProfileInfoForm />
-			<UpdateProfileSocialsForm />
 		</div>
 	)
 }

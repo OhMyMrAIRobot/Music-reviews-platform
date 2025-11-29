@@ -1,11 +1,11 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { IAuthUser } from '../models/auth/auth-user'
-import { IProfile } from '../models/profile/profile'
+import { Profile } from '../types/profile'
 
 class AuthStore {
 	isAuth: boolean = false
 	user: IAuthUser | null = null
-	profile: IProfile | null = null
+	profile: Profile | null = null
 	isProfileLoading: boolean = true
 
 	constructor() {
@@ -16,7 +16,7 @@ class AuthStore {
 		this.isAuth = value
 	}
 
-	setProfile(profile: IProfile | null) {
+	setProfile(profile: Profile | null) {
 		this.profile = profile
 	}
 

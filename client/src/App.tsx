@@ -36,7 +36,7 @@ export const App = observer(() => {
 	const { data: profileData } = useQuery({
 		queryKey: userId ? profileKeys.profile(userId) : ['profile', 'null'],
 		queryFn: userId
-			? () => ProfileAPI.fetchProfile(userId)
+			? () => ProfileAPI.findByUserId(userId)
 			: () => Promise.resolve(null),
 		enabled: authStore.isAuth && !!userId && !authStore.profile,
 		staleTime: Infinity,

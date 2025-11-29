@@ -2,10 +2,10 @@ import { FC } from 'react'
 import { Link } from 'react-router'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
-import { IProfilePreference } from '../../../../../models/profile/profile-preference/profile-preference-item'
+import { ProfilePreference } from '../../../../../types/profile'
 
 interface IProps {
-	item?: IProfilePreference
+	item?: ProfilePreference
 	isAuthor: boolean
 	isLoading: boolean
 }
@@ -34,7 +34,7 @@ const ProfilePreferencesItem: FC<IProps> = ({ item, isAuthor, isLoading }) => {
 					src={`${import.meta.env.VITE_SERVER_URL}/public/${
 						isAuthor ? 'authors/avatars' : 'releases'
 					}/${
-						item.image === '' ? import.meta.env.VITE_DEFAULT_AVATAR : item.image
+						item.img === '' ? import.meta.env.VITE_DEFAULT_AVATAR : item.img
 					}`}
 					className={`size-full object-cover object-center hover:ring-4 ring-white/20 transition-all duration-300 ${
 						isAuthor ? 'rounded-full' : 'rounded-lg'
