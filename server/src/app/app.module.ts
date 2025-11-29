@@ -17,7 +17,6 @@ import { FeedbackModule } from '../feedback/feedback.module';
 import { FileModule } from '../file/files.module';
 import { LeaderboardModule } from '../leaderboard/leaderboard.module';
 import { MailsModule } from '../mails/mails.module';
-import { ProfileSocialMediaModule } from '../profile-social-media/profile-social-media.module';
 import { ProfilesModule } from '../profiles/profiles.module';
 import { RegisteredAuthorsModule } from '../registered-authors/registered-authors.module';
 import { ReleaseMediaStatusesModule } from '../release-media-statuses/release-media-statuses.module';
@@ -63,7 +62,6 @@ import { AppService } from './app.service';
     ReleaseMediaTypesModule,
     ReleaseMediaModule,
     UserFavMediaModule,
-    ProfileSocialMediaModule,
     RegisteredAuthorsModule,
     AuthorCommentsModule,
     AuthorConfirmationStatusesModule,

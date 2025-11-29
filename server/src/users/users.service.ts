@@ -253,7 +253,7 @@ export class UsersService {
   async delete(id: string): Promise<UserResponseDto> {
     await this.findOne(id);
 
-    const profile = await this.profilesService.findByUserId(id);
+    const profile = await this.profilesService.findOne(id);
 
     const deletedUser = await this.prisma.user.delete({
       where: { id },
