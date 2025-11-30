@@ -1,5 +1,5 @@
 import { AlbumValueTiersEnum } from '../types/album-value'
-import type { SortOrder } from '../types/sort-order-type'
+import type { SortOrder } from '../types/common/types/sort-order'
 
 export const albumValuesKeys = {
 	all: ['albumValues'] as const,

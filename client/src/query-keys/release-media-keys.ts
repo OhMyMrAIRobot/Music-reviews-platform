@@ -1,4 +1,4 @@
-import type { SortOrder } from '../types/sort-order-type'
+import type { SortOrder } from '../types/common/types/sort-order'
 
 export const releaseMediaKeys = {
 	all: ['releaseMedia'] as const,

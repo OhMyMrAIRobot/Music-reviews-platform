@@ -8,8 +8,8 @@ import {
 	useState,
 } from 'react'
 import ReleaseCard from '../../../../../components/release/Release-card'
-import { CarouselRef } from '../../../../../types/carousel-ref'
-import { CarouselStateCallbacks } from '../../../../../types/carousel-state-callbacks'
+import { CarouselRef } from '../../../../../types/common/types/carousel-ref'
+import { CarouselStateCallbacks } from '../../../../../types/common/types/carousel-state-callbacks'
 import { Release } from '../../../../../types/release'
 
 interface IProps extends CarouselStateCallbacks {

@@ -3,10 +3,10 @@ import { useEffect, useState } from 'react'
 import { ReviewAPI } from '../../../../../api/review/review-api.ts'
 import AdminHeader from '../../../../../components/layout/admin-header/Admin-header.tsx'
 import Pagination from '../../../../../components/pagination/Pagination.tsx'
-import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum.ts'
 import { reviewsKeys } from '../../../../../query-keys/reviews-keys.ts'
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum.ts'
+import { SortOrder } from '../../../../../types/common/types/sort-order.ts'
 import { ReviewsSortFieldsEnum } from '../../../../../types/review/index.ts'
-import { SortOrder } from '../../../../../types/sort-order-type.ts'
 import AdminDashboardReviewsGridItem from './Admin-dashboard-reviews-grid-item.tsx'
 
 const perPage = 10

@@ -1,4 +1,4 @@
-import { SortOrdersEnum } from '../../../models/sort/sort-orders-enum'
+import { SortOrdersEnum } from '../../common/enums/sort-orders-enum'
 import { ReleasesSortFieldsEnum } from '../enums/releases-sort-fields-enum'
 import { ReleaseSortFields, ReleaseSortKey } from './sort'
 

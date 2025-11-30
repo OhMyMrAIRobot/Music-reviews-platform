@@ -1,5 +1,5 @@
+import type { SortOrder } from '../types/common/types/sort-order'
 import { ReviewsSortFieldsEnum } from '../types/review'
-import type { SortOrder } from '../types/sort-order-type'
 
 export const releaseDetailsKeys = {
 	all: ['releaseDetails'] as const,

@@ -5,8 +5,8 @@ import AuthorCommentCard from '../../components/author/author-comment/Author-com
 import AuthorCommentColorSvg from '../../components/author/author-comment/svg/Author-comment-color-svg'
 import ComboBox from '../../components/buttons/Combo-box'
 import Pagination from '../../components/pagination/Pagination'
-import { SortOrdersEnum } from '../../models/sort/sort-orders-enum'
 import { authorCommentsKeys } from '../../query-keys/author-comments-keys'
+import { SortOrdersEnum } from '../../types/common/enums/sort-orders-enum'
 import { ReviewSortFields } from '../../types/review'
 
 const PER_PAGE = 12

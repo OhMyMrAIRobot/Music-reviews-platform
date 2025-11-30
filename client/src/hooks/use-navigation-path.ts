@@ -1,5 +1,5 @@
-import { SearchTypesEnum } from '../models/search/search-types-enum'
 import { ROUTES } from '../routes/routes-enum'
+import { SearchTypesEnum } from '../types/common/enums/search-types-enum'
 
 const useNavigationPath = () => {
 	const navigateToMain = `${ROUTES.MAIN}`

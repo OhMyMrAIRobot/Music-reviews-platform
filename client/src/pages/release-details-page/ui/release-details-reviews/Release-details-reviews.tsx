@@ -2,13 +2,13 @@ import { useQuery } from '@tanstack/react-query'
 import { FC, useState } from 'react'
 import { ReviewAPI } from '../../../../api/review/review-api.ts'
 import Pagination from '../../../../components/pagination/Pagination.tsx'
-import { SortOrdersEnum } from '../../../../models/sort/sort-orders-enum.ts'
 import { releaseDetailsKeys } from '../../../../query-keys/release-details-keys.ts'
+import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum.ts'
+import { SortOrder } from '../../../../types/common/types/sort-order.ts'
 import {
 	ReleaseReviewSortFields,
 	ReviewsSortFieldsEnum,
 } from '../../../../types/review/index.ts'
-import { SortOrder } from '../../../../types/sort-order-type.ts'
 import ReleaseDetailsReviewsHeader from './Release-details-reviews-header.tsx'
 import ReleaseDetailsReviewsItem from './Release-details-reviews-item.tsx'
 

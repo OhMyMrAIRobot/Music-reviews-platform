@@ -6,13 +6,13 @@ import Pagination from '../../../../../components/pagination/Pagination'
 import ReleaseMediaStatusIcon from '../../../../../components/release/release-media/Release-media-status-icon'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import { useReleaseMediaMeta } from '../../../../../hooks/use-release-media-meta'
-import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
 import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys'
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum'
+import { SortOrder } from '../../../../../types/common/types/sort-order'
 import {
 	ReleaseMediaStatusesFilterOptions,
 	ReleaseMediaTypesFilterOptions,
 } from '../../../../../types/release'
-import { SortOrder } from '../../../../../types/sort-order-type'
 import AdminFilterButton from '../../buttons/Admin-filter-button'
 import AdminDashboardMediaGridItem from './Admin-dashboard-media-grid-item'
 import MediaFormModal from './Media-form-modal'

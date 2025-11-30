@@ -4,9 +4,9 @@ import { AuthorCommentAPI } from '../../../../api/author/author-comment-api'
 import AuthorCommentColorSvg from '../../../../components/author/author-comment/svg/Author-comment-color-svg'
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
-import { SortOrdersEnum } from '../../../../models/sort/sort-orders-enum'
 import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys'
-import { CarouselRef } from '../../../../types/carousel-ref'
+import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum'
+import { CarouselRef } from '../../../../types/common/types/carousel-ref'
 import AuthorCommentsCarousel from './carousel/Author-comments-carousel'
 
 const limit = 15

@@ -2,8 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 import { FC } from 'react'
 import { ReleaseAPI } from '../../../api/release/release-api'
 import ReleasesColumn from '../../../components/release/releases-column/Releases-column'
-import { SortOrdersEnum } from '../../../models/sort/sort-orders-enum'
 import { releasesKeys } from '../../../query-keys/releases-keys'
+import { SortOrdersEnum } from '../../../types/common/enums/sort-orders-enum'
 import {
 	ReleasesSortFieldsEnum,
 	ReleaseTypesEnum,

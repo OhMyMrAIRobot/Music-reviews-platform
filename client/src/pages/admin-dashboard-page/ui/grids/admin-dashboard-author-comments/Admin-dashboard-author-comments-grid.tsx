@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react'
 import { AuthorCommentAPI } from '../../../../../api/author/author-comment-api'
 import AdminHeader from '../../../../../components/layout/admin-header/Admin-header'
 import Pagination from '../../../../../components/pagination/Pagination'
-import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
 import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys'
-import { SortOrder } from '../../../../../types/sort-order-type'
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum'
+import { SortOrder } from '../../../../../types/common/types/sort-order'
 import AdminDashboardAuthorCommentsGridItem from './Admin-dashboard-author-comments-grid-item'
 
 const perPage = 10

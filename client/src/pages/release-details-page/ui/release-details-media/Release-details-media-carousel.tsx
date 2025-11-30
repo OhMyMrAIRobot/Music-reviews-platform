@@ -8,8 +8,8 @@ import {
 	useState,
 } from 'react'
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
-import { CarouselRef } from '../../../../types/carousel-ref'
-import { CarouselStateCallbacks } from '../../../../types/carousel-state-callbacks'
+import { CarouselRef } from '../../../../types/common/types/carousel-ref'
+import { CarouselStateCallbacks } from '../../../../types/common/types/carousel-state-callbacks'
 import { ReleaseMedia } from '../../../../types/release'
 import ReleaseDetailsMediaItem from './Release-details-media-item'
 

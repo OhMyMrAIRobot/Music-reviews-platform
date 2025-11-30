@@ -4,9 +4,9 @@ import { UserAPI } from '../../../../../api/user/user-api.ts'
 import AdminHeader from '../../../../../components/layout/admin-header/Admin-header.tsx'
 import Pagination from '../../../../../components/pagination/Pagination.tsx'
 import UserRoleSvg from '../../../../../components/user/User-role-svg.tsx'
-import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum.ts'
 import { usersKeys } from '../../../../../query-keys/users-keys.ts'
-import { SortOrder } from '../../../../../types/sort-order-type.ts'
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum.ts'
+import { SortOrder } from '../../../../../types/common/types/sort-order.ts'
 import {
 	RolesEnum,
 	RolesFilterOptions,

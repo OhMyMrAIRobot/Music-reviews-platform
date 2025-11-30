@@ -5,7 +5,7 @@ import { NominationAPI } from '../../api/nomination-api'
 import ComboBox from '../../components/buttons/Combo-box'
 import SkeletonLoader from '../../components/utils/Skeleton-loader'
 import useNavigationPath from '../../hooks/use-navigation-path'
-import { MonthEnum, MonthEnumType } from '../../types/month-enum-type'
+import { MonthEnumType, MonthsEnum } from '../../types/common/enums/months-enum'
 import NominationCarouselContainer from './ui/carousel/Nomination-carousel-container'
 
 const AwardsPage = () => {
@@ -47,7 +47,7 @@ const AwardsPage = () => {
 					to={navigateToVotes}
 					className='w-40 bg-white h-full rounded-lg text-black flex items-center justify-center font-medium text-sm px-3 py-2 hover:bg-white/80 transition-colors duration-200 text-center'
 				>
-					Голосование за {MonthEnum[new Date().getMonth() as MonthEnumType]}
+					Голосование за {MonthsEnum[new Date().getMonth() as MonthEnumType]}
 				</Link>
 
 				<div className='w-full rounded-lg border border-white/10 bg-zinc-900 p-3 shadow-sm flex gap-4 items-center'>

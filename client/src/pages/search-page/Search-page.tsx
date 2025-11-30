@@ -6,9 +6,9 @@ import { ReleaseAPI } from '../../api/release/release-api'
 import AuthorsGrid from '../../components/author/authors-grid/Authors-grid'
 import ReleasesGrid from '../../components/release/Releases-grid'
 import useNavigationPath from '../../hooks/use-navigation-path'
-import { SearchTypesEnum } from '../../models/search/search-types-enum'
 import { authorsKeys } from '../../query-keys/authors-keys'
 import { releasesKeys } from '../../query-keys/releases-keys'
+import { SearchTypesEnum } from '../../types/common/enums/search-types-enum'
 
 const perPage = 10
 

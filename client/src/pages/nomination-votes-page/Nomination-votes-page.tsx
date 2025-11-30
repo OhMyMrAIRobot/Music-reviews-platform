@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useNominationVotes } from '../../hooks/use-nomination-votes'
 import { useStore } from '../../hooks/use-store'
-import { MonthEnum, MonthEnumType } from '../../types/month-enum-type'
+import { MonthEnumType, MonthsEnum } from '../../types/common/enums/months-enum'
 import { NominationTypesEnum } from '../../types/nomination'
 import NominationVotesSection from './ui/Nomination-votes-section'
 
@@ -42,7 +42,7 @@ const NominationVotesPage = () => {
 	return (
 		<>
 			<h1 className='text-lg md:text-xl lg:text-3xl font-semibold'>
-				Голосование за {MonthEnum[new Date().getUTCMonth() as MonthEnumType]}
+				Голосование за {MonthsEnum[new Date().getUTCMonth() as MonthEnumType]}
 			</h1>
 
 			<div className='mt-10 grid lg:grid-cols-2 gap-5'>

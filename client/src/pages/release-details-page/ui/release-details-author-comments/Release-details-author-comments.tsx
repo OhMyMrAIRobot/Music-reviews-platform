@@ -2,8 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 import { FC } from 'react'
 import { AuthorCommentAPI } from '../../../../api/author/author-comment-api'
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
-import { SortOrdersEnum } from '../../../../models/sort/sort-orders-enum'
 import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys'
+import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum'
 import ReleaseDetailsAuthorCommentItem from './Release-details-author-comment-item'
 
 interface IProps {

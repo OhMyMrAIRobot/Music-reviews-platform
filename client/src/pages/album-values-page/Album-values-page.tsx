@@ -6,12 +6,12 @@ import ComboBox from '../../components/buttons/Combo-box'
 import FormCheckbox from '../../components/form-elements/Form-checkbox'
 import FormLabel from '../../components/form-elements/Form-label'
 import Pagination from '../../components/pagination/Pagination'
-import { SortOrdersEnum } from '../../models/sort/sort-orders-enum'
 import { albumValuesKeys } from '../../query-keys/album-values-keys'
 import {
 	AlbumValueSortOptions,
 	AlbumValueTiersEnum,
 } from '../../types/album-value'
+import { SortOrdersEnum } from '../../types/common/enums/sort-orders-enum'
 import { ALBUM_VALUES } from '../../utils/album-value-config'
 
 const PER_PAGE = 12

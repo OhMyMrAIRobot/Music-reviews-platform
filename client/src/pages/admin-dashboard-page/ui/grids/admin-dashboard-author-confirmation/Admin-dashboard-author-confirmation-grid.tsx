@@ -6,10 +6,10 @@ import AdminHeader from '../../../../../components/layout/admin-header/Admin-hea
 import Pagination from '../../../../../components/pagination/Pagination'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import { useAuthorConfirmationMeta } from '../../../../../hooks/use-author-confirmation-meta'
-import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
 import { authorConfirmationsKeys } from '../../../../../query-keys/author-confirmation-keys'
 import { AuthorConfirmationStatusesFilterOptions } from '../../../../../types/author'
-import { SortOrder } from '../../../../../types/sort-order-type'
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum'
+import { SortOrder } from '../../../../../types/common/types/sort-order'
 import AdminFilterButton from '../../buttons/Admin-filter-button'
 import AdminDashboardAuthorConfirmationGridItem from './Admin-dashboard-author-confirmation-grid-item'
 

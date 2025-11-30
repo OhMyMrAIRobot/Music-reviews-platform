@@ -8,8 +8,8 @@ import {
 	useImperativeHandle,
 	useState,
 } from 'react'
-import { CarouselRef } from '../../types/carousel-ref'
-import { CarouselStateCallbacks } from '../../types/carousel-state-callbacks.ts'
+import { CarouselRef } from '../../types/common/types/carousel-ref.ts'
+import { CarouselStateCallbacks } from '../../types/common/types/carousel-state-callbacks.ts'
 import { Review } from '../../types/review/index.ts'
 import ReviewCard from '../review/review-card/Review-card'
 

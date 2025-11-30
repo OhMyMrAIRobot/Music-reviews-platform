@@ -9,9 +9,9 @@ import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
 import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler.ts'
 import useNavigationPath from '../../../../../hooks/use-navigation-path.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
-import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum.ts'
 import { usersKeys } from '../../../../../query-keys/users-keys.ts'
-import { SortOrder } from '../../../../../types/sort-order-type.ts'
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum.ts'
+import { SortOrder } from '../../../../../types/common/types/sort-order.ts'
 import {
 	UserDetails,
 	UserStatusesEnum,

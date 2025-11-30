@@ -1,7 +1,10 @@
 import { FC } from 'react'
 import ComboBox from '../../../components/buttons/Combo-box'
 import SkeletonLoader from '../../../components/utils/Skeleton-loader'
-import { MonthEnum, MonthEnumType } from '../../../types/month-enum-type'
+import {
+	MonthEnumType,
+	MonthsEnum,
+} from '../../../types/common/enums/months-enum'
 
 interface IProps {
 	selectedMonth: number
@@ -23,7 +26,7 @@ const ReleasesRatingPageHeader: FC<IProps> = ({
 }) => {
 	const handleMonthChange = (value: string) => {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const entry = Object.entries(MonthEnum).find(([_, name]) => name === value)
+		const entry = Object.entries(MonthsEnum).find(([_, name]) => name === value)
 		const month = entry ? parseInt(entry[0], 10) : selectedMonth
 		setSelectedMonth(month)
 	}
@@ -74,11 +77,11 @@ const ReleasesRatingPageHeader: FC<IProps> = ({
 								<SkeletonLoader className='size-full rounded-md' />
 							) : (
 								<ComboBox
-									options={Object.values(MonthEnum)}
+									options={Object.values(MonthsEnum)}
 									onChange={handleMonthChange}
 									className='border border-white/10'
 									value={
-										MonthEnum[selectedMonth as MonthEnumType] ?? 'Неизвестно'
+										MonthsEnum[selectedMonth as MonthEnumType] ?? 'Неизвестно'
 									}
 								/>
 							)}

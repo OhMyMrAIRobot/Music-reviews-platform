@@ -4,7 +4,7 @@ import { ReviewAPI } from '../../../api/review/review-api'
 import CarouselContainer from '../../../components/carousel/Carousel-container'
 import LastReviewsCarousel from '../../../components/carousel/Last-reviews-carousel'
 import { reviewsKeys } from '../../../query-keys/reviews-keys'
-import { CarouselRef } from '../../../types/carousel-ref'
+import { CarouselRef } from '../../../types/common/types/carousel-ref'
 
 interface IProps {
 	id: string

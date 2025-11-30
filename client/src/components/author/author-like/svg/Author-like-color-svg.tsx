@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { ISvgProps } from '../../../../models/svg/svg-props'
+import { ISvgProps } from '../../../../types/common/types/svg-props'
 
 const AuthorLikeColorSvg: FC<ISvgProps> = ({ className }) => {
 	const gradientId = `paint0_linear_${Math.random().toString(36).substr(2, 9)}`

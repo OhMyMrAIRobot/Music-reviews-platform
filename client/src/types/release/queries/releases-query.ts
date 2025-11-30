@@ -1,4 +1,4 @@
-import { SortOrder } from '../../sort-order-type'
+import { SortOrder } from '../../common/types/sort-order'
 import { ReleasesSortFieldsEnum } from '../enums/releases-sort-fields-enum'
 
 /**

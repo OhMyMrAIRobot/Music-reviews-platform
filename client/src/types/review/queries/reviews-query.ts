@@ -1,4 +1,4 @@
-import { SortOrder } from '../../sort-order-type'
+import { SortOrder } from '../../common/types/sort-order'
 import { ReviewsSortFieldsEnum } from '../enums'
 
 /**

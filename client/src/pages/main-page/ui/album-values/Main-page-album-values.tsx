@@ -4,7 +4,7 @@ import { AlbumValueAPI } from '../../../../api/album-value-api'
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { albumValuesKeys } from '../../../../query-keys/album-values-keys'
-import { CarouselRef } from '../../../../types/carousel-ref'
+import { CarouselRef } from '../../../../types/common/types/carousel-ref'
 import MainPageAlbumValuesCarousel from './Main-page-album-values-carousel'
 
 const limit = 15

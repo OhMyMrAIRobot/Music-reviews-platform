@@ -9,8 +9,8 @@ import {
 } from 'react'
 import AuthorCommentCard from '../../../../../components/author/author-comment/Author-comment-card'
 import { AuthorComment } from '../../../../../types/author'
-import { CarouselRef } from '../../../../../types/carousel-ref'
-import { CarouselStateCallbacks } from '../../../../../types/carousel-state-callbacks'
+import { CarouselRef } from '../../../../../types/common/types/carousel-ref'
+import { CarouselStateCallbacks } from '../../../../../types/common/types/carousel-state-callbacks'
 
 interface IProps extends CarouselStateCallbacks {
 	items: AuthorComment[]

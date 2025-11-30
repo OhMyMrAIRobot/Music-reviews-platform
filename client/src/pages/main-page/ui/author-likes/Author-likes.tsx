@@ -5,7 +5,7 @@ import AuthorLikeColorSvg from '../../../../components/author/author-like/svg/Au
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { authorLikesKeys } from '../../../../query-keys/author-likes-keys'
-import { CarouselRef } from '../../../../types/carousel-ref'
+import { CarouselRef } from '../../../../types/common/types/carousel-ref'
 import AuthorLikesCarousel from './carousel/Author-likes-carousel'
 
 const LIMIT = 20

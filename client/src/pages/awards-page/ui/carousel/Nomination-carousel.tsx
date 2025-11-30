@@ -7,8 +7,8 @@ import {
 	useImperativeHandle,
 	useState,
 } from 'react'
-import { CarouselRef } from '../../../../types/carousel-ref'
-import { CarouselStateCallbacks } from '../../../../types/carousel-state-callbacks'
+import { CarouselRef } from '../../../../types/common/types/carousel-ref'
+import { CarouselStateCallbacks } from '../../../../types/common/types/carousel-state-callbacks'
 import { NominationWinner } from '../../../../types/nomination'
 import NominationWinnerCard from './Nomination-winner'
 

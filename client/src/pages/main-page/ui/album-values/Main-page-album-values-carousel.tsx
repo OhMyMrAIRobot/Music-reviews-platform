@@ -9,8 +9,8 @@ import {
 } from 'react'
 import AlbumValueCard from '../../../../components/album-value/Album-value-card'
 import { AlbumValue } from '../../../../types/album-value'
-import { CarouselRef } from '../../../../types/carousel-ref'
-import { CarouselStateCallbacks } from '../../../../types/carousel-state-callbacks'
+import { CarouselRef } from '../../../../types/common/types/carousel-ref'
+import { CarouselStateCallbacks } from '../../../../types/common/types/carousel-state-callbacks'
 
 interface IProps extends CarouselStateCallbacks {
 	isLoading: boolean

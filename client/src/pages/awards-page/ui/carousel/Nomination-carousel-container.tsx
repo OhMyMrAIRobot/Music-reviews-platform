@@ -1,7 +1,10 @@
 import { FC, useRef, useState } from 'react'
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
-import { CarouselRef } from '../../../../types/carousel-ref'
-import { MonthEnum, MonthEnumType } from '../../../../types/month-enum-type'
+import {
+	MonthEnumType,
+	MonthsEnum,
+} from '../../../../types/common/enums/months-enum'
+import { CarouselRef } from '../../../../types/common/types/carousel-ref'
 import { NominationMonthWinners } from '../../../../types/nomination'
 import NominationCarousel from './Nomination-carousel'
 
@@ -19,7 +22,7 @@ const NominationCarouselContainer: FC<IProps> = ({ item, isLoading, idx }) => {
 
 	return (
 		<CarouselContainer
-			title={MonthEnum[(item?.month ?? idx + 1) as MonthEnumType]}
+			title={MonthsEnum[(item?.month ?? idx + 1) as MonthEnumType]}
 			buttonTitle={'#'}
 			showButton={false}
 			href={'#'}

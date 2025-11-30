@@ -8,8 +8,8 @@ import {
 	useState,
 } from 'react'
 import AuthorLikeCard from '../../../../../components/author/author-like/Author-like-card'
-import { CarouselRef } from '../../../../../types/carousel-ref'
-import { CarouselStateCallbacks } from '../../../../../types/carousel-state-callbacks'
+import { CarouselRef } from '../../../../../types/common/types/carousel-ref'
+import { CarouselStateCallbacks } from '../../../../../types/common/types/carousel-state-callbacks'
 import { AuthorLike } from '../../../../../types/review'
 
 interface IProps extends CarouselStateCallbacks {

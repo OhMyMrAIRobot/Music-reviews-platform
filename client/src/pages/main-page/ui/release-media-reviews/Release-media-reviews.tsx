@@ -5,9 +5,9 @@ import { ReleaseMediaAPI } from '../../../../api/release/release-media-api'
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useReleaseMediaMeta } from '../../../../hooks/use-release-media-meta'
-import { SortOrdersEnum } from '../../../../models/sort/sort-orders-enum'
 import { releaseMediaKeys } from '../../../../query-keys/release-media-keys'
-import { CarouselRef } from '../../../../types/carousel-ref'
+import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum'
+import { CarouselRef } from '../../../../types/common/types/carousel-ref'
 import {
 	ReleaseMediaStatusesEnum,
 	ReleaseMediaTypesEnum,

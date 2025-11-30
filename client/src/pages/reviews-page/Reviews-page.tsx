@@ -4,8 +4,8 @@ import { ReviewAPI } from '../../api/review/review-api'
 import ComboBox from '../../components/buttons/Combo-box'
 import Pagination from '../../components/pagination/Pagination'
 import ReviewCard from '../../components/review/review-card/Review-card'
-import { SortOrdersEnum } from '../../models/sort/sort-orders-enum'
 import { reviewsKeys } from '../../query-keys/reviews-keys'
+import { SortOrdersEnum } from '../../types/common/enums/sort-orders-enum'
 import { ReviewSortFields, ReviewsSortFieldsEnum } from '../../types/review'
 
 const PER_PAGE = 12

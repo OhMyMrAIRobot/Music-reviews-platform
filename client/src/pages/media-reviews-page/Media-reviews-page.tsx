@@ -5,14 +5,14 @@ import ComboBox from '../../components/buttons/Combo-box'
 import Pagination from '../../components/pagination/Pagination'
 import ReleaseMediaReview from '../../components/release/release-media/Release-media-review'
 import { useReleaseMediaMeta } from '../../hooks/use-release-media-meta'
-import { SortOrdersEnum } from '../../models/sort/sort-orders-enum'
 import { releaseMediaKeys } from '../../query-keys/release-media-keys'
+import { SortOrdersEnum } from '../../types/common/enums/sort-orders-enum'
+import type { SortOrder } from '../../types/common/types/sort-order'
 import {
 	ReleaseMediaStatusesEnum,
 	ReleaseMediaTypesEnum,
 } from '../../types/release'
 import { ReviewSortFields } from '../../types/review'
-import type { SortOrder } from '../../types/sort-order-type'
 
 const PER_PAGE = 12
 

@@ -11,13 +11,13 @@ import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import { useAuthorConfirmationMeta } from '../../../../../hooks/use-author-confirmation-meta'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../../hooks/use-store'
-import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
 import { authorConfirmationsKeys } from '../../../../../query-keys/author-confirmation-keys'
 import {
 	AuthorConfirmation,
 	AuthorConfirmationStatusesEnum,
 } from '../../../../../types/author'
-import { SortOrder } from '../../../../../types/sort-order-type'
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum'
+import { SortOrder } from '../../../../../types/common/types/sort-order'
 import { getReleaseMediaStatusColor } from '../../../../../utils/get-release-media-status-color'
 import AdminDeleteButton from '../../buttons/Admin-delete-button'
 import AdminSvgButton from '../../buttons/Admin-svg-button'

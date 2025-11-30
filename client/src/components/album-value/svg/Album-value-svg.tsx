@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { ISvgProps } from '../../../models/svg/svg-props'
+import { ISvgProps } from '../../../types/common/types/svg-props'
 
 const AlbumValueSvg: FC<ISvgProps> = ({ className }) => {
 	return (

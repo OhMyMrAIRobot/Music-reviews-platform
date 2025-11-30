@@ -3,7 +3,7 @@ import { FC, useRef, useState } from 'react'
 import { NominationAPI } from '../../../../api/nomination-api'
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
 import { nominationsKeys } from '../../../../query-keys/nominations-keys'
-import { CarouselRef } from '../../../../types/carousel-ref'
+import { CarouselRef } from '../../../../types/common/types/carousel-ref'
 import AuthorDetailsNominationsCarousel from './Author-details-nominations-carousel'
 
 interface IProps {

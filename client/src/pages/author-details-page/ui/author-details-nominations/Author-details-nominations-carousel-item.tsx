@@ -2,7 +2,10 @@ import { FC, useRef } from 'react'
 import { Link } from 'react-router'
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
-import { MonthEnum, MonthEnumType } from '../../../../types/month-enum-type'
+import {
+	MonthEnumType,
+	MonthsEnum,
+} from '../../../../types/common/enums/months-enum'
 import {
 	AuthorNominationWin,
 	NominationTypesEnum,
@@ -127,7 +130,7 @@ const AuthorDetailsNominationsCarouselItem: FC<IProps> = ({
 								{item.nominationType}
 							</div>
 							<div className='text-[10px] lg:text-sm opacity-40 font-semibold'>
-								{MonthEnum[item.month as MonthEnumType]} {item.year}
+								{MonthsEnum[item.month as MonthEnumType]} {item.year}
 							</div>
 						</div>
 

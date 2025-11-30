@@ -6,10 +6,10 @@ import AdminHeader from '../../../../../components/layout/admin-header/Admin-hea
 import Pagination from '../../../../../components/pagination/Pagination'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import { useFeedbackMeta } from '../../../../../hooks/use-feedback-meta'
-import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
 import { feedbackKeys } from '../../../../../query-keys/feedback-keys'
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum'
+import { SortOrder } from '../../../../../types/common/types/sort-order'
 import { FeedbackStatusesFilterEnum } from '../../../../../types/feedback'
-import { SortOrder } from '../../../../../types/sort-order-type'
 import AdminFilterButton from '../../buttons/Admin-filter-button'
 import AdminDashboardFeedbackGridItem from './Admin-dashboard-feedback-grid-item'
 
