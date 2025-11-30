@@ -14,6 +14,20 @@ export class UserFavMediaService {
     private readonly releaseMediaService: ReleaseMediaService,
   ) {}
 
+  /**
+   * Add media to user's favorites.
+   *
+   * Validates that:
+   * - user and media exist
+   * - user is not the media owner
+   * - media is an approved media review
+   * - favorite doesn't already exist
+   *
+   * @param mediaId - id of the media to favorite
+   * @param userId - id of the user adding the favorite
+   * @returns created UserFavMedia record
+   * @throws ConflictException when user owns the media, media is not eligible, or already favorited
+   */
   async create(mediaId: string, userId: string): Promise<UserFavMedia> {
     await this.usersService.findOne(userId);
     const media = await this.releaseMediaService.findOne(mediaId);
@@ -49,6 +63,17 @@ export class UserFavMediaService {
     });
   }
 
+  /**
+   * Remove media from user's favorites.
+   *
+   * Validates that both user and media exist, ensures the favorite
+   * exists, then removes the association.
+   *
+   * @param mediaId - id of the media to unfavorite
+   * @param userId - id of the user removing the favorite
+   * @returns deleted UserFavMedia record
+   * @throws ConflictException when the media was not favorited
+   */
   async remove(mediaId: string, userId: string): Promise<UserFavMedia> {
     await this.releaseMediaService.findOne(mediaId);
     await this.usersService.findOne(userId);
@@ -68,6 +93,15 @@ export class UserFavMediaService {
     });
   }
 
+  /**
+   * Check if a specific user-media favorite relationship exists.
+   *
+   * Internal helper used to prevent duplicates and validate removals.
+   *
+   * @param mediaId - id of the media
+   * @param userId - id of the user
+   * @returns UserFavMedia record if exists, null otherwise
+   */
   private findByMediaUserIds(
     mediaId: string,
     userId: string,

@@ -1,5 +1,5 @@
 import { NominationTypesEnum } from 'src/nomination-types/types/nomination-types.enum';
-import { ReleaseRatingTypesEnum } from 'src/shared/types/release-rating-types.enum';
+import { ReleaseRatingTypesEnum } from 'src/releases/types/release-rating-types.enum';
 
 /**
  * ReleaseType: brief information about the release type.

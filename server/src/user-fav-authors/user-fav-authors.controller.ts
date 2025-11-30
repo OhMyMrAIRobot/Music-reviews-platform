@@ -1,7 +1,6 @@
 import {
   Controller,
   Delete,
-  Get,
   Param,
   Post,
   Request,
@@ -15,18 +14,14 @@ import { UserFavAuthorsService } from './user-fav-authors.service';
 export class UserFavAuthorsController {
   constructor(private readonly userFavAuthorsService: UserFavAuthorsService) {}
 
-  @Get('user/:id')
-  findByUserId(@Param('id') id: string) {
-    return this.userFavAuthorsService.findByUserId(id);
-  }
-
-  @Get('author/:id')
-  findByAuthorId(@Param('id') id: string) {
-    return this.userFavAuthorsService.findByAuthorId(id);
-  }
-
-  @UseGuards(JwtAuthGuard)
+  /**
+   * POST /user-fav-authors/:authorId
+   *
+   * Adds an author to the authenticated user's favorites.
+   * Requires authentication.
+   */
   @Post(':authorId')
+  @UseGuards(JwtAuthGuard)
   create(
     @Param('authorId') authorId: string,
     @Request() req: IAuthenticatedRequest,
@@ -34,8 +29,14 @@ export class UserFavAuthorsController {
     return this.userFavAuthorsService.create(authorId, req.user.id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  /**
+   * DELETE /user-fav-authors/:authorId
+   *
+   * Removes an author from the authenticated user's favorites.
+   * Requires authentication.
+   */
   @Delete(':authorId')
+  @UseGuards(JwtAuthGuard)
   remove(
     @Param('authorId') authorId: string,
     @Request() req: IAuthenticatedRequest,

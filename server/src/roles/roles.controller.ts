@@ -1,5 +1,4 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { Role } from '@prisma/client';
 import { RolesService } from './roles.service';
 
 @Controller('roles')
@@ -10,11 +9,9 @@ export class RolesController {
    * GET /roles
    *
    * Returns all available roles.
-   *
-   * @returns Promise<Role[]>
    */
   @Get()
-  async findAll(): Promise<Role[]> {
+  async findAll() {
     return this.roleService.findAll();
   }
 
@@ -26,10 +23,9 @@ export class RolesController {
    * 404 response by the global exception filter.
    *
    * @param id - role entity id
-   * @returns Promise<Role>
    */
   @Get(':id')
-  async findById(@Param('id') id: string): Promise<Role> {
+  async findById(@Param('id') id: string) {
     return this.roleService.findById(id);
   }
 }

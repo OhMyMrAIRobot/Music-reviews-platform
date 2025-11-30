@@ -1,7 +1,6 @@
 import {
   Controller,
   Delete,
-  Get,
   Param,
   Post,
   Request,
@@ -17,18 +16,14 @@ export class UserFavReleasesController {
     private readonly userFavReleasesService: UserFavReleasesService,
   ) {}
 
-  @Get('user/:id')
-  findByUserId(@Param('id') id: string) {
-    return this.userFavReleasesService.findByUserId(id);
-  }
-
-  @Get('release/:id')
-  findByReleaseId(@Param('id') id: string) {
-    return this.userFavReleasesService.findByReleaseId(id);
-  }
-
-  @UseGuards(JwtAuthGuard)
+  /**
+   * POST /user-fav-releases/:releaseId
+   *
+   * Adds a release to the authenticated user's favorites.
+   * Requires authentication.
+   */
   @Post(':releaseId')
+  @UseGuards(JwtAuthGuard)
   create(
     @Param('releaseId') releaseId: string,
     @Request() req: IAuthenticatedRequest,
@@ -36,8 +31,14 @@ export class UserFavReleasesController {
     return this.userFavReleasesService.create(releaseId, req.user.id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  /**
+   * DELETE /user-fav-releases/:releaseId
+   *
+   * Removes a release from the authenticated user's favorites.
+   * Requires authentication.
+   */
   @Delete(':releaseId')
+  @UseGuards(JwtAuthGuard)
   remove(
     @Param('releaseId') releaseId: string,
     @Request() req: IAuthenticatedRequest,
