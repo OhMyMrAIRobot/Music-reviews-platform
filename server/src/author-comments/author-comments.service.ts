@@ -112,10 +112,6 @@ export class AuthorCommentsService {
   async findAll(
     query: AuthorCommentsQueryDto,
   ): Promise<AuthorCommentsResponseDto> {
-    if (query.releaseId) {
-      await this.releasesService.findOne(query.releaseId);
-    }
-
     const { result } = await this.executeRawQuery(query);
 
     return result;

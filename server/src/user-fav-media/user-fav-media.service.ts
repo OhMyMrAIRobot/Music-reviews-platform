@@ -1,13 +1,10 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { UserFavMedia } from '@prisma/client';
-import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
 import { ReleaseMediaStatusesEnum } from 'src/release-media-statuses/types/release-media-statuses.enum';
 import { ReleaseMediaTypesEnum } from 'src/release-media-types/types/release-media-types.enum';
 import { ReleaseMediaService } from 'src/release-media/release-media.service';
-import { EntityNotFoundException } from 'src/shared/exceptions/entity-not-found.exception';
 import { UsersService } from 'src/users/users.service';
-import { FindUserFavByMediaIdResponseDto } from './dto/response/find-user-fav-by-media-id.response.dto';
 
 @Injectable()
 export class UserFavMediaService {
@@ -19,7 +16,7 @@ export class UserFavMediaService {
 
   async create(mediaId: string, userId: string): Promise<UserFavMedia> {
     await this.usersService.findOne(userId);
-    const media = await this.releaseMediaService.findById(mediaId);
+    const media = await this.releaseMediaService.findOne(mediaId);
 
     if (media.userId === userId) {
       throw new ConflictException(
@@ -52,53 +49,8 @@ export class UserFavMediaService {
     });
   }
 
-  async findByMediaId(
-    mediaId: string,
-  ): Promise<FindUserFavByMediaIdResponseDto> {
-    const media = await this.prisma.releaseMedia.findUnique({
-      where: { id: mediaId },
-      select: {
-        id: true,
-        release: {
-          select: {
-            releaseProducer: { select: { authorId: true } },
-            releaseArtist: { select: { authorId: true } },
-            releaseDesigner: { select: { authorId: true } },
-          },
-        },
-      },
-    });
-
-    if (!media) {
-      throw new EntityNotFoundException('Медиарецензия', 'id', mediaId);
-    }
-
-    const favs = await this.prisma.userFavMedia.findMany({
-      where: { mediaId },
-      include: {
-        user: {
-          select: {
-            id: true,
-            nickname: true,
-            profile: { select: { avatar: true } },
-            registeredAuthor: { select: { authorId: true } },
-          },
-        },
-      },
-    });
-
-    return plainToInstance(
-      FindUserFavByMediaIdResponseDto,
-      {
-        userFavMedia: favs,
-        release: media.release,
-      },
-      { excludeExtraneousValues: true },
-    );
-  }
-
   async remove(mediaId: string, userId: string): Promise<UserFavMedia> {
-    await this.releaseMediaService.findById(mediaId);
+    await this.releaseMediaService.findOne(mediaId);
     await this.usersService.findOne(userId);
 
     const exist = await this.findByMediaUserIds(mediaId, userId);

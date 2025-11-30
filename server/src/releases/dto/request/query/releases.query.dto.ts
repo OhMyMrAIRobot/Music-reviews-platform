@@ -11,8 +11,7 @@ import { SortOrder } from 'src/shared/types/sort-order.type';
  *
  * Query parameters for listing releases. Supports filtering by author,
  * release type, search text and publication date. Also provides sorting
- * and pagination controls. Validation errors/messages are provided in
- * Russian (see individual validators).
+ * and pagination controls.
  */
 export class ReleasesQueryDto {
   /**

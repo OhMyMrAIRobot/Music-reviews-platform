@@ -5,6 +5,7 @@ import { ReleaseMediaTypesModule } from 'src/release-media-types/release-media-t
 import { ReleasesModule } from 'src/releases/releases.module';
 import { ReviewsModule } from 'src/reviews/reviews.module';
 import { UsersModule } from 'src/users/users.module';
+import { AdminReleaseMediaController } from './admin-release-media.controller';
 import { ReleaseMediaController } from './release-media.controller';
 import { ReleaseMediaService } from './release-media.service';
 
@@ -17,7 +18,7 @@ import { ReleaseMediaService } from './release-media.service';
     UsersModule,
     ReviewsModule,
   ],
-  controllers: [ReleaseMediaController],
+  controllers: [ReleaseMediaController, AdminReleaseMediaController],
   providers: [ReleaseMediaService],
   exports: [ReleaseMediaService],
 })

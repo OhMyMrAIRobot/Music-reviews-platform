@@ -1,7 +1,6 @@
 import {
   Controller,
   Delete,
-  Get,
   Param,
   Post,
   Request,
@@ -22,11 +21,6 @@ export class UserFavMediaController {
     @Request() req: IAuthenticatedRequest,
   ) {
     return this.userFavMediaService.create(mediaId, req.user.id);
-  }
-
-  @Get(':mediaId')
-  findByMediaId(@Param('mediaId') mediaId: string) {
-    return this.userFavMediaService.findByMediaId(mediaId);
   }
 
   @UseGuards(JwtAuthGuard)
