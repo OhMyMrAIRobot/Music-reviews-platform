@@ -1,8 +1,8 @@
 import { observer } from 'mobx-react-lite'
 import { Navigate } from 'react-router'
 import { useStore } from '../hooks/use-store'
-import { RolesEnum } from '../models/role/roles-enum'
 import AdminDashboardPage from '../pages/admin-dashboard-page/Admin-dashboard-page'
+import { RolesEnum } from '../types/user'
 import { ROUTES } from './routes-enum'
 
 const AdminRoute = observer(() => {

@@ -6,7 +6,7 @@ import FormInput from '../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../components/form-elements/Form-label'
 import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import { useStore } from '../../../../hooks/use-store'
-import { IUpdateUserData } from '../../../../models/user/update-user-data'
+import { UpdateUserData } from '../../../../types/user'
 import EditProfilePageSection from '../Edit-profile-page-section'
 
 const UpdateUserInfoForm = () => {
@@ -23,7 +23,7 @@ const UpdateUserInfoForm = () => {
 	const handleApiError = useApiErrorHandler()
 
 	const updateMutation = useMutation({
-		mutationFn: (data: IUpdateUserData) => UserAPI.updateUser(data),
+		mutationFn: (data: UpdateUserData) => UserAPI.update(data),
 		onSuccess: data => {
 			const { user, accessToken, emailSent } = data
 			authStore.setAuthorization(user, accessToken)

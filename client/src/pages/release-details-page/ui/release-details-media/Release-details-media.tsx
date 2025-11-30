@@ -5,11 +5,11 @@ import CarouselNavButton from '../../../../components/carousel/Carousel-nav-butt
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
 import { useReleaseMediaMeta } from '../../../../hooks/use-release-media-meta'
 import { useStore } from '../../../../hooks/use-store'
-import { RolesEnum } from '../../../../models/role/roles-enum'
 import { SortOrdersEnum } from '../../../../models/sort/sort-orders-enum'
 import { releaseMediaKeys } from '../../../../query-keys/release-media-keys'
 import { CarouselRef } from '../../../../types/carousel-ref'
 import { ReleaseMediaStatusesEnum } from '../../../../types/release'
+import { RolesEnum } from '../../../../types/user'
 import ReleaseDetailsMediaCarousel from './Release-details-media-carousel'
 
 interface IProps {

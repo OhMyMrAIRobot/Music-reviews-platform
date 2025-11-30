@@ -10,7 +10,16 @@ import PreventableLink from '../../../../components/utils/Preventable-link'
 import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
-import { IRegistrationRequest } from '../../../../models/auth/request/registration-request'
+import { RegisterData } from '../../../../types/auth'
+
+type RegistrationFormState = {
+	email: string
+	nickname: string
+	password: string
+	passwordConfirm: string
+	agreementChecked: boolean
+	policyChecked: boolean
+}
 
 const RegistrationForm = () => {
 	const { authStore, notificationStore } = useStore()
@@ -19,7 +28,7 @@ const RegistrationForm = () => {
 
 	const handleApiError = useApiErrorHandler()
 
-	const [formData, setFormData] = useState<IRegistrationRequest>({
+	const [formData, setFormData] = useState<RegistrationFormState>({
 		email: '',
 		nickname: '',
 		password: '',
@@ -29,8 +38,7 @@ const RegistrationForm = () => {
 	})
 
 	const { mutateAsync: register, isPending: isLoading } = useMutation({
-		mutationFn: (data: IRegistrationRequest) =>
-			AuthAPI.register(data.email, data.nickname, data.password),
+		mutationFn: (data: RegisterData) => AuthAPI.register(data),
 		onSuccess: data => {
 			const { user, accessToken, emailSent } = data
 			authStore.setAuthorization(user, accessToken)

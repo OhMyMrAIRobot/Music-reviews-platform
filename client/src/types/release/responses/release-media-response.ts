@@ -10,7 +10,7 @@ export type ReleaseMediaResponse = {
 	/** Pagination / collection metadata */
 	meta: MetaInfo
 
-	/** Array of release media DTOs */
+	/** Array of release media items */
 	items: ReleaseMedia[]
 }
 

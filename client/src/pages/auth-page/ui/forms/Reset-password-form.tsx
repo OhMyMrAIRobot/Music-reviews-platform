@@ -10,7 +10,12 @@ import FormTitle from '../../../../components/form-elements/Form-title'
 import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
-import { IResetPasswordRequest } from '../../../../models/auth/request/reset-password-request'
+import { ResetPasswordData } from '../../../../types/auth'
+
+type ResetPasswordFormState = {
+	password: string
+	passwordConfirm: string
+}
 
 const ResetPasswordForm = () => {
 	const { token } = useParams()
@@ -23,7 +28,7 @@ const ResetPasswordForm = () => {
 
 	const handleApiError = useApiErrorHandler()
 
-	const [formData, setFormData] = useState<IResetPasswordRequest>({
+	const [formData, setFormData] = useState<ResetPasswordFormState>({
 		password: '',
 		passwordConfirm: '',
 	})
@@ -37,8 +42,8 @@ const ResetPasswordForm = () => {
 	}, [formData])
 
 	const { mutateAsync: reset, isPending: isLoading } = useMutation({
-		mutationFn: ({ password, token }: { password: string; token: string }) =>
-			AuthAPI.resetPassword(password, token),
+		mutationFn: ({ password, token }: ResetPasswordData) =>
+			AuthAPI.resetPassword({ password, token }),
 		onSuccess: data => {
 			const { user, accessToken } = data
 			authStore.setAuthorization(user, accessToken)

@@ -8,6 +8,7 @@ import FormSubTitle from '../../../../components/form-elements/Form-subtitle'
 import FormTitle from '../../../../components/form-elements/Form-title'
 import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import { useStore } from '../../../../hooks/use-store'
+import { SendResetPasswordData } from '../../../../types/auth'
 import { generateUUID } from '../../../../utils/generate-uuid'
 
 const ReqResetPasswordForm = () => {
@@ -18,7 +19,8 @@ const ReqResetPasswordForm = () => {
 	const handleApiError = useApiErrorHandler()
 
 	const { mutateAsync: sendRequest, isPending: isLoading } = useMutation({
-		mutationFn: (email: string) => AuthAPI.reqResetPassword(email),
+		mutationFn: (data: SendResetPasswordData) =>
+			AuthAPI.sendResetPassword(data),
 		onSuccess: data => {
 			if (data.emailSent) {
 				notificationStore.addNotification({
@@ -42,7 +44,7 @@ const ReqResetPasswordForm = () => {
 
 	const onSubmit = async () => {
 		if (isLoading || !email.trim()) return
-		await sendRequest(email.trim())
+		await sendRequest({ email: email.trim() })
 	}
 
 	return (

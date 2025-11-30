@@ -4,10 +4,13 @@ import { UserAPI } from '../../../../../api/user/user-api.ts'
 import AdminHeader from '../../../../../components/layout/admin-header/Admin-header.tsx'
 import Pagination from '../../../../../components/pagination/Pagination.tsx'
 import UserRoleSvg from '../../../../../components/user/User-role-svg.tsx'
-import { RolesFilterOptions } from '../../../../../models/role/roles-filter-options.ts'
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum.ts'
 import { usersKeys } from '../../../../../query-keys/users-keys.ts'
 import { SortOrder } from '../../../../../types/sort-order-type.ts'
+import {
+	RolesEnum,
+	RolesFilterOptions,
+} from '../../../../../types/user/index.ts'
 import AdminFilterButton from '../../buttons/Admin-filter-button.tsx'
 import AdminDashboardUsersGridItem from './Admin-dashboard-users-grid-item.tsx'
 
@@ -15,7 +18,7 @@ const perPage = 10
 
 const AdminDashboardUsersGrid = () => {
 	const [searchText, setSearchText] = useState<string>('')
-	const [activeOption, setActiveOption] = useState<string>(
+	const [activeOption, setActiveOption] = useState<RolesFilterOptions>(
 		RolesFilterOptions.ALL
 	)
 	const [currentPage, setCurrentPage] = useState<number>(1)
@@ -30,21 +33,24 @@ const AdminDashboardUsersGrid = () => {
 	})
 
 	const queryFn = () =>
-		UserAPI.fetchUsers(
-			searchText.trim().length > 0 ? searchText.trim() : null,
-			activeOption !== RolesFilterOptions.ALL ? activeOption : null,
+		UserAPI.findAll({
+			search: searchText.trim().length > 0 ? searchText.trim() : undefined,
+			role:
+				activeOption !== RolesFilterOptions.ALL
+					? (activeOption as unknown as RolesEnum) // TODO: FIX
+					: undefined,
 			order,
-			perPage,
-			(currentPage - 1) * perPage
-		)
+			limit: perPage,
+			offset: (currentPage - 1) * perPage,
+		})
 
 	const { data: usersData, isPending: isLoading } = useQuery({
 		queryKey,
 		queryFn,
 	})
 
-	const users = usersData?.users || []
-	const count = usersData?.total || 0
+	const users = usersData?.items || []
+	const count = usersData?.meta.count || 0
 
 	useEffect(() => {
 		setCurrentPage(1)

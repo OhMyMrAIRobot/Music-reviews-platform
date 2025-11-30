@@ -26,7 +26,7 @@ export const App = observer(() => {
 
 	const { data, error, isFetching } = useQuery({
 		queryKey: authKeys.auth,
-		queryFn: AuthAPI.checkAuth,
+		queryFn: AuthAPI.refresh,
 		enabled: !!localStorage.getItem('token') && !authStore.isAuth,
 		staleTime: Infinity,
 	})

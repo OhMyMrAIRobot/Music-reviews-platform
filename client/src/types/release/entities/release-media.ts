@@ -38,7 +38,7 @@ export type ReleaseMedia = {
 	createdAt: string
 }
 
-/** Minimal user representation returned in `ReleaseMediaDto.user`. */
+/** Minimal user representation returned in `ReleaseMedia.user`. */
 type User = {
 	id: string
 	nickname: string
@@ -47,7 +47,7 @@ type User = {
 	rank: number | null
 }
 
-/** Minimal release representation returned in `ReleaseMediaDto.release`. */
+/** Minimal release representation returned in `ReleaseMedia.release`. */
 type Release = {
 	id: string
 	title: string

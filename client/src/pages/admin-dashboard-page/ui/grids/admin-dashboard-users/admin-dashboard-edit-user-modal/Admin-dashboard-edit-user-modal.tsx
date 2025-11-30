@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
 import { FC, useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router'
@@ -19,26 +19,27 @@ import useNavigationPath from '../../../../../../hooks/use-navigation-path.ts'
 import { useRoleMeta } from '../../../../../../hooks/use-role-meta.ts'
 import { useSocialMeta } from '../../../../../../hooks/use-social-meta.ts'
 import { useStore } from '../../../../../../hooks/use-store.ts'
-import {
-	AdminAvailableRolesEnum,
-	RolesEnum,
-	RootAdminAvalaibleRolesEnum,
-} from '../../../../../../models/role/roles-enum.ts'
-import { IUpdateUserData } from '../../../../../../models/user/update-user-data.ts'
-import { UserStatusesEnum } from '../../../../../../models/user/user-statuses-enum.ts'
 import { usersKeys } from '../../../../../../query-keys/users-keys.ts'
 import { UpdateProfileData } from '../../../../../../types/profile/index.ts'
+import {
+	AdminAvailableRolesEnum,
+	AdminUpdateUserData,
+	RolesEnum,
+	RootAdminAvalaibleRolesEnum,
+	UserDetails,
+	UserStatusesEnum,
+} from '../../../../../../types/user/index.ts'
 import { getRoleColor } from '../../../../../../utils/get-role-color.ts'
 import EditUserModalButton from './Edit-user-modal-button.tsx'
 
 interface IProps {
-	userId: string
 	isOpen: boolean
 	onClose: () => void
+	user: UserDetails
 }
 
 const AdminDashboardEditUserModal: FC<IProps> = observer(
-	({ userId, isOpen, onClose }) => {
+	({ isOpen, onClose, user }) => {
 		const { authStore, notificationStore } = useStore()
 
 		const { navigatoToProfile } = useNavigationPath()
@@ -64,21 +65,15 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 
 		const queryClient = useQueryClient()
 
-		const { data: user, isLoading: isUserLoading } = useQuery({
-			queryKey: usersKeys.id(userId),
-			queryFn: () => UserAPI.fetchUserDetails(userId),
-			enabled: isOpen,
-		})
-
 		const updateUserMutation = useMutation({
-			mutationFn: (data: { id: string; updateData: IUpdateUserData }) =>
-				UserAPI.adminUpdateUser(data.id, data.updateData),
+			mutationFn: (data: { id: string; updateData: AdminUpdateUserData }) =>
+				UserAPI.adminUpdate(data.id, data.updateData),
 			onSuccess: () => {
 				notificationStore.addSuccessNotification(
 					'Информация о пользователе успешно обновлена'
 				)
 				queryClient.invalidateQueries({ queryKey: usersKeys.all })
-				queryClient.invalidateQueries({ queryKey: usersKeys.id(userId) })
+				queryClient.invalidateQueries({ queryKey: usersKeys.id(user.id) })
 			},
 			onError: (error: unknown) => {
 				handleApiError(error)
@@ -91,14 +86,13 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 			onSuccess: () => {
 				notificationStore.addSuccessNotification('Вы успешно обновили профиль!')
 				queryClient.invalidateQueries({ queryKey: usersKeys.all })
-				queryClient.invalidateQueries({ queryKey: usersKeys.id(userId) })
+				queryClient.invalidateQueries({ queryKey: usersKeys.id(user.id) })
 			},
 			onError: (error: unknown) => {
 				handleApiError(error)
 			},
 		})
 
-		// helper to safely read user's profile social url
 		const getUserSocialUrl = useCallback(
 			(socialId: string) => {
 				const socialsArr = user?.profile?.socialMedia ?? []
@@ -169,7 +163,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 			// Call only necessary mutations
 			if (hasUserChanges) {
 				updateUserMutation.mutate({
-					id: userId,
+					id: user.id,
 					updateData: {
 						nickname: nicknameChanged ? nickname.trim() : undefined,
 						email: emailChanged ? email.trim() : undefined,
@@ -184,7 +178,10 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 				if (bioChanged) profilePayload.bio = bio
 				if (changedSocials.length > 0) profilePayload.socials = changedSocials
 
-				updateProfileMutation.mutate({ id: userId, updateData: profilePayload })
+				updateProfileMutation.mutate({
+					id: user.id,
+					updateData: profilePayload,
+				})
 			}
 		}
 
@@ -198,7 +195,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 				}
 				className='max-lg:size-full'
 			>
-				{isUserLoading || isRolesLoading ? (
+				{isRolesLoading ? (
 					<SkeletonLoader className='w-full lg:w-180 h-190 rounded-lg' />
 				) : (
 					user && (
@@ -233,7 +230,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 								</div>
 
 								<div className='lg:absolute right-3 top-3 grid lg:flex gap-3'>
-									<Link to={navigatoToProfile(userId)} className='md:w-45'>
+									<Link to={navigatoToProfile(user.id)} className='md:w-45'>
 										<EditUserModalButton
 											title={'Профиль'}
 											svg={<MoveToSvg className={'size-4'} />}
@@ -406,7 +403,6 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 											disabled={
 												authStore.user?.id === user.id ||
 												updateUserMutation.isPending ||
-												isUserLoading ||
 												isRolesLoading ||
 												nickname.length === 0 ||
 												email.length === 0 ||

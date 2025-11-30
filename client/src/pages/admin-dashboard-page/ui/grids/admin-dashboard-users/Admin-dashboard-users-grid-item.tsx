@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { AxiosError } from 'axios'
 import { FC, useState } from 'react'
 import { Link } from 'react-router'
 import { UserAPI } from '../../../../../api/user/user-api.ts'
@@ -7,13 +6,16 @@ import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bo
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal.tsx'
 import UserRoleSvg from '../../../../../components/user/User-role-svg.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
+import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler.ts'
 import useNavigationPath from '../../../../../hooks/use-navigation-path.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum.ts'
-import { UserStatusesEnum } from '../../../../../models/user/user-statuses-enum.ts'
-import { IUser } from '../../../../../models/user/user.ts'
 import { usersKeys } from '../../../../../query-keys/users-keys.ts'
 import { SortOrder } from '../../../../../types/sort-order-type.ts'
+import {
+	UserDetails,
+	UserStatusesEnum,
+} from '../../../../../types/user/index.ts'
 import { getRoleColor } from '../../../../../utils/get-role-color.ts'
 import AdminDeleteButton from '../../buttons/Admin-delete-button.tsx'
 import AdminEditButton from '../../buttons/Admin-edit-button.tsx'
@@ -21,7 +23,7 @@ import AdminDashboardEditUserModal from './admin-dashboard-edit-user-modal/Admin
 
 interface IProps {
 	className?: string
-	user?: IUser
+	user?: UserDetails
 	isLoading: boolean
 	position?: number
 	order?: SortOrder
@@ -42,11 +44,12 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [editModelOpen, setEditModalOpen] = useState<boolean>(false)
+	const handleApiError = useApiErrorHandler()
 
 	const queryClient = useQueryClient()
 
 	const deleteMutation = useMutation({
-		mutationFn: (id: string) => UserAPI.adminDeleteUser(id),
+		mutationFn: (id: string) => UserAPI.adminDelete(id),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification(
 				'Вы успешно удалили пользователя!'
@@ -55,14 +58,7 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 			setConfModalOpen(false)
 		},
 		onError: (error: unknown) => {
-			const axiosError = error as AxiosError<{ message: string | string[] }>
-			const errors = Array.isArray(axiosError.response?.data?.message)
-				? axiosError.response?.data?.message
-				: [axiosError.response?.data?.message]
-			errors
-				.filter((err): err is string => typeof err === 'string')
-				.forEach((err: string) => notificationStore.addErrorNotification(err))
-
+			handleApiError(error)
 			setConfModalOpen(false)
 		},
 	})
@@ -83,8 +79,8 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 
 					<AdminDashboardEditUserModal
 						isOpen={editModelOpen}
-						userId={user.id}
 						onClose={() => setEditModalOpen(false)}
+						user={user}
 					/>
 				</>
 			)}
@@ -102,9 +98,9 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 						loading='lazy'
 						decoding='async'
 						src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-							user.avatar === ''
+							user.profile?.avatar === ''
 								? import.meta.env.VITE_DEFAULT_AVATAR
-								: user.avatar
+								: user.profile?.avatar
 						}`}
 						className='absolute right-0 top-0 xl:hidden rounded-lg size-22 aspect-square select-none object-cover'
 					/>
@@ -120,9 +116,9 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 								loading='lazy'
 								decoding='async'
 								src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-									user.avatar === ''
+									user.profile?.avatar === ''
 										? import.meta.env.VITE_DEFAULT_AVATAR
-										: user.avatar
+										: user.profile?.avatar
 								}`}
 								className='max-xl:hidden size-9 aspect-square rounded-full select-none object-cover'
 							/>
@@ -170,14 +166,11 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 							<span className='xl:hidden'>Роль: </span>
 							<div
 								className={`flex max-xl:ml-0.5 gap-x-1 items-center ${getRoleColor(
-									user.role
+									user.role.role
 								)}`}
 							>
-								<UserRoleSvg
-									role={{ role: user.role, id: '0' }}
-									className={'size-5'}
-								/>
-								<span>{user.role}</span>
+								<UserRoleSvg role={user.role} className={'size-5'} />
+								<span>{user.role.role}</span>
 							</div>
 						</>
 					) : (

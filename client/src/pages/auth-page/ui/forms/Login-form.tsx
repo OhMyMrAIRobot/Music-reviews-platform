@@ -10,6 +10,7 @@ import PreventableLink from '../../../../components/utils/Preventable-link'
 import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
+import { LoginData } from '../../../../types/auth'
 
 const LoginForm = () => {
 	const [email, setEmail] = useState<string>('')
@@ -22,8 +23,8 @@ const LoginForm = () => {
 	const handleApiError = useApiErrorHandler()
 
 	const { mutateAsync: login, isPending: isLoading } = useMutation({
-		mutationFn: ({ email, password }: { email: string; password: string }) =>
-			AuthAPI.login(email, password),
+		mutationFn: ({ email, password }: LoginData) =>
+			AuthAPI.login({ email, password }),
 		onSuccess: data => {
 			const { user, accessToken } = data
 			authStore.setAuthorization(user, accessToken)

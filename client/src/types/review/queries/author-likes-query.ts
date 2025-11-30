@@ -1,5 +1,5 @@
 /**
- * AuthorLikeQueryDto — query parameters for fetching author-like relations.
+ * AuthorLikeQuery — query parameters for fetching author-like relations.
  *
  */
 export type AuthorLikesQuery = {

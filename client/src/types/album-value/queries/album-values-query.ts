@@ -2,7 +2,7 @@ import { AlbumValueTiersEnum } from '..'
 import { SortOrder } from '../../sort-order-type'
 
 /**
- * Query DTO for listing album values.
+ * Query for listing album values.
  *
  * Used by endpoints that return paginated album value summaries. All fields
  * are optional and control filtering, sorting and pagination of results.

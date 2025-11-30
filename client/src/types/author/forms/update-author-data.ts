@@ -3,7 +3,7 @@ import { CreateAuthorData } from './create-author-data'
 /**
  * Describes form data for updating an existing author.
  *
- * Extends the `CreateAuthorRequestDto` as a partial type
+ * Extends the `CreateAuthorRequest` as a partial type
  * so all create fields are optional for updates.
  * Additionally allows two boolean flags to request clearing
  * the stored avatar or cover images.
