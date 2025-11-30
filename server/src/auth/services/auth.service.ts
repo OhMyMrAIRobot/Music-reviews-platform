@@ -10,8 +10,7 @@ import { UserRoleEnum } from 'src/roles/types/user-role.enum';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { RolesService } from '../../roles/roles.service';
 import { InvalidCredentialsException } from '../../shared/exceptions/invalid-credentials.exception';
-import { UserWithPasswordResponseDto } from '../../users/dto/response/user-with-password.response.dto';
-import { UserResponseDto } from '../../users/dto/response/user.response.dto';
+import { UserDto } from '../../users/dto/response/user.dto';
 import { UsersService } from '../../users/users.service';
 import { LoginRequestDto } from '../dto/request/login.request.dto';
 import { RegisterRequestDto } from '../dto/request/register.request.dto';
@@ -29,9 +28,18 @@ export class AuthService {
     private readonly prisma: PrismaService,
   ) {}
 
-  async validateUser(dto: LoginRequestDto): Promise<UserResponseDto> {
-    const user: UserWithPasswordResponseDto =
-      await this.usersService.findByEmail(dto.email, true);
+  /**
+   * Validate user credentials for login.
+   *
+   * Looks up the user by email and verifies the provided password against
+   * the stored hash. Returns a sanitized UserDto on success.
+   *
+   * @param dto - login credentials (email and password)
+   * @returns UserDto for the authenticated user
+   * @throws InvalidCredentialsException when email not found or password invalid
+   */
+  async validateUser(dto: LoginRequestDto): Promise<UserDto> {
+    const user = await this.usersService.findByEmail(dto.email, true);
 
     if (
       !user ||
@@ -40,10 +48,20 @@ export class AuthService {
       throw new InvalidCredentialsException();
     }
 
-    return plainToInstance(UserResponseDto, user);
+    return plainToInstance(UserDto, user);
   }
 
-  async login(res: Response, user: UserResponseDto) {
+  /**
+   * Complete user login by generating tokens and setting cookies.
+   *
+   * Creates access and refresh tokens, persists the refresh token in the
+   * database (hashed), and sets the refresh token as an httpOnly cookie.
+   *
+   * @param res - Express Response object to set cookies
+   * @param user - validated UserDto for the authenticated user
+   * @returns object containing user data and access token
+   */
+  async login(res: Response, user: UserDto) {
     const role = await this.rolesService.findById(user.role.id);
 
     const validRole = this.rolesService.getValidRole(role.role);
@@ -73,6 +91,15 @@ export class AuthService {
     return { user, accessToken: tokens.accessToken };
   }
 
+  /**
+   * Log out a user by invalidating their refresh token.
+   *
+   * Decodes the refresh token to identify the user, deletes the stored
+   * token from the database, and clears the refresh token cookie.
+   *
+   * @param res - Express Response object to clear cookies
+   * @param refreshToken - refresh token from the user's cookie
+   */
   async logout(res: Response, refreshToken: string) {
     const decodedToken = this.tokensService.decodeRefreshToken(refreshToken);
 
@@ -81,6 +108,17 @@ export class AuthService {
     res.clearCookie('refreshToken');
   }
 
+  /**
+   * Refresh user session using a valid refresh token.
+   *
+   * Validates the provided refresh token against the stored hash, then
+   * generates a new token pair and updates the session.
+   *
+   * @param res - Express Response object to set new cookies
+   * @param refreshToken - refresh token from the user's cookie
+   * @returns object containing user data and new access token
+   * @throws UnauthorizedException when refresh token is invalid or doesn't match
+   */
   async refresh(res: Response, refreshToken: string) {
     const decodedToken = this.tokensService.decodeRefreshToken(refreshToken);
 
@@ -93,9 +131,21 @@ export class AuthService {
     }
 
     const user = await this.usersService.findOne(decodedToken.id);
-    return this.login(res, plainToInstance(UserResponseDto, user));
+    return this.login(res, plainToInstance(UserDto, user));
   }
 
+  /**
+   * Register a new user account.
+   *
+   * Validates that email and nickname are unique, hashes the password,
+   * assigns the USER role, and creates both User and UserProfile records
+   * in a transaction. Automatically logs in the new user on success.
+   *
+   * @param res - Express Response object to set cookies
+   * @param dto - registration data (email, nickname, password)
+   * @returns object containing user data and access token
+   * @throws InternalServerErrorException on database errors during registration
+   */
   async register(res: Response, dto: RegisterRequestDto) {
     await this.usersService.isUserExists(dto.email, dto.nickname);
 
@@ -126,7 +176,7 @@ export class AuthService {
         return user;
       });
 
-      return this.login(res, plainToInstance(UserResponseDto, user));
+      return this.login(res, plainToInstance(UserDto, user));
     } catch {
       throw new InternalServerErrorException(
         'Ошибка при выполении регистрации',
@@ -134,6 +184,17 @@ export class AuthService {
     }
   }
 
+  /**
+   * Activate a user account using an activation token.
+   *
+   * Decodes and validates the activation token, marks the user as active,
+   * and automatically logs them in.
+   *
+   * @param res - Express Response object to set cookies
+   * @param token - JWT activation token from email link
+   * @returns object containing user data and access token
+   * @throws InvalidTokenException when token is invalid or expired
+   */
   async activateAccount(res: Response, token: string) {
     const { id } = this.tokensService.decodeActionToken(
       token,
@@ -145,6 +206,18 @@ export class AuthService {
     return this.login(res, user);
   }
 
+  /**
+   * Reset user password using a password reset token.
+   *
+   * Decodes and validates the reset token, verifies the user exists,
+   * hashes the new password, updates the database, and logs the user in.
+   *
+   * @param res - Express Response object to set cookies
+   * @param token - JWT password reset token from email link
+   * @param dto - new password data
+   * @returns object containing user data and access token
+   * @throws InvalidTokenException when token is invalid or expired
+   */
   async resetPassword(
     res: Response,
     token: string,
@@ -165,6 +238,6 @@ export class AuthService {
       include: { role: true, registeredAuthor: true },
     });
 
-    return this.login(res, plainToInstance(UserResponseDto, updatedUser));
+    return this.login(res, plainToInstance(UserDto, updatedUser));
   }
 }

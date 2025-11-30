@@ -20,9 +20,8 @@ import { Roles } from '../shared/decorators/roles.decorator';
 import { JwtAuthGuard } from '../shared/guards/jwt-auth.guard';
 import { RolesGuard } from '../shared/guards/roles.guard';
 import { AdminUpdateUserRequestDto } from './dto/request/admin-update-user.request.dto';
-import { FindUsersQuery } from './dto/request/query/find-users.query.dto';
+import { UsersQueryDto } from './dto/request/query/users.query.dto';
 import { UpdateUserRequestDto } from './dto/request/update-user.request.dto';
-import { UserResponseDto } from './dto/response/user.response.dto';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -34,8 +33,15 @@ export class UsersController {
     private readonly mailsService: MailsService,
   ) {}
 
-  @UseGuards(JwtAuthGuard)
+  /**
+   * PATCH /users
+   *
+   * Update the authenticated user's profile. Requires authentication.
+   * On success this endpoint returns new auth tokens and a flag
+   * indicating whether an activation email was sent (when email changed).
+   */
   @Patch()
+  @UseGuards(JwtAuthGuard)
   async update(
     @Res() res: Response,
     @Request() req: IAuthenticatedRequest,
@@ -65,29 +71,54 @@ export class UsersController {
     return res.status(200).send({ ...result, emailSent });
   }
 
-  @UseGuards(JwtAuthGuard)
+  /**
+   * DELETE /users
+   *
+   * Delete the authenticated user's account. Requires authentication.
+   * Performs cleanup of profile files and related data.
+   */
   @Delete()
+  @UseGuards(JwtAuthGuard)
   async delete(@Request() req: IAuthenticatedRequest) {
     return this.usersService.delete(req.user.id);
   }
 
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  /**
+   * GET /users
+   *
+   * Admin-only endpoint. Returns a paginated list of users according to
+   * provided query parameters. Delegates to `UsersService.findAll`.
+   */
   @Get()
-  async findAll(@Query() query: FindUsersQuery) {
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  async findAll(@Query() query: UsersQueryDto) {
     return this.usersService.findAll(query);
   }
 
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  /**
+   * GET /users/:id
+   *
+   * Admin-only endpoint. Returns detailed information for a single user,
+   * including profile and social media. Delegates to
+   * `UsersService.findUserDetails` which throws when the user does not exist.
+   */
   @Get(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   async findUserDetails(@Param('id') id: string) {
     return this.usersService.findUserDetails(id);
   }
 
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  /**
+   * PATCH /users/:id
+   *
+   * Admin-only endpoint to update any user's fields. Validates admin
+   * permissions and delegates to `UsersService.adminUpdate`.
+   */
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   async adminUpdateUser(
     @Param('id') id: string,
     @Body() dto: AdminUpdateUserRequestDto,
@@ -96,13 +127,19 @@ export class UsersController {
     return this.usersService.adminUpdate(id, dto, req);
   }
 
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  /**
+   * DELETE /users/:id
+   *
+   * Admin-only endpoint to delete a user by id. Enforces permissions and
+   * delegates deletion to `UsersService.adminDelete`.
+   */
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
   async removeById(
     @Param('id') id: string,
     @Request() req: IAuthenticatedRequest,
-  ): Promise<UserResponseDto> {
+  ) {
     return this.usersService.adminDelete(req, id);
   }
 }
