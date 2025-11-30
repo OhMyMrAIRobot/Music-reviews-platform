@@ -3,13 +3,12 @@ import { FC, useState } from 'react'
 import { ReleaseMediaAPI } from '../../../../api/release/release-media-api'
 import Pagination from '../../../../components/pagination/Pagination'
 import ReleaseMediaReview from '../../../../components/release/release-media/Release-media-review'
-import { useQueryListFavToggleAll } from '../../../../hooks/use-query-list-fav-toggle'
 import { useReleaseMediaMeta } from '../../../../hooks/use-release-media-meta'
-import { IReleaseMedia } from '../../../../models/release/release-media/release-media'
-import { ReleaseMediaStatusesEnum } from '../../../../models/release/release-media/release-media-status/release-media-statuses-enum'
-import { ReleaseMediaTypesEnum } from '../../../../models/release/release-media/release-media-type/release-media-types-enum'
 import { profileKeys } from '../../../../query-keys/profile-keys'
-import { toggleFavMedia } from '../../../../utils/toggle-fav-media'
+import {
+	ReleaseMediaStatusesEnum,
+	ReleaseMediaTypesEnum,
+} from '../../../../types/release'
 
 interface IProps {
 	userId: string
@@ -40,26 +39,33 @@ const ProfileMediaReviewsGrid: FC<IProps> = ({ userId }) => {
 	const { data: mediaData, isPending: isMediaLoading } = useQuery({
 		queryKey,
 		queryFn: () =>
-			typeId && statusId
-				? ReleaseMediaAPI.fetchReleaseMedia(
-						perPage,
-						(currentPage - 1) * perPage,
-						statusId,
-						typeId,
-						null,
-						userId,
-						null,
-						null
-				  )
-				: Promise.resolve({ releaseMedia: [], count: 0 }),
-		enabled: !isMetaLoading && !!typeId && !!statusId,
+			ReleaseMediaAPI.findAll(
+				{
+					limit: perPage,
+					offset: (currentPage - 1) * perPage,
+					userId,
+					statusId,
+					typeId,
+				}
+				// perPage,
+				// (currentPage - 1) * perPage,
+				// statusId,
+				// typeId,
+				// null,
+				// userId,
+				// null,
+				// null
+			),
+		enabled: !isMetaLoading && !!typeId && !!statusId && !!userId,
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const { storeToggle } = useQueryListFavToggleAll<
-		IReleaseMedia,
-		{ releaseMedia: IReleaseMedia[] }
-	>(['profile', 'media'], 'releaseMedia', toggleFavMedia)
+	// const { storeToggle } = useQueryListFavToggleAll<
+	// 	IReleaseMedia,
+	// 	{ releaseMedia: IReleaseMedia[] }
+	// >(['profile', 'media'], 'releaseMedia', toggleFavMedia)
+
+	const items = mediaData?.items || []
 
 	return (
 		<section>
@@ -71,29 +77,27 @@ const ProfileMediaReviewsGrid: FC<IProps> = ({ userId }) => {
 								isLoading={true}
 							/>
 					  ))
-					: mediaData?.releaseMedia.map(media => (
+					: items.map(media => (
 							<ReleaseMediaReview
 								key={media.id}
 								media={media}
-								toggleFav={storeToggle}
+								toggleFav={undefined} // TODO: FIX TOGGLE
 								isLoading={false}
 							/>
 					  ))}
 			</div>
 
-			{!isMediaLoading &&
-				!isMediaLoading &&
-				mediaData?.releaseMedia.length === 0 && (
-					<p className='text-center text-2xl font-semibold mt-10'>
-						Медиарецензии не найдены!
-					</p>
-				)}
+			{!isMediaLoading && !isMediaLoading && items.length === 0 && (
+				<p className='text-center text-2xl font-semibold mt-10'>
+					Медиарецензии не найдены!
+				</p>
+			)}
 
-			{mediaData && mediaData.releaseMedia.length > 0 && (
+			{mediaData && items.length > 0 && (
 				<div className='mt-10'>
 					<Pagination
 						currentPage={currentPage}
-						totalItems={mediaData.count ?? 0}
+						totalItems={mediaData.meta.count ?? 0}
 						itemsPerPage={perPage}
 						setCurrentPage={setCurrentPage}
 						idToScroll={'profile-sections'}

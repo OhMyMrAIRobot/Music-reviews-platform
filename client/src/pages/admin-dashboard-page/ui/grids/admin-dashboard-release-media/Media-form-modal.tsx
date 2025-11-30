@@ -9,22 +9,29 @@ import FormLabel from '../../../../../components/form-elements/Form-label'
 import FormSingleSelect from '../../../../../components/form-elements/Form-single-select'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
+import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler'
 import { useReleaseMediaMeta } from '../../../../../hooks/use-release-media-meta'
 import { useStore } from '../../../../../hooks/use-store'
-import { IReleaseMedia } from '../../../../../models/release/release-media/release-media'
 import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys'
 import { releasesKeys } from '../../../../../query-keys/releases-keys'
+import {
+	AdminCreateReleaseMediaData,
+	AdminUpdateReleaseMediaData,
+	ReleaseMedia,
+} from '../../../../../types/release'
 
 interface IProps {
 	isOpen: boolean
 	onClose: () => void
-	media?: IReleaseMedia
+	media?: ReleaseMedia
 }
 
 const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 	const { notificationStore } = useStore()
 
 	const { statuses, types, isLoading: isMetaLoading } = useReleaseMediaMeta()
+
+	const handleApiError = useApiErrorHandler()
 
 	const queryClient = useQueryClient()
 
@@ -56,26 +63,8 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 	const releases = releasesData?.items || []
 
 	const createMutation = useMutation({
-		mutationFn: ({
-			title,
-			url,
-			releaseId,
-			typeId,
-			statusId,
-		}: {
-			title: string
-			url: string
-			releaseId: string
-			typeId: string
-			statusId: string
-		}) =>
-			ReleaseMediaAPI.adminPostReleaseMedia(
-				title,
-				url,
-				releaseId,
-				typeId,
-				statusId
-			),
+		mutationFn: (data: AdminCreateReleaseMediaData) =>
+			ReleaseMediaAPI.adminCreate(data),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification('Медиа успешно добавлено!')
 			queryClient.invalidateQueries({ queryKey: releaseMediaKeys.all })
@@ -83,42 +72,18 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 			onClose()
 		},
 		onError: (error: unknown) => {
-			const axiosError = error as {
-				response?: { data?: { message?: string[] } }
-			}
-			const errors = axiosError?.response?.data?.message || [
-				'Ошибка при добавлении медиа',
-			]
-			errors.forEach((err: string) =>
-				notificationStore.addErrorNotification(err)
-			)
+			handleApiError(error)
 		},
 	})
 
 	const updateMutation = useMutation({
 		mutationFn: ({
 			id,
-			title,
-			url,
-			releaseId,
-			typeId,
-			statusId,
+			data,
 		}: {
 			id: string
-			title?: string
-			url?: string
-			releaseId?: string
-			typeId?: string
-			statusId?: string
-		}) =>
-			ReleaseMediaAPI.adminUpdateReleaseMedia(
-				id,
-				title,
-				url,
-				releaseId,
-				typeId,
-				statusId
-			),
+			data: AdminUpdateReleaseMediaData
+		}) => ReleaseMediaAPI.adminUpdate(id, data),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification('Медиа успешно обновлено!')
 			queryClient.invalidateQueries({ queryKey: releaseMediaKeys.all })
@@ -126,15 +91,7 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 			onClose()
 		},
 		onError: (error: unknown) => {
-			const axiosError = error as {
-				response?: { data?: { message?: string[] } }
-			}
-			const errors = axiosError?.response?.data?.message || [
-				'Ошибка при обновлении медиа',
-			]
-			errors.forEach((err: string) =>
-				notificationStore.addErrorNotification(err)
-			)
+			handleApiError(error)
 		},
 	})
 
@@ -145,25 +102,26 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 		const statusId = statuses.find(s => s.status === status)?.id
 		const releaseId = releases.find(r => r.title === release)?.id
 
-		if ((!typeId || !statusId || !releaseId) && !media) return
-
 		if (!media) {
-			createMutation.mutate({
-				title: title.trim(),
-				url: url.trim(),
-				releaseId: releaseId!,
-				typeId: typeId!,
-				statusId: statusId!,
-			})
+			if (typeId && statusId && releaseId)
+				createMutation.mutate({
+					title: title.trim(),
+					url: url.trim(),
+					releaseId: releaseId,
+					releaseMediaTypeId: typeId,
+					releaseMediaStatusId: statusId,
+				})
 		} else {
 			updateMutation.mutate({
 				id: media.id,
-				title: title.trim() !== media.title ? title.trim() : undefined,
-				url: url.trim() !== media.url ? url.trim() : undefined,
-				releaseId: releaseId !== media.release.id ? releaseId : undefined,
-				typeId: typeId !== media.releaseMediaType.id ? typeId : undefined,
-				statusId:
-					statusId !== media.releaseMediaStatus.id ? statusId : undefined,
+				data: {
+					title: title.trim() !== media.title ? title.trim() : undefined,
+					url: url.trim() !== media.url ? url.trim() : undefined,
+					releaseId: releaseId !== media.release.id ? releaseId : undefined,
+					releaseMediaTypeId: typeId !== media.type.id ? typeId : undefined,
+					releaseMediaStatusId:
+						statusId !== media.status.id ? statusId : undefined,
+				},
 			})
 		}
 	}
@@ -191,8 +149,8 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 		return (
 			title.trim() !== media.title ||
 			url.trim() !== media.url ||
-			type !== media.releaseMediaType.type ||
-			status !== media.releaseMediaStatus.status ||
+			type !== media.type.type ||
+			status !== media.status.status ||
 			release !== media.release.title
 		)
 	}, [media, release, status, title, type, url])
@@ -201,8 +159,8 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 		if (isOpen && media) {
 			setTitle(media.title)
 			setUrl(media.url)
-			setStatus(media.releaseMediaStatus.status)
-			setType(media.releaseMediaType.type)
+			setStatus(media.status.status)
+			setType(media.type.type)
 			setRelease(media.release.title)
 		}
 	}, [isOpen, media])

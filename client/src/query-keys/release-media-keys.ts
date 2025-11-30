@@ -10,6 +10,7 @@ export const releaseMediaKeys = {
 		order: SortOrder
 		authorId?: string | null
 		releaseId?: string | null
+		search?: string | null
 	}) =>
 		[
 			'releaseMedia',
@@ -21,6 +22,7 @@ export const releaseMediaKeys = {
 				order: params.order,
 				authorId: params.authorId ?? null,
 				releaseId: params.releaseId ?? null,
+				search: params.search ?? null,
 			},
 		] as const,
 	byRelease: (releaseId: string, statusId: string | null) =>

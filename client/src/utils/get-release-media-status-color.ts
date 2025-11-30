@@ -1,4 +1,4 @@
-import { ReleaseMediaStatusesEnum } from '../models/release/release-media/release-media-status/release-media-statuses-enum'
+import { ReleaseMediaStatusesEnum } from '../types/release'
 
 export const getReleaseMediaStatusColor = (status: string): string => {
 	switch (status) {

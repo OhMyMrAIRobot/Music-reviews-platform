@@ -6,13 +6,13 @@ export function useReleaseMediaMeta() {
 		queries: [
 			{
 				queryKey: ['releaseMediaStatuses'],
-				queryFn: ReleaseMediaAPI.fetchReleaseMediaStatuses,
+				queryFn: ReleaseMediaAPI.fetchStatuses,
 				staleTime: Infinity,
 				gcTime: 1000 * 60 * 60 * 24,
 			},
 			{
 				queryKey: ['releaseMediaTypes'],
-				queryFn: ReleaseMediaAPI.fetchReleaseMediaTypes,
+				queryFn: ReleaseMediaAPI.fetchTypes,
 				staleTime: Infinity,
 				gcTime: 1000 * 60 * 60 * 24,
 			},

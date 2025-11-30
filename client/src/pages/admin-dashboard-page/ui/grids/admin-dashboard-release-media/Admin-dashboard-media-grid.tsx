@@ -6,10 +6,12 @@ import Pagination from '../../../../../components/pagination/Pagination'
 import ReleaseMediaStatusIcon from '../../../../../components/release/release-media/Release-media-status-icon'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import { useReleaseMediaMeta } from '../../../../../hooks/use-release-media-meta'
-import { ReleaseMediaStatusesFilterOptions } from '../../../../../models/release/release-media/release-media-status/release-media-statuses-filter-options'
-import { ReleaseMediaTypesFilterOptions } from '../../../../../models/release/release-media/release-media-type/release-media-types-filter-options'
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
 import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys'
+import {
+	ReleaseMediaStatusesFilterOptions,
+	ReleaseMediaTypesFilterOptions,
+} from '../../../../../types/release'
 import { SortOrder } from '../../../../../types/sort-order-type'
 import AdminFilterButton from '../../buttons/Admin-filter-button'
 import AdminDashboardMediaGridItem from './Admin-dashboard-media-grid-item'
@@ -47,19 +49,18 @@ const AdminDashboardMediaGrid = () => {
 		statusId,
 		typeId,
 		order,
+		search: searchText.trim().length > 0 ? searchText.trim() : undefined,
 	})
 
 	const queryFn = () =>
-		ReleaseMediaAPI.fetchReleaseMedia(
-			perPage,
-			(currentPage - 1) * perPage,
-			statusId,
-			typeId,
-			null,
-			null,
-			searchText.trim().length > 0 ? searchText.trim() : null,
-			order
-		)
+		ReleaseMediaAPI.findAll({
+			statusId: statusId ?? undefined,
+			typeId: typeId ?? undefined,
+			order,
+			limit: perPage,
+			offset: (currentPage - 1) * perPage,
+			search: searchText.trim().length > 0 ? searchText.trim() : undefined,
+		})
 
 	const { data: mediaData, isPending: isMediaLoading } = useQuery({
 		queryKey,
@@ -68,8 +69,8 @@ const AdminDashboardMediaGrid = () => {
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const media = mediaData?.releaseMedia || []
-	const count = mediaData?.count || 0
+	const media = mediaData?.items || []
+	const count = mediaData?.meta.count || 0
 
 	useEffect(() => {
 		setCurrentPage(1)

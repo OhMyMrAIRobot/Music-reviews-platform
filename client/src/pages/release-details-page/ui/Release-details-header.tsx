@@ -1,12 +1,8 @@
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import ToggleFavButton from '../../../components/buttons/Toggle-fav-button'
 import LikesCount from '../../../components/utils/Likes-count'
-import { useAuth } from '../../../hooks/use-auth'
-import { useQueryListFavToggleAll } from '../../../hooks/use-query-list-fav-toggle'
 import { useStore } from '../../../hooks/use-store'
-import { releaseDetailsKeys } from '../../../query-keys/release-details-keys'
 import { Release } from '../../../types/release'
-import { toggleFavRelease } from '../../../utils/toggle-fav-release'
 import ReleaseDetailsAuthors from './release-details-authors/Release-details-authors'
 import ReleaseDetailsNominations from './Release-details-nominations'
 import ReleaseDetailsRatings from './release-details-ratings/Release-details-ratings'
@@ -16,42 +12,40 @@ interface IProps {
 }
 
 const ReleaseDetailsHeader: FC<IProps> = ({ release }) => {
-	const { checkAuth } = useAuth()
+	const { authStore } = useStore()
 
-	const { authStore, notificationStore } = useStore()
+	// const [toggling, setToggling] = useState(false)
 
-	const [toggling, setToggling] = useState(false)
-
-	const { storeToggle } = useQueryListFavToggleAll<Release, Release>(
-		releaseDetailsKeys.all,
-		null,
-		toggleFavRelease
-	)
+	// const { storeToggle } = useQueryListFavToggleAll<Release, Release>(
+	// 	releaseDetailsKeys.all,
+	// 	null,
+	// 	toggleFavRelease
+	// )
 
 	const isFav = release.userFavRelease?.some(
 		fav => fav.userId === authStore.user?.id
 	)
 
-	const toggle = async () => {
-		if (!checkAuth()) return
-		setToggling(true)
+	// const toggle = async () => {
+	// 	if (!checkAuth()) return
+	// 	setToggling(true)
 
-		const errors = await storeToggle(release.id, isFav)
+	// 	const errors = await storeToggle(release.id, isFav)
 
-		if (errors.length === 0) {
-			notificationStore.addSuccessNotification(
-				isFav
-					? 'Вы успешно убрали релиз из списка понравившихся!'
-					: 'Вы успешно добавили релиз в список понравившихся!'
-			)
-		} else {
-			errors.forEach((err: string) =>
-				notificationStore.addErrorNotification(err)
-			)
-		}
+	// 	if (errors.length === 0) {
+	// 		notificationStore.addSuccessNotification(
+	// 			isFav
+	// 				? 'Вы успешно убрали релиз из списка понравившихся!'
+	// 				: 'Вы успешно добавили релиз в список понравившихся!'
+	// 		)
+	// 	} else {
+	// 		errors.forEach((err: string) =>
+	// 			notificationStore.addErrorNotification(err)
+	// 		)
+	// 	}
 
-		setToggling(false)
-	}
+	// 	setToggling(false)
+	// }
 
 	return (
 		<div className='lg:p-5 lg:bg-zinc-900 lg:border lg:border-white/10 rounded-2xl flex items-center lg:items-start max-lg:flex-col gap-y-3 relative'>
@@ -106,10 +100,10 @@ const ReleaseDetailsHeader: FC<IProps> = ({ release }) => {
 				)}
 
 				<ToggleFavButton
-					onClick={toggle}
+					onClick={() => {}} // TODO: FIX TOGGLE
 					isLiked={isFav}
 					className='size-10 lg:size-12'
-					toggling={toggling}
+					toggling={false}
 				/>
 			</div>
 		</div>

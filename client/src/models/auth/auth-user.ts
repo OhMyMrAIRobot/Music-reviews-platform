@@ -1,4 +1,3 @@
-import { IRegisteredAuthor } from '../author/registered-author/registered-author'
 import { IRole } from '../role/role'
 
 export interface IAuthUser {
@@ -8,5 +7,5 @@ export interface IAuthUser {
 	isActive: boolean
 	createdAt: Date
 	role: IRole
-	registeredAuthor: IRegisteredAuthor[]
+	registeredAuthor: RegisteredAuthor[]
 }

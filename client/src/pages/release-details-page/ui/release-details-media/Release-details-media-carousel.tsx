@@ -8,13 +8,13 @@ import {
 	useState,
 } from 'react'
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
-import { IReleaseMedia } from '../../../../models/release/release-media/release-media'
 import { CarouselRef } from '../../../../types/carousel-ref'
 import { CarouselStateCallbacks } from '../../../../types/carousel-state-callbacks'
+import { ReleaseMedia } from '../../../../types/release'
 import ReleaseDetailsMediaItem from './Release-details-media-item'
 
 interface IProps extends CarouselStateCallbacks {
-	items: IReleaseMedia[]
+	items: ReleaseMedia[]
 	isLoading: boolean
 }
 

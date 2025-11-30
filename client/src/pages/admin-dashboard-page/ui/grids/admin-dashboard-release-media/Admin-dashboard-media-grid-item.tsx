@@ -9,9 +9,9 @@ import ReleaseMediaStatusIcon from '../../../../../components/release/release-me
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../../hooks/use-store'
-import { IReleaseMedia } from '../../../../../models/release/release-media/release-media'
 import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
 import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys'
+import { ReleaseMedia } from '../../../../../types/release'
 import { SortOrder } from '../../../../../types/sort-order-type'
 import { getReleaseMediaStatusColor } from '../../../../../utils/get-release-media-status-color'
 import AdminDeleteButton from '../../buttons/Admin-delete-button'
@@ -21,7 +21,7 @@ import MediaFormModal from './Media-form-modal'
 
 interface IProps {
 	className?: string
-	media?: IReleaseMedia
+	media?: ReleaseMedia
 	position?: number
 	isLoading: boolean
 	order?: SortOrder
@@ -46,7 +46,7 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 	const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
 
 	const deleteMutation = useMutation({
-		mutationFn: (id: string) => ReleaseMediaAPI.adminDeleteReleaseMedia(id),
+		mutationFn: (id: string) => ReleaseMediaAPI.adminDelete(id),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification(
 				'Вы успешно удалили медиаматериал!'
@@ -142,7 +142,7 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 						<>
 							<span className='xl:hidden pr-0.5'>Тип медиа: </span>
 							<div className={`flex gap-x-1 items-center`}>
-								<span>{media.releaseMediaType.type}</span>
+								<span>{media.type.type}</span>
 							</div>
 						</>
 					) : (
@@ -177,14 +177,14 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 							<span className='xl:hidden pr-1'>Статус: </span>
 							<div
 								className={`flex gap-x-1 items-center ${getReleaseMediaStatusColor(
-									media.releaseMediaStatus.status
+									media.status.status
 								)}`}
 							>
 								<ReleaseMediaStatusIcon
-									status={media.releaseMediaStatus.status}
+									status={media.status.status}
 									className={'size-5'}
 								/>
-								<span>{media.releaseMediaStatus.status}</span>
+								<span>{media.status.status}</span>
 							</div>
 						</>
 					) : (

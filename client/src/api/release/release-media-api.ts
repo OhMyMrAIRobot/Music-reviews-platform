@@ -1,9 +1,15 @@
 import axios from 'axios'
-import { IReleaseMedia } from '../../models/release/release-media/release-media'
-import { IReleaseMediaList } from '../../models/release/release-media/release-media-list'
-import { IReleaseMediaStatus } from '../../models/release/release-media/release-media-status/release-media-status'
-import { IReleaseMediaType } from '../../models/release/release-media/release-media-type/release-media-type'
-import { SortOrder } from '../../types/sort-order-type'
+import {
+	AdminCreateReleaseMediaData,
+	AdminUpdateReleaseMediaData,
+	CreateReleaseMediaData,
+	ReleaseMedia,
+	ReleaseMediaQuery,
+	ReleaseMediaResponse,
+	ReleaseMediaStatus,
+	ReleaseMediaType,
+	UpdateReleaseMediaData,
+} from '../../types/release'
 import { api } from '../api-instance'
 
 const _api = axios.create({
@@ -14,120 +20,91 @@ const _api = axios.create({
 })
 
 export const ReleaseMediaAPI = {
-	async fetchReleaseMediaStatuses(): Promise<IReleaseMediaStatus[]> {
-		const { data } = await _api.get<IReleaseMediaStatus[]>(
-			'release-media-statuses'
+	async fetchStatuses(): Promise<ReleaseMediaStatus[]> {
+		const { data } = await _api.get<ReleaseMediaStatus[]>(
+			'/release-media-statuses'
 		)
 		return data
 	},
 
-	async fetchReleaseMediaTypes(): Promise<IReleaseMediaType[]> {
-		const { data } = await _api.get<IReleaseMediaType[]>('release-media-types')
+	async fetchTypes(): Promise<ReleaseMediaType[]> {
+		const { data } = await _api.get<ReleaseMediaType[]>('/release-media-types')
 		return data
 	},
 
-	async fetchReleaseMedia(
-		limit: number | null,
-		offset: number | null,
-		statusId: string | null,
-		typeId: string | null,
-		releaseId: string | null,
-		userId: string | null,
-		query: string | null,
-		order: SortOrder | null
-	): Promise<IReleaseMediaList> {
-		const { data } = await _api.get<IReleaseMediaList>(
+	async findAll(query: ReleaseMediaQuery): Promise<ReleaseMediaResponse> {
+		const {
+			statusId,
+			typeId,
+			releaseId,
+			userId,
+			search,
+			order,
+			limit,
+			offset,
+		} = query
+
+		const { data } = await _api.get<ReleaseMediaResponse>(
 			`/release-media?
-			${limit !== null ? `limit=${limit}&` : ''}
-			${offset !== null ? `offset=${offset}&` : ''}
-			${statusId !== null ? `statusId=${statusId}&` : ''}
-			${typeId !== null ? `typeId=${typeId}&` : ''}
-			${releaseId !== null ? `releaseId=${releaseId}&` : ''}
-			${userId !== null ? `userId=${userId}&` : ''}
-			${query !== null ? `query=${query}&` : ''}
-			${order !== null ? `order=${order}` : ''}
+			${statusId ? `statusId=${statusId}&` : ''}
+			${typeId ? `typeId=${typeId}&` : ''}
+			${releaseId ? `releaseId=${releaseId}&` : ''}
+			${userId ? `userId=${userId}&` : ''}
+			${search ? `search=${search}&` : ''}
+			${order ? `order=${order}&` : ''}
+			${limit ? `limit=${limit}&` : ''}
+			${offset ? `offset=${offset}` : ''}
 			`
 		)
 		return data
 	},
 
-	async fetchUserReleaseMedia(releaseId: string, userId: string) {
-		const { data } = await _api.get<IReleaseMedia>(
-			`/release-media/${releaseId}/${userId}`
-		)
-		return data
-	},
-
-	async postReleaseMedia(
-		title: string,
-		url: string,
-		releaseId: string
-	): Promise<IReleaseMedia> {
-		const { data } = await api.post<IReleaseMedia>(`/release-media`, {
-			title,
-			url,
-			releaseId,
-		})
+	async create(formData: CreateReleaseMediaData): Promise<ReleaseMedia> {
+		const { data } = await api.post<ReleaseMedia>(`/release-media`, formData)
 
 		return data
 	},
 
-	async adminPostReleaseMedia(
-		title: string,
-		url: string,
-		releaseId: string,
-		releaseMediaTypeId: string,
-		releaseMediaStatusId: string
-	): Promise<IReleaseMedia> {
-		const { data } = await api.post<IReleaseMedia>(`/release-media/admin`, {
-			title,
-			url,
-			releaseId,
-			releaseMediaTypeId,
-			releaseMediaStatusId,
-		})
-
-		return data
-	},
-
-	async updateReleaseMedia(
+	async update(
 		id: string,
-		updateData: { title?: string; url?: string }
-	): Promise<IReleaseMedia> {
-		const { data } = await api.patch<IReleaseMedia>(`/release-media/${id}`, {
-			...updateData,
-		})
-
-		return data
-	},
-
-	async adminUpdateReleaseMedia(
-		id: string,
-		title?: string,
-		url?: string,
-		releaseId?: string,
-		releaseMediaTypeId?: string,
-		releaseMediaStatusId?: string
-	): Promise<IReleaseMedia> {
-		const { data } = await api.patch<IReleaseMedia>(
-			`/release-media/admin/${id}`,
-			{
-				title,
-				url,
-				releaseId,
-				releaseMediaStatusId,
-				releaseMediaTypeId,
-			}
+		updateData: UpdateReleaseMediaData
+	): Promise<ReleaseMedia> {
+		const { data } = await api.patch<ReleaseMedia>(
+			`/release-media/${id}`,
+			updateData
 		)
 
 		return data
 	},
 
-	async deleteReleaseMedia(id: string) {
-		return api.delete<IReleaseMedia>(`/release-media/${id}`)
+	async delete(id: string) {
+		return api.delete(`/release-media/${id}`)
 	},
 
-	async adminDeleteReleaseMedia(id: string) {
-		return api.delete<IReleaseMedia>(`/release-media/admin/${id}`)
+	async adminCreate(
+		formData: AdminCreateReleaseMediaData
+	): Promise<ReleaseMedia> {
+		const { data } = await api.post<ReleaseMedia>(
+			`admin/release-media`,
+			formData
+		)
+
+		return data
+	},
+
+	async adminUpdate(
+		id: string,
+		formData: AdminUpdateReleaseMediaData
+	): Promise<ReleaseMedia> {
+		const { data } = await api.patch<ReleaseMedia>(
+			`admin/release-media/${id}`,
+			formData
+		)
+
+		return data
+	},
+
+	async adminDelete(id: string) {
+		return api.delete(`admin/release-media/${id}`)
 	},
 }

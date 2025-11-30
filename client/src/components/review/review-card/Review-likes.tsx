@@ -1,7 +1,6 @@
 import { FC } from 'react'
 import { Link } from 'react-router'
 import useNavigationPath from '../../../hooks/use-navigation-path'
-import { IAuthorFavMedia } from '../../../models/release/release-media/user-fav-media/author-fav-media'
 import { AuthorFavReview } from '../../../types/review'
 import Tooltip from '../../tooltip/Tooltip'
 import TooltipSpan from '../../tooltip/Tooltip-span'
@@ -12,7 +11,7 @@ interface IProps {
 	isLiked: boolean
 	likesCount: number
 	toggleFavReview: () => void
-	authorLikes: AuthorFavReview[] | IAuthorFavMedia[]
+	authorLikes: Omit<AuthorFavReview, 'reviewId'>[]
 }
 
 const ReviewLikes: FC<IProps> = ({

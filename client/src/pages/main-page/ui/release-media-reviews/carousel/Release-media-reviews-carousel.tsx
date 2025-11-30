@@ -9,12 +9,12 @@ import {
 	useState,
 } from 'react'
 import ReleaseMediaReview from '../../../../../components/release/release-media/Release-media-review'
-import { IReleaseMedia } from '../../../../../models/release/release-media/release-media'
 import { CarouselRef } from '../../../../../types/carousel-ref'
 import { CarouselStateCallbacks } from '../../../../../types/carousel-state-callbacks'
+import { ReleaseMedia } from '../../../../../types/release'
 
 interface IProps extends CarouselStateCallbacks {
-	items: IReleaseMedia[]
+	items: ReleaseMedia[]
 	isLoading: boolean
 	storeToggle: (mediaId: string, isFav: boolean) => Promise<string[]>
 }

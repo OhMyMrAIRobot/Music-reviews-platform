@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { ReleaseMediaStatusesEnum } from '../../../models/release/release-media/release-media-status/release-media-statuses-enum'
+import { ReleaseMediaStatusesEnum } from '../../../types/release'
 import HourglassSvg from '../../svg/Hourglass-svg'
 import RejectSvg from '../../svg/Reject-svg'
 import TickRoundedSvg from '../../svg/Tick-rounded-svg'

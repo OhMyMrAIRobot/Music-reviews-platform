@@ -5,11 +5,11 @@ import CarouselNavButton from '../../../../components/carousel/Carousel-nav-butt
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
 import { useReleaseMediaMeta } from '../../../../hooks/use-release-media-meta'
 import { useStore } from '../../../../hooks/use-store'
-import { ReleaseMediaStatusesEnum } from '../../../../models/release/release-media/release-media-status/release-media-statuses-enum'
 import { RolesEnum } from '../../../../models/role/roles-enum'
 import { SortOrdersEnum } from '../../../../models/sort/sort-orders-enum'
 import { releaseMediaKeys } from '../../../../query-keys/release-media-keys'
 import { CarouselRef } from '../../../../types/carousel-ref'
+import { ReleaseMediaStatusesEnum } from '../../../../types/release'
 import ReleaseDetailsMediaCarousel from './Release-details-media-carousel'
 
 interface IProps {
@@ -37,18 +37,13 @@ const ReleaseDetailsMedia: FC<IProps> = ({ releaseId }) => {
 		const status = statuses.find(
 			el => el.status === ReleaseMediaStatusesEnum.APPROVED
 		)
-		if (!status) return { releaseMedia: [], count: 0 }
+		if (!status) return { meta: { count: 0 }, items: [] }
 
-		return ReleaseMediaAPI.fetchReleaseMedia(
-			null,
-			null,
-			status.id,
-			null,
+		return ReleaseMediaAPI.findAll({
+			statusId: status.id,
 			releaseId,
-			null,
-			null,
-			SortOrdersEnum.DESC
-		)
+			order: SortOrdersEnum.DESC,
+		})
 	}
 
 	const { data: releaseMediaData, isPending: isReleaseMediaLoading } = useQuery(
@@ -64,12 +59,12 @@ const ReleaseDetailsMedia: FC<IProps> = ({ releaseId }) => {
 		? releaseMediaKeys.userByRelease(releaseId, user.id)
 		: releaseMediaKeys.userByRelease(releaseId, 'unknown')
 
-	const userMediaQueryFn = () =>
-		user
-			? ReleaseMediaAPI.fetchUserReleaseMedia(releaseId, user.id)
-			: Promise.resolve(null)
+	const userMediaQueryFn = () => {
+		if (!user) return Promise.resolve(undefined)
+		return ReleaseMediaAPI.findAll({ releaseId, userId: user.id })
+	}
 
-	const { data: userReleaseMedia, isPending: isUserReleaseMediaLoading } =
+	const { data: userReleaseMediaData, isPending: isUserReleaseMediaLoading } =
 		useQuery({
 			queryKey: userMediaQueryKey,
 			queryFn: userMediaQueryFn,
@@ -77,13 +72,15 @@ const ReleaseDetailsMedia: FC<IProps> = ({ releaseId }) => {
 			staleTime: 1000 * 60 * 5,
 		})
 
-	const releaseMedia = releaseMediaData?.releaseMedia || []
-	const releaseMediaCount = releaseMediaData?.count || 0
-	const userMedia = userReleaseMedia
+	const releaseMedia = releaseMediaData?.items || []
+	const releaseMediaCount = releaseMediaData?.meta.count || 0
+	const userMedia =
+		userReleaseMediaData?.items.length === 1
+			? userReleaseMediaData?.items[0]
+			: null
 
 	const items =
-		userMedia &&
-		userMedia.releaseMediaStatus.status !== ReleaseMediaStatusesEnum.APPROVED
+		userMedia && userMedia.status.status !== ReleaseMediaStatusesEnum.APPROVED
 			? [userMedia, ...releaseMedia]
 			: releaseMedia
 

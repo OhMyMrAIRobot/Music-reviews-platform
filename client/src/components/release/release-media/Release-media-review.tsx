@@ -4,7 +4,7 @@ import { Link } from 'react-router'
 import { useAuth } from '../../../hooks/use-auth'
 import useNavigationPath from '../../../hooks/use-navigation-path'
 import { useStore } from '../../../hooks/use-store'
-import { IReleaseMedia } from '../../../models/release/release-media/release-media'
+import { ReleaseMedia } from '../../../types/release'
 import { parseYoutubeId } from '../../../utils/parse-youtube-id'
 import ReviewAuthor from '../../review/review-card/Review-author'
 import ReviewLikes from '../../review/review-card/Review-likes'
@@ -15,7 +15,7 @@ import MoveToSvg from '../../svg/Move-to-svg'
 import SkeletonLoader from '../../utils/Skeleton-loader'
 
 interface IProps {
-	media?: IReleaseMedia
+	media?: ReleaseMedia
 	isLoading: boolean
 	toggleFav?: (id: string, isFav: boolean) => Promise<string[]>
 }
@@ -78,25 +78,9 @@ const ReleaseMediaReview: FC<IProps> = observer(
 						to={navigatoToProfile(media.user.id)}
 						className='flex items-center space-x-2 lg:space-x-3 w-full'
 					>
-						<ReviewUserImage // TODO: fix user
-							user={{
-								id: '',
-								nickname: '',
-								avatar: '',
-								points: 0,
-								rank: null,
-							}}
-						/>
+						<ReviewUserImage user={media.user} />
 
-						<ReviewAuthor // TODO: fix user
-							user={{
-								id: '',
-								nickname: '',
-								avatar: '',
-								points: 0,
-								rank: null,
-							}}
-						/>
+						<ReviewAuthor user={media.user} />
 					</Link>
 
 					<div className='flex items-center justify-end gap-2 lg:gap-4'>

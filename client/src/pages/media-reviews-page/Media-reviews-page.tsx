@@ -4,16 +4,15 @@ import { ReleaseMediaAPI } from '../../api/release/release-media-api'
 import ComboBox from '../../components/buttons/Combo-box'
 import Pagination from '../../components/pagination/Pagination'
 import ReleaseMediaReview from '../../components/release/release-media/Release-media-review'
-import { useQueryListFavToggleAll } from '../../hooks/use-query-list-fav-toggle'
 import { useReleaseMediaMeta } from '../../hooks/use-release-media-meta'
-import type { IReleaseMedia } from '../../models/release/release-media/release-media'
-import { ReleaseMediaStatusesEnum } from '../../models/release/release-media/release-media-status/release-media-statuses-enum'
-import { ReleaseMediaTypesEnum } from '../../models/release/release-media/release-media-type/release-media-types-enum'
 import { SortOrdersEnum } from '../../models/sort/sort-orders-enum'
 import { releaseMediaKeys } from '../../query-keys/release-media-keys'
+import {
+	ReleaseMediaStatusesEnum,
+	ReleaseMediaTypesEnum,
+} from '../../types/release'
 import { ReviewSortFields } from '../../types/review'
 import type { SortOrder } from '../../types/sort-order-type'
-import { toggleFavMedia } from '../../utils/toggle-fav-media'
 
 const PER_PAGE = 12
 
@@ -63,27 +62,24 @@ const MediaReviewsPage = () => {
 	const { data, isPending: isMediaLoading } = useQuery({
 		queryKey,
 		queryFn: () =>
-			ReleaseMediaAPI.fetchReleaseMedia(
+			ReleaseMediaAPI.findAll({
 				limit,
 				offset,
-				statusId!,
-				typeId!,
-				null,
-				null,
-				null,
-				order
-			),
+				statusId: statusId ?? undefined,
+				typeId: typeId ?? undefined,
+				order,
+			}),
 		enabled: Boolean(typeId && statusId),
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const items = data?.releaseMedia ?? []
-	const total = data?.count ?? 0
+	const items = data?.items ?? []
+	const total = data?.meta.count ?? 0
 
-	const { storeToggle } = useQueryListFavToggleAll<
-		IReleaseMedia,
-		{ releaseMedia: IReleaseMedia[] }
-	>(releaseMediaKeys.all, 'releaseMedia', toggleFavMedia)
+	// const { storeToggle } = useQueryListFavToggleAll<
+	// 	IReleaseMedia,
+	// 	{ releaseMedia: IReleaseMedia[] }
+	// >(releaseMediaKeys.all, 'releaseMedia', toggleFavMedia)
 
 	return (
 		<>
@@ -122,7 +118,7 @@ const MediaReviewsPage = () => {
 									key={media.id}
 									media={media}
 									isLoading={false}
-									toggleFav={storeToggle}
+									toggleFav={undefined} // TODO: FIX TOGGLE
 								/>
 						  ))}
 

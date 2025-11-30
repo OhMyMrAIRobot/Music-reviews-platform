@@ -40,10 +40,15 @@ const SendAuthorConfirmationForm: FC<IProps> = ({ show }) => {
 				limit: limit ?? null,
 				offset: 0,
 			}),
-			queryFn: () => AuthorAPI.adminFetchAuthors(null, query, limit ?? null, 0),
+			queryFn: () =>
+				AuthorAPI.findAll({
+					search: query || undefined,
+					limit: limit || undefined,
+					offset: 0,
+				}),
 			staleTime: 1000 * 60 * 5,
 		})
-		const list = data?.authors ?? []
+		const list = data?.items ?? []
 		return list.map((a: { id: string; name: string }) => ({
 			id: a.id,
 			name: a.name,

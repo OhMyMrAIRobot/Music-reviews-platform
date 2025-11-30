@@ -1,17 +1,17 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useQuery } from '@tanstack/react-query'
 import { useMemo, useRef, useState } from 'react'
 import { ReleaseMediaAPI } from '../../../../api/release/release-media-api'
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
-import { useQueryListFavToggleAll } from '../../../../hooks/use-query-list-fav-toggle'
 import { useReleaseMediaMeta } from '../../../../hooks/use-release-media-meta'
-import { IReleaseMedia } from '../../../../models/release/release-media/release-media'
-import { ReleaseMediaStatusesEnum } from '../../../../models/release/release-media/release-media-status/release-media-statuses-enum'
-import { ReleaseMediaTypesEnum } from '../../../../models/release/release-media/release-media-type/release-media-types-enum'
 import { SortOrdersEnum } from '../../../../models/sort/sort-orders-enum'
 import { releaseMediaKeys } from '../../../../query-keys/release-media-keys'
 import { CarouselRef } from '../../../../types/carousel-ref'
-import { toggleFavMedia } from '../../../../utils/toggle-fav-media'
+import {
+	ReleaseMediaStatusesEnum,
+	ReleaseMediaTypesEnum,
+} from '../../../../types/release'
 import ReleaseMediaReviewsCarousel from './carousel/Release-media-reviews-carousel'
 
 const LIMIT = 15
@@ -43,16 +43,13 @@ const ReleaseMediaReviews = () => {
 	)
 
 	const queryFn = () =>
-		ReleaseMediaAPI.fetchReleaseMedia(
-			LIMIT,
-			OFFSET,
-			statusId!,
-			typeId!,
-			null,
-			null,
-			null,
-			ORDER
-		)
+		ReleaseMediaAPI.findAll({
+			limit: LIMIT,
+			offset: OFFSET,
+			statusId: statusId ?? undefined,
+			typeId: typeId ?? undefined,
+			order: ORDER,
+		})
 
 	const { data: mediaData, isPending: isMediaLoading } = useQuery({
 		queryKey,
@@ -61,12 +58,12 @@ const ReleaseMediaReviews = () => {
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const items = mediaData?.releaseMedia ?? []
+	const items = mediaData?.items ?? []
 
-	const { storeToggle } = useQueryListFavToggleAll<
-		IReleaseMedia,
-		{ releaseMedia: IReleaseMedia[] }
-	>(releaseMediaKeys.all, 'releaseMedia', toggleFavMedia)
+	// const { storeToggle } = useQueryListFavToggleAll<
+	// 	IReleaseMedia,
+	// 	{ releaseMedia: IReleaseMedia[] }
+	// >(releaseMediaKeys.all, 'releaseMedia', toggleFavMedia)
 
 	const carouselRef = useRef<CarouselRef>(null)
 	const [canScrollPrev, setCanScrollPrev] = useState(false)
@@ -86,8 +83,13 @@ const ReleaseMediaReviews = () => {
 					items={items}
 					isLoading={isMediaLoading || isMetaLoading}
 					onCanScrollPrevChange={setCanScrollPrev}
-					onCanScrollNextChange={setCanScrollNext}
-					storeToggle={storeToggle}
+					onCanScrollNextChange={setCanScrollNext} // TODO: FIX TOGGLE
+					storeToggle={function (
+						mediaId: string,
+						isFav: boolean
+					): Promise<string[]> {
+						throw new Error('Function not implemented.')
+					}}
 				/>
 			}
 			canScrollNext={canScrollNext}

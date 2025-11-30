@@ -2,7 +2,7 @@ import { SortOrder } from '../../sort-order-type'
 import { ReleasesSortFieldsEnum } from '../enums/releases-sort-fields-enum'
 
 /**
- * ReleasesQueryDto
+ * ReleasesQuery
  *
  * Query parameters for listing releases. Supports filtering by author,
  * release type, search text and publication date. Also provides sorting

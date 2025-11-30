@@ -1,14 +1,18 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { AxiosError } from 'axios'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { ReleaseMediaAPI } from '../../../../../../api/release/release-media-api'
 import FormButton from '../../../../../../components/form-elements/Form-button'
 import FormInput from '../../../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../../../components/form-elements/Form-label'
+import { useApiErrorHandler } from '../../../../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../../../../hooks/use-auth'
 import { useStore } from '../../../../../../hooks/use-store'
 import { releaseMediaKeys } from '../../../../../../query-keys/release-media-keys'
 import authStore from '../../../../../../stores/auth-store'
+import {
+	CreateReleaseMediaData,
+	UpdateReleaseMediaData,
+} from '../../../../../../types/release'
 
 interface IProps {
 	releaseId: string
@@ -20,6 +24,8 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = ({ releaseId }) => {
 	const { checkAuth } = useAuth()
 	const queryClient = useQueryClient()
 
+	const handleApiError = useApiErrorHandler()
+
 	const invalidateRelatedQueries = () => {
 		const keys = [
 			releaseMediaKeys.userByRelease(releaseId, authStore.user?.id || ''),
@@ -29,8 +35,7 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = ({ releaseId }) => {
 	}
 
 	const createMutation = useMutation({
-		mutationFn: (data: { title: string; url: string }) =>
-			ReleaseMediaAPI.postReleaseMedia(data.title, data.url, releaseId),
+		mutationFn: (data: CreateReleaseMediaData) => ReleaseMediaAPI.create(data),
 		onSuccess: data => {
 			invalidateRelatedQueries()
 			queryClient.setQueryData(
@@ -41,10 +46,8 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = ({ releaseId }) => {
 	})
 
 	const updateMutation = useMutation({
-		mutationFn: (data: {
-			id: string
-			updateData: { title?: string; url?: string }
-		}) => ReleaseMediaAPI.updateReleaseMedia(data.id, data.updateData),
+		mutationFn: (data: { id: string; updateData: UpdateReleaseMediaData }) =>
+			ReleaseMediaAPI.update(data.id, data.updateData),
 		onSuccess: data => {
 			invalidateRelatedQueries()
 			queryClient.setQueryData(
@@ -55,7 +58,7 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = ({ releaseId }) => {
 	})
 
 	const deleteMutation = useMutation({
-		mutationFn: (id: string) => ReleaseMediaAPI.deleteReleaseMedia(id),
+		mutationFn: (id: string) => ReleaseMediaAPI.delete(id),
 		onSuccess: () => {
 			invalidateRelatedQueries()
 			queryClient.setQueryData(
@@ -65,20 +68,24 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = ({ releaseId }) => {
 		},
 	})
 
-	const { data: userReleaseMedia } = useQuery({
+	const { data: userReleaseMediaData } = useQuery({
 		queryKey: releaseMediaKeys.userByRelease(
 			releaseId,
 			authStore.user?.id || ''
 		),
 		queryFn: () =>
-			ReleaseMediaAPI.fetchUserReleaseMedia(
-				releaseId,
-				authStore.user?.id || ''
-			),
-		enabled: authStore.isAuth,
+			ReleaseMediaAPI.findAll({
+				releaseId: releaseId,
+				userId: authStore.user?.id || '',
+			}),
+		enabled: authStore.isAuth && !!authStore.user?.id,
 		staleTime: 1000 * 60 * 5,
-		retry: false,
 	})
+
+	const userReleaseMedia =
+		userReleaseMediaData?.items.length === 1
+			? userReleaseMediaData?.items[0]
+			: null
 
 	const [title, setTitle] = useState<string>('')
 	const [url, setUrl] = useState<string>('')
@@ -105,6 +112,7 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = ({ releaseId }) => {
 				})
 			} else {
 				await createMutation.mutateAsync({
+					releaseId,
 					title: title.trim(),
 					url: url.trim(),
 				})
@@ -116,13 +124,7 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = ({ releaseId }) => {
 				} медиарецензию. Ожидайте подтверждения!`
 			)
 		} catch (error: unknown) {
-			const axiosError = error as AxiosError<{ message: string | string[] }>
-			const errors = Array.isArray(axiosError.response?.data?.message)
-				? axiosError.response?.data?.message
-				: [axiosError.response?.data?.message]
-			errors
-				.filter((err): err is string => typeof err === 'string')
-				.forEach((err: string) => notificationStore.addErrorNotification(err))
+			handleApiError(error)
 		}
 	}
 
@@ -144,13 +146,7 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = ({ releaseId }) => {
 			setUrl('')
 			setTitle('')
 		} catch (error: unknown) {
-			const axiosError = error as AxiosError<{ message: string | string[] }>
-			const errors = Array.isArray(axiosError.response?.data?.message)
-				? axiosError.response?.data?.message
-				: [axiosError.response?.data?.message]
-			errors
-				.filter((err): err is string => typeof err === 'string')
-				.forEach((err: string) => notificationStore.addErrorNotification(err))
+			handleApiError(error)
 		}
 	}
 
