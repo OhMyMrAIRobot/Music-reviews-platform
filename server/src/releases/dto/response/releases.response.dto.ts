@@ -7,9 +7,9 @@ type MetaInfo = {
   /** Total number of releases matching the filters */
   count: number;
   /** Minimum publish year among results or null */
-  minYearRelease: number | null;
+  minPublishYear: number | null;
   /** Maximum publish year among results or null */
-  maxYearRelease: number | null;
+  maxPublishYear: number | null;
 };
 
 /**

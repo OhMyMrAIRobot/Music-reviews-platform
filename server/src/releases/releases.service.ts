@@ -428,7 +428,7 @@ export class ReleasesService {
                   COUNT(*) AS total_count,
                   MIN(EXTRACT(YEAR FROM publish_date))::int AS min_publish_year,
                   MAX(EXTRACT(YEAR FROM publish_date))::int AS max_publish_year
-              FROM filtered_releases
+              FROM "Releases"
           ),
 
           last24_reviews AS (
