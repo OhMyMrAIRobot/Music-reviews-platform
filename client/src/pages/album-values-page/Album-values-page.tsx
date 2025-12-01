@@ -9,12 +9,13 @@ import Pagination from '../../components/pagination/Pagination'
 import { albumValuesKeys } from '../../query-keys/album-values-keys'
 import {
 	AlbumValueSortOptions,
+	AlbumValuesQuery,
 	AlbumValueTiersEnum,
 } from '../../types/album-value'
 import { SortOrdersEnum } from '../../types/common/enums/sort-orders-enum'
 import { ALBUM_VALUES } from '../../utils/album-value-config'
 
-const PER_PAGE = 12
+const limit = 12
 
 const AlbumValuesPage = () => {
 	const [sortOrder, setSortOrder] = useState<string>('')
@@ -28,28 +29,18 @@ const AlbumValuesPage = () => {
 				: SortOrdersEnum.DESC
 			: undefined
 
-	const limit = PER_PAGE
-	const offset = (currentPage - 1) * PER_PAGE
 	const tiersParam = selectedTiers.length > 0 ? selectedTiers : undefined
 
-	const queryKey = albumValuesKeys.list({
+	const query: AlbumValuesQuery = {
 		limit,
-		offset,
-		order: orderParam,
+		offset: (currentPage - 1) * limit,
+		sortOrder: orderParam,
 		tiers: tiersParam,
-		authorId: null,
-		releaseId: null,
-	})
+	}
 
 	const { data, isPending } = useQuery({
-		queryKey,
-		queryFn: () =>
-			AlbumValueAPI.findAll({
-				limit,
-				offset,
-				sortOrder: orderParam,
-				tiers: tiersParam,
-			}),
+		queryKey: albumValuesKeys.list(query),
+		queryFn: () => AlbumValueAPI.findAll(query),
 		staleTime: 1000 * 60 * 5,
 	})
 
@@ -110,7 +101,7 @@ const AlbumValuesPage = () => {
 				<div className='xl:col-span-3'>
 					<div className='grid grid-cols-2 md:col-span-3 xl:grid-cols-4 gap-2 xl:gap-4'>
 						{isPending
-							? Array.from({ length: PER_PAGE }).map((_, idx) => (
+							? Array.from({ length: limit }).map((_, idx) => (
 									<AlbumValueCard
 										key={`Skeleton-album-value-${idx}`}
 										isLoading={true}
@@ -129,7 +120,7 @@ const AlbumValuesPage = () => {
 						<Pagination
 							currentPage={currentPage}
 							totalItems={totalCount}
-							itemsPerPage={PER_PAGE}
+							itemsPerPage={limit}
 							setCurrentPage={setCurrentPage}
 							idToScroll={'album-values'}
 						/>

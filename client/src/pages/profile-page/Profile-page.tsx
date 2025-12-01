@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'react-router'
 import { ProfileAPI } from '../../api/user/profile-api'
 import Loader from '../../components/utils/Loader.tsx'
-import { profileKeys } from '../../query-keys/profile-keys'
+import { profilesKeys } from '../../query-keys/profiles-keys.ts'
 import ProfileLeftSection from './ui/profile-left-section/Profile-left-section.tsx'
 import ProfileRightSection from './ui/profile-right-section/Profile-right-section.tsx'
 
@@ -10,7 +10,7 @@ const ProfilePage = () => {
 	const { id } = useParams()
 
 	const { data: profile, isPending: isLoading } = useQuery({
-		queryKey: id ? profileKeys.profile(id) : ['profile', 'unknown'],
+		queryKey: id ? profilesKeys.profile(id) : ['profile', 'unknown'],
 		queryFn: async () => {
 			if (!id) throw new Error('No profile id provided!')
 			return ProfileAPI.findByUserId(id)

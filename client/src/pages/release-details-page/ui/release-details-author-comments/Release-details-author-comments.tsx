@@ -3,6 +3,7 @@ import { FC } from 'react'
 import { AuthorCommentAPI } from '../../../../api/author/author-comment-api'
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
 import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys'
+import { AuthorCommentsQuery } from '../../../../types/author'
 import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum'
 import ReleaseDetailsAuthorCommentItem from './Release-details-author-comment-item'
 
@@ -11,10 +12,14 @@ interface IProps {
 }
 
 const ReleaseDetailsAuthorComments: FC<IProps> = ({ releaseId }) => {
+	const query: AuthorCommentsQuery = {
+		releaseId,
+		sortOrder: SortOrdersEnum.DESC,
+	}
+
 	const { data, isPending: isFetching } = useQuery({
-		queryKey: authorCommentsKeys.byRelease(releaseId),
-		queryFn: () =>
-			AuthorCommentAPI.findAll({ releaseId, sortOrder: SortOrdersEnum.DESC }),
+		queryKey: authorCommentsKeys.list(query),
+		queryFn: () => AuthorCommentAPI.findAll(query),
 		staleTime: 1000 * 60 * 5,
 	})
 

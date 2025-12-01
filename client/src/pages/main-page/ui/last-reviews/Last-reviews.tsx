@@ -7,33 +7,21 @@ import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { reviewsKeys } from '../../../../query-keys/reviews-keys'
 import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum'
 import { CarouselRef } from '../../../../types/common/types/carousel-ref'
-import { ReviewsSortFieldsEnum } from '../../../../types/review'
+import { ReviewsQuery, ReviewsSortFieldsEnum } from '../../../../types/review'
 
-const LIMIT = 45
-const OFFSET = 0
-const FIELD = ReviewsSortFieldsEnum.CREATED
-const ORDER = SortOrdersEnum.DESC
+const query: ReviewsQuery = {
+	limit: 45,
+	offset: 0,
+	sortField: ReviewsSortFieldsEnum.CREATED,
+	sortOrder: SortOrdersEnum.DESC,
+}
 
 const LastReviews = () => {
 	const { navigateToReviews } = useNavigationPath()
 
-	const queryKey = reviewsKeys.list({
-		order: ORDER,
-		limit: LIMIT,
-		offset: OFFSET,
-		authorId: null,
-		releaseId: null,
-	})
-
 	const { data, isPending } = useQuery({
-		queryKey,
-		queryFn: () =>
-			ReviewAPI.findAll({
-				sortField: FIELD,
-				sortOrder: ORDER,
-				limit: LIMIT,
-				offset: OFFSET,
-			}),
+		queryKey: reviewsKeys.list(query),
+		queryFn: () => ReviewAPI.findAll(query),
 		staleTime: 1000 * 60 * 5,
 	})
 

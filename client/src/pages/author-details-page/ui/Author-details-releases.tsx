@@ -5,6 +5,7 @@ import ReleasesColumn from '../../../components/release/releases-column/Releases
 import { releasesKeys } from '../../../query-keys/releases-keys'
 import { SortOrdersEnum } from '../../../types/common/enums/sort-orders-enum'
 import {
+	ReleasesQuery,
 	ReleasesSortFieldsEnum,
 	ReleaseTypesEnum,
 } from '../../../types/release'
@@ -14,16 +15,18 @@ interface IProps {
 }
 
 const AuthorDetailsReleases: FC<IProps> = ({ id }) => {
+	const query: ReleasesQuery = {
+		authorId: id,
+		sortField: ReleasesSortFieldsEnum.PUBLISHED,
+		sortOrder: SortOrdersEnum.DESC,
+	}
+
 	const { data, isPending } = useQuery({
-		queryKey: releasesKeys.byAuthor(id, true),
-		queryFn: () =>
-			ReleaseAPI.findAll({
-				authorId: id,
-				sortField: ReleasesSortFieldsEnum.PUBLISHED,
-				sortOrder: SortOrdersEnum.DESC,
-			}),
+		queryKey: releasesKeys.list(query),
+		queryFn: () => ReleaseAPI.findAll(query),
 		staleTime: 1000 * 60 * 5,
 	})
+
 	const releases = data?.items || []
 
 	const tracks = releases.filter(

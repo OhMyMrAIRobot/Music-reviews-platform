@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { FC } from 'react'
 import { AuthorConfirmationAPI } from '../../../api/author/author-confirmation-api'
-import { authorConfirmationsKeys } from '../../../query-keys/author-confirmation-keys'
+import { useStore } from '../../../hooks/use-store'
+import { authorConfirmationsKeys } from '../../../query-keys/authors-confirmations-keys'
 import AuthorConfirmationItem from './Author-confirmation-item'
 
 interface IProps {
@@ -9,11 +10,15 @@ interface IProps {
 }
 
 const AuthorConfirmationTickets: FC<IProps> = ({ show }) => {
+	const { authStore } = useStore()
+
 	const { data, isPending } = useQuery({
-		queryKey: authorConfirmationsKeys.byCurrentUser(),
+		queryKey: authorConfirmationsKeys.list({
+			userId: authStore.user?.id ?? 'unknown',
+		}),
 		queryFn: () => AuthorConfirmationAPI.findMyConfirmations(),
 		staleTime: 1000 * 60 * 5,
-		enabled: show,
+		enabled: show && !!authStore.user,
 		refetchOnMount: 'always',
 	})
 

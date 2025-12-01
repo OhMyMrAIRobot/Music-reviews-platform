@@ -10,11 +10,12 @@ import { SortOrder } from '../../../../../types/common/types/sort-order.ts'
 import {
 	RolesEnum,
 	RolesFilterOptions,
+	UsersQuery,
 } from '../../../../../types/user/index.ts'
 import AdminFilterButton from '../../buttons/Admin-filter-button.tsx'
 import AdminDashboardUsersGridItem from './Admin-dashboard-users-grid-item.tsx'
 
-const perPage = 10
+const limit = 10
 
 const AdminDashboardUsersGrid = () => {
 	const [searchText, setSearchText] = useState<string>('')
@@ -24,29 +25,21 @@ const AdminDashboardUsersGrid = () => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC)
 
-	const queryKey = usersKeys.adminList({
-		query: searchText.trim().length > 0 ? searchText.trim() : null,
-		role: activeOption !== RolesFilterOptions.ALL ? activeOption : null,
+	// TODO: FIX ENUM
+	const query: UsersQuery = {
+		search: searchText.trim() || undefined,
 		order,
-		limit: perPage,
-		offset: (currentPage - 1) * perPage,
-	})
-
-	const queryFn = () =>
-		UserAPI.findAll({
-			search: searchText.trim().length > 0 ? searchText.trim() : undefined,
-			role:
-				activeOption !== RolesFilterOptions.ALL
-					? (activeOption as unknown as RolesEnum) // TODO: FIX
-					: undefined,
-			order,
-			limit: perPage,
-			offset: (currentPage - 1) * perPage,
-		})
+		limit,
+		offset: (currentPage - 1) * limit,
+		role:
+			activeOption !== RolesFilterOptions.ALL
+				? (activeOption as unknown as RolesEnum)
+				: undefined,
+	}
 
 	const { data: usersData, isPending: isLoading } = useQuery({
-		queryKey,
-		queryFn,
+		queryKey: usersKeys.list(query),
+		queryFn: () => UserAPI.findAll(query),
 	})
 
 	const users = usersData?.items || []
@@ -96,7 +89,7 @@ const AdminDashboardUsersGrid = () => {
 				<div className='flex-1 overflow-y-auto mt-5'>
 					<div className='grid gap-y-5'>
 						{isLoading
-							? Array.from({ length: perPage }).map((_, idx) => (
+							? Array.from({ length: limit }).map((_, idx) => (
 									<AdminDashboardUsersGridItem
 										key={`User-skeleton-${idx}`}
 										isLoading={isLoading}
@@ -107,7 +100,7 @@ const AdminDashboardUsersGrid = () => {
 										key={user.id}
 										user={user}
 										isLoading={isLoading}
-										position={(currentPage - 1) * perPage + idx + 1}
+										position={(currentPage - 1) * limit + idx + 1}
 									/>
 							  ))}
 					</div>
@@ -124,7 +117,7 @@ const AdminDashboardUsersGrid = () => {
 						<Pagination
 							currentPage={currentPage}
 							totalItems={count}
-							itemsPerPage={perPage}
+							itemsPerPage={limit}
 							setCurrentPage={setCurrentPage}
 							idToScroll={'admin-users-grid'}
 						/>

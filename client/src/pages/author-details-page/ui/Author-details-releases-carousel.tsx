@@ -5,27 +5,28 @@ import CarouselContainer from '../../../components/carousel/Carousel-container'
 import { releasesKeys } from '../../../query-keys/releases-keys'
 import { SortOrdersEnum } from '../../../types/common/enums/sort-orders-enum'
 import { CarouselRef } from '../../../types/common/types/carousel-ref'
-import { ReleasesSortFieldsEnum } from '../../../types/release'
+import { ReleasesQuery, ReleasesSortFieldsEnum } from '../../../types/release'
 import LastReleasesCarousel from '../../main-page/ui/last-releases/carousel/Last-releases-carousel'
 
 interface IProps {
 	id: string
 }
 
-const LIMIT = 15
-const OFFSET = 0
+const limit = 15
+const offset = 0
 
 const AuthorDetailsReleasesCarousel: FC<IProps> = ({ id }) => {
+	const query: ReleasesQuery = {
+		authorId: id,
+		sortField: ReleasesSortFieldsEnum.ALL_RATING,
+		sortOrder: SortOrdersEnum.DESC,
+		limit,
+		offset,
+	}
+
 	const { data, isPending } = useQuery({
-		queryKey: releasesKeys.byAuthor(id, false),
-		queryFn: () =>
-			ReleaseAPI.findAll({
-				authorId: id,
-				sortField: ReleasesSortFieldsEnum.ALL_RATING,
-				sortOrder: SortOrdersEnum.DESC,
-				limit: LIMIT,
-				offset: OFFSET,
-			}),
+		queryKey: releasesKeys.list(query),
+		queryFn: () => ReleaseAPI.findAll(query),
 		staleTime: 1000 * 60 * 5,
 	})
 

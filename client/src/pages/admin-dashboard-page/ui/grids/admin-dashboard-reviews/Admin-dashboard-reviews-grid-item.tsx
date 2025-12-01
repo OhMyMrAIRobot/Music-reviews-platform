@@ -1,15 +1,13 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { AxiosError } from 'axios'
+import { useMutation } from '@tanstack/react-query'
 import { FC, useState } from 'react'
 import { Link } from 'react-router'
 import { ReviewAPI } from '../../../../../api/review/review-api.ts'
 import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg.tsx'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
+import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler.ts'
 import useNavigationPath from '../../../../../hooks/use-navigation-path.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
-import { releasesKeys } from '../../../../../query-keys/releases-keys.ts'
-import { reviewsKeys } from '../../../../../query-keys/reviews-keys.ts'
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum.ts'
 import { SortOrder } from '../../../../../types/common/types/sort-order.ts'
 import { Review } from '../../../../../types/review/index.ts'
@@ -36,7 +34,9 @@ const AdminDashboardReviewsGridItem: FC<IProps> = ({
 }) => {
 	const { notificationStore } = useStore()
 
-	const queryClient = useQueryClient()
+	const handleApiError = useApiErrorHandler()
+
+	// const queryClient = useQueryClient()
 
 	const { navigateToReleaseDetails, navigatoToProfile } = useNavigationPath()
 
@@ -47,19 +47,12 @@ const AdminDashboardReviewsGridItem: FC<IProps> = ({
 		mutationFn: ({ id }: { id: string }) => ReviewAPI.adminDelete(id),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification('Вы успешно удалили рецензию!')
-			queryClient.invalidateQueries({ queryKey: reviewsKeys.all })
-			queryClient.invalidateQueries({ queryKey: releasesKeys.all })
+			// queryClient.invalidateQueries({ queryKey: reviewsKeys.all })
+			// queryClient.invalidateQueries({ queryKey: releasesKeys.all })
 			setConfModalOpen(false)
 		},
 		onError: (error: unknown) => {
-			const axiosError = error as AxiosError<{ message: string | string[] }>
-			const errors = Array.isArray(axiosError.response?.data?.message)
-				? axiosError.response?.data?.message
-				: [axiosError.response?.data?.message]
-			errors
-				.filter((err): err is string => typeof err === 'string')
-				.forEach((err: string) => notificationStore.addErrorNotification(err))
-
+			handleApiError(error)
 			setConfModalOpen(false)
 		},
 	})

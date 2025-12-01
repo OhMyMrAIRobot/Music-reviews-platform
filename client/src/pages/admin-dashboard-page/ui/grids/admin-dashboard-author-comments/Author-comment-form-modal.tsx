@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { AuthorCommentAPI } from '../../../../../api/author/author-comment-api'
 import FormButton from '../../../../../components/form-elements/Form-button'
@@ -7,7 +7,6 @@ import FormLabel from '../../../../../components/form-elements/Form-label'
 import FormTextbox from '../../../../../components/form-elements/Form-textbox'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay'
 import { useStore } from '../../../../../hooks/use-store'
-import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys'
 import { AuthorComment } from '../../../../../types/author'
 
 interface IProps {
@@ -19,7 +18,7 @@ interface IProps {
 const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
 	const { notificationStore } = useStore()
 
-	const queryClient = useQueryClient()
+	// const queryClient = useQueryClient()
 
 	const updateMutation = useMutation({
 		mutationFn: ({
@@ -35,7 +34,7 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
 			notificationStore.addSuccessNotification(
 				'Авторский комментарий успешно обновлен!'
 			)
-			queryClient.invalidateQueries({ queryKey: authorCommentsKeys.all })
+			// queryClient.invalidateQueries({ queryKey: authorCommentsKeys.all })
 			onClose()
 		},
 		onError: (error: unknown) => {

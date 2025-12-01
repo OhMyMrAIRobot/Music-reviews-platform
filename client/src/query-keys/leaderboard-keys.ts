@@ -1,11 +1,6 @@
+import { LeaderboardQuery } from '../types/leaderboard'
+
 export const leaderboardKeys = {
 	all: ['leaderboard'] as const,
-	list: (params: { limit: number | null; offset: number | null }) =>
-		[
-			'leaderboard',
-			{
-				limit: params.limit ?? null,
-				offset: params.offset ?? null,
-			},
-		] as const,
+	list: (params: LeaderboardQuery) => ['leaderboard', 'list', params] as const,
 }

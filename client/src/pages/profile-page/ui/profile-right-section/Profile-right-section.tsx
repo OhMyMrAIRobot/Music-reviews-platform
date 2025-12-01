@@ -2,10 +2,10 @@ import { useQuery } from '@tanstack/react-query'
 import { FC, useState } from 'react'
 import { useParams } from 'react-router'
 import { ReviewAPI } from '../../../../api/review/review-api'
-import { profileKeys } from '../../../../query-keys/profile-keys'
+import { reviewsKeys } from '../../../../query-keys/reviews-keys'
 import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum'
 import { Profile } from '../../../../types/profile'
-import { ReviewsSortFieldsEnum } from '../../../../types/review'
+import { ReviewsQuery, ReviewsSortFieldsEnum } from '../../../../types/review'
 import { RolesEnum } from '../../../../types/user'
 import { ProfilePageSections } from '../../types/profile-page-sections'
 import ProfileAuthorCardsGrid from './Profile-author-cards-grid'
@@ -18,7 +18,7 @@ interface IProps {
 	profile: Profile
 }
 
-const perPage = 5
+const limit = 5
 
 const ProfileRightSection: FC<IProps> = ({ profile }) => {
 	const { id } = useParams()
@@ -31,43 +31,37 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 	const [reviewsCurrentPage, setReviewsCurrentPage] = useState<number>(1)
 	const [favCurrentPage, setFavCurrentPage] = useState<number>(1)
 
-	const reviewsQueryKey = profileKeys.reviews({
-		userId: id ?? '',
-		limit: perPage,
-		offset: (reviewsCurrentPage - 1) * perPage,
-	})
+	const reviewsQuery: ReviewsQuery = {
+		userId: id,
+		limit,
+		offset: (reviewsCurrentPage - 1) * limit,
+		sortField: ReviewsSortFieldsEnum.CREATED,
+		sortOrder: SortOrdersEnum.DESC,
+	}
+
 	const { data: reviewsData, isPending: isReviewsPending } = useQuery({
-		queryKey: reviewsQueryKey,
+		queryKey: reviewsKeys.list(reviewsQuery),
 		queryFn: () =>
 			id
-				? ReviewAPI.findAll({
-						limit: perPage,
-						offset: (reviewsCurrentPage - 1) * perPage,
-						sortField: ReviewsSortFieldsEnum.CREATED,
-						sortOrder: SortOrdersEnum.DESC,
-						userId: id,
-				  })
+				? ReviewAPI.findAll(reviewsQuery)
 				: Promise.resolve({ items: [], meta: { count: 0 } }),
 		enabled: !!id && selectedSection === ProfilePageSections.REVIEWS,
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const favReviewsQueryKey = profileKeys.favReviews({
-		favUserId: id ?? '',
-		limit: perPage,
-		offset: (favCurrentPage - 1) * perPage,
-	})
+	const favReviewsQuery: ReviewsQuery = {
+		favUserId: id,
+		limit,
+		offset: (favCurrentPage - 1) * limit,
+		sortOrder: SortOrdersEnum.DESC,
+		sortField: ReviewsSortFieldsEnum.CREATED,
+	}
+
 	const { data: favReviewsData, isPending: isFavReviewsPending } = useQuery({
-		queryKey: favReviewsQueryKey,
+		queryKey: reviewsKeys.list(favReviewsQuery),
 		queryFn: () =>
 			id
-				? ReviewAPI.findAll({
-						sortField: ReviewsSortFieldsEnum.CREATED,
-						favUserId: id,
-						limit: perPage,
-						offset: (favCurrentPage - 1) * perPage,
-						sortOrder: SortOrdersEnum.DESC,
-				  })
+				? ReviewAPI.findAll(favReviewsQuery)
 				: Promise.resolve({ items: [], meta: { count: 0 } }),
 		enabled: !!id && selectedSection === ProfilePageSections.LIKES,
 		staleTime: 1000 * 60 * 5,
@@ -161,7 +155,7 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 					currentPage={reviewsCurrentPage}
 					setCurrentPage={setReviewsCurrentPage}
 					isLoading={isReviewsPending}
-					perPage={perPage}
+					perPage={limit}
 					// TODO: Fix toggle
 				/>
 			)}
@@ -178,7 +172,7 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 					currentPage={favCurrentPage}
 					setCurrentPage={setFavCurrentPage}
 					isLoading={isFavReviewsPending}
-					perPage={perPage}
+					perPage={limit}
 					// TODO: Fix toggle
 				/>
 			)}

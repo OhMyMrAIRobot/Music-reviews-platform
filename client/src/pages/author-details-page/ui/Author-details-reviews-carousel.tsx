@@ -4,18 +4,28 @@ import { ReviewAPI } from '../../../api/review/review-api'
 import CarouselContainer from '../../../components/carousel/Carousel-container'
 import LastReviewsCarousel from '../../../components/carousel/Last-reviews-carousel'
 import { reviewsKeys } from '../../../query-keys/reviews-keys'
+import { SortOrdersEnum } from '../../../types/common'
 import { CarouselRef } from '../../../types/common/types/carousel-ref'
+import { ReviewsQuery, ReviewsSortFieldsEnum } from '../../../types/review'
 
 interface IProps {
 	id: string
 }
 
-const COUNT = 25
+const limit = 25
 
 const AuthorDetailsReviewsCarousel: FC<IProps> = ({ id }) => {
+	const query: ReviewsQuery = {
+		authorId: id,
+		limit,
+		offset: 0,
+		sortOrder: SortOrdersEnum.DESC,
+		sortField: ReviewsSortFieldsEnum.CREATED,
+	}
+
 	const { data, isPending } = useQuery({
-		queryKey: reviewsKeys.byAuthor(id, COUNT, 0),
-		queryFn: () => ReviewAPI.findAll({ authorId: id, limit: COUNT, offset: 0 }),
+		queryKey: reviewsKeys.list(query),
+		queryFn: () => ReviewAPI.findAll(query),
 		staleTime: 1000 * 60 * 5,
 	})
 

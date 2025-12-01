@@ -4,24 +4,27 @@ import { ReleaseAPI } from '../../api/release/release-api'
 import ReleasesColumn from '../../components/release/releases-column/Releases-column'
 import { releasesKeys } from '../../query-keys/releases-keys'
 import { SortOrdersEnum } from '../../types/common/enums/sort-orders-enum'
-import { ReleasesSortFieldsEnum, ReleaseTypesEnum } from '../../types/release'
+import {
+	ReleasesQuery,
+	ReleasesSortFieldsEnum,
+	ReleaseTypesEnum,
+} from '../../types/release'
 import ReleasesRatingPageHeader from './ui/Releases-rating-page-header'
 
 const ReleasesRatingPage = () => {
 	const [month, setMonth] = useState<number>(new Date().getMonth() + 1)
 	const [year, setYear] = useState<number | null>(new Date().getFullYear())
 
-	const queryKey = releasesKeys.topRating({ year, month })
+	const query: ReleasesQuery = {
+		year: year ?? undefined,
+		month: month,
+		sortField: ReleasesSortFieldsEnum.ALL_RATING,
+		sortOrder: SortOrdersEnum.DESC,
+	}
 
 	const { data, isPending } = useQuery({
-		queryKey,
-		queryFn: () =>
-			ReleaseAPI.findAll({
-				year: year ?? undefined,
-				month: month,
-				sortField: ReleasesSortFieldsEnum.ALL_RATING,
-				sortOrder: SortOrdersEnum.DESC,
-			}),
+		queryKey: releasesKeys.list(query),
+		queryFn: () => ReleaseAPI.findAll(query),
 		enabled: true,
 		staleTime: 1000 * 60 * 5,
 	})

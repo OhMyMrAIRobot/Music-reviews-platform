@@ -5,30 +5,23 @@ import AuthorCommentColorSvg from '../../../../components/author/author-comment/
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys'
+import { AuthorCommentsQuery } from '../../../../types/author'
 import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum'
 import { CarouselRef } from '../../../../types/common/types/carousel-ref'
 import AuthorCommentsCarousel from './carousel/Author-comments-carousel'
 
-const limit = 15
-const offset = 0
-const order = SortOrdersEnum.DESC
-
-const queryKey = authorCommentsKeys.list({
-	limit,
-	offset,
-	order,
-	authorId: null,
-})
-
-const queryFn = () =>
-	AuthorCommentAPI.findAll({ limit, offset, sortOrder: order })
+const query: AuthorCommentsQuery = {
+	limit: 15,
+	offset: 0,
+	sortOrder: SortOrdersEnum.DESC,
+}
 
 const AuthorComments = () => {
 	const { navigateToAuthorComments } = useNavigationPath()
 
 	const { data, isPending } = useQuery({
-		queryKey,
-		queryFn,
+		queryKey: authorCommentsKeys.list(query),
+		queryFn: () => AuthorCommentAPI.findAll(query),
 		staleTime: 1000 * 60 * 5,
 	})
 

@@ -4,27 +4,21 @@ import { AlbumValueAPI } from '../../../../api/album-value-api'
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { albumValuesKeys } from '../../../../query-keys/album-values-keys'
+import { AlbumValuesQuery } from '../../../../types/album-value'
 import { CarouselRef } from '../../../../types/common/types/carousel-ref'
 import MainPageAlbumValuesCarousel from './Main-page-album-values-carousel'
 
-const limit = 15
-const offset = 0
-
-const queryKey = albumValuesKeys.list({
-	limit,
-	offset,
-	order: undefined,
-	tiers: undefined,
-})
-
-const queryFn = () => AlbumValueAPI.findAll({ limit, offset })
+const query: AlbumValuesQuery = {
+	limit: 15,
+	offset: 0,
+}
 
 const MainPageAlbumValues = () => {
 	const { navigateToAlbumValues } = useNavigationPath()
 
 	const { data, isPending } = useQuery({
-		queryKey,
-		queryFn,
+		queryKey: albumValuesKeys.list(query),
+		queryFn: () => AlbumValueAPI.findAll(query),
 		staleTime: 1000 * 60 * 5,
 	})
 

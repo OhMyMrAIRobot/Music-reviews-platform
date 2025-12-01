@@ -10,6 +10,7 @@ import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys'
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum'
 import { SortOrder } from '../../../../../types/common/types/sort-order'
 import {
+	ReleaseMediaQuery,
 	ReleaseMediaStatusesFilterOptions,
 	ReleaseMediaTypesFilterOptions,
 } from '../../../../../types/release'
@@ -17,7 +18,7 @@ import AdminFilterButton from '../../buttons/Admin-filter-button'
 import AdminDashboardMediaGridItem from './Admin-dashboard-media-grid-item'
 import MediaFormModal from './Media-form-modal'
 
-const perPage = 10
+const limit = 10
 
 const AdminDashboardMediaGrid = () => {
 	const { statuses, types, isLoading: isMetaLoading } = useReleaseMediaMeta()
@@ -35,42 +36,32 @@ const AdminDashboardMediaGrid = () => {
 
 	const statusId =
 		activeStatus !== ReleaseMediaStatusesFilterOptions.ALL
-			? statuses.find(status => status.status === activeStatus)?.id ?? null
-			: null
+			? statuses.find(status => status.status === activeStatus)?.id
+			: undefined
 
 	const typeId =
 		activeType !== ReleaseMediaTypesFilterOptions.ALL
-			? types.find(type => type.type === activeType)?.id ?? null
-			: null
+			? types.find(type => type.type === activeType)?.id
+			: undefined
 
-	const queryKey = releaseMediaKeys.list({
-		limit: perPage,
-		offset: (currentPage - 1) * perPage,
+	const query: ReleaseMediaQuery = {
+		limit,
+		offset: (currentPage - 1) * limit,
 		statusId,
 		typeId,
 		order,
-		search: searchText.trim().length > 0 ? searchText.trim() : undefined,
-	})
+		search: searchText.trim() || undefined,
+	}
 
-	const queryFn = () =>
-		ReleaseMediaAPI.findAll({
-			statusId: statusId ?? undefined,
-			typeId: typeId ?? undefined,
-			order,
-			limit: perPage,
-			offset: (currentPage - 1) * perPage,
-			search: searchText.trim().length > 0 ? searchText.trim() : undefined,
-		})
-
-	const { data: mediaData, isPending: isMediaLoading } = useQuery({
-		queryKey,
-		queryFn,
+	const { data, isPending: isMediaLoading } = useQuery({
+		queryKey: releaseMediaKeys.list(query),
+		queryFn: () => ReleaseMediaAPI.findAll(query),
 		enabled: !isMetaLoading,
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const media = mediaData?.items || []
-	const count = mediaData?.meta.count || 0
+	const media = data?.items || []
+	const count = data?.meta.count || 0
 
 	useEffect(() => {
 		setCurrentPage(1)
@@ -168,7 +159,7 @@ const AdminDashboardMediaGrid = () => {
 				<div className='flex-1 overflow-y-auto mt-5'>
 					<div className='grid gap-y-5'>
 						{isMediaLoading
-							? Array.from({ length: perPage }).map((_, idx) => (
+							? Array.from({ length: limit }).map((_, idx) => (
 									<AdminDashboardMediaGridItem
 										key={`Media-skeleton-${idx}`}
 										isLoading={isMediaLoading}
@@ -179,7 +170,7 @@ const AdminDashboardMediaGrid = () => {
 										key={mediaItem.id}
 										media={mediaItem}
 										isLoading={isMediaLoading}
-										position={(currentPage - 1) * perPage + idx + 1}
+										position={(currentPage - 1) * limit + idx + 1}
 									/>
 							  ))}
 					</div>
@@ -196,7 +187,7 @@ const AdminDashboardMediaGrid = () => {
 						<Pagination
 							currentPage={currentPage}
 							totalItems={count}
-							itemsPerPage={perPage}
+							itemsPerPage={limit}
 							setCurrentPage={setCurrentPage}
 							idToScroll={'admin-media-grid'}
 						/>

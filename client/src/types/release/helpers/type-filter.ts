@@ -7,8 +7,8 @@ import { ReleaseTypesFilterOptions } from './filter'
 export function getTypeIdByOption(
 	option: ReleaseTypesFilterOptions | string,
 	types?: ReleaseType[] | null
-): string | null {
-	if (option === ReleaseTypesFilterOptions.ALL) return null
+): string | undefined {
+	if (option === ReleaseTypesFilterOptions.ALL) return undefined
 	const found = types?.find(t => t.type === option)
-	return found?.id ?? null
+	return found?.id ?? undefined
 }

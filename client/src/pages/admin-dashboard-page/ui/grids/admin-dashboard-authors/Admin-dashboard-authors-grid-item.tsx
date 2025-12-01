@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 import { FC, useState } from 'react'
 import { Link } from 'react-router'
@@ -8,7 +8,6 @@ import ConfirmationModal from '../../../../../components/modals/Confirmation-mod
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
 import useNavigationPath from '../../../../../hooks/use-navigation-path.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
-import { authorsKeys } from '../../../../../query-keys/authors-keys.ts'
 import { Author } from '../../../../../types/author/'
 import { getAuthorTypeColor } from '../../../../../utils/get-author-type-color.ts'
 import AdminDeleteButton from '../../buttons/Admin-delete-button.tsx'
@@ -31,7 +30,7 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 }) => {
 	const { notificationStore } = useStore()
 
-	const queryClient = useQueryClient()
+	// const queryClient = useQueryClient()
 
 	const { navigateToAuthorDetails } = useNavigationPath()
 
@@ -42,7 +41,7 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 		mutationFn: (id: string) => AuthorAPI.deleteAuthor(id),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification('Вы успешно удалили автора!')
-			queryClient.invalidateQueries({ queryKey: authorsKeys.all })
+			// queryClient.invalidateQueries({ queryKey: authorsKeys.all })
 			setConfModalOpen(false)
 		},
 		onError: (error: unknown) => {

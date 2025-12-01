@@ -5,18 +5,21 @@ import AuthorLikeCard from '../../components/author/author-like/Author-like-card
 import AuthorLikeColorSvg from '../../components/author/author-like/svg/Author-like-color-svg'
 import Pagination from '../../components/pagination/Pagination'
 import { authorLikesKeys } from '../../query-keys/author-likes-keys'
+import { AuthorLikesQuery } from '../../types/review'
 
-const PER_PAGE = 9
+const limit = 9
 
 const AuthorLikesPage = () => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
 
-	const limit = PER_PAGE
-	const offset = (currentPage - 1) * PER_PAGE
+	const query: AuthorLikesQuery = {
+		limit,
+		offset: (currentPage - 1) * limit,
+	}
 
 	const { data, isPending } = useQuery({
-		queryKey: authorLikesKeys.list({ limit, offset }),
-		queryFn: () => UserFavReviewAPI.findAuthorLikes({ limit, offset }),
+		queryKey: authorLikesKeys.list(query),
+		queryFn: () => UserFavReviewAPI.findAuthorLikes(query),
 		staleTime: 1000 * 60 * 5,
 	})
 
@@ -35,7 +38,7 @@ const AuthorLikesPage = () => {
 			<section className='mt-5 py-2'>
 				<div className='gap-3 xl:gap-5 grid md:grid-cols-2 xl:grid-cols-3 grid-cols-1'>
 					{isPending
-						? Array.from({ length: PER_PAGE }).map((_, idx) => (
+						? Array.from({ length: limit }).map((_, idx) => (
 								<AuthorLikeCard
 									key={`Skeleton-author-like-${idx}`}
 									isLoading={true}
@@ -63,7 +66,7 @@ const AuthorLikesPage = () => {
 					<Pagination
 						currentPage={currentPage}
 						totalItems={totalCount}
-						itemsPerPage={PER_PAGE}
+						itemsPerPage={limit}
 						setCurrentPage={setCurrentPage}
 						idToScroll={'author-likes'}
 					/>

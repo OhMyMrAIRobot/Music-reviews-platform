@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
 import { ProfileAPI } from '../../../../api/user/profile-api'
@@ -11,7 +11,6 @@ import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../../hooks/use-auth'
 import { useSocialMeta } from '../../../../hooks/use-social-meta'
 import { useStore } from '../../../../hooks/use-store'
-import { profileKeys } from '../../../../query-keys/profile-keys'
 import { UpdateProfileData } from '../../../../types/profile'
 import buildProfileFormData from '../../../../utils/build-profile-form-data'
 import EditProfilePageSection from '../Edit-profile-page-section'
@@ -29,7 +28,7 @@ const UpdateProfileInfoForm = observer(() => {
 		Record<string, string>
 	>({})
 
-	const queryClient = useQueryClient()
+	// const queryClient = useQueryClient()
 	const handleApiError = useApiErrorHandler()
 
 	const updateMutation = useMutation({
@@ -37,7 +36,7 @@ const UpdateProfileInfoForm = observer(() => {
 		onSuccess: () => {
 			const userId = authStore.user?.id
 			if (userId) {
-				queryClient.invalidateQueries({ queryKey: profileKeys.profile(userId) })
+				// queryClient.invalidateQueries({ queryKey: profileKeys.profile(userId) })
 			}
 			notificationStore.addSuccessNotification(
 				'Описание профиля успешно обновлено!'

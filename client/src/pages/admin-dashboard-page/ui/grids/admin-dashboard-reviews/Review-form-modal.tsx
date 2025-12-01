@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { ReviewAPI } from '../../../../../api/review/review-api'
 import FormButton from '../../../../../components/form-elements/Form-button'
@@ -7,7 +7,6 @@ import FormLabel from '../../../../../components/form-elements/Form-label'
 import FormTextbox from '../../../../../components/form-elements/Form-textbox'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay'
 import { useStore } from '../../../../../hooks/use-store'
-import { reviewsKeys } from '../../../../../query-keys/reviews-keys'
 import { Review, UpdateReviewData } from '../../../../../types/review'
 
 interface IProps {
@@ -19,7 +18,7 @@ interface IProps {
 const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
 	const { notificationStore } = useStore()
 
-	const queryClient = useQueryClient()
+	// const queryClient = useQueryClient()
 
 	const updateMutation = useMutation({
 		mutationFn: ({
@@ -31,7 +30,7 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
 		}) => ReviewAPI.adminUpdate(reviewId, reviewData),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification('Рецензия успешно обновлена!')
-			queryClient.invalidateQueries({ queryKey: reviewsKeys.all })
+			// queryClient.invalidateQueries({ queryKey: reviewsKeys.all })
 			onClose()
 		},
 		onError: (error: unknown) => {

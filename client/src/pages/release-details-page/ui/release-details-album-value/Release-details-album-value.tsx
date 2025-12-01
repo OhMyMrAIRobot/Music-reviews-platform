@@ -10,10 +10,8 @@ interface IProps {
 }
 
 const ReleaseDetailsAlbumValue: FC<IProps> = ({ releaseId }) => {
-	const queryKey = albumValuesKeys.byRelease(releaseId)
-
 	const { data, isPending } = useQuery({
-		queryKey,
+		queryKey: albumValuesKeys.byRelease(releaseId),
 		queryFn: () => AlbumValueAPI.findByReleaseId(releaseId),
 		staleTime: 1000 * 60 * 5,
 		retry: false,

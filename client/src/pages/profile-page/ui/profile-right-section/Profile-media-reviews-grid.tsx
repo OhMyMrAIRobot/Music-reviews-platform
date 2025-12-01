@@ -4,8 +4,9 @@ import { ReleaseMediaAPI } from '../../../../api/release/release-media-api'
 import Pagination from '../../../../components/pagination/Pagination'
 import ReleaseMediaReview from '../../../../components/release/release-media/Release-media-review'
 import { useReleaseMediaMeta } from '../../../../hooks/use-release-media-meta'
-import { profileKeys } from '../../../../query-keys/profile-keys'
+import { releaseMediaKeys } from '../../../../query-keys/release-media-keys'
 import {
+	ReleaseMediaQuery,
 	ReleaseMediaStatusesEnum,
 	ReleaseMediaTypesEnum,
 } from '../../../../types/release'
@@ -14,7 +15,7 @@ interface IProps {
 	userId: string
 }
 
-const perPage = 5
+const limit = 5
 
 const ProfileMediaReviewsGrid: FC<IProps> = ({ userId }) => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
@@ -28,34 +29,17 @@ const ProfileMediaReviewsGrid: FC<IProps> = ({ userId }) => {
 		s => s.status === ReleaseMediaStatusesEnum.APPROVED
 	)?.id
 
-	const queryKey = profileKeys.media({
+	const query: ReleaseMediaQuery = {
 		userId,
-		statusId: statusId ?? null,
-		typeId: typeId ?? null,
-		limit: perPage,
-		offset: (currentPage - 1) * perPage,
-	})
+		statusId,
+		typeId,
+		limit,
+		offset: (currentPage - 1) * limit,
+	}
 
 	const { data: mediaData, isPending: isMediaLoading } = useQuery({
-		queryKey,
-		queryFn: () =>
-			ReleaseMediaAPI.findAll(
-				{
-					limit: perPage,
-					offset: (currentPage - 1) * perPage,
-					userId,
-					statusId,
-					typeId,
-				}
-				// perPage,
-				// (currentPage - 1) * perPage,
-				// statusId,
-				// typeId,
-				// null,
-				// userId,
-				// null,
-				// null
-			),
+		queryKey: releaseMediaKeys.list(query),
+		queryFn: () => ReleaseMediaAPI.findAll(query),
 		enabled: !isMetaLoading && !!typeId && !!statusId && !!userId,
 		staleTime: 1000 * 60 * 5,
 	})
@@ -71,7 +55,7 @@ const ProfileMediaReviewsGrid: FC<IProps> = ({ userId }) => {
 		<section>
 			<div className='gap-5 grid grid-cols-1 select-none'>
 				{isMediaLoading || isMediaLoading
-					? Array.from({ length: perPage }).map((_, idx) => (
+					? Array.from({ length: limit }).map((_, idx) => (
 							<ReleaseMediaReview
 								key={`Skeleton-media-review-${idx}`}
 								isLoading={true}
@@ -98,7 +82,7 @@ const ProfileMediaReviewsGrid: FC<IProps> = ({ userId }) => {
 					<Pagination
 						currentPage={currentPage}
 						totalItems={mediaData.meta.count ?? 0}
-						itemsPerPage={perPage}
+						itemsPerPage={limit}
 						setCurrentPage={setCurrentPage}
 						idToScroll={'profile-sections'}
 					/>

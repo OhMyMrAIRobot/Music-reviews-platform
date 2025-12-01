@@ -5,7 +5,9 @@ import { NominationAPI } from '../../api/nomination-api'
 import ComboBox from '../../components/buttons/Combo-box'
 import SkeletonLoader from '../../components/utils/Skeleton-loader'
 import useNavigationPath from '../../hooks/use-navigation-path'
+import { nominationsKeys } from '../../query-keys/nominations-keys'
 import { MonthEnumType, MonthsEnum } from '../../types/common/enums/months-enum'
+import { NominationWinnersQuery } from '../../types/nomination'
 import NominationCarouselContainer from './ui/carousel/Nomination-carousel-container'
 
 const AwardsPage = () => {
@@ -15,12 +17,16 @@ const AwardsPage = () => {
 
 	const parsedYear = useMemo(() => {
 		const y = parseInt(year, 10)
-		return Number.isFinite(y) ? y : null
+		return Number.isFinite(y) ? y : undefined
 	}, [year])
 
+	const query: NominationWinnersQuery = {
+		year: parsedYear,
+	}
+
 	const { data, isPending } = useQuery({
-		queryKey: ['nominationWinners', { month: null, year: parsedYear }],
-		queryFn: () => NominationAPI.findWinners(null, parsedYear),
+		queryKey: nominationsKeys.winners(query),
+		queryFn: () => NominationAPI.findWinners(query),
 		enabled: parsedYear !== null,
 		staleTime: 1000 * 60 * 5,
 	})

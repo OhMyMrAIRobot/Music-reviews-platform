@@ -3,21 +3,21 @@ import { Link } from 'react-router'
 import { LeaderboardAPI } from '../../../../../api/leaderboard-api'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
 import { leaderboardKeys } from '../../../../../query-keys/leaderboard-keys'
+import { LeaderboardQuery } from '../../../../../types/leaderboard'
 import PlatformStatsLeaderboardItem from './Platform-stats-leaderboard-item'
 import PlatformStatsLeaderboardLeaderItem from './Platform-stats-leaderboard-leader-item'
 
-const limit = 10
-const offset = 0
-
-const queryKey = leaderboardKeys.list({ limit, offset })
-const queryFn = () => LeaderboardAPI.fetchLeaderboard({ limit, offset })
+const query: LeaderboardQuery = {
+	limit: 10,
+	offset: 0,
+}
 
 const PlatformStatsLeaderboard = () => {
 	const { navigateToLeaderboard } = useNavigationPath()
 
 	const { data: items = [], isPending } = useQuery({
-		queryKey,
-		queryFn: queryFn,
+		queryKey: leaderboardKeys.list(query),
+		queryFn: () => LeaderboardAPI.fetchLeaderboard(query),
 		staleTime: 1000 * 60 * 15,
 	})
 

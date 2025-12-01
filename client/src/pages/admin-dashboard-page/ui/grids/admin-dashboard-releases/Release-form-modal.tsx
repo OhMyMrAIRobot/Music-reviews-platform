@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { AxiosError } from 'axios'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { AuthorAPI } from '../../../../../api/author/author-api.ts'
 import { ReleaseAPI } from '../../../../../api/release/release-api.ts'
@@ -13,10 +12,11 @@ import FormMultiSelect, {
 } from '../../../../../components/form-elements/Form-multi-select.tsx'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
+import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler.ts'
 import { useReleaseMeta } from '../../../../../hooks/use-release-meta.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
 import { authorsKeys } from '../../../../../query-keys/authors-keys.ts'
-import { releasesKeys } from '../../../../../query-keys/releases-keys.ts'
+import { AuthorsQuery } from '../../../../../types/author/index.ts'
 import { IReleaseFormValues, Release } from '../../../../../types/release'
 import { arraysEqual } from '../../../../../utils/arrays-equal.ts'
 import buildReleaseFormData from '../../../../../utils/build-release-form-data'
@@ -32,7 +32,8 @@ interface IProps {
 const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 	const { types, isLoading: isTypesLoading } = useReleaseMeta()
 	const { notificationStore } = useStore()
-	const queryClient = useQueryClient()
+
+	const handleApiError = useApiErrorHandler()
 
 	const [cover, setCover] = useState<File | null>(null)
 	const [coverPreviewUrl, setCoverPreviewUrl] = useState<string | null>(null)
@@ -53,19 +54,13 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 	const createMutation = useMutation({
 		mutationFn: (formData: FormData) => ReleaseAPI.create(formData),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: releasesKeys.all })
+			// queryClient.invalidateQueries({ queryKey: releasesKeys.all })
 			notificationStore.addSuccessNotification('Релиз успешно добавлен!')
 			resetForm()
 			onClose()
 		},
 		onError: (error: unknown) => {
-			const axiosError = error as AxiosError<{ message: string | string[] }>
-			const errors = Array.isArray(axiosError.response?.data?.message)
-				? axiosError.response?.data?.message
-				: [axiosError.response?.data?.message]
-			errors
-				.filter((err): err is string => typeof err === 'string')
-				.forEach((err: string) => notificationStore.addErrorNotification(err))
+			handleApiError(error)
 		},
 	})
 
@@ -73,19 +68,13 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 		mutationFn: ({ id, formData }: { id: string; formData: FormData }) =>
 			ReleaseAPI.update(id, formData),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: releasesKeys.all })
+			// queryClient.invalidateQueries({ queryKey: releasesKeys.all })
 			notificationStore.addSuccessNotification('Релиз успешно обновлен')
 			resetForm()
 			onClose()
 		},
 		onError: (error: unknown) => {
-			const axiosError = error as AxiosError<{ message: string | string[] }>
-			const errors = Array.isArray(axiosError.response?.data?.message)
-				? axiosError.response?.data?.message
-				: [axiosError.response?.data?.message]
-			errors
-				.filter((err): err is string => typeof err === 'string')
-				.forEach((err: string) => notificationStore.addErrorNotification(err))
+			handleApiError(error)
 		},
 	})
 
@@ -180,22 +169,21 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 		}
 	}
 
+	const queryClient = useQueryClient()
+
 	const loadAuthors = async (
 		search: string,
 		limit: number | null
 	): Promise<IMultiSelectValue[]> => {
+		const query: AuthorsQuery = {
+			search: search.trim() || undefined,
+			limit: limit ?? undefined,
+			offset: 0,
+		}
+
 		const data = await queryClient.fetchQuery({
-			queryKey: authorsKeys.search({
-				query: search.trim() !== '' ? search.trim() : null,
-				limit,
-				offset: 0,
-			}),
-			queryFn: () =>
-				AuthorAPI.findAll({
-					search: search.trim() !== '' ? search.trim() : undefined,
-					limit: limit ?? undefined,
-					offset: 0,
-				}),
+			queryKey: authorsKeys.list(query),
+			queryFn: () => AuthorAPI.findAll(query),
 		})
 		return data?.items.map(a => ({
 			id: a.id,

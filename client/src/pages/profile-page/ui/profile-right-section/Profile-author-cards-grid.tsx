@@ -4,7 +4,8 @@ import useEmblaCarousel from 'embla-carousel-react'
 import { FC } from 'react'
 import { AuthorAPI } from '../../../../api/author/author-api'
 import AuthorCard from '../../../../components/author/authors-grid/Author-card'
-import { profileKeys } from '../../../../query-keys/profile-keys'
+import { authorsKeys } from '../../../../query-keys/authors-keys'
+import { AuthorsQuery } from '../../../../types/author'
 
 interface IProps {
 	userId: string
@@ -15,14 +16,14 @@ const options: EmblaOptionsType = { dragFree: true, align: 'start' }
 const ProfileAuthorCardsGrid: FC<IProps> = ({ userId }) => {
 	const [emblaRef] = useEmblaCarousel(options)
 
-	const queryKey = profileKeys.authorCards(userId)
+	const query: AuthorsQuery = {
+		onlyRegistered: true,
+		userId,
+	}
+
 	const { data, isLoading } = useQuery({
-		queryKey,
-		queryFn: () =>
-			AuthorAPI.findAll({
-				onlyRegistered: true,
-				userId,
-			}),
+		queryKey: authorsKeys.list(query),
+		queryFn: () => AuthorAPI.findAll(query),
 		enabled: !!userId,
 		staleTime: 1000 * 60 * 5,
 	})

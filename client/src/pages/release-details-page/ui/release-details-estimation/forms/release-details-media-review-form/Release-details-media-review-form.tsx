@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { ReleaseMediaAPI } from '../../../../../../api/release/release-media-api'
 import FormButton from '../../../../../../components/form-elements/Form-button'
@@ -11,6 +11,7 @@ import { releaseMediaKeys } from '../../../../../../query-keys/release-media-key
 import authStore from '../../../../../../stores/auth-store'
 import {
 	CreateReleaseMediaData,
+	ReleaseMediaQuery,
 	UpdateReleaseMediaData,
 } from '../../../../../../types/release'
 
@@ -22,62 +23,52 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = ({ releaseId }) => {
 	const { notificationStore } = useStore()
 
 	const { checkAuth } = useAuth()
-	const queryClient = useQueryClient()
+	// const queryClient = useQueryClient()
 
 	const handleApiError = useApiErrorHandler()
 
-	const invalidateRelatedQueries = () => {
-		const keys = [
-			releaseMediaKeys.userByRelease(releaseId, authStore.user?.id || ''),
-			releaseMediaKeys.all,
-		]
-		keys.forEach(key => queryClient.invalidateQueries({ queryKey: key }))
-	}
-
 	const createMutation = useMutation({
 		mutationFn: (data: CreateReleaseMediaData) => ReleaseMediaAPI.create(data),
-		onSuccess: data => {
-			invalidateRelatedQueries()
-			queryClient.setQueryData(
-				releaseMediaKeys.userByRelease(releaseId, authStore.user?.id || ''),
-				data
-			)
-		},
+		// onSuccess: data => {
+		// 	invalidateRelatedQueries()
+		// 	queryClient.setQueryData(
+		// 		releaseMediaKeys.userByRelease(releaseId, authStore.user?.id || ''),
+		// 		data
+		// 	)
+		// },
 	})
 
 	const updateMutation = useMutation({
 		mutationFn: (data: { id: string; updateData: UpdateReleaseMediaData }) =>
 			ReleaseMediaAPI.update(data.id, data.updateData),
-		onSuccess: data => {
-			invalidateRelatedQueries()
-			queryClient.setQueryData(
-				releaseMediaKeys.userByRelease(releaseId, authStore.user?.id || ''),
-				data
-			)
-		},
+		// onSuccess: data => {
+		// 	invalidateRelatedQueries()
+		// 	queryClient.setQueryData(
+		// 		releaseMediaKeys.userByRelease(releaseId, authStore.user?.id || ''),
+		// 		data
+		// 	)
+		// },
 	})
 
 	const deleteMutation = useMutation({
 		mutationFn: (id: string) => ReleaseMediaAPI.delete(id),
-		onSuccess: () => {
-			invalidateRelatedQueries()
-			queryClient.setQueryData(
-				releaseMediaKeys.userByRelease(releaseId, authStore.user?.id || ''),
-				undefined
-			)
-		},
+		// onSuccess: () => {
+		// 	invalidateRelatedQueries()
+		// 	queryClient.setQueryData(
+		// 		releaseMediaKeys.userByRelease(releaseId, authStore.user?.id || ''),
+		// 		undefined
+		// 	)
+		// },
 	})
 
+	const query: ReleaseMediaQuery = {
+		releaseId,
+		userId: authStore.user?.id,
+	}
+
 	const { data: userReleaseMediaData } = useQuery({
-		queryKey: releaseMediaKeys.userByRelease(
-			releaseId,
-			authStore.user?.id || ''
-		),
-		queryFn: () =>
-			ReleaseMediaAPI.findAll({
-				releaseId: releaseId,
-				userId: authStore.user?.id || '',
-			}),
+		queryKey: releaseMediaKeys.list(query),
+		queryFn: () => ReleaseMediaAPI.findAll(query),
 		enabled: authStore.isAuth && !!authStore.user?.id,
 		staleTime: 1000 * 60 * 5,
 	})

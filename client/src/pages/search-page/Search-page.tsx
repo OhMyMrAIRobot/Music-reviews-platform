@@ -8,7 +8,9 @@ import ReleasesGrid from '../../components/release/Releases-grid'
 import useNavigationPath from '../../hooks/use-navigation-path'
 import { authorsKeys } from '../../query-keys/authors-keys'
 import { releasesKeys } from '../../query-keys/releases-keys'
+import { AuthorsQuery } from '../../types/author'
 import { SearchTypesEnum } from '../../types/common/enums/search-types-enum'
+import { ReleasesQuery } from '../../types/release'
 
 const perPage = 10
 
@@ -25,35 +27,28 @@ const SearchPage = () => {
 	const [searchParams] = useSearchParams()
 	const query = searchParams.get('query') || ''
 
-	const authorsQuery = useQuery({
-		queryKey: authorsKeys.search({
-			query: query || null,
-			limit: perPage,
-			offset: (currentPage - 1) * perPage,
-		}),
-		queryFn: () =>
-			AuthorAPI.findAll({
-				search: query.trim() || undefined,
-				limit: perPage,
-				offset: (currentPage - 1) * perPage,
-			}),
+	const authorsQuery: AuthorsQuery = {
+		search: query.trim() || undefined,
+		limit: perPage,
+		offset: (currentPage - 1) * perPage,
+	}
+
+	const authorsQ = useQuery({
+		queryKey: authorsKeys.list(authorsQuery),
+		queryFn: () => AuthorAPI.findAll(authorsQuery),
 		enabled: query.length > 0 && type === SearchTypesEnum.AUTHORS,
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const releasesQuery = useQuery({
-		queryKey: releasesKeys.search({
-			query: query || null,
-			limit: perPage,
-			offset: (currentPage - 1) * perPage,
-		}),
-		queryFn: () =>
-			ReleaseAPI.findAll({
-				search: query || undefined,
-				limit: perPage,
-				offset: (currentPage - 1) * perPage,
-			}),
+	const releasesQuery: ReleasesQuery = {
+		search: query || undefined,
+		limit: perPage,
+		offset: (currentPage - 1) * perPage,
+	}
 
+	const releasesQ = useQuery({
+		queryKey: releasesKeys.list(releasesQuery),
+		queryFn: () => ReleaseAPI.findAll(releasesQuery),
 		enabled: query.length > 0 && type === SearchTypesEnum.RELEASES,
 		staleTime: 1000 * 60 * 5,
 	})
@@ -73,21 +68,21 @@ const SearchPage = () => {
 			<>
 				{type === SearchTypesEnum.AUTHORS && (
 					<AuthorsGrid
-						items={authorsQuery.data?.items ?? []}
-						isLoading={authorsQuery.isPending}
+						items={authorsQ.data?.items ?? []}
+						isLoading={authorsQ.isPending}
 						currentPage={currentPage}
 						setCurrentPage={setCurrentPage}
-						total={authorsQuery.data?.meta.count ?? 0}
+						total={authorsQ.data?.meta.count ?? 0}
 						perPage={perPage}
 					/>
 				)}
 				{type === SearchTypesEnum.RELEASES && (
 					<ReleasesGrid
-						items={releasesQuery.data?.items ?? []}
-						isLoading={releasesQuery.isPending}
+						items={releasesQ.data?.items ?? []}
+						isLoading={releasesQ.isPending}
 						currentPage={currentPage}
 						setCurrentPage={setCurrentPage}
-						total={releasesQuery.data?.meta.count ?? 0}
+						total={releasesQ.data?.meta.count ?? 0}
 						perPage={perPage}
 					/>
 				)}

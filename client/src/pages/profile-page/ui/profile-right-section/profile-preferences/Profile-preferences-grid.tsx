@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { FC } from 'react'
 import { ProfileAPI } from '../../../../../api/user/profile-api.ts'
-import { profileKeys } from '../../../../../query-keys/profile-keys'
+import { profilesKeys } from '../../../../../query-keys/profiles-keys.ts'
 import ProfilePreferencesGridRow from './Profile-preferences-grid-row.tsx'
 
 interface IProps {
@@ -9,9 +9,8 @@ interface IProps {
 }
 
 const ProfilePreferencesGrid: FC<IProps> = ({ userId }) => {
-	const queryKey = profileKeys.preferences(userId)
 	const { data, isPending } = useQuery({
-		queryKey,
+		queryKey: profilesKeys.preferences(userId),
 		queryFn: () => ProfileAPI.findPreferences(userId),
 		staleTime: 1000 * 60 * 5,
 	})

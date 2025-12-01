@@ -6,10 +6,11 @@ import AuthorCommentColorSvg from '../../components/author/author-comment/svg/Au
 import ComboBox from '../../components/buttons/Combo-box'
 import Pagination from '../../components/pagination/Pagination'
 import { authorCommentsKeys } from '../../query-keys/author-comments-keys'
+import { AuthorCommentsQuery } from '../../types/author'
 import { SortOrdersEnum } from '../../types/common/enums/sort-orders-enum'
 import { ReviewSortFields } from '../../types/review'
 
-const PER_PAGE = 12
+const limit = 12
 
 const AuthorCommentsPage = () => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
@@ -17,22 +18,20 @@ const AuthorCommentsPage = () => {
 		ReviewSortFields.NEW
 	)
 
-	const limit = PER_PAGE
-	const offset = (currentPage - 1) * PER_PAGE
-	const orderParam =
+	const sortOrder =
 		selectedOrder === ReviewSortFields.NEW
 			? SortOrdersEnum.DESC
 			: SortOrdersEnum.ASC
 
+	const query: AuthorCommentsQuery = {
+		limit,
+		sortOrder,
+		offset: (currentPage - 1) * limit,
+	}
+
 	const { data, isPending } = useQuery({
-		queryKey: authorCommentsKeys.list({
-			limit,
-			offset,
-			order: orderParam,
-			authorId: null,
-		}),
-		queryFn: () =>
-			AuthorCommentAPI.findAll({ limit, offset, sortOrder: orderParam }),
+		queryKey: authorCommentsKeys.list(query),
+		queryFn: () => AuthorCommentAPI.findAll(query),
 		staleTime: 1000 * 60 * 5,
 	})
 
@@ -65,7 +64,7 @@ const AuthorCommentsPage = () => {
 			<section className='mt-5 overflow-hidden py-2'>
 				<div className='gap-3 xl:gap-5 grid md:grid-cols-2 xl:grid-cols-3 grid-cols-1'>
 					{isPending
-						? Array.from({ length: PER_PAGE }).map((_, idx) => (
+						? Array.from({ length: limit }).map((_, idx) => (
 								<AuthorCommentCard
 									key={`skeleton-author-comment-${idx}`}
 									isLoading={true}
@@ -92,7 +91,7 @@ const AuthorCommentsPage = () => {
 					<Pagination
 						currentPage={currentPage}
 						totalItems={totalCount}
-						itemsPerPage={PER_PAGE}
+						itemsPerPage={limit}
 						setCurrentPage={setCurrentPage}
 						idToScroll={'author-comments'}
 					/>

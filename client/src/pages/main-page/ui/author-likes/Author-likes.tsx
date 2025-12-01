@@ -6,21 +6,20 @@ import CarouselContainer from '../../../../components/carousel/Carousel-containe
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { authorLikesKeys } from '../../../../query-keys/author-likes-keys'
 import { CarouselRef } from '../../../../types/common/types/carousel-ref'
+import { AuthorLikesQuery } from '../../../../types/review'
 import AuthorLikesCarousel from './carousel/Author-likes-carousel'
 
-const LIMIT = 20
-const OFFSET = 0
-
-const queryKey = authorLikesKeys.list({ limit: LIMIT, offset: OFFSET })
-const queryFn = () =>
-	UserFavReviewAPI.findAuthorLikes({ limit: LIMIT, offset: OFFSET })
+const query: AuthorLikesQuery = {
+	limit: 20,
+	offset: 0,
+}
 
 const AuthorLikes = () => {
 	const { navigateToAuthorLikes } = useNavigationPath()
 
 	const { data, isPending } = useQuery({
-		queryKey,
-		queryFn,
+		queryKey: authorLikesKeys.list(query),
+		queryFn: () => UserFavReviewAPI.findAuthorLikes(query),
 		staleTime: 1000 * 60 * 5,
 	})
 

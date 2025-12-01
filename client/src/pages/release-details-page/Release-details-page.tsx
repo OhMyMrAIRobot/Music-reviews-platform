@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router'
 import { ReleaseAPI } from '../../api/release/release-api'
 import Loader from '../../components/utils/Loader.tsx'
 import useNavigationPath from '../../hooks/use-navigation-path'
-import { releaseDetailsKeys } from '../../query-keys/release-details-keys'
+import { releasesKeys } from '../../query-keys/releases-keys.ts'
 import authStore from '../../stores/auth-store.ts'
 import { ReleaseTypesEnum } from '../../types/release'
 import ReleaseDetailsAlbumValue from './ui/release-details-album-value/Release-details-album-value.tsx'
@@ -22,10 +22,8 @@ const ReleaseDetailsPage = () => {
 	const { navigateToMain } = useNavigationPath()
 
 	const { data: release, isPending: isReleaseLoading } = useQuery({
-		queryKey: id
-			? releaseDetailsKeys.details(id)
-			: releaseDetailsKeys.unknown(),
-		queryFn: () => (id ? ReleaseAPI.fetchById(id) : Promise.resolve(null)),
+		queryKey: id ? releasesKeys.details(id) : releasesKeys.details('unknown'),
+		queryFn: () => (id ? ReleaseAPI.fetchById(id) : Promise.resolve(undefined)),
 		enabled: !!id,
 		staleTime: 1000 * 60 * 5,
 	})

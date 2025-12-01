@@ -9,11 +9,14 @@ import { useFeedbackMeta } from '../../../../../hooks/use-feedback-meta'
 import { feedbackKeys } from '../../../../../query-keys/feedback-keys'
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum'
 import { SortOrder } from '../../../../../types/common/types/sort-order'
-import { FeedbackStatusesFilterEnum } from '../../../../../types/feedback'
+import {
+	FeedbackQuery,
+	FeedbackStatusesFilterEnum,
+} from '../../../../../types/feedback'
 import AdminFilterButton from '../../buttons/Admin-filter-button'
 import AdminDashboardFeedbackGridItem from './Admin-dashboard-feedback-grid-item'
 
-const perPage = 10
+const limit = 10
 
 const AdminDashboardFeedbackGrid = () => {
 	const { statuses, isLoading: isMetaLoading } = useFeedbackMeta()
@@ -27,35 +30,26 @@ const AdminDashboardFeedbackGrid = () => {
 
 	const statusId =
 		activeStatus !== FeedbackStatusesFilterEnum.ALL
-			? statuses.find(status => status.status === activeStatus)?.id ?? null
-			: null
+			? statuses.find(status => status.status === activeStatus)?.id
+			: undefined
 
-	const queryKey = feedbackKeys.list({
-		query: searchText.trim().length > 0 ? searchText.trim() : null,
+	const query: FeedbackQuery = {
 		statusId,
+		search: searchText.trim() || undefined,
 		order,
-		limit: perPage,
-		offset: (currentPage - 1) * perPage,
-	})
+		limit,
+		offset: (currentPage - 1) * limit,
+	}
 
-	const queryFn = () =>
-		FeedbackAPI.findAll({
-			search: searchText.trim().length > 0 ? searchText.trim() : undefined,
-			statusId: statusId ?? undefined,
-			order,
-			limit: perPage,
-			offset: (currentPage - 1) * perPage,
-		})
-
-	const { data: feedbackData, isPending: isFeedbackLoading } = useQuery({
-		queryKey,
-		queryFn,
+	const { data, isPending: isFeedbackLoading } = useQuery({
+		queryKey: feedbackKeys.list(query),
+		queryFn: () => FeedbackAPI.findAll(query),
 		enabled: !isMetaLoading,
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const feedback = feedbackData?.items || []
-	const count = feedbackData?.meta.count || 0
+	const feedback = data?.items || []
+	const count = data?.meta.count || 0
 
 	useEffect(() => {
 		setCurrentPage(1)
@@ -110,7 +104,7 @@ const AdminDashboardFeedbackGrid = () => {
 				<div className='flex-1 overflow-y-auto mt-5'>
 					<div className='grid gap-y-5'>
 						{isLoading
-							? Array.from({ length: perPage }).map((_, idx) => (
+							? Array.from({ length: limit }).map((_, idx) => (
 									<AdminDashboardFeedbackGridItem
 										key={`Feedback-skeleton-${idx}`}
 										isLoading={true}
@@ -121,7 +115,7 @@ const AdminDashboardFeedbackGrid = () => {
 										key={feedbackItem.id}
 										feedback={feedbackItem}
 										isLoading={false}
-										position={(currentPage - 1) * perPage + idx + 1}
+										position={(currentPage - 1) * limit + idx + 1}
 									/>
 							  ))}
 					</div>
@@ -138,7 +132,7 @@ const AdminDashboardFeedbackGrid = () => {
 						<Pagination
 							currentPage={currentPage}
 							totalItems={count}
-							itemsPerPage={perPage}
+							itemsPerPage={limit}
 							setCurrentPage={setCurrentPage}
 							idToScroll={'admin-feedback-grid'}
 						/>

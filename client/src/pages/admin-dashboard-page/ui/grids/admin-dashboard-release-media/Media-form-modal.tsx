@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { ReleaseAPI } from '../../../../../api/release/release-api'
 import { ReleaseMediaAPI } from '../../../../../api/release/release-media-api'
@@ -12,12 +12,12 @@ import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler'
 import { useReleaseMediaMeta } from '../../../../../hooks/use-release-media-meta'
 import { useStore } from '../../../../../hooks/use-store'
-import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys'
 import { releasesKeys } from '../../../../../query-keys/releases-keys'
 import {
 	AdminCreateReleaseMediaData,
 	AdminUpdateReleaseMediaData,
 	ReleaseMedia,
+	ReleasesQuery,
 } from '../../../../../types/release'
 
 interface IProps {
@@ -33,7 +33,7 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 
 	const handleApiError = useApiErrorHandler()
 
-	const queryClient = useQueryClient()
+	// const queryClient = useQueryClient()
 
 	const [title, setTitle] = useState<string>('')
 	const [url, setUrl] = useState<string>('')
@@ -42,20 +42,15 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 	const [release, setRelease] = useState<string>('')
 	const [searchReleases, setSearchReleases] = useState<string>('')
 
+	const query: ReleasesQuery = {
+		search: searchReleases.trim() ?? undefined,
+		limit: 20,
+		offset: 0,
+	}
+
 	const { data: releasesData, isPending: isReleasesLoading } = useQuery({
-		queryKey: releasesKeys.adminList({
-			typeId: null,
-			query: searchReleases.trim() || null,
-			order: null,
-			limit: 20,
-			offset: 0,
-		}),
-		queryFn: () =>
-			ReleaseAPI.findAll({
-				search: searchReleases.trim() ?? undefined,
-				limit: 20,
-				offset: 0,
-			}),
+		queryKey: releasesKeys.list(query),
+		queryFn: () => ReleaseAPI.findAll(query),
 		enabled: !!searchReleases.trim() && isOpen,
 		staleTime: 1000 * 60 * 5,
 	})
@@ -67,7 +62,7 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 			ReleaseMediaAPI.adminCreate(data),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification('Медиа успешно добавлено!')
-			queryClient.invalidateQueries({ queryKey: releaseMediaKeys.all })
+			// queryClient.invalidateQueries({ queryKey: releaseMediaKeys.all })
 			clearForm()
 			onClose()
 		},
@@ -86,7 +81,7 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 		}) => ReleaseMediaAPI.adminUpdate(id, data),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification('Медиа успешно обновлено!')
-			queryClient.invalidateQueries({ queryKey: releaseMediaKeys.all })
+			// queryClient.invalidateQueries({ queryKey: releaseMediaKeys.all })
 			clearForm()
 			onClose()
 		},

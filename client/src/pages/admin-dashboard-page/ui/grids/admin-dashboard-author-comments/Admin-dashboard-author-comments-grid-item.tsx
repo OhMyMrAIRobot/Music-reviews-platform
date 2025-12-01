@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { FC, useState } from 'react'
 import { Link } from 'react-router'
 import { AuthorCommentAPI } from '../../../../../api/author/author-comment-api'
@@ -7,7 +7,6 @@ import ConfirmationModal from '../../../../../components/modals/Confirmation-mod
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../../hooks/use-store'
-import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys'
 import { AuthorComment } from '../../../../../types/author'
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum'
 import { SortOrder } from '../../../../../types/common/types/sort-order'
@@ -36,7 +35,7 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = ({
 
 	const { navigateToReleaseDetails, navigatoToProfile } = useNavigationPath()
 
-	const queryClient = useQueryClient()
+	// const queryClient = useQueryClient()
 
 	const deleteMutation = useMutation({
 		mutationFn: (id: string) => AuthorCommentAPI.adminDelete(id),
@@ -44,7 +43,7 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = ({
 			notificationStore.addSuccessNotification(
 				'Вы успешно удалили авторский комментарий!'
 			)
-			queryClient.invalidateQueries({ queryKey: authorCommentsKeys.all })
+			// queryClient.invalidateQueries({ queryKey: authorCommentsKeys.all })
 			setConfModalOpen(false)
 		},
 		onError: (error: unknown) => {

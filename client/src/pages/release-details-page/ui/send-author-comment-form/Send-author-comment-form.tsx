@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { AuthorCommentAPI } from '../../../../api/author/author-comment-api'
 import FormButton from '../../../../components/form-elements/Form-button'
@@ -7,11 +7,8 @@ import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../../hooks/use-auth'
 import { useStore } from '../../../../hooks/use-store'
 import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys'
-import { leaderboardKeys } from '../../../../query-keys/leaderboard-keys'
-import { platformStatsKeys } from '../../../../query-keys/platform-stats-keys'
-import { profileKeys } from '../../../../query-keys/profile-keys'
-import { releasesKeys } from '../../../../query-keys/releases-keys'
 import {
+	AuthorCommentsQuery,
 	CreateAuthorCommentData,
 	UpdateAuthorCommentData,
 } from '../../../../types/author'
@@ -24,16 +21,20 @@ interface IProps {
 const SendAuthorCommentForm: FC<IProps> = ({ releaseId }) => {
 	const { notificationStore, authStore } = useStore()
 	const { checkAuth } = useAuth()
-	const queryClient = useQueryClient()
+	// const queryClient = useQueryClient()
 	const handleApiError = useApiErrorHandler()
 
 	const [title, setTitle] = useState<string>('')
 	const [text, setText] = useState<string>('')
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 
+	const query: AuthorCommentsQuery = {
+		releaseId,
+	}
+
 	const { data } = useQuery({
-		queryKey: authorCommentsKeys.byRelease(releaseId),
-		queryFn: () => AuthorCommentAPI.findAll({ releaseId }),
+		queryKey: authorCommentsKeys.list(query),
+		queryFn: () => AuthorCommentAPI.findAll(query),
 		staleTime: 1000 * 60 * 5,
 	})
 
@@ -43,22 +44,22 @@ const SendAuthorCommentForm: FC<IProps> = ({ releaseId }) => {
 		c => c.user.id === authStore.user?.id
 	)
 
-	const invalidateRelatedQueries = () => {
-		const keys = [
-			authorCommentsKeys.all,
-			authorCommentsKeys.byRelease(releaseId),
-			releasesKeys.all,
-			profileKeys.profile(authStore.user?.id || 'unknown'),
-			platformStatsKeys.all,
-			leaderboardKeys.all,
-		]
-		keys.forEach(key => queryClient.invalidateQueries({ queryKey: key }))
-	}
+	// const invalidateRelatedQueries = () => {
+	// 	const keys = [
+	// 		authorCommentsKeys.all,
+	// 		authorCommentsKeys.byRelease(releaseId),
+	// 		releasesKeys.all,
+	// 		profileKeys.profile(authStore.user?.id || 'unknown'),
+	// 		platformStatsKeys.all,
+	// 		leaderboardKeys.all,
+	// 	]
+	// 	keys.forEach(key => queryClient.invalidateQueries({ queryKey: key }))
+	// }
 
 	const createMutation = useMutation({
 		mutationFn: ({ title, text, releaseId }: CreateAuthorCommentData) =>
 			AuthorCommentAPI.create({ releaseId, title, text }),
-		onSuccess: invalidateRelatedQueries,
+		// onSuccess: invalidateRelatedQueries,
 	})
 
 	const updateMutation = useMutation({
@@ -68,12 +69,12 @@ const SendAuthorCommentForm: FC<IProps> = ({ releaseId }) => {
 			text,
 		}: UpdateAuthorCommentData & { id: string }) =>
 			AuthorCommentAPI.update(id, { title, text }),
-		onSuccess: invalidateRelatedQueries,
+		// onSuccess: invalidateRelatedQueries,
 	})
 
 	const deleteMutation = useMutation({
 		mutationFn: (id: string) => AuthorCommentAPI.delete(id),
-		onSuccess: invalidateRelatedQueries,
+		// onSuccess: invalidateRelatedQueries,
 	})
 
 	const handleSubmit = async () => {

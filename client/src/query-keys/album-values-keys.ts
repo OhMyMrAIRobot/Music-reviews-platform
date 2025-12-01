@@ -1,30 +1,9 @@
-import { AlbumValueTiersEnum } from '../types/album-value'
-import type { SortOrder } from '../types/common/types/sort-order'
+import { AlbumValuesQuery } from '../types/album-value'
 
 export const albumValuesKeys = {
 	all: ['albumValues'] as const,
+	list: (params: AlbumValuesQuery) => ['albumValues', 'list', params] as const,
 	byRelease: (releaseId: string) =>
-		['albumValues', 'byRelease', { releaseId }] as const,
-	list: (params: {
-		limit: number
-		offset: number
-		order: SortOrder | undefined
-		tiers: AlbumValueTiersEnum[] | undefined
-		authorId?: string | null
-		releaseId?: string | null
-	}) => {
-		const normalizedTiers = params.tiers ? [...params.tiers].sort() : null
-
-		return [
-			'albumValues',
-			{
-				limit: params.limit,
-				offset: params.offset,
-				order: params.order ?? null,
-				tiers: normalizedTiers,
-				authorId: params.authorId ?? null,
-				releaseId: params.releaseId ?? null,
-			},
-		] as const
-	},
+		['albumValues', 'byRelease', releaseId] as const,
+	user: (releaseId: string) => ['albumValues', 'user', releaseId] as const,
 }

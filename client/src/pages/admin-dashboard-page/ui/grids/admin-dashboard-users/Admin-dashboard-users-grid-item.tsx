@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { FC, useState } from 'react'
 import { Link } from 'react-router'
 import { UserAPI } from '../../../../../api/user/user-api.ts'
@@ -9,7 +9,6 @@ import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
 import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler.ts'
 import useNavigationPath from '../../../../../hooks/use-navigation-path.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
-import { usersKeys } from '../../../../../query-keys/users-keys.ts'
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum.ts'
 import { SortOrder } from '../../../../../types/common/types/sort-order.ts'
 import {
@@ -46,7 +45,7 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 	const [editModelOpen, setEditModalOpen] = useState<boolean>(false)
 	const handleApiError = useApiErrorHandler()
 
-	const queryClient = useQueryClient()
+	// const queryClient = useQueryClient()
 
 	const deleteMutation = useMutation({
 		mutationFn: (id: string) => UserAPI.adminDelete(id),
@@ -54,7 +53,7 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 			notificationStore.addSuccessNotification(
 				'Вы успешно удалили пользователя!'
 			)
-			queryClient.invalidateQueries({ queryKey: usersKeys.all })
+			// queryClient.invalidateQueries({ queryKey: usersKeys.all })
 			setConfModalOpen(false)
 		},
 		onError: (error: unknown) => {

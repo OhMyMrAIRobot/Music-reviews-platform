@@ -1,10 +1,11 @@
 import axios from 'axios'
 import {
 	AuthorNominationWinsResponse,
+	CreateNominationVoteData,
 	NominationCandidatesResponse,
-	NominationEntityKind,
 	NominationType,
 	NominationUserVote,
+	NominationWinnersQuery,
 	NominationWinnersResponse,
 } from '../types/nomination'
 import { api } from './api-instance'
@@ -29,12 +30,13 @@ export const NominationAPI = {
 	},
 
 	async findWinners(
-		month: number | null,
-		year: number | null
+		query: NominationWinnersQuery
 	): Promise<NominationWinnersResponse> {
+		const { year, month } = query
+
 		const { data } = await _api.get<NominationWinnersResponse>(`?
-			${month !== null ? `month=${month}&` : ''}
-			${year !== null ? `year=${year}&` : ''}
+			${month ? `month=${month}&` : ''}
+			${year ? `year=${year}&` : ''}
 		`)
 
 		return data
@@ -57,15 +59,12 @@ export const NominationAPI = {
 	},
 
 	async postVote(
-		nominationTypeId: string,
-		entityKind: NominationEntityKind,
-		entityId: string
+		formData: CreateNominationVoteData
 	): Promise<NominationUserVote> {
-		const { data } = await api.post<NominationUserVote>(`/nominations`, {
-			nominationTypeId,
-			entityKind,
-			entityId,
-		})
+		const { data } = await api.post<NominationUserVote>(
+			`/nominations`,
+			formData
+		)
 
 		return data
 	},

@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { FeedbackAPI } from '../../api/feedback/feedback-api'
 import FormButton from '../../components/form-elements/Form-button'
@@ -9,7 +9,6 @@ import FormTextbox from '../../components/form-elements/Form-textbox'
 import FormTitle from '../../components/form-elements/Form-title'
 import { useApiErrorHandler } from '../../hooks/use-api-error-handler'
 import { useStore } from '../../hooks/use-store'
-import { feedbackKeys } from '../../query-keys/feedback-keys'
 import { CreateFeedbackData } from '../../types/feedback'
 
 const FeedbackPage = () => {
@@ -27,7 +26,7 @@ const FeedbackPage = () => {
 		setFeedbackData(prev => ({ ...prev, [field]: value }))
 	}
 
-	const queryClient = useQueryClient()
+	// const queryClient = useQueryClient()
 
 	const { mutateAsync: sendFeedbackMutate, isPending: isSending } = useMutation(
 		{
@@ -35,7 +34,7 @@ const FeedbackPage = () => {
 			onSuccess: () => {
 				notificationStore.addSuccessNotification('Отзыв успешно отправлен!')
 				setFeedbackData({ email: '', title: '', message: '' })
-				queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
+				// queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
 			},
 			onError: (error: unknown) => {
 				handleApiError(error)

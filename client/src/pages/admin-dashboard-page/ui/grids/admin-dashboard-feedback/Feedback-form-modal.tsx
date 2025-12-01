@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { FC, useEffect, useState } from 'react'
 import { FeedbackAPI } from '../../../../../api/feedback/feedback-api'
 import { FeedbackReplyAPI } from '../../../../../api/feedback/feedback-reply-api'
@@ -32,8 +32,6 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
 
 	const handleApiError = useApiErrorHandler()
 
-	const queryClient = useQueryClient()
-
 	const [reply, setReply] = useState<FeedbackReply | null>(null)
 	const [showReply, setShowReply] = useState<boolean>(false)
 	const [replyText, setReplyText] = useState<string>('')
@@ -54,7 +52,7 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
 			notificationStore.addSuccessNotification(
 				'Вы успешно отметили сообщение как прочитанное!'
 			)
-			queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
+			// queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
 		},
 		onError: (error: unknown) => {
 			handleApiError(error)
@@ -69,10 +67,10 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
 			setReply(data)
 			setShowReply(false)
 			setReplyText('')
-			queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
-			queryClient.invalidateQueries({
-				queryKey: feedbackKeys.reply(feedback.id),
-			})
+			// queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
+			// queryClient.invalidateQueries({
+			// 	queryKey: feedbackKeys.reply(feedback.id),
+			// })
 
 			onClose()
 		},

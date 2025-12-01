@@ -1,18 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { ReviewAPI } from '../../../../../../api/review/review-api'
 import TickSvg from '../../../../../../components/svg/Tick-svg'
 import Loader from '../../../../../../components/utils/Loader'
 import { useAuth } from '../../../../../../hooks/use-auth'
 import { useStore } from '../../../../../../hooks/use-store'
-import { leaderboardKeys } from '../../../../../../query-keys/leaderboard-keys'
-import { platformStatsKeys } from '../../../../../../query-keys/platform-stats-keys'
-import { profileKeys } from '../../../../../../query-keys/profile-keys'
-import { releaseDetailsKeys } from '../../../../../../query-keys/release-details-keys'
-import { releasesKeys } from '../../../../../../query-keys/releases-keys'
 import { reviewsKeys } from '../../../../../../query-keys/reviews-keys'
-import { Review } from '../../../../../../types/review'
+import { Review, ReviewsQuery } from '../../../../../../types/review'
 import { calculateTotalReviewMark } from '../../../../../../utils/calculate-total-review-mark'
 import ReleaseDetailsEstimationDeleteButton from '../../buttons/Release-details-estimation-delete-button'
 import ReleaseDetailsReviewFormMarks from './Release-details-review-form-marks'
@@ -27,14 +22,16 @@ const ReleaseDetailsReviewForm: FC<IProps> = ({ isReview, releaseId }) => {
 	const { authStore, notificationStore } = useStore()
 
 	const { checkAuth } = useAuth()
-	const queryClient = useQueryClient()
+	// const queryClient = useQueryClient()
+
+	const query: ReviewsQuery = {
+		releaseId,
+		userId: authStore.user?.id,
+	}
 
 	const { data: reviewsData } = useQuery({
-		queryKey: releaseDetailsKeys.userReview({
-			userId: authStore.user?.id ?? 'unknown',
-			releaseId,
-		}),
-		queryFn: () => ReviewAPI.findAll({ releaseId, userId: authStore.user?.id }),
+		queryKey: reviewsKeys.list(query),
+		queryFn: () => ReviewAPI.findAll(query),
 		enabled: authStore.isAuth && authStore.user?.id !== undefined,
 		staleTime: 1000 * 60 * 5,
 		retry: false,
@@ -43,28 +40,28 @@ const ReleaseDetailsReviewForm: FC<IProps> = ({ isReview, releaseId }) => {
 	const userReview =
 		reviewsData && reviewsData?.items.length > 0 ? reviewsData?.items[0] : null
 
-	const invalidateRelatedQueries = () => {
-		const keys = [
-			releaseDetailsKeys.details(releaseId),
-			releaseDetailsKeys.userReview({
-				releaseId,
-				userId: authStore.user?.id ?? 'unknown',
-			}),
-			reviewsKeys.all,
-			releasesKeys.all,
-			profileKeys.profile(authStore.user?.id || 'unknown'),
-			platformStatsKeys.all,
-			leaderboardKeys.all,
-		]
-		keys.forEach(key => queryClient.invalidateQueries({ queryKey: key }))
+	// const invalidateRelatedQueries = () => {
+	// 	const keys = [
+	// 		releaseDetailsKeys.details(releaseId),
+	// 		releaseDetailsKeys.userReview({
+	// 			releaseId,
+	// 			userId: authStore.user?.id ?? 'unknown',
+	// 		}),
+	// 		reviewsKeys.all,
+	// 		releasesKeys.all,
+	// 		profileKeys.profile(authStore.user?.id || 'unknown'),
+	// 		platformStatsKeys.all,
+	// 		leaderboardKeys.all,
+	// 	]
+	// 	keys.forEach(key => queryClient.invalidateQueries({ queryKey: key }))
 
-		queryClient.invalidateQueries({
-			queryKey: ['releaseDetails', 'reviews'],
-			predicate: query =>
-				(query.queryKey[2] as { releaseId: string } | undefined)?.releaseId ===
-				releaseId,
-		})
-	}
+	// 	queryClient.invalidateQueries({
+	// 		queryKey: ['releaseDetails', 'reviews'],
+	// 		predicate: query =>
+	// 			(query.queryKey[2] as { releaseId: string } | undefined)?.releaseId ===
+	// 			releaseId,
+	// 	})
+	// }
 
 	const createMutation = useMutation({
 		mutationFn: (data: {
@@ -77,7 +74,7 @@ const ReleaseDetailsReviewForm: FC<IProps> = ({ isReview, releaseId }) => {
 			atmosphere: number
 			releaseId: string
 		}) => ReviewAPI.create(data),
-		onSuccess: invalidateRelatedQueries,
+		// onSuccess: invalidateRelatedQueries,
 	})
 
 	const updateMutation = useMutation({
@@ -96,12 +93,12 @@ const ReleaseDetailsReviewForm: FC<IProps> = ({ isReview, releaseId }) => {
 				atmosphere: number
 			}
 		}) => ReviewAPI.update(id, data),
-		onSuccess: invalidateRelatedQueries,
+		// onSuccess: invalidateRelatedQueries,
 	})
 
 	const deleteMutation = useMutation({
 		mutationFn: (id: string) => ReviewAPI.delete(id),
-		onSuccess: invalidateRelatedQueries,
+		// onSuccess: invalidateRelatedQueries,
 	})
 
 	const [title, setTitle] = useState<string>('')

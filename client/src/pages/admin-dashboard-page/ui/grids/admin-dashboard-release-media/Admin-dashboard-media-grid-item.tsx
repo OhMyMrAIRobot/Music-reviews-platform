@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 import { FC, useState } from 'react'
 import { Link } from 'react-router'
@@ -9,7 +9,6 @@ import ReleaseMediaStatusIcon from '../../../../../components/release/release-me
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../../hooks/use-store'
-import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys'
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum'
 import { SortOrder } from '../../../../../types/common/types/sort-order'
 import { ReleaseMedia } from '../../../../../types/release'
@@ -38,7 +37,7 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 }) => {
 	const { notificationStore } = useStore()
 
-	const queryClient = useQueryClient()
+	// const queryClient = useQueryClient()
 
 	const { navigateToReleaseDetails } = useNavigationPath()
 
@@ -51,7 +50,7 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 			notificationStore.addSuccessNotification(
 				'Вы успешно удалили медиаматериал!'
 			)
-			queryClient.invalidateQueries({ queryKey: releaseMediaKeys.all })
+			// queryClient.invalidateQueries({ queryKey: releaseMediaKeys.all })
 			setConfModalOpen(false)
 		},
 		onError: (error: unknown) => {

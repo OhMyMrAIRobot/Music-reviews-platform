@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useQuery } from '@tanstack/react-query'
-import { useMemo, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { ReleaseMediaAPI } from '../../../../api/release/release-media-api'
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
@@ -9,51 +9,38 @@ import { releaseMediaKeys } from '../../../../query-keys/release-media-keys'
 import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum'
 import { CarouselRef } from '../../../../types/common/types/carousel-ref'
 import {
+	ReleaseMediaQuery,
 	ReleaseMediaStatusesEnum,
 	ReleaseMediaTypesEnum,
 } from '../../../../types/release'
 import ReleaseMediaReviewsCarousel from './carousel/Release-media-reviews-carousel'
 
-const LIMIT = 15
-const OFFSET = 0
-const ORDER = SortOrdersEnum.DESC
+const limit = 15
+const offset = 0
+const order = SortOrdersEnum.DESC
 
 const ReleaseMediaReviews = () => {
 	const { navigateToMediaReviews } = useNavigationPath()
 	const { statuses, types, isLoading: isMetaLoading } = useReleaseMediaMeta()
 
-	const typeId =
-		types.find(t => t.type === ReleaseMediaTypesEnum.MEDIA_REVIEW)?.id ?? null
-	const statusId =
-		statuses.find(s => s.status === ReleaseMediaStatusesEnum.APPROVED)?.id ??
-		null
+	const typeId = types.find(
+		t => t.type === ReleaseMediaTypesEnum.MEDIA_REVIEW
+	)?.id
+	const statusId = statuses.find(
+		s => s.status === ReleaseMediaStatusesEnum.APPROVED
+	)?.id
 
-	const queryKey = useMemo(
-		() =>
-			releaseMediaKeys.list({
-				limit: LIMIT,
-				offset: OFFSET,
-				statusId,
-				typeId,
-				order: ORDER,
-				authorId: null,
-				releaseId: null,
-			}),
-		[statusId, typeId]
-	)
-
-	const queryFn = () =>
-		ReleaseMediaAPI.findAll({
-			limit: LIMIT,
-			offset: OFFSET,
-			statusId: statusId ?? undefined,
-			typeId: typeId ?? undefined,
-			order: ORDER,
-		})
+	const query: ReleaseMediaQuery = {
+		limit,
+		offset,
+		statusId,
+		typeId,
+		order,
+	}
 
 	const { data: mediaData, isPending: isMediaLoading } = useQuery({
-		queryKey,
-		queryFn,
+		queryKey: releaseMediaKeys.list(query),
+		queryFn: () => ReleaseMediaAPI.findAll(query),
 		enabled: Boolean(typeId && statusId),
 		staleTime: 1000 * 60 * 5,
 	})

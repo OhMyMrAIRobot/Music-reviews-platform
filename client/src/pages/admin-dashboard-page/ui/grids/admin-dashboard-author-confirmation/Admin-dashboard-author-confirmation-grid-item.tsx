@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { FC, useState } from 'react'
 import { Link } from 'react-router'
 import { AuthorConfirmationAPI } from '../../../../../api/author/author-confirmation-api'
@@ -11,7 +11,6 @@ import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import { useAuthorConfirmationMeta } from '../../../../../hooks/use-author-confirmation-meta'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../../hooks/use-store'
-import { authorConfirmationsKeys } from '../../../../../query-keys/author-confirmation-keys'
 import {
 	AuthorConfirmation,
 	AuthorConfirmationStatusesEnum,
@@ -49,7 +48,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
 
 	const { navigatoToProfile, navigateToAuthorDetails } = useNavigationPath()
 
-	const queryClient = useQueryClient()
+	// const queryClient = useQueryClient()
 
 	const deleteMutation = useMutation({
 		mutationFn: (id: string) => AuthorConfirmationAPI.delete(id),
@@ -57,7 +56,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
 			notificationStore.addSuccessNotification(
 				'Вы успешно удалили заявку на верификацию!'
 			)
-			queryClient.invalidateQueries({ queryKey: authorConfirmationsKeys.all })
+			// queryClient.invalidateQueries({ queryKey: authorConfirmationsKeys.all })
 			setDeleteConfModalOpen(false)
 		},
 		onError: (error: unknown) => {
@@ -81,7 +80,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
 			notificationStore.addSuccessNotification(
 				'Вы успешно обновили статус заявки на верификацию!'
 			)
-			queryClient.invalidateQueries({ queryKey: authorConfirmationsKeys.all })
+			// queryClient.invalidateQueries({ queryKey: authorConfirmationsKeys.all })
 			setRejectModalOpen(false)
 			setApproveModalOpen(false)
 		},

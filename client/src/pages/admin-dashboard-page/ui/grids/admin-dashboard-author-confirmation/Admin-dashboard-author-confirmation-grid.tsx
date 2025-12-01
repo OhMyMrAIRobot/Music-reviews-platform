@@ -6,14 +6,15 @@ import AdminHeader from '../../../../../components/layout/admin-header/Admin-hea
 import Pagination from '../../../../../components/pagination/Pagination'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import { useAuthorConfirmationMeta } from '../../../../../hooks/use-author-confirmation-meta'
-import { authorConfirmationsKeys } from '../../../../../query-keys/author-confirmation-keys'
+import { authorConfirmationsKeys } from '../../../../../query-keys/authors-confirmations-keys'
 import { AuthorConfirmationStatusesFilterOptions } from '../../../../../types/author'
+import { AuthorConfirmationsQuery } from '../../../../../types/author/queries/author-confirmations-query'
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum'
 import { SortOrder } from '../../../../../types/common/types/sort-order'
 import AdminFilterButton from '../../buttons/Admin-filter-button'
 import AdminDashboardAuthorConfirmationGridItem from './Admin-dashboard-author-confirmation-grid-item'
 
-const perPage = 10
+const limit = 10
 
 const AdminDashboardAuthorConfirmationGrid = () => {
 	const [searchText, setSearchText] = useState<string>('')
@@ -27,36 +28,26 @@ const AdminDashboardAuthorConfirmationGrid = () => {
 
 	const statusId =
 		status !== AuthorConfirmationStatusesFilterOptions.ALL
-			? statuses.find(s => s.status === status)?.id ?? null
-			: null
+			? statuses.find(s => s.status === status)?.id
+			: undefined
 
-	const queryKey = authorConfirmationsKeys.list({
-		limit: perPage,
-		offset: (currentPage - 1) * perPage,
+	const params: AuthorConfirmationsQuery = {
+		limit,
+		offset: (currentPage - 1) * limit,
 		order,
 		statusId,
-		query: searchText.trim() || null,
+		search: searchText.trim() || undefined,
+	}
+
+	const { data, isPending: isConfirmationsLoading } = useQuery({
+		queryKey: authorConfirmationsKeys.list(params),
+		queryFn: () => AuthorConfirmationAPI.findAll(params),
+		staleTime: 1000 * 60 * 5,
+		enabled: !isStatusesLoading,
 	})
 
-	const queryFn = () =>
-		AuthorConfirmationAPI.findAll({
-			limit: perPage,
-			offset: (currentPage - 1) * perPage,
-			order,
-			statusId: statusId ?? undefined,
-			search: searchText.trim() || undefined,
-		})
-
-	const { data: confirmationsData, isPending: isConfirmationsLoading } =
-		useQuery({
-			queryKey,
-			queryFn,
-			staleTime: 1000 * 60 * 5,
-			enabled: !isStatusesLoading,
-		})
-
-	const confirmations = confirmationsData?.items || []
-	const count = confirmationsData?.meta.count || 0
+	const confirmations = data?.items || []
+	const count = data?.meta.count || 0
 
 	useEffect(() => {
 		setCurrentPage(1)
@@ -120,7 +111,7 @@ const AdminDashboardAuthorConfirmationGrid = () => {
 				<div className='flex-1 overflow-y-auto mt-5'>
 					<div className='grid gap-y-5'>
 						{isConfirmationsLoading || isStatusesLoading
-							? Array.from({ length: perPage }).map((_, idx) => (
+							? Array.from({ length: limit }).map((_, idx) => (
 									<AdminDashboardAuthorConfirmationGridItem
 										key={`Author-confirmation-skeleton-${idx}`}
 										isLoading={true}
@@ -131,7 +122,7 @@ const AdminDashboardAuthorConfirmationGrid = () => {
 										key={item.id}
 										item={item}
 										isLoading={false}
-										position={(currentPage - 1) * perPage + idx + 1}
+										position={(currentPage - 1) * limit + idx + 1}
 									/>
 							  ))}
 					</div>
@@ -142,7 +133,7 @@ const AdminDashboardAuthorConfirmationGrid = () => {
 						<Pagination
 							currentPage={currentPage}
 							totalItems={count}
-							itemsPerPage={perPage}
+							itemsPerPage={limit}
 							setCurrentPage={setCurrentPage}
 							idToScroll={'admin-author-confirmations-grid'}
 						/>

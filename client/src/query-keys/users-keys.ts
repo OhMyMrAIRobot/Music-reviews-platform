@@ -1,24 +1,7 @@
-import type { SortOrder } from '../types/common/types/sort-order'
+import { UsersQuery } from '../types/user'
 
 export const usersKeys = {
+	roles: ['roles'] as const,
 	all: ['users'] as const,
-	id: (userId: string) => ['user', userId] as const,
-	adminList: (params: {
-		query: string | null
-		role: string | null
-		order: SortOrder | null
-		limit: number | null
-		offset: number | null
-	}) =>
-		[
-			'users',
-			'admin',
-			{
-				query: params.query ?? null,
-				role: params.role ?? null,
-				order: params.order ?? null,
-				limit: params.limit ?? null,
-				offset: params.offset ?? null,
-			},
-		] as const,
+	list: (params: UsersQuery) => ['users', 'list', params] as const,
 }

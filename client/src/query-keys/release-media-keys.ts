@@ -1,32 +1,9 @@
-import type { SortOrder } from '../types/common/types/sort-order'
+import { ReleaseMediaQuery } from '../types/release'
 
 export const releaseMediaKeys = {
+	types: ['releaseMediaTypes'] as const,
+	statuses: ['releaseMediaStatuses'] as const,
 	all: ['releaseMedia'] as const,
-	list: (params: {
-		limit: number
-		offset: number
-		statusId: string | null
-		typeId: string | null
-		order: SortOrder
-		authorId?: string | null
-		releaseId?: string | null
-		search?: string | null
-	}) =>
-		[
-			'releaseMedia',
-			{
-				limit: params.limit,
-				offset: params.offset,
-				statusId: params.statusId,
-				typeId: params.typeId,
-				order: params.order,
-				authorId: params.authorId ?? null,
-				releaseId: params.releaseId ?? null,
-				search: params.search ?? null,
-			},
-		] as const,
-	byRelease: (releaseId: string, statusId: string | null) =>
-		['releaseMedia', 'byRelease', { releaseId, statusId }] as const,
-	userByRelease: (releaseId: string, userId: string) =>
-		['releaseMedia', 'userByRelease', { releaseId, userId }] as const,
+	list: (params: ReleaseMediaQuery) =>
+		['releaseMedia', 'list', params] as const,
 }

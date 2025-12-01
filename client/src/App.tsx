@@ -11,7 +11,7 @@ import { useStore } from './hooks/use-store'
 import AuthPage from './pages/auth-page/Auth-page'
 import ActivationForm from './pages/auth-page/ui/forms/Activation-form'
 import { authKeys } from './query-keys/auth-keys'
-import { profileKeys } from './query-keys/profile-keys'
+import { profilesKeys } from './query-keys/profiles-keys'
 import AdminRoute from './routes/Admin-route'
 import AdminRouteList from './routes/Admin-route-list'
 import AuthRoute from './routes/Auth-route'
@@ -34,7 +34,7 @@ export const App = observer(() => {
 	const userId = authStore.user?.id
 
 	const { data: profileData } = useQuery({
-		queryKey: userId ? profileKeys.profile(userId) : ['profile', 'null'],
+		queryKey: userId ? profilesKeys.profile(userId) : ['profile', 'null'],
 		queryFn: userId
 			? () => ProfileAPI.findByUserId(userId)
 			: () => Promise.resolve(null),

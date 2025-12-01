@@ -6,37 +6,30 @@ import Pagination from '../../../../../components/pagination/Pagination.tsx'
 import { reviewsKeys } from '../../../../../query-keys/reviews-keys.ts'
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum.ts'
 import { SortOrder } from '../../../../../types/common/types/sort-order.ts'
-import { ReviewsSortFieldsEnum } from '../../../../../types/review/index.ts'
+import {
+	ReviewsQuery,
+	ReviewsSortFieldsEnum,
+} from '../../../../../types/review/index.ts'
 import AdminDashboardReviewsGridItem from './Admin-dashboard-reviews-grid-item.tsx'
 
-const perPage = 10
+const limit = 10
 
 const AdminDashboardReviewsGrid = () => {
 	const [searchText, setSearchText] = useState<string>('')
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC)
 
-	const offset = (currentPage - 1) * perPage
-
-	const queryKey = reviewsKeys.adminList({
-		query: searchText.trim().length > 0 ? searchText.trim() : null,
-		order,
-		limit: perPage,
-		offset,
-	})
-
-	const queryFn = () =>
-		ReviewAPI.findAll({
-			search: searchText.trim().length > 0 ? searchText.trim() : undefined,
-			sortOrder: order,
-			sortField: ReviewsSortFieldsEnum.CREATED,
-			limit: perPage,
-			offset,
-		})
+	const query: ReviewsQuery = {
+		search: searchText.trim() || undefined,
+		sortOrder: order,
+		sortField: ReviewsSortFieldsEnum.CREATED,
+		limit,
+		offset: (currentPage - 1) * limit,
+	}
 
 	const { data, isPending: isLoading } = useQuery({
-		queryKey,
-		queryFn,
+		queryKey: reviewsKeys.list(query),
+		queryFn: () => ReviewAPI.findAll(query),
 		staleTime: 1000 * 60 * 5,
 	})
 
@@ -71,7 +64,7 @@ const AdminDashboardReviewsGrid = () => {
 				<div className='flex-1 overflow-y-auto mt-5'>
 					<div className='grid gap-y-5'>
 						{isLoading
-							? Array.from({ length: perPage }).map((_, idx) => (
+							? Array.from({ length: limit }).map((_, idx) => (
 									<AdminDashboardReviewsGridItem
 										key={`Review-skeleton-${idx}`}
 										isLoading={true}
@@ -82,7 +75,7 @@ const AdminDashboardReviewsGrid = () => {
 										key={review.id}
 										review={review}
 										isLoading={isLoading}
-										position={(currentPage - 1) * perPage + idx + 1}
+										position={(currentPage - 1) * limit + idx + 1}
 									/>
 							  ))}
 					</div>
@@ -99,7 +92,7 @@ const AdminDashboardReviewsGrid = () => {
 						<Pagination
 							currentPage={currentPage}
 							totalItems={count}
-							itemsPerPage={perPage}
+							itemsPerPage={limit}
 							setCurrentPage={setCurrentPage}
 							idToScroll={'admin-reviews-grid'}
 						/>

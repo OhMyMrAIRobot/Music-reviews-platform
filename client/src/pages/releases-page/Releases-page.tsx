@@ -10,12 +10,13 @@ import {
 	ReleaseSortFields,
 	ReleaseSortKey,
 	ReleaseTypesFilterOptions,
+	ReleasesQuery,
 	getKeyByLabel,
 	getSortParams,
 	getTypeIdByOption,
 } from '../../types/release'
 
-const PER_PAGE = 12
+const limit = 12
 
 const ReleasesPage = () => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
@@ -44,27 +45,17 @@ const ReleasesPage = () => {
 		setCurrentPage(1)
 	}, [selectedType])
 
-	const limit = PER_PAGE
-	const offset = (currentPage - 1) * PER_PAGE
-
-	const queryKey = releasesKeys.list({
+	const query: ReleasesQuery = {
 		typeId: selectedTypeId,
 		sortField,
 		sortOrder,
 		limit,
-		offset,
-	})
+		offset: (currentPage - 1) * limit,
+	}
 
 	const { data, isPending: isReleasesLoading } = useQuery({
-		queryKey,
-		queryFn: () =>
-			ReleaseAPI.findAll({
-				typeId: selectedTypeId ?? undefined,
-				sortField,
-				sortOrder,
-				limit,
-				offset,
-			}),
+		queryKey: releasesKeys.list(query),
+		queryFn: () => ReleaseAPI.findAll(query),
 		staleTime: 1000 * 60 * 5,
 		enabled: Boolean(releaseTypes),
 	})
@@ -114,7 +105,7 @@ const ReleasesPage = () => {
 				currentPage={currentPage}
 				setCurrentPage={setCurrentPage}
 				total={count}
-				perPage={PER_PAGE}
+				perPage={limit}
 			/>
 		</>
 	)

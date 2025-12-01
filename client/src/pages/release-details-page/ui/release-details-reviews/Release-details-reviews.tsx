@@ -2,11 +2,12 @@ import { useQuery } from '@tanstack/react-query'
 import { FC, useState } from 'react'
 import { ReviewAPI } from '../../../../api/review/review-api.ts'
 import Pagination from '../../../../components/pagination/Pagination.tsx'
-import { releaseDetailsKeys } from '../../../../query-keys/release-details-keys.ts'
+import { reviewsKeys } from '../../../../query-keys/reviews-keys.ts'
 import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum.ts'
 import { SortOrder } from '../../../../types/common/types/sort-order.ts'
 import {
 	ReleaseReviewSortFields,
+	ReviewsQuery,
 	ReviewsSortFieldsEnum,
 } from '../../../../types/review/index.ts'
 import ReleaseDetailsReviewsHeader from './Release-details-reviews-header.tsx'
@@ -16,7 +17,7 @@ interface IProps {
 	releaseId: string
 }
 
-const PER_PAGE = 5
+const limit = 5
 
 const ReleaseDetailsReviews: FC<IProps> = ({ releaseId }) => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
@@ -33,26 +34,17 @@ const ReleaseDetailsReviews: FC<IProps> = ({ releaseId }) => {
 		field = ReviewsSortFieldsEnum.LIKES
 	}
 
-	const queryKey = releaseDetailsKeys.reviews({
+	const query: ReviewsQuery = {
 		releaseId,
-		field,
-		order,
-		limit: PER_PAGE,
-		offset: (currentPage - 1) * PER_PAGE,
-	})
-
-	const queryFn = () =>
-		ReviewAPI.findAll({
-			releaseId,
-			sortField: field,
-			sortOrder: order,
-			limit: PER_PAGE,
-			offset: (currentPage - 1) * PER_PAGE,
-		})
+		sortField: field,
+		sortOrder: order,
+		limit,
+		offset: (currentPage - 1) * limit,
+	}
 
 	const { data: reviewsData, isPending: isLoading } = useQuery({
-		queryKey,
-		queryFn,
+		queryKey: reviewsKeys.list(query),
+		queryFn: () => ReviewAPI.findAll(query),
 		staleTime: 1000 * 60 * 5,
 	})
 
@@ -97,7 +89,7 @@ const ReleaseDetailsReviews: FC<IProps> = ({ releaseId }) => {
 					<Pagination
 						currentPage={currentPage}
 						totalItems={totalItems}
-						itemsPerPage={PER_PAGE}
+						itemsPerPage={limit}
 						setCurrentPage={setCurrentPage}
 						idToScroll='release-reviews'
 					/>

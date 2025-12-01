@@ -1,15 +1,12 @@
 import { useMemo } from 'react'
 import { useNominationVotes } from '../../hooks/use-nomination-votes'
-import { useStore } from '../../hooks/use-store'
 import { MonthEnumType, MonthsEnum } from '../../types/common/enums/months-enum'
 import { NominationTypesEnum } from '../../types/nomination'
 import NominationVotesSection from './ui/Nomination-votes-section'
 
 const NominationVotesPage = () => {
-	const { authStore } = useStore()
-
 	const { nominationTypes, candidates, userVotes, postVote, isLoading } =
-		useNominationVotes(authStore.isAuth)
+		useNominationVotes()
 
 	const hitType = useMemo(
 		() =>

@@ -12,9 +12,11 @@ import FormMultiSelect, {
 } from '../../../components/form-elements/Form-multi-select'
 import { useAuth } from '../../../hooks/use-auth'
 import { useStore } from '../../../hooks/use-store'
-import { authorConfirmationsKeys } from '../../../query-keys/author-confirmation-keys'
 import { authorsKeys } from '../../../query-keys/authors-keys'
-import { CreateAuthorConfirmationData } from '../../../types/author'
+import {
+	AuthorsQuery,
+	CreateAuthorConfirmationData,
+} from '../../../types/author'
 
 interface IProps {
 	show: boolean
@@ -33,23 +35,19 @@ const SendAuthorConfirmationForm: FC<IProps> = ({ show }) => {
 		search: string,
 		limit: number | null
 	): Promise<IMultiSelectValue[]> => {
-		const query = search.trim() !== '' ? search.trim() : null
+		const query: AuthorsQuery = {
+			search: search.trim() || undefined,
+			limit: limit || undefined,
+			offset: 0,
+		}
+
 		const data = await queryClient.fetchQuery({
-			queryKey: authorsKeys.search({
-				query,
-				limit: limit ?? null,
-				offset: 0,
-			}),
-			queryFn: () =>
-				AuthorAPI.findAll({
-					search: query || undefined,
-					limit: limit || undefined,
-					offset: 0,
-				}),
+			queryKey: authorsKeys.list(query),
+			queryFn: () => AuthorAPI.findAll(query),
 			staleTime: 1000 * 60 * 5,
 		})
 		const list = data?.items ?? []
-		return list.map((a: { id: string; name: string }) => ({
+		return list.map((a: IMultiSelectValue) => ({
 			id: a.id,
 			name: a.name,
 		}))
@@ -66,9 +64,9 @@ const SendAuthorConfirmationForm: FC<IProps> = ({ show }) => {
 				setChecked(false)
 				setAuthors([])
 				setConfirmation('')
-				await queryClient.invalidateQueries({
-					queryKey: authorConfirmationsKeys.byCurrentUser(),
-				})
+				// await queryClient.invalidateQueries({
+				// 	queryKey: authorConfirmationsKeys.byCurrentUser(),
+				// })
 			},
 			onError: (e: any) => {
 				const messages = Array.isArray(e?.response?.data?.message)

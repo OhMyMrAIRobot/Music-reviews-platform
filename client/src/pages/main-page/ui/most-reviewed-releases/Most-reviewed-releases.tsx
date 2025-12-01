@@ -3,30 +3,28 @@ import { useState } from 'react'
 import { ReleaseAPI } from '../../../../api/release/release-api'
 import { releasesKeys } from '../../../../query-keys/releases-keys'
 import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum'
-import { ReleasesSortFieldsEnum } from '../../../../types/release'
+import {
+	ReleasesQuery,
+	ReleasesSortFieldsEnum,
+} from '../../../../types/release'
 import MostReviewedCarousel from './carousel/Most-reviewed-carousel'
 import MostReviewedSwiper from './swiper/Most-reviewed-swiper'
 
-const LIMIT = 15
-const OFFSET = 0
-
-const queryKey = releasesKeys.mostReviewed()
-const queryFn = () =>
-	ReleaseAPI.findAll({
-		sortField: ReleasesSortFieldsEnum.TOTAL_COUNT,
-		sortOrder: SortOrdersEnum.DESC,
-		last24h: true,
-		limit: LIMIT,
-		offset: OFFSET,
-	})
+const query: ReleasesQuery = {
+	sortField: ReleasesSortFieldsEnum.TOTAL_COUNT,
+	sortOrder: SortOrdersEnum.DESC,
+	last24h: true,
+	limit: 15,
+	offset: 0,
+}
 
 const MostReviewedReleases = () => {
 	const [index, setIndex] = useState<number>(0)
 	const [show, setShow] = useState<boolean>(false)
 
 	const { data, isPending } = useQuery({
-		queryKey,
-		queryFn,
+		queryKey: releasesKeys.list(query),
+		queryFn: () => ReleaseAPI.findAll(query),
 		staleTime: 1000 * 60 * 5,
 	})
 

@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
@@ -6,8 +6,6 @@ import { AuthAPI } from '../../../../api/auth-api'
 import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
-import { authKeys } from '../../../../query-keys/auth-keys'
-import { profileKeys } from '../../../../query-keys/profile-keys'
 import { RolesEnum } from '../../../../types/user'
 import { generateUUID } from '../../../../utils/generate-uuid'
 import SettingsSvg from '../../../svg/Settings-svg'
@@ -34,7 +32,7 @@ const ProfileButton = observer(() => {
 	const [isOpen, setIsOpen] = useState<boolean>(false)
 	const popUpProfRef = useRef<HTMLDivElement | null>(null)
 
-	const queryClient = useQueryClient()
+	// const queryClient = useQueryClient()
 
 	const handleClickOutside = (event: MouseEvent) => {
 		if (
@@ -56,12 +54,12 @@ const ProfileButton = observer(() => {
 	const { mutateAsync: logOut } = useMutation({
 		mutationFn: AuthAPI.logout,
 		onSuccess: () => {
-			const userId = authStore.user?.id
+			// const userId = authStore.user?.id
 			authStore.unsetAuthorization()
-			if (userId) {
-				queryClient.invalidateQueries({ queryKey: profileKeys.profile(userId) })
-			}
-			queryClient.invalidateQueries({ queryKey: authKeys.auth })
+			// if (userId) {
+			// 	queryClient.invalidateQueries({ queryKey: profileKeys.profile(userId) })
+			// }
+			// queryClient.invalidateQueries({ queryKey: authKeys.auth })
 			navigate(navigateToMain)
 			setIsOpen(false)
 			notificationStore.addNotification({

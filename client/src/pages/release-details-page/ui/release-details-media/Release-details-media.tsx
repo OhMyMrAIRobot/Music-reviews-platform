@@ -8,7 +8,10 @@ import { useStore } from '../../../../hooks/use-store'
 import { releaseMediaKeys } from '../../../../query-keys/release-media-keys'
 import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum'
 import { CarouselRef } from '../../../../types/common/types/carousel-ref'
-import { ReleaseMediaStatusesEnum } from '../../../../types/release'
+import {
+	ReleaseMediaQuery,
+	ReleaseMediaStatusesEnum,
+} from '../../../../types/release'
 import { RolesEnum } from '../../../../types/user'
 import ReleaseDetailsMediaCarousel from './Release-details-media-carousel'
 
@@ -18,7 +21,6 @@ interface IProps {
 
 const ReleaseDetailsMedia: FC<IProps> = ({ releaseId }) => {
 	const { authStore } = useStore()
-	const { user } = authStore
 
 	const carouselRef = useRef<CarouselRef>(null)
 
@@ -28,47 +30,36 @@ const ReleaseDetailsMedia: FC<IProps> = ({ releaseId }) => {
 	const { statuses, isLoading: isReleaseMediaMetaLoading } =
 		useReleaseMediaMeta()
 
-	const mediaQueryKey = releaseMediaKeys.byRelease(
+	const statusId = statuses.find(
+		el => el.status === ReleaseMediaStatusesEnum.APPROVED
+	)?.id
+
+	const mediaQuery: ReleaseMediaQuery = {
+		statusId,
 		releaseId,
-		ReleaseMediaStatusesEnum.APPROVED
-	)
-
-	const mediaQueryFn = async () => {
-		const status = statuses.find(
-			el => el.status === ReleaseMediaStatusesEnum.APPROVED
-		)
-		if (!status) return { meta: { count: 0 }, items: [] }
-
-		return ReleaseMediaAPI.findAll({
-			statusId: status.id,
-			releaseId,
-			order: SortOrdersEnum.DESC,
-		})
+		order: SortOrdersEnum.DESC,
 	}
 
 	const { data: releaseMediaData, isPending: isReleaseMediaLoading } = useQuery(
 		{
-			queryKey: mediaQueryKey,
-			queryFn: mediaQueryFn,
+			queryKey: releaseMediaKeys.list(mediaQuery),
+			queryFn: () => ReleaseMediaAPI.findAll(mediaQuery),
 			enabled: statuses.length > 0 && !isReleaseMediaMetaLoading,
 			staleTime: 1000 * 60 * 5,
 		}
 	)
 
-	const userMediaQueryKey = user
-		? releaseMediaKeys.userByRelease(releaseId, user.id)
-		: releaseMediaKeys.userByRelease(releaseId, 'unknown')
-
-	const userMediaQueryFn = () => {
-		if (!user) return Promise.resolve(undefined)
-		return ReleaseMediaAPI.findAll({ releaseId, userId: user.id })
+	const userMediaQuery: ReleaseMediaQuery = {
+		releaseId,
+		userId: authStore.user?.id,
 	}
 
 	const { data: userReleaseMediaData, isPending: isUserReleaseMediaLoading } =
 		useQuery({
-			queryKey: userMediaQueryKey,
-			queryFn: userMediaQueryFn,
-			enabled: !!user && user.role.role === RolesEnum.MEDIA,
+			queryKey: releaseMediaKeys.list(userMediaQuery),
+			queryFn: () => ReleaseMediaAPI.findAll(userMediaQuery),
+			enabled:
+				!!authStore.isAuth && authStore.user?.role.role === RolesEnum.MEDIA,
 			staleTime: 1000 * 60 * 5,
 		})
 
@@ -87,7 +78,9 @@ const ReleaseDetailsMedia: FC<IProps> = ({ releaseId }) => {
 	const isLoading =
 		isReleaseMediaLoading ||
 		isReleaseMediaMetaLoading ||
-		(isUserReleaseMediaLoading && !!user && user.role.role === RolesEnum.MEDIA)
+		(isUserReleaseMediaLoading &&
+			!!authStore.user &&
+			authStore.user.role.role === RolesEnum.MEDIA)
 
 	return (
 		<section

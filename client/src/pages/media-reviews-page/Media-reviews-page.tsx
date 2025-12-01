@@ -9,12 +9,13 @@ import { releaseMediaKeys } from '../../query-keys/release-media-keys'
 import { SortOrdersEnum } from '../../types/common/enums/sort-orders-enum'
 import type { SortOrder } from '../../types/common/types/sort-order'
 import {
+	ReleaseMediaQuery,
 	ReleaseMediaStatusesEnum,
 	ReleaseMediaTypesEnum,
 } from '../../types/release'
 import { ReviewSortFields } from '../../types/review'
 
-const PER_PAGE = 12
+const limit = 12
 
 const MediaReviewsPage = () => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
@@ -25,16 +26,13 @@ const MediaReviewsPage = () => {
 	const { statuses, types, isLoading: isMetaLoading } = useReleaseMediaMeta()
 
 	const typeId = useMemo(
-		() =>
-			types.find(t => t.type === ReleaseMediaTypesEnum.MEDIA_REVIEW)?.id ??
-			null,
+		() => types.find(t => t.type === ReleaseMediaTypesEnum.MEDIA_REVIEW)?.id,
 		[types]
 	)
 
 	const statusId = useMemo(
 		() =>
-			statuses.find(s => s.status === ReleaseMediaStatusesEnum.APPROVED)?.id ??
-			null,
+			statuses.find(s => s.status === ReleaseMediaStatusesEnum.APPROVED)?.id,
 		[statuses]
 	)
 
@@ -46,29 +44,17 @@ const MediaReviewsPage = () => {
 		[selectedOrder]
 	)
 
-	const limit = PER_PAGE
-	const offset = (currentPage - 1) * PER_PAGE
-
-	const queryKey = releaseMediaKeys.list({
-		limit,
-		offset,
+	const query: ReleaseMediaQuery = {
 		statusId,
 		typeId,
 		order,
-		authorId: null,
-		releaseId: null,
-	})
+		limit,
+		offset: (currentPage - 1) * limit,
+	}
 
 	const { data, isPending: isMediaLoading } = useQuery({
-		queryKey,
-		queryFn: () =>
-			ReleaseMediaAPI.findAll({
-				limit,
-				offset,
-				statusId: statusId ?? undefined,
-				typeId: typeId ?? undefined,
-				order,
-			}),
+		queryKey: releaseMediaKeys.list(query),
+		queryFn: () => ReleaseMediaAPI.findAll(query),
 		enabled: Boolean(typeId && statusId),
 		staleTime: 1000 * 60 * 5,
 	})
@@ -107,7 +93,7 @@ const MediaReviewsPage = () => {
 			<section className='mt-5 overflow-hidden'>
 				<div className='gap-3 xl:gap-5 grid md:grid-cols-2 xl:grid-cols-3'>
 					{isMediaLoading || isMetaLoading
-						? Array.from({ length: PER_PAGE }).map((_, idx) => (
+						? Array.from({ length: limit }).map((_, idx) => (
 								<ReleaseMediaReview
 									key={`skeleton-release-media-${idx}`}
 									isLoading={true}
@@ -135,7 +121,7 @@ const MediaReviewsPage = () => {
 					<Pagination
 						currentPage={currentPage}
 						totalItems={total}
-						itemsPerPage={PER_PAGE}
+						itemsPerPage={limit}
 						setCurrentPage={setCurrentPage}
 						idToScroll={'media-reviews'}
 					/>

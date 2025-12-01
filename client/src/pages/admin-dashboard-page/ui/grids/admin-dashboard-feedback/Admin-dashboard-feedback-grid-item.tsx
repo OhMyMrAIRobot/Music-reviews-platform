@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { FC, useState } from 'react'
 import { FeedbackAPI } from '../../../../../api/feedback/feedback-api'
 import FeedbackStatusIcon from '../../../../../components/feedback/Feedback-status-icon'
@@ -7,7 +7,6 @@ import ConfirmationModal from '../../../../../components/modals/Confirmation-mod
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler'
 import { useStore } from '../../../../../hooks/use-store'
-import { feedbackKeys } from '../../../../../query-keys/feedback-keys'
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum'
 import { SortOrder } from '../../../../../types/common/types/sort-order'
 import { Feedback } from '../../../../../types/feedback'
@@ -36,7 +35,7 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
 }) => {
 	const { notificationStore } = useStore()
 
-	const queryClient = useQueryClient()
+	// const queryClient = useQueryClient()
 
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [detailsModalOpen, setDetailsModalOpen] = useState<boolean>(false)
@@ -47,7 +46,7 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
 		mutationFn: (id: string) => FeedbackAPI.delete(id),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification('Сообщение успешно удалено!')
-			queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
+			// queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
 			setConfModalOpen(false)
 		},
 		onError: (error: unknown) => {

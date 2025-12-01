@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { AuthorAPI } from '../../../../../api/author/author-api.ts'
 import FormButton from '../../../../../components/form-elements/Form-button.tsx'
@@ -13,7 +13,6 @@ import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
 import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler.ts'
 import { useAuthorMeta } from '../../../../../hooks/use-author-meta.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
-import { authorsKeys } from '../../../../../query-keys/authors-keys.ts'
 import { Author } from '../../../../../types/author/index.ts'
 import { arraysEqual } from '../../../../../utils/arrays-equal.ts'
 import buildAuthorFormData from '../../../../../utils/build-author-form-data'
@@ -32,7 +31,7 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 	const { types, isLoading: isTypesLoading } = useAuthorMeta()
 	const handleApiError = useApiErrorHandler()
 
-	const queryClient = useQueryClient()
+	// const queryClient = useQueryClient()
 
 	const [avatar, setAvatar] = useState<File | null>(null)
 	const [cover, setCover] = useState<File | null>(null)
@@ -48,7 +47,7 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 		mutationFn: (formData: FormData) => AuthorAPI.createAuthor(formData),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification('Автор успешно добавлен!')
-			queryClient.invalidateQueries({ queryKey: authorsKeys.all })
+			// queryClient.invalidateQueries({ queryKey: authorsKeys.all })
 			resetForm()
 			onClose()
 		},
@@ -62,7 +61,7 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 			AuthorAPI.updateAuthor(id, formData),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification('Автор успешно обновлен!')
-			queryClient.invalidateQueries({ queryKey: authorsKeys.all })
+			// queryClient.invalidateQueries({ queryKey: authorsKeys.all })
 			resetForm()
 			onClose()
 		},

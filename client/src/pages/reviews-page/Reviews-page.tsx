@@ -6,9 +6,13 @@ import Pagination from '../../components/pagination/Pagination'
 import ReviewCard from '../../components/review/review-card/Review-card'
 import { reviewsKeys } from '../../query-keys/reviews-keys'
 import { SortOrdersEnum } from '../../types/common/enums/sort-orders-enum'
-import { ReviewSortFields, ReviewsSortFieldsEnum } from '../../types/review'
+import {
+	ReviewSortFields,
+	ReviewsQuery,
+	ReviewsSortFieldsEnum,
+} from '../../types/review'
 
-const PER_PAGE = 12
+const limit = 12
 
 const ReviewsPage = () => {
 	const [selectedOrder, setSelectedOrder] = useState<string>(
@@ -24,34 +28,21 @@ const ReviewsPage = () => {
 		[selectedOrder]
 	)
 
-	const limit = PER_PAGE
-	const offset = (currentPage - 1) * PER_PAGE
-
-	const queryKey = reviewsKeys.list({
-		order,
+	const query: ReviewsQuery = {
 		limit,
-		offset,
-		authorId: null,
-		releaseId: null,
-	})
+		offset: (currentPage - 1) * limit,
+		sortOrder: order,
+		sortField: ReviewsSortFieldsEnum.CREATED,
+	}
 
 	const { data, isPending } = useQuery({
-		queryKey,
-		queryFn: () =>
-			ReviewAPI.findAll({
-				limit,
-				offset,
-				sortOrder: order,
-				sortField: ReviewsSortFieldsEnum.CREATED,
-			}),
+		queryKey: reviewsKeys.list(query),
+		queryFn: () => ReviewAPI.findAll(query),
 		staleTime: 1000 * 60 * 5,
 	})
 
 	const items = data?.items ?? []
 	const total = data?.meta.count ?? 0
-
-	const skeletonCount =
-		total > 0 ? Math.min(PER_PAGE, Math.max(0, total - offset)) : PER_PAGE
 
 	// const { storeToggle } = useQueryListFavToggleAll<
 	// 	IReview,
@@ -84,7 +75,7 @@ const ReviewsPage = () => {
 			<section className='mt-5 overflow-hidden'>
 				<div className='gap-3 xl:gap-5 grid md:grid-cols-2 xl:grid-cols-3'>
 					{isPending
-						? Array.from({ length: skeletonCount }).map((_, idx) => (
+						? Array.from({ length: limit }).map((_, idx) => (
 								<ReviewCard key={`reviews-skeleton-${idx}`} isLoading={true} />
 						  ))
 						: items.map(review => (
@@ -108,7 +99,7 @@ const ReviewsPage = () => {
 					<Pagination
 						currentPage={currentPage}
 						totalItems={total}
-						itemsPerPage={PER_PAGE}
+						itemsPerPage={limit}
 						setCurrentPage={setCurrentPage}
 						idToScroll={'reviews'}
 					/>

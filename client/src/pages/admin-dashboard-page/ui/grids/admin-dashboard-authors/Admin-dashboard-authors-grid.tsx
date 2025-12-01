@@ -7,12 +7,15 @@ import Pagination from '../../../../../components/pagination/Pagination.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
 import { useAuthorMeta } from '../../../../../hooks/use-author-meta.ts'
 import { authorsKeys } from '../../../../../query-keys/authors-keys.ts'
-import { AuthorTypesFilterOptions } from '../../../../../types/author/index.ts'
+import {
+	AuthorsQuery,
+	AuthorTypesFilterOptions,
+} from '../../../../../types/author/index.ts'
 import AdminFilterButton from '../../buttons/Admin-filter-button.tsx'
 import AdminDashboardAuthorsGridItem from './Admin-dashboard-authors-grid-item.tsx'
 import AuthorFormModal from './Author-form-modal.tsx'
 
-const perPage = 10
+const limit = 10
 
 const AdminDashboardAuthorsGrid = () => {
 	const [searchText, setSearchText] = useState<string>('')
@@ -26,33 +29,25 @@ const AdminDashboardAuthorsGrid = () => {
 
 	const typeId =
 		activeType !== AuthorTypesFilterOptions.ALL && types
-			? types.find(type => type.type === activeType)?.id ?? null
-			: null
+			? types.find(type => type.type === activeType)?.id
+			: undefined
 
-	const queryKey = authorsKeys.adminList({
+	const query: AuthorsQuery = {
 		typeId,
-		query: searchText.trim().length > 0 ? searchText.trim() : null,
-		limit: perPage,
-		offset: (currentPage - 1) * perPage,
-	})
+		search: searchText.trim() || undefined,
+		limit,
+		offset: (currentPage - 1) * limit,
+	}
 
-	const queryFn = () =>
-		AuthorAPI.findAll({
-			typeId: typeId ?? undefined,
-			search: searchText.trim().length > 0 ? searchText.trim() : undefined,
-			limit: perPage,
-			offset: (currentPage - 1) * perPage,
-		})
-
-	const { data: authorsData, isPending } = useQuery({
-		queryKey,
-		queryFn,
+	const { data, isPending } = useQuery({
+		queryKey: authorsKeys.list(query),
+		queryFn: () => AuthorAPI.findAll(query),
 		enabled: !isTypesLoading,
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const authors = authorsData?.items || []
-	const count = authorsData?.meta.count || 0
+	const authors = data?.items || []
+	const count = data?.meta.count || 0
 
 	useEffect(() => {
 		setCurrentPage(1)
@@ -125,7 +120,7 @@ const AdminDashboardAuthorsGrid = () => {
 				<div className='flex-1 overflow-y-auto mt-5'>
 					<div className='grid gap-y-5'>
 						{isPending
-							? Array.from({ length: perPage }).map((_, idx) => (
+							? Array.from({ length: limit }).map((_, idx) => (
 									<AdminDashboardAuthorsGridItem
 										key={`Author-skeleton-${idx}`}
 										isLoading={isPending}
@@ -136,7 +131,7 @@ const AdminDashboardAuthorsGrid = () => {
 										key={author.id}
 										author={author}
 										isLoading={isPending}
-										position={(currentPage - 1) * perPage + idx + 1}
+										position={(currentPage - 1) * limit + idx + 1}
 									/>
 							  ))}
 					</div>
@@ -147,7 +142,7 @@ const AdminDashboardAuthorsGrid = () => {
 						<Pagination
 							currentPage={currentPage}
 							totalItems={count}
-							itemsPerPage={perPage}
+							itemsPerPage={limit}
 							setCurrentPage={setCurrentPage}
 							idToScroll={'admin-authors-grid'}
 						/>

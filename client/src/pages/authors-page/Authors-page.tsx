@@ -6,13 +6,13 @@ import ComboBox from '../../components/buttons/Combo-box'
 import SkeletonLoader from '../../components/utils/Skeleton-loader'
 import { useAuthorMeta } from '../../hooks/use-author-meta'
 import { authorsKeys } from '../../query-keys/authors-keys'
-import { AuthorTypesFilterOptions } from '../../types/author'
+import { AuthorsQuery, AuthorTypesFilterOptions } from '../../types/author'
 
 interface IProps {
 	onlyRegistered: boolean
 }
 
-const PER_PAGE = 10
+const limit = 10
 
 const AuthorsPage: FC<IProps> = ({ onlyRegistered }) => {
 	const [selectedAuthorType, setSelectedAuthorType] = useState<string>(
@@ -23,29 +23,19 @@ const AuthorsPage: FC<IProps> = ({ onlyRegistered }) => {
 	const { types: authorTypes, isLoading: isTypesLoading } = useAuthorMeta()
 
 	const selectedTypeId = useMemo(() => {
-		const type = authorTypes.find(t => t.type === selectedAuthorType)
-		return type ? type.id : null
+		return authorTypes.find(t => t.type === selectedAuthorType)?.id
 	}, [authorTypes, selectedAuthorType])
 
-	const limit = PER_PAGE
-	const offset = (currentPage - 1) * PER_PAGE
-
-	const queryKey = authorsKeys.list({
+	const query: AuthorsQuery = {
 		typeId: selectedTypeId,
 		limit,
-		offset,
+		offset: (currentPage - 1) * limit,
 		onlyRegistered,
-	})
+	}
 
 	const { data, isPending: isAuthorsLoading } = useQuery({
-		queryKey,
-		queryFn: () =>
-			AuthorAPI.findAll({
-				typeId: selectedTypeId ?? undefined,
-				limit,
-				offset,
-				onlyRegistered,
-			}),
+		queryKey: authorsKeys.list(query),
+		queryFn: () => AuthorAPI.findAll(query),
 		staleTime: 1000 * 60 * 5,
 	})
 
@@ -89,7 +79,7 @@ const AuthorsPage: FC<IProps> = ({ onlyRegistered }) => {
 				currentPage={currentPage}
 				setCurrentPage={setCurrentPage}
 				total={total}
-				perPage={PER_PAGE}
+				perPage={limit}
 			/>
 		</>
 	)

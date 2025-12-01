@@ -4,6 +4,7 @@ import { AuthorCommentAPI } from '../../../../../api/author/author-comment-api'
 import AdminHeader from '../../../../../components/layout/admin-header/Admin-header'
 import Pagination from '../../../../../components/pagination/Pagination'
 import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys'
+import { AuthorCommentsQuery } from '../../../../../types/author'
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum'
 import { SortOrder } from '../../../../../types/common/types/sort-order'
 import AdminDashboardAuthorCommentsGridItem from './Admin-dashboard-author-comments-grid-item'
@@ -15,29 +16,21 @@ const AdminDashboardAuthorCommentsGrid = () => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC)
 
-	const queryKey = authorCommentsKeys.list({
+	const query: AuthorCommentsQuery = {
 		limit: perPage,
 		offset: (currentPage - 1) * perPage,
-		order,
-		query: searchText.trim() || null,
-	})
+		sortOrder: order,
+		search: searchText.trim(),
+	}
 
-	const queryFn = () =>
-		AuthorCommentAPI.findAll({
-			limit: perPage,
-			offset: (currentPage - 1) * perPage,
-			sortOrder: order,
-			search: searchText.trim() ?? undefined,
-		})
-
-	const { data: commentsData, isLoading } = useQuery({
-		queryKey,
-		queryFn,
+	const { data, isLoading } = useQuery({
+		queryKey: authorCommentsKeys.list(query),
+		queryFn: () => AuthorCommentAPI.findAll(query),
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const comments = commentsData?.items || []
-	const count = commentsData?.meta.count || 0
+	const comments = data?.items || []
+	const count = data?.meta.count || 0
 
 	useEffect(() => {
 		setCurrentPage(1)

@@ -10,11 +10,8 @@ import TextReviewSvg from '../../../../../components/review/svg/Text-review-svg'
 import MediaPlayerSvg from '../../../../../components/svg/Media-player-svg'
 import UserSvg from '../../../../../components/svg/User-svg'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
-import { platformStatsKeys } from '../../../../../query-keys/platform-stats-keys'
+import { platformStatsKeys } from '../../../../../query-keys/platform-stats-keys.ts'
 import PlatformStatisticsRow from './Platform-statistics-row'
-
-const queryKey = platformStatsKeys.all
-const queryFn = () => GlobalAppAPI.fetchPlatformStats()
 
 const PlatformStatistics = () => {
 	const {
@@ -27,8 +24,8 @@ const PlatformStatistics = () => {
 	} = useNavigationPath()
 
 	const { data: stats, isPending } = useQuery({
-		queryKey,
-		queryFn,
+		queryKey: platformStatsKeys.all,
+		queryFn: () => GlobalAppAPI.fetchPlatformStats(),
 		staleTime: 1000 * 60 * 5,
 	})
 

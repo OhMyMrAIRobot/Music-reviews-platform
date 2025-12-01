@@ -6,36 +6,25 @@ import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { releasesKeys } from '../../../../query-keys/releases-keys'
 import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum'
 import { CarouselRef } from '../../../../types/common/types/carousel-ref'
-import { ReleasesSortFieldsEnum } from '../../../../types/release'
+import {
+	ReleasesQuery,
+	ReleasesSortFieldsEnum,
+} from '../../../../types/release'
 import LastReleasesCarousel from './carousel/Last-releases-carousel'
 
-const LIMIT = 20
-const OFFSET = 0
-const FIELD = ReleasesSortFieldsEnum.PUBLISHED
-const ORDER = SortOrdersEnum.DESC
-
-const queryKey = releasesKeys.list({
-	typeId: null,
-	sortField: FIELD,
-	sortOrder: ORDER,
-	limit: LIMIT,
-	offset: OFFSET,
-})
-
-const queryFn = () =>
-	ReleaseAPI.findAll({
-		limit: LIMIT,
-		offset: OFFSET,
-		sortField: FIELD,
-		sortOrder: ORDER,
-	})
+const query: ReleasesQuery = {
+	limit: 20,
+	offset: 0,
+	sortField: ReleasesSortFieldsEnum.PUBLISHED,
+	sortOrder: SortOrdersEnum.DESC,
+}
 
 const LastReleases = () => {
 	const { navigateToReleases } = useNavigationPath()
 
 	const { data, isPending } = useQuery({
-		queryKey,
-		queryFn,
+		queryKey: releasesKeys.list(query),
+		queryFn: () => ReleaseAPI.findAll(query),
 		staleTime: 1000 * 60 * 5,
 	})
 

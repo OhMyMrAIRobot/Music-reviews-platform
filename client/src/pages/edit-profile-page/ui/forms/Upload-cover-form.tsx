@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
 import { ProfileAPI } from '../../../../api/user/profile-api'
@@ -6,7 +6,6 @@ import FormButton from '../../../../components/form-elements/Form-button'
 import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../../hooks/use-auth'
 import { useStore } from '../../../../hooks/use-store'
-import { profileKeys } from '../../../../query-keys/profile-keys'
 import buildProfileFormData from '../../../../utils/build-profile-form-data'
 import EditProfilePageSection from '../Edit-profile-page-section'
 import SelectImageLabel from '../labels/Select-image-label'
@@ -20,7 +19,7 @@ const UploadCoverForm = observer(() => {
 	const [file, setFile] = useState<File | null>(null)
 	const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 
-	const queryClient = useQueryClient()
+	// const queryClient = useQueryClient()
 	const handleApiError = useApiErrorHandler()
 
 	const uploadMutation = useMutation({
@@ -28,7 +27,7 @@ const UploadCoverForm = observer(() => {
 		onSuccess: () => {
 			const userId = authStore.user?.id
 			if (userId) {
-				queryClient.invalidateQueries({ queryKey: profileKeys.profile(userId) })
+				// queryClient.invalidateQueries({ queryKey: profileKeys.profile(userId) })
 			}
 			notificationStore.addSuccessNotification('Обложка успешно обновлена!')
 			setFile(null)
@@ -50,7 +49,7 @@ const UploadCoverForm = observer(() => {
 		onSuccess: () => {
 			const userId = authStore.user?.id
 			if (userId) {
-				queryClient.invalidateQueries({ queryKey: profileKeys.profile(userId) })
+				// queryClient.invalidateQueries({ queryKey: profileKeys.profile(userId) })
 			}
 			notificationStore.addSuccessNotification('Обложка успешно удалена!')
 		},

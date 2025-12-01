@@ -9,12 +9,15 @@ import { useReleaseMeta } from '../../../../../hooks/use-release-meta.ts'
 import { releasesKeys } from '../../../../../query-keys/releases-keys.ts'
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum.ts'
 import { SortOrder } from '../../../../../types/common/types/sort-order.ts'
-import { ReleaseTypesFilterOptions } from '../../../../../types/release/index.ts'
+import {
+	ReleasesQuery,
+	ReleaseTypesFilterOptions,
+} from '../../../../../types/release/index.ts'
 import AdminFilterButton from '../../buttons/Admin-filter-button.tsx'
 import AdminDashboardReleasesGridItem from './Admin-dashboard-releases-grid-item.tsx'
 import ReleaseFormModal from './Release-form-modal.tsx'
 
-const perPage = 10
+const limit = 10
 
 const AdminDashboardReleasesGrid = () => {
 	const [addModalOpen, setAddModalOpen] = useState<boolean>(false)
@@ -29,31 +32,20 @@ const AdminDashboardReleasesGrid = () => {
 
 	const typeId =
 		activeType === ReleaseTypesFilterOptions.ALL
-			? null
-			: types.find(type => type.type === activeType)?.id || null
+			? undefined
+			: types.find(type => type.type === activeType)?.id
 
-	const offset = (currentPage - 1) * perPage
-
-	const queryKey = releasesKeys.adminList({
+	const query: ReleasesQuery = {
 		typeId,
-		query: searchText.trim() || null,
-		order,
-		limit: perPage,
-		offset,
-	})
-
-	const queryFn = () =>
-		ReleaseAPI.findAll({
-			typeId: typeId ?? undefined,
-			search: searchText.trim() || undefined,
-			sortOrder: order,
-			limit: perPage,
-			offset,
-		})
+		search: searchText.trim() || undefined,
+		sortOrder: order,
+		limit,
+		offset: (currentPage - 1) * limit,
+	}
 
 	const { data, isPending: isReleasesLoading } = useQuery({
-		queryKey,
-		queryFn,
+		queryKey: releasesKeys.list(query),
+		queryFn: () => ReleaseAPI.findAll(query),
 		enabled: !isTypesLoading,
 		staleTime: 1000 * 60 * 5,
 	})
@@ -138,7 +130,7 @@ const AdminDashboardReleasesGrid = () => {
 				<div className='flex-1 overflow-y-auto mt-5'>
 					<div className='grid gap-y-5'>
 						{isReleasesLoading
-							? Array.from({ length: perPage }).map((_, idx) => (
+							? Array.from({ length: limit }).map((_, idx) => (
 									<AdminDashboardReleasesGridItem
 										key={`Release-skeleton-${idx}`}
 										isLoading={isReleasesLoading}
@@ -149,7 +141,7 @@ const AdminDashboardReleasesGrid = () => {
 										key={release.id}
 										release={release}
 										isLoading={isReleasesLoading}
-										position={(currentPage - 1) * perPage + idx + 1}
+										position={(currentPage - 1) * limit + idx + 1}
 									/>
 							  ))}
 					</div>
@@ -160,7 +152,7 @@ const AdminDashboardReleasesGrid = () => {
 						<Pagination
 							currentPage={currentPage}
 							totalItems={count}
-							itemsPerPage={perPage}
+							itemsPerPage={limit}
 							setCurrentPage={setCurrentPage}
 							idToScroll={'admin-authors-grid'}
 						/>

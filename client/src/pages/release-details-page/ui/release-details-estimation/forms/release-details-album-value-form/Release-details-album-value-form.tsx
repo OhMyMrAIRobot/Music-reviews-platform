@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { AlbumValueAPI } from '../../../../../../api/album-value-api'
@@ -9,9 +9,6 @@ import { useApiErrorHandler } from '../../../../../../hooks/use-api-error-handle
 import { useAuth } from '../../../../../../hooks/use-auth'
 import { useStore } from '../../../../../../hooks/use-store'
 import { albumValuesKeys } from '../../../../../../query-keys/album-values-keys'
-import { leaderboardKeys } from '../../../../../../query-keys/leaderboard-keys'
-import { profileKeys } from '../../../../../../query-keys/profile-keys'
-import { releaseDetailsKeys } from '../../../../../../query-keys/release-details-keys'
 import authStore from '../../../../../../stores/auth-store'
 import {
 	CreateAlbumValueVoteData,
@@ -38,30 +35,18 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = ({ release }) => {
 	const { notificationStore } = useStore()
 
 	const { checkAuth } = useAuth()
-	const queryClient = useQueryClient()
+	//const queryClient = useQueryClient()
 	const handleApiError = useApiErrorHandler()
-
-	const invalidateRelatedQueries = () => {
-		const keys = [
-			releaseDetailsKeys.userAlbumValueVote(release.id),
-			albumValuesKeys.all,
-			albumValuesKeys.byRelease(release.id),
-			profileKeys.profile(authStore.user?.id || 'unknown'),
-			leaderboardKeys.all,
-		]
-		keys.forEach(key => queryClient.invalidateQueries({ queryKey: key }))
-	}
 
 	const createMutation = useMutation({
 		mutationFn: (data: CreateAlbumValueVoteData) =>
 			AlbumValueAPI.postAlbumValueVote(data),
-		onSuccess: data => {
-			invalidateRelatedQueries()
-			queryClient.setQueryData(
-				releaseDetailsKeys.userAlbumValueVote(release.id),
-				data
-			)
-		},
+		// onSuccess: data => {
+		// 	queryClient.setQueryData(
+		// 		releaseDetailsKeys.userAlbumValueVote(release.id),
+		// 		data
+		// 	)
+		// },
 	})
 
 	const updateMutation = useMutation({
@@ -72,24 +57,23 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = ({ release }) => {
 			id: string
 			data: UpdateAlbumValueVoteData
 		}) => AlbumValueAPI.updateAlbumValueVote(id, data),
-		onSuccess: data => {
-			invalidateRelatedQueries()
-			queryClient.setQueryData(
-				releaseDetailsKeys.userAlbumValueVote(release.id),
-				data
-			)
-		},
+		// onSuccess: data => {
+		// 	queryClient.setQueryData(
+		// 		releaseDetailsKeys.userAlbumValueVote(release.id),
+		// 		data
+		// 	)
+		// },
 	})
 
 	const deleteMutation = useMutation({
 		mutationFn: (id: string) => AlbumValueAPI.deleteAlbumValueVote(id),
-		onSuccess: () => {
-			invalidateRelatedQueries()
-			queryClient.setQueryData(
-				releaseDetailsKeys.userAlbumValueVote(release.id),
-				undefined
-			)
-		},
+		// onSuccess: () => {
+		// 	invalidateRelatedQueries()
+		// 	queryClient.setQueryData(
+		// 		releaseDetailsKeys.userAlbumValueVote(release.id),
+		// 		undefined
+		// 	)
+		// },
 	})
 
 	const [rarityGenre, setRarityGenre] = useState<number>(0.5)
@@ -106,7 +90,7 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = ({ release }) => {
 	const [releaseAnticip, setReleaseAnticip] = useState(0.5)
 
 	const { data: userAlbumValueVote } = useQuery({
-		queryKey: releaseDetailsKeys.userAlbumValueVote(release.id),
+		queryKey: albumValuesKeys.user(release.id),
 		queryFn: () => AlbumValueAPI.findUserAlbumValueVote(release.id),
 		enabled:
 			authStore.isAuth && release.releaseType.type === ReleaseTypesEnum.ALBUM,

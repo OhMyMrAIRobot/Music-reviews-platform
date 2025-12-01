@@ -1,24 +1,9 @@
-import type { SortOrder } from '../types/common/types/sort-order'
+import { FeedbackQuery } from '../types/feedback'
 
 export const feedbackKeys = {
-	all: ['feedback'] as const,
 	statuses: ['feedbackStatuses'] as const,
-	reply: (feedbackId: string) => ['feedbackReply', feedbackId] as const,
-	list: (params: {
-		query: string | null
-		statusId: string | null
-		order: SortOrder | null
-		limit: number | null
-		offset: number | null
-	}) =>
-		[
-			'feedback',
-			{
-				query: params.query ?? null,
-				statusId: params.statusId ?? null,
-				order: params.order ?? null,
-				limit: params.limit ?? null,
-				offset: params.offset ?? null,
-			},
-		] as const,
+	all: ['feedback'] as const,
+	list: (params: FeedbackQuery) => ['feedback', params] as const,
+	reply: (feedbackId: string) =>
+		['feedback', 'feedbackReply', feedbackId] as const,
 }

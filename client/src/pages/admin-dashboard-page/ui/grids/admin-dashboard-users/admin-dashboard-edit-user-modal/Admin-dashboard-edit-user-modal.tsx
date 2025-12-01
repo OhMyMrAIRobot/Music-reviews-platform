@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
 import { FC, useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router'
@@ -19,7 +19,6 @@ import useNavigationPath from '../../../../../../hooks/use-navigation-path.ts'
 import { useRoleMeta } from '../../../../../../hooks/use-role-meta.ts'
 import { useSocialMeta } from '../../../../../../hooks/use-social-meta.ts'
 import { useStore } from '../../../../../../hooks/use-store.ts'
-import { usersKeys } from '../../../../../../query-keys/users-keys.ts'
 import { UpdateProfileData } from '../../../../../../types/profile/index.ts'
 import {
 	AdminAvailableRolesEnum,
@@ -63,7 +62,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 			Record<string, string>
 		>({})
 
-		const queryClient = useQueryClient()
+		// const queryClient = useQueryClient()
 
 		const updateUserMutation = useMutation({
 			mutationFn: (data: { id: string; updateData: AdminUpdateUserData }) =>
@@ -72,8 +71,8 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 				notificationStore.addSuccessNotification(
 					'Информация о пользователе успешно обновлена'
 				)
-				queryClient.invalidateQueries({ queryKey: usersKeys.all })
-				queryClient.invalidateQueries({ queryKey: usersKeys.id(user.id) })
+				// queryClient.invalidateQueries({ queryKey: usersKeys.all })
+				// queryClient.invalidateQueries({ queryKey: usersKeys.id(user.id) })
 			},
 			onError: (error: unknown) => {
 				handleApiError(error)
@@ -85,8 +84,8 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 				ProfileAPI.adminUpdate(data.id, data.updateData),
 			onSuccess: () => {
 				notificationStore.addSuccessNotification('Вы успешно обновили профиль!')
-				queryClient.invalidateQueries({ queryKey: usersKeys.all })
-				queryClient.invalidateQueries({ queryKey: usersKeys.id(user.id) })
+				// queryClient.invalidateQueries({ queryKey: usersKeys.all })
+				// queryClient.invalidateQueries({ queryKey: usersKeys.id(user.id) })
 			},
 			onError: (error: unknown) => {
 				handleApiError(error)
