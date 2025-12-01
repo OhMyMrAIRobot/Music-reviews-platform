@@ -37,7 +37,7 @@ export const useNominationVotes = () => {
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const { data: userVotes = [], isPending: isVotesLoading } = useQuery({
+	const { data: userVotes = [], isLoading: isVotesLoading } = useQuery({
 		queryKey: nominationsKeys.userVotes(authStore.user?.id ?? 'unknown'),
 		queryFn: () => NominationAPI.findUserVotes(),
 		enabled: authStore.isAuth && !!authStore.user,

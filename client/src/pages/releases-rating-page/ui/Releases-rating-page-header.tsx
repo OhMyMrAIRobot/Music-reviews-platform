@@ -11,7 +11,7 @@ interface IProps {
 	setSelectedMonth: (value: number) => void
 	selectedYear: number | null
 	setSelectedYear: (value: number | null) => void
-	minYear: number | null
+	minYear: number
 	maxYear: number
 	isLoading: boolean
 }
@@ -23,6 +23,7 @@ const ReleasesRatingPageHeader: FC<IProps> = ({
 	setSelectedYear,
 	minYear,
 	maxYear,
+	isLoading,
 }) => {
 	const handleMonthChange = (value: string) => {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -56,7 +57,7 @@ const ReleasesRatingPageHeader: FC<IProps> = ({
 				</p>
 				<div className='flex flex-col gap-y-2 md:flex-row md:gap-x-5'>
 					<div className='w-50 h-10'>
-						{!minYear ? (
+						{isLoading ? (
 							<SkeletonLoader className='size-full rounded-md' />
 						) : (
 							<ComboBox
@@ -73,7 +74,7 @@ const ReleasesRatingPageHeader: FC<IProps> = ({
 					</div>
 					{selectedYear !== null && (
 						<div className='w-50 h-10'>
-							{!minYear ? (
+							{isLoading ? (
 								<SkeletonLoader className='size-full rounded-md' />
 							) : (
 								<ComboBox

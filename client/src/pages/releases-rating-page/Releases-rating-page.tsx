@@ -17,7 +17,7 @@ const ReleasesRatingPage = () => {
 
 	const query: ReleasesQuery = {
 		year: year ?? undefined,
-		month: month,
+		month: year !== null ? month : undefined,
 		sortField: ReleasesSortFieldsEnum.ALL_RATING,
 		sortOrder: SortOrdersEnum.DESC,
 	}
@@ -30,6 +30,8 @@ const ReleasesRatingPage = () => {
 	})
 
 	const releases = data?.items ?? []
+	const minYear = data?.meta.minPublishYear
+	const maxYear = data?.meta.maxPublishYear
 
 	const tracks = releases.filter(
 		val => val.releaseType.type === ReleaseTypesEnum.SINGLE
@@ -45,8 +47,8 @@ const ReleasesRatingPage = () => {
 				setSelectedMonth={setMonth}
 				selectedYear={year}
 				setSelectedYear={setYear}
-				minYear={data?.meta.minYearRelease ?? null}
-				maxYear={data?.meta.maxYearRelease ?? new Date().getFullYear()}
+				minYear={minYear ?? new Date().getFullYear()}
+				maxYear={maxYear ?? new Date().getFullYear()}
 				isLoading={isPending}
 			/>
 			<div className='grid grid-cols-1 lg:grid-cols-2 gap-5 mt-5 space-y-5'>
