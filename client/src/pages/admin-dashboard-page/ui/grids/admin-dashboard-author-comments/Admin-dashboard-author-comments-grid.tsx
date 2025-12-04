@@ -9,7 +9,7 @@ import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-en
 import { SortOrder } from '../../../../../types/common/types/sort-order'
 import AdminDashboardAuthorCommentsGridItem from './Admin-dashboard-author-comments-grid-item'
 
-const perPage = 10
+const limit = 10
 
 const AdminDashboardAuthorCommentsGrid = () => {
 	const [searchText, setSearchText] = useState<string>('')
@@ -17,8 +17,8 @@ const AdminDashboardAuthorCommentsGrid = () => {
 	const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC)
 
 	const query: AuthorCommentsQuery = {
-		limit: perPage,
-		offset: (currentPage - 1) * perPage,
+		limit,
+		offset: (currentPage - 1) * limit,
 		sortOrder: order,
 		search: searchText.trim(),
 	}
@@ -60,7 +60,7 @@ const AdminDashboardAuthorCommentsGrid = () => {
 				<div className='flex-1 overflow-y-auto mt-5'>
 					<div className='grid gap-y-5'>
 						{isLoading
-							? Array.from({ length: perPage }).map((_, idx) => (
+							? Array.from({ length: limit }).map((_, idx) => (
 									<AdminDashboardAuthorCommentsGridItem
 										key={`Comment-skeleton-${idx}`}
 										isLoading={true}
@@ -71,7 +71,7 @@ const AdminDashboardAuthorCommentsGrid = () => {
 										key={comment.id}
 										comment={comment}
 										isLoading={isLoading}
-										position={(currentPage - 1) * perPage + idx + 1}
+										position={(currentPage - 1) * limit + idx + 1}
 									/>
 							  ))}
 					</div>
@@ -88,7 +88,7 @@ const AdminDashboardAuthorCommentsGrid = () => {
 						<Pagination
 							currentPage={currentPage}
 							totalItems={count}
-							itemsPerPage={perPage}
+							itemsPerPage={limit}
 							setCurrentPage={setCurrentPage}
 							idToScroll={'admin-author-comments-grid'}
 						/>

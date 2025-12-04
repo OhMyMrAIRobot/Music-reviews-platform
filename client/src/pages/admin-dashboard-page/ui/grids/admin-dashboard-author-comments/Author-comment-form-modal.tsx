@@ -1,4 +1,8 @@
-import { useMutation } from '@tanstack/react-query'
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQueryClient,
+} from '@tanstack/react-query'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { AuthorCommentAPI } from '../../../../../api/author/author-comment-api'
 import FormButton from '../../../../../components/form-elements/Form-button'
@@ -6,8 +10,14 @@ import FormInput from '../../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../../components/form-elements/Form-label'
 import FormTextbox from '../../../../../components/form-elements/Form-textbox'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay'
+import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler'
 import { useStore } from '../../../../../hooks/use-store'
-import { AuthorComment } from '../../../../../types/author'
+import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys'
+import { releasesKeys } from '../../../../../query-keys/releases-keys'
+import {
+	AuthorComment,
+	UpdateAuthorCommentData,
+} from '../../../../../types/author'
 
 interface IProps {
 	isOpen: boolean
@@ -18,40 +28,35 @@ interface IProps {
 const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
 	const { notificationStore } = useStore()
 
-	// const queryClient = useQueryClient()
+	const handleApiError = useApiErrorHandler()
+
+	const queryClient = useQueryClient()
+
+	const [title, setTitle] = useState<string>(comment.title)
+	const [text, setText] = useState<string>(comment.text)
+
+	// All queries need to be invalidated after update
+	const keysToInvalidate: InvalidateQueryFilters[] = [
+		{ queryKey: authorCommentsKeys.all },
+		{ queryKey: releasesKeys.details(comment.release.id) },
+	]
 
 	const updateMutation = useMutation({
-		mutationFn: ({
-			id,
-			title,
-			text,
-		}: {
-			id: string
-			title?: string
-			text?: string
-		}) => AuthorCommentAPI.adminUpdate(id, { title, text }),
+		mutationFn: ({ id, data }: { id: string; data: UpdateAuthorCommentData }) =>
+			AuthorCommentAPI.adminUpdate(id, data),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification(
 				'Авторский комментарий успешно обновлен!'
 			)
-			// queryClient.invalidateQueries({ queryKey: authorCommentsKeys.all })
 			onClose()
+
+			// invalidate related queries
+			keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
 		},
 		onError: (error: unknown) => {
-			const axiosError = error as {
-				response?: { data?: { message?: string[] } }
-			}
-			const errors = axiosError?.response?.data?.message || [
-				'Ошибка при обновлении комментария',
-			]
-			errors.forEach((err: string) =>
-				notificationStore.addErrorNotification(err)
-			)
+			handleApiError(error, 'Не удалось обновить авторский комментарий.')
 		},
 	})
-
-	const [title, setTitle] = useState<string>(comment.title)
-	const [text, setText] = useState<string>(comment.text)
 
 	useEffect(() => {
 		setTitle(comment.title)
@@ -75,8 +80,10 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
 
 		updateMutation.mutate({
 			id: comment.id,
-			title: title.trim() !== comment.title ? title.trim() : undefined,
-			text: text.trim() !== comment.text ? text.trim() : undefined,
+			data: {
+				title: title.trim() !== comment.title ? title.trim() : undefined,
+				text: text.trim() !== comment.text ? text.trim() : undefined,
+			},
 		})
 	}
 

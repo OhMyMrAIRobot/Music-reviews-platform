@@ -1,12 +1,22 @@
-import { useMutation } from '@tanstack/react-query'
+import {
+	useMutation,
+	useQueryClient,
+	type InvalidateQueryFilters,
+} from '@tanstack/react-query'
 import { FC, useState } from 'react'
 import { Link } from 'react-router'
 import { AuthorCommentAPI } from '../../../../../api/author/author-comment-api'
 import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
+import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../../hooks/use-store'
+import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys'
+import { leaderboardKeys } from '../../../../../query-keys/leaderboard-keys'
+import { platformStatsKeys } from '../../../../../query-keys/platform-stats-keys'
+import { profilesKeys } from '../../../../../query-keys/profiles-keys'
+import { releasesKeys } from '../../../../../query-keys/releases-keys'
 import { AuthorComment } from '../../../../../types/author'
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum'
 import { SortOrder } from '../../../../../types/common/types/sort-order'
@@ -33,9 +43,20 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = ({
 }) => {
 	const { notificationStore } = useStore()
 
+	const handleApiError = useApiErrorHandler()
+
 	const { navigateToReleaseDetails, navigatoToProfile } = useNavigationPath()
 
-	// const queryClient = useQueryClient()
+	const queryClient = useQueryClient()
+
+	// All queries need to be invalidated after delete
+	const keysToInvalidate: InvalidateQueryFilters[] = [
+		{ queryKey: authorCommentsKeys.all },
+		{ queryKey: leaderboardKeys.all },
+		{ queryKey: platformStatsKeys.all },
+		{ queryKey: profilesKeys.profile(comment?.user.id || 'unknown') },
+		{ queryKey: releasesKeys.all },
+	]
 
 	const deleteMutation = useMutation({
 		mutationFn: (id: string) => AuthorCommentAPI.adminDelete(id),
@@ -43,20 +64,17 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = ({
 			notificationStore.addSuccessNotification(
 				'Вы успешно удалили авторский комментарий!'
 			)
-			// queryClient.invalidateQueries({ queryKey: authorCommentsKeys.all })
 			setConfModalOpen(false)
+
+			// invalidate related queries
+			keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
 		},
 		onError: (error: unknown) => {
-			const axiosError = error as {
-				response?: { data?: { message?: string[] } }
-			}
-			const errors = axiosError?.response?.data?.message || [
-				'Ошибка при удалении комментария',
-			]
-			errors.forEach((err: string) =>
-				notificationStore.addErrorNotification(err)
-			)
 			setConfModalOpen(false)
+			handleApiError(
+				error,
+				'Произошла ошибка при удалении авторского комментария!'
+			)
 		},
 	})
 

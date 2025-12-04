@@ -1,4 +1,10 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQuery,
+	useQueryClient,
+} from '@tanstack/react-query'
+import { observer } from 'mobx-react-lite'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { AuthorCommentAPI } from '../../../../api/author/author-comment-api'
 import FormButton from '../../../../components/form-elements/Form-button'
@@ -7,6 +13,10 @@ import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../../hooks/use-auth'
 import { useStore } from '../../../../hooks/use-store'
 import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys'
+import { leaderboardKeys } from '../../../../query-keys/leaderboard-keys'
+import { platformStatsKeys } from '../../../../query-keys/platform-stats-keys'
+import { profilesKeys } from '../../../../query-keys/profiles-keys'
+import { releasesKeys } from '../../../../query-keys/releases-keys'
 import {
 	AuthorCommentsQuery,
 	CreateAuthorCommentData,
@@ -18,10 +28,13 @@ interface IProps {
 	releaseId: string
 }
 
-const SendAuthorCommentForm: FC<IProps> = ({ releaseId }) => {
+const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 	const { notificationStore, authStore } = useStore()
+
 	const { checkAuth } = useAuth()
-	// const queryClient = useQueryClient()
+
+	const queryClient = useQueryClient()
+
 	const handleApiError = useApiErrorHandler()
 
 	const [title, setTitle] = useState<string>('')
@@ -44,37 +57,66 @@ const SendAuthorCommentForm: FC<IProps> = ({ releaseId }) => {
 		c => c.user.id === authStore.user?.id
 	)
 
-	// const invalidateRelatedQueries = () => {
-	// 	const keys = [
-	// 		authorCommentsKeys.all,
-	// 		authorCommentsKeys.byRelease(releaseId),
-	// 		releasesKeys.all,
-	// 		profileKeys.profile(authStore.user?.id || 'unknown'),
-	// 		platformStatsKeys.all,
-	// 		leaderboardKeys.all,
-	// 	]
-	// 	keys.forEach(key => queryClient.invalidateQueries({ queryKey: key }))
-	// }
+	// All queries need to be invalidated after delete
+	const invalidateRelatedQueries = () => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: authorCommentsKeys.all },
+			{ queryKey: leaderboardKeys.all },
+			{ queryKey: platformStatsKeys.all },
+			{ queryKey: profilesKeys.profile(authStore.user?.id || 'unknown') },
+			{ queryKey: releasesKeys.all },
+		]
+
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	}
 
 	const createMutation = useMutation({
-		mutationFn: ({ title, text, releaseId }: CreateAuthorCommentData) =>
-			AuthorCommentAPI.create({ releaseId, title, text }),
-		// onSuccess: invalidateRelatedQueries,
+		mutationFn: (data: CreateAuthorCommentData) =>
+			AuthorCommentAPI.create(data),
+		onSuccess: () => {
+			notificationStore.addSuccessNotification(
+				'Вы успешно добавили авторский комментарий!'
+			)
+			setTitle('')
+			setText('')
+
+			invalidateRelatedQueries()
+		},
+		onError(error: unknown) {
+			handleApiError(error, 'Не удалось добавить авторский комментарий.')
+		},
 	})
 
 	const updateMutation = useMutation({
-		mutationFn: ({
-			id,
-			title,
-			text,
-		}: UpdateAuthorCommentData & { id: string }) =>
-			AuthorCommentAPI.update(id, { title, text }),
-		// onSuccess: invalidateRelatedQueries,
+		mutationFn: ({ id, data }: { id: string; data: UpdateAuthorCommentData }) =>
+			AuthorCommentAPI.update(id, data),
+		onSuccess: () => {
+			notificationStore.addSuccessNotification(
+				'Вы успешно изменили авторский комментарий!'
+			)
+
+			invalidateRelatedQueries()
+		},
+		onError(error: unknown) {
+			handleApiError(error, 'Не удалось изменить авторский комментарий.')
+		},
 	})
 
 	const deleteMutation = useMutation({
 		mutationFn: (id: string) => AuthorCommentAPI.delete(id),
-		// onSuccess: invalidateRelatedQueries,
+		onSuccess: () => {
+			notificationStore.addSuccessNotification(
+				'Вы успешно удалили авторский комментарий!'
+			)
+			setConfModalOpen(false)
+			setTitle('')
+			setText('')
+
+			invalidateRelatedQueries()
+		},
+		onError(error: unknown) {
+			handleApiError(error, 'Не удалось удалить авторский комментарий.')
+		},
 	})
 
 	const handleSubmit = async () => {
@@ -88,29 +130,21 @@ const SendAuthorCommentForm: FC<IProps> = ({ releaseId }) => {
 		)
 			return
 
-		try {
-			if (authorComment) {
-				await updateMutation.mutateAsync({
-					id: authorComment.id,
+		if (authorComment) {
+			return updateMutation.mutateAsync({
+				id: authorComment.id,
+				data: {
 					title:
 						title.trim() !== authorComment.title ? title.trim() : undefined,
 					text: text.trim() !== authorComment.text ? text.trim() : undefined,
-				})
-			} else {
-				await createMutation.mutateAsync({
-					title: title.trim(),
-					text: text.trim(),
-					releaseId: releaseId,
-				})
-			}
-
-			notificationStore.addSuccessNotification(
-				`Вы успешно ${
-					authorComment ? 'изменили' : 'добавили'
-				} авторский комментарий!`
-			)
-		} catch (error: unknown) {
-			handleApiError(error)
+				},
+			})
+		} else {
+			return createMutation.mutateAsync({
+				title: title.trim(),
+				text: text.trim(),
+				releaseId: releaseId,
+			})
 		}
 	}
 
@@ -124,16 +158,7 @@ const SendAuthorCommentForm: FC<IProps> = ({ releaseId }) => {
 		)
 			return
 
-		try {
-			await deleteMutation.mutateAsync(authorComment.id)
-			notificationStore.addSuccessNotification(
-				`Вы успешно удалили авторский комментарий!`
-			)
-			setTitle('')
-			setText('')
-		} catch (error: unknown) {
-			handleApiError(error)
-		}
+		return deleteMutation.mutateAsync(authorComment.id)
 	}
 
 	useEffect(() => {
@@ -228,6 +253,6 @@ const SendAuthorCommentForm: FC<IProps> = ({ releaseId }) => {
 			</div>
 		</>
 	)
-}
+})
 
 export default SendAuthorCommentForm
