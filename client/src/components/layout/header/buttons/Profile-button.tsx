@@ -1,11 +1,13 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
 import { useEffect, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router'
+import { Link } from 'react-router'
 import { AuthAPI } from '../../../../api/auth-api'
 import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
+import { authKeys } from '../../../../query-keys/auth-keys'
+import { nominationsKeys } from '../../../../query-keys/nominations-keys'
 import { RolesEnum } from '../../../../types/user'
 import { generateUUID } from '../../../../utils/generate-uuid'
 import SettingsSvg from '../../../svg/Settings-svg'
@@ -18,21 +20,15 @@ import PopupProfileButton from './Popup-profile-button'
 const ProfileButton = observer(() => {
 	const { authStore, notificationStore } = useStore()
 
-	const navigate = useNavigate()
-
-	const {
-		navigateToMain,
-		navigatoToProfile,
-		navigateToEditProfile,
-		navigateToAdminReleases,
-	} = useNavigationPath()
+	const { navigatoToProfile, navigateToEditProfile, navigateToAdminReleases } =
+		useNavigationPath()
 
 	const handleApiError = useApiErrorHandler()
 
 	const [isOpen, setIsOpen] = useState<boolean>(false)
 	const popUpProfRef = useRef<HTMLDivElement | null>(null)
 
-	// const queryClient = useQueryClient()
+	const queryClient = useQueryClient()
 
 	const handleClickOutside = (event: MouseEvent) => {
 		if (
@@ -51,22 +47,38 @@ const ProfileButton = observer(() => {
 		}
 	}, [])
 
+	const invalidateUserAlbumValues = (userId: string) => {
+		queryClient.invalidateQueries({
+			queryKey: ['albumValues', 'user'],
+			predicate: query => {
+				const params = query.queryKey[2] as {
+					releaseId: string
+					userId: string
+				}
+				return params?.userId === userId
+			},
+		})
+	}
+
 	const { mutateAsync: logOut } = useMutation({
 		mutationFn: AuthAPI.logout,
 		onSuccess: () => {
-			// const userId = authStore.user?.id
 			authStore.unsetAuthorization()
-			// if (userId) {
-			// 	queryClient.invalidateQueries({ queryKey: profileKeys.profile(userId) })
-			// }
-			// queryClient.invalidateQueries({ queryKey: authKeys.auth })
-			navigate(navigateToMain)
 			setIsOpen(false)
 			notificationStore.addNotification({
 				id: generateUUID(),
 				text: 'Вы успешно вышли из аккаунта!',
 				isError: false,
 			})
+
+			const userId = authStore.user?.id || 'unknown'
+
+			// Invalidate auth-user-related queries
+			queryClient.invalidateQueries({ queryKey: authKeys.auth })
+			queryClient.invalidateQueries({
+				queryKey: nominationsKeys.userVotes(userId),
+			})
+			invalidateUserAlbumValues(userId)
 		},
 		onError: (error: unknown) => {
 			handleApiError(error, 'Произошла ошибка при выходе!')

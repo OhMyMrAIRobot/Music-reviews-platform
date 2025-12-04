@@ -9,7 +9,6 @@ import { useApiErrorHandler } from '../../../../../../hooks/use-api-error-handle
 import { useAuth } from '../../../../../../hooks/use-auth'
 import { useStore } from '../../../../../../hooks/use-store'
 import { albumValuesKeys } from '../../../../../../query-keys/album-values-keys'
-import authStore from '../../../../../../stores/auth-store'
 import {
 	CreateAlbumValueVoteData,
 	UpdateAlbumValueVoteData,
@@ -32,7 +31,7 @@ function round2(value: number): number {
 }
 
 const ReleaseDetailsAlbumValueForm: FC<IProps> = ({ release }) => {
-	const { notificationStore } = useStore()
+	const { notificationStore, authStore } = useStore()
 
 	const { checkAuth } = useAuth()
 	//const queryClient = useQueryClient()
@@ -90,7 +89,10 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = ({ release }) => {
 	const [releaseAnticip, setReleaseAnticip] = useState(0.5)
 
 	const { data: userAlbumValueVote } = useQuery({
-		queryKey: albumValuesKeys.user(release.id),
+		queryKey: albumValuesKeys.user({
+			releaseId: release.id,
+			userId: authStore.user?.id ?? 'unknown',
+		}),
 		queryFn: () => AlbumValueAPI.findUserAlbumValueVote(release.id),
 		enabled:
 			authStore.isAuth && release.releaseType.type === ReleaseTypesEnum.ALBUM,

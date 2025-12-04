@@ -5,5 +5,6 @@ export const albumValuesKeys = {
 	list: (params: AlbumValuesQuery) => ['albumValues', 'list', params] as const,
 	byRelease: (releaseId: string) =>
 		['albumValues', 'byRelease', releaseId] as const,
-	user: (releaseId: string) => ['albumValues', 'user', releaseId] as const,
+	user: (params: { releaseId: string; userId: string }) =>
+		['albumValues', 'user', params] as const,
 }
