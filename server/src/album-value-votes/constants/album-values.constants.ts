@@ -1,3 +1,9 @@
+/**
+ * Allowed numeric levels for various album value dimensions.
+ *
+ * These constants are used by request DTO validators to restrict allowed
+ * values for specific rating fields.
+ */
 export const RARITY_LEVELS = [0.5, 1.5, 2.5] as const;
 export const INTEGRITY_GENRE_LEVELS = [0.5, 1.5, 2.5] as const;
 export const INTEGRITY_SEMANTIC_LEVELS = [0.5, 1.5] as const;

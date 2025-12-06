@@ -12,6 +12,17 @@ export class UserFavReleasesService {
     private readonly releasesService: ReleasesService,
   ) {}
 
+  /**
+   * Add a release to user's favorites.
+   *
+   * Validates that both user and release exist, ensures the favorite
+   * doesn't already exist, then creates the association.
+   *
+   * @param releaseId - id of the release to favorite
+   * @param userId - id of the user adding the favorite
+   * @returns created UserFavRelease record
+   * @throws ConflictException when the release is already favorited
+   */
   async create(releaseId: string, userId: string): Promise<UserFavRelease> {
     await this.usersService.findOne(userId);
     await this.releasesService.findOne(releaseId);
@@ -28,6 +39,14 @@ export class UserFavReleasesService {
     });
   }
 
+  /**
+   * Retrieve all favorite releases for a specific user.
+   *
+   * Validates that the user exists before fetching their favorites.
+   *
+   * @param userId - id of the user whose favorites to retrieve
+   * @returns array of UserFavRelease records
+   */
   async findByUserId(userId: string): Promise<UserFavRelease[]> {
     await this.usersService.findOne(userId);
 
@@ -36,6 +55,14 @@ export class UserFavReleasesService {
     });
   }
 
+  /**
+   * Retrieve all users who favorited a specific release.
+   *
+   * Validates that the release exists before fetching favorites.
+   *
+   * @param releaseId - id of the release to get favorites for
+   * @returns array of UserFavRelease records
+   */
   async findByReleaseId(releaseId: string): Promise<UserFavRelease[]> {
     await this.releasesService.findOne(releaseId);
 
@@ -44,6 +71,17 @@ export class UserFavReleasesService {
     });
   }
 
+  /**
+   * Remove a release from user's favorites.
+   *
+   * Validates that both user and release exist, ensures the favorite
+   * exists, then removes the association.
+   *
+   * @param releaseId - id of the release to unfavorite
+   * @param userId - id of the user removing the favorite
+   * @returns deleted UserFavRelease record
+   * @throws ConflictException when the release was not favorited
+   */
   async remove(releaseId: string, userId: string): Promise<UserFavRelease> {
     await this.releasesService.findOne(releaseId);
     await this.usersService.findOne(userId);
@@ -60,6 +98,15 @@ export class UserFavReleasesService {
     });
   }
 
+  /**
+   * Check if a specific user-release favorite relationship exists.
+   *
+   * Internal helper used to prevent duplicates and validate removals.
+   *
+   * @param userId - id of the user
+   * @param releaseId - id of the release
+   * @returns UserFavRelease record if exists, null otherwise
+   */
   async findOne(
     userId: string,
     releaseId: string,

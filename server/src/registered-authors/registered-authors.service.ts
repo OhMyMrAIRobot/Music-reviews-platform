@@ -15,15 +15,20 @@ export class RegisteredAuthorsService {
     private readonly usersService: UsersService,
     private readonly releasesService: ReleasesService,
   ) {}
-
-  async findByUserId(userId: string): Promise<RegisteredAuthor[]> {
-    await this.usersService.findOne(userId);
-
-    return this.prisma.registeredAuthor.findMany({
-      where: { userId },
-    });
-  }
-
+  /**
+   * Verify that the given user is registered as an author and is an author
+   * of the specified release.
+   *
+   * Steps:
+   * - ensure the user has at least one registered author entry
+   * - load the target release and check whether any of the user's
+   *   registered author ids participate in the release (artist/producer/designer)
+   *
+   * @param userId - id of the user to check
+   * @param releaseId - id of the release to verify authorship against
+   * @throws BadRequestException when the user is not registered as an author
+   * @throws ForbiddenException when the user is not an author of the release
+   */
   async checkUserIsReleaseAuthor(userId: string, releaseId: string) {
     const userAuthors = await this.findByUserId(userId);
 
@@ -51,5 +56,22 @@ export class RegisteredAuthorsService {
     }
 
     return;
+  }
+
+  /**
+   * Return all `RegisteredAuthor` rows for a given user.
+   *
+   * Ensures the user exists first via `UsersService.findOne` and then
+   * queries the `registeredAuthor` table.
+   *
+   * @param userId - target user id
+   * @returns array of `RegisteredAuthor` records belonging to the user
+   */
+  private async findByUserId(userId: string): Promise<RegisteredAuthor[]> {
+    await this.usersService.findOne(userId);
+
+    return this.prisma.registeredAuthor.findMany({
+      where: { userId },
+    });
   }
 }

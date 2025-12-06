@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
@@ -7,10 +7,10 @@ import { AuthorConfirmationStatusesEnum } from 'src/author-confirmation-statuses
 import { EntityNotFoundException } from 'src/shared/exceptions/entity-not-found.exception';
 import { UsersService } from 'src/users/users.service';
 import { CreateAuthorConfirmationDto } from './dto/create-author-confirmation.dto';
-import { FindAuthorConfirmationsQuery } from './dto/query/find-author-confirmations-query.dto';
+import { AuthorConfirmationsQueryDto } from './dto/query/author-confirmations.query.dto';
 import { UpdateAuthorConfirmationRequestDto } from './dto/request/update-author-confirmation.request.dto';
-import { AuthorConfirmationResponseDto } from './dto/response/author-confirmation.response.dto';
-import { FindAuthorConfirmationResponseDto } from './dto/response/find-author-confirmations.response.dto';
+import { AuthorConfirmationDto } from './dto/response/author-confirmation.dto';
+import { AuthorConfirmationsResponseDto } from './dto/response/author-confirmations.response.dto';
 
 @Injectable()
 export class AuthorConfirmationsService {
@@ -20,6 +20,12 @@ export class AuthorConfirmationsService {
     private readonly authorConfirmationStatusesService: AuthorConfirmationStatusesService,
   ) {}
 
+  /**
+   * Create multiple author confirmation records in bulk.
+   *
+   * Uses `createMany` with `skipDuplicates` so repeated submissions for the
+   * same user/author pair are ignored. Returns the Prisma createMany result.
+   */
   create(data: CreateAuthorConfirmationDto[]) {
     return this.prisma.authorConfirmation.createMany({
       data,
@@ -27,31 +33,23 @@ export class AuthorConfirmationsService {
     });
   }
 
-  async findByUserId(userId: string): Promise<AuthorConfirmationResponseDto[]> {
-    await this.usersService.findOne(userId);
-    const result = await this.prisma.authorConfirmation.findMany({
-      where: { userId },
-      include: {
-        user: { select: { id: true, nickname: true, profile: true } },
-        author: { select: { id: true, name: true, avatarImg: true } },
-        status: true,
-      },
-    });
-
-    return plainToInstance(AuthorConfirmationResponseDto, result, {
-      excludeExtraneousValues: true,
-    });
-  }
-
+  /**
+   * Find confirmations matching the provided query.
+   *
+   * Supports filtering by `userId`, `statusId`, free-text `search` across
+   * author name and user nickname, ordering and pagination. Validates
+   * referenced status existence when `statusId` is provided.
+   */
   async findAll(
-    query: FindAuthorConfirmationsQuery,
-  ): Promise<FindAuthorConfirmationResponseDto> {
+    query: AuthorConfirmationsQueryDto,
+  ): Promise<AuthorConfirmationsResponseDto> {
     const {
       limit,
       offset = 0,
-      query: searchQuery,
+      search: searchQuery,
       statusId,
       order = 'desc',
+      userId,
     } = query;
 
     if (statusId) {
@@ -60,6 +58,7 @@ export class AuthorConfirmationsService {
 
     const where: Prisma.AuthorConfirmationWhereInput = {
       AND: [
+        userId ? { userId } : {},
         statusId ? { statusId } : {},
         searchQuery
           ? {
@@ -102,38 +101,53 @@ export class AuthorConfirmationsService {
     ]);
 
     return {
-      count,
-      items: plainToInstance(AuthorConfirmationResponseDto, result, {
+      meta: { count },
+      items: plainToInstance(AuthorConfirmationDto, result, {
         excludeExtraneousValues: true,
       }),
     };
   }
 
+  /**
+   * Update the status of a confirmation.
+   *
+   * Preconditions:
+   * - The confirmation must exist.
+   * - The current status must be `PENDING` (otherwise update is blocked).
+   *
+   * Side effects:
+   * - When the new status is `APPROVED`, a `registeredAuthor` record is
+   *   created linking the user and the author.
+   * - When the new status is `PENDING` or `REJECTED`, the `registeredAuthor`
+   *   record is deleted if it exists.
+   *
+   * Returns the updated `AuthorConfirmationDto`.
+   */
   async update(
     id: string,
     dto: UpdateAuthorConfirmationRequestDto,
-  ): Promise<AuthorConfirmationResponseDto> {
+  ): Promise<AuthorConfirmationDto> {
     const exist = await this.findOne(id);
     const newStatus = await this.authorConfirmationStatusesService.findOne(
       dto.statusId,
     );
 
-    if (
-      (exist.status.status as AuthorConfirmationStatusesEnum) !==
-      AuthorConfirmationStatusesEnum.PENDING
-    ) {
-      throw new BadRequestException(
-        'Вы не можете изменить статус принятой / отклонённой заявки!',
-      );
-    }
-
     const result = await this.prisma.$transaction(async (prisma) => {
-      if (
-        (newStatus.status as AuthorConfirmationStatusesEnum) ===
-        AuthorConfirmationStatusesEnum.APPROVED
-      ) {
+      const newStatusEnum = newStatus.status as AuthorConfirmationStatusesEnum;
+
+      if (newStatusEnum === AuthorConfirmationStatusesEnum.APPROVED) {
         await prisma.registeredAuthor.create({
           data: {
+            authorId: exist.authorId,
+            userId: exist.userId,
+          },
+        });
+      } else if (
+        newStatusEnum === AuthorConfirmationStatusesEnum.PENDING ||
+        newStatusEnum === AuthorConfirmationStatusesEnum.REJECTED
+      ) {
+        await prisma.registeredAuthor.deleteMany({
+          where: {
             authorId: exist.authorId,
             userId: exist.userId,
           },
@@ -151,20 +165,44 @@ export class AuthorConfirmationsService {
       });
     });
 
-    return plainToInstance(AuthorConfirmationResponseDto, result, {
+    return plainToInstance(AuthorConfirmationDto, result, {
       excludeExtraneousValues: true,
     });
   }
 
+  /**
+   * Delete a confirmation by id.
+   *
+   * Also deletes the associated `registeredAuthor` record if it exists,
+   * ensuring cleanup of all related data.
+   *
+   * Ensures the entity exists before performing deletion.
+   */
   async delete(id: string) {
-    await this.findOne(id);
+    const exist = await this.findOne(id);
 
-    return this.prisma.authorConfirmation.delete({
-      where: { id },
+    await this.prisma.$transaction(async (prisma) => {
+      await prisma.registeredAuthor.deleteMany({
+        where: {
+          authorId: exist.authorId,
+          userId: exist.userId,
+        },
+      });
+
+      await prisma.authorConfirmation.delete({
+        where: { id },
+      });
     });
+
+    return;
   }
 
-  async findOne(id: string) {
+  /**
+   * Internal helper to fetch a confirmation by id including its status.
+   *
+   * Throws `EntityNotFoundException` when the confirmation does not exist.
+   */
+  private async findOne(id: string) {
     const exist = await this.prisma.authorConfirmation.findUnique({
       where: { id },
       include: { status: true },

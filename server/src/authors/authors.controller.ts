@@ -18,32 +18,44 @@ import { JwtAuthGuard } from 'src/shared/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/shared/guards/roles.guard';
 import { AuthorsService } from './authors.service';
 import { CreateAuthorRequestDto } from './dto/request/create-author.request.dto';
-import { FindAuthorByIdParams } from './dto/request/params/find-author-by-id.params.dto';
-import { FindAuthorsQuery } from './dto/request/query/find-authors.query.dto';
+import { AuthorsQueryDto } from './dto/request/query/authors.query.dto';
 import { UpdateAuthorRequestDto } from './dto/request/update-author.request.dto';
 
 @Controller('authors')
 export class AuthorsController {
   constructor(private readonly authorsService: AuthorsService) {}
 
+  /**
+   * GET /authors
+   *
+   * Return a paginated list of authors. Supports filters from
+   * `AuthorsQueryDto` such as `typeId`, `search`, `onlyRegistered`.
+   */
   @Get()
-  findAll(@Query() query: FindAuthorsQuery) {
+  findAll(@Query() query: AuthorsQueryDto) {
     return this.authorsService.findAll(query);
   }
 
-  @Get('public')
-  findAuthors(@Query() query: FindAuthorsQuery) {
-    return this.authorsService.findAuthors(query);
+  /**
+   * GET /authors/:id
+   *
+   * Return a single author by id in serialized `AuthorDto` form.
+   */
+  @Get(':id')
+  findById(@Param('id') id: string) {
+    return this.authorsService.findById(id);
   }
 
-  @Get('details/:id')
-  findById(@Param() params: FindAuthorByIdParams) {
-    return this.authorsService.findById(params.id);
-  }
-
+  /**
+   * POST /authors
+   *
+   * Create a new author. Requires admin/owner roles.
+   * Accepts multipart uploads for `avatarImg` and `coverImg` fields
+   * in addition to the JSON body described by `CreateAuthorRequestDto`.
+   */
+  @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
-  @Post()
   @UseInterceptors(
     FileFieldsInterceptor([
       { name: 'avatarImg', maxCount: 1 },
@@ -65,9 +77,16 @@ export class AuthorsController {
     );
   }
 
+  /**
+   * PATCH /authors/:id
+   *
+   * Update an existing author. Requires admin/owner roles.
+   * Accepts the partial JSON payload described by `UpdateAuthorRequestDto`
+   * and optional multipart files for `avatarImg` and `coverImg`.
+   */
+  @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
-  @Patch(':id')
   @UseInterceptors(
     FileFieldsInterceptor([
       { name: 'avatarImg', maxCount: 1 },
@@ -91,9 +110,15 @@ export class AuthorsController {
     );
   }
 
+  /**
+   * DELETE /authors/:id
+   *
+   * Delete an author by id. Requires admin/owner roles.
+   * Removes stored media files associated with the author as part of deletion.
+   */
+  @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
-  @Delete(':id')
   remove(@Param('id') id: string) {
     return this.authorsService.remove(id);
   }

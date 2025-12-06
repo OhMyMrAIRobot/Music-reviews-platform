@@ -19,10 +19,8 @@ import { UserRoleEnum } from 'src/roles/types/user-role.enum';
 import { Roles } from 'src/shared/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/shared/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/shared/guards/roles.guard';
-import { AdminCreateReleaseMediaRequestDto } from './dto/request/admin-create-release-media.request.dto';
-import { AdminUpdateReleaseMediaRequestDto } from './dto/request/admin-update-release-media.request.dto';
 import { CreateReleaseMediaRequestDto } from './dto/request/create-release-media.request.dto';
-import { ReleaseMediaRequestQuery } from './dto/request/query/release-media.request.query.dto';
+import { ReleaseMediaQueryDto } from './dto/request/query/release-media.query.dto';
 import { UpdateReleaseMediaRequestDto } from './dto/request/update-release-media.request.dto';
 import { ReleaseMediaService } from './release-media.service';
 
@@ -34,9 +32,16 @@ export class ReleaseMediaController {
     private readonly releaseMediaStatusesService: ReleaseMediaStatusesService,
   ) {}
 
+  /**
+   * POST /release-media
+   *
+   * Create a new media review. Requires an authenticated user with the
+   * `MEDIA` role. The controller resolves default `type` and `status`
+   * values and delegates creation to `ReleaseMediaService.create`.
+   */
+  @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.MEDIA)
-  @Post()
   async create(
     @Body() dto: CreateReleaseMediaRequestDto,
     @Request() req: IAuthenticatedRequest,
@@ -57,32 +62,39 @@ export class ReleaseMediaController {
     });
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
-  @Post('/admin')
-  adminCreate(@Body() dto: AdminCreateReleaseMediaRequestDto) {
-    return this.releaseMediaService.create({
-      ...dto,
-      userId: undefined,
-    });
-  }
-
+  /**
+   * GET /release-media
+   *
+   * Returns a paginated list of media entries according to query filters.
+   * Delegates to `ReleaseMediaService.findAll` which performs filtering
+   * and aggregation via a centralized raw SQL query.
+   */
   @Get()
-  findAll(@Query() query: ReleaseMediaRequestQuery) {
+  findAll(@Query() query: ReleaseMediaQueryDto) {
     return this.releaseMediaService.findAll(query);
   }
 
-  @Get(':releaseId/:userId')
-  findOne(
-    @Param('releaseId') releaseId: string,
-    @Param('userId') userId: string,
-  ) {
-    return this.releaseMediaService.findOne(releaseId, userId);
+  /**
+   * GET /release-media/:id
+   *
+   * Return a single media entry by id. Delegates to
+   * `ReleaseMediaService.findById` which throws when the entity is missing.
+   */
+  @Get(':id')
+  findById(@Param('id') id: string) {
+    return this.releaseMediaService.findById(id);
   }
 
+  /**
+   * PATCH /release-media/:id
+   *
+   * Update an existing media entry. Requires authenticated owner with
+   * `MEDIA` role. Delegates to `ReleaseMediaService.update` which performs
+   * validation and permission checks.
+   */
+  @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.MEDIA)
-  @Patch(':id')
   update(
     @Param('id') id: string,
     @Body() dto: UpdateReleaseMediaRequestDto,
@@ -91,27 +103,17 @@ export class ReleaseMediaController {
     return this.releaseMediaService.update(id, dto, req.user.id);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
-  @Patch('/admin/:id')
-  adminUpdate(
-    @Param('id') id: string,
-    @Body() dto: AdminUpdateReleaseMediaRequestDto,
-  ) {
-    return this.releaseMediaService.update(id, dto);
-  }
-
+  /**
+   * DELETE /release-media/:id
+   *
+   * Delete a media entry. Requires authenticated owner with `MEDIA` role.
+   * Delegates to `ReleaseMediaService.remove` which enforces permission
+   * checks and deletes the database record.
+   */
+  @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.MEDIA)
-  @Delete(':id')
   remove(@Param('id') id: string, @Request() req: IAuthenticatedRequest) {
     return this.releaseMediaService.remove(id, req.user.id);
-  }
-
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
-  @Delete('admin/:id')
-  adminRemove(@Param('id') id: string) {
-    return this.releaseMediaService.remove(id);
   }
 }

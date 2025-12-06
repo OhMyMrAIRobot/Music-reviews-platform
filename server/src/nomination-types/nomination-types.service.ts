@@ -7,6 +7,16 @@ import { EntityNotFoundException } from 'src/shared/exceptions/entity-not-found.
 export class NominationTypesService {
   constructor(private readonly prisma: PrismaService) {}
 
+  /**
+   * Returns a single nomination type by id.
+   *
+   * Throws `EntityNotFoundException` when no matching nomination type
+   * is found for the provided `id`.
+   *
+   * @param id - entity id of the nomination type
+   * @returns Promise<NominationType>
+   * @throws EntityNotFoundException when not found
+   */
   async findOne(id: string): Promise<NominationType> {
     const type = await this.prisma.nominationType.findUnique({
       where: { id },
@@ -19,6 +29,11 @@ export class NominationTypesService {
     return type;
   }
 
+  /**
+   * Returns all available nomination types defined in the system.
+   *
+   * @returns Promise<NominationType[]>
+   */
   async findAll(): Promise<NominationType[]> {
     return this.prisma.nominationType.findMany();
   }

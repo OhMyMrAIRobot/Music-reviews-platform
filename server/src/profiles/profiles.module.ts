@@ -12,6 +12,7 @@ import { ProfilesService } from './profiles.service';
     SocialMediaModule,
     PrismaModule,
     FileModule,
+    SocialMediaModule,
   ],
   controllers: [ProfilesController],
   providers: [ProfilesService],

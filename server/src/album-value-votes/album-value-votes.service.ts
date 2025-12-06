@@ -21,6 +21,18 @@ export class AlbumValueVotesService {
     private readonly releasesService: ReleasesService,
   ) {}
 
+  /**
+   * Create a new album value vote for a user.
+   *
+   * Preconditions:
+   * - The referenced release must exist and be of type ALBUM.
+   * - The user must exist.
+   * - The user must not already have a vote for the same release.
+   *
+   * The method converts certain numeric inputs to decimal-backed values
+   * before persisting and returns the created entity serialized to
+   * `AlbumValueVoteResponseDto`.
+   */
   async create(
     userId: string,
     dto: CreateAlbumVoteRequestDto,
@@ -75,6 +87,12 @@ export class AlbumValueVotesService {
     );
   }
 
+  /**
+   * Get the authenticated user's album value vote for a release.
+   *
+   * Throws an `EntityNotFoundException` when no vote exists for the
+   * provided `userId` and `releaseId` pair.
+   */
   async findUserAlbumValueVote(
     userId: string,
     releaseId: string,
@@ -98,15 +116,11 @@ export class AlbumValueVotesService {
     );
   }
 
-  async findByUserReleaseIds(
-    userId: string,
-    releaseId: string,
-  ): Promise<AlbumValueVote | null> {
-    return this.prisma.albumValueVote.findUnique({
-      where: { userId_releaseId: { userId, releaseId } },
-    });
-  }
-
+  /**
+   * Retrieve the raw AlbumValueVote by id.
+   *
+   * Throws `EntityNotFoundException` if the vote does not exist.
+   */
   async findOne(id: string): Promise<AlbumValueVote> {
     const exist = await this.prisma.albumValueVote.findUnique({
       where: { id },
@@ -119,6 +133,15 @@ export class AlbumValueVotesService {
     return exist;
   }
 
+  /**
+   * Update an existing album value vote.
+   *
+   * Preconditions:
+   * - The authenticated user (provided as `userId`) must own the vote.
+   * - At least one field must be provided in the partial DTO.
+   *
+   * Returns the updated vote serialized to `AlbumValueVoteResponseDto`.
+   */
   async update(
     id: string,
     dto: UpdateAlbumVoteRequestDto,
@@ -169,11 +192,27 @@ export class AlbumValueVotesService {
     );
   }
 
+  /**
+   * Delete a vote by id. The authenticated user must be the vote owner.
+   *
+   * Returns the Prisma deleteMany result for convenience.
+   */
   async delete(id: string, userId: string) {
     await this.checkBelongsToUser(id, userId);
 
-    return this.prisma.albumValueVote.deleteMany({
+    await this.prisma.albumValueVote.deleteMany({
       where: { id },
+    });
+
+    return;
+  }
+
+  private async findByUserReleaseIds(
+    userId: string,
+    releaseId: string,
+  ): Promise<AlbumValueVote | null> {
+    return this.prisma.albumValueVote.findUnique({
+      where: { userId_releaseId: { userId, releaseId } },
     });
   }
 

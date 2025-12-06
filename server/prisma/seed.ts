@@ -1,14 +1,14 @@
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { AuthorConfirmationStatusesEnum } from '../src/author-confirmation-statuses/types/author-confirmation-statuses.enum';
-import { AuthorTypesEnum } from '../src/author-types/entities/author-types.enum';
+import { AuthorTypesEnum } from '../src/author-types/types/author-types.enum';
 import { FeedbackStatusesEnum } from '../src/feedback-statuses/types/feedback-statuses.enum';
 import { NominationTypesEnum } from '../src/nomination-types/types/nomination-types.enum';
 import { ReleaseMediaStatusesEnum } from '../src/release-media-statuses/types/release-media-statuses.enum';
 import { ReleaseMediaTypesEnum } from '../src/release-media-types/types/release-media-types.enum';
 import { ReleaseTypesEnum } from '../src/release-types/types/release-types.enum';
+import { ReleaseRatingTypesEnum } from '../src/releases/types/release-rating-types.enum';
 import { UserRoleEnum } from '../src/roles/types/user-role.enum';
-import { ReleaseRatingTypesEnum } from '../src/shared/types/release-rating-types.enum';
 import { SocialMediaEnum } from '../src/social-media/types/social-media.enum';
 
 const prisma = new PrismaClient();

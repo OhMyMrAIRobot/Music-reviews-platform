@@ -1,3 +1,10 @@
+/**
+ * Tier identifiers used to categorize aggregated album values.
+ *
+ * Each tier corresponds to a numeric range defined in
+ * `ALBUM_VALUE_TIER_RANGES` and is used by consumers to filter or label
+ * computed album value results.
+ */
 export type AlbumValueTier =
   | 'silver'
   | 'gold'
@@ -5,6 +12,7 @@ export type AlbumValueTier =
   | 'sapphire'
   | 'ruby';
 
+/** Ordered list of all possible album value tiers. */
 export const ALBUM_VALUE_TIERS: readonly AlbumValueTier[] = [
   'silver',
   'gold',
@@ -13,6 +21,12 @@ export const ALBUM_VALUE_TIERS: readonly AlbumValueTier[] = [
   'ruby',
 ] as const;
 
+/**
+ * Numeric boundaries used to map a computed total value to a tier.
+ *
+ * Values are inclusive of `min` and `max` ranges and represent the human
+ * readable ranges for each tier.
+ */
 export const ALBUM_VALUE_TIER_RANGES: Record<
   AlbumValueTier,
   { min: number; max: number }

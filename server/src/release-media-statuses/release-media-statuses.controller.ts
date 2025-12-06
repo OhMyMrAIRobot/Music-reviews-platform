@@ -7,6 +7,13 @@ export class ReleaseMediaStatusesController {
     private readonly releaseMediaStatusesService: ReleaseMediaStatusesService,
   ) {}
 
+  /**
+   * GET /release-media-statuses
+   *
+   * Returns a list of media statuses.
+   *
+   * @returns Promise<ReleaseMediaStatus[]> - array of media statuses
+   */
   @Get()
   findAll() {
     return this.releaseMediaStatusesService.findAll();

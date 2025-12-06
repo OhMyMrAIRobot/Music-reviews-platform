@@ -1,13 +1,10 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { UserFavMedia } from '@prisma/client';
-import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
 import { ReleaseMediaStatusesEnum } from 'src/release-media-statuses/types/release-media-statuses.enum';
 import { ReleaseMediaTypesEnum } from 'src/release-media-types/types/release-media-types.enum';
 import { ReleaseMediaService } from 'src/release-media/release-media.service';
-import { EntityNotFoundException } from 'src/shared/exceptions/entity-not-found.exception';
 import { UsersService } from 'src/users/users.service';
-import { FindUserFavByMediaIdResponseDto } from './dto/response/find-user-fav-by-media-id.response.dto';
 
 @Injectable()
 export class UserFavMediaService {
@@ -17,9 +14,23 @@ export class UserFavMediaService {
     private readonly releaseMediaService: ReleaseMediaService,
   ) {}
 
+  /**
+   * Add media to user's favorites.
+   *
+   * Validates that:
+   * - user and media exist
+   * - user is not the media owner
+   * - media is an approved media review
+   * - favorite doesn't already exist
+   *
+   * @param mediaId - id of the media to favorite
+   * @param userId - id of the user adding the favorite
+   * @returns created UserFavMedia record
+   * @throws ConflictException when user owns the media, media is not eligible, or already favorited
+   */
   async create(mediaId: string, userId: string): Promise<UserFavMedia> {
     await this.usersService.findOne(userId);
-    const media = await this.releaseMediaService.findById(mediaId);
+    const media = await this.releaseMediaService.findOne(mediaId);
 
     if (media.userId === userId) {
       throw new ConflictException(
@@ -52,53 +63,19 @@ export class UserFavMediaService {
     });
   }
 
-  async findByMediaId(
-    mediaId: string,
-  ): Promise<FindUserFavByMediaIdResponseDto> {
-    const media = await this.prisma.releaseMedia.findUnique({
-      where: { id: mediaId },
-      select: {
-        id: true,
-        release: {
-          select: {
-            releaseProducer: { select: { authorId: true } },
-            releaseArtist: { select: { authorId: true } },
-            releaseDesigner: { select: { authorId: true } },
-          },
-        },
-      },
-    });
-
-    if (!media) {
-      throw new EntityNotFoundException('Медиарецензия', 'id', mediaId);
-    }
-
-    const favs = await this.prisma.userFavMedia.findMany({
-      where: { mediaId },
-      include: {
-        user: {
-          select: {
-            id: true,
-            nickname: true,
-            profile: { select: { avatar: true } },
-            registeredAuthor: { select: { authorId: true } },
-          },
-        },
-      },
-    });
-
-    return plainToInstance(
-      FindUserFavByMediaIdResponseDto,
-      {
-        userFavMedia: favs,
-        release: media.release,
-      },
-      { excludeExtraneousValues: true },
-    );
-  }
-
+  /**
+   * Remove media from user's favorites.
+   *
+   * Validates that both user and media exist, ensures the favorite
+   * exists, then removes the association.
+   *
+   * @param mediaId - id of the media to unfavorite
+   * @param userId - id of the user removing the favorite
+   * @returns deleted UserFavMedia record
+   * @throws ConflictException when the media was not favorited
+   */
   async remove(mediaId: string, userId: string): Promise<UserFavMedia> {
-    await this.releaseMediaService.findById(mediaId);
+    await this.releaseMediaService.findOne(mediaId);
     await this.usersService.findOne(userId);
 
     const exist = await this.findByMediaUserIds(mediaId, userId);
@@ -116,6 +93,15 @@ export class UserFavMediaService {
     });
   }
 
+  /**
+   * Check if a specific user-media favorite relationship exists.
+   *
+   * Internal helper used to prevent duplicates and validate removals.
+   *
+   * @param mediaId - id of the media
+   * @param userId - id of the user
+   * @returns UserFavMedia record if exists, null otherwise
+   */
   private findByMediaUserIds(
     mediaId: string,
     userId: string,

@@ -12,6 +12,17 @@ export class UserFavAuthorsService {
     private readonly authorsService: AuthorsService,
   ) {}
 
+  /**
+   * Add an author to user's favorites.
+   *
+   * Validates that both user and author exist, ensures the favorite
+   * doesn't already exist, then creates the association.
+   *
+   * @param authorId - id of the author to favorite
+   * @param userId - id of the user adding the favorite
+   * @returns created UserFavAuthor record
+   * @throws ConflictException when the author is already favorited
+   */
   async create(authorId: string, userId: string): Promise<UserFavAuthor> {
     await this.usersService.findOne(userId);
     await this.authorsService.findOne(authorId);
@@ -28,6 +39,14 @@ export class UserFavAuthorsService {
     });
   }
 
+  /**
+   * Retrieve all favorite authors for a specific user.
+   *
+   * Validates that the user exists before fetching their favorites.
+   *
+   * @param userId - id of the user whose favorites to retrieve
+   * @returns array of UserFavAuthor records
+   */
   async findByUserId(userId: string): Promise<UserFavAuthor[]> {
     await this.usersService.findOne(userId);
 
@@ -36,6 +55,14 @@ export class UserFavAuthorsService {
     });
   }
 
+  /**
+   * Retrieve all users who favorited a specific author.
+   *
+   * Validates that the author exists before fetching favorites.
+   *
+   * @param authorId - id of the author to get favorites for
+   * @returns array of UserFavAuthor records
+   */
   async findByAuthorId(authorId: string): Promise<UserFavAuthor[]> {
     await this.authorsService.findOne(authorId);
 
@@ -44,6 +71,17 @@ export class UserFavAuthorsService {
     });
   }
 
+  /**
+   * Remove an author from user's favorites.
+   *
+   * Validates that both user and author exist, ensures the favorite
+   * exists, then removes the association.
+   *
+   * @param authorId - id of the author to unfavorite
+   * @param userId - id of the user removing the favorite
+   * @returns deleted UserFavAuthor record
+   * @throws ConflictException when the author was not favorited
+   */
   async remove(authorId: string, userId: string): Promise<UserFavAuthor> {
     await this.authorsService.findOne(authorId);
     await this.usersService.findOne(userId);
@@ -61,6 +99,15 @@ export class UserFavAuthorsService {
     });
   }
 
+  /**
+   * Check if a specific user-author favorite relationship exists.
+   *
+   * Internal helper used to prevent duplicates and validate removals.
+   *
+   * @param userId - id of the user
+   * @param authorId - id of the author
+   * @returns UserFavAuthor record if exists, null otherwise
+   */
   async findOne(
     userId: string,
     authorId: string,

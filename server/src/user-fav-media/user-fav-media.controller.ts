@@ -1,7 +1,6 @@
 import {
   Controller,
   Delete,
-  Get,
   Param,
   Post,
   Request,
@@ -15,8 +14,14 @@ import { UserFavMediaService } from './user-fav-media.service';
 export class UserFavMediaController {
   constructor(private readonly userFavMediaService: UserFavMediaService) {}
 
-  @UseGuards(JwtAuthGuard)
+  /**
+   * POST /user-fav-media/:mediaId
+   *
+   * Adds media to the authenticated user's favorites.
+   * Requires authentication.
+   */
   @Post(':mediaId')
+  @UseGuards(JwtAuthGuard)
   create(
     @Param('mediaId') mediaId: string,
     @Request() req: IAuthenticatedRequest,
@@ -24,13 +29,14 @@ export class UserFavMediaController {
     return this.userFavMediaService.create(mediaId, req.user.id);
   }
 
-  @Get(':mediaId')
-  findByMediaId(@Param('mediaId') mediaId: string) {
-    return this.userFavMediaService.findByMediaId(mediaId);
-  }
-
-  @UseGuards(JwtAuthGuard)
+  /**
+   * DELETE /user-fav-media/:mediaId
+   *
+   * Removes media from the authenticated user's favorites.
+   * Requires authentication.
+   */
   @Delete(':mediaId')
+  @UseGuards(JwtAuthGuard)
   remove(
     @Param('mediaId') mediaId: string,
     @Request() req: IAuthenticatedRequest,

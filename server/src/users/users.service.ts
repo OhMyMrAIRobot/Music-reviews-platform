@@ -22,15 +22,14 @@ import { DuplicateFieldException } from '../shared/exceptions/duplicate-field.ex
 import { EntityNotFoundException } from '../shared/exceptions/entity-not-found.exception';
 import { InvalidCredentialsException } from '../shared/exceptions/invalid-credentials.exception';
 import { AdminUpdateUserRequestDto } from './dto/request/admin-update-user.request.dto';
-import { FindUsersQuery } from './dto/request/query/find-users.query.dto';
+import { UsersQueryDto } from './dto/request/query/users.query.dto';
 import { UpdateUserRequestDto } from './dto/request/update-user.request.dto';
-import { FindUserDetailsResponse } from './dto/response/find-user-details.response.dto';
 import {
-  FindUsersPrismaResponseDto,
-  FindUsersResponseDto,
-} from './dto/response/find-users.response.dto';
-import { UserWithPasswordResponseDto } from './dto/response/user-with-password.response.dto';
-import { UserResponseDto } from './dto/response/user.response.dto';
+  UserDetailsDto,
+  UserDto,
+  UserWithPasswordDto,
+} from './dto/response/user.dto';
+import { UsersResponseDto } from './dto/response/users.response.dto';
 
 @Injectable()
 export class UsersService {
@@ -42,6 +41,15 @@ export class UsersService {
     private readonly fileService: FileService,
   ) {}
 
+  /**
+   * Check whether a user with given email or nickname already exists.
+   *
+   * Throws `DuplicateFieldException` when an existing user matches the
+   * provided email or nickname.
+   *
+   * @param email string - candidate email to check
+   * @param nickname string - candidate nickname to check
+   */
   async isUserExists(email: string, nickname: string) {
     const existingUser = await this.prisma.user.findFirst({
       where: {
@@ -67,14 +75,26 @@ export class UsersService {
     return;
   }
 
-  async findAll(query: FindUsersQuery): Promise<FindUsersResponseDto> {
-    const { limit, offset, query: searchTerm, role, order } = query;
+  /**
+   * Find users according to query filters and return a paginated result.
+   *
+   * Behaviour:
+   * - applies optional search and role filters
+   * - resolves pagination `limit` and `offset`
+   * - includes related `role` and `profile.socialMedia` relations
+   * - maps raw Prisma entities to `UserDetailsDto` instances
+   *
+   * @param query UsersQueryDto - query parameters for filtering/pagination
+   * @returns Promise<UsersResponseDto> paginated users and meta information
+   */
+  async findAll(query: UsersQueryDto): Promise<UsersResponseDto> {
+    const { limit, offset, search, role, order } = query;
 
-    const where: Prisma.UserWhereInput = searchTerm
+    const where: Prisma.UserWhereInput = search
       ? {
           OR: [
-            { nickname: { contains: searchTerm, mode: 'insensitive' } },
-            { email: { contains: searchTerm, mode: 'insensitive' } },
+            { nickname: { contains: search, mode: 'insensitive' } },
+            { email: { contains: search, mode: 'insensitive' } },
           ],
         }
       : {};
@@ -88,7 +108,7 @@ export class UsersService {
       };
     }
 
-    const [total, users] = await Promise.all([
+    const [count, users] = await Promise.all([
       this.prisma.user.count({ where }),
 
       this.prisma.user.findMany({
@@ -97,22 +117,44 @@ export class UsersService {
         skip: offset,
         include: {
           role: true,
-          profile: { select: { avatar: true } },
+          profile: {
+            include: {
+              socialMedia: {
+                include: {
+                  social: true,
+                },
+              },
+            },
+          },
         },
         orderBy: [{ createdAt: order ?? 'desc' }, { id: 'desc' }],
       }),
     ]);
 
     return {
-      total,
-      users: plainToInstance(FindUsersPrismaResponseDto, users),
+      meta: {
+        count,
+      },
+      items: plainToInstance(UserDetailsDto, users),
     };
   }
 
+  /**
+   * Load a user by id.
+   *
+   * When `includePassword` is true the returned DTO will include the
+   * hashed password (useful for internal/authentication flows). The
+   * method throws `EntityNotFoundException` when the user is missing.
+   *
+   * @param id string - user id
+   * @param includePassword boolean - whether to include password in the result
+   * @returns Promise<UserDto | UserWithPasswordDto> user DTO
+   * @throws EntityNotFoundException when user not found
+   */
   async findOne(
     id: string,
     includePassword: boolean = false,
-  ): Promise<UserResponseDto | UserWithPasswordResponseDto> {
+  ): Promise<UserDto | UserWithPasswordDto> {
     const user = await this.prisma.user.findUnique({
       where: { id },
       include: { role: true, registeredAuthor: true },
@@ -123,14 +165,24 @@ export class UsersService {
     }
 
     return includePassword
-      ? plainToInstance(UserWithPasswordResponseDto, user, {
+      ? plainToInstance(UserWithPasswordDto, user, {
           excludeExtraneousValues: true,
         })
-      : plainToInstance(UserResponseDto, user, {
+      : plainToInstance(UserDto, user, {
           excludeExtraneousValues: true,
         });
   }
 
+  /**
+   * Load full user details (including profile and social media).
+   *
+   * Uses Prisma includes to fetch nested profile.socialMedia and maps the
+   * result to `UserDetailsDto` for consistent API output.
+   *
+   * @param id string - user id
+   * @returns Promise<UserDetailsDto> detailed user DTO
+   * @throws EntityNotFoundException when user not found
+   */
   async findUserDetails(id: string) {
     const user = await this.prisma.user.findUnique({
       where: { id },
@@ -152,13 +204,24 @@ export class UsersService {
       throw new EntityNotFoundException('Пользователь', 'id', `${id}`);
     }
 
-    return plainToInstance(FindUserDetailsResponse, user);
+    return plainToInstance(UserDetailsDto, user);
   }
 
+  /**
+   * Find a user by email.
+   *
+   * Similar to `findOne` but queries by email. When `includePassword` is
+   * true the returned DTO will include the hashed password.
+   *
+   * @param email string - user email
+   * @param includePassword boolean - include hashed password in result
+   * @returns Promise<UserDto | UserWithPasswordDto>
+   * @throws EntityNotFoundException when user not found
+   */
   async findByEmail(
     email: string,
     includePassword: boolean = false,
-  ): Promise<UserResponseDto | UserWithPasswordResponseDto> {
+  ): Promise<UserDto | UserWithPasswordDto> {
     const user = await this.prisma.user.findFirst({
       where: { email: { equals: email, mode: 'insensitive' } },
       include: { role: true, registeredAuthor: true },
@@ -169,15 +232,26 @@ export class UsersService {
     }
 
     return includePassword
-      ? plainToInstance(UserWithPasswordResponseDto, user)
-      : plainToInstance(UserResponseDto, user);
+      ? plainToInstance(UserWithPasswordDto, user)
+      : plainToInstance(UserDto, user);
   }
 
-  async update(
-    id: string,
-    dto: UpdateUserRequestDto,
-  ): Promise<UserResponseDto> {
-    const user: UserWithPasswordResponseDto = await this.findOne(id, true);
+  /**
+   * Update a user's own data.
+   *
+   * Behaviour:
+   * - verifies the current password before applying changes
+   * - prevents duplicated email/nickname via `isUserExists`
+   * - hashes `newPassword` when provided and preserves existing password otherwise
+   * - toggles `isActive` to false when email is changed
+   *
+   * @param id string - id of user to update
+   * @param dto UpdateUserRequestDto - update payload
+   * @returns Promise<UserDto> updated user DTO without password
+   * @throws InvalidCredentialsException when provided current password is incorrect
+   */
+  async update(id: string, dto: UpdateUserRequestDto): Promise<UserDto> {
+    const user: UserWithPasswordDto = await this.findOne(id, true);
     if (!(await this.verifyPassword(dto.password, user.password))) {
       throw new InvalidCredentialsException();
     }
@@ -203,14 +277,29 @@ export class UsersService {
       include: { role: true, registeredAuthor: true },
     });
 
-    return plainToInstance(UserResponseDto, updatedUser);
+    return plainToInstance(UserDto, updatedUser);
   }
 
+  /**
+   * Admin update for a user.
+   *
+   * Behaviour:
+   * - validates provided data and permissions of the requesting admin
+   * - prevents setting protected roles without sufficient privileges
+   * - applies changes and returns `UserDetailsDto` with nested profile
+   *
+   * @param id string - target user id
+   * @param dto AdminUpdateUserRequestDto - admin patch payload
+   * @param req IAuthenticatedRequest - request containing authenticated admin
+   * @returns Promise<UserDetailsDto> updated detailed user DTO
+   * @throws NoDataProvidedException when dto is empty
+   * @throws InsufficientPermissionsException when admin lacks permissions
+   */
   async adminUpdate(
     id: string,
     dto: AdminUpdateUserRequestDto,
     req: IAuthenticatedRequest,
-  ): Promise<UserResponseDto> {
+  ): Promise<UserDetailsDto> {
     if (!dto || Object.keys(dto).length === 0) {
       throw new NoDataProvidedException();
     }
@@ -244,18 +333,37 @@ export class UsersService {
     const updatedUser = this.prisma.user.update({
       where: { id },
       data: dto,
-      include: { role: true },
+      include: {
+        role: true,
+        profile: {
+          include: {
+            socialMedia: {
+              include: {
+                social: true,
+              },
+            },
+          },
+        },
+      },
     });
 
-    return plainToInstance(UserResponseDto, updatedUser);
+    return plainToInstance(UserDetailsDto, updatedUser);
   }
 
-  async delete(id: string): Promise<UserResponseDto> {
+  /**
+   * Delete a user and cleanup related profile files.
+   *
+   * Performs existence checks, deletes the user DB row and removes
+   * associated avatar/cover files from storage when present.
+   *
+   * @param id string - user id to delete
+   */
+  async delete(id: string) {
     await this.findOne(id);
 
-    const profile = await this.profilesService.findByUserId(id);
+    const profile = await this.profilesService.findOne(id);
 
-    const deletedUser = await this.prisma.user.delete({
+    await this.prisma.user.delete({
       where: { id },
     });
 
@@ -267,16 +375,30 @@ export class UsersService {
       await this.fileService.deleteFile('covers/' + profile.coverImage);
     }
 
-    return plainToInstance(UserResponseDto, deletedUser);
+    return;
   }
 
+  /**
+   * Admin delete wrapper that enforces permission checks.
+   *
+   * @param req IAuthenticatedRequest - authenticated admin request
+   * @param id string - target user id
+   */
   async adminDelete(req: IAuthenticatedRequest, id: string) {
     await this.checkPermissions(req.user, id);
 
     return this.delete(id);
   }
 
-  async activateUser(id: string): Promise<UserResponseDto> {
+  /**
+   * Activate a user account.
+   *
+   * Throws `ConflictException` when the account is already active.
+   *
+   * @param id string - user id to activate
+   * @returns Promise<UserDto> activated user DTO
+   */
+  async activateUser(id: string): Promise<UserDto> {
     const user = await this.findOne(id);
 
     if (user.isActive) {
@@ -289,9 +411,16 @@ export class UsersService {
       include: { role: true, registeredAuthor: true },
     });
 
-    return plainToInstance(UserResponseDto, updatedUser);
+    return plainToInstance(UserDto, updatedUser);
   }
 
+  /**
+   * Verify a plaintext password against a stored bcrypt hash.
+   *
+   * @param currentPassword string - plaintext candidate password
+   * @param storedPassword string - bcrypt hashed password stored in DB
+   * @returns Promise<boolean> true when the password matches
+   */
   async verifyPassword(
     currentPassword: string,
     storedPassword: string,
@@ -299,10 +428,26 @@ export class UsersService {
     return bcrypt.compare(currentPassword, storedPassword);
   }
 
+  /**
+   * Create a bcrypt hash for a plaintext password.
+   *
+   * @param password string - plaintext password
+   * @returns Promise<string> bcrypt hash
+   */
   async createPasswordHash(password: string): Promise<string> {
     return await bcrypt.hash(password, 10);
   }
 
+  /**
+   * Check whether the acting user has permissions to perform actions on
+   * the target user.
+   *
+   * This helper throws exceptions on forbidden actions (editing self,
+   * editing root admin, or admin-on-admin edits).
+   *
+   * @param authUser IJwtAuthPayload - authenticated user payload
+   * @param targetId string - id of the target user
+   */
   async checkPermissions(authUser: IJwtAuthPayload, targetId: string) {
     if (targetId === authUser.id) {
       throw new BadRequestException('Вы не можете редактировать свой аккаунт!');

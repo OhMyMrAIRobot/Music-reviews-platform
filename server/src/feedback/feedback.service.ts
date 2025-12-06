@@ -4,7 +4,7 @@ import {
   Inject,
   Injectable,
 } from '@nestjs/common';
-import { Feedback, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
 import { FeedbackRepliesService } from 'src/feedback-replies/feedback-replies.service';
@@ -12,12 +12,10 @@ import { FeedbackStatusesService } from 'src/feedback-statuses/feedback-statuses
 import { FeedbackStatusesEnum } from 'src/feedback-statuses/types/feedback-statuses.enum';
 import { EntityNotFoundException } from 'src/shared/exceptions/entity-not-found.exception';
 import { CreateFeedbackRequestDto } from './dto/request/create-feedback.request.dto';
-import { FindFeedbackQuery } from './dto/request/query/find-feedback.query.dto';
+import { FeedbackQueryDto } from './dto/request/query/feedback.query.dto';
 import { UpdateFeedbackRequestDto } from './dto/request/update-feedback.request.dto';
-import {
-  FeedbackResponseItem,
-  FindFeedbackResponseDto,
-} from './dto/response/find-feedback.response.dto';
+import { FeedbackDto } from './dto/response/feedback.dto';
+import { FeedbackResponseDto } from './dto/response/feedback.response.dto';
 
 @Injectable()
 export class FeedbackService {
@@ -28,7 +26,18 @@ export class FeedbackService {
     private readonly statusesService: FeedbackStatusesService,
   ) {}
 
-  async create(dto: CreateFeedbackRequestDto): Promise<Feedback> {
+  /**
+   * Create a new feedback record.
+   *
+   * - Finds the default `NEW` feedback status and assigns it to the
+   *   newly created record.
+   * - Persists the feedback via Prisma and returns the serialized
+   *   `FeedbackDto`.
+   *
+   * @param dto Request payload containing `email`, `title` and `message`.
+   * @returns The created feedback serialized as `FeedbackDto`.
+   */
+  async create(dto: CreateFeedbackRequestDto): Promise<FeedbackDto> {
     const status = await this.statusesService.findByStatus(
       FeedbackStatusesEnum.NEW,
     );
@@ -41,13 +50,29 @@ export class FeedbackService {
       );
     }
 
-    return this.prisma.feedback.create({
+    const created = await this.prisma.feedback.create({
       data: { ...dto, feedbackStatusId: status.id },
+    });
+
+    return plainToInstance(FeedbackDto, created, {
+      excludeExtraneousValues: true,
     });
   }
 
-  async findAll(query: FindFeedbackQuery): Promise<FindFeedbackResponseDto> {
-    const { limit, offset, order, query: searchTerm, statusId } = query;
+  /**
+   * List feedback items with optional filtering, search and pagination.
+   *
+   * - Validates `statusId` when provided.
+   * - Builds a Prisma `where` filter supporting search across email,
+   *   title and message fields (case-insensitive).
+   * - Returns an object with `meta.count` and `items` array of
+   *   serialized `FeedbackDto` objects.
+   *
+   * @param query Query parameters for filtering, ordering and pagination.
+   * @returns Paginated `FeedbackResponseDto`.
+   */
+  async findAll(query: FeedbackQueryDto): Promise<FeedbackResponseDto> {
+    const { limit, offset, order, search, statusId } = query;
 
     if (statusId) {
       await this.statusesService.findOne(statusId);
@@ -59,11 +84,11 @@ export class FeedbackService {
       where.feedbackStatusId = statusId;
     }
 
-    if (searchTerm) {
+    if (search) {
       where.OR = [
-        { email: { contains: searchTerm, mode: 'insensitive' } },
-        { title: { contains: searchTerm, mode: 'insensitive' } },
-        { message: { contains: searchTerm, mode: 'insensitive' } },
+        { email: { contains: search, mode: 'insensitive' } },
+        { title: { contains: search, mode: 'insensitive' } },
+        { message: { contains: search, mode: 'insensitive' } },
       ];
     }
 
@@ -81,14 +106,22 @@ export class FeedbackService {
     ]);
 
     return {
-      count,
-      feedback: plainToInstance(FeedbackResponseItem, feedback, {
+      meta: { count },
+      items: plainToInstance(FeedbackDto, feedback, {
         excludeExtraneousValues: true,
       }),
     };
   }
 
-  async findById(id: string): Promise<Feedback> {
+  /**
+   * Retrieve a single feedback item by id.
+   *
+   * Throws `EntityNotFoundException` when the feedback does not exist.
+   *
+   * @param id Feedback id
+   * @returns Serialized `FeedbackDto` for the requested id
+   */
+  async findOne(id: string): Promise<FeedbackDto> {
     const existing = await this.prisma.feedback.findUnique({
       where: { id },
     });
@@ -97,14 +130,32 @@ export class FeedbackService {
       throw new EntityNotFoundException('Отзыв', 'id', `${id}`);
     }
 
-    return existing;
+    return plainToInstance(FeedbackDto, existing, {
+      excludeExtraneousValues: true,
+    });
   }
 
+  /**
+   * Update feedback status.
+   *
+   * Behaviour:
+   * - Ensures the target feedback exists.
+   * - Validates the requested `feedbackStatusId` and performs special
+   *   checks when transitioning to `ANSWERED` — specifically, a reply
+   *   must exist for the feedback before the status can be set to
+   *   `ANSWERED`.
+   * - Applies the status update and returns the updated serialized
+   *   `FeedbackDto`.
+   *
+   * @param id Feedback id to update
+   * @param dto Update payload containing `feedbackStatusId`
+   * @returns Updated `FeedbackDto`
+   */
   async update(
     id: string,
     dto: UpdateFeedbackRequestDto,
-  ): Promise<FeedbackResponseItem> {
-    await this.findById(id);
+  ): Promise<FeedbackDto> {
+    await this.findOne(id);
     const status = await this.statusesService.findOne(dto.feedbackStatusId);
 
     if (
@@ -127,15 +178,25 @@ export class FeedbackService {
       },
     });
 
-    return plainToInstance(FeedbackResponseItem, updated, {
+    return plainToInstance(FeedbackDto, updated, {
       excludeExtraneousValues: true,
     });
   }
 
-  async remove(id: string): Promise<Feedback> {
-    await this.findById(id);
-    return this.prisma.feedback.delete({
+  /**
+   * Delete a feedback item by id.
+   *
+   * Ensures the feedback exists and removes it from the database.
+   *
+   * @param id Feedback id to delete
+   */
+  async remove(id: string) {
+    await this.findOne(id);
+
+    await this.prisma.feedback.delete({
       where: { id },
     });
+
+    return;
   }
 }

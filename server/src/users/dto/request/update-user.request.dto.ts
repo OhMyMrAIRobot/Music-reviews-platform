@@ -6,7 +6,16 @@ import {
   Length,
 } from 'class-validator';
 
+/**
+ * DTO for updating a user from the user-facing endpoint.
+ *
+ * Validation rules are declared with `class-validator` decorators and
+ * will be enforced by Nest's validation pipe.
+ */
 export class UpdateUserRequestDto {
+  /**
+   * Current password (required for sensitive operations)
+   */
   @IsString({ message: 'Пароль должен быть строкой' })
   @Length(6, 64, {
     message:
@@ -14,6 +23,9 @@ export class UpdateUserRequestDto {
   })
   password: string;
 
+  /**
+   * Optional new email for the user.
+   */
   @IsOptional()
   @IsEmail({}, { message: 'Некорректный формат email' })
   @Length(1, 60, {
@@ -21,6 +33,9 @@ export class UpdateUserRequestDto {
   })
   email?: string;
 
+  /**
+   * Optional new nickname.
+   */
   @IsOptional()
   @IsString({ message: 'Никнейм должен быть строкой' })
   @Length(3, 20, {
@@ -29,6 +44,9 @@ export class UpdateUserRequestDto {
   })
   nickname?: string;
 
+  /**
+   * Optional new password the user wants to set.
+   */
   @IsOptional()
   @IsString({ message: 'Новый пароль должен быть строкой' })
   @Length(6, 64, {
@@ -37,6 +55,9 @@ export class UpdateUserRequestDto {
   })
   newPassword?: string;
 
+  /**
+   * Optional flag to activate/deactivate the user (rarely used by clients).
+   */
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;

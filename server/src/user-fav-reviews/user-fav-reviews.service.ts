@@ -3,19 +3,16 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
-import { UserFavReview } from '@prisma/client';
-import { plainToInstance } from 'class-transformer';
+import { Prisma, UserFavReview } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
 import { ReviewsService } from 'src/reviews/reviews.service';
-import { EntityNotFoundException } from 'src/shared/exceptions/entity-not-found.exception';
 import { UsersService } from 'src/users/users.service';
-import { FindAuthorLikesQuery } from './dto/query/find-author-likes.query.dto';
+import { AuthorLikeQueryDto } from './dto/query/author-like.query.dto';
+import { AuthorLikesResponseDto } from './dto/response/author-likes.response.dto';
 import {
-  AuthorLikeItemDto,
-  FindAuthorLikesResponseDto,
-} from './dto/response/find-author-likes.response.dto';
-import { FindUserFavByReviewIdResponseDto } from './dto/response/find-user-fav-by-review-id.response.dto';
-import { AuthorLikesRaw } from './dto/types/author-likes-raw';
+  AuthorLikesRawQueryArrayDto,
+  AuthorLikesRawQueryDto,
+} from './dto/types/author-likes-raw-query.dto';
 
 @Injectable()
 export class UserFavReviewsService {
@@ -25,6 +22,21 @@ export class UserFavReviewsService {
     private readonly reviewsService: ReviewsService,
   ) {}
 
+  /**
+   * Mark a review as favorited by a user.
+   *
+   * Validations:
+   * - ensures the `user` and `review` exist
+   * - prevents marking own review as favorite
+   * - only reviews with both `title` and `text` can be favorited
+   * - prevents duplicate favorite records
+   *
+   * @param reviewId ID of the review to favorite
+   * @param userId ID of the user who favorites the review
+   * @returns created `UserFavReview` Prisma entity
+   * @throws ConflictException when the action is not allowed or duplicate
+   * @throws ForbiddenException when the review cannot be favorited
+   */
   async create(reviewId: string, userId: string): Promise<UserFavReview> {
     await this.usersService.findOne(userId);
     const review = await this.reviewsService.findOne(reviewId);
@@ -53,156 +65,18 @@ export class UserFavReviewsService {
     });
   }
 
-  async findAuthorLikes(
-    query: FindAuthorLikesQuery,
-  ): Promise<FindAuthorLikesResponseDto> {
-    const { limit, offset = 0 } = query;
-
-    const totalRowsPromise = this.prisma.$queryRawUnsafe<{ count: number }[]>(`
-      SELECT COUNT(*)::int AS count
-      FROM "User_fav_reviews" ufr
-      JOIN "Reviews" rev ON rev.id = ufr.review_id
-      WHERE EXISTS (
-        SELECT 1
-        FROM "Registered_authors" ra
-        WHERE ra.user_id = ufr.user_id
-          AND ra.author_id IN (
-            SELECT rp.author_id 
-            FROM "Release_producers" rp 
-            WHERE rp.release_id = rev.release_id
-            UNION
-            SELECT ar.author_id 
-            FROM "Release_artists" ar 
-            WHERE ar.release_id = rev.release_id
-            UNION
-            SELECT rd.author_id 
-            FROM "Release_designers" rd 
-            WHERE rd.release_id = rev.release_id
-          )
-      );
-    `);
-
-    const itemsRowsPromise = this.prisma.$queryRawUnsafe<AuthorLikesRaw[]>(`
-      SELECT
-        ru.id AS "reviewAuthorId",
-        ru.nickname AS "reviewAuthorNickname",
-        upr.avatar AS "reviewAuthorAvatar",
-        rev.title AS "reviewTitle",
-
-        lu.id AS "likerUserId",
-        lu.nickname AS "likerNickname",
-        upl.avatar AS "likerAvatar",
-
-        r.id AS "releaseId",
-        r.title AS "releaseTitle",
-        r.img as "releaseImg",
-
-        ufr.created_at AS "createdAt"
-      FROM "User_fav_reviews" ufr
-      JOIN "Reviews" rev ON rev.id = ufr.review_id
-      JOIN "Users" ru ON ru.id = rev.user_id
-      LEFT JOIN "User_profiles" upr ON upr.user_id = ru.id
-      JOIN "Users" lu ON lu.id = ufr.user_id
-      LEFT JOIN "User_profiles" upl ON upl.user_id = lu.id
-      JOIN "Releases" r ON r.id = rev.release_id
-      WHERE EXISTS (
-        SELECT 1
-        FROM "Registered_authors" ra
-        WHERE ra.user_id = ufr.user_id
-          AND ra.author_id IN (
-            SELECT rp.author_id 
-            FROM "Release_producers" rp 
-            WHERE rp.release_id = rev.release_id
-            UNION
-            SELECT ar.author_id 
-            FROM "Release_artists" ar 
-            WHERE ar.release_id = rev.release_id
-            UNION
-            SELECT rd.author_id 
-            FROM "Release_designers" rd 
-            WHERE rd.release_id = rev.release_id
-          )
-      )
-      ORDER BY ufr.created_at DESC, ufr.review_id DESC
-      ${limit !== undefined ? `LIMIT ${limit}` : ''} OFFSET ${offset};
-    `);
-
-    const [[{ count }], rows] = await Promise.all([
-      totalRowsPromise,
-      itemsRowsPromise,
-    ]);
-
-    const items: AuthorLikeItemDto[] = rows.map((r) => ({
-      reviewAuthor: {
-        id: r.reviewAuthorId,
-        nickname: r.reviewAuthorNickname,
-        avatar: r.reviewAuthorAvatar,
-      },
-      author: {
-        id: r.likerUserId,
-        nickname: r.likerNickname,
-        avatar: r.likerAvatar,
-      },
-      release: {
-        id: r.releaseId,
-        title: r.releaseTitle,
-        img: r.releaseImg,
-      },
-      reviewTitle: r.reviewTitle,
-    }));
-
-    return plainToInstance(
-      FindAuthorLikesResponseDto,
-      { count, items },
-      { excludeExtraneousValues: true },
-    );
-  }
-
-  async findByReviewId(
-    reviewId: string,
-  ): Promise<FindUserFavByReviewIdResponseDto> {
-    const reviewWithRelease = await this.prisma.review.findUnique({
-      where: { id: reviewId },
-      select: {
-        id: true,
-        release: {
-          select: {
-            releaseProducer: { select: { authorId: true } },
-            releaseArtist: { select: { authorId: true } },
-            releaseDesigner: { select: { authorId: true } },
-          },
-        },
-      },
-    });
-
-    if (!reviewWithRelease) {
-      throw new EntityNotFoundException('Рецензия', 'id', reviewId);
-    }
-
-    const favs = await this.prisma.userFavReview.findMany({
-      where: { reviewId },
-      include: {
-        user: {
-          select: {
-            id: true,
-            nickname: true,
-            profile: { select: { avatar: true } },
-            registeredAuthor: { select: { authorId: true } },
-          },
-        },
-      },
-    });
-
-    return plainToInstance(
-      FindUserFavByReviewIdResponseDto,
-      {
-        userFavReview: favs,
-        review: { release: reviewWithRelease.release },
-      },
-      { excludeExtraneousValues: true },
-    );
-  }
-
+  /**
+   * Remove an existing favorite relation for a review by a user.
+   *
+   * Validations:
+   * - ensures the `review` and `user` exist
+   * - ensures the favorite record exists before deletion
+   *
+   * @param reviewId ID of the review
+   * @param userId ID of the user who previously favorited the review
+   * @returns void
+   * @throws ConflictException when the favorite does not exist
+   */
   async remove(reviewId: string, userId: string) {
     await this.reviewsService.findOne(reviewId);
     await this.usersService.findOne(userId);
@@ -214,17 +88,165 @@ export class UserFavReviewsService {
       );
     }
 
-    return this.prisma.userFavReview.delete({
+    await this.prisma.userFavReview.delete({
       where: { userId_reviewId: { userId, reviewId } },
     });
+
+    return;
   }
 
-  async findOne(
+  /**
+   * Return a paginated list of author-like records.
+   *
+   * This endpoint lists users who are registered authors and have favorited
+   * reviews for releases they are associated with. Aggregation and pagination
+   * are delegated to `executeAuthorLikesRawQuery` which returns a JSON payload
+   * with `items` and `meta` keys.
+   *
+   * @param query Pagination query DTO
+   * @returns `AuthorLikesResponseDto` containing `items` and `meta`
+   */
+  async findAuthorLikes(
+    query: AuthorLikeQueryDto,
+  ): Promise<AuthorLikesResponseDto> {
+    const { result } = await this.executeAuthorLikesRawQuery(query);
+
+    return result;
+  }
+
+  /**
+   * Find a single favorite relation by `userId` and `reviewId`.
+   * @returns `UserFavReview` or `null` when not found
+   */
+  private async findOne(
     userId: string,
     reviewId: string,
   ): Promise<UserFavReview | null> {
     return this.prisma.userFavReview.findUnique({
       where: { userId_reviewId: { userId, reviewId } },
     });
+  }
+
+  /**
+   * Execute the raw SQL aggregation used to produce the author-likes listing.
+   *
+   * The raw query returns a single JSON column named `result` with the shape
+   * matching `AuthorLikesResponseDto`: { items: [...], meta: { count } }.
+   *
+   * @param params Object with optional `limit` and `offset` for pagination
+   * @returns `AuthorLikeRawQueryDto` wrapper containing the `result` payload
+   */
+  private async executeAuthorLikesRawQuery(params: {
+    limit?: number;
+    offset?: number;
+  }): Promise<AuthorLikesRawQueryDto> {
+    const { limit = null, offset = null } = params;
+
+    const sql = Prisma.sql`
+      WITH params AS (
+          SELECT
+              ${limit}::int AS limit_,
+              ${offset}::int AS offset_
+      ),
+
+          filtered_favs AS (
+              SELECT ufr.*
+              FROM "User_fav_reviews" ufr
+                  JOIN "Reviews" rev ON rev.id = ufr.review_id
+                  JOIN "Users" ru ON ru.id = rev.user_id
+                  LEFT JOIN "User_profiles" upr ON upr.user_id = ru.id
+                  JOIN "Users" lu ON lu.id = ufr.user_id
+                  LEFT JOIN "User_profiles" upl ON upl.user_id = lu.id
+                  JOIN "Releases" r ON r.id = rev.release_id
+              WHERE EXISTS (
+                  SELECT 1
+                  FROM "Registered_authors" ra
+                  WHERE ra.user_id = ufr.user_id
+                      AND ra.author_id IN (
+                          SELECT rp.author_id
+                          FROM "Release_producers" rp
+                          WHERE rp.release_id = rev.release_id
+                          UNION
+                          SELECT ar.author_id
+                          FROM "Release_artists" ar
+                          WHERE ar.release_id = rev.release_id
+                          UNION
+                          SELECT rd.author_id
+                          FROM "Release_designers" rd
+                          WHERE rd.release_id = rev.release_id
+                      )
+              )
+          ),
+
+          agg_stats AS (
+              SELECT COUNT(*)::int AS total_count
+              FROM filtered_favs
+          ),
+
+          reviews_page AS (
+              SELECT
+                  jsonb_build_object(
+                          'title', rev.title,
+                          'createdAt', rev.created_at,
+                          'user', jsonb_build_object(
+                                  'id', ru.id,
+                                  'nickname', ru.nickname,
+                                  'avatar', upr.avatar
+                          )
+                  ) AS review,
+
+                  jsonb_build_object(
+                          'id', lu.id,
+                          'nickname', lu.nickname,
+                          'avatar', upl.avatar
+                  ) AS author,
+
+                  jsonb_build_object(
+                          'id', r.id,
+                          'title', r.title,
+                          'img', r.img
+                  ) AS release,
+
+                  ufr.created_at AS ufr_created_at,
+                  ufr.review_id AS ufr_review_id
+
+              FROM filtered_favs ufr
+                  JOIN "Reviews" rev ON rev.id = ufr.review_id
+                  JOIN "Users" ru ON ru.id = rev.user_id
+                  LEFT JOIN "User_profiles" upr ON upr.user_id = ru.id
+                  JOIN "Users" lu ON lu.id = ufr.user_id
+                  LEFT JOIN "User_profiles" upl ON upl.user_id = lu.id
+                  JOIN "Releases" r ON r.id = rev.release_id
+              ORDER BY ufr.created_at DESC, ufr.review_id DESC
+              LIMIT (SELECT limit_ FROM params)
+              OFFSET (SELECT offset_ FROM params)
+          )
+
+      SELECT
+          jsonb_build_object(
+              'items', COALESCE(
+                          JSONB_AGG(
+                              jsonb_build_object(
+                                  'review', rp.review,
+                                  'author', rp.author,
+                                  'release', rp.release
+                              )
+                          ) FILTER (WHERE rp.review IS NOT NULL),
+                          '[]'::jsonb),
+
+              'meta', jsonb_build_object(
+                      'count', agg.total_count
+                      )
+          ) AS result
+
+      FROM reviews_page rp
+      CROSS JOIN agg_stats agg
+      GROUP BY agg.total_count
+    `;
+
+    const [result] =
+      await this.prisma.$queryRaw<AuthorLikesRawQueryArrayDto>(sql);
+
+    return result;
   }
 }

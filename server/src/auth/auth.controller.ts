@@ -15,7 +15,7 @@ import { JwtAuthNoActiveGuard } from '../shared/guards/jwt-auth-no-active.guard'
 import { LoginRequestDto } from './dto/request/login.request.dto';
 import { RegisterRequestDto } from './dto/request/register.request.dto';
 import { ResetPasswordRequestDto } from './dto/request/reset-password.request.dto';
-import { SendActivationCodeRequestDto } from './dto/request/send-activation-code.request.dto';
+import { SendResetPasswordRequestDto } from './dto/request/send-reset-password.request.dto';
 import { AuthService } from './services/auth.service';
 import { TokensService } from './services/tokens.service';
 import { IAuthenticatedRequest } from './types/authenticated-request.interface';
@@ -30,6 +30,12 @@ export class AuthController {
     private readonly usersService: UsersService,
   ) {}
 
+  /**
+   * POST /auth/register
+   *
+   * Registers a new user account and sends an activation email.
+   * Returns user data, access token, and email delivery status.
+   */
   @Post('register')
   async register(@Res() res: Response, @Body() dto: RegisterRequestDto) {
     const result = await this.authService.register(res, dto);
@@ -52,6 +58,12 @@ export class AuthController {
     return res.status(200).send({ ...result, emailSent: emailSent });
   }
 
+  /**
+   * POST /auth/login
+   *
+   * Authenticates a user with email and password.
+   * Returns user data and access token, sets refresh token cookie.
+   */
   @Post('login')
   async login(@Res() res: Response, @Body() dto: LoginRequestDto) {
     const user = await this.authService.validateUser(dto);
@@ -59,12 +71,24 @@ export class AuthController {
     return res.status(200).send(result);
   }
 
+  /**
+   * POST /auth/activate?token=...
+   *
+   * Activates a user account using the activation token from email.
+   * Returns user data and access token, sets refresh token cookie.
+   */
   @Post('activate')
   async activate(@Res() res: Response, @Query('token') token: string) {
     const result = await this.authService.activateAccount(res, token);
     res.status(200).send(result);
   }
 
+  /**
+   * POST /auth/refresh
+   *
+   * Refreshes user session using the refresh token from cookies.
+   * Returns new access token and updated user data.
+   */
   @Post('refresh')
   async refresh(@Req() req: IRequestWithCookies, @Res() res: Response) {
     const refreshToken = req.cookies['refreshToken'];
@@ -78,6 +102,11 @@ export class AuthController {
     return res.status(200).send(result);
   }
 
+  /**
+   * POST /auth/logout
+   *
+   * Logs out the user by invalidating the refresh token and clearing cookies.
+   */
   @Post('logout')
   async logout(@Req() req: IRequestWithCookies, @Res() res: Response) {
     const refreshToken = req.cookies['refreshToken'];
@@ -90,6 +119,13 @@ export class AuthController {
     return res.status(200).send();
   }
 
+  /**
+   * POST /auth/resend-activation
+   *
+   * Resends the activation email to the authenticated user.
+   * Requires authentication but allows inactive accounts.
+   * Returns email delivery status.
+   */
   @UseGuards(JwtAuthNoActiveGuard)
   @Post('resend-activation')
   async resendActivationCode(@Request() req: IAuthenticatedRequest) {
@@ -114,8 +150,14 @@ export class AuthController {
     return { emailSent };
   }
 
+  /**
+   * POST /auth/send-reset-password
+   *
+   * Sends a password reset email to the user with the provided email.
+   * Returns email delivery status.
+   */
   @Post('send-reset-password')
-  async sendResetPasswordCode(@Body() dto: SendActivationCodeRequestDto) {
+  async sendResetPasswordCode(@Body() dto: SendResetPasswordRequestDto) {
     const user = await this.usersService.findByEmail(dto.email);
     const resetToken = this.tokensService.generateResetToken(
       user.id,
@@ -138,6 +180,12 @@ export class AuthController {
     return { emailSent };
   }
 
+  /**
+   * POST /auth/reset-password?token=...
+   *
+   * Resets user password using the reset token from email.
+   * Returns user data and access token, sets refresh token cookie.
+   */
   @Post('reset-password')
   async resetPassword(
     @Res() res: Response,

@@ -20,7 +20,7 @@ import { JwtAuthGuard } from 'src/shared/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/shared/guards/roles.guard';
 import { UsersService } from 'src/users/users.service';
 import { AuthorConfirmationsService } from './author-confirmations.service';
-import { FindAuthorConfirmationsQuery } from './dto/query/find-author-confirmations-query.dto';
+import { AuthorConfirmationsQueryDto } from './dto/query/author-confirmations.query.dto';
 import { CreateAuthorConfirmationRequestDto } from './dto/request/create-author-confirmation.request.dto';
 import { UpdateAuthorConfirmationRequestDto } from './dto/request/update-author-confirmation.request.dto';
 
@@ -33,6 +33,15 @@ export class AuthorConfirmationsController {
     private readonly usersService: UsersService,
   ) {}
 
+  /**
+   * Create one or more author confirmation requests on behalf of the
+   * authenticated user.
+   *
+   * - Ensures the default `PENDING` status exists.
+   * - Validates the authenticated user and that each `authorId` exists.
+   * - Builds internal DTOs and delegates creation to the service which uses
+   *   `createMany` with `skipDuplicates`.
+   */
   @Post()
   @UseGuards(JwtAuthGuard)
   async create(
@@ -57,19 +66,38 @@ export class AuthorConfirmationsController {
     return this.authorConfirmationsService.create(createData);
   }
 
-  @Get('user')
+  /**
+   * Return confirmations created by the authenticated user.
+   *
+   * Requires authentication and returns the same paginated shape as
+   * the administrative `findAll` endpoint but filtered to the current user.
+   */
+  @Get('my-confirmations')
   @UseGuards(JwtAuthGuard)
-  async findByUserId(@Request() req: IAuthenticatedRequest) {
-    return this.authorConfirmationsService.findByUserId(req.user.id);
+  async findMyConfirmations(@Request() req: IAuthenticatedRequest) {
+    return this.authorConfirmationsService.findAll({ userId: req.user.id });
   }
 
+  /**
+   * Administrative endpoint to list author confirmations.
+   *
+   * Requires admin or root admin role. Accepts filtering/search/sort and
+   * pagination parameters defined by `AuthorConfirmationsQueryDto`.
+   */
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
-  async findAll(@Query() query: FindAuthorConfirmationsQuery) {
+  async findAll(@Query() query: AuthorConfirmationsQueryDto) {
     return this.authorConfirmationsService.findAll(query);
   }
 
+  /**
+   * Update the status of an author confirmation.
+   *
+   * Administrative endpoint. Delegates to the service which enforces
+   * domain rules (e.g. cannot change status of already approved/declined
+   * confirmations). Returns the updated confirmation DTO.
+   */
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
@@ -80,6 +108,12 @@ export class AuthorConfirmationsController {
     return this.authorConfirmationsService.update(id, dto);
   }
 
+  /**
+   * Delete an author confirmation by id.
+   *
+   * Administrative endpoint. Ensures the confirmation exists before
+   * deleting and returns the Prisma deletion result.
+   */
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
