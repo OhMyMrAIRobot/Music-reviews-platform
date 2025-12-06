@@ -1,4 +1,8 @@
-import { useMutation } from '@tanstack/react-query'
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQueryClient,
+} from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
 import { ProfileAPI } from '../../../../api/user/profile-api'
@@ -11,32 +15,61 @@ import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../../hooks/use-auth'
 import { useSocialMeta } from '../../../../hooks/use-social-meta'
 import { useStore } from '../../../../hooks/use-store'
+import { profilesKeys } from '../../../../query-keys/profiles-keys'
+import { usersKeys } from '../../../../query-keys/users-keys'
 import { UpdateProfileData } from '../../../../types/profile'
 import buildProfileFormData from '../../../../utils/build-profile-form-data'
 import EditProfilePageSection from '../Edit-profile-page-section'
 
 const UpdateProfileInfoForm = observer(() => {
+	/** HOOKS */
 	const { authStore, notificationStore } = useStore()
-
 	const { checkAuth } = useAuth()
+	const queryClient = useQueryClient()
+	const handleApiError = useApiErrorHandler()
 	const { socials, isLoading } = useSocialMeta()
 
+	/** STATES */
 	const [bio, setBio] = useState<string>(authStore.profile?.bio ?? '')
-
 	const [socialValues, setSocialValues] = useState<Record<string, string>>({})
 	const [initialSocialValues, setInitialSocialValues] = useState<
 		Record<string, string>
 	>({})
 
-	// const queryClient = useQueryClient()
-	const handleApiError = useApiErrorHandler()
+	/** EFFECTS */
+	useEffect(() => {
+		if (socials && socials.length > 0) {
+			const map: Record<string, string> = {}
+			socials.forEach(s => {
+				const initial =
+					authStore.profile?.socials.find(el => el.id === s.id)?.url ?? ''
+				map[s.id] = initial
+			})
+			setSocialValues(map)
+			setInitialSocialValues(map)
+		}
+	}, [socials, authStore.profile])
 
+	/**
+	 * Function to invalidate related queries after mutations
+	 */
+	const invalidateRelatedQueries = (userId: string) => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: profilesKeys.profile(userId) },
+			{ queryKey: usersKeys.all },
+		]
+
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	}
+
+	/**
+	 * Mutation to update profile info
+	 */
 	const updateMutation = useMutation({
 		mutationFn: (formData: FormData) => ProfileAPI.update(formData),
 		onSuccess: () => {
-			const userId = authStore.user?.id
-			if (userId) {
-				// queryClient.invalidateQueries({ queryKey: profileKeys.profile(userId) })
+			if (authStore.user?.id) {
+				invalidateRelatedQueries(authStore.user.id)
 			}
 			notificationStore.addSuccessNotification(
 				'Описание профиля успешно обновлено!'
@@ -47,6 +80,9 @@ const UpdateProfileInfoForm = observer(() => {
 		},
 	})
 
+	/**
+	 * Handle form submission
+	 */
 	const handleSubmit = async () => {
 		if (!checkAuth() || updateMutation.isPending) return
 
@@ -71,19 +107,6 @@ const UpdateProfileInfoForm = observer(() => {
 
 		updateMutation.mutate(formData)
 	}
-
-	useEffect(() => {
-		if (socials && socials.length > 0) {
-			const map: Record<string, string> = {}
-			socials.forEach(s => {
-				const initial =
-					authStore.profile?.socials.find(el => el.id === s.id)?.url ?? ''
-				map[s.id] = initial
-			})
-			setSocialValues(map)
-			setInitialSocialValues(map)
-		}
-	}, [socials, authStore.profile])
 
 	return (
 		<EditProfilePageSection
