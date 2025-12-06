@@ -29,7 +29,7 @@ export const FeedbackAPI = {
 		const { statusId, search, order, limit, offset } = query
 
 		const { data } = await api.get<FeedbackResponse>(`/feedback?
-			${search ? `query=${search}&` : ''}
+			${search ? `search=${search}&` : ''}
 			${statusId ? `statusId=${statusId}&` : ''}
 			${order ? `order=${order}&` : ''}
 			${limit ? `limit=${limit}&` : ''}

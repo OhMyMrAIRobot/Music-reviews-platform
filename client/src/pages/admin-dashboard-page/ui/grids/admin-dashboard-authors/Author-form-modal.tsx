@@ -1,4 +1,8 @@
-import { useMutation } from '@tanstack/react-query'
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQueryClient,
+} from '@tanstack/react-query'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { AuthorAPI } from '../../../../../api/author/author-api.ts'
 import FormButton from '../../../../../components/form-elements/Form-button.tsx'
@@ -13,9 +17,20 @@ import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
 import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler.ts'
 import { useAuthorMeta } from '../../../../../hooks/use-author-meta.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
+import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys.ts'
+import { authorLikesKeys } from '../../../../../query-keys/author-likes-keys.ts'
+import { authorsKeys } from '../../../../../query-keys/authors-keys.ts'
+import { leaderboardKeys } from '../../../../../query-keys/leaderboard-keys.ts'
+import { platformStatsKeys } from '../../../../../query-keys/platform-stats-keys.ts'
+import { profilesKeys } from '../../../../../query-keys/profiles-keys.ts'
+import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys.ts'
+import { releasesKeys } from '../../../../../query-keys/releases-keys.ts'
+import { reviewsKeys } from '../../../../../query-keys/reviews-keys.ts'
+import { usersKeys } from '../../../../../query-keys/users-keys.ts'
 import { Author } from '../../../../../types/author/index.ts'
 import { arraysEqual } from '../../../../../utils/arrays-equal.ts'
 import buildAuthorFormData from '../../../../../utils/build-author-form-data'
+import { constraints } from '../../../../../utils/constraints.ts'
 import SelectImageLabel from '../../../../edit-profile-page/ui/labels/Select-image-label.tsx'
 import SelectedImageLabel from '../../../../edit-profile-page/ui/labels/Selected-image-label.tsx'
 
@@ -26,123 +41,23 @@ interface IProps {
 }
 
 const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
+	/** HOOKS */
 	const { notificationStore } = useStore()
-
 	const { types, isLoading: isTypesLoading } = useAuthorMeta()
 	const handleApiError = useApiErrorHandler()
+	const queryClient = useQueryClient()
 
-	// const queryClient = useQueryClient()
-
+	/** STATES */
 	const [avatar, setAvatar] = useState<File | null>(null)
 	const [cover, setCover] = useState<File | null>(null)
 	const [name, setName] = useState<string>('')
 	const [selectedTypes, setSelectedTypes] = useState<IMultiSelectValue[]>([])
 	const [deleteAvatar, setDeleteAvatar] = useState<boolean>(false)
 	const [deleteCover, setDeleteCover] = useState<boolean>(false)
-
 	const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string | null>(null)
 	const [coverPreviewUrl, setCoverPreviewUrl] = useState<string | null>(null)
 
-	const createMutation = useMutation({
-		mutationFn: (formData: FormData) => AuthorAPI.createAuthor(formData),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification('Автор успешно добавлен!')
-			// queryClient.invalidateQueries({ queryKey: authorsKeys.all })
-			resetForm()
-			onClose()
-		},
-		onError: (error: unknown) => {
-			handleApiError(error)
-		},
-	})
-
-	const updateMutation = useMutation({
-		mutationFn: ({ id, formData }: { id: string; formData: FormData }) =>
-			AuthorAPI.updateAuthor(id, formData),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification('Автор успешно обновлен!')
-			// queryClient.invalidateQueries({ queryKey: authorsKeys.all })
-			resetForm()
-			onClose()
-		},
-		onError: (error: unknown) => {
-			handleApiError(error)
-		},
-	})
-
-	const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		if (event.target.files && event.target.files[0]) {
-			const selectedFile = event.target.files[0]
-			setAvatar(selectedFile)
-
-			const fileUrl = URL.createObjectURL(selectedFile)
-			setAvatarPreviewUrl(fileUrl)
-		}
-	}
-
-	const handleCoverChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		if (event.target.files && event.target.files[0]) {
-			const selectedFile = event.target.files[0]
-			setCover(selectedFile)
-
-			const fileUrl = URL.createObjectURL(selectedFile)
-			setCoverPreviewUrl(fileUrl)
-		}
-	}
-
-	const handleSubmit = async () => {
-		if (!isFormValid || updateMutation.isPending || createMutation.isPending)
-			return
-
-		const values = {
-			name,
-			selectedTypes,
-			avatar,
-			cover,
-			deleteAvatar,
-			deleteCover,
-		}
-
-		const formData = buildAuthorFormData(values, author)
-
-		if (author) {
-			updateMutation.mutate({ id: author.id, formData })
-		} else {
-			createMutation.mutate(formData)
-		}
-	}
-
-	const hasChanges = useMemo(() => {
-		if (!author) return true
-
-		if (author.name !== name) return true
-
-		if (
-			!arraysEqual(
-				author.authorTypes.map(t => t.type).sort(),
-				selectedTypes.map(st => st.name).sort()
-			)
-		)
-			return true
-
-		if (avatar || cover) return true
-
-		if (deleteAvatar || deleteCover) return true
-
-		return false
-	}, [author, name, selectedTypes, avatar, cover, deleteAvatar, deleteCover])
-
-	const resetForm = () => {
-		setName('')
-		setSelectedTypes([])
-		setAvatar(null)
-		setCover(null)
-		setAvatarPreviewUrl(null)
-		setCoverPreviewUrl(null)
-		setDeleteAvatar(false)
-		setDeleteCover(false)
-	}
-
+	/** EFFECTS */
 	useEffect(() => {
 		if (author && isOpen) {
 			setName(author.name)
@@ -172,6 +87,178 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 		}
 	}, [isOpen, author])
 
+	/**
+	 * Function to invalidate related queries after mutations
+	 */
+	const invalidateRelatedQueries = () => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: leaderboardKeys.all },
+			{ queryKey: authorCommentsKeys.all },
+			{ queryKey: authorLikesKeys.all },
+			{ queryKey: releaseMediaKeys.all },
+			{ queryKey: releasesKeys.all },
+			{ queryKey: reviewsKeys.all },
+			{ queryKey: usersKeys.all },
+			{ queryKey: platformStatsKeys.all },
+			{ queryKey: authorsKeys.all },
+			{ queryKey: profilesKeys.all },
+		]
+
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	}
+
+	/**
+	 * Mutation to create a new author
+	 */
+	const { mutateAsync: createAsync, isPending: isCreating } = useMutation({
+		mutationFn: (formData: FormData) => AuthorAPI.createAuthor(formData),
+		onSuccess: () => {
+			notificationStore.addSuccessNotification('Автор успешно добавлен!')
+			resetForm()
+			onClose()
+
+			invalidateRelatedQueries()
+		},
+		onError: (error: unknown) => {
+			handleApiError(error, 'Не удалось добавить автора!')
+		},
+	})
+
+	/**
+	 * Mutation to update an existing author
+	 */
+	const { mutateAsync: updateAsync, isPending: isUpdating } = useMutation({
+		mutationFn: ({ id, formData }: { id: string; formData: FormData }) =>
+			AuthorAPI.updateAuthor(id, formData),
+		onSuccess: () => {
+			notificationStore.addSuccessNotification('Автор успешно обновлен!')
+			resetForm()
+			onClose()
+
+			invalidateRelatedQueries()
+		},
+		onError: (error: unknown) => {
+			handleApiError(error, 'Не удалось обновить автора!')
+		},
+	})
+
+	/**
+	 * Indicates if any mutation is pending
+	 *
+	 * @return {boolean} True if creating or updating, false otherwise
+	 */
+	const isPending = useMemo(() => {
+		return isCreating || isUpdating
+	}, [isCreating, isUpdating])
+
+	/**
+	 * Handles avatar file selection
+	 *
+	 * @param {React.ChangeEvent<HTMLInputElement>} event - The file input change event
+	 */
+	const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		if (event.target.files && event.target.files[0]) {
+			const selectedFile = event.target.files[0]
+			setAvatar(selectedFile)
+
+			const fileUrl = URL.createObjectURL(selectedFile)
+			setAvatarPreviewUrl(fileUrl)
+		}
+	}
+
+	/**
+	 * Handles cover file selection
+	 *
+	 * @param {React.ChangeEvent<HTMLInputElement>} event - The file input change event
+	 */
+	const handleCoverChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		if (event.target.files && event.target.files[0]) {
+			const selectedFile = event.target.files[0]
+			setCover(selectedFile)
+
+			const fileUrl = URL.createObjectURL(selectedFile)
+			setCoverPreviewUrl(fileUrl)
+		}
+	}
+
+	/**
+	 * Handles form submission for creating or updating an author
+	 */
+	const handleSubmit = async () => {
+		if (!isFormValid || !hasChanges || isPending) return
+
+		const values = {
+			name,
+			selectedTypes,
+			avatar,
+			cover,
+			deleteAvatar,
+			deleteCover,
+		}
+
+		const formData = buildAuthorFormData(values, author)
+
+		if (author) {
+			return updateAsync({ id: author.id, formData })
+		} else {
+			return createAsync(formData)
+		}
+	}
+
+	/**
+	 * Indicates whether there are changes to be saved
+	 *
+	 * @return {boolean} True if there are changes, false otherwise
+	 */
+	const hasChanges = useMemo(() => {
+		if (!author) return true
+
+		if (author.name !== name) return true
+
+		if (
+			!arraysEqual(
+				author.authorTypes.map(t => t.type).sort(),
+				selectedTypes.map(st => st.name).sort()
+			)
+		)
+			return true
+
+		if (avatar || cover) return true
+
+		if (deleteAvatar || deleteCover) return true
+
+		return false
+	}, [author, name, selectedTypes, avatar, cover, deleteAvatar, deleteCover])
+
+	const isFormValid = useMemo(
+		() =>
+			name.trim().length >= constraints.author.minNameLength &&
+			name.trim().length <= constraints.author.maxNameLength &&
+			selectedTypes.length > 0,
+		[name, selectedTypes]
+	)
+
+	/**
+	 * Resets the form fields to their initial state
+	 */
+	const resetForm = () => {
+		setName('')
+		setSelectedTypes([])
+		setAvatar(null)
+		setCover(null)
+		setAvatarPreviewUrl(null)
+		setCoverPreviewUrl(null)
+		setDeleteAvatar(false)
+		setDeleteCover(false)
+	}
+
+	/**
+	 * Loads options for the multi-select component
+	 *
+	 * @param {string} search - The search string
+	 * @param {number | null} limit - The maximum number of options to load
+	 * @return {Promise<IMultiSelectValue[]>} A promise that resolves to an array of multi-select values
+	 */
 	const loadOptions = async (
 		search: string,
 		limit: number | null
@@ -181,9 +268,9 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 		})
 	}
 
+	/** CONSTANTS */
 	const title = author ? 'Редактирование автора' : 'Добавление автора'
 	const buttonText = author ? 'Сохранить' : 'Добавить'
-	const isFormValid = name.length > 0 && selectedTypes.length > 0
 
 	if (!isOpen) return null
 
@@ -191,7 +278,7 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 		<ModalOverlay
 			isOpen={isOpen}
 			onCancel={onClose}
-			isLoading={updateMutation.isPending || createMutation.isPending}
+			isLoading={isPending}
 			className='max-lg:size-full'
 		>
 			{isTypesLoading ? (
@@ -357,12 +444,9 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 								isInvert={true}
 								onClick={handleSubmit}
 								disabled={
-									!isFormValid ||
-									(!!author && !hasChanges) ||
-									updateMutation.isPending ||
-									createMutation.isPending
+									!isFormValid || (!!author && !hasChanges) || isPending
 								}
-								isLoading={updateMutation.isPending || createMutation.isPending}
+								isLoading={isPending}
 							/>
 						</div>
 
@@ -371,7 +455,7 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 								title={'Назад'}
 								isInvert={false}
 								onClick={onClose}
-								disabled={updateMutation.isPending || createMutation.isPending}
+								disabled={isPending}
 							/>
 						</div>
 					</div>

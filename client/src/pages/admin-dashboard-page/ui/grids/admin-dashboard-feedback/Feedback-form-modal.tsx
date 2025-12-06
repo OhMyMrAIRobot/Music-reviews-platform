@@ -17,6 +17,7 @@ import {
 	FeedbackReply,
 	FeedbackStatusesEnum,
 } from '../../../../../types/feedback'
+import { constraints } from '../../../../../utils/constraints'
 import { getFeedbackStatusColor } from '../../../../../utils/get-feedback-status-color'
 
 interface IProps {
@@ -110,7 +111,12 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
 	 * Handler to post a reply to the feedback
 	 */
 	const postReply = () => {
-		if (reply || !replyText.trim().length) return
+		if (
+			reply ||
+			replyText.trim().length < constraints.feedback.replyMinLength ||
+			replyText.trim().length > constraints.feedback.replyMaxLength
+		)
+			return
 
 		createReplyMutation.mutate({
 			message: replyText,

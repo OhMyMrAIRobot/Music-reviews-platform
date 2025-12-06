@@ -29,7 +29,7 @@ export const AuthorAPI = {
 		const { data } = await _api.get<AuthorsResponse>(
 			`/?
 			${typeId ? `typeId=${typeId}&` : ''}
-			${search ? `query=${search}&` : ''}
+			${search ? `search=${search}&` : ''}
 			${limit ? `limit=${limit}&` : ''}
 			${offset ? `offset=${offset}&` : ''}
 			${onlyRegistered ? `onlyRegistered=${onlyRegistered}&` : ''}

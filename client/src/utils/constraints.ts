@@ -34,6 +34,8 @@ export const constraints = {
 		maxTitleLength: 50,
 		minMessageLength: 100,
 		maxMessageLength: 4000,
+		replyMinLength: 100,
+		replyMaxLength: 8500,
 	} as const,
 
 	/** User */
@@ -58,5 +60,11 @@ export const constraints = {
 	release: {
 		minTitleLength: 1,
 		maxTitleLength: 50,
+	},
+
+	/** Author */
+	author: {
+		minNameLength: 1,
+		maxNameLength: 50,
 	},
 } as const
