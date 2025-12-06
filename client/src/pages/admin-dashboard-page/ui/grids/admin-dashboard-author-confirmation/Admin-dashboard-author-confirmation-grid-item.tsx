@@ -1,5 +1,9 @@
-import { useMutation } from '@tanstack/react-query'
-import { FC, useState } from 'react'
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQueryClient,
+} from '@tanstack/react-query'
+import { FC, useMemo, useState } from 'react'
 import { Link } from 'react-router'
 import { AuthorConfirmationAPI } from '../../../../../api/author/author-confirmation-api'
 import AuthorConfirmationStatusIcon from '../../../../../components/author/author-confirmation/Author-confirmation-status-icon'
@@ -8,9 +12,19 @@ import ConfirmationModal from '../../../../../components/modals/Confirmation-mod
 import RejectSvg from '../../../../../components/svg/Reject-svg'
 import TickRoundedSvg from '../../../../../components/svg/Tick-rounded-svg'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
+import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler'
 import { useAuthorConfirmationMeta } from '../../../../../hooks/use-author-confirmation-meta'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../../hooks/use-store'
+import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys'
+import { authorLikesKeys } from '../../../../../query-keys/author-likes-keys'
+import { authorConfirmationsKeys } from '../../../../../query-keys/authors-confirmations-keys'
+import { authorsKeys } from '../../../../../query-keys/authors-keys'
+import { leaderboardKeys } from '../../../../../query-keys/leaderboard-keys'
+import { platformStatsKeys } from '../../../../../query-keys/platform-stats-keys'
+import { profilesKeys } from '../../../../../query-keys/profiles-keys'
+import { releasesKeys } from '../../../../../query-keys/releases-keys'
+import { reviewsKeys } from '../../../../../query-keys/reviews-keys'
 import {
 	AuthorConfirmation,
 	AuthorConfirmationStatusesEnum,
@@ -32,88 +46,115 @@ interface IProps {
 
 const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
 	isLoading,
-	className,
+	className = '',
 	position,
 	item,
 	order,
 	toggleOrder,
 }) => {
+	/** HOOKS */
 	const { notificationStore } = useStore()
+	const { statuses } = useAuthorConfirmationMeta()
+	const { navigatoToProfile, navigateToAuthorDetails } = useNavigationPath()
+	const handleApiError = useApiErrorHandler()
+	const queryClient = useQueryClient()
 
+	/** STATES */
 	const [deleteConfModalOpen, setDeleteConfModalOpen] = useState<boolean>(false)
 	const [rejectModalOpen, setRejectModalOpen] = useState<boolean>(false)
 	const [approveModalOpen, setApproveModalOpen] = useState<boolean>(false)
 
-	const { statuses } = useAuthorConfirmationMeta()
+	/**
+	 * Function to invalidate related queries after mutations
+	 */
+	const invalidateRelatedQueries = () => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: authorConfirmationsKeys.all },
+			{ queryKey: authorCommentsKeys.all },
+			{ queryKey: platformStatsKeys.all },
+			{ queryKey: reviewsKeys.all },
+			{ queryKey: releasesKeys.all },
+			{ queryKey: authorsKeys.all },
+			{ queryKey: leaderboardKeys.all },
+			{ queryKey: profilesKeys.all },
+			{ queryKey: authorLikesKeys.all },
+		]
 
-	const { navigatoToProfile, navigateToAuthorDetails } = useNavigationPath()
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	}
 
-	// const queryClient = useQueryClient()
-
-	const deleteMutation = useMutation({
+	/**
+	 * Mutation to delete the author confirmation
+	 */
+	const { mutateAsync: deleteAsync, isPending: isDeleting } = useMutation({
 		mutationFn: (id: string) => AuthorConfirmationAPI.delete(id),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification(
 				'Вы успешно удалили заявку на верификацию!'
 			)
-			// queryClient.invalidateQueries({ queryKey: authorConfirmationsKeys.all })
 			setDeleteConfModalOpen(false)
+			invalidateRelatedQueries()
 		},
 		onError: (error: unknown) => {
-			const axiosError = error as {
-				response?: { data?: { message?: string[] } }
-			}
-			const errors = axiosError?.response?.data?.message || [
-				'Ошибка при удалении заявки',
-			]
-			errors.forEach((err: string) =>
-				notificationStore.addErrorNotification(err)
-			)
 			setDeleteConfModalOpen(false)
+
+			handleApiError(error, 'Не удалось удалить заявку на верификацию!')
 		},
 	})
 
-	const updateMutation = useMutation({
+	/**
+	 * Mutation to update the author confirmation status
+	 */
+	const { mutateAsync: updateAsync, isPending: isUpdating } = useMutation({
 		mutationFn: ({ id, statusId }: { id: string; statusId: string }) =>
 			AuthorConfirmationAPI.update(id, { statusId }),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification(
 				'Вы успешно обновили статус заявки на верификацию!'
 			)
-			// queryClient.invalidateQueries({ queryKey: authorConfirmationsKeys.all })
 			setRejectModalOpen(false)
 			setApproveModalOpen(false)
+
+			invalidateRelatedQueries()
 		},
 		onError: (error: unknown) => {
-			const axiosError = error as {
-				response?: { data?: { message?: string[] } }
-			}
-			const errors = axiosError?.response?.data?.message || [
-				'Ошибка при обновлении статуса заявки',
-			]
-			errors.forEach((err: string) =>
-				notificationStore.addErrorNotification(err)
-			)
 			setRejectModalOpen(false)
 			setApproveModalOpen(false)
+			handleApiError(error, 'Не удалось обновить статус заявки на верификацию!')
 		},
 	})
 
-	const handleDelete = async (id: string) => {
-		if (deleteMutation.isPending || updateMutation.isPending) return
+	/**
+	 * Indicates if any mutation is pending
+	 *
+	 * @returns {boolean} True if any mutation is pending, false otherwise
+	 */
+	const isPending = useMemo(
+		() => isDeleting || isUpdating,
+		[isDeleting, isUpdating]
+	)
 
-		deleteMutation.mutate(id)
+	/**
+	 * Handles the delete action
+	 */
+	const handleDelete = async (id: string) => {
+		if (isPending) return
+
+		return deleteAsync(id)
 	}
 
+	/**
+	 * Handles the update action
+	 */
 	const handleUpdate = async (
 		id: string,
 		status: AuthorConfirmationStatusesEnum
 	) => {
-		if (deleteMutation.isPending || updateMutation.isPending) return
+		if (isPending) return
 
 		const statusId = statuses.find(s => s.status === status)?.id
 		if (statusId) {
-			updateMutation.mutate({ id, statusId })
+			updateAsync({ id, statusId })
 		}
 	}
 
@@ -129,7 +170,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
 							isOpen={deleteConfModalOpen}
 							onConfirm={() => handleDelete(item.id)}
 							onCancel={() => setDeleteConfModalOpen(false)}
-							isLoading={deleteMutation.isPending}
+							isLoading={isDeleting}
 						/>
 					)}
 					{(rejectModalOpen || approveModalOpen) && (
@@ -152,7 +193,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
 								setRejectModalOpen(false)
 								setApproveModalOpen(false)
 							}}
-							isLoading={updateMutation.isPending}
+							isLoading={isUpdating}
 						/>
 					)}
 				</>
@@ -278,27 +319,31 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
 				<div className='xl:col-span-2 text-center max-xl:mt-1'>
 					{item ? (
 						<div className='flex gap-x-3 xl:justify-end'>
-							{item.status.status ===
-								AuthorConfirmationStatusesEnum.PENDING && (
-								<>
-									<AdminSvgButton
-										onClick={() => {
-											setApproveModalOpen(true)
-											setRejectModalOpen(false)
-										}}
-									>
-										<TickRoundedSvg className={'size-5'} />
-									</AdminSvgButton>
-									<AdminSvgButton
-										onClick={() => {
-											setRejectModalOpen(true)
-											setApproveModalOpen(false)
-										}}
-									>
-										<RejectSvg className={'size-5'} />
-									</AdminSvgButton>
-								</>
-							)}
+							<AdminSvgButton
+								disabled={
+									item.status.status ===
+										AuthorConfirmationStatusesEnum.APPROVED || isPending
+								}
+								onClick={() => {
+									setApproveModalOpen(true)
+									setRejectModalOpen(false)
+								}}
+							>
+								<TickRoundedSvg className={'size-5'} />
+							</AdminSvgButton>
+
+							<AdminSvgButton
+								disabled={
+									item.status.status ===
+										AuthorConfirmationStatusesEnum.REJECTED || isPending
+								}
+								onClick={() => {
+									setRejectModalOpen(true)
+									setApproveModalOpen(false)
+								}}
+							>
+								<RejectSvg className={'size-5'} />
+							</AdminSvgButton>
 
 							<AdminDeleteButton onClick={() => setDeleteConfModalOpen(true)} />
 						</div>
