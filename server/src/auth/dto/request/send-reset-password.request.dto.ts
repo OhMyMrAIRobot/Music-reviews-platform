@@ -11,7 +11,7 @@ export class SendResetPasswordRequestDto {
    * Email address where the reset code will be sent.
    */
   @IsEmail({}, { message: 'Некорректный формат email' })
-  @Length(1, 60, {
+  @Length(1, 100, {
     message: 'Email не должен быть пустым и содержать более 60 символов',
   })
   email: string;

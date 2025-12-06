@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { Type } from 'class-transformer';
-import { IsOptional } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsBoolean, IsOptional } from 'class-validator';
 import { CreateAuthorRequestDto } from './create-author.request.dto';
 
 /**
@@ -15,13 +15,23 @@ export class UpdateAuthorRequestDto extends PartialType(
    * If true, the author's avatar will be cleared/removed.
    */
   @IsOptional()
-  @Type(() => Boolean)
+  @IsBoolean({ message: 'Поле clearAvatar должно быть булевым значением!' })
+  @Transform(({ value }) => {
+    if (value === 'true' || value === true) return true;
+    if (value === 'false' || value === false) return false;
+    return undefined;
+  })
   clearAvatar?: boolean;
 
   /**
    * If true, the author's cover image will be cleared/removed.
    */
   @IsOptional()
-  @Type(() => Boolean)
+  @IsBoolean({ message: 'Поле clearCover должно быть булевым значением!' })
+  @Transform(({ value }) => {
+    if (value === 'true' || value === true) return true;
+    if (value === 'false' || value === false) return false;
+    return undefined;
+  })
   clearCover?: boolean;
 }
