@@ -45,4 +45,12 @@ export const constraints = {
 		minPasswordLength: 6,
 		maxPasswordLength: 64,
 	} as const,
+
+	/** Author Confirmation */
+	authorConfirmation: {
+		minConfirmationLength: 1,
+		maxConfirmationLength: 300,
+		minArraySize: 1,
+		maxArraySize: 5,
+	} as const,
 } as const

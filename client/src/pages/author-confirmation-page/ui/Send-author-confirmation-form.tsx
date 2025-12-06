@@ -1,5 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQueryClient,
+} from '@tanstack/react-query'
 import { FC, useMemo, useState } from 'react'
 import { AuthorAPI } from '../../../api/author/author-api'
 import { AuthorConfirmationAPI } from '../../../api/author/author-confirmation-api'
@@ -10,27 +13,40 @@ import FormLabel from '../../../components/form-elements/Form-label'
 import FormMultiSelect, {
 	IMultiSelectValue,
 } from '../../../components/form-elements/Form-multi-select'
+import { useApiErrorHandler } from '../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../hooks/use-auth'
 import { useStore } from '../../../hooks/use-store'
+import { authorConfirmationsKeys } from '../../../query-keys/authors-confirmations-keys'
 import { authorsKeys } from '../../../query-keys/authors-keys'
 import {
 	AuthorsQuery,
 	CreateAuthorConfirmationData,
 } from '../../../types/author'
+import { constraints } from '../../../utils/constraints'
 
 interface IProps {
 	show: boolean
 }
 
 const SendAuthorConfirmationForm: FC<IProps> = ({ show }) => {
+	/** HOOKS */
 	const { notificationStore } = useStore()
 	const { checkAuth } = useAuth()
 	const queryClient = useQueryClient()
+	const handleApiError = useApiErrorHandler()
 
+	/** STATE */
 	const [confirmation, setConfirmation] = useState<string>('')
 	const [checked, setChecked] = useState<boolean>(false)
 	const [authors, setAuthors] = useState<IMultiSelectValue[]>([])
 
+	/**
+	 * Function to load authors for multi-select
+	 *
+	 * @param {string} search - The search term
+	 * @param {number | null} limit - The maximum number of authors to load
+	 * @returns {Promise<IMultiSelectValue[]>} A promise that resolves to an array of multi-select values
+	 */
 	const loadAuthors = async (
 		search: string,
 		limit: number | null
@@ -46,6 +62,7 @@ const SendAuthorConfirmationForm: FC<IProps> = ({ show }) => {
 			queryFn: () => AuthorAPI.findAll(query),
 			staleTime: 1000 * 60 * 5,
 		})
+
 		const list = data?.items ?? []
 		return list.map((a: IMultiSelectValue) => ({
 			id: a.id,
@@ -53,6 +70,20 @@ const SendAuthorConfirmationForm: FC<IProps> = ({ show }) => {
 		}))
 	}
 
+	/**
+	 * Function to invalidate related queries after mutations
+	 */
+	const invalidateRelatedQueries = () => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: authorConfirmationsKeys.all },
+		]
+
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	}
+
+	/**
+	 * Create author confirmation mutation
+	 */
 	const { mutateAsync: createConfirmation, isPending: isCreating } =
 		useMutation({
 			mutationFn: (payload: CreateAuthorConfirmationData) =>
@@ -64,29 +95,40 @@ const SendAuthorConfirmationForm: FC<IProps> = ({ show }) => {
 				setChecked(false)
 				setAuthors([])
 				setConfirmation('')
-				// await queryClient.invalidateQueries({
-				// 	queryKey: authorConfirmationsKeys.byCurrentUser(),
-				// })
+
+				invalidateRelatedQueries()
 			},
-			onError: (e: any) => {
-				const messages = Array.isArray(e?.response?.data?.message)
-					? e.response.data.message
-					: [e?.response?.data?.message || 'Не удалось отправить заявку']
-				messages.forEach((m: string) =>
-					notificationStore.addErrorNotification(m)
-				)
+			onError: (err: unknown) => {
+				handleApiError(err, 'Не удалось отправить заявку')
 			},
 		})
 
-	const postAuthorConfirmation = async () => {
-		if (!checkAuth() || isCreating || !isFormValid) return
-		const authorIds = authors.map(a => a.id)
-		await createConfirmation({ confirmation, authorIds })
-	}
-
+	/**
+	 * Indicates if the form is valid
+	 *
+	 * @returns {boolean} True if the form is valid, false otherwise
+	 */
 	const isFormValid = useMemo(() => {
-		return confirmation.trim().length > 5 && authors.length > 0 && checked
+		return (
+			confirmation.trim().length >=
+				constraints.authorConfirmation.minConfirmationLength &&
+			confirmation.trim().length <=
+				constraints.authorConfirmation.maxConfirmationLength &&
+			authors.length >= constraints.authorConfirmation.minArraySize &&
+			authors.length <= constraints.authorConfirmation.maxArraySize &&
+			checked
+		)
 	}, [authors.length, checked, confirmation])
+
+	/**
+	 * Handle post confirmation
+	 */
+	const handlePostConfirmation = async () => {
+		if (!checkAuth() || isCreating || !isFormValid) return
+
+		const authorIds = authors.map(a => a.id)
+		return createConfirmation({ confirmation, authorIds })
+	}
 
 	return (
 		<div
@@ -143,7 +185,7 @@ const SendAuthorConfirmationForm: FC<IProps> = ({ show }) => {
 
 			<FormButton
 				title={'Отправить'}
-				onClick={postAuthorConfirmation}
+				onClick={handlePostConfirmation}
 				isInvert={true}
 				disabled={!isFormValid || isCreating}
 				isLoading={isCreating}
