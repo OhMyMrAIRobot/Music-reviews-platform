@@ -25,4 +25,14 @@ export const constraints = {
 		minUrlLength: 5,
 		maxUrlLength: 255,
 	} as const,
+
+	/** Feedback */
+	feedback: {
+		minEmailLength: 1,
+		maxEmailLength: 100,
+		minTitleLength: 5,
+		maxTitleLength: 50,
+		minMessageLength: 100,
+		maxMessageLength: 4000,
+	} as const,
 } as const
