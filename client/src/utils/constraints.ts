@@ -53,4 +53,10 @@ export const constraints = {
 		minArraySize: 1,
 		maxArraySize: 5,
 	} as const,
+
+	/** Release */
+	release: {
+		minTitleLength: 1,
+		maxTitleLength: 50,
+	},
 } as const

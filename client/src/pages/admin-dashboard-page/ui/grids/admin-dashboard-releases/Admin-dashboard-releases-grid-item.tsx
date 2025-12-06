@@ -1,4 +1,8 @@
-import { useMutation } from '@tanstack/react-query'
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQueryClient,
+} from '@tanstack/react-query'
 import { FC, useState } from 'react'
 import { Link } from 'react-router'
 import { ReleaseAPI } from '../../../../../api/release/release-api.ts'
@@ -9,6 +13,17 @@ import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
 import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler.ts'
 import useNavigationPath from '../../../../../hooks/use-navigation-path.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
+import { albumValuesKeys } from '../../../../../query-keys/album-values-keys.ts'
+import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys.ts'
+import { authorLikesKeys } from '../../../../../query-keys/author-likes-keys.ts'
+import { authorsKeys } from '../../../../../query-keys/authors-keys.ts'
+import { leaderboardKeys } from '../../../../../query-keys/leaderboard-keys.ts'
+import { nominationsKeys } from '../../../../../query-keys/nominations-keys.ts'
+import { platformStatsKeys } from '../../../../../query-keys/platform-stats-keys.ts'
+import { profilesKeys } from '../../../../../query-keys/profiles-keys.ts'
+import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys.ts'
+import { releasesKeys } from '../../../../../query-keys/releases-keys.ts'
+import { reviewsKeys } from '../../../../../query-keys/reviews-keys.ts'
 import { AuthorTypesEnum } from '../../../../../types/author/index.ts'
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum.ts'
 import { SortOrder } from '../../../../../types/common/types/sort-order.ts'
@@ -36,31 +51,60 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 	position,
 	toggleOrder,
 }) => {
+	/** HOOKS */
+	const { notificationStore } = useStore()
+	const queryClient = useQueryClient()
+	const { navigateToReleaseDetails } = useNavigationPath()
+	const handleApiError = useApiErrorHandler()
+
+	/** STATES */
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
 
-	const handleApiError = useApiErrorHandler()
+	/**
+	 * Function to invalidate related queries after mutations
+	 */
+	const invalidateRelatedQueries = () => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: releasesKeys.all },
+			{ queryKey: profilesKeys.all },
+			{ queryKey: authorsKeys.all },
+			{ queryKey: reviewsKeys.all },
+			{ queryKey: leaderboardKeys.all },
+			{ queryKey: platformStatsKeys.all },
+			{ queryKey: releaseMediaKeys.all },
+			{ queryKey: authorLikesKeys.all },
+			{ queryKey: authorCommentsKeys.all },
+			{ queryKey: albumValuesKeys.all },
+			{ queryKey: nominationsKeys.all },
+		]
 
-	const { notificationStore } = useStore()
-	// const queryClient = useQueryClient()
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	}
 
-	const { navigateToReleaseDetails } = useNavigationPath()
-
+	/**
+	 * Mutation to delete the release
+	 */
 	const deleteMutation = useMutation({
 		mutationFn: (id: string) => ReleaseAPI.delete(id),
 		onSuccess: () => {
-			// queryClient.invalidateQueries({ queryKey: releasesKeys.all })
 			notificationStore.addSuccessNotification('Вы успешно удалили релиз!')
 			setConfModalOpen(false)
+
+			invalidateRelatedQueries()
 		},
 		onError: (error: unknown) => {
-			handleApiError(error)
+			handleApiError(error, 'Не удалось удалить релиз')
 		},
 	})
 
+	/**
+	 * Handler for deleting the release
+	 */
 	const handleDelete = async () => {
 		if (deleteMutation.isPending || !release) return
-		await deleteMutation.mutateAsync(release.id)
+
+		return deleteMutation.mutateAsync(release.id)
 	}
 
 	return isLoading ? (

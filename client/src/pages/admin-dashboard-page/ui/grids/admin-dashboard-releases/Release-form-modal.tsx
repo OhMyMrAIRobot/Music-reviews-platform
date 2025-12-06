@@ -1,4 +1,8 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQueryClient,
+} from '@tanstack/react-query'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { AuthorAPI } from '../../../../../api/author/author-api.ts'
 import { ReleaseAPI } from '../../../../../api/release/release-api.ts'
@@ -15,11 +19,20 @@ import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
 import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler.ts'
 import { useReleaseMeta } from '../../../../../hooks/use-release-meta.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
+import { albumValuesKeys } from '../../../../../query-keys/album-values-keys.ts'
+import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys.ts'
+import { authorLikesKeys } from '../../../../../query-keys/author-likes-keys.ts'
 import { authorsKeys } from '../../../../../query-keys/authors-keys.ts'
+import { nominationsKeys } from '../../../../../query-keys/nominations-keys.ts'
+import { platformStatsKeys } from '../../../../../query-keys/platform-stats-keys.ts'
+import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys.ts'
+import { releasesKeys } from '../../../../../query-keys/releases-keys.ts'
+import { reviewsKeys } from '../../../../../query-keys/reviews-keys.ts'
 import { AuthorsQuery } from '../../../../../types/author/index.ts'
 import { IReleaseFormValues, Release } from '../../../../../types/release'
 import { arraysEqual } from '../../../../../utils/arrays-equal.ts'
 import buildReleaseFormData from '../../../../../utils/build-release-form-data'
+import { constraints } from '../../../../../utils/constraints.ts'
 import SelectImageLabel from '../../../../edit-profile-page/ui/labels/Select-image-label.tsx'
 import SelectedImageLabel from '../../../../edit-profile-page/ui/labels/Selected-image-label.tsx'
 
@@ -30,11 +43,13 @@ interface IProps {
 }
 
 const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
+	/** HOOKS */
 	const { types, isLoading: isTypesLoading } = useReleaseMeta()
 	const { notificationStore } = useStore()
-
 	const handleApiError = useApiErrorHandler()
+	const queryClient = useQueryClient()
 
+	/** STATES */
 	const [cover, setCover] = useState<File | null>(null)
 	const [coverPreviewUrl, setCoverPreviewUrl] = useState<string | null>(null)
 	const [title, setTitle] = useState<string>('')
@@ -51,36 +66,105 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 	>([])
 	const [deleteCover, setDeleteCover] = useState<boolean>(false)
 
-	const createMutation = useMutation({
+	/** EFFECTS */
+	useEffect(() => {
+		if (release && isOpen) {
+			setTitle(release.title)
+			setDate(release.publishDate.split('T')[0])
+			setType(release.releaseType.type)
+			if (release.img) {
+				setCoverPreviewUrl(
+					`${import.meta.env.VITE_SERVER_URL}/public/releases/${release.img}`
+				)
+			}
+			setSelectedArtists(release.authors.artists)
+			setSelectedProducers(release.authors.producers)
+			setSelectedDesigners(release.authors.designers)
+		} else {
+			resetForm()
+		}
+	}, [isOpen, release])
+
+	/**
+	 * Function to invalidate related queries after create mutation
+	 */
+	const invalidateRelatedQueriesCreate = () => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: releasesKeys.all },
+			{ queryKey: authorsKeys.all },
+			{ queryKey: platformStatsKeys.all },
+		]
+
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	}
+
+	/**
+	 * Function to invalidate related queries after update mutation
+	 */
+	const invalidateRelatedQueriesUpdate = () => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: releasesKeys.all },
+			{ queryKey: authorsKeys.all },
+			{ queryKey: reviewsKeys.all },
+			{ queryKey: releaseMediaKeys.all },
+			{ queryKey: authorLikesKeys.all },
+			{ queryKey: authorCommentsKeys.all },
+			{ queryKey: albumValuesKeys.all },
+			{ queryKey: nominationsKeys.all },
+		]
+
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	}
+
+	/**
+	 * Mutation to create a new release
+	 */
+	const { mutateAsync: createAsync, isPending: isCreating } = useMutation({
 		mutationFn: (formData: FormData) => ReleaseAPI.create(formData),
 		onSuccess: () => {
-			// queryClient.invalidateQueries({ queryKey: releasesKeys.all })
 			notificationStore.addSuccessNotification('Релиз успешно добавлен!')
 			resetForm()
 			onClose()
+			invalidateRelatedQueriesCreate()
 		},
 		onError: (error: unknown) => {
-			handleApiError(error)
+			handleApiError(error, 'Не удалось добавить релиз')
 		},
 	})
 
-	const updateMutation = useMutation({
+	/**
+	 * Mutation to update an existing release
+	 */
+	const { mutateAsync: updateAsync, isPending: isUpdating } = useMutation({
 		mutationFn: ({ id, formData }: { id: string; formData: FormData }) =>
 			ReleaseAPI.update(id, formData),
 		onSuccess: () => {
-			// queryClient.invalidateQueries({ queryKey: releasesKeys.all })
 			notificationStore.addSuccessNotification('Релиз успешно обновлен')
 			resetForm()
 			onClose()
+
+			invalidateRelatedQueriesUpdate()
 		},
 		onError: (error: unknown) => {
-			handleApiError(error)
+			handleApiError(error, 'Не удалось обновить релиз')
 		},
 	})
 
+	/**
+	 * Indicator whether any mutation is pending
+	 *
+	 * @returns {boolean} True if any mutation is pending, false otherwise
+	 */
+	const isPending = useMemo(
+		() => isCreating || isUpdating,
+		[isCreating, isUpdating]
+	)
+
+	/**
+	 * Handles the form submission for creating or updating a release.
+	 */
 	const handleSubmit = async () => {
-		if (!isFormValid || createMutation.isPending || updateMutation.isPending)
-			return
+		if (!isFormValid || isPending) return
 
 		const values: IReleaseFormValues = {
 			cover,
@@ -97,12 +181,15 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 		const formData = buildReleaseFormData(values, types, release)
 
 		if (release) {
-			await updateMutation.mutateAsync({ id: release.id, formData })
+			return updateAsync({ id: release.id, formData })
 		} else {
-			await createMutation.mutateAsync(formData)
+			return createAsync(formData)
 		}
 	}
 
+	/**
+	 * Resets the form to its initial state.
+	 */
 	const resetForm = () => {
 		setCover(null)
 		setCoverPreviewUrl(null)
@@ -114,6 +201,9 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 		setSelectedProducers([])
 	}
 
+	/**
+	 * Determines if there are any changes in the form compared to the initial release data.
+	 */
 	const hasChanges = useMemo(() => {
 		if (!release) return true
 		if (cover) return true
@@ -159,6 +249,11 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 		type,
 	])
 
+	/**
+	 * Handles the change event for the cover image input.
+	 *
+	 * @param {React.ChangeEvent<HTMLInputElement>} event - The change event.
+	 */
 	const handleCoverChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (event.target.files && event.target.files[0]) {
 			const selectedFile = event.target.files[0]
@@ -169,8 +264,13 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 		}
 	}
 
-	const queryClient = useQueryClient()
-
+	/**
+	 * Loads authors based on the search query and limit.
+	 *
+	 * @param {string} search - The search query.
+	 * @param {number | null} limit - The maximum number of authors to load.
+	 * @returns {Promise<IMultiSelectValue[]>} A promise that resolves to an array of multi-select values representing authors.
+	 */
 	const loadAuthors = async (
 		search: string,
 		limit: number | null
@@ -185,33 +285,31 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 			queryKey: authorsKeys.list(query),
 			queryFn: () => AuthorAPI.findAll(query),
 		})
-		return data?.items.map(a => ({
+		const items = data?.items || []
+
+		return items.map(a => ({
 			id: a.id,
 			name: a.name,
 		}))
 	}
 
-	useEffect(() => {
-		if (release && isOpen) {
-			setTitle(release.title)
-			setDate(release.publishDate)
-			setType(release.releaseType.type)
-			if (release.img) {
-				setCoverPreviewUrl(
-					`${import.meta.env.VITE_SERVER_URL}/public/releases/${release.img}`
-				)
-			}
-			setSelectedArtists(release.authors.artists)
-			setSelectedProducers(release.authors.producers)
-			setSelectedDesigners(release.authors.designers)
-		} else {
-			resetForm()
-		}
-	}, [isOpen, release])
+	/**
+	 * Indicates whether the form is valid for submission.
+	 *
+	 * @returns {boolean} True if the form is valid, false otherwise.
+	 */
+	const isFormValid = useMemo(
+		() =>
+			title.trim().length >= constraints.release.minTitleLength &&
+			title.trim().length <= constraints.release.maxTitleLength &&
+			type !== '' &&
+			date !== '',
+		[title, type, date]
+	)
 
+	/** CONSTANTS */
 	const formTitle = release ? 'Редактирование релиза' : 'Добавление релиза'
 	const buttonText = release ? 'Сохранить' : 'Добавить'
-	const isFormValid = title.length > 0 && type !== '' && date !== ''
 
 	if (!isOpen) return null
 
@@ -219,7 +317,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 		<ModalOverlay
 			isOpen={isOpen}
 			onCancel={onClose}
-			isLoading={createMutation.isPending || updateMutation.isPending}
+			isLoading={isPending}
 			className='max-lg:size-full'
 		>
 			{isTypesLoading ? (
@@ -393,12 +491,9 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 								isInvert={true}
 								onClick={handleSubmit}
 								disabled={
-									!isFormValid ||
-									(!!release && !hasChanges) ||
-									createMutation.isPending ||
-									updateMutation.isPending
+									!isFormValid || (!!release && !hasChanges) || isPending
 								}
-								isLoading={createMutation.isPending || updateMutation.isPending}
+								isLoading={isPending}
 							/>
 						</div>
 
@@ -407,7 +502,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 								title={'Назад'}
 								isInvert={false}
 								onClick={onClose}
-								disabled={createMutation.isPending || updateMutation.isPending}
+								disabled={isPending}
 							/>
 						</div>
 					</div>
