@@ -8,15 +8,23 @@ import { authorLikesKeys } from '../query-keys/author-likes-keys'
 import { leaderboardKeys } from '../query-keys/leaderboard-keys'
 import { profilesKeys } from '../query-keys/profiles-keys'
 import { reviewsKeys } from '../query-keys/reviews-keys'
+import { UseToggleFavResult } from '../types/common'
 import { Review } from '../types/review'
 import { useApiErrorHandler } from './use-api-error-handler'
 import { useAuth } from './use-auth'
 import { useStore } from './use-store'
 
+/**
+ * Custom hook to toggle favorite review
+ *
+ * @param {Review | undefined} review - The review to be toggled.
+ * @param {boolean} isFav - Current favorite status of the review.
+ * @returns {UseToggleFavResult} An object containing the toggleFav function and toggling state.
+ */
 export const useToggleFavReview = (
 	review: Review | undefined,
 	isFav: boolean
-) => {
+): UseToggleFavResult => {
 	/** HOOKS */
 	const { authStore, notificationStore } = useStore()
 	const { checkAuth } = useAuth()

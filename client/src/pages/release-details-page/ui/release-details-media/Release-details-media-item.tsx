@@ -3,6 +3,7 @@ import { FC, useState } from 'react'
 import HourglassSvg from '../../../../components/svg/Hourglass-svg'
 import RejectSvg from '../../../../components/svg/Reject-svg'
 import { useStore } from '../../../../hooks/use-store'
+import { useToggleFavMedia } from '../../../../hooks/use-toggle-fav-media'
 import {
 	ReleaseMedia,
 	ReleaseMediaStatusesEnum,
@@ -16,62 +17,22 @@ interface IProps {
 
 const ReleaseDetailsMediaItem: FC<IProps> = observer(({ releaseMedia }) => {
 	const { authStore } = useStore()
-	// const { storeToggle } = useQueryListFavToggleAll(
-	// 	releaseMediaKeys.all,
-	// 	'releaseMedia',
-	// 	toggleFavMedia
-	// )
-
-	// const handleToggleFav = async (mediaId: string, isFav: boolean) => {
-	// 	const errors = await storeToggle(mediaId, isFav)
-
-	// 	if (errors.length === 0) {
-	// 		notificationStore.addSuccessNotification(
-	// 			isFav
-	// 				? 'Вы успешно убрали медиарецензию из списка понравившихся!'
-	// 				: 'Вы успешно отметили медиарецензию как понравившеюся!'
-	// 		)
-	// 	} else {
-	// 		errors.forEach((err: string) =>
-	// 			notificationStore.addErrorNotification(err)
-	// 		)
-	// 	}
-	// }
-
-	const toggling = false
-
-	const isApproved =
-		releaseMedia.status.status === ReleaseMediaStatusesEnum.APPROVED
-
 	const isFav =
 		releaseMedia.userFavMedia.some(
 			item => item.userId === authStore.user?.id
 		) ?? false
 
-	// const [toggling, setToggling] = useState<boolean>(false)
+	const { toggleFav, toggling } = useToggleFavMedia(releaseMedia, isFav)
+
+	const isApproved =
+		releaseMedia.status.status === ReleaseMediaStatusesEnum.APPROVED
+
 	const [show, setShow] = useState<boolean>(false)
 
-	// const handleClickFav = async (e: React.MouseEvent) => {
-	// 	e.preventDefault()
-	// 	setToggling(true)
-
-	// 	if (!checkAuth()) {
-	// 		setToggling(false)
-	// 		return
-	// 	}
-
-	// 	if (authStore.user?.id === releaseMedia.user?.id) {
-	// 		notificationStore.addErrorNotification(
-	// 			'Вы не можете отметить свою медиарецензию как понравившеюся!'
-	// 		)
-	// 		setToggling(false)
-	// 		return
-	// 	}
-
-	// 	await handleToggleFav(releaseMedia.id, isFav)
-
-	// 	setToggling(false)
-	// }
+	const handleClickFav = async (e: React.MouseEvent) => {
+		e.preventDefault()
+		return toggleFav()
+	}
 
 	return (
 		<div className={`w-[230px]`}>
@@ -87,7 +48,7 @@ const ReleaseDetailsMediaItem: FC<IProps> = observer(({ releaseMedia }) => {
 				{releaseMedia.status.status === ReleaseMediaStatusesEnum.APPROVED &&
 					releaseMedia.type.type === ReleaseMediaTypesEnum.MEDIA_REVIEW && (
 						<button
-							onClick={undefined} // TODO: FIX TOGGLE
+							onClick={handleClickFav}
 							disabled={toggling}
 							className={`${
 								show ? 'opacity-100' : 'xl:pointer-events-none xl:opacity-0'

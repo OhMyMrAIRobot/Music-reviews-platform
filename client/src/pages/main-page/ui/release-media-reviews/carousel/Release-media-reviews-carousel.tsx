@@ -16,19 +16,12 @@ import { ReleaseMedia } from '../../../../../types/release'
 interface IProps extends CarouselStateCallbacks {
 	items: ReleaseMedia[]
 	isLoading: boolean
-	storeToggle: (mediaId: string, isFav: boolean) => Promise<string[]>
 }
 
 const ReleaseMediaReviewsCarousel = observer(
 	forwardRef<CarouselRef, IProps>(
 		(
-			{
-				items,
-				isLoading,
-				onCanScrollPrevChange,
-				onCanScrollNextChange,
-				storeToggle,
-			},
+			{ items, isLoading, onCanScrollPrevChange, onCanScrollNextChange },
 			ref
 		) => {
 			const options: EmblaOptionsType = {
@@ -95,11 +88,7 @@ const ReleaseMediaReviewsCarousel = observer(
 											className='flex-[0_0_100%] md:flex-[0_0_450px] md:max-w-[450px]'
 											key={item.id}
 										>
-											<ReleaseMediaReview
-												isLoading={isLoading}
-												media={item}
-												toggleFav={storeToggle}
-											/>
+											<ReleaseMediaReview isLoading={isLoading} media={item} />
 										</div>
 								  ))}
 						</div>

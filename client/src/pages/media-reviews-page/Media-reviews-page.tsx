@@ -104,7 +104,6 @@ const MediaReviewsPage = () => {
 									key={media.id}
 									media={media}
 									isLoading={false}
-									toggleFav={undefined} // TODO: FIX TOGGLE
 								/>
 						  ))}
 

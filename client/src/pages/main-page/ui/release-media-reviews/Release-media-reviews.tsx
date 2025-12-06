@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useQuery } from '@tanstack/react-query'
 import { useRef, useState } from 'react'
 import { ReleaseMediaAPI } from '../../../../api/release/release-media-api'
@@ -47,11 +46,6 @@ const ReleaseMediaReviews = () => {
 
 	const items = mediaData?.items ?? []
 
-	// const { storeToggle } = useQueryListFavToggleAll<
-	// 	IReleaseMedia,
-	// 	{ releaseMedia: IReleaseMedia[] }
-	// >(releaseMediaKeys.all, 'releaseMedia', toggleFavMedia)
-
 	const carouselRef = useRef<CarouselRef>(null)
 	const [canScrollPrev, setCanScrollPrev] = useState(false)
 	const [canScrollNext, setCanScrollNext] = useState(false)
@@ -70,13 +64,7 @@ const ReleaseMediaReviews = () => {
 					items={items}
 					isLoading={isMediaLoading || isMetaLoading}
 					onCanScrollPrevChange={setCanScrollPrev}
-					onCanScrollNextChange={setCanScrollNext} // TODO: FIX TOGGLE
-					storeToggle={function (
-						mediaId: string,
-						isFav: boolean
-					): Promise<string[]> {
-						throw new Error('Function not implemented.')
-					}}
+					onCanScrollNextChange={setCanScrollNext}
 				/>
 			}
 			canScrollNext={canScrollNext}

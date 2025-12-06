@@ -44,11 +44,6 @@ const ProfileMediaReviewsGrid: FC<IProps> = ({ userId }) => {
 		staleTime: 1000 * 60 * 5,
 	})
 
-	// const { storeToggle } = useQueryListFavToggleAll<
-	// 	IReleaseMedia,
-	// 	{ releaseMedia: IReleaseMedia[] }
-	// >(['profile', 'media'], 'releaseMedia', toggleFavMedia)
-
 	const items = mediaData?.items || []
 
 	return (
@@ -65,7 +60,6 @@ const ProfileMediaReviewsGrid: FC<IProps> = ({ userId }) => {
 							<ReleaseMediaReview
 								key={media.id}
 								media={media}
-								toggleFav={undefined} // TODO: FIX TOGGLE
 								isLoading={false}
 							/>
 					  ))}
