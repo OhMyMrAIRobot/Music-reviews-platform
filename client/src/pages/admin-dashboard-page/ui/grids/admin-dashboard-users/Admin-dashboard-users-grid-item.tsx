@@ -1,4 +1,8 @@
-import { useMutation } from '@tanstack/react-query'
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQueryClient,
+} from '@tanstack/react-query'
 import { FC, useState } from 'react'
 import { Link } from 'react-router'
 import { UserAPI } from '../../../../../api/user/user-api.ts'
@@ -9,6 +13,17 @@ import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
 import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler.ts'
 import useNavigationPath from '../../../../../hooks/use-navigation-path.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
+import { albumValuesKeys } from '../../../../../query-keys/album-values-keys.ts'
+import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys.ts'
+import { authorLikesKeys } from '../../../../../query-keys/author-likes-keys.ts'
+import { authorsKeys } from '../../../../../query-keys/authors-keys.ts'
+import { leaderboardKeys } from '../../../../../query-keys/leaderboard-keys.ts'
+import { platformStatsKeys } from '../../../../../query-keys/platform-stats-keys.ts'
+import { profilesKeys } from '../../../../../query-keys/profiles-keys.ts'
+import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys.ts'
+import { releasesKeys } from '../../../../../query-keys/releases-keys.ts'
+import { reviewsKeys } from '../../../../../query-keys/reviews-keys.ts'
+import { usersKeys } from '../../../../../query-keys/users-keys.ts'
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum.ts'
 import { SortOrder } from '../../../../../types/common/types/sort-order.ts'
 import {
@@ -37,27 +52,51 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 	order,
 	toggleOrder,
 }) => {
+	/** HOOKS */
 	const { notificationStore } = useStore()
-
 	const { navigatoToProfile } = useNavigationPath()
+	const handleApiError = useApiErrorHandler()
+	const queryClient = useQueryClient()
 
+	/** STATES */
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [editModelOpen, setEditModalOpen] = useState<boolean>(false)
-	const handleApiError = useApiErrorHandler()
 
-	// const queryClient = useQueryClient()
+	/**
+	 * Function to invalidate related queries after mutations
+	 */
+	const invalidateRelatedQueries = (userId: string) => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: profilesKeys.profile(userId) },
+			{ queryKey: leaderboardKeys.all },
+			{ queryKey: authorCommentsKeys.all },
+			{ queryKey: authorLikesKeys.all },
+			{ queryKey: releaseMediaKeys.all },
+			{ queryKey: albumValuesKeys.all },
+			{ queryKey: releasesKeys.all },
+			{ queryKey: reviewsKeys.all },
+			{ queryKey: usersKeys.all },
+			{ queryKey: platformStatsKeys.all },
+			{ queryKey: authorsKeys.all },
+		]
 
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	}
+
+	/**
+	 * Mutation to delete user
+	 */
 	const deleteMutation = useMutation({
 		mutationFn: (id: string) => UserAPI.adminDelete(id),
-		onSuccess: () => {
+		onSuccess: (_, id) => {
 			notificationStore.addSuccessNotification(
 				'Вы успешно удалили пользователя!'
 			)
-			// queryClient.invalidateQueries({ queryKey: usersKeys.all })
+			invalidateRelatedQueries(id)
 			setConfModalOpen(false)
 		},
 		onError: (error: unknown) => {
-			handleApiError(error)
+			handleApiError(error, 'Не удалось удалить пользователя.')
 			setConfModalOpen(false)
 		},
 	})

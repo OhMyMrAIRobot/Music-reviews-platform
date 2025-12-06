@@ -13,6 +13,7 @@ import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../../hooks/use-auth'
 import { useStore } from '../../../../hooks/use-store'
 import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys'
+import { authorLikesKeys } from '../../../../query-keys/author-likes-keys'
 import { leaderboardKeys } from '../../../../query-keys/leaderboard-keys'
 import { profilesKeys } from '../../../../query-keys/profiles-keys'
 import { releaseMediaKeys } from '../../../../query-keys/release-media-keys'
@@ -46,7 +47,7 @@ const UpdateUserInfoForm = observer(() => {
 			{ queryKey: profilesKeys.profile(userId) },
 			{ queryKey: leaderboardKeys.all },
 			{ queryKey: authorCommentsKeys.all },
-			{ queryKey: authorCommentsKeys.all },
+			{ queryKey: authorLikesKeys.all },
 			{ queryKey: releaseMediaKeys.all },
 			{ queryKey: reviewsKeys.all },
 			{ queryKey: usersKeys.all },

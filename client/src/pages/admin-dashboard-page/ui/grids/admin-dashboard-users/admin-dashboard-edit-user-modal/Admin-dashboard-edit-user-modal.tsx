@@ -1,4 +1,8 @@
-import { useMutation } from '@tanstack/react-query'
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQueryClient,
+} from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
 import { FC, useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router'
@@ -19,6 +23,13 @@ import useNavigationPath from '../../../../../../hooks/use-navigation-path.ts'
 import { useRoleMeta } from '../../../../../../hooks/use-role-meta.ts'
 import { useSocialMeta } from '../../../../../../hooks/use-social-meta.ts'
 import { useStore } from '../../../../../../hooks/use-store.ts'
+import { authorCommentsKeys } from '../../../../../../query-keys/author-comments-keys.ts'
+import { authorLikesKeys } from '../../../../../../query-keys/author-likes-keys.ts'
+import { leaderboardKeys } from '../../../../../../query-keys/leaderboard-keys.ts'
+import { profilesKeys } from '../../../../../../query-keys/profiles-keys.ts'
+import { releaseMediaKeys } from '../../../../../../query-keys/release-media-keys.ts'
+import { reviewsKeys } from '../../../../../../query-keys/reviews-keys.ts'
+import { usersKeys } from '../../../../../../query-keys/users-keys.ts'
 import { UpdateProfileData } from '../../../../../../types/profile/index.ts'
 import {
 	AdminAvailableRolesEnum,
@@ -39,15 +50,15 @@ interface IProps {
 
 const AdminDashboardEditUserModal: FC<IProps> = observer(
 	({ isOpen, onClose, user }) => {
+		/** HOOKS */
 		const { authStore, notificationStore } = useStore()
-
 		const { navigatoToProfile } = useNavigationPath()
-
 		const { roles, isLoading: isRolesLoading } = useRoleMeta()
 		const { socials, isLoading: isSocialsLoading } = useSocialMeta()
-
 		const handleApiError = useApiErrorHandler()
+		const queryClient = useQueryClient()
 
+		/** STATES */
 		const [nickname, setNickname] = useState<string>('')
 		const [email, setEmail] = useState<string>('')
 		const [role, setRole] = useState<string>('')
@@ -55,15 +66,44 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 			Record<string, string>
 		>(AdminAvailableRolesEnum)
 		const [status, setStatus] = useState<string>('')
-		const [bio, setBio] = useState<string>(authStore.profile?.bio ?? '')
-
+		const [bio, setBio] = useState<string>(user.profile?.bio ?? '')
 		const [socialValues, setSocialValues] = useState<Record<string, string>>({})
 		const [initialSocialValues, setInitialSocialValues] = useState<
 			Record<string, string>
 		>({})
 
-		// const queryClient = useQueryClient()
+		/**
+		 * Function to invalidate user related queries after mutations
+		 */
+		const invalidateUserRelatedQueries = () => {
+			const keysToInvalidate: InvalidateQueryFilters[] = [
+				{ queryKey: profilesKeys.profile(user.id) },
+				{ queryKey: leaderboardKeys.all },
+				{ queryKey: authorCommentsKeys.all },
+				{ queryKey: authorLikesKeys.all },
+				{ queryKey: releaseMediaKeys.all },
+				{ queryKey: reviewsKeys.all },
+				{ queryKey: usersKeys.all },
+			]
 
+			keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+		}
+
+		/**
+		 * Function to invalidate profile related queries after mutations
+		 */
+		const invalidateProfileRelatedQueries = () => {
+			const keysToInvalidate: InvalidateQueryFilters[] = [
+				{ queryKey: profilesKeys.profile(user.id) },
+				{ queryKey: usersKeys.all },
+			]
+
+			keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+		}
+
+		/**
+		 * Mutation to update user data (admin)
+		 */
 		const updateUserMutation = useMutation({
 			mutationFn: (data: { id: string; updateData: AdminUpdateUserData }) =>
 				UserAPI.adminUpdate(data.id, data.updateData),
@@ -71,27 +111,39 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 				notificationStore.addSuccessNotification(
 					'Информация о пользователе успешно обновлена'
 				)
-				// queryClient.invalidateQueries({ queryKey: usersKeys.all })
-				// queryClient.invalidateQueries({ queryKey: usersKeys.id(user.id) })
+				invalidateUserRelatedQueries()
 			},
 			onError: (error: unknown) => {
-				handleApiError(error)
+				handleApiError(error, 'Ошибка при обновлении информации о пользователе')
 			},
 		})
 
+		/**
+		 * Mutation to update profile data (admin)
+		 */
 		const updateProfileMutation = useMutation({
 			mutationFn: (data: { id: string; updateData: UpdateProfileData }) =>
 				ProfileAPI.adminUpdate(data.id, data.updateData),
-			onSuccess: () => {
+			onSuccess: (_, { updateData }) => {
 				notificationStore.addSuccessNotification('Вы успешно обновили профиль!')
-				// queryClient.invalidateQueries({ queryKey: usersKeys.all })
-				// queryClient.invalidateQueries({ queryKey: usersKeys.id(user.id) })
+				if (updateData.clearAvatar || updateData.clearCover) {
+					invalidateUserRelatedQueries()
+				} else {
+					invalidateProfileRelatedQueries()
+				}
 			},
 			onError: (error: unknown) => {
-				handleApiError(error)
+				handleApiError(error, 'Ошибка при обновлении профиля')
 			},
 		})
 
+		/**
+		 * Gets the URL of a user's social media by social ID.
+		 *
+		 * @param socialId - The ID of the social media.
+		 *
+		 * @returns The URL of the user's social media or an empty string if not found.
+		 */
 		const getUserSocialUrl = useCallback(
 			(socialId: string) => {
 				const socialsArr = user?.profile?.socialMedia ?? []
@@ -102,6 +154,9 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 			[user]
 		)
 
+		/**
+		 * Effect to initialize form fields when the modal is opened or the user changes.
+		 */
 		useEffect(() => {
 			if (isOpen && user) {
 				setNickname(user.nickname ?? '')
@@ -128,7 +183,10 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 			}
 		}, [isOpen, user, authStore.user?.role.role, socials, getUserSocialUrl])
 
-		const update = () => {
+		/**
+		 * Handles the submission of the edit user form.
+		 */
+		const handleSubmit = () => {
 			const isActive = status === UserStatusesEnum.ACTIVE ? true : false
 			const roleObj = roles.find(el => el.role === role)
 
@@ -398,7 +456,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 										<FormButton
 											title={'Сохранить'}
 											isInvert={true}
-											onClick={update}
+											onClick={handleSubmit}
 											disabled={
 												authStore.user?.id === user.id ||
 												updateUserMutation.isPending ||
