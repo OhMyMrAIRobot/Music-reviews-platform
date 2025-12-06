@@ -17,4 +17,12 @@ export const constraints = {
 		minTextLength: 300,
 		maxTextLength: 8500,
 	} as const,
+
+	/** Release Media */
+	releaseMedia: {
+		minTitleLength: 10,
+		maxTitleLength: 100,
+		minUrlLength: 5,
+		maxUrlLength: 255,
+	} as const,
 } as const
