@@ -13,6 +13,7 @@ import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../../hooks/use-store'
 import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys'
+import { authorsKeys } from '../../../../../query-keys/authors-keys'
 import { leaderboardKeys } from '../../../../../query-keys/leaderboard-keys'
 import { platformStatsKeys } from '../../../../../query-keys/platform-stats-keys'
 import { profilesKeys } from '../../../../../query-keys/profiles-keys'
@@ -41,23 +42,35 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = ({
 	order,
 	toggleOrder,
 }) => {
+	/** HOOKS */
 	const { notificationStore } = useStore()
-
 	const handleApiError = useApiErrorHandler()
-
 	const { navigateToReleaseDetails, navigatoToProfile } = useNavigationPath()
-
 	const queryClient = useQueryClient()
 
-	// All queries need to be invalidated after delete
-	const keysToInvalidate: InvalidateQueryFilters[] = [
-		{ queryKey: authorCommentsKeys.all },
-		{ queryKey: leaderboardKeys.all },
-		{ queryKey: platformStatsKeys.all },
-		{ queryKey: profilesKeys.profile(comment?.user.id || 'unknown') },
-		{ queryKey: releasesKeys.all },
-	]
+	/** STATES */
+	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
+	const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
 
+	/**
+	 * Function to invalidate related queries after mutations
+	 */
+	const invalidateRelatedQueries = () => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: authorCommentsKeys.all },
+			{ queryKey: releasesKeys.all },
+			{ queryKey: authorsKeys.all },
+			{ queryKey: profilesKeys.all },
+			{ queryKey: leaderboardKeys.all },
+			{ queryKey: platformStatsKeys.all },
+		]
+
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	}
+
+	/**
+	 * Mutation to delete the author comment
+	 */
 	const deleteMutation = useMutation({
 		mutationFn: (id: string) => AuthorCommentAPI.adminDelete(id),
 		onSuccess: () => {
@@ -66,20 +79,13 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = ({
 			)
 			setConfModalOpen(false)
 
-			// invalidate related queries
-			keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+			invalidateRelatedQueries()
 		},
 		onError: (error: unknown) => {
 			setConfModalOpen(false)
-			handleApiError(
-				error,
-				'Произошла ошибка при удалении авторского комментария!'
-			)
+			handleApiError(error, 'Не удалось удалить авторский комментарий!')
 		},
 	})
-
-	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
-	const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
 
 	return isLoading ? (
 		<SkeletonLoader className='w-full h-75 xl:h-12 rounded-lg' />

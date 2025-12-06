@@ -13,11 +13,11 @@ import ModalOverlay from '../../../../../components/modals/Modal-overlay'
 import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler'
 import { useStore } from '../../../../../hooks/use-store'
 import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys'
-import { releasesKeys } from '../../../../../query-keys/releases-keys'
 import {
 	AuthorComment,
 	UpdateAuthorCommentData,
 } from '../../../../../types/author'
+import { constraints } from '../../../../../utils/constraints'
 
 interface IProps {
 	isOpen: boolean
@@ -26,22 +26,36 @@ interface IProps {
 }
 
 const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
+	/** HOOKS */
 	const { notificationStore } = useStore()
-
 	const handleApiError = useApiErrorHandler()
-
 	const queryClient = useQueryClient()
 
+	/** STATES */
 	const [title, setTitle] = useState<string>(comment.title)
 	const [text, setText] = useState<string>(comment.text)
 
-	// All queries need to be invalidated after update
-	const keysToInvalidate: InvalidateQueryFilters[] = [
-		{ queryKey: authorCommentsKeys.all },
-		{ queryKey: releasesKeys.details(comment.release.id) },
-	]
+	/** EFFECTS */
+	useEffect(() => {
+		setTitle(comment.title)
+		setText(comment.text)
+	}, [comment])
 
-	const updateMutation = useMutation({
+	/**
+	 * Function to invalidate related queries after mutations
+	 */
+	const invalidateRelatedQueries = () => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: authorCommentsKeys.all },
+		]
+
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	}
+
+	/**
+	 * Mutation to update the author comment
+	 */
+	const { mutateAsync: updateAsync, isPending } = useMutation({
 		mutationFn: ({ id, data }: { id: string; data: UpdateAuthorCommentData }) =>
 			AuthorCommentAPI.adminUpdate(id, data),
 		onSuccess: () => {
@@ -49,36 +63,40 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
 				'Авторский комментарий успешно обновлен!'
 			)
 			onClose()
-
-			// invalidate related queries
-			keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+			invalidateRelatedQueries()
 		},
 		onError: (error: unknown) => {
-			handleApiError(error, 'Не удалось обновить авторский комментарий.')
+			handleApiError(error, 'Не удалось обновить авторский комментарий!')
 		},
 	})
 
-	useEffect(() => {
-		setTitle(comment.title)
-		setText(comment.text)
-	}, [comment])
-
+	/**
+	 * Checks if there are changes in the form
+	 *
+	 * @returns {boolean} - True if there are changes, false otherwise
+	 */
 	const hasChanges = useMemo(() => {
 		return title !== comment.title || text !== comment.text
 	}, [title, comment.title, comment.text, text])
 
+	/**
+	 * Checks if the form is valid
+	 *
+	 * @returns {boolean} - True if the form is valid, false otherwise
+	 */
 	const isFormValid = useMemo(() => {
 		return (
-			text.trim().length >= 300 &&
-			title.trim().length >= 5 &&
-			title.trim().length <= 100
+			text.trim().length <= constraints.authorComment.maxTextLength &&
+			text.trim().length >= constraints.authorComment.minTextLength &&
+			title.trim().length >= constraints.authorComment.minTitleLength &&
+			title.trim().length <= constraints.authorComment.maxTitleLength
 		)
 	}, [text, title])
 
 	const updateComment = async () => {
-		if (!isFormValid || updateMutation.isPending) return
+		if (!isFormValid || isPending || !hasChanges) return
 
-		updateMutation.mutate({
+		updateAsync({
 			id: comment.id,
 			data: {
 				title: title.trim() !== comment.title ? title.trim() : undefined,
@@ -91,7 +109,7 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
 		<ModalOverlay
 			isOpen={isOpen}
 			onCancel={onClose}
-			isLoading={updateMutation.isPending}
+			isLoading={isPending}
 			className='max-lg:size-full'
 		>
 			<div
@@ -138,10 +156,8 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
 								title={'Сохранить'}
 								isInvert={true}
 								onClick={updateComment}
-								disabled={
-									!hasChanges || updateMutation.isPending || !isFormValid
-								}
-								isLoading={updateMutation.isPending}
+								disabled={!hasChanges || isPending || !isFormValid}
+								isLoading={isPending}
 							/>
 						</div>
 
@@ -150,7 +166,7 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
 								title={'Назад'}
 								isInvert={false}
 								onClick={onClose}
-								disabled={updateMutation.isPending}
+								disabled={isPending}
 							/>
 						</div>
 					</div>
