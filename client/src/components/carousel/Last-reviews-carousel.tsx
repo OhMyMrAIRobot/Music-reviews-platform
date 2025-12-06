@@ -17,7 +17,6 @@ interface IProps extends CarouselStateCallbacks {
 	items: Review[]
 	rowCount: number
 	isLoading: boolean
-	storeToggle: (reviewId: string, isFav: boolean) => Promise<string[]>
 }
 
 const LastReviewsCarousel = observer(
@@ -27,7 +26,6 @@ const LastReviewsCarousel = observer(
 				items,
 				rowCount,
 				isLoading,
-				storeToggle,
 				onCanScrollPrevChange,
 				onCanScrollNextChange,
 			},
@@ -109,7 +107,6 @@ const LastReviewsCarousel = observer(
 															review={review}
 															key={review.id}
 															isLoading={isLoading}
-															storeToggle={storeToggle}
 														/>
 													))}
 									</div>

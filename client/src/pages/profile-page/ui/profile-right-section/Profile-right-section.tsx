@@ -158,7 +158,6 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 					setCurrentPage={setReviewsCurrentPage}
 					isLoading={isReviewsPending}
 					perPage={limit}
-					// TODO: Fix toggle
 				/>
 			)}
 
@@ -175,7 +174,6 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 					setCurrentPage={setFavCurrentPage}
 					isLoading={isFavReviewsPending}
 					perPage={limit}
-					// TODO: Fix toggle
 				/>
 			)}
 		</div>

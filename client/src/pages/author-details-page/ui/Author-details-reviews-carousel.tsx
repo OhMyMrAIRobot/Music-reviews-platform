@@ -32,12 +32,6 @@ const AuthorDetailsReviewsCarousel: FC<IProps> = ({ id }) => {
 
 	const lastReviews = data?.items
 
-	// const { storeToggle } = useQueryListFavToggleAll<IReview, IReview[]>(
-	// 	reviewsKeys.all,
-	// 	null,
-	// 	toggleFavReview
-	// )
-
 	const carouselRef = useRef<CarouselRef>(null)
 
 	const [canScrollPrev, setCanScrollPrev] = useState(false)
@@ -60,14 +54,6 @@ const AuthorDetailsReviewsCarousel: FC<IProps> = ({ id }) => {
 						rowCount={1}
 						onCanScrollPrevChange={setCanScrollPrev}
 						onCanScrollNextChange={setCanScrollNext}
-						storeToggle={function (
-							// eslint-disable-next-line @typescript-eslint/no-unused-vars
-							reviewId: string,
-							// eslint-disable-next-line @typescript-eslint/no-unused-vars
-							isFav: boolean
-						): Promise<string[]> {
-							throw new Error('Function not implemented.')
-						}} // TODO: Fix toggle
 					/>
 				}
 				canScrollNext={canScrollNext}

@@ -80,12 +80,7 @@ const ReviewsPage = () => {
 								<ReviewCard key={`reviews-skeleton-${idx}`} isLoading={true} />
 						  ))
 						: items.map(review => (
-								<ReviewCard
-									key={review.id}
-									review={review}
-									storeToggle={undefined} // TODO: add toggle
-									isLoading={false}
-								/>
+								<ReviewCard key={review.id} review={review} isLoading={false} />
 						  ))}
 					{items.length === 0 && !isPending && (
 						<p className='text-center text-2xl font-semibold mt-10 w-full absolute'>

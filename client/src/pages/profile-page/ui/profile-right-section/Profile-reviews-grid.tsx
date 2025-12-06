@@ -11,19 +11,10 @@ interface IProps {
 	perPage: number
 	setCurrentPage: (val: number) => void
 	isLoading: boolean
-	storeToggle?: (reviewId: string, isFav: boolean) => Promise<string[]>
 }
 
 const ProfileReviewsGrid: FC<IProps> = observer(
-	({
-		items,
-		total,
-		currentPage,
-		setCurrentPage,
-		perPage,
-		isLoading,
-		storeToggle,
-	}) => {
+	({ items, total, currentPage, setCurrentPage, perPage, isLoading }) => {
 		return (
 			<section>
 				<div className='gap-5 grid grid-cols-1 select-none'>
@@ -38,7 +29,6 @@ const ProfileReviewsGrid: FC<IProps> = observer(
 								<ReviewCard
 									key={review.id}
 									review={review}
-									storeToggle={storeToggle}
 									isLoading={isLoading}
 								/>
 						  ))}

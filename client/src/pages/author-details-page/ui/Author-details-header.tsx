@@ -32,7 +32,10 @@ const AuthorDetailsHeader: FC<IProps> = observer(({ author, isLoading }) => {
 	const handleApiError = useApiErrorHandler()
 	const queryClient = useQueryClient()
 
-	let isFav =
+	/**
+	 * Current toggling state for like/unlike action
+	 */
+	const isFav =
 		author?.userFavAuthor?.some(val => val.userId === authStore.user?.id) ??
 		false
 
@@ -65,7 +68,6 @@ const AuthorDetailsHeader: FC<IProps> = observer(({ author, isLoading }) => {
 					: 'Автор успешно добавлен в избранное!'
 			)
 
-			isFav = !isFav
 			invalidateRelatedQueries()
 		},
 		onError: (error: unknown) => {

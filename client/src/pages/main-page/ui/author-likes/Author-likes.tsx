@@ -36,7 +36,7 @@ const AuthorLikes = () => {
 					<div className='size-8'>
 						<AuthorLikeColorSvg className='size-8' />
 					</div>
-					Авторские комментарии
+					Понравилось авторам
 				</div>
 			}
 			buttonTitle={'Все авторские лайки'}
