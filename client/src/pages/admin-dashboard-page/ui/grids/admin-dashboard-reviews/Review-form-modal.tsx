@@ -1,4 +1,8 @@
-import { useMutation } from '@tanstack/react-query'
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQueryClient,
+} from '@tanstack/react-query'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { ReviewAPI } from '../../../../../api/review/review-api'
 import FormButton from '../../../../../components/form-elements/Form-button'
@@ -6,8 +10,13 @@ import FormInput from '../../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../../components/form-elements/Form-label'
 import FormTextbox from '../../../../../components/form-elements/Form-textbox'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay'
+import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler'
+import { useAuth } from '../../../../../hooks/use-auth'
 import { useStore } from '../../../../../hooks/use-store'
+import { releasesKeys } from '../../../../../query-keys/releases-keys'
+import { reviewsKeys } from '../../../../../query-keys/reviews-keys'
 import { Review, UpdateReviewData } from '../../../../../types/review'
+import { constraints } from '../../../../../utils/constraints'
 
 interface IProps {
 	isOpen: boolean
@@ -16,11 +25,38 @@ interface IProps {
 }
 
 const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
+	/** HOOKS */
 	const { notificationStore } = useStore()
+	const queryClient = useQueryClient()
+	const handleApiError = useApiErrorHandler()
+	const { checkAuth } = useAuth()
 
-	// const queryClient = useQueryClient()
+	/** STATES */
+	const [title, setTitle] = useState<string>(review.title ?? '')
+	const [text, setText] = useState<string>(review.text ?? '')
 
-	const updateMutation = useMutation({
+	/** EFFECTS */
+	useEffect(() => {
+		setTitle(review.title ?? '')
+		setText(review.text ?? '')
+	}, [review])
+
+	/**
+	 * Function to invalidate related queries after mutations
+	 */
+	const invalidateRelatedQueries = () => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: reviewsKeys.all },
+			{ queryKey: releasesKeys.details(review.release.id) },
+		]
+
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	}
+
+	/**
+	 * Mutation to update the review
+	 */
+	const { mutateAsync, isPending } = useMutation({
 		mutationFn: ({
 			reviewId,
 			reviewData,
@@ -30,34 +66,28 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
 		}) => ReviewAPI.adminUpdate(reviewId, reviewData),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification('Рецензия успешно обновлена!')
-			// queryClient.invalidateQueries({ queryKey: reviewsKeys.all })
+			invalidateRelatedQueries()
 			onClose()
 		},
 		onError: (error: unknown) => {
-			const axiosError = error as {
-				response?: { data?: { message?: string[] } }
-			}
-			const errors = axiosError?.response?.data?.message || [
-				'Ошибка при обновлении рецензии',
-			]
-			errors.forEach((err: string) =>
-				notificationStore.addErrorNotification(err)
-			)
+			handleApiError(error, 'Не удалось обновить рецензию')
 		},
 	})
 
-	const [title, setTitle] = useState<string>(review.title)
-	const [text, setText] = useState<string>(review.text)
-
-	useEffect(() => {
-		setTitle(review.title)
-		setText(review.text)
-	}, [review])
-
+	/**
+	 * Indicates whether there are changes to be saved
+	 *
+	 * @return {boolean} True if there are changes, false otherwise
+	 */
 	const hasChanges = useMemo(() => {
 		return title !== review.title || text !== review.text
 	}, [title, text, review.title, review.text])
 
+	/**
+	 * Indicates whether both text and title are either filled or both are empty
+	 *
+	 * @return {boolean} True if both are filled or both are empty, false otherwise
+	 */
 	const textAndTitleTogether = useMemo(() => {
 		return (
 			(text.trim() !== '' && title.trim() !== '') ||
@@ -65,8 +95,28 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
 		)
 	}, [text, title])
 
+	/**
+	 * Indicates whether the form is valid
+	 *
+	 * @return {boolean} True if the form is valid, false otherwise
+	 */
+	const isFormValid = useMemo(() => {
+		return (
+			textAndTitleTogether &&
+			text.trim().length >= constraints.review.minTextLength &&
+			text.trim().length <= constraints.review.maxTextLength &&
+			title.trim().length >= constraints.review.minTitleLength &&
+			title.trim().length <= constraints.review.maxTitleLength
+		)
+	}, [text, textAndTitleTogether, title])
+
+	/**
+	 * Handle form submission
+	 */
 	const handleSubmit = () => {
-		updateMutation.mutate({
+		if (!checkAuth() || !isFormValid || !hasChanges || isPending) return
+
+		return mutateAsync({
 			reviewId: review.id,
 			reviewData: {
 				title: title.trim() !== '' ? title.trim() : undefined,
@@ -79,7 +129,7 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
 		<ModalOverlay
 			isOpen={isOpen}
 			onCancel={onClose}
-			isLoading={updateMutation.isPending}
+			isLoading={isPending}
 			className='max-lg:size-full'
 		>
 			<div
@@ -126,12 +176,8 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
 								title={'Сохранить'}
 								isInvert={true}
 								onClick={handleSubmit}
-								disabled={
-									!hasChanges ||
-									!textAndTitleTogether ||
-									updateMutation.isPending
-								}
-								isLoading={updateMutation.isPending}
+								disabled={!hasChanges || !isFormValid || isPending}
+								isLoading={isPending}
 							/>
 						</div>
 
@@ -140,7 +186,7 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
 								title={'Назад'}
 								isInvert={false}
 								onClick={onClose}
-								disabled={updateMutation.isPending}
+								disabled={isPending}
 							/>
 						</div>
 					</div>
