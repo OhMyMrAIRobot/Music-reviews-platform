@@ -27,6 +27,7 @@ export const ReviewAPI = {
 			${query.hasAuthorLikes ? `hasAuthorLikes=${query.hasAuthorLikes}&` : ''}
 			${query.sortField ? `sortField=${query.sortField}&` : ''}
 			${query.sortOrder ? `sortOrder=${query.sortOrder}&` : ''}
+			${query.withTextOnly ? `withTextOnly=${query.withTextOnly}&` : ''}
 			${query.limit ? `limit=${query.limit}&` : ''}
 			${query.offset ? `offset=${query.offset}` : ''}
 			`)
@@ -40,7 +41,7 @@ export const ReviewAPI = {
 	},
 
 	async create(formData: CreateReviewData): Promise<Review> {
-		const { data } = await _api.post('/reviews', {
+		const { data } = await api.post('/reviews', {
 			...formData,
 		})
 		return data

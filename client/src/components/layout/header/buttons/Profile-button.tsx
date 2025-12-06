@@ -7,7 +7,6 @@ import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
 import { authKeys } from '../../../../query-keys/auth-keys'
-import { nominationsKeys } from '../../../../query-keys/nominations-keys'
 import { RolesEnum } from '../../../../types/user'
 import { generateUUID } from '../../../../utils/generate-uuid'
 import SettingsSvg from '../../../svg/Settings-svg'
@@ -47,19 +46,6 @@ const ProfileButton = observer(() => {
 		}
 	}, [])
 
-	const invalidateUserAlbumValues = (userId: string) => {
-		queryClient.invalidateQueries({
-			queryKey: ['albumValues', 'user'],
-			predicate: query => {
-				const params = query.queryKey[2] as {
-					releaseId: string
-					userId: string
-				}
-				return params?.userId === userId
-			},
-		})
-	}
-
 	const { mutateAsync: logOut } = useMutation({
 		mutationFn: AuthAPI.logout,
 		onSuccess: () => {
@@ -71,14 +57,8 @@ const ProfileButton = observer(() => {
 				isError: false,
 			})
 
-			const userId = authStore.user?.id || 'unknown'
-
 			// Invalidate auth-user-related queries
 			queryClient.invalidateQueries({ queryKey: authKeys.auth })
-			queryClient.invalidateQueries({
-				queryKey: nominationsKeys.userVotes(userId),
-			})
-			invalidateUserAlbumValues(userId)
 		},
 		onError: (error: unknown) => {
 			handleApiError(error, 'Произошла ошибка при выходе!')

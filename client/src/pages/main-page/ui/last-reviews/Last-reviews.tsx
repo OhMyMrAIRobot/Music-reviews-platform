@@ -14,6 +14,7 @@ const query: ReviewsQuery = {
 	offset: 0,
 	sortField: ReviewsSortFieldsEnum.CREATED,
 	sortOrder: SortOrdersEnum.DESC,
+	withTextOnly: true,
 }
 
 const LastReviews = () => {

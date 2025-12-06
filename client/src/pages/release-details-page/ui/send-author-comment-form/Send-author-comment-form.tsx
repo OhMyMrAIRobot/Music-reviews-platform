@@ -57,7 +57,7 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 		c => c.user.id === authStore.user?.id
 	)
 
-	// All queries need to be invalidated after delete
+	// All queries need to be invalidated after mutations
 	const invalidateRelatedQueries = () => {
 		const keysToInvalidate: InvalidateQueryFilters[] = [
 			{ queryKey: authorCommentsKeys.all },

@@ -21,6 +21,7 @@ const AuthorDetailsReviewsCarousel: FC<IProps> = ({ id }) => {
 		offset: 0,
 		sortOrder: SortOrdersEnum.DESC,
 		sortField: ReviewsSortFieldsEnum.CREATED,
+		withTextOnly: true,
 	}
 
 	const { data, isPending } = useQuery({

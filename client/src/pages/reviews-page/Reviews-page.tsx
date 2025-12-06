@@ -33,6 +33,7 @@ const ReviewsPage = () => {
 		offset: (currentPage - 1) * limit,
 		sortOrder: order,
 		sortField: ReviewsSortFieldsEnum.CREATED,
+		withTextOnly: true,
 	}
 
 	const { data, isPending } = useQuery({

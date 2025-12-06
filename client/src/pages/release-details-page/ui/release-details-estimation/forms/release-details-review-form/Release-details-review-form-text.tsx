@@ -1,5 +1,6 @@
 import { FC } from 'react'
 import BrushSvg from '../../../../../../components/svg/Brush-svg'
+import { constraints } from '../../../../../../utils/constraints'
 
 interface IProps {
 	isReview: boolean
@@ -29,7 +30,7 @@ const ReleaseDetailsReviewFormText: FC<IProps> = ({
 				type='text'
 				value={title}
 				onChange={e => setTitle(e.target.value)}
-				placeholder='Заголовок (до 100 символов)'
+				placeholder={`Заголовок (от ${constraints.review.minTitleLength} до ${constraints.review.maxTitleLength} символов)`}
 				className='w-full border border-white/10 px-3 py-2 text-base h-14 rounded-lg outline-none placeholder:text-sm lg:placeholder:text-base focus:border-white/85 transition-colors duration-200'
 			/>
 
@@ -37,7 +38,7 @@ const ReleaseDetailsReviewFormText: FC<IProps> = ({
 				value={text}
 				onChange={e => setText(e.target.value)}
 				maxLength={8500}
-				placeholder='Текст (от 300 до 8500 символов)'
+				placeholder={`Текст (от ${constraints.review.minTextLength} до ${constraints.review.maxTextLength} символов)`}
 				className='min-h-35 max-h-125 w-full border border-white/15 px-3 py-2 text-base h-14 rounded-lg outline-none placeholder:text-sm lg:placeholder:text-base focus:border-white/85 transition-colors duration-200'
 			/>
 

@@ -33,6 +33,9 @@ export type ReviewsQuery = {
 	/** Sort order: 'asc' or 'desc'. */
 	sortOrder?: SortOrder
 
+	/** When true, only include reviews that have text (non-empty title or text). */
+	withTextOnly?: boolean
+
 	/** Pagination limit (integer). */
 	limit?: number
 

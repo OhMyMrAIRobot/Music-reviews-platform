@@ -25,6 +25,7 @@ const AdminDashboardReviewsGrid = () => {
 		sortField: ReviewsSortFieldsEnum.CREATED,
 		limit,
 		offset: (currentPage - 1) * limit,
+		withTextOnly: true,
 	}
 
 	const { data, isPending: isLoading } = useQuery({

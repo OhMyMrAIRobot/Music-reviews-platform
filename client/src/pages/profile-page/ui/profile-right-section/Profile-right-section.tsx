@@ -37,6 +37,7 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 		offset: (reviewsCurrentPage - 1) * limit,
 		sortField: ReviewsSortFieldsEnum.CREATED,
 		sortOrder: SortOrdersEnum.DESC,
+		withTextOnly: true,
 	}
 
 	const { data: reviewsData, isPending: isReviewsPending } = useQuery({
@@ -55,6 +56,7 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 		offset: (favCurrentPage - 1) * limit,
 		sortOrder: SortOrdersEnum.DESC,
 		sortField: ReviewsSortFieldsEnum.CREATED,
+		withTextOnly: true,
 	}
 
 	const { data: favReviewsData, isPending: isFavReviewsPending } = useQuery({

@@ -12,10 +12,10 @@ export type Review = {
 	id: string
 
 	/** Review title */
-	title: string
+	title: string | null
 
 	/** Review text */
-	text: string
+	text: string | null
 
 	/** Numerical review values and computed total score */
 	values: ReviewValues

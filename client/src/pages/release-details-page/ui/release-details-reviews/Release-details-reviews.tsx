@@ -40,6 +40,7 @@ const ReleaseDetailsReviews: FC<IProps> = ({ releaseId }) => {
 		sortOrder: order,
 		limit,
 		offset: (currentPage - 1) * limit,
+		withTextOnly: true,
 	}
 
 	const { data: reviewsData, isPending: isLoading } = useQuery({
