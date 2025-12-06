@@ -1,10 +1,10 @@
 import { FC } from 'react'
-import { IAuthor } from '../../../models/author/author'
+import { Author } from '../../../types/author'
 import Pagination from '../../pagination/Pagination'
 import AuthorCard from './Author-card'
 
 interface IProps {
-	items: IAuthor[]
+	items: Author[]
 	isLoading: boolean
 	currentPage: number
 	setCurrentPage: (val: number) => void

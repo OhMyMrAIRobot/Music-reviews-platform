@@ -1,29 +1,31 @@
-import { observer } from 'mobx-react-lite'
-import { useEffect, useRef, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useRef, useState } from 'react'
+import { UserFavReviewAPI } from '../../../../api/review/user-fav-review-api'
 import AuthorLikeColorSvg from '../../../../components/author/author-like/svg/Author-like-color-svg'
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
-import { useLoading } from '../../../../hooks/use-loading'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
-import { useStore } from '../../../../hooks/use-store'
-import { CarouselRef } from '../../../../types/carousel-ref'
+import { authorLikesKeys } from '../../../../query-keys/author-likes-keys'
+import { CarouselRef } from '../../../../types/common/types/carousel-ref'
+import { AuthorLikesQuery } from '../../../../types/review'
 import AuthorLikesCarousel from './carousel/Author-likes-carousel'
 
-const AuthorLikes = observer(() => {
-	const { mainPageStore } = useStore()
+const query: AuthorLikesQuery = {
+	limit: 20,
+	offset: 0,
+}
 
+const AuthorLikes = () => {
 	const { navigateToAuthorLikes } = useNavigationPath()
 
-	const { execute: fetch, isLoading } = useLoading(
-		mainPageStore.fetchAuthorLikes
-	)
+	const { data, isPending } = useQuery({
+		queryKey: authorLikesKeys.list(query),
+		queryFn: () => UserFavReviewAPI.findAuthorLikes(query),
+		staleTime: 1000 * 60 * 5,
+	})
 
-	useEffect(() => {
-		fetch()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	const items = data?.items ?? []
 
 	const carouselRef = useRef<CarouselRef>(null)
-
 	const [canScrollPrev, setCanScrollPrev] = useState(false)
 	const [canScrollNext, setCanScrollNext] = useState(false)
 
@@ -34,7 +36,7 @@ const AuthorLikes = observer(() => {
 					<div className='size-8'>
 						<AuthorLikeColorSvg className='size-8' />
 					</div>
-					Авторские комментарии
+					Понравилось авторам
 				</div>
 			}
 			buttonTitle={'Все авторские лайки'}
@@ -45,8 +47,8 @@ const AuthorLikes = observer(() => {
 			carousel={
 				<AuthorLikesCarousel
 					ref={carouselRef}
-					items={mainPageStore.authorLikes}
-					isLoading={isLoading}
+					items={items}
+					isLoading={isPending}
 					onCanScrollPrevChange={setCanScrollPrev}
 					onCanScrollNextChange={setCanScrollNext}
 				/>
@@ -55,6 +57,6 @@ const AuthorLikes = observer(() => {
 			canScrollPrev={canScrollPrev}
 		/>
 	)
-})
+}
 
 export default AuthorLikes

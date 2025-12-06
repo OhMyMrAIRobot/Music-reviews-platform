@@ -4,13 +4,13 @@ import AuthorLikeColorSvg from '../../../../../components/author/author-like/svg
 import LogoSmallSvg from '../../../../../components/svg/Logo-small-svg'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
-import { ILeaderboardItem } from '../../../../../models/leaderboard/leaderboard-item'
+import { LeaderboardItem } from '../../../../../types/leaderboard'
 import { formatNumber } from '../../../../../utils/format-number'
 import { getLevelConfig, getUserLevel } from '../../../../../utils/user-level'
 
 interface IProps {
 	isLoading: boolean
-	item?: ILeaderboardItem
+	item?: LeaderboardItem
 	className?: string
 	position: number
 }
@@ -23,7 +23,7 @@ const PlatformStatsLeaderboardLeaderItem: FC<IProps> = ({
 }) => {
 	const { navigatoToProfile } = useNavigationPath()
 
-	const level = getUserLevel(item?.points ?? 0)
+	const level = getUserLevel(item?.user.points ?? 0)
 
 	return isLoading || !item ? (
 		<SkeletonLoader className={`rounded-xl ${className} pb-44`} />
@@ -40,25 +40,25 @@ const PlatformStatsLeaderboardLeaderItem: FC<IProps> = ({
 
 			<div className='flex flex-col justify-center text-center items-center relative'>
 				<Link
-					to={navigatoToProfile(item.userId)}
+					to={navigatoToProfile(item.user.id)}
 					className='inset-0 absolute z-100'
 				/>
 				<div className='relative mb-1'>
 					<img
 						loading='lazy'
 						decoding='async'
-						alt={item.nickname}
+						alt={item.user.nickname}
 						className='shrink-0 size-[70px] border border-white/10 rounded-full object-cover'
 						src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-							item.avatar === ''
+							item.user.avatar === ''
 								? import.meta.env.VITE_DEFAULT_AVATAR
-								: item.avatar
+								: item.user.avatar
 						}`}
 					/>
 					{level && (
 						<div className='absolute -bottom-0.5 -right-2'>
 							<img
-								alt={item.avatar + level}
+								alt={item.user.avatar + level}
 								loading='lazy'
 								decoding='async'
 								width='38'
@@ -73,7 +73,7 @@ const PlatformStatsLeaderboardLeaderItem: FC<IProps> = ({
 				</div>
 				<div className='w-[70px] lg:w-[110px]'>
 					<span className='text-ellipsis max-w-full whitespace-nowrap overflow-hidden text-sm font-semibold'>
-						{item.nickname}
+						{item.user.nickname}
 					</span>
 				</div>
 			</div>
@@ -81,11 +81,11 @@ const PlatformStatsLeaderboardLeaderItem: FC<IProps> = ({
 			<div className='flex flex-col items-center justify-center p-2 space-y-1.5 min-w-20 text-xs bg-zinc-950 rounded-xl mt-2'>
 				<div className='flex items-center space-x-1'>
 					<LogoSmallSvg className='w-[25px] h-5' />
-					<span>{formatNumber(item.points)}</span>
+					<span>{formatNumber(item.user.points)}</span>
 				</div>
 				<div className='flex items-center space-x-1'>
 					<AuthorLikeColorSvg className='size-5' />
-					<span>{item.receivedAuthorLikes}</span>
+					<span>{item.stats.receivedAuthorLikes}</span>
 				</div>
 			</div>
 		</div>

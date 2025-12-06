@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import ArrowBottomSvg from '../../../../components/layout/header/svg/Arrow-bottom-svg'
-import { SortOrdersEnum } from '../../../../models/sort/sort-orders-enum'
-import { SortOrder } from '../../../../types/sort-order-type'
+import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum'
+import { SortOrder } from '../../../../types/common/types/sort-order'
 
 interface IProps {
 	title: string

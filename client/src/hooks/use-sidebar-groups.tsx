@@ -20,6 +20,17 @@ import { useActivePath } from './use-active-path'
 import useNavigationPath from './use-navigation-path'
 import { useStore } from './use-store'
 
+/**
+ * Custom hook to generate sidebar navigation groups based on user authentication status and active path.
+ * This hook dynamically builds arrays of sidebar items for different sections of the application,
+ * including conditional items based on whether the user is authenticated and account activation status.
+ *
+ * @returns An object containing sidebar item groups:
+ * - `sidebarFirstGroup`: Array of primary navigation items (e.g., Home, FAQ, About, Become Author if authenticated).
+ * - `sidebarSecondGroup`: Array of leaderboard and awards related items (e.g., Leaderboard, Album Values, Ratings, Awards).
+ * - `sidebarThirdGroup`: Array of content-related items (e.g., Author Likes, Comments, Authors, Releases, Reviews).
+ * - `sidebarFourthGroup`: Array of utility items (e.g., Feedback, Activation if not active).
+ */
 export const useSidebarGroups = () => {
 	const { authStore } = useStore()
 

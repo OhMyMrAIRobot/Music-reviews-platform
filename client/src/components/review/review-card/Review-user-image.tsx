@@ -1,25 +1,24 @@
 import { FC } from 'react'
+import { ReviewUser } from '../../../types/review'
 import { getLevelConfig, getUserLevel } from '../../../utils/user-level'
 import Tooltip from '../../tooltip/Tooltip'
 import TooltipSpan from '../../tooltip/Tooltip-span'
 
 interface IProps {
-	nickname: string
-	img: string
-	points: number
+	user: ReviewUser
 }
 
-const ReviewUserImage: FC<IProps> = ({ nickname, img, points }) => {
-	const level = getUserLevel(points)
+const ReviewUserImage: FC<IProps> = ({ user }) => {
+	const level = getUserLevel(user.points)
 
 	return (
 		<div className='relative'>
 			<img
 				loading='lazy'
 				decoding='async'
-				alt={nickname}
+				alt={user.nickname}
 				src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-					img === '' ? import.meta.env.VITE_DEFAULT_AVATAR : img
+					user.avatar === '' ? import.meta.env.VITE_DEFAULT_AVATAR : user.avatar
 				}`}
 				className='rounded-full border border-white/10 min-w-10 size-10 lg:size-11 cursor-pointer aspect-square object-cover'
 			/>

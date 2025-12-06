@@ -1,24 +1,25 @@
-import { observer } from 'mobx-react-lite'
+import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
+import { ReleaseAPI } from '../../../../../api/release/release-api.ts'
 import AdminHeader from '../../../../../components/layout/admin-header/Admin-header.tsx'
 import Pagination from '../../../../../components/pagination/Pagination.tsx'
 import ReleaseTypeIcon from '../../../../../components/release/Release-type-icon.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
-import { useLoading } from '../../../../../hooks/use-loading.ts'
-import { useStore } from '../../../../../hooks/use-store.ts'
-import { ReleaseTypesFilterOptions } from '../../../../../models/release/release-type/release-types-filter-options.ts'
-import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum.ts'
-import { SortOrder } from '../../../../../types/sort-order-type.ts'
+import { useReleaseMeta } from '../../../../../hooks/use-release-meta.ts'
+import { releasesKeys } from '../../../../../query-keys/releases-keys.ts'
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum.ts'
+import { SortOrder } from '../../../../../types/common/types/sort-order.ts'
+import {
+	ReleasesQuery,
+	ReleaseTypesFilterOptions,
+} from '../../../../../types/release/index.ts'
 import AdminFilterButton from '../../buttons/Admin-filter-button.tsx'
-import AdminToggleSortOrderButton from '../../buttons/Admin-toggle-sort-order-button.tsx'
 import AdminDashboardReleasesGridItem from './Admin-dashboard-releases-grid-item.tsx'
 import ReleaseFormModal from './Release-form-modal.tsx'
 
-const AdminDashboardReleasesGrid = observer(() => {
-	const perPage = 10
+const limit = 10
 
-	const { adminDashboardReleasesStore, metaStore } = useStore()
-
+const AdminDashboardReleasesGrid = () => {
 	const [addModalOpen, setAddModalOpen] = useState<boolean>(false)
 	const [searchText, setSearchText] = useState<string>('')
 	const [currentPage, setCurrentPage] = useState<number>(1)
@@ -27,46 +28,34 @@ const AdminDashboardReleasesGrid = observer(() => {
 	)
 	const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC)
 
-	const { execute: fetch, isLoading: isReleasesLoading } = useLoading(
-		adminDashboardReleasesStore.fetchReleases
-	)
+	const { types, isLoading: isTypesLoading } = useReleaseMeta()
 
-	const { execute: fetchReleaseTypes, isLoading: isTypesLoading } = useLoading(
-		metaStore.fetchReleaseTypes
-	)
+	const typeId =
+		activeType === ReleaseTypesFilterOptions.ALL
+			? undefined
+			: types.find(type => type.type === activeType)?.id
 
-	const fetchReleases = () => {
-		let typeId: string | null = null
-		if (activeType !== ReleaseTypesFilterOptions.ALL) {
-			const type = metaStore.releaseTypes.find(type => type.type === activeType)
-			typeId = type?.id ?? null
-		}
-		return fetch(
-			typeId,
-			searchText.trim() ? searchText : null,
-			order,
-			perPage,
-			(currentPage - 1) * perPage
-		)
+	const query: ReleasesQuery = {
+		typeId,
+		search: searchText.trim() || undefined,
+		sortOrder: order,
+		limit,
+		offset: (currentPage - 1) * limit,
 	}
+
+	const { data, isPending: isReleasesLoading } = useQuery({
+		queryKey: releasesKeys.list(query),
+		queryFn: () => ReleaseAPI.findAll(query),
+		enabled: !isTypesLoading,
+		staleTime: 1000 * 60 * 5,
+	})
+
+	const releases = data?.items || []
+	const count = data?.meta.count || 0
 
 	useEffect(() => {
 		setCurrentPage(1)
-		fetchReleases()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [searchText, activeType])
-
-	useEffect(() => {
-		fetchReleases()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentPage, order])
-
-	useEffect(() => {
-		if (metaStore.releaseTypes.length === 0) {
-			fetchReleaseTypes()
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
 
 	return (
 		<div className='flex flex-col h-screen' id='admin-authors'>
@@ -76,7 +65,6 @@ const AdminDashboardReleasesGrid = observer(() => {
 				<ReleaseFormModal
 					isOpen={addModalOpen}
 					onClose={() => setAddModalOpen(false)}
-					refetchReleases={fetchReleases}
 				/>
 			)}
 
@@ -120,18 +108,6 @@ const AdminDashboardReleasesGrid = observer(() => {
 					/>
 				</div>
 
-				<AdminToggleSortOrderButton
-					title={'Дата создания'}
-					order={order}
-					toggleOrder={() =>
-						setOrder(
-							order === SortOrdersEnum.DESC
-								? SortOrdersEnum.ASC
-								: SortOrdersEnum.DESC
-						)
-					}
-				/>
-
 				<AdminDashboardReleasesGridItem
 					className='bg-white/5 font-medium max-xl:hidden'
 					isLoading={false}
@@ -145,7 +121,7 @@ const AdminDashboardReleasesGrid = observer(() => {
 					}
 				/>
 
-				{!isReleasesLoading && adminDashboardReleasesStore.count === 0 && (
+				{!isReleasesLoading && count === 0 && (
 					<span className='font-medium mx-auto mt-5 text-lg'>
 						Релизы не найдены!
 					</span>
@@ -154,30 +130,29 @@ const AdminDashboardReleasesGrid = observer(() => {
 				<div className='flex-1 overflow-y-auto mt-5'>
 					<div className='grid gap-y-5'>
 						{isReleasesLoading
-							? Array.from({ length: perPage }).map((_, idx) => (
+							? Array.from({ length: limit }).map((_, idx) => (
 									<AdminDashboardReleasesGridItem
 										key={`Release-skeleton-${idx}`}
 										isLoading={isReleasesLoading}
 									/>
 							  ))
-							: adminDashboardReleasesStore.releases.map((release, idx) => (
+							: releases.map((release, idx) => (
 									<AdminDashboardReleasesGridItem
 										key={release.id}
 										release={release}
 										isLoading={isReleasesLoading}
-										position={(currentPage - 1) * perPage + idx + 1}
-										refetchReleases={fetchReleases}
+										position={(currentPage - 1) * limit + idx + 1}
 									/>
 							  ))}
 					</div>
 				</div>
 
-				{!isReleasesLoading && adminDashboardReleasesStore.count > 0 && (
+				{!isReleasesLoading && count > 0 && (
 					<div className='mt-5'>
 						<Pagination
 							currentPage={currentPage}
-							totalItems={adminDashboardReleasesStore.count}
-							itemsPerPage={perPage}
+							totalItems={count}
+							itemsPerPage={limit}
 							setCurrentPage={setCurrentPage}
 							idToScroll={'admin-authors-grid'}
 						/>
@@ -186,6 +161,6 @@ const AdminDashboardReleasesGrid = observer(() => {
 			</div>
 		</div>
 	)
-})
+}
 
 export default AdminDashboardReleasesGrid

@@ -1,4 +1,4 @@
-import { AuthorTypesEnum } from '../models/author/author-type/author-types-enum'
+import { AuthorTypesEnum } from '../types/author'
 
 export const getAuthorTypeColor = (type: string): string => {
 	switch (type) {

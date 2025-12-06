@@ -1,11 +1,11 @@
 import { FC } from 'react'
 import RegisteredAuthorTypes from '../../../../components/author/registered-author/Registered-author-types'
 import UserRoleSpan from '../../../../components/user/User-role-span'
-import { IProfile } from '../../../../models/profile/profile'
+import { Profile } from '../../../../types/profile'
 import ProfileSocialItem from './profile-social-item/Profile-social-item'
 
 interface IProps {
-	profile: IProfile
+	profile: Profile
 }
 
 const ProfileInfo: FC<IProps> = ({ profile }) => {
@@ -25,13 +25,13 @@ const ProfileInfo: FC<IProps> = ({ profile }) => {
 			</div>
 
 			<h1 className='text-xl text-center lg:text-[24px] font-bold mt-2.5 flex items-center gap-1.5'>
-				<div>{profile.nickname}</div>
+				<div>{profile.user.nickname}</div>
 
-				<UserRoleSpan role={profile.role} />
-				{profile.isAuthor && (
+				<UserRoleSpan role={profile.user.role.role} />
+				{profile.user.isAuthor && (
 					<RegisteredAuthorTypes
 						className={'size-7'}
-						types={profile.authorTypes}
+						types={profile.user.authorTypes}
 					/>
 				)}
 			</h1>
@@ -47,7 +47,7 @@ const ProfileInfo: FC<IProps> = ({ profile }) => {
 			)}
 
 			<div className='flex space-x-2 mt-5'>
-				{profile.social.map(
+				{profile.socials.map(
 					social =>
 						social.name &&
 						social.url && (

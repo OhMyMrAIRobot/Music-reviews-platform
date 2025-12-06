@@ -1,16 +1,33 @@
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQueryClient,
+} from '@tanstack/react-query'
 import { FC, useState } from 'react'
 import { Link } from 'react-router'
+import { ReleaseAPI } from '../../../../../api/release/release-api.ts'
 import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg.tsx'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal.tsx'
 import ReleaseTypeIcon from '../../../../../components/release/Release-type-icon.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
-import { useLoading } from '../../../../../hooks/use-loading.ts'
+import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler.ts'
 import useNavigationPath from '../../../../../hooks/use-navigation-path.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
-import { AuthorTypesEnum } from '../../../../../models/author/author-type/author-types-enum.ts'
-import { IAdminRelease } from '../../../../../models/release/admin-release/admin-release.ts'
-import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum.ts'
-import { SortOrder } from '../../../../../types/sort-order-type.ts'
+import { albumValuesKeys } from '../../../../../query-keys/album-values-keys.ts'
+import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys.ts'
+import { authorLikesKeys } from '../../../../../query-keys/author-likes-keys.ts'
+import { authorsKeys } from '../../../../../query-keys/authors-keys.ts'
+import { leaderboardKeys } from '../../../../../query-keys/leaderboard-keys.ts'
+import { nominationsKeys } from '../../../../../query-keys/nominations-keys.ts'
+import { platformStatsKeys } from '../../../../../query-keys/platform-stats-keys.ts'
+import { profilesKeys } from '../../../../../query-keys/profiles-keys.ts'
+import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys.ts'
+import { releasesKeys } from '../../../../../query-keys/releases-keys.ts'
+import { reviewsKeys } from '../../../../../query-keys/reviews-keys.ts'
+import { AuthorTypesEnum } from '../../../../../types/author/index.ts'
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum.ts'
+import { SortOrder } from '../../../../../types/common/types/sort-order.ts'
+import { Release } from '../../../../../types/release/index.ts'
 import { getAuthorTypeColor } from '../../../../../utils/get-author-type-color.ts'
 import { getReleaseTypeColor } from '../../../../../utils/get-release-type-color.ts'
 import AdminDeleteButton from '../../buttons/Admin-delete-button.tsx'
@@ -19,12 +36,11 @@ import ReleaseFormModal from './Release-form-modal.tsx'
 
 interface IProps {
 	className?: string
-	release?: IAdminRelease
+	release?: Release
 	isLoading: boolean
 	position?: number
 	order?: SortOrder
 	toggleOrder?: () => void
-	refetchReleases?: () => void
 }
 
 const AdminDashboardReleasesGridItem: FC<IProps> = ({
@@ -34,32 +50,61 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 	isLoading,
 	position,
 	toggleOrder,
-	refetchReleases,
 }) => {
-	const { adminDashboardReleasesStore, notificationStore } = useStore()
-
+	/** HOOKS */
+	const { notificationStore } = useStore()
+	const queryClient = useQueryClient()
 	const { navigateToReleaseDetails } = useNavigationPath()
+	const handleApiError = useApiErrorHandler()
 
-	const { execute: deleteRelease, isLoading: isDeleting } = useLoading(
-		adminDashboardReleasesStore.deleteRelease
-	)
-
+	/** STATES */
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
 
-	const handleDelete = async (id: string) => {
-		if (isDeleting) return
+	/**
+	 * Function to invalidate related queries after mutations
+	 */
+	const invalidateRelatedQueries = () => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: releasesKeys.all },
+			{ queryKey: profilesKeys.all },
+			{ queryKey: authorsKeys.all },
+			{ queryKey: reviewsKeys.all },
+			{ queryKey: leaderboardKeys.all },
+			{ queryKey: platformStatsKeys.all },
+			{ queryKey: releaseMediaKeys.all },
+			{ queryKey: authorLikesKeys.all },
+			{ queryKey: authorCommentsKeys.all },
+			{ queryKey: albumValuesKeys.all },
+			{ queryKey: nominationsKeys.all },
+		]
 
-		const errors = await deleteRelease(id)
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	}
 
-		if (errors.length === 0) {
+	/**
+	 * Mutation to delete the release
+	 */
+	const deleteMutation = useMutation({
+		mutationFn: (id: string) => ReleaseAPI.delete(id),
+		onSuccess: () => {
 			notificationStore.addSuccessNotification('Вы успешно удалили релиз!')
-			refetchReleases?.()
-		} else {
-			errors.forEach(err => {
-				notificationStore.addErrorNotification(err)
-			})
-		}
+			setConfModalOpen(false)
+
+			invalidateRelatedQueries()
+		},
+		onError: (error: unknown) => {
+			handleApiError(error, 'Не удалось удалить релиз')
+		},
+	})
+
+	/**
+	 * Handler for deleting the release
+	 */
+	const handleDelete = async () => {
+		if (deleteMutation.isPending || !release) return
+
+		return deleteMutation.mutateAsync(release.id)
 	}
 
 	return isLoading ? (
@@ -72,9 +117,9 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 						<ConfirmationModal
 							title={'Вы действительно хотите удалить релиз?'}
 							isOpen={confModalOpen}
-							onConfirm={() => handleDelete(release.id)}
+							onConfirm={() => handleDelete()}
 							onCancel={() => setConfModalOpen(false)}
-							isLoading={isDeleting}
+							isLoading={deleteMutation.isPending}
 						/>
 					)}
 
@@ -83,7 +128,6 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 							isOpen={editModalOpen}
 							onClose={() => setEditModalOpen(false)}
 							release={release}
-							refetchReleases={() => {}}
 						/>
 					)}
 				</>
@@ -187,10 +231,10 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 					{release ? (
 						<>
 							<span className='xl:hidden'>Артист: </span>
-							{release.releaseArtists.length === 0 ? (
+							{release.authors.artists.length === 0 ? (
 								<span className='opacity-50 '>Отсутствует</span>
 							) : (
-								release.releaseArtists.map((ra, idx) => (
+								release.authors.artists.map((ra, idx) => (
 									<span key={ra.id}>
 										<span
 											className={` ${getAuthorTypeColor(
@@ -199,7 +243,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 										>
 											{ra.name}
 										</span>
-										{idx < release.releaseArtists.length - 1 && ', '}
+										{idx < release.authors.artists.length - 1 && ', '}
 									</span>
 								))
 							)}
@@ -213,10 +257,10 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 					{release ? (
 						<>
 							<span className='xl:hidden'>Продюссер: </span>
-							{release.releaseProducers.length === 0 ? (
+							{release.authors.producers.length === 0 ? (
 								<span className='opacity-50 '>Отсутствует</span>
 							) : (
-								release.releaseProducers.map((rp, idx) => (
+								release.authors.producers.map((rp, idx) => (
 									<span key={rp.id}>
 										<span
 											className={` ${getAuthorTypeColor(
@@ -225,7 +269,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 										>
 											{rp.name}
 										</span>
-										{idx < release.releaseProducers.length - 1 && ', '}
+										{idx < release.authors.producers.length - 1 && ', '}
 									</span>
 								))
 							)}
@@ -239,10 +283,10 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 					{release ? (
 						<>
 							<span className='xl:hidden'>Дизайнер: </span>
-							{release.releaseDesigners.length === 0 ? (
+							{release.authors.designers.length === 0 ? (
 								<span className='opacity-50 '>Отсутствует</span>
 							) : (
-								release.releaseDesigners.map((rd, idx) => (
+								release.authors.designers.map((rd, idx) => (
 									<span key={rd.id}>
 										<span
 											className={` ${getAuthorTypeColor(
@@ -251,7 +295,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
 										>
 											{rd.name}
 										</span>
-										{idx < release.releaseDesigners.length - 1 && ', '}
+										{idx < release.authors.designers.length - 1 && ', '}
 									</span>
 								))
 							)}

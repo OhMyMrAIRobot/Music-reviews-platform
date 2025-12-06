@@ -1,10 +1,13 @@
-import { FC, useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { FC, useState } from 'react'
 import { useParams } from 'react-router'
-import { useLoading } from '../../../../hooks/use-loading'
-import { useStore } from '../../../../hooks/use-store'
-import { IProfile } from '../../../../models/profile/profile'
-import { ProfileDetailsPageSections } from '../../../../models/profile/profile-details-page-sections'
-import { RolesEnum } from '../../../../models/role/roles-enum'
+import { ReviewAPI } from '../../../../api/review/review-api'
+import { reviewsKeys } from '../../../../query-keys/reviews-keys'
+import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum'
+import { Profile } from '../../../../types/profile'
+import { ReviewsQuery, ReviewsSortFieldsEnum } from '../../../../types/review'
+import { RolesEnum } from '../../../../types/user'
+import { ProfilePageSections } from '../../types/profile-page-sections'
 import ProfileAuthorCardsGrid from './Profile-author-cards-grid'
 import ProfileMediaReviewsGrid from './Profile-media-reviews-grid'
 import ProfilePreferencesGrid from './profile-preferences/Profile-preferences-grid'
@@ -12,57 +15,76 @@ import ProfileReviewsGrid from './Profile-reviews-grid'
 import ProfileSectionButton from './Profile-section-button'
 
 interface IProps {
-	profile: IProfile
+	profile: Profile
 }
 
-const ProfileRightSection: FC<IProps> = ({ profile }) => {
-	const perPage = 5
+const limit = 5
 
+const ProfileRightSection: FC<IProps> = ({ profile }) => {
 	const { id } = useParams()
 
-	const { profilePageStore } = useStore()
-
 	const [selectedSection, setSelectedSection] = useState<string>(
-		profilePageStore.profile?.isAuthor === true
-			? ProfileDetailsPageSections.AUTHOR_CARDS
-			: ProfileDetailsPageSections.PREFER
+		profile.user.isAuthor === true
+			? ProfilePageSections.AUTHOR_CARDS
+			: ProfilePageSections.PREFER
 	)
 	const [reviewsCurrentPage, setReviewsCurrentPage] = useState<number>(1)
 	const [favCurrentPage, setFavCurrentPage] = useState<number>(1)
 
-	const { execute: fetchReviews, isLoading: isReviewsLoading } = useLoading(
-		profilePageStore.fetchReviews
-	)
-	const { execute: fetchFavReviews, isLoading: isFavReviewsLoading } =
-		useLoading(profilePageStore.fetchFavReviews)
-	const { execute: fetchCards, isLoading: isCardsLoading } = useLoading(
-		profilePageStore.fetchAuthorCards
-	)
+	const reviewsQuery: ReviewsQuery = {
+		userId: id,
+		limit,
+		offset: (reviewsCurrentPage - 1) * limit,
+		sortField: ReviewsSortFieldsEnum.CREATED,
+		sortOrder: SortOrdersEnum.DESC,
+		withTextOnly: true,
+	}
 
-	useEffect(() => {
-		if (id) {
-			switch (selectedSection) {
-				case ProfileDetailsPageSections.REVIEWS:
-					fetchReviews(perPage, (reviewsCurrentPage - 1) * perPage, id)
-					break
-				case ProfileDetailsPageSections.LIKES:
-					fetchFavReviews(perPage, (favCurrentPage - 1) * perPage, id)
-					break
-				case ProfileDetailsPageSections.AUTHOR_CARDS:
-					if (profilePageStore.profile?.isAuthor === true) fetchCards(id)
-					break
-			}
-		}
-	}, [
-		reviewsCurrentPage,
-		favCurrentPage,
-		id,
-		selectedSection,
-		fetchReviews,
-		fetchFavReviews,
-		profilePageStore.profile?.isAuthor,
-		fetchCards,
-	])
+	const { data: reviewsData, isPending: isReviewsPending } = useQuery({
+		queryKey: reviewsKeys.list(reviewsQuery),
+		queryFn: () =>
+			id
+				? ReviewAPI.findAll(reviewsQuery)
+				: Promise.resolve({ items: [], meta: { count: 0 } }),
+		enabled: !!id && selectedSection === ProfilePageSections.REVIEWS,
+		staleTime: 1000 * 60 * 5,
+	})
+
+	const favReviewsQuery: ReviewsQuery = {
+		favUserId: id,
+		limit,
+		offset: (favCurrentPage - 1) * limit,
+		sortOrder: SortOrdersEnum.DESC,
+		sortField: ReviewsSortFieldsEnum.CREATED,
+		withTextOnly: true,
+	}
+
+	const { data: favReviewsData, isPending: isFavReviewsPending } = useQuery({
+		queryKey: reviewsKeys.list(favReviewsQuery),
+		queryFn: () =>
+			id
+				? ReviewAPI.findAll(favReviewsQuery)
+				: Promise.resolve({ items: [], meta: { count: 0 } }),
+		enabled: !!id && selectedSection === ProfilePageSections.LIKES,
+		staleTime: 1000 * 60 * 5,
+	})
+
+	// const { storeToggle: storeToggleReviews } = useQueryListFavToggleAll<
+	// 	IReview,
+	// 	{ reviews: IReview[] }
+	// >(['profile', 'reviews'], 'reviews', toggleFavReview)
+
+	// const { storeToggle: storeToggleFavReviews } = useQueryListFavToggleAll<
+	// 	IReview,
+	// 	{ reviews: IReview[] }
+	// >(['profile', 'favReviews'], 'reviews', toggleFavReview)
+
+	if (!id) return null
+
+	const reviews = reviewsData?.items || []
+	const reviewsCount = reviewsData?.meta.count || 0
+	const favReviews = favReviewsData?.items || []
+	const favReviewsCount = favReviewsData?.meta.count || 0
 
 	return (
 		<div className='xl:col-span-7'>
@@ -83,83 +105,75 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
 				className='mt-5 mb-2 lg:mb-5 flex gap-x-2 gap-y-2 items-center flex-wrap'
 				id='profile-sections'
 			>
-				{profile.isAuthor && (
+				{profile.user.isAuthor && (
 					<ProfileSectionButton
-						title={ProfileDetailsPageSections.AUTHOR_CARDS}
-						isActive={
-							selectedSection === ProfileDetailsPageSections.AUTHOR_CARDS
-						}
+						title={ProfilePageSections.AUTHOR_CARDS}
+						isActive={selectedSection === ProfilePageSections.AUTHOR_CARDS}
+						onClick={() => setSelectedSection(ProfilePageSections.AUTHOR_CARDS)}
+					/>
+				)}
+
+				<ProfileSectionButton
+					title={ProfilePageSections.PREFER}
+					isActive={selectedSection === ProfilePageSections.PREFER}
+					onClick={() => setSelectedSection(ProfilePageSections.PREFER)}
+				/>
+
+				<ProfileSectionButton
+					title={ProfilePageSections.REVIEWS}
+					isActive={selectedSection === ProfilePageSections.REVIEWS}
+					onClick={() => setSelectedSection(ProfilePageSections.REVIEWS)}
+				/>
+
+				{profile.user.role.role === RolesEnum.MEDIA && (
+					<ProfileSectionButton
+						title={ProfilePageSections.MEDIA_REVIEWS}
+						isActive={selectedSection === ProfilePageSections.MEDIA_REVIEWS}
 						onClick={() =>
-							setSelectedSection(ProfileDetailsPageSections.AUTHOR_CARDS)
+							setSelectedSection(ProfilePageSections.MEDIA_REVIEWS)
 						}
 					/>
 				)}
 
 				<ProfileSectionButton
-					title={ProfileDetailsPageSections.PREFER}
-					isActive={selectedSection === ProfileDetailsPageSections.PREFER}
-					onClick={() => setSelectedSection(ProfileDetailsPageSections.PREFER)}
-				/>
-
-				<ProfileSectionButton
-					title={ProfileDetailsPageSections.REVIEWS}
-					isActive={selectedSection === ProfileDetailsPageSections.REVIEWS}
-					onClick={() => setSelectedSection(ProfileDetailsPageSections.REVIEWS)}
-				/>
-
-				{profile.role === RolesEnum.MEDIA && (
-					<ProfileSectionButton
-						title={ProfileDetailsPageSections.MEDIA_REVIEWS}
-						isActive={
-							selectedSection === ProfileDetailsPageSections.MEDIA_REVIEWS
-						}
-						onClick={() =>
-							setSelectedSection(ProfileDetailsPageSections.MEDIA_REVIEWS)
-						}
-					/>
-				)}
-
-				<ProfileSectionButton
-					title={ProfileDetailsPageSections.LIKES}
-					isActive={selectedSection === ProfileDetailsPageSections.LIKES}
-					onClick={() => setSelectedSection(ProfileDetailsPageSections.LIKES)}
+					title={ProfilePageSections.LIKES}
+					isActive={selectedSection === ProfilePageSections.LIKES}
+					onClick={() => setSelectedSection(ProfilePageSections.LIKES)}
 				/>
 			</div>
 
-			{selectedSection === ProfileDetailsPageSections.AUTHOR_CARDS && (
-				<ProfileAuthorCardsGrid isLoading={isCardsLoading} />
+			{selectedSection === ProfilePageSections.AUTHOR_CARDS && (
+				<ProfileAuthorCardsGrid userId={id} />
 			)}
 
-			{selectedSection === ProfileDetailsPageSections.PREFER && (
-				<ProfilePreferencesGrid />
+			{selectedSection === ProfilePageSections.PREFER && (
+				<ProfilePreferencesGrid userId={id} />
 			)}
 
-			{selectedSection === ProfileDetailsPageSections.REVIEWS && (
+			{selectedSection === ProfilePageSections.REVIEWS && (
 				<ProfileReviewsGrid
-					items={profilePageStore.reviews}
-					total={profilePageStore.reviewsCount}
+					items={reviews}
+					total={reviewsCount}
 					currentPage={reviewsCurrentPage}
 					setCurrentPage={setReviewsCurrentPage}
-					isLoading={isReviewsLoading}
-					perPage={perPage}
-					storeToggle={profilePageStore.toggleReview}
+					isLoading={isReviewsPending}
+					perPage={limit}
 				/>
 			)}
 
-			{profile.role === RolesEnum.MEDIA &&
-				selectedSection === ProfileDetailsPageSections.MEDIA_REVIEWS && (
-					<ProfileMediaReviewsGrid profile={profile} />
+			{profile.user.role.role === RolesEnum.MEDIA &&
+				selectedSection === ProfilePageSections.MEDIA_REVIEWS && (
+					<ProfileMediaReviewsGrid userId={id} />
 				)}
 
-			{selectedSection === ProfileDetailsPageSections.LIKES && (
+			{selectedSection === ProfilePageSections.LIKES && (
 				<ProfileReviewsGrid
-					items={profilePageStore.favReviews}
-					total={profilePageStore.favReviewsCount}
+					items={favReviews}
+					total={favReviewsCount}
 					currentPage={favCurrentPage}
 					setCurrentPage={setFavCurrentPage}
-					isLoading={isFavReviewsLoading}
-					perPage={perPage}
-					storeToggle={profilePageStore.toggleFavReview}
+					isLoading={isFavReviewsPending}
+					perPage={limit}
 				/>
 			)}
 		</div>

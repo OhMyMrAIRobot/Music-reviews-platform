@@ -1,10 +1,13 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
 import { useEffect, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router'
-import { useLoading } from '../../../../hooks/use-loading'
+import { Link } from 'react-router'
+import { AuthAPI } from '../../../../api/auth-api'
+import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
-import { RolesEnum } from '../../../../models/role/roles-enum'
+import { authKeys } from '../../../../query-keys/auth-keys'
+import { RolesEnum } from '../../../../types/user'
 import { generateUUID } from '../../../../utils/generate-uuid'
 import SettingsSvg from '../../../svg/Settings-svg'
 import ShieldSvg from '../../../svg/Shield-svg'
@@ -14,29 +17,17 @@ import ProfileSvg from '../svg/Profile-svg'
 import PopupProfileButton from './Popup-profile-button'
 
 const ProfileButton = observer(() => {
-	const { authStore, profileStore, notificationStore } = useStore()
+	const { authStore, notificationStore } = useStore()
 
-	const navigate = useNavigate()
+	const { navigatoToProfile, navigateToEditProfile, navigateToAdminReleases } =
+		useNavigationPath()
 
-	const {
-		navigateToMain,
-		navigatoToProfile,
-		navigateToEditProfile,
-		navigateToAdminReleases,
-	} = useNavigationPath()
-
-	const { execute: fetchProfile, isLoading } = useLoading(
-		profileStore.fetchProfile
-	)
-
-	useEffect(() => {
-		if (authStore.isAuth && authStore.user) {
-			fetchProfile(authStore.user.id)
-		}
-	}, [authStore.isAuth, authStore.user, fetchProfile])
+	const handleApiError = useApiErrorHandler()
 
 	const [isOpen, setIsOpen] = useState<boolean>(false)
 	const popUpProfRef = useRef<HTMLDivElement | null>(null)
+
+	const queryClient = useQueryClient()
 
 	const handleClickOutside = (event: MouseEvent) => {
 		if (
@@ -55,21 +46,26 @@ const ProfileButton = observer(() => {
 		}
 	}, [])
 
-	const logOut = () => {
-		authStore.logOut().then(() => {
-			if (!authStore.isAuth) {
-				navigate(navigateToMain)
-				setIsOpen(false)
-			}
+	const { mutateAsync: logOut } = useMutation({
+		mutationFn: AuthAPI.logout,
+		onSuccess: () => {
+			authStore.unsetAuthorization()
+			setIsOpen(false)
 			notificationStore.addNotification({
 				id: generateUUID(),
-				text: !authStore.isAuth
-					? 'Вы успешно вышли из аккаунта!'
-					: 'Произошла ошибка при выходе!',
-				isError: authStore.isAuth,
+				text: 'Вы успешно вышли из аккаунта!',
+				isError: false,
 			})
-		})
-	}
+
+			// Invalidate auth-user-related queries
+			queryClient.invalidateQueries({ queryKey: authKeys.auth })
+		},
+		onError: (error: unknown) => {
+			handleApiError(error, 'Произошла ошибка при выходе!')
+		},
+	})
+
+	const isLoading = authStore.isProfileLoading
 
 	return (
 		<div
@@ -87,9 +83,9 @@ const ProfileButton = observer(() => {
 						loading='lazy'
 						decoding='async'
 						src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-							profileStore.profile?.avatar === ''
+							authStore.profile?.avatar === ''
 								? import.meta.env.VITE_DEFAULT_AVATAR
-								: profileStore.profile?.avatar
+								: authStore.profile?.avatar
 						}`}
 						className='size-full aspect-square object-cover'
 					/>

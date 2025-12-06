@@ -1,11 +1,11 @@
 import { FC } from 'react'
 import SkeletonLoader from '../../../components/utils/Skeleton-loader'
-import { IAuthorConfirmation } from '../../../models/author/author-confirmation/author-confirmation'
+import { AuthorConfirmation } from '../../../types/author'
 import { getAuthorConfirmationStatusColor } from '../../../utils/get-author-confirmation-status-color'
 
 interface IProps {
 	isLoading: boolean
-	item?: IAuthorConfirmation
+	item?: AuthorConfirmation
 }
 
 const AuthorConfirmationItem: FC<IProps> = ({ isLoading, item }) => {

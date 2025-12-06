@@ -7,12 +7,12 @@ import TextReviewSvg from '../../../../../components/review/svg/Text-review-svg'
 import PixelHeartFillSvg from '../../../../../components/svg/Pixel-heart-fill-svg'
 import PixelHeartSvg from '../../../../../components/svg/Pixel-heart-svg'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
-import { IProfile } from '../../../../../models/profile/profile'
+import { Profile } from '../../../../../types/profile'
 import { getLevelConfig, getUserLevel } from '../../../../../utils/user-level'
 import ProfileStatsRow from './Profile-stats-row'
 
 interface IProps {
-	profile: IProfile
+	profile: Profile
 }
 
 const ProfileStats: FC<IProps> = ({ profile }) => {
@@ -61,10 +61,10 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
 						<p className='text-[13px] font-medium'>баллов сообщества</p>
 					</div>
 
-					{profile.position ? (
+					{profile.rank ? (
 						<div className='flex items-center space-x-2 select-none'>
 							<div className='min-w-max shadow-lg shadow-red-600/50 px-1.5 h-[21px] leading-[19px] font-bold border border-red-500  rounded-full bg-red-600 text-[13px]'>
-								ТОП {profile.position}
+								ТОП {profile.rank}
 							</div>
 
 							<p className='text-[13px] text-white/90 hover:text-white transition-all duration-200 underline underline-offset-4 hover:border-white cursor-pointer font-medium'>
@@ -81,16 +81,16 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
 				</div>
 			</div>
 
-			{profile.isAuthor && (
+			{profile.user.isAuthor && (
 				<div>
 					<ProfileStatsRow
 						title={'Написано авторских комментариев'}
-						value={profile.authorCommentsCount}
+						value={profile.stats.authorCommentsCount}
 						icon={<AuthorCommentColorSvg className={'size-5'} />}
 					/>
 					<ProfileStatsRow
 						title={'Поставлено авторских лайков'}
-						value={profile.givenAuthorLikes}
+						value={profile.stats.givenAuthorLikes}
 						icon={<AuthorLikeColorSvg className={'size-5'} />}
 					/>
 				</div>
@@ -104,12 +104,12 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
 			<div>
 				<ProfileStatsRow
 					title={'Рецензий'}
-					value={profile.textCount}
+					value={profile.stats.textCount}
 					icon={<TextReviewSvg className={'size-5'} />}
 				/>
 				<ProfileStatsRow
 					title={'Оценок без рецензий'}
-					value={profile.withoutTextCount}
+					value={profile.stats.withoutTextCount}
 					icon={<NoTextReviewSvg className={'size-5'} />}
 				/>
 			</div>
@@ -122,17 +122,17 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
 			<div>
 				<ProfileStatsRow
 					title={'Получено авторских лайков'}
-					value={profile.receivedAuthorLikes}
+					value={profile.stats.receivedAuthorLikes}
 					icon={<AuthorLikeColorSvg className={'size-5'} />}
 				/>
 				<ProfileStatsRow
 					title={'Получено лайков'}
-					value={profile.receivedLikes}
+					value={profile.stats.receivedLikes}
 					icon={<PixelHeartSvg className={'w-5 h-4.5'} />}
 				/>
 				<ProfileStatsRow
 					title={'Поставлено лайков'}
-					value={profile.givenLikes}
+					value={profile.stats.givenLikes}
 					icon={<PixelHeartFillSvg className={'w-5 h-4.5'} />}
 				/>
 			</div>

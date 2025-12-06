@@ -1,15 +1,25 @@
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQueryClient,
+} from '@tanstack/react-query'
 import { FC, useState } from 'react'
 import { Link } from 'react-router'
+import { ReleaseMediaAPI } from '../../../../../api/release/release-media-api'
 import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal'
 import ReleaseMediaStatusIcon from '../../../../../components/release/release-media/Release-media-status-icon'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
-import { useLoading } from '../../../../../hooks/use-loading'
+import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../../hooks/use-store'
-import { IReleaseMedia } from '../../../../../models/release/release-media/release-media'
-import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
-import { SortOrder } from '../../../../../types/sort-order-type'
+import { leaderboardKeys } from '../../../../../query-keys/leaderboard-keys'
+import { platformStatsKeys } from '../../../../../query-keys/platform-stats-keys'
+import { profilesKeys } from '../../../../../query-keys/profiles-keys'
+import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys'
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum'
+import { SortOrder } from '../../../../../types/common/types/sort-order'
+import { ReleaseMedia } from '../../../../../types/release'
 import { getReleaseMediaStatusColor } from '../../../../../utils/get-release-media-status-color'
 import AdminDeleteButton from '../../buttons/Admin-delete-button'
 import AdminEditButton from '../../buttons/Admin-edit-button'
@@ -18,50 +28,62 @@ import MediaFormModal from './Media-form-modal'
 
 interface IProps {
 	className?: string
-	media?: IReleaseMedia
+	media?: ReleaseMedia
 	position?: number
 	isLoading: boolean
 	order?: SortOrder
 	toggleOrder?: () => void
-	refetch?: () => void
 }
 
 const AdminDashboardMediaGridItem: FC<IProps> = ({
 	position,
 	isLoading,
-	className,
+	className = '',
 	media,
 	order,
 	toggleOrder,
-	refetch,
 }) => {
-	const { adminDashboardMediaStore, notificationStore } = useStore()
-
+	/** HOOKS */
+	const { notificationStore } = useStore()
+	const queryClient = useQueryClient()
 	const { navigateToReleaseDetails } = useNavigationPath()
+	const handleApiError = useApiErrorHandler()
 
+	/** STATES */
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
 
-	const { execute: deleteMedia, isLoading: isDeleting } = useLoading(
-		adminDashboardMediaStore.deleteReleaseMedia
-	)
+	/**
+	 * Function to invalidate related queries after mutations
+	 */
+	const invalidateRelatedQueries = () => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: profilesKeys.all },
+			{ queryKey: releaseMediaKeys.all },
+			{ queryKey: leaderboardKeys.all },
+			{ queryKey: platformStatsKeys.all },
+		]
 
-	const handleDelete = async (id: string) => {
-		if (isDeleting) return
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	}
 
-		const errors = await deleteMedia(id)
-
-		if (errors.length === 0) {
+	/**
+	 * Mutation to delete the media
+	 */
+	const deleteMutation = useMutation({
+		mutationFn: (id: string) => ReleaseMediaAPI.adminDelete(id),
+		onSuccess: () => {
 			notificationStore.addSuccessNotification(
 				'Вы успешно удалили медиаматериал!'
 			)
-			refetch?.()
-		} else {
-			errors.forEach(err => {
-				notificationStore.addErrorNotification(err)
-			})
-		}
-	}
+			invalidateRelatedQueries()
+			setConfModalOpen(false)
+		},
+		onError: (error: unknown) => {
+			setConfModalOpen(false)
+			handleApiError(error, 'Не удалось удалить медиа')
+		},
+	})
 
 	return isLoading ? (
 		<SkeletonLoader className='w-full h-70 xl:h-12 rounded-lg' />
@@ -73,9 +95,9 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 						<ConfirmationModal
 							title={'Вы действительно хотите удалить медиаматериал?'}
 							isOpen={confModalOpen}
-							onConfirm={() => handleDelete(media.id)}
+							onConfirm={() => deleteMutation.mutate(media.id)}
 							onCancel={() => setConfModalOpen(false)}
-							isLoading={isDeleting}
+							isLoading={deleteMutation.isPending}
 						/>
 					)}
 
@@ -139,7 +161,7 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 						<>
 							<span className='xl:hidden pr-0.5'>Тип медиа: </span>
 							<div className={`flex gap-x-1 items-center`}>
-								<span>{media.releaseMediaType.type}</span>
+								<span>{media.type.type}</span>
 							</div>
 						</>
 					) : (
@@ -174,14 +196,14 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 							<span className='xl:hidden pr-1'>Статус: </span>
 							<div
 								className={`flex gap-x-1 items-center ${getReleaseMediaStatusColor(
-									media.releaseMediaStatus.status
+									media.status.status
 								)}`}
 							>
 								<ReleaseMediaStatusIcon
-									status={media.releaseMediaStatus.status}
+									status={media.status.status}
 									className={'size-5'}
 								/>
-								<span>{media.releaseMediaStatus.status}</span>
+								<span>{media.status.status}</span>
 							</div>
 						</>
 					) : (

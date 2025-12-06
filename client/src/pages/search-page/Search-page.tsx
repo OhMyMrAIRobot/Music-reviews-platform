@@ -1,19 +1,21 @@
-import { observer } from 'mobx-react-lite'
+import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router'
+import { AuthorAPI } from '../../api/author/author-api'
+import { ReleaseAPI } from '../../api/release/release-api'
 import AuthorsGrid from '../../components/author/authors-grid/Authors-grid'
 import ReleasesGrid from '../../components/release/Releases-grid'
-import { useLoading } from '../../hooks/use-loading'
 import useNavigationPath from '../../hooks/use-navigation-path'
-import { useStore } from '../../hooks/use-store'
-import { SearchTypesEnum } from '../../models/search/search-types-enum'
+import { authorsKeys } from '../../query-keys/authors-keys'
+import { releasesKeys } from '../../query-keys/releases-keys'
+import { AuthorsQuery } from '../../types/author'
+import { SearchTypesEnum } from '../../types/common/enums/search-types-enum'
+import { ReleasesQuery } from '../../types/release'
 
 const perPage = 10
 
-const SearchPage = observer(() => {
+const SearchPage = () => {
 	const { type } = useParams()
-
-	const { searchPageStore } = useStore()
 
 	const navigate = useNavigate()
 
@@ -25,28 +27,31 @@ const SearchPage = observer(() => {
 	const [searchParams] = useSearchParams()
 	const query = searchParams.get('query') || ''
 
-	const { execute: fetchAuthors, isLoading: isAuthorsLoading } = useLoading(
-		searchPageStore.fetchAuthors
-	)
+	const authorsQuery: AuthorsQuery = {
+		search: query.trim() || undefined,
+		limit: perPage,
+		offset: (currentPage - 1) * perPage,
+	}
 
-	const { execute: fetchReleases, isLoading: isReleasesLoading } = useLoading(
-		searchPageStore.fetchReleases
-	)
+	const authorsQ = useQuery({
+		queryKey: authorsKeys.list(authorsQuery),
+		queryFn: () => AuthorAPI.findAll(authorsQuery),
+		enabled: query.length > 0 && type === SearchTypesEnum.AUTHORS,
+		staleTime: 1000 * 60 * 5,
+	})
 
-	useEffect(() => {
-		if (query.length > 0) {
-			switch (type) {
-				case SearchTypesEnum.AUTHORS:
-					fetchAuthors(query, perPage, (currentPage - 1) * perPage)
-					break
-				case SearchTypesEnum.RELEASES:
-					fetchReleases(query, perPage, (currentPage - 1) * perPage)
-					break
-				default:
-					break
-			}
-		}
-	}, [currentPage, fetchAuthors, fetchReleases, query, type])
+	const releasesQuery: ReleasesQuery = {
+		search: query || undefined,
+		limit: perPage,
+		offset: (currentPage - 1) * perPage,
+	}
+
+	const releasesQ = useQuery({
+		queryKey: releasesKeys.list(releasesQuery),
+		queryFn: () => ReleaseAPI.findAll(releasesQuery),
+		enabled: query.length > 0 && type === SearchTypesEnum.RELEASES,
+		staleTime: 1000 * 60 * 5,
+	})
 
 	useEffect(() => {
 		if (
@@ -56,35 +61,34 @@ const SearchPage = observer(() => {
 			navigate(navigateToMain)
 		}
 		setIsloading(false)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	}, [navigate, navigateToMain, type])
 
 	return (
 		!isLoading && (
 			<>
 				{type === SearchTypesEnum.AUTHORS && (
 					<AuthorsGrid
-						items={searchPageStore.authors}
-						isLoading={isAuthorsLoading}
+						items={authorsQ.data?.items ?? []}
+						isLoading={authorsQ.isPending}
 						currentPage={currentPage}
 						setCurrentPage={setCurrentPage}
-						total={searchPageStore.authorsCount}
+						total={authorsQ.data?.meta.count ?? 0}
 						perPage={perPage}
 					/>
 				)}
 				{type === SearchTypesEnum.RELEASES && (
 					<ReleasesGrid
-						items={searchPageStore.releases}
-						isLoading={isReleasesLoading}
+						items={releasesQ.data?.items ?? []}
+						isLoading={releasesQ.isPending}
 						currentPage={currentPage}
 						setCurrentPage={setCurrentPage}
-						total={searchPageStore.releasesCount}
+						total={releasesQ.data?.meta.count ?? 0}
 						perPage={perPage}
 					/>
 				)}
 			</>
 		)
 	)
-})
+}
 
 export default SearchPage

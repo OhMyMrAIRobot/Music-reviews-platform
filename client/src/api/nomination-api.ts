@@ -1,10 +1,13 @@
 import axios from 'axios'
-import { INominationCandidatesResponse } from '../models/nomination/nomination-candidate/nomination-candidates-response'
-import { NominationEntityKind } from '../models/nomination/nomination-entity-kind'
-import { INominationType } from '../models/nomination/nomination-type/nomination-type'
-import { INominationUserVote } from '../models/nomination/nomination-user-vote'
-import { INominationWinnerParticipation } from '../models/nomination/nomination-winner-participation/nomination-winner-participation'
-import { INominationWinnersResponse } from '../models/nomination/nomination-winner/nomination-winners-response'
+import {
+	AuthorNominationWinsResponse,
+	CreateNominationVoteData,
+	NominationCandidatesResponse,
+	NominationType,
+	NominationUserVote,
+	NominationWinnersQuery,
+	NominationWinnersResponse,
+} from '../types/nomination'
 import { api } from './api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
@@ -17,61 +20,96 @@ const _api = axios.create({
 	},
 })
 
+/**
+ * API service for nomination-related operations.
+ * Provides methods for fetching nomination types, winners, candidates, and managing user votes.
+ */
 export const NominationAPI = {
-	async fetchNominationTypes(): Promise<INominationType[]> {
-		const { data } = await axios.get<INominationType[]>(
+	/**
+	 * Fetches all available nomination types.
+	 *
+	 * @returns {Promise<NominationType[]>} A promise that resolves to an array of nomination types.
+	 */
+	async fetchNominationTypes(): Promise<NominationType[]> {
+		const { data } = await axios.get<NominationType[]>(
 			`${SERVER_URL}/nomination-types`
 		)
 
 		return data
 	},
 
-	async fetchWinners(
-		month: number | null,
-		year: number | null
-	): Promise<INominationWinnersResponse> {
-		const { data } = await _api.get<INominationWinnersResponse>(`?
-			${month !== null ? `month=${month}&` : ''}
-			${year !== null ? `year=${year}&` : ''}
+	/**
+	 * Fetches nomination winners for a specific period.
+	 *
+	 * @param {NominationWinnersQuery} query - The query parameters for filtering winners.
+	 * @param {number} [query.year] - The year to filter winners by.
+	 * @param {number} [query.month] - The month to filter winners by.
+	 * @returns {Promise<NominationWinnersResponse>} A promise that resolves to the nomination winners response.
+	 */
+	async findWinners(
+		query: NominationWinnersQuery
+	): Promise<NominationWinnersResponse> {
+		const { year, month } = query
+
+		const { data } = await _api.get<NominationWinnersResponse>(`?
+			${month ? `month=${month}&` : ''}
+			${year ? `year=${year}&` : ''}
 		`)
 
 		return data
 	},
 
-	async fetchWinnersByAuthorId(
+	/**
+	 * Fetches nomination wins for a specific author.
+	 *
+	 * @param {string} authorId - The ID of the author to get nomination wins for.
+	 * @returns {Promise<AuthorNominationWinsResponse>} A promise that resolves to the author's nomination wins response.
+	 */
+	async findAuthorNominationWins(
 		authorId: string
-	): Promise<INominationWinnerParticipation> {
-		const { data } = await _api.get<INominationWinnerParticipation>(
+	): Promise<AuthorNominationWinsResponse> {
+		const { data } = await _api.get<AuthorNominationWinsResponse>(
 			`author/${authorId}`
 		)
 
 		return data
 	},
 
-	async fetchCandidates(): Promise<INominationCandidatesResponse> {
-		const { data } = await _api.get<INominationCandidatesResponse>(
-			`/candidates`
+	/**
+	 * Fetches current nomination candidates.
+	 *
+	 * @returns {Promise<NominationCandidatesResponse>} A promise that resolves to the nomination candidates response.
+	 */
+	async findCandidates(): Promise<NominationCandidatesResponse> {
+		const { data } = await _api.get<NominationCandidatesResponse>(`/candidates`)
+
+		return data
+	},
+
+	/**
+	 * Submits a vote for a nomination.
+	 *
+	 * @param {CreateNominationVoteData} formData - The data required to create a nomination vote.
+	 * @returns {Promise<NominationUserVote>} A promise that resolves to the created nomination vote object.
+	 */
+	async postVote(
+		formData: CreateNominationVoteData
+	): Promise<NominationUserVote> {
+		const { data } = await api.post<NominationUserVote>(
+			`/nominations`,
+			formData
 		)
 
 		return data
 	},
 
-	async postVote(
-		nominationTypeId: string,
-		entityKind: NominationEntityKind,
-		entityId: string
-	): Promise<INominationUserVote> {
-		const { data } = await api.post<INominationUserVote>(`/nominations`, {
-			nominationTypeId,
-			entityKind,
-			entityId,
-		})
-
-		return data
-	},
-
-	async fetchUserVotes(): Promise<INominationUserVote[]> {
-		const { data } = await api.get<INominationUserVote[]>(`/nominations/votes`)
+	/**
+	 * Fetches the current user's nomination votes.
+	 *
+	 * @returns {Promise<NominationUserVote[]>} A promise that resolves to an array of the user's nomination votes.
+	 */
+	async findUserVotes(): Promise<NominationUserVote[]> {
+		const { data } = await api.get<NominationUserVote[]>(`/nominations/votes`)
 
 		return data
 	},

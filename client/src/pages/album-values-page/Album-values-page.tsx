@@ -1,49 +1,59 @@
+import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
+import { AlbumValueAPI } from '../../api/album-value-api'
 import AlbumValueCard from '../../components/album-value/Album-value-card'
 import ComboBox from '../../components/buttons/Combo-box'
 import FormCheckbox from '../../components/form-elements/Form-checkbox'
 import FormLabel from '../../components/form-elements/Form-label'
 import Pagination from '../../components/pagination/Pagination'
-import { useLoading } from '../../hooks/use-loading'
-import { useStore } from '../../hooks/use-store'
-import { AlbumValueSortOptions } from '../../models/album-value/album-value-sort-options'
-import { AlbumValueTiersEnum } from '../../models/album-value/album-value-tiers-enum'
-import { SortOrdersEnum } from '../../models/sort/sort-orders-enum'
+import { albumValuesKeys } from '../../query-keys/album-values-keys'
+import {
+	AlbumValueSortOptions,
+	AlbumValuesQuery,
+	AlbumValueTiersEnum,
+} from '../../types/album-value'
+import { SortOrdersEnum } from '../../types/common/enums/sort-orders-enum'
 import { ALBUM_VALUES } from '../../utils/album-value-config'
 
+const limit = 12
+
 const AlbumValuesPage = () => {
-	const perPage = 12
-
-	const { albumValuesPageStore } = useStore()
-
-	const { execute: fetch, isLoading } = useLoading(
-		albumValuesPageStore.fetchAlbumValues
-	)
-
 	const [sortOrder, setSortOrder] = useState<string>('')
 	const [selectedTiers, setSelectedTiers] = useState<AlbumValueTiersEnum[]>([])
 	const [currentPage, setCurrentPage] = useState<number>(1)
 
+	const orderParam =
+		sortOrder !== ''
+			? sortOrder === AlbumValueSortOptions.ASC
+				? SortOrdersEnum.ASC
+				: SortOrdersEnum.DESC
+			: undefined
+
+	const tiersParam = selectedTiers.length > 0 ? selectedTiers : undefined
+
+	const query: AlbumValuesQuery = {
+		limit,
+		offset: (currentPage - 1) * limit,
+		sortOrder: orderParam,
+		tiers: tiersParam,
+	}
+
+	const { data, isPending } = useQuery({
+		queryKey: albumValuesKeys.list(query),
+		queryFn: () => AlbumValueAPI.findAll(query),
+		staleTime: 1000 * 60 * 5,
+	})
+
+	const values = data?.items ?? []
+	const totalCount = data?.meta.count ?? 0
+
 	useEffect(() => {
-		const order =
-			sortOrder !== ''
-				? sortOrder === AlbumValueSortOptions.ASC
-					? SortOrdersEnum.ASC
-					: SortOrdersEnum.DESC
-				: null
-		fetch(
-			perPage,
-			(currentPage - 1) * perPage,
-			order,
-			selectedTiers.length > 0 ? selectedTiers : null
-		)
-	}, [fetch, selectedTiers, sortOrder, currentPage])
+		setCurrentPage(1)
+	}, [selectedTiers])
 
 	const toggleTier = (tier: AlbumValueTiersEnum, nextChecked: boolean) => {
 		setSelectedTiers(prev => {
-			if (nextChecked) {
-				return prev.includes(tier) ? prev : [...prev, tier]
-			}
+			if (nextChecked) return prev.includes(tier) ? prev : [...prev, tier]
 			return prev.filter(t => t !== tier)
 		})
 	}
@@ -90,14 +100,14 @@ const AlbumValuesPage = () => {
 
 				<div className='xl:col-span-3'>
 					<div className='grid grid-cols-2 md:col-span-3 xl:grid-cols-4 gap-2 xl:gap-4'>
-						{isLoading
-							? Array.from({ length: perPage }).map((_, idx) => (
+						{isPending
+							? Array.from({ length: limit }).map((_, idx) => (
 									<AlbumValueCard
 										key={`Skeleton-album-value-${idx}`}
 										isLoading={true}
 									/>
 							  ))
-							: albumValuesPageStore.values.map(albumValue => (
+							: values.map(albumValue => (
 									<AlbumValueCard
 										key={albumValue.release.id}
 										isLoading={false}
@@ -105,11 +115,12 @@ const AlbumValuesPage = () => {
 									/>
 							  ))}
 					</div>
+
 					<div className='mt-10'>
 						<Pagination
 							currentPage={currentPage}
-							totalItems={albumValuesPageStore.count}
-							itemsPerPage={perPage}
+							totalItems={totalCount}
+							itemsPerPage={limit}
 							setCurrentPage={setCurrentPage}
 							idToScroll={'album-values'}
 						/>

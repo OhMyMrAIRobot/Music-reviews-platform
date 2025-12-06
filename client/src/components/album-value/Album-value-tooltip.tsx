@@ -1,12 +1,12 @@
 import { FC } from 'react'
-import { IAlbumValue } from '../../models/album-value/album-value'
+import { AlbumValue } from '../../types/album-value'
 import {
 	getAlbumValueTier,
 	getAlbumValueTierConfig,
 } from '../../utils/album-value-config'
 
 interface IProps {
-	value: IAlbumValue
+	value: AlbumValue
 	className?: string
 }
 

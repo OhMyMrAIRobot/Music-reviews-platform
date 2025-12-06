@@ -8,16 +8,15 @@ import {
 	useImperativeHandle,
 	useState,
 } from 'react'
-import { IReview } from '../../models/review/review.ts'
-import { CarouselRef } from '../../types/carousel-ref'
-import { CarouselStateCallbacks } from '../../types/carousel-state-callbacks.ts'
+import { CarouselRef } from '../../types/common/types/carousel-ref.ts'
+import { CarouselStateCallbacks } from '../../types/common/types/carousel-state-callbacks.ts'
+import { Review } from '../../types/review/index.ts'
 import ReviewCard from '../review/review-card/Review-card'
 
 interface IProps extends CarouselStateCallbacks {
-	items: IReview[]
+	items: Review[]
 	rowCount: number
 	isLoading: boolean
-	storeToggle: (reviewId: string, isFav: boolean) => Promise<string[]>
 }
 
 const LastReviewsCarousel = observer(
@@ -27,7 +26,6 @@ const LastReviewsCarousel = observer(
 				items,
 				rowCount,
 				isLoading,
-				storeToggle,
 				onCanScrollPrevChange,
 				onCanScrollNextChange,
 			},
@@ -109,7 +107,6 @@ const LastReviewsCarousel = observer(
 															review={review}
 															key={review.id}
 															isLoading={isLoading}
-															storeToggle={storeToggle}
 														/>
 													))}
 									</div>

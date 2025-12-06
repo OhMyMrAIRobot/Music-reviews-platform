@@ -2,65 +2,36 @@ import { observer } from 'mobx-react-lite'
 import { FC, useState } from 'react'
 import HourglassSvg from '../../../../components/svg/Hourglass-svg'
 import RejectSvg from '../../../../components/svg/Reject-svg'
-import { useAuth } from '../../../../hooks/use-auth'
 import { useStore } from '../../../../hooks/use-store'
-import { IReleaseMedia } from '../../../../models/release/release-media/release-media'
-import { ReleaseMediaStatusesEnum } from '../../../../models/release/release-media/release-media-status/release-media-statuses-enum'
-import { ReleaseMediaTypesEnum } from '../../../../models/release/release-media/release-media-type/release-media-types-enum'
+import { useToggleFavMedia } from '../../../../hooks/use-toggle-fav-media'
+import {
+	ReleaseMedia,
+	ReleaseMediaStatusesEnum,
+	ReleaseMediaTypesEnum,
+} from '../../../../types/release'
 import { parseYoutubeId } from '../../../../utils/parse-youtube-id'
 
 interface IProps {
-	releaseMedia: IReleaseMedia
+	releaseMedia: ReleaseMedia
 }
 
 const ReleaseDetailsMediaItem: FC<IProps> = observer(({ releaseMedia }) => {
-	const { authStore, notificationStore, releaseDetailsPageStore } = useStore()
-
-	const { checkAuth } = useAuth()
-
-	const isApproved =
-		releaseMedia.releaseMediaStatus.status === ReleaseMediaStatusesEnum.APPROVED
-
+	const { authStore } = useStore()
 	const isFav =
 		releaseMedia.userFavMedia.some(
 			item => item.userId === authStore.user?.id
 		) ?? false
 
-	const [toggling, setToggling] = useState<boolean>(false)
+	const { toggleFav, toggling } = useToggleFavMedia(releaseMedia, isFav)
+
+	const isApproved =
+		releaseMedia.status.status === ReleaseMediaStatusesEnum.APPROVED
+
 	const [show, setShow] = useState<boolean>(false)
 
 	const handleClickFav = async (e: React.MouseEvent) => {
 		e.preventDefault()
-		setToggling(true)
-
-		if (!checkAuth()) {
-			setToggling(false)
-			return
-		}
-
-		if (authStore.user?.id === releaseMedia.user?.id) {
-			notificationStore.addErrorNotification(
-				'Вы не можете отметить свою медиарецензию как понравившеюся!'
-			)
-			setToggling(false)
-			return
-		}
-
-		const errors = await releaseDetailsPageStore.toggleFavMedia(
-			releaseMedia.id,
-			isFav
-		)
-
-		if (errors.length === 0) {
-			notificationStore.addSuccessNotification(
-				isFav
-					? 'Вы успешно убрали медиарецензию из списка понравившихся!'
-					: 'Вы успешно отметили медиарецензию как понравившеюся!'
-			)
-		} else {
-			errors.forEach(err => notificationStore.addErrorNotification(err))
-		}
-		setToggling(false)
+		return toggleFav()
 	}
 
 	return (
@@ -74,10 +45,8 @@ const ReleaseDetailsMediaItem: FC<IProps> = observer(({ releaseMedia }) => {
 				onMouseEnter={() => setShow(true)}
 				onMouseLeave={() => setShow(false)}
 			>
-				{releaseMedia.releaseMediaStatus.status ===
-					ReleaseMediaStatusesEnum.APPROVED &&
-					releaseMedia.releaseMediaType.type ===
-						ReleaseMediaTypesEnum.MEDIA_REVIEW && (
+				{releaseMedia.status.status === ReleaseMediaStatusesEnum.APPROVED &&
+					releaseMedia.type.type === ReleaseMediaTypesEnum.MEDIA_REVIEW && (
 						<button
 							onClick={handleClickFav}
 							disabled={toggling}
@@ -121,16 +90,14 @@ const ReleaseDetailsMediaItem: FC<IProps> = observer(({ releaseMedia }) => {
 					)}/mqdefault.jpg`}
 				/>
 
-				{releaseMedia.releaseMediaStatus.status ===
-					ReleaseMediaStatusesEnum.PENDING && (
+				{releaseMedia.status.status === ReleaseMediaStatusesEnum.PENDING && (
 					<div className='absolute inset-0 flex flex-col gap-y-1.5 items-center justify-center text-sm font-medium text-yellow-700 bg-black/60 rounded-lg text-center'>
 						<HourglassSvg className={'size-6 '} />
 						<span>{ReleaseMediaStatusesEnum.PENDING}</span>
 					</div>
 				)}
 
-				{releaseMedia.releaseMediaStatus.status ===
-					ReleaseMediaStatusesEnum.REJECTED && (
+				{releaseMedia.status.status === ReleaseMediaStatusesEnum.REJECTED && (
 					<div className='absolute inset-0 flex flex-col items-center justify-center text-sm font-medium text-red-800 bg-black/60 rounded-lg text-center'>
 						<RejectSvg className={'size-6 '} />
 						<span>{ReleaseMediaStatusesEnum.REJECTED}</span>
@@ -149,7 +116,7 @@ const ReleaseDetailsMediaItem: FC<IProps> = observer(({ releaseMedia }) => {
 			</a>
 
 			<span className='text-sm font-medium text-white/50'>
-				{releaseMedia.releaseMediaType.type}
+				{releaseMedia.type.type}
 			</span>
 		</div>
 	)

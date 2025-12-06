@@ -1,24 +1,27 @@
-import { observer } from 'mobx-react-lite'
+import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
+import { ReleaseMediaAPI } from '../../../../../api/release/release-media-api'
 import AdminHeader from '../../../../../components/layout/admin-header/Admin-header'
 import Pagination from '../../../../../components/pagination/Pagination'
 import ReleaseMediaStatusIcon from '../../../../../components/release/release-media/Release-media-status-icon'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
-import { useLoading } from '../../../../../hooks/use-loading'
-import { useStore } from '../../../../../hooks/use-store'
-import { ReleaseMediaStatusesFilterOptions } from '../../../../../models/release/release-media/release-media-status/release-media-statuses-filter-options'
-import { ReleaseMediaTypesFilterOptions } from '../../../../../models/release/release-media/release-media-type/release-media-types-filter-options'
-import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
-import { SortOrder } from '../../../../../types/sort-order-type'
+import { useReleaseMediaMeta } from '../../../../../hooks/use-release-media-meta'
+import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys'
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum'
+import { SortOrder } from '../../../../../types/common/types/sort-order'
+import {
+	ReleaseMediaQuery,
+	ReleaseMediaStatusesFilterOptions,
+	ReleaseMediaTypesFilterOptions,
+} from '../../../../../types/release'
 import AdminFilterButton from '../../buttons/Admin-filter-button'
-import AdminToggleSortOrderButton from '../../buttons/Admin-toggle-sort-order-button'
 import AdminDashboardMediaGridItem from './Admin-dashboard-media-grid-item'
 import MediaFormModal from './Media-form-modal'
 
-const AdminDashboardMediaGrid = observer(() => {
-	const perPage = 10
+const limit = 10
 
-	const { metaStore, adminDashboardMediaStore } = useStore()
+const AdminDashboardMediaGrid = () => {
+	const { statuses, types, isLoading: isMetaLoading } = useReleaseMediaMeta()
 
 	const [addModalOpen, setAddModalOpen] = useState<boolean>(false)
 	const [searchText, setSearchText] = useState<string>('')
@@ -31,78 +34,53 @@ const AdminDashboardMediaGrid = observer(() => {
 	)
 	const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC)
 
-	const { execute: fetchStatuses, isLoading: isStatusesLoading } = useLoading(
-		metaStore.fetchReleaseMediaStatuses
-	)
+	const statusId =
+		activeStatus !== ReleaseMediaStatusesFilterOptions.ALL
+			? statuses.find(status => status.status === activeStatus)?.id
+			: undefined
 
-	const { execute: fetchTypes, isLoading: isTypesLoading } = useLoading(
-		metaStore.fetchReleaseMediaTypes
-	)
+	const typeId =
+		activeType !== ReleaseMediaTypesFilterOptions.ALL
+			? types.find(type => type.type === activeType)?.id
+			: undefined
 
-	const { execute: _fetchMedia, isLoading: isMediaLoading } = useLoading(
-		adminDashboardMediaStore.fetchReleaseMedia
-	)
-
-	const fetchMedia = async () => {
-		let statusId: string | null = null
-		let typeId: string | null = null
-		if (activeStatus !== ReleaseMediaStatusesFilterOptions.ALL) {
-			statusId =
-				metaStore.releaseMediaStatuses.find(
-					status => status.status === activeStatus
-				)?.id ?? null
-		}
-		if (activeType !== ReleaseMediaTypesFilterOptions.ALL) {
-			typeId =
-				metaStore.releaseMediaTypes.find(type => type.type === activeType)
-					?.id ?? null
-		}
-		return _fetchMedia(
-			perPage,
-			(currentPage - 1) * perPage,
-			statusId,
-			typeId,
-			searchText.trim().length > 0 ? searchText : null,
-			order
-		)
+	const query: ReleaseMediaQuery = {
+		limit,
+		offset: (currentPage - 1) * limit,
+		statusId,
+		typeId,
+		order,
+		search: searchText.trim() || undefined,
 	}
 
-	useEffect(() => {
-		if (metaStore.releaseMediaStatuses.length === 0) {
-			fetchStatuses()
-		}
-		if (metaStore.releaseMediaTypes.length === 0) {
-			fetchTypes()
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	const { data, isPending: isMediaLoading } = useQuery({
+		queryKey: releaseMediaKeys.list(query),
+		queryFn: () => ReleaseMediaAPI.findAll(query),
+		enabled: !isMetaLoading,
+		staleTime: 1000 * 60 * 5,
+	})
+
+	const media = data?.items || []
+	const count = data?.meta.count || 0
 
 	useEffect(() => {
 		setCurrentPage(1)
-		fetchMedia()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [searchText, activeStatus, activeType])
-
-	useEffect(() => {
-		fetchMedia()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentPage, order])
 
 	return (
 		<div className='flex flex-col h-screen' id='admin-media'>
 			<AdminHeader title={'Медиаматериалы'} setText={setSearchText} />
 
-			{!isTypesLoading && !isStatusesLoading && (
+			{!isMetaLoading && (
 				<MediaFormModal
 					isOpen={addModalOpen}
 					onClose={() => setAddModalOpen(false)}
-					refetch={fetchMedia}
 				/>
 			)}
 
 			<div id='admin-media-grid' className='flex flex-col overflow-hidden p-5'>
 				<div className='flex flex-wrap mb-2 gap-y-2 text-white/80 border-b border-white/10'>
-					{isStatusesLoading
+					{isMetaLoading
 						? Array.from({ length: 5 }).map((_, idx) => (
 								<SkeletonLoader
 									key={`status-skeleton-button-${idx}`}
@@ -136,7 +114,7 @@ const AdminDashboardMediaGrid = observer(() => {
 				</div>
 
 				<div className='flex flex-wrap gap-y-2 xl:mb-5 text-white/80 border-b border-white/10'>
-					{isTypesLoading
+					{isMetaLoading
 						? Array.from({ length: 5 }).map((_, idx) => (
 								<SkeletonLoader
 									key={`type-skeleton-button-${idx}`}
@@ -165,18 +143,6 @@ const AdminDashboardMediaGrid = observer(() => {
 					/>
 				</div>
 
-				<AdminToggleSortOrderButton
-					title={'Дата публикации'}
-					order={order}
-					toggleOrder={() =>
-						setOrder(
-							order === SortOrdersEnum.DESC
-								? SortOrdersEnum.ASC
-								: SortOrdersEnum.DESC
-						)
-					}
-				/>
-
 				<AdminDashboardMediaGridItem
 					className='bg-white/5 font-medium max-xl:hidden'
 					isLoading={false}
@@ -193,37 +159,35 @@ const AdminDashboardMediaGrid = observer(() => {
 				<div className='flex-1 overflow-y-auto mt-5'>
 					<div className='grid gap-y-5'>
 						{isMediaLoading
-							? Array.from({ length: perPage }).map((_, idx) => (
+							? Array.from({ length: limit }).map((_, idx) => (
 									<AdminDashboardMediaGridItem
 										key={`Media-skeleton-${idx}`}
 										isLoading={isMediaLoading}
 									/>
 							  ))
-							: adminDashboardMediaStore.releaseMedia.map((media, idx) => (
+							: media.map((mediaItem, idx) => (
 									<AdminDashboardMediaGridItem
-										key={media.id}
-										media={media}
+										key={mediaItem.id}
+										media={mediaItem}
 										isLoading={isMediaLoading}
-										position={(currentPage - 1) * perPage + idx + 1}
-										refetch={fetchMedia}
+										position={(currentPage - 1) * limit + idx + 1}
 									/>
 							  ))}
 					</div>
 				</div>
 
-				{!isMediaLoading &&
-					adminDashboardMediaStore.releaseMediaCount === 0 && (
-						<span className='font-medium mx-auto mt-5 text-lg'>
-							Медиаматериалы не найдены!
-						</span>
-					)}
+				{!isMediaLoading && count === 0 && (
+					<span className='font-medium mx-auto mt-5 text-lg'>
+						Медиаматериалы не найдены!
+					</span>
+				)}
 
-				{!isMediaLoading && adminDashboardMediaStore.releaseMediaCount > 0 && (
+				{!isMediaLoading && count > 0 && (
 					<div className='mt-5'>
 						<Pagination
 							currentPage={currentPage}
-							totalItems={adminDashboardMediaStore.releaseMediaCount}
-							itemsPerPage={perPage}
+							totalItems={count}
+							itemsPerPage={limit}
 							setCurrentPage={setCurrentPage}
 							idToScroll={'admin-media-grid'}
 						/>
@@ -232,6 +196,6 @@ const AdminDashboardMediaGrid = observer(() => {
 			</div>
 		</div>
 	)
-})
+}
 
 export default AdminDashboardMediaGrid

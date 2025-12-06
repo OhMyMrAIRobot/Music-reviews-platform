@@ -1,8 +1,8 @@
 import { FC, useState } from 'react'
 import { useNavigate } from 'react-router'
 import useNavigationPath from '../../../hooks/use-navigation-path'
-import { SearchBarOptions } from '../../../models/search/search-bar-options'
-import { SearchTypesEnum } from '../../../models/search/search-types-enum'
+import { SearchBarOptionsEnum } from '../../../types/common'
+import { SearchTypesEnum } from '../../../types/common/enums/search-types-enum'
 import ComboBox from '../../buttons/Combo-box'
 import SearchSvg from './svg/Search-svg'
 
@@ -19,7 +19,7 @@ const SearchBar: FC<IProps> = ({ className, comboboxClassname, onSubmit }) => {
 
 	const [searchText, setSearchText] = useState<string>('')
 	const [selectedType, setSelectedType] = useState<string>(
-		SearchBarOptions.AUTHORS
+		SearchBarOptionsEnum.AUTHORS
 	)
 
 	const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -34,10 +34,10 @@ const SearchBar: FC<IProps> = ({ className, comboboxClassname, onSubmit }) => {
 		let typeKey: SearchTypesEnum
 
 		switch (selectedType) {
-			case SearchBarOptions.AUTHORS:
+			case SearchBarOptionsEnum.AUTHORS:
 				typeKey = SearchTypesEnum.AUTHORS
 				break
-			case SearchBarOptions.RELEASES:
+			case SearchBarOptionsEnum.RELEASES:
 				typeKey = SearchTypesEnum.RELEASES
 				break
 			default:
@@ -71,7 +71,7 @@ const SearchBar: FC<IProps> = ({ className, comboboxClassname, onSubmit }) => {
 			/>
 
 			<ComboBox
-				options={Object.values(SearchBarOptions)}
+				options={Object.values(SearchBarOptionsEnum)}
 				value={selectedType}
 				onChange={setSelectedType}
 				className={`rounded-md border-l border-white/10 relative inline-block ${comboboxClassname}`}

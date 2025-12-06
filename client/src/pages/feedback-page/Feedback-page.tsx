@@ -1,3 +1,4 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { FeedbackAPI } from '../../api/feedback/feedback-api'
 import FormButton from '../../components/form-elements/Form-button'
@@ -6,49 +7,76 @@ import FormLabel from '../../components/form-elements/Form-label'
 import FormSubTitle from '../../components/form-elements/Form-subtitle'
 import FormTextbox from '../../components/form-elements/Form-textbox'
 import FormTitle from '../../components/form-elements/Form-title'
-import { useLoading } from '../../hooks/use-loading'
+import { useApiErrorHandler } from '../../hooks/use-api-error-handler'
 import { useStore } from '../../hooks/use-store'
-import { IFeedbackData } from '../../models/feedback/feedback-data'
+import { feedbackKeys } from '../../query-keys/feedback-keys'
+import { CreateFeedbackData } from '../../types/feedback'
+import { constraints } from '../../utils/constraints'
 
 const FeedbackPage = () => {
+	/** HOOKS */
 	const { notificationStore } = useStore()
+	const handleApiError = useApiErrorHandler()
+	const queryClient = useQueryClient()
 
-	const [feedbackData, setFeedbackData] = useState<IFeedbackData>({
+	/** STATES */
+	const [feedbackData, setFeedbackData] = useState<CreateFeedbackData>({
 		email: '',
 		title: '',
 		message: '',
 	})
 
-	const handleChange = (field: keyof IFeedbackData, value: string) => {
+	/**
+	 * Mutation to send feedback
+	 */
+	const { mutateAsync: sendAsync, isPending: isSending } = useMutation({
+		mutationFn: (payload: CreateFeedbackData) => FeedbackAPI.create(payload),
+		onSuccess: () => {
+			notificationStore.addSuccessNotification('Отзыв успешно отправлен!')
+			setFeedbackData({ email: '', title: '', message: '' })
+
+			queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
+		},
+		onError: (error: unknown) => {
+			handleApiError(error)
+		},
+	})
+
+	/**
+	 * Checks if the form is valid
+	 *
+	 * @returns {boolean} - True if the form is valid, false otherwise
+	 */
+	const isFormValid = useMemo(() => {
+		return (
+			feedbackData.email.trim().length >= constraints.feedback.minEmailLength &&
+			feedbackData.email.trim().length <= constraints.feedback.maxEmailLength &&
+			feedbackData.message.trim().length >=
+				constraints.feedback.minMessageLength &&
+			feedbackData.message.trim().length <=
+				constraints.feedback.maxMessageLength &&
+			feedbackData.title.trim().length >= constraints.feedback.minTitleLength &&
+			feedbackData.title.trim().length <= constraints.feedback.maxTitleLength
+		)
+	}, [feedbackData])
+
+	/**
+	 * Handles the change of a form field
+	 *
+	 * @param {keyof CreateFeedbackData} field - The field to change
+	 * @param {string} value - The new value of the field
+	 */
+	const handleChange = (field: keyof CreateFeedbackData, value: string) => {
 		setFeedbackData(prev => ({ ...prev, [field]: value }))
 	}
 
-	const sendFeedback = async () => {
-		if (!isFormValid) return
-		try {
-			await FeedbackAPI.sendFeedback(feedbackData)
-			notificationStore.addSuccessNotification('Отзыв успешно отправлен!')
-			setFeedbackData({ email: '', title: '', message: '' })
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		} catch (e: any) {
-			const errors: string[] = Array.isArray(e.response?.data?.message)
-				? e.response?.data?.message
-				: [e.response?.data?.message]
-			errors.forEach(error => {
-				notificationStore.addErrorNotification(error)
-			})
-		}
+	/**
+	 * Handles the send button click event
+	 */
+	const send = async () => {
+		if (!isFormValid || isSending) return
+		await sendAsync(feedbackData)
 	}
-
-	const { execute: send, isLoading } = useLoading(sendFeedback)
-
-	const isFormValid = useMemo(() => {
-		return (
-			feedbackData.email.trim() !== '' &&
-			feedbackData.message.trim().length >= 100 &&
-			feedbackData.title.trim().length >= 5
-		)
-	}, [feedbackData])
 
 	return (
 		<div className='grid w-full md:w-[400px] gap-5 mx-auto'>
@@ -76,7 +104,7 @@ const FeedbackPage = () => {
 				<FormLabel name={'Заголовок'} htmlFor={'title'} />
 				<FormInput
 					id={'title'}
-					placeholder={'Краткий заголовок (до 50 символов)'}
+					placeholder={`Краткий заголовок (от ${constraints.feedback.minTitleLength} до ${constraints.feedback.maxTitleLength} символов)`}
 					type={'text'}
 					value={feedbackData.title}
 					setValue={value => handleChange('title', value)}
@@ -87,7 +115,7 @@ const FeedbackPage = () => {
 				<FormLabel name={'Описание'} htmlFor={'message'} />
 				<FormTextbox
 					id={'message'}
-					placeholder={'Текст (от 100 символов)'}
+					placeholder={`Текст (от ${constraints.feedback.minMessageLength} до ${constraints.feedback.maxMessageLength} символов)`}
 					value={feedbackData.message}
 					setValue={value => handleChange('message', value)}
 					className='h-50'
@@ -95,11 +123,11 @@ const FeedbackPage = () => {
 			</div>
 
 			<FormButton
-				title={isLoading ? 'Отправка...' : 'Отправить'}
+				title={isSending ? 'Отправка...' : 'Отправить'}
 				isInvert={true}
 				onClick={send}
-				disabled={isLoading || !isFormValid}
-				isLoading={isLoading}
+				disabled={isSending || !isFormValid}
+				isLoading={isSending}
 			/>
 		</div>
 	)

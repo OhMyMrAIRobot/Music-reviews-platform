@@ -2,8 +2,10 @@ import { FC } from 'react'
 import { Link } from 'react-router'
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
-import { NominationTypesEnum } from '../../../../models/nomination/nomination-type/nomination-type-enum'
-import { NominationWinner } from '../../../../models/nomination/nomination-winner/nomination-winner'
+import {
+	NominationTypesEnum,
+	NominationWinner,
+} from '../../../../types/nomination'
 
 interface IProps {
 	item?: NominationWinner

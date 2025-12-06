@@ -1,13 +1,13 @@
 import { FC } from 'react'
 import { Link } from 'react-router'
 import useNavigationPath from '../../../hooks/use-navigation-path'
-import { IAuthorLike } from '../../../models/author/author-likes/author-like'
+import { AuthorLike } from '../../../types/review'
 import SkeletonLoader from '../../utils/Skeleton-loader'
 import AuthorLikeCardHeader from './Author-like-card-header'
 
 interface IProps {
 	isLoading: boolean
-	authorLike?: IAuthorLike
+	authorLike?: AuthorLike
 }
 
 const AuthorLikeCard: FC<IProps> = ({ isLoading, authorLike }) => {
@@ -27,7 +27,7 @@ const AuthorLikeCard: FC<IProps> = ({ isLoading, authorLike }) => {
 				to={navigateToReleaseDetails(authorLike.release.id)}
 				className='block text-ellipsis pl-1.5 whitespace-nowrap overflow-hidden text-sm font-bold w-full z-100 relative'
 			>
-				{authorLike.reviewTitle}
+				{authorLike.review.title}
 			</Link>
 
 			<div className='p-1.5 mt-4 overflow-hidden flex justify-between rounded-[10px] relative bg-white/8 border border-white/3'>

@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { NominationTypesEnum } from '../../models/nomination/nomination-type/nomination-type-enum'
+import { NominationTypesEnum } from '../../types/nomination/enums/nomination-types-enum'
 import AlbumOfMonthNominationSvg from './svg/Album-of-month-nomination-svg'
 import CoverOfMonthNominationSvg from './svg/Cover-of-month-nomination-svg'
 import HitOfMonthNominationSvg from './svg/Hit-of-month-nomination-svg'

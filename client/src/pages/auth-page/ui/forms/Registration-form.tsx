@@ -1,22 +1,38 @@
-import { observer } from 'mobx-react-lite'
+import { useMutation } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
+import { AuthAPI } from '../../../../api/auth-api'
 import FormButton from '../../../../components/form-elements/Form-button'
 import FormCheckbox from '../../../../components/form-elements/Form-checkbox'
 import FormInput from '../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../components/form-elements/Form-label'
 import FormTitle from '../../../../components/form-elements/Form-title'
 import PreventableLink from '../../../../components/utils/Preventable-link'
-import { useLoading } from '../../../../hooks/use-loading'
+import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
-import { IRegistrationRequest } from '../../../../models/auth/request/registration-request'
+import { RegisterData } from '../../../../types/auth'
+import { constraints } from '../../../../utils/constraints'
 
-const RegistrationForm = observer(() => {
+/**
+ * Represents state of registration form.
+ */
+type RegistrationFormState = {
+	email: string
+	nickname: string
+	password: string
+	passwordConfirm: string
+	agreementChecked: boolean
+	policyChecked: boolean
+}
+
+const RegistrationForm = () => {
+	/** HOOKS */
 	const { authStore, notificationStore } = useStore()
-
 	const { navigateToLogin } = useNavigationPath()
+	const handleApiError = useApiErrorHandler()
 
-	const [formData, setFormData] = useState<IRegistrationRequest>({
+	/** STATES */
+	const [formData, setFormData] = useState<RegistrationFormState>({
 		email: '',
 		nickname: '',
 		password: '',
@@ -25,8 +41,30 @@ const RegistrationForm = observer(() => {
 		policyChecked: false,
 	})
 
-	const { execute: register, isLoading } = useLoading(authStore.register)
+	/**
+	 * Mutation for user registration
+	 */
+	const { mutateAsync: register, isPending: isLoading } = useMutation({
+		mutationFn: (data: RegisterData) => AuthAPI.register(data),
+		onSuccess: data => {
+			const { user, accessToken, emailSent } = data
+			authStore.setAuthorization(user, accessToken)
+			notificationStore.addSuccessNotification('Вы успешно зарегистрировались!')
+			if (emailSent) {
+				notificationStore.addEmailSentNotification(emailSent)
+			}
+		},
+		onError: (error: unknown) => {
+			handleApiError(error, 'Ошибка при регистрации!')
+		},
+	})
 
+	/**
+	 * Handles changes in form inputs.
+	 *
+	 * @param field - The field to update.
+	 * @param value - The new value for the field.
+	 */
 	const handleChange = (
 		field: keyof typeof formData,
 		value: string | boolean
@@ -34,6 +72,17 @@ const RegistrationForm = observer(() => {
 		setFormData(prev => ({ ...prev, [field]: value }))
 	}
 
+	/**
+	 * Renders an input field.
+	 *
+	 * @param id - The ID of the input field.
+	 * @param label - The label for the input field.
+	 * @param type - The type of the input field.
+	 * @param placeholder - The placeholder text for the input field.
+	 * @param description - An optional description for the input field.
+	 *
+	 * @returns The rendered input field.
+	 */
 	const renderInput = (
 		id: keyof typeof formData,
 		label: string,
@@ -58,6 +107,15 @@ const RegistrationForm = observer(() => {
 		</div>
 	)
 
+	/**
+	 * Renders a checkbox with a link.
+	 *
+	 * @param id - The ID of the checkbox field.
+	 * @param linkText - The text for the link.
+	 * @param linkHref - The href for the link.
+	 *
+	 * @returns The rendered checkbox with a link.
+	 */
 	const renderCheckbox = (
 		id: keyof typeof formData,
 		linkText: string,
@@ -81,27 +139,35 @@ const RegistrationForm = observer(() => {
 		</div>
 	)
 
-	const handleRegistration = async () => {
-		if (!isFormValid || isLoading) return
-		const result = await register(formData)
-		if (Array.isArray(result)) {
-			result.forEach(err => notificationStore.addErrorNotification(err))
-		} else {
-			notificationStore.addSuccessNotification('Вы успешно зарегистрировались!')
-			notificationStore.addEmailSentNotification(result)
-		}
-	}
-
+	/**
+	 * Indicates whether the form is valid for submission.
+	 *
+	 * @return {boolean} True if the form is valid, false otherwise.
+	 */
 	const isFormValid = useMemo(() => {
 		return (
 			formData.agreementChecked &&
 			formData.policyChecked &&
-			formData.email.trim() &&
-			formData.nickname.trim() &&
-			formData.password &&
-			formData.passwordConfirm
+			formData.email.trim().length >= constraints.user.minEmailLength &&
+			formData.email.trim().length <= constraints.user.maxEmailLength &&
+			formData.nickname.trim().length >= constraints.user.minNicknameLength &&
+			formData.nickname.trim().length <= constraints.user.maxNicknameLength &&
+			formData.password.length >= constraints.user.minPasswordLength &&
+			formData.password.length <= constraints.user.maxPasswordLength &&
+			formData.passwordConfirm.length >= constraints.user.minPasswordLength &&
+			formData.passwordConfirm.length <= constraints.user.maxPasswordLength &&
+			formData.password === formData.passwordConfirm
 		)
 	}, [formData])
+
+	/**
+	 * Handles form submission.
+	 */
+	const handleSubmit = async () => {
+		if (!isFormValid || isLoading) return
+
+		return register(formData)
+	}
 
 	return (
 		<div className='grid w-full sm:w-[350px] gap-2 py-10'>
@@ -134,7 +200,7 @@ const RegistrationForm = observer(() => {
 				<FormButton
 					title={isLoading ? 'Регистрация...' : 'Создать аккаунт'}
 					isInvert={true}
-					onClick={handleRegistration}
+					onClick={handleSubmit}
 					disabled={isLoading || !isFormValid}
 					isLoading={isLoading}
 				/>
@@ -155,6 +221,6 @@ const RegistrationForm = observer(() => {
 			</div>
 		</div>
 	)
-})
+}
 
 export default RegistrationForm

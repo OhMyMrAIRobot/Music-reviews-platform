@@ -1,4 +1,4 @@
-import { RolesEnum } from '../models/role/roles-enum'
+import { RolesEnum } from '../types/user'
 
 export const getRoleColor = (role: string): string => {
 	switch (role) {

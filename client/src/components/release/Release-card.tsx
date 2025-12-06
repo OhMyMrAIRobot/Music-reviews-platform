@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { Link } from 'react-router'
 import useNavigationPath from '../../hooks/use-navigation-path'
-import { IRelease } from '../../models/release/release'
+import { Release } from '../../types/release'
 import SkeletonLoader from '../utils/Skeleton-loader'
 import ReleaseAuthorActions from './Release-author-actions'
 import ReleaseAuthors from './Release-authors'
@@ -10,7 +10,7 @@ import ReleaseReviewsCount from './Release-reviews-count'
 import ReleaseTypeIcon from './Release-type-icon'
 
 interface IProps {
-	release?: IRelease
+	release?: Release
 	isLoading: boolean
 }
 
@@ -41,14 +41,14 @@ const ReleaseCard: FC<IProps> = ({ release, isLoading }) => {
 					</div>
 
 					<ReleaseReviewsCount
-						textCount={release.textCount}
-						noTextCount={release.withoutTextCount}
+						textCount={release.reviewsInfo.withText}
+						noTextCount={release.reviewsInfo.withoutText}
 						className='absolute bottom-1.5 left-1.5 bg-zinc-900 rounded-full px-1.5'
 					/>
 
 					<div className='absolute bottom-1.5 right-1.5 bg-zinc-900 size-6 rounded-full flex items-center justify-center'>
 						<ReleaseTypeIcon
-							type={release.releaseType}
+							type={release.releaseType.type}
 							className={'relative size-4'}
 						/>
 					</div>
@@ -60,7 +60,7 @@ const ReleaseCard: FC<IProps> = ({ release, isLoading }) => {
 				</div>
 
 				<ReleaseAuthors
-					authors={release.authors}
+					authors={release.authors.artists}
 					className='text-[13px] font-medium mt-2 leading-3'
 				/>
 
@@ -72,7 +72,7 @@ const ReleaseCard: FC<IProps> = ({ release, isLoading }) => {
 
 				<div className='flex items-center px-1 pb-1 gap-1 text-white mt-auto pt-5'>
 					<ReleaseRatings
-						ratings={release.ratings}
+						ratings={release.ratings.total}
 						className={'size-7 text-xs'}
 						showHint={false}
 					/>

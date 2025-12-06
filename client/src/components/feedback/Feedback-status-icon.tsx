@@ -1,11 +1,14 @@
 import { FC } from 'react'
-import { FeedbackStatusesEnum } from '../../models/feedback/feedback-status/feedback-statuses-enum'
+import {
+	FeedbackStatusesEnum,
+	FeedbackStatusesFilterEnum,
+} from '../../types/feedback'
 import MessageChatSvg from './svg/Message-chat-svg'
 import MessageCircleSvg from './svg/Message-circle-svg'
 import MessageTickSvg from './svg/Message-tick-svg'
 
 interface IProps {
-	status: string
+	status: FeedbackStatusesEnum | FeedbackStatusesFilterEnum
 	className: string
 }
 
@@ -17,8 +20,6 @@ const FeedbackStatusIcon: FC<IProps> = ({ status, className }) => {
 			return <MessageTickSvg className={className} />
 		case FeedbackStatusesEnum.ANSWERED:
 			return <MessageChatSvg className={className} />
-		default:
-			return null
 	}
 }
 

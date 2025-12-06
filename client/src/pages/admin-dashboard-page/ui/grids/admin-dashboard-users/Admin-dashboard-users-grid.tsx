@@ -1,53 +1,53 @@
-import { observer } from 'mobx-react-lite'
+import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
+import { UserAPI } from '../../../../../api/user/user-api.ts'
 import AdminHeader from '../../../../../components/layout/admin-header/Admin-header.tsx'
 import Pagination from '../../../../../components/pagination/Pagination.tsx'
 import UserRoleSvg from '../../../../../components/user/User-role-svg.tsx'
-import { useLoading } from '../../../../../hooks/use-loading.ts'
-import { useStore } from '../../../../../hooks/use-store.ts'
-import { RolesFilterOptions } from '../../../../../models/role/roles-filter-options.ts'
-import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum.ts'
-import { SortOrder } from '../../../../../types/sort-order-type.ts'
+import { usersKeys } from '../../../../../query-keys/users-keys.ts'
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum.ts'
+import { SortOrder } from '../../../../../types/common/types/sort-order.ts'
+import {
+	RolesEnum,
+	RolesFilterOptions,
+	UsersQuery,
+} from '../../../../../types/user/index.ts'
 import AdminFilterButton from '../../buttons/Admin-filter-button.tsx'
-import AdminToggleSortOrderButton from '../../buttons/Admin-toggle-sort-order-button.tsx'
 import AdminDashboardUsersGridItem from './Admin-dashboard-users-grid-item.tsx'
 
-const AdminDashboardUsersGrid = observer(() => {
-	const perPage = 10
+const limit = 10
 
-	const { adminDashboardUsersStore } = useStore()
-
+const AdminDashboardUsersGrid = () => {
 	const [searchText, setSearchText] = useState<string>('')
-	const [activeOption, setActiveOption] = useState<string>(
+	const [activeOption, setActiveOption] = useState<RolesFilterOptions>(
 		RolesFilterOptions.ALL
 	)
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC)
 
-	const { execute: fetch, isLoading } = useLoading(
-		adminDashboardUsersStore.fetchUsers
-	)
-
-	const fetchUsers = () => {
-		return fetch(
-			searchText.trim().length > 0 ? searchText.trim() : null,
-			activeOption !== RolesFilterOptions.ALL ? activeOption : null,
-			order,
-			perPage,
-			(currentPage - 1) * perPage
-		)
+	// TODO: FIX ENUM
+	const query: UsersQuery = {
+		search: searchText.trim() || undefined,
+		order,
+		limit,
+		offset: (currentPage - 1) * limit,
+		role:
+			activeOption !== RolesFilterOptions.ALL
+				? (activeOption as unknown as RolesEnum)
+				: undefined,
 	}
+
+	const { data: usersData, isPending: isLoading } = useQuery({
+		queryKey: usersKeys.list(query),
+		queryFn: () => UserAPI.findAll(query),
+	})
+
+	const users = usersData?.items || []
+	const count = usersData?.meta.count || 0
 
 	useEffect(() => {
 		setCurrentPage(1)
-		fetchUsers()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [activeOption, searchText])
-
-	useEffect(() => {
-		fetchUsers()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentPage, order])
 
 	return (
 		<div className='flex flex-col h-screen' id='admin-users'>
@@ -73,18 +73,6 @@ const AdminDashboardUsersGrid = observer(() => {
 					))}
 				</div>
 
-				<AdminToggleSortOrderButton
-					title={'Дата создания'}
-					order={order}
-					toggleOrder={() =>
-						setOrder(
-							order === SortOrdersEnum.DESC
-								? SortOrdersEnum.ASC
-								: SortOrdersEnum.DESC
-						)
-					}
-				/>
-
 				<AdminDashboardUsersGridItem
 					className='bg-white/5 font-medium max-xl:hidden'
 					isLoading={false}
@@ -101,36 +89,35 @@ const AdminDashboardUsersGrid = observer(() => {
 				<div className='flex-1 overflow-y-auto mt-5'>
 					<div className='grid gap-y-5'>
 						{isLoading
-							? Array.from({ length: perPage }).map((_, idx) => (
+							? Array.from({ length: limit }).map((_, idx) => (
 									<AdminDashboardUsersGridItem
 										key={`User-skeleton-${idx}`}
 										isLoading={isLoading}
 									/>
 							  ))
-							: adminDashboardUsersStore.users.map((user, idx) => (
+							: users.map((user, idx) => (
 									<AdminDashboardUsersGridItem
 										key={user.id}
 										user={user}
 										isLoading={isLoading}
-										position={(currentPage - 1) * perPage + idx + 1}
-										refetchUsers={fetchUsers}
+										position={(currentPage - 1) * limit + idx + 1}
 									/>
 							  ))}
 					</div>
 				</div>
 
-				{!isLoading && adminDashboardUsersStore.count === 0 && (
+				{!isLoading && count === 0 && (
 					<span className='font-medium mx-auto mt-5 text-xl'>
 						Пользователи не найдены!
 					</span>
 				)}
 
-				{!isLoading && adminDashboardUsersStore.count > 0 && (
+				{!isLoading && count > 0 && (
 					<div className='mt-5'>
 						<Pagination
 							currentPage={currentPage}
-							totalItems={adminDashboardUsersStore.count}
-							itemsPerPage={perPage}
+							totalItems={count}
+							itemsPerPage={limit}
 							setCurrentPage={setCurrentPage}
 							idToScroll={'admin-users-grid'}
 						/>
@@ -139,6 +126,6 @@ const AdminDashboardUsersGrid = observer(() => {
 			</div>
 		</div>
 	)
-})
+}
 
 export default AdminDashboardUsersGrid

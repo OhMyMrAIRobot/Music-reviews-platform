@@ -1,30 +1,54 @@
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQuery,
+	useQueryClient,
+} from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
 import { FC, useEffect, useMemo, useState } from 'react'
+import { ReviewAPI } from '../../../../../../api/review/review-api'
 import TickSvg from '../../../../../../components/svg/Tick-svg'
 import Loader from '../../../../../../components/utils/Loader'
+import { useApiErrorHandler } from '../../../../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../../../../hooks/use-auth'
-import { useLoading } from '../../../../../../hooks/use-loading'
 import { useStore } from '../../../../../../hooks/use-store'
-import { IUserReview } from '../../../../../../models/review/user-review'
+import { leaderboardKeys } from '../../../../../../query-keys/leaderboard-keys'
+import { platformStatsKeys } from '../../../../../../query-keys/platform-stats-keys'
+import { profilesKeys } from '../../../../../../query-keys/profiles-keys'
+import { releasesKeys } from '../../../../../../query-keys/releases-keys'
+import { reviewsKeys } from '../../../../../../query-keys/reviews-keys'
+import {
+	CreateReviewData,
+	Review,
+	ReviewsQuery,
+	UpdateReviewData,
+} from '../../../../../../types/review'
 import { calculateTotalReviewMark } from '../../../../../../utils/calculate-total-review-mark'
+import { constraints } from '../../../../../../utils/constraints'
 import ReleaseDetailsEstimationDeleteButton from '../../buttons/Release-details-estimation-delete-button'
 import ReleaseDetailsReviewFormMarks from './Release-details-review-form-marks'
 import ReleaseDetailsReviewFormText from './Release-details-review-form-text'
 
+/**
+ * Props for ReleaseDetailsReviewForm component
+ *
+ * @property {boolean} isReview - Indicates if the form is for a review or just a mark
+ * @property {string} releaseId - The id of the release
+ */
 interface IProps {
 	isReview: boolean
 	releaseId: string
-	refetchReviews: () => void
 }
 
 const ReleaseDetailsReviewForm: FC<IProps> = observer(
-	({ isReview, releaseId, refetchReviews }) => {
-		const { releaseDetailsPageStore, notificationStore } = useStore()
-
+	({ isReview, releaseId }) => {
+		/** HOOKS */
+		const { authStore, notificationStore } = useStore()
 		const { checkAuth } = useAuth()
+		const queryClient = useQueryClient()
+		const handleApiError = useApiErrorHandler()
 
-		const userReview = releaseDetailsPageStore.userReview
-
+		/** STATES */
 		const [title, setTitle] = useState<string>('')
 		const [text, setText] = useState<string>('')
 		const [rhymes, setRhymes] = useState<number>(5)
@@ -34,16 +58,109 @@ const ReleaseDetailsReviewForm: FC<IProps> = observer(
 		const [atmosphere, setAtmosphere] = useState<number>(1)
 		const [total, setTotal] = useState<number>(28)
 
-		const { execute: handleDelete, isLoading: isDeleting } = useLoading(
-			releaseDetailsPageStore.deleteReview
-		)
-		const { execute: handleUpdate, isLoading: isUpdating } = useLoading(
-			releaseDetailsPageStore.updateReview
-		)
-		const { execute: handlePost, isLoading: isPosting } = useLoading(
-			releaseDetailsPageStore.postReview
-		)
+		/**
+		 * Query to get user's review for the release
+		 */
+		const query: ReviewsQuery = {
+			releaseId,
+			userId: authStore.user?.id,
+			withTextOnly: false,
+		}
 
+		/**
+		 * Fetch reviews data
+		 */
+		const { data: reviewsData } = useQuery({
+			queryKey: reviewsKeys.list(query),
+			queryFn: () => ReviewAPI.findAll(query),
+			enabled: authStore.isAuth && authStore.user?.id !== undefined,
+			staleTime: 1000 * 60 * 5,
+			retry: false,
+		})
+
+		const userReview =
+			reviewsData && reviewsData?.items.length > 0
+				? reviewsData?.items[0]
+				: null
+
+		/**
+		 * Invalidate related queries after mutations
+		 */
+		const invalidateRelatedQueries = () => {
+			const keysToInvalidate: InvalidateQueryFilters[] = [
+				{ queryKey: releasesKeys.details(releaseId) },
+				{ queryKey: profilesKeys.profile(authStore.user?.id || 'unknown') },
+				{ queryKey: leaderboardKeys.all },
+				{ queryKey: platformStatsKeys.all },
+				{ queryKey: reviewsKeys.all },
+				{ queryKey: releasesKeys.all },
+			]
+
+			keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+		}
+
+		/**
+		 * Create a review mutation
+		 */
+		const { mutateAsync: createAsync, isPending: isCreating } = useMutation({
+			mutationFn: (data: CreateReviewData) => ReviewAPI.create(data),
+			onSuccess: () => {
+				notificationStore.addSuccessNotification(
+					`Вы успешно добавили ${isReview ? 'рецензию' : 'оценку'}!`
+				)
+				invalidateRelatedQueries()
+			},
+			onError: (error: unknown) => {
+				handleApiError(
+					error,
+					`Не удалось добавить ${isReview ? 'рецензию' : 'оценку'}.`
+				)
+			},
+		})
+
+		/**
+		 * Update a review mutation
+		 */
+		const { mutateAsync: updateAsync, isPending: isUpdating } = useMutation({
+			mutationFn: ({ id, data }: { id: string; data: UpdateReviewData }) =>
+				ReviewAPI.update(id, data),
+			onSuccess: () => {
+				notificationStore.addSuccessNotification(
+					`Вы успешно обновили ${isReview ? 'рецензию' : 'оценку'}!`
+				)
+
+				invalidateRelatedQueries()
+			},
+			onError: (error: unknown) => {
+				handleApiError(
+					error,
+					`Не удалось обновить ${isReview ? 'рецензию' : 'оценку'}.`
+				)
+			},
+		})
+
+		/**
+		 * Delete a review mutation
+		 */
+		const { mutateAsync: deleteAsync, isPending: isDeleting } = useMutation({
+			mutationFn: (id: string) => ReviewAPI.delete(id),
+			onSuccess: () => {
+				notificationStore.addSuccessNotification(
+					`Вы успешно удалили ${isReview ? 'рецензию' : 'оценку'}!`
+				)
+				setDefaultValues(null)
+
+				invalidateRelatedQueries()
+			},
+			onError: (error: unknown) => {
+				handleApiError(
+					error,
+					`Не удалось удалить ${isReview ? 'рецензию' : 'оценку'}.`
+				)
+			},
+		})
+
+		/** EFFECTS */
 		useEffect(() => {
 			setTotal(
 				calculateTotalReviewMark({
@@ -57,39 +174,46 @@ const ReleaseDetailsReviewForm: FC<IProps> = observer(
 		}, [rhymes, structure, realization, individuality, atmosphere])
 
 		useEffect(() => {
-			setDefaultValues(userReview)
+			setDefaultValues(userReview || null)
 		}, [userReview])
 
-		const setDefaultValues = (review: IUserReview | null) => {
+		/**
+		 * Set default values for the review form
+		 *
+		 * @param {Review | null} review - The review object or null
+		 */
+		const setDefaultValues = (review: Review | null) => {
 			setTitle(review?.title ?? '')
 			setText(review?.text ?? '')
-			setRhymes(review?.rhymes ?? 5)
-			setStructure(review?.structure ?? 5)
-			setRealization(review?.realization ?? 5)
-			setIndividuality(review?.individuality ?? 5)
-			setAtmosphere(review?.atmosphere ?? 1)
+			setRhymes(review?.values.rhymes ?? 5)
+			setStructure(review?.values.structure ?? 5)
+			setRealization(review?.values.realization ?? 5)
+			setIndividuality(review?.values.individuality ?? 5)
+			setAtmosphere(review?.values.atmosphere ?? 1)
 		}
 
+		/**
+		 * Check if there are changes in the form compared to the user's existing review
+		 *
+		 * @returns {boolean} - True if there are changes, false otherwise
+		 */
 		const hasChanges = useMemo(() => {
 			if (userReview) {
+				const valuesChanged =
+					rhymes !== userReview.values.rhymes ||
+					structure !== userReview.values.structure ||
+					realization !== userReview.values.realization ||
+					individuality !== userReview.values.individuality ||
+					atmosphere !== userReview.values.atmosphere
+
 				if (isReview) {
 					return (
 						title !== userReview.title ||
 						text !== userReview.text ||
-						rhymes !== userReview.rhymes ||
-						structure !== userReview.structure ||
-						realization !== userReview.realization ||
-						individuality !== userReview.individuality ||
-						atmosphere !== userReview.atmosphere
+						valuesChanged
 					)
 				} else {
-					return (
-						rhymes !== userReview.rhymes ||
-						structure !== userReview.structure ||
-						realization !== userReview.realization ||
-						individuality !== userReview.individuality ||
-						atmosphere !== userReview.atmosphere
-					)
+					return valuesChanged
 				}
 			}
 			return true
@@ -105,71 +229,80 @@ const ReleaseDetailsReviewForm: FC<IProps> = observer(
 			userReview,
 		])
 
+		/**
+		 * Check if the form is valid
+		 *
+		 * @returns {boolean} - True if the form is valid, false otherwise
+		 */
+		const isFormValid = useMemo(() => {
+			if (!isReview) return true
+			return (
+				title.trim().length <= constraints.review.maxTitleLength &&
+				title.trim().length >= constraints.review.minTitleLength &&
+				text.trim().length >= constraints.review.minTextLength &&
+				text.trim().length <= constraints.review.maxTextLength
+			)
+		}, [isReview, text, title])
+
+		/**
+		 * Check if both text and title are filled when isReview is true
+		 *
+		 * @returns {boolean} - True if both text and title are filled, false otherwise
+		 */
 		const textAndTitleTogether = useMemo(() => {
 			if (!isReview) return true
 			return text.trim() !== '' && title.trim() !== ''
 		}, [isReview, text, title])
 
-		const postReview = async () => {
-			if (!checkAuth() || isDeleting || isPosting || isUpdating) return
+		/**
+		 * Check if any mutation is in progress
+		 *
+		 * @returns {boolean} - True if any mutation is in progress, false otherwise
+		 */
+		const isSubmitting = useMemo(
+			() => isCreating || isUpdating || isDeleting,
+			[isCreating, isUpdating, isDeleting]
+		)
 
-			const promise = userReview
-				? handleUpdate(releaseId, userReview.id, {
-						title: isReview ? title.trim() || undefined : undefined,
-						text: isReview ? text.trim() || undefined : undefined,
-						rhymes,
-						structure,
-						realization,
-						individuality,
-						atmosphere,
-				  })
-				: handlePost(releaseId, {
-						title: isReview ? title.trim() || undefined : undefined,
-						text: isReview ? text.trim() || undefined : undefined,
-						rhymes,
-						structure,
-						realization,
-						individuality,
-						atmosphere,
-				  })
+		/**
+		 * Handle form submission
+		 */
+		const handleSubmit = async () => {
+			if (!checkAuth() || !isFormValid || !hasChanges || isSubmitting) return
 
-			const errors = await promise
+			const reviewData = {
+				title: isReview ? title.trim() || undefined : undefined,
+				text: isReview ? text.trim() || undefined : undefined,
+				rhymes,
+				structure,
+				realization,
+				individuality,
+				atmosphere,
+			}
 
-			if (errors.length === 0) {
-				notificationStore.addSuccessNotification(
-					`Вы успешно ${userReview ? 'обновили' : 'добавили'} ${
-						isReview ? 'рецензию' : 'оценку'
-					}!`
-				)
-				refetchReviews()
-			} else {
-				errors.forEach(error => {
-					notificationStore.addErrorNotification(error)
+			if (userReview) {
+				return updateAsync({
+					id: userReview.id,
+					data: reviewData,
 				})
+			} else {
+				return createAsync({ ...reviewData, releaseId })
 			}
 		}
 
+		/**
+		 * Handle review deletion
+		 */
 		const deleteReview = async () => {
-			if (!checkAuth() || !userReview || isDeleting) return
-			const errors = await handleDelete(userReview.id, releaseId)
+			if (!checkAuth() || !userReview || isSubmitting) return
 
-			if (errors.length === 0) {
-				notificationStore.addSuccessNotification(
-					`Вы успешно удалили ${
-						userReview.title && userReview.text ? ' рецензию' : ' оценку'
-					}!`
-				)
-				refetchReviews()
-				setDefaultValues(null)
-			} else {
-				errors.forEach(err => notificationStore.addErrorNotification(err))
-			}
+			return deleteAsync(userReview.id)
 		}
 
 		return (
 			<div className='border bg-zinc-900 rounded-xl p-2 border-white/10 grid gap-y-4 lg:gap-y-5'>
 				{userReview && (
-					<div className='bg-gradient-to-br from-white/20 border border-white/5 rounded-lg text-sm lg:text-base text-center px-3 py-3 lg:py-5 mb-4 font-medium'>
+					<div className='bg-gradient-to-br from-white/20 border border-white/5 rounded-lg text-sm lg:text-base text-center px-3 py-3 lg:py-5 font-medium'>
 						Вы уже оставляли
 						{userReview.title && userReview.text ? ' рецензию ' : ' оценку '}к
 						данной работе. Вы можете изменить ее, заполнив форму ниже!
@@ -178,12 +311,12 @@ const ReleaseDetailsReviewForm: FC<IProps> = observer(
 
 				<div className='border bg-zinc-900 rounded-xl p-2 border-white/10 grid gap-y-4 lg:gap-y-5'>
 					{userReview && (
-						<div className='flex max-sm:w-full justify-end'>
+						<div className='ml-auto sm:max-w-50 max-sm:w-full justify-end'>
 							<ReleaseDetailsEstimationDeleteButton
-								title={
+								title={`Удалить ${
 									userReview.title && userReview.text ? ' рецензию' : ' оценку'
-								}
-								disabled={isDeleting || isUpdating}
+								}`}
+								disabled={!userReview || isSubmitting}
 								isLoading={isDeleting}
 								onClick={deleteReview}
 							/>
@@ -220,19 +353,23 @@ const ReleaseDetailsReviewForm: FC<IProps> = observer(
 						</div>
 
 						<button
-							disabled={isDeleting || !hasChanges || !textAndTitleTogether}
-							onClick={postReview}
-							className={`inline-flex items-center justify-center whitespace-nowrap text-sm font-medium rounded-full size-16 text-black transition-colors duration-200 ${
+							disabled={
 								isDeleting ||
-								isUpdating ||
-								isPosting ||
+								!hasChanges ||
+								!isFormValid ||
+								!textAndTitleTogether
+							}
+							onClick={handleSubmit}
+							className={`inline-flex items-center justify-center whitespace-nowrap text-sm font-medium rounded-full size-16 text-black transition-colors duration-200 ${
+								isSubmitting ||
+								!isFormValid ||
 								!hasChanges ||
 								!textAndTitleTogether
 									? 'bg-white/60 pointer-events-none'
 									: 'cursor-pointer hover:bg-white/70 bg-white'
 							}`}
 						>
-							{isUpdating || isPosting ? (
+							{isUpdating || isCreating ? (
 								<Loader className={'size-8'} />
 							) : (
 								<TickSvg className='size-8' />

@@ -1,4 +1,4 @@
-import { ReleaseTypesEnum } from '../models/release/release-type/release-types-enum'
+import { ReleaseTypesEnum } from '../types/release'
 
 export const getReleaseTypeColor = (type: string): string => {
 	switch (type) {

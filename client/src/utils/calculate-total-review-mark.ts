@@ -1,6 +1,8 @@
-import { IReviewData } from '../models/review/review-data'
+import { ReviewValues } from '../types/review'
 
-export const calculateTotalReviewMark = (reviewData: IReviewData): number => {
+export const calculateTotalReviewMark = (
+	reviewData: Omit<ReviewValues, 'total'>
+): number => {
 	const baseScore =
 		reviewData.rhymes +
 		reviewData.structure +

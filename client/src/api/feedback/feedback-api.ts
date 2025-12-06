@@ -1,9 +1,12 @@
 import axios from 'axios'
-import { IFeedback } from '../../models/feedback/feedback'
-import { IFeedbackData } from '../../models/feedback/feedback-data'
-import { IFeedbackResponse } from '../../models/feedback/feedback-response'
-import { IFeedbackStatus } from '../../models/feedback/feedback-status/feedback-status'
-import { SortOrder } from '../../types/sort-order-type'
+import {
+	CreateFeedbackData,
+	Feedback,
+	FeedbackQuery,
+	FeedbackResponse,
+	FeedbackStatus,
+	UpdateFeedbackData,
+} from '../../types/feedback'
 import { api } from '../api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
@@ -14,45 +17,79 @@ const _api = axios.create({
 	},
 })
 
+/**
+ * API service for managing feedback.
+ * Provides methods for fetching feedback statuses, retrieving feedback lists,
+ * and performing CRUD operations on feedback entries.
+ */
 export const FeedbackAPI = {
-	async fetchFeedback(
-		query: string | null,
-		statusId: string | null,
-		order: SortOrder | null,
-		limit: number | null,
-		offset: number | null
-	): Promise<IFeedbackResponse> {
-		const { data } = await api.get<IFeedbackResponse>(`/feedback?
-			${query !== null ? `query=${query}&` : ''}
-			${statusId !== null ? `statusId=${statusId}&` : ''}
-			${order !== null ? `order=${order}&` : ''}
-			${limit !== null ? `limit=${limit}&` : ''}
-			${offset !== null ? `offset=${offset}` : ''}`)
-
-		return data
-	},
-
-	async fetchFeedbackStatuses(): Promise<IFeedbackStatus[]> {
-		const { data } = await axios.get<IFeedbackStatus[]>(
+	/**
+	 * Fetches all available feedback statuses from the server.
+	 *
+	 * @returns {Promise<FeedbackStatus[]>} A promise that resolves to an array of feedback statuses.
+	 */
+	async fetchFeedbackStatuses(): Promise<FeedbackStatus[]> {
+		const { data } = await axios.get<FeedbackStatus[]>(
 			`${SERVER_URL}/feedback-statuses`
 		)
 		return data
 	},
 
-	async sendFeedback(feedbackData: IFeedbackData) {
-		return _api.post('/', {
-			...feedbackData,
-		})
-	},
+	/**
+	 * Fetches a paginated list of feedback with optional filtering and sorting.
+	 *
+	 * @param {FeedbackQuery} query - The query parameters for filtering feedback.
+	 * @param {string} [query.statusId] - Filter feedback by status ID.
+	 * @param {string} [query.search] - Search term to filter feedback by content.
+	 * @param {string} [query.order] - Sort order for the feedback.
+	 * @param {number} [query.limit] - Maximum number of feedback entries to return.
+	 * @param {number} [query.offset] - Number of feedback entries to skip (for pagination).
+	 * @returns {Promise<FeedbackResponse>} A promise that resolves to the feedback list response containing items and metadata.
+	 */
+	async findAll(query: FeedbackQuery): Promise<FeedbackResponse> {
+		const { statusId, search, order, limit, offset } = query
 
-	async updateFeedbackStatus(id: string, statusId: string): Promise<IFeedback> {
-		const { data } = await api.patch<IFeedback>(`/feedback/${id}`, {
-			feedbackStatusId: statusId,
-		})
+		const { data } = await api.get<FeedbackResponse>(`/feedback?
+			${search ? `search=${search}&` : ''}
+			${statusId ? `statusId=${statusId}&` : ''}
+			${order ? `order=${order}&` : ''}
+			${limit ? `limit=${limit}&` : ''}
+			${offset ? `offset=${offset}` : ''}`)
+
 		return data
 	},
 
-	async deleteFeedback(id: string) {
+	/**
+	 * Creates a new feedback entry.
+	 *
+	 * @param {CreateFeedbackData} formData - The data required to create the feedback.
+	 * @returns {Promise<Feedback>} A promise that resolves to the newly created feedback object.
+	 */
+	async create(formData: CreateFeedbackData): Promise<Feedback> {
+		const { data } = await _api.post('/', formData)
+
+		return data
+	},
+
+	/**
+	 * Updates an existing feedback entry.
+	 *
+	 * @param {string} id - The ID of the feedback to update.
+	 * @param {UpdateFeedbackData} formData - The data to update the feedback with.
+	 * @returns {Promise<Feedback>} A promise that resolves to the updated feedback object.
+	 */
+	async update(id: string, formData: UpdateFeedbackData): Promise<Feedback> {
+		const { data } = await api.patch<Feedback>(`/feedback/${id}`, formData)
+
+		return data
+	},
+
+	/**
+	 * Deletes a feedback entry by ID.
+	 *
+	 * @param {string} id - The ID of the feedback to delete.
+	 */
+	async delete(id: string) {
 		return api.delete(`/feedback/${id}`)
 	},
 }

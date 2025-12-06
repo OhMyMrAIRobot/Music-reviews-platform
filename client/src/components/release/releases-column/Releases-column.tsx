@@ -1,10 +1,10 @@
 import { FC } from 'react'
-import { IRelease } from '../../../models/release/release'
+import { Release } from '../../../types/release'
 import ReleasesColumnItem from './Releases-column-item'
 
 interface IProps {
 	title: string
-	releases: IRelease[]
+	releases: Release[]
 	isLoading: boolean
 }
 

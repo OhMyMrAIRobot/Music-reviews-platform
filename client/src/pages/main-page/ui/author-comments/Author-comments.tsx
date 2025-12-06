@@ -1,28 +1,33 @@
-import { observer } from 'mobx-react-lite'
-import { useEffect, useRef, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useRef, useState } from 'react'
+import { AuthorCommentAPI } from '../../../../api/author/author-comment-api'
 import AuthorCommentColorSvg from '../../../../components/author/author-comment/svg/Author-comment-color-svg'
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
-import { useLoading } from '../../../../hooks/use-loading'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
-import { useStore } from '../../../../hooks/use-store'
-import { CarouselRef } from '../../../../types/carousel-ref'
+import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys'
+import { AuthorCommentsQuery } from '../../../../types/author'
+import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum'
+import { CarouselRef } from '../../../../types/common/types/carousel-ref'
 import AuthorCommentsCarousel from './carousel/Author-comments-carousel'
 
-const AuthorComments = observer(() => {
-	const { mainPageStore } = useStore()
+const query: AuthorCommentsQuery = {
+	limit: 15,
+	offset: 0,
+	sortOrder: SortOrdersEnum.DESC,
+}
 
+const AuthorComments = () => {
 	const { navigateToAuthorComments } = useNavigationPath()
 
-	const { execute: fetch, isLoading } = useLoading(
-		mainPageStore.fetchAuthorComments
-	)
+	const { data, isPending } = useQuery({
+		queryKey: authorCommentsKeys.list(query),
+		queryFn: () => AuthorCommentAPI.findAll(query),
+		staleTime: 1000 * 60 * 5,
+	})
 
-	useEffect(() => {
-		fetch()
-	}, [fetch])
+	const items = data?.items ?? []
 
 	const carouselRef = useRef<CarouselRef>(null)
-
 	const [canScrollPrev, setCanScrollPrev] = useState(false)
 	const [canScrollNext, setCanScrollNext] = useState(false)
 
@@ -44,8 +49,8 @@ const AuthorComments = observer(() => {
 			carousel={
 				<AuthorCommentsCarousel
 					ref={carouselRef}
-					items={mainPageStore.authorComments}
-					isLoading={isLoading}
+					items={items}
+					isLoading={isPending}
 					onCanScrollPrevChange={setCanScrollPrev}
 					onCanScrollNextChange={setCanScrollNext}
 				/>
@@ -54,6 +59,6 @@ const AuthorComments = observer(() => {
 			canScrollPrev={canScrollPrev}
 		/>
 	)
-})
+}
 
 export default AuthorComments

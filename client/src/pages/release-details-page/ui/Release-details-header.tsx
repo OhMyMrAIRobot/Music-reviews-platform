@@ -1,46 +1,86 @@
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQueryClient,
+} from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
 import { FC } from 'react'
+import { UserFavReleaseAPI } from '../../../api/release/user-fav-release-api'
 import ToggleFavButton from '../../../components/buttons/Toggle-fav-button'
 import LikesCount from '../../../components/utils/Likes-count'
+import { useApiErrorHandler } from '../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../hooks/use-auth'
-import { useLoading } from '../../../hooks/use-loading'
 import { useStore } from '../../../hooks/use-store'
-import { IReleaseDetails } from '../../../models/release/release-details/release-details'
+import { leaderboardKeys } from '../../../query-keys/leaderboard-keys'
+import { profilesKeys } from '../../../query-keys/profiles-keys'
+import { releasesKeys } from '../../../query-keys/releases-keys'
+import { Release } from '../../../types/release'
 import ReleaseDetailsAuthors from './release-details-authors/Release-details-authors'
 import ReleaseDetailsNominations from './Release-details-nominations'
 import ReleaseDetailsRatings from './release-details-ratings/Release-details-ratings'
 
 interface IProps {
-	release: IReleaseDetails
+	release: Release
 }
 
 const ReleaseDetailsHeader: FC<IProps> = observer(({ release }) => {
+	/** HOOKS */
+	const { authStore, notificationStore } = useStore()
 	const { checkAuth } = useAuth()
+	const handleApiError = useApiErrorHandler()
+	const queryClient = useQueryClient()
 
-	const { authStore, releaseDetailsPageStore, notificationStore } = useStore()
-
-	const { execute: toggle, isLoading: isToggling } = useLoading(
-		releaseDetailsPageStore.toggleFavRelease
-	)
-
+	/**
+	 * Current toggling state for like/unlike action
+	 */
 	const isFav = release.userFavRelease?.some(
 		fav => fav.userId === authStore.user?.id
 	)
 
-	const toggleFavRelease = async () => {
-		if (!checkAuth()) return
+	/**
+	 * Function to invalidate related queries after mutations
+	 */
+	const invalidateRelatedQueries = () => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: releasesKeys.all },
+			{ queryKey: profilesKeys.profile(authStore.user?.id ?? 'unknown') },
+			{ queryKey: profilesKeys.preferences(authStore.user?.id ?? 'unknown') },
+			{ queryKey: leaderboardKeys.all },
+		]
 
-		const errors = await toggle(release.id, isFav)
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	}
 
-		if (errors.length === 0) {
+	/**
+	 * Mutation to toggle favorite review
+	 */
+	const toggleFavMutation = useMutation({
+		mutationFn: () =>
+			isFav
+				? UserFavReleaseAPI.deleteFromFav(release.id)
+				: UserFavReleaseAPI.addToFav(release.id),
+		onSuccess: () => {
 			notificationStore.addSuccessNotification(
 				isFav
-					? 'Вы успешно убрали релиз из списка понравившихся!'
-					: 'Вы успешно добавили релиз в список понравившихся!'
+					? 'Релиз успешно удален из понравившихся!'
+					: 'Релиз успешно добавлен в понравившиеся!'
 			)
-		} else {
-			errors.forEach(err => notificationStore.addErrorNotification(err))
-		}
+			invalidateRelatedQueries()
+		},
+		onError: (error: unknown) => {
+			handleApiError(
+				error,
+				isFav
+					? 'Не удалось убрать релиз из понравившихся!'
+					: 'Не удалось добавить релиз в понравившиеся!'
+			)
+		},
+	})
+
+	const toggleFav = () => {
+		if (!checkAuth() || toggleFavMutation.isPending) return
+
+		return toggleFavMutation.mutate()
 	}
 
 	return (
@@ -71,7 +111,7 @@ const ReleaseDetailsHeader: FC<IProps> = observer(({ release }) => {
 			<div className='lg:pl-8 gap-3 lg:h-62 flex justify-between lg:text-left flex-col text-center w-full'>
 				<div>
 					<p className='text-white opacity-70 text-xs font-semibold'>
-						{release.releaseType}
+						{release.releaseType.type}
 					</p>
 					<p className='text-2xl lg:text-3xl xl:text-5xl font-extrabold mt-2'>
 						{release.title}
@@ -86,17 +126,20 @@ const ReleaseDetailsHeader: FC<IProps> = observer(({ release }) => {
 			</div>
 
 			<div className='absolute right-2 top-0 lg:right-3 lg:top-3 z-20 flex items-center gap-x-3 overflow-x-hidden'>
-				{release.favCount > 0 && (
+				{release.userFavRelease.length > 0 && (
 					<div className='bg-zinc-950 px-2 py-1 lg:px-3 lg:py-2 flex rounded-xl items-center select-none'>
-						<LikesCount count={release.favCount} className='size-5' />
+						<LikesCount
+							count={release.userFavRelease.length}
+							className='size-5'
+						/>
 					</div>
 				)}
 
 				<ToggleFavButton
-					onClick={toggleFavRelease}
+					onClick={toggleFav}
 					isLiked={isFav}
 					className='size-10 lg:size-12'
-					toggling={isToggling}
+					toggling={toggleFavMutation.isPending}
 				/>
 			</div>
 		</div>

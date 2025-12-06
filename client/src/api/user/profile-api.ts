@@ -1,8 +1,9 @@
 import axios from 'axios'
-import { IProfile } from '../../models/profile/profile'
-import { IProfilePreferences } from '../../models/profile/profile-preference/profile-preferences'
-import { IUpdateProfileData } from '../../models/profile/update-profile-data'
-import { IUpdatedProfile } from '../../models/profile/updated-profile'
+import {
+	Profile,
+	ProfilePreferencesResponse,
+	UpdateProfileData,
+} from '../../types/profile'
 import { api } from '../api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
@@ -13,44 +14,70 @@ const _api = axios.create({
 	},
 })
 
+/**
+ * API service for managing user profiles.
+ * Provides methods for retrieving and updating user profiles and preferences,
+ * including admin operations.
+ */
 export const ProfileAPI = {
-	async fetchProfile(userId: string): Promise<IProfile> {
-		const { data } = await _api.get<IProfile>(`/${userId}`)
+	/**
+	 * Fetches a user profile by user ID.
+	 *
+	 * @param {string} userId - The ID of the user whose profile to retrieve.
+	 * @returns {Promise<Profile>} A promise that resolves to the user profile object.
+	 */
+	async findByUserId(userId: string): Promise<Profile> {
+		const { data } = await _api.get<Profile>(`/user/${userId}`)
+
 		return data
 	},
 
-	async fetchProfilePreferences(userId: string): Promise<IProfilePreferences> {
-		const { data } = await _api.get<IProfilePreferences>(
-			`preferences/${userId}`
+	/**
+	 * Fetches the preferences for a user profile by user ID.
+	 *
+	 * @param {string} userId - The ID of the user whose preferences to retrieve.
+	 * @returns {Promise<ProfilePreferencesResponse>} A promise that resolves to the user profile preferences response.
+	 */
+	async findPreferences(userId: string): Promise<ProfilePreferencesResponse> {
+		const { data } = await _api.get<ProfilePreferencesResponse>(
+			`/user/${userId}/preferences`
 		)
+
 		return data
 	},
 
-	async uploadProfileImages(formData: FormData): Promise<IUpdatedProfile> {
-		const { data } = await api.patch<IUpdatedProfile>('/profiles', formData, {
+	/**
+	 * Updates the current user's profile with the provided form data.
+	 *
+	 * @param {FormData} formData - The form data containing updated profile information (image, bio, etc.).
+	 * @returns {Promise<Profile>} A promise that resolves to the updated profile object.
+	 */
+	async update(formData: FormData): Promise<Profile> {
+		const { data } = await api.patch<Profile>('/profiles', formData, {
 			headers: {
 				'Content-Type': 'multipart/form-data',
 			},
 		})
+
 		return data
 	},
 
-	async updateProfile(
-		profileData: IUpdateProfileData
-	): Promise<IUpdatedProfile> {
-		const { data } = await api.patch<IUpdatedProfile>('/profiles', {
-			...profileData,
-		})
-		return data
-	},
-
-	async adminUpdateProfile(
+	/**
+	 * Updates a user profile as an admin user.
+	 *
+	 * @param {string} userId - The ID of the user whose profile to update.
+	 * @param {UpdateProfileData} profileData - The data to update the profile with.
+	 * @returns {Promise<UpdateProfileData>} A promise that resolves to the updated profile data.
+	 */
+	async adminUpdate(
 		userId: string,
-		profileData: IUpdateProfileData
-	): Promise<IUpdatedProfile> {
-		const { data } = await api.patch<IUpdatedProfile>(`/profiles/${userId}`, {
-			...profileData,
-		})
+		profileData: UpdateProfileData
+	): Promise<UpdateProfileData> {
+		const { data } = await api.patch<UpdateProfileData>(
+			`/profiles/user/${userId}`,
+			profileData
+		)
+
 		return data
 	},
 }

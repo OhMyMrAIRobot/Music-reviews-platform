@@ -1,4 +1,12 @@
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQuery,
+	useQueryClient,
+} from '@tanstack/react-query'
 import { FC, useEffect, useMemo, useState } from 'react'
+import { ReleaseAPI } from '../../../../../api/release/release-api'
+import { ReleaseMediaAPI } from '../../../../../api/release/release-media-api'
 import ComboBox from '../../../../../components/buttons/Combo-box'
 import FormButton from '../../../../../components/form-elements/Form-button'
 import FormInput from '../../../../../components/form-elements/Form-input'
@@ -6,156 +14,239 @@ import FormLabel from '../../../../../components/form-elements/Form-label'
 import FormSingleSelect from '../../../../../components/form-elements/Form-single-select'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
-import { useLoading } from '../../../../../hooks/use-loading'
+import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler'
+import { useReleaseMediaMeta } from '../../../../../hooks/use-release-media-meta'
 import { useStore } from '../../../../../hooks/use-store'
-import { IReleaseMedia } from '../../../../../models/release/release-media/release-media'
+import { platformStatsKeys } from '../../../../../query-keys/platform-stats-keys'
+import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys'
+import { releasesKeys } from '../../../../../query-keys/releases-keys'
+import {
+	AdminCreateReleaseMediaData,
+	AdminUpdateReleaseMediaData,
+	ReleaseMedia,
+	ReleasesQuery,
+} from '../../../../../types/release'
+import { constraints } from '../../../../../utils/constraints'
 
 interface IProps {
 	isOpen: boolean
 	onClose: () => void
-	refetch?: () => void
-	media?: IReleaseMedia
+	media?: ReleaseMedia
 }
 
-const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media, refetch }) => {
-	const { metaStore, adminDashboardMediaStore, notificationStore } = useStore()
+const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
+	/** HOOKS */
+	const { notificationStore } = useStore()
+	const { statuses, types, isLoading: isMetaLoading } = useReleaseMediaMeta()
+	const handleApiError = useApiErrorHandler()
+	const queryClient = useQueryClient()
 
+	/** STATES */
 	const [title, setTitle] = useState<string>('')
 	const [url, setUrl] = useState<string>('')
 	const [type, setType] = useState<string>('')
 	const [status, setStatus] = useState<string>('')
 	const [release, setRelease] = useState<string>('')
+	const [searchReleases, setSearchReleases] = useState<string>('')
 
-	const { execute: fetchStatuses, isLoading: isStatusesLoading } = useLoading(
-		metaStore.fetchReleaseMediaStatuses
-	)
+	/** EFFECTS */
+	useEffect(() => {
+		if (isOpen && media) {
+			setTitle(media.title)
+			setUrl(media.url)
+			setStatus(media.status.status)
+			setType(media.type.type)
+			setRelease(media.release.title)
+		}
+	}, [isOpen, media])
 
-	const { execute: fetchTypes, isLoading: isTypesLoading } = useLoading(
-		metaStore.fetchReleaseMediaTypes
-	)
+	/**
+	 * Query to load releases for the release select input
+	 */
+	const query: ReleasesQuery = {
+		search: searchReleases.trim() ?? undefined,
+		limit: 20,
+		offset: 0,
+	}
 
-	const { execute: fetchReleases } = useLoading(
-		adminDashboardMediaStore.fetchReleases
-	)
+	/**
+	 * Fetch releases for the release select input
+	 */
+	const { data: releasesData, isPending: isReleasesLoading } = useQuery({
+		queryKey: releasesKeys.list(query),
+		queryFn: () => ReleaseAPI.findAll(query),
+		enabled: isOpen,
+		staleTime: 1000 * 60 * 5,
+	})
 
-	const { execute: createReleaseMedia, isLoading: isCreating } = useLoading(
-		adminDashboardMediaStore.createReleaseMedia
-	)
+	const releases = releasesData?.items || []
 
-	const { execute: updateReleaseMedia, isLoading: isUpdating } = useLoading(
-		adminDashboardMediaStore.updateReleaseMedia
-	)
-
-	const handleSubmit = async () => {
-		if (isCreating || isStatusesLoading || isTypesLoading || isUpdating) return
-
-		const typeId = metaStore.releaseMediaTypes.find(t => t.type === type)?.id
-
-		const statusId = metaStore.releaseMediaStatuses.find(
-			s => s.status === status
-		)?.id
-
-		const releaseId = adminDashboardMediaStore.releases.find(
-			r => r.title === release
-		)?.id
-
-		if ((!type || !statusId || !releaseId) && !media) return
-
-		let errors = []
-
-		if (!media) {
-			errors = await createReleaseMedia(
-				title.trim(),
-				url.trim(),
-				releaseId,
-				typeId,
-				statusId
-			)
-		} else {
-			errors = await updateReleaseMedia(
-				media.id,
-				title.trim() !== media.title ? title.trim() : undefined,
-				url.trim() !== media.url ? url.trim() : undefined,
-				releaseId !== media.release.id ? releaseId : undefined,
-				typeId !== media.releaseMediaType.id ? typeId : undefined,
-				statusId !== media.releaseMediaStatus.id ? statusId : undefined
-			)
+	/**
+	 * Function to load releases for the release select input.
+	 * Fetches filtered releases from the server for the given search string
+	 * so the single-select receives up-to-date options while the user types.
+	 *
+	 * @param {string} search - The search string
+	 * @returns {Promise<string[]>} - A promise that resolves to an array of release titles
+	 */
+	const loadReleases = async (search: string): Promise<string[]> => {
+		// Build a query that includes the current search term
+		const query: ReleasesQuery = {
+			search: search.trim() || undefined,
+			limit: 20,
+			offset: 0,
 		}
 
-		if (errors.length === 0) {
-			notificationStore.addSuccessNotification(
-				`Вы успешно ${media ? 'обновили' : 'добавили'} медиа!`
-			)
-			if (media && refetch) {
-				refetch()
-			}
+		// Fetch matching releases directly (ensures fresh, filtered results)
+		const data = await queryClient.fetchQuery({
+			queryKey: releasesKeys.list(query),
+			queryFn: () => ReleaseAPI.findAll(query),
+		})
 
+		const items = data?.items || []
+		return items.map(r => r.title)
+	}
+
+	/**
+	 * Function to invalidate related queries after mutations
+	 */
+	const invalidateRelatedQueries = () => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: releaseMediaKeys.all },
+			{ queryKey: platformStatsKeys.all },
+		]
+
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	}
+
+	/**
+	 * Mutation to create the media
+	 */
+	const { mutateAsync: createAsync, isPending: isCreating } = useMutation({
+		mutationFn: (data: AdminCreateReleaseMediaData) =>
+			ReleaseMediaAPI.adminCreate(data),
+		onSuccess: () => {
+			notificationStore.addSuccessNotification('Медиа успешно добавлено!')
+			invalidateRelatedQueries()
 			clearForm()
 			onClose()
+		},
+		onError: (error: unknown) => {
+			handleApiError(error, 'Не удалось добавить медиа!')
+		},
+	})
+
+	/**
+	 * Mutation to update the media
+	 */
+	const { mutateAsync: updateAsync, isPending: isUpdating } = useMutation({
+		mutationFn: ({
+			id,
+			data,
+		}: {
+			id: string
+			data: AdminUpdateReleaseMediaData
+		}) => ReleaseMediaAPI.adminUpdate(id, data),
+		onSuccess: () => {
+			notificationStore.addSuccessNotification('Медиа успешно обновлено!')
+			invalidateRelatedQueries()
+			clearForm()
+			onClose()
+		},
+		onError: (error: unknown) => {
+			handleApiError(error, 'Не удалось обновить медиа!')
+		},
+	})
+
+	/**
+	 * Indicates whether a mutation is pending
+	 *
+	 * @return {boolean} True if a mutation is pending, false otherwise
+	 */
+	const isPending = useMemo(() => {
+		return isCreating || isUpdating
+	}, [isCreating, isUpdating])
+
+	/**
+	 * Indicates whether the form is valid
+	 *
+	 * @return {boolean} True if the form is valid, false otherwise
+	 */
+	const isFormValid = useMemo(() => {
+		return (
+			title.trim().length >= constraints.releaseMedia.minTitleLength &&
+			title.trim().length <= constraints.releaseMedia.maxTitleLength &&
+			url.trim().length >= constraints.releaseMedia.minUrlLength &&
+			url.trim().length <= constraints.releaseMedia.maxUrlLength &&
+			status &&
+			type &&
+			release
+		)
+	}, [release, status, title, type, url])
+
+	/**
+	 * Indicates whether there are changes to be saved
+	 *
+	 * @return {boolean} True if there are changes, false otherwise
+	 */
+	const hasChanges = useMemo(() => {
+		if (!media) return true
+		return (
+			title.trim() !== media.title ||
+			url.trim() !== media.url ||
+			type !== media.type.type ||
+			status !== media.status.status ||
+			release !== media.release.title
+		)
+	}, [media, release, status, title, type, url])
+
+	/**
+	 * Handler for form submission
+	 */
+	const handleSubmit = () => {
+		if (isPending || !isFormValid || !hasChanges) return
+
+		const typeId = types.find(t => t.type === type)?.id
+		const statusId = statuses.find(s => s.status === status)?.id
+		const releaseId = releases.find(r => r.title === release)?.id
+
+		if (!media) {
+			if (typeId && statusId && releaseId)
+				return createAsync({
+					title: title.trim(),
+					url: url.trim(),
+					releaseId: releaseId,
+					releaseMediaTypeId: typeId,
+					releaseMediaStatusId: statusId,
+				})
 		} else {
-			errors.forEach(err => notificationStore.addErrorNotification(err))
+			return updateAsync({
+				id: media.id,
+				data: {
+					title: title.trim() !== media.title ? title.trim() : undefined,
+					url: url.trim() !== media.url ? url.trim() : undefined,
+					releaseId: releaseId !== media.release.id ? releaseId : undefined,
+					releaseMediaTypeId: typeId !== media.type.id ? typeId : undefined,
+					releaseMediaStatusId:
+						statusId !== media.status.id ? statusId : undefined,
+				},
+			})
 		}
 	}
 
-	const loadReleases = async (search: string): Promise<string[]> => {
-		if (search.trim() !== '') await fetchReleases(search)
-
-		return adminDashboardMediaStore.releases.map(r => r.title)
-	}
-
+	/**
+	 * Clears the form fields
+	 */
 	const clearForm = () => {
 		setTitle('')
 		setUrl('')
 		setStatus('')
 		setType('')
 		setRelease('')
-		adminDashboardMediaStore.setReleases([])
+		setSearchReleases('')
 	}
 
-	const isFormValid = useMemo(() => {
-		return title && url && status && type && release
-	}, [release, status, title, type, url])
-
-	const hasChanges = useMemo(() => {
-		if (!media) return true
-		return (
-			title.trim() !== media.title ||
-			url.trim() !== media.url ||
-			type !== media.releaseMediaType.type ||
-			status !== media.releaseMediaStatus.status ||
-			release !== media.release.title
-		)
-	}, [media, release, status, title, type, url])
-
-	useEffect(() => {
-		if (isOpen) {
-			if (metaStore.releaseMediaStatuses.length === 0) {
-				fetchStatuses()
-			}
-			if (metaStore.releaseMediaTypes.length === 0) {
-				fetchTypes()
-			}
-		}
-	}, [
-		adminDashboardMediaStore.releases.length,
-		fetchReleases,
-		fetchStatuses,
-		fetchTypes,
-		isOpen,
-		metaStore.releaseMediaStatuses.length,
-		metaStore.releaseMediaTypes.length,
-	])
-
-	useEffect(() => {
-		if (isOpen && media) {
-			setTitle(media.title)
-			setUrl(media.url)
-			setStatus(media.releaseMediaStatus.status)
-			setType(media.releaseMediaType.type)
-			setRelease(media.release.title)
-		}
-	}, [isOpen, media])
-
+	/** CONSTANTS */
 	const formTitle = media ? 'Редактирование медиа' : 'Добавление медиа'
 	const buttonText = media ? 'Сохранить' : 'Добавить'
 
@@ -165,10 +256,10 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media, refetch }) => {
 		<ModalOverlay
 			isOpen={isOpen}
 			onCancel={onClose}
-			isLoading={isCreating || isUpdating}
+			isLoading={isPending}
 			className='max-lg:size-full'
 		>
-			{isTypesLoading || isStatusesLoading ? (
+			{isMetaLoading ? (
 				<SkeletonLoader className='w-full lg:w-240 h-140 rounded-xl' />
 			) : (
 				<div
@@ -218,7 +309,7 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media, refetch }) => {
 								/>
 
 								<ComboBox
-									options={metaStore.releaseMediaTypes.map(entry => entry.type)}
+									options={types.map(entry => entry.type)}
 									value={type || undefined}
 									onChange={setType}
 									placeholder='Тип медиа'
@@ -234,9 +325,7 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media, refetch }) => {
 								/>
 
 								<ComboBox
-									options={metaStore.releaseMediaStatuses.map(
-										entry => entry.status
-									)}
+									options={statuses.map(entry => entry.status)}
 									value={status || undefined}
 									onChange={setStatus}
 									placeholder='Статус медиа'
@@ -257,6 +346,7 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media, refetch }) => {
 									value={release}
 									onChange={setRelease}
 									loadOptions={loadReleases}
+									isLoading={isReleasesLoading}
 								/>
 							</div>
 						</div>
@@ -267,10 +357,8 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media, refetch }) => {
 									title={buttonText}
 									isInvert={true}
 									onClick={handleSubmit}
-									disabled={
-										isCreating || !isFormValid || !hasChanges || isUpdating
-									}
-									isLoading={isCreating || isUpdating}
+									disabled={isPending || !isFormValid || !hasChanges}
+									isLoading={isPending}
 								/>
 							</div>
 

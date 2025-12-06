@@ -1,147 +1,243 @@
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQueryClient,
+} from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
-import { FC, useEffect, useState } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router'
+import { ProfileAPI } from '../../../../../../api/user/profile-api.ts'
+import { UserAPI } from '../../../../../../api/user/user-api.ts'
 import ComboBox from '../../../../../../components/buttons/Combo-box.tsx'
 import FormButton from '../../../../../../components/form-elements/Form-button.tsx'
 import FormDelimiter from '../../../../../../components/form-elements/Form-delimiter.tsx'
 import FormInput from '../../../../../../components/form-elements/Form-input.tsx'
 import FormLabel from '../../../../../../components/form-elements/Form-label.tsx'
-import FormTextboxWithConfirmation from '../../../../../../components/form-elements/Form-textbox-with-confirmation.tsx'
+import FormTextbox from '../../../../../../components/form-elements/Form-textbox.tsx'
 import ModalOverlay from '../../../../../../components/modals/Modal-overlay.tsx'
 import MoveToSvg from '../../../../../../components/svg/Move-to-svg.tsx'
 import TrashSvg from '../../../../../../components/svg/Trash-svg.tsx'
 import SkeletonLoader from '../../../../../../components/utils/Skeleton-loader.tsx'
-import { useLoading } from '../../../../../../hooks/use-loading.ts'
+import { useApiErrorHandler } from '../../../../../../hooks/use-api-error-handler.ts'
 import useNavigationPath from '../../../../../../hooks/use-navigation-path.ts'
+import { useRoleMeta } from '../../../../../../hooks/use-role-meta.ts'
+import { useSocialMeta } from '../../../../../../hooks/use-social-meta.ts'
 import { useStore } from '../../../../../../hooks/use-store.ts'
+import { authorCommentsKeys } from '../../../../../../query-keys/author-comments-keys.ts'
+import { authorLikesKeys } from '../../../../../../query-keys/author-likes-keys.ts'
+import { leaderboardKeys } from '../../../../../../query-keys/leaderboard-keys.ts'
+import { profilesKeys } from '../../../../../../query-keys/profiles-keys.ts'
+import { releaseMediaKeys } from '../../../../../../query-keys/release-media-keys.ts'
+import { reviewsKeys } from '../../../../../../query-keys/reviews-keys.ts'
+import { usersKeys } from '../../../../../../query-keys/users-keys.ts'
+import { UpdateProfileData } from '../../../../../../types/profile/index.ts'
 import {
 	AdminAvailableRolesEnum,
+	AdminUpdateUserData,
 	RolesEnum,
 	RootAdminAvalaibleRolesEnum,
-} from '../../../../../../models/role/roles-enum.ts'
-import { UserStatusesEnum } from '../../../../../../models/user/user-statuses-enum.ts'
+	UserDetails,
+	UserStatusesEnum,
+} from '../../../../../../types/user/index.ts'
 import { getRoleColor } from '../../../../../../utils/get-role-color.ts'
 import EditUserModalButton from './Edit-user-modal-button.tsx'
-import EditUserModalInputs from './Edit-user-social-inputs.tsx'
 
 interface IProps {
-	userId: string
 	isOpen: boolean
 	onClose: () => void
+	user: UserDetails
 }
 
 const AdminDashboardEditUserModal: FC<IProps> = observer(
-	({ userId, isOpen, onClose }) => {
-		const {
-			adminDashboardUsersStore,
-			authStore,
-			notificationStore,
-			metaStore,
-		} = useStore()
-
-		const user = adminDashboardUsersStore.user
-
+	({ isOpen, onClose, user }) => {
+		/** HOOKS */
+		const { authStore, notificationStore } = useStore()
 		const { navigatoToProfile } = useNavigationPath()
+		const { roles, isLoading: isRolesLoading } = useRoleMeta()
+		const { socials, isLoading: isSocialsLoading } = useSocialMeta()
+		const handleApiError = useApiErrorHandler()
+		const queryClient = useQueryClient()
 
-		const { execute: fetchUser, isLoading: isUserLoading } = useLoading(
-			adminDashboardUsersStore.fetchUser
-		)
-
-		const { execute: fetchRoles, isLoading: isRolesLoading } = useLoading(
-			metaStore.fetchRoles
-		)
-
-		const { execute: updateUserData, isLoading: isUpdateUserDataLoading } =
-			useLoading(adminDashboardUsersStore.updateUser)
-
-		const { execute: updateProfile, isLoading: isUpdateProfileLoading } =
-			useLoading(adminDashboardUsersStore.updateProfile)
-
-		const { execute: deleteAvatar, isLoading: isDeletingAvatar } = useLoading(
-			adminDashboardUsersStore.updateProfile
-		)
-
-		const { execute: deleteCover, isLoading: isDeletingCover } = useLoading(
-			adminDashboardUsersStore.updateProfile
-		)
-
-		useEffect(() => {
-			if (isOpen) {
-				fetchUser(userId).then(() => {
-					setNickname(adminDashboardUsersStore.user?.nickname ?? '')
-					setEmail(adminDashboardUsersStore.user?.email ?? '')
-					setRole(adminDashboardUsersStore.user?.role.role ?? '')
-					setStatus(
-						adminDashboardUsersStore.user?.isActive
-							? UserStatusesEnum.ACTIVE
-							: UserStatusesEnum.NON_ACTIVE
-					)
-					if (authStore.user?.role.role === RolesEnum.ADMIN)
-						setAvailableRoles(AdminAvailableRolesEnum)
-					if (authStore.user?.role.role === RolesEnum.ROOT_ADMIN)
-						setAvailableRoles(RootAdminAvalaibleRolesEnum)
-				})
-				if (metaStore.roles.length === 0) {
-					fetchRoles()
-				}
-			}
-			// eslint-disable-next-line react-hooks/exhaustive-deps
-		}, [isOpen, userId])
-
+		/** STATES */
 		const [nickname, setNickname] = useState<string>('')
 		const [email, setEmail] = useState<string>('')
 		const [role, setRole] = useState<string>('')
 		const [availableRoles, setAvailableRoles] = useState<
 			Record<string, string>
-		>({})
+		>(AdminAvailableRolesEnum)
 		const [status, setStatus] = useState<string>('')
+		const [bio, setBio] = useState<string>(user.profile?.bio ?? '')
+		const [socialValues, setSocialValues] = useState<Record<string, string>>({})
+		const [initialSocialValues, setInitialSocialValues] = useState<
+			Record<string, string>
+		>({})
 
-		const update = async () => {
-			const isActive = status === UserStatusesEnum.ACTIVE ? true : false
-			const roleId = metaStore.roles.find(el => el.role === role)
-			const updResult = await updateUserData(
-				nickname,
-				email,
-				roleId?.id,
-				status.length > 0 ? isActive : undefined
-			)
+		/**
+		 * Function to invalidate user related queries after mutations
+		 */
+		const invalidateUserRelatedQueries = () => {
+			const keysToInvalidate: InvalidateQueryFilters[] = [
+				{ queryKey: profilesKeys.profile(user.id) },
+				{ queryKey: leaderboardKeys.all },
+				{ queryKey: authorCommentsKeys.all },
+				{ queryKey: authorLikesKeys.all },
+				{ queryKey: releaseMediaKeys.all },
+				{ queryKey: reviewsKeys.all },
+				{ queryKey: usersKeys.all },
+			]
 
-			if (updResult.length === 0) {
+			keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+		}
+
+		/**
+		 * Function to invalidate profile related queries after mutations
+		 */
+		const invalidateProfileRelatedQueries = () => {
+			const keysToInvalidate: InvalidateQueryFilters[] = [
+				{ queryKey: profilesKeys.profile(user.id) },
+				{ queryKey: usersKeys.all },
+			]
+
+			keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+		}
+
+		/**
+		 * Mutation to update user data (admin)
+		 */
+		const updateUserMutation = useMutation({
+			mutationFn: (data: { id: string; updateData: AdminUpdateUserData }) =>
+				UserAPI.adminUpdate(data.id, data.updateData),
+			onSuccess: () => {
 				notificationStore.addSuccessNotification(
 					'Информация о пользователе успешно обновлена'
 				)
-			} else {
-				updResult.forEach(err => {
-					notificationStore.addErrorNotification(err)
+				invalidateUserRelatedQueries()
+			},
+			onError: (error: unknown) => {
+				handleApiError(error, 'Ошибка при обновлении информации о пользователе')
+			},
+		})
+
+		/**
+		 * Mutation to update profile data (admin)
+		 */
+		const updateProfileMutation = useMutation({
+			mutationFn: (data: { id: string; updateData: UpdateProfileData }) =>
+				ProfileAPI.adminUpdate(data.id, data.updateData),
+			onSuccess: (_, { updateData }) => {
+				notificationStore.addSuccessNotification('Вы успешно обновили профиль!')
+				if (updateData.clearAvatar || updateData.clearCover) {
+					invalidateUserRelatedQueries()
+				} else {
+					invalidateProfileRelatedQueries()
+				}
+			},
+			onError: (error: unknown) => {
+				handleApiError(error, 'Ошибка при обновлении профиля')
+			},
+		})
+
+		/**
+		 * Gets the URL of a user's social media by social ID.
+		 *
+		 * @param socialId - The ID of the social media.
+		 *
+		 * @returns The URL of the user's social media or an empty string if not found.
+		 */
+		const getUserSocialUrl = useCallback(
+			(socialId: string) => {
+				const socialsArr = user?.profile?.socialMedia ?? []
+
+				const found = socialsArr.find(el => el.id === socialId)
+				return found?.url ?? ''
+			},
+			[user]
+		)
+
+		/**
+		 * Effect to initialize form fields when the modal is opened or the user changes.
+		 */
+		useEffect(() => {
+			if (isOpen && user) {
+				setNickname(user.nickname ?? '')
+				setEmail(user.email ?? '')
+				setRole(user.role.role ?? '')
+				setStatus(
+					user.isActive ? UserStatusesEnum.ACTIVE : UserStatusesEnum.NON_ACTIVE
+				)
+				if (authStore.user?.role.role === RolesEnum.ADMIN)
+					setAvailableRoles(AdminAvailableRolesEnum)
+				if (authStore.user?.role.role === RolesEnum.ROOT_ADMIN)
+					setAvailableRoles(RootAdminAvalaibleRolesEnum)
+			}
+
+			// initialize socials values for inputs
+			if (socials && socials.length > 0) {
+				const map: Record<string, string> = {}
+				socials.forEach(s => {
+					const initial = getUserSocialUrl(s.id)
+					map[s.id] = initial
+				})
+				setSocialValues(map)
+				setInitialSocialValues(map)
+			}
+		}, [isOpen, user, authStore.user?.role.role, socials, getUserSocialUrl])
+
+		/**
+		 * Handles the submission of the edit user form.
+		 */
+		const handleSubmit = () => {
+			const isActive = status === UserStatusesEnum.ACTIVE ? true : false
+			const roleObj = roles.find(el => el.role === role)
+
+			// Check if user data changed
+			const nicknameChanged = nickname.trim() !== user?.nickname
+			const emailChanged = email.trim() !== user?.email
+			const roleChanged = roleObj?.id !== user?.role.id
+			const statusChanged =
+				(status === UserStatusesEnum.ACTIVE && !user?.isActive) ||
+				(status === UserStatusesEnum.NON_ACTIVE && user?.isActive)
+
+			const hasUserChanges =
+				nicknameChanged || emailChanged || roleChanged || statusChanged
+
+			// Check if profile data changed
+			const bioChanged = (bio ?? '') !== (user?.profile?.bio ?? '')
+			const changedSocials = socials
+				.map(s => {
+					const url = (socialValues[s.id] ?? '').trim()
+					const initial = (initialSocialValues[s.id] ?? '').trim()
+					if (url === initial) return null
+					if (url === '') return { socialId: s.id }
+					return { socialId: s.id, url }
+				})
+				.filter(
+					(item): item is { socialId: string; url?: string } => item !== null
+				)
+
+			const hasProfileChanges = bioChanged || changedSocials.length > 0
+
+			// Call only necessary mutations
+			if (hasUserChanges) {
+				updateUserMutation.mutate({
+					id: user.id,
+					updateData: {
+						nickname: nicknameChanged ? nickname.trim() : undefined,
+						email: emailChanged ? email.trim() : undefined,
+						roleId: roleChanged ? roleObj?.id : undefined,
+						isActive: statusChanged ? isActive : undefined,
+					},
 				})
 			}
-		}
 
-		const handleDeleteCover = async () => {
-			if (!user || isDeletingCover) return
-			const errors = await deleteCover(user.id, { clearCover: true })
-			if (errors.length === 0) {
-				notificationStore.addSuccessNotification(
-					'Вы успешно удалили обложку профиля!'
-				)
-			} else {
-				errors.forEach(err => {
-					notificationStore.addErrorNotification(err)
-				})
-			}
-		}
+			if (hasProfileChanges) {
+				const profilePayload: UpdateProfileData = {}
+				if (bioChanged) profilePayload.bio = bio
+				if (changedSocials.length > 0) profilePayload.socials = changedSocials
 
-		const handleDeleteAvatar = async () => {
-			if (!user || isDeletingAvatar) return
-
-			const errors = await deleteAvatar(user.id, { clearAvatar: true })
-			if (errors.length === 0) {
-				notificationStore.addSuccessNotification(
-					'Вы успешно удалили аватар профиля!'
-				)
-			} else {
-				errors.forEach(err => {
-					notificationStore.addErrorNotification(err)
+				updateProfileMutation.mutate({
+					id: user.id,
+					updateData: profilePayload,
 				})
 			}
 		}
@@ -152,11 +248,11 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 				isOpen={isOpen}
 				onCancel={onClose}
 				isLoading={
-					isUpdateUserDataLoading || isDeletingAvatar || isDeletingCover
+					updateUserMutation.isPending || updateProfileMutation.isPending
 				}
 				className='max-lg:size-full'
 			>
-				{isUserLoading || isRolesLoading ? (
+				{isRolesLoading ? (
 					<SkeletonLoader className='w-full lg:w-180 h-190 rounded-lg' />
 				) : (
 					user && (
@@ -191,7 +287,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 								</div>
 
 								<div className='lg:absolute right-3 top-3 grid lg:flex gap-3'>
-									<Link to={navigatoToProfile(userId)} className='md:w-45'>
+									<Link to={navigatoToProfile(user.id)} className='md:w-45'>
 										<EditUserModalButton
 											title={'Профиль'}
 											svg={<MoveToSvg className={'size-4'} />}
@@ -201,23 +297,37 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 
 									<div className='md:w-45'>
 										<EditUserModalButton
-											disabled={user.profile?.avatar === '' || isDeletingAvatar}
+											disabled={
+												user.profile?.avatar === '' ||
+												updateProfileMutation.isPending
+											}
 											title={'Удалить аватар'}
-											onClick={handleDeleteAvatar}
+											onClick={() =>
+												updateProfileMutation.mutate({
+													id: user.id,
+													updateData: { clearAvatar: true },
+												})
+											}
 											svg={<TrashSvg className={'size-4'} />}
-											isLoading={isDeletingAvatar}
+											isLoading={updateProfileMutation.isPending}
 										/>
 									</div>
 
 									<div className='md:w-45'>
 										<EditUserModalButton
 											disabled={
-												user.profile?.coverImage === '' || isDeletingCover
+												user.profile?.coverImage === '' ||
+												updateProfileMutation.isPending
 											}
 											title={'Удалить обложку'}
-											onClick={handleDeleteCover}
+											onClick={() => {
+												updateProfileMutation.mutate({
+													id: user.id,
+													updateData: { clearCover: true },
+												})
+											}}
 											svg={<TrashSvg className={'size-4'} />}
-											isLoading={isDeletingCover}
+											isLoading={updateProfileMutation.isPending}
 										/>
 									</div>
 								</div>
@@ -272,23 +382,15 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 									</div>
 
 									<div className={`w-full md:w-1/2`}>
-										<FormTextboxWithConfirmation
-											label={'Описание'}
-											initialValue={user.profile?.bio ?? ''}
-											onClick={val => {
-												updateProfile(user.id, { bio: val }).then(errors => {
-													if (errors.length === 0) {
-														notificationStore.addSuccessNotification(
-															'Вы успешно обновили описание профиля!'
-														)
-													} else {
-														errors.forEach(err => {
-															notificationStore.addErrorNotification(err)
-														})
-													}
-												})
-											}}
-											isLoading={isUpdateProfileLoading}
+										<FormLabel
+											name={'Описание'}
+											htmlFor={'admin-edit-user-bio'}
+										/>
+										<FormTextbox
+											id={'admin-edit-user-bio'}
+											placeholder='Описание...'
+											value={bio}
+											setValue={setBio}
 										/>
 									</div>
 								</div>
@@ -321,7 +423,31 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 
 								<FormDelimiter />
 
-								<EditUserModalInputs user={user} />
+								<div className='grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-3'>
+									{isSocialsLoading
+										? Array.from({ length: 4 }).map((_, idx) => (
+												<SkeletonLoader
+													key={`Social-inputs-skeleton-${idx}`}
+													className='w-full h-10 rounded-md'
+												/>
+										  ))
+										: socials.map(social => {
+												return (
+													<FormInput
+														id={'admin-social-input-' + social.id}
+														placeholder={social.name}
+														type={'url'}
+														value={socialValues[social.id] ?? ''}
+														setValue={(value: string) =>
+															setSocialValues(prev => ({
+																...prev,
+																[social.id]: value,
+															}))
+														}
+													/>
+												)
+										  })}
+								</div>
 
 								<FormDelimiter />
 
@@ -330,11 +456,10 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 										<FormButton
 											title={'Сохранить'}
 											isInvert={true}
-											onClick={update}
+											onClick={handleSubmit}
 											disabled={
 												authStore.user?.id === user.id ||
-												isUpdateUserDataLoading ||
-												isUserLoading ||
+												updateUserMutation.isPending ||
 												isRolesLoading ||
 												nickname.length === 0 ||
 												email.length === 0 ||
@@ -349,9 +474,15 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 													((status === UserStatusesEnum.ACTIVE &&
 														user.isActive) ||
 														(status === UserStatusesEnum.NON_ACTIVE &&
-															!user.isActive)))
+															!user.isActive)) &&
+													bio === (user.profile?.bio || '') &&
+													!socials.some(
+														s =>
+															(socialValues[s.id] ?? '').trim() !==
+															(getUserSocialUrl(s.id) ?? '').trim()
+													))
 											}
-											isLoading={isUpdateUserDataLoading}
+											isLoading={updateUserMutation.isPending}
 										/>
 									</div>
 
@@ -360,7 +491,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 											title={'Назад'}
 											isInvert={false}
 											onClick={onClose}
-											disabled={isUpdateUserDataLoading}
+											disabled={updateUserMutation.isPending}
 										/>
 									</div>
 								</div>

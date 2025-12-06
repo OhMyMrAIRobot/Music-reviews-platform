@@ -1,16 +1,35 @@
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQueryClient,
+} from '@tanstack/react-query'
 import { FC, useState } from 'react'
 import { Link } from 'react-router'
+import { UserAPI } from '../../../../../api/user/user-api.ts'
 import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg.tsx'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal.tsx'
 import UserRoleSvg from '../../../../../components/user/User-role-svg.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
-import { useLoading } from '../../../../../hooks/use-loading.ts'
+import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler.ts'
 import useNavigationPath from '../../../../../hooks/use-navigation-path.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
-import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum.ts'
-import { UserStatusesEnum } from '../../../../../models/user/user-statuses-enum.ts'
-import { IUser } from '../../../../../models/user/user.ts'
-import { SortOrder } from '../../../../../types/sort-order-type.ts'
+import { albumValuesKeys } from '../../../../../query-keys/album-values-keys.ts'
+import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys.ts'
+import { authorLikesKeys } from '../../../../../query-keys/author-likes-keys.ts'
+import { authorsKeys } from '../../../../../query-keys/authors-keys.ts'
+import { leaderboardKeys } from '../../../../../query-keys/leaderboard-keys.ts'
+import { platformStatsKeys } from '../../../../../query-keys/platform-stats-keys.ts'
+import { profilesKeys } from '../../../../../query-keys/profiles-keys.ts'
+import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys.ts'
+import { releasesKeys } from '../../../../../query-keys/releases-keys.ts'
+import { reviewsKeys } from '../../../../../query-keys/reviews-keys.ts'
+import { usersKeys } from '../../../../../query-keys/users-keys.ts'
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum.ts'
+import { SortOrder } from '../../../../../types/common/types/sort-order.ts'
+import {
+	UserDetails,
+	UserStatusesEnum,
+} from '../../../../../types/user/index.ts'
 import { getRoleColor } from '../../../../../utils/get-role-color.ts'
 import AdminDeleteButton from '../../buttons/Admin-delete-button.tsx'
 import AdminEditButton from '../../buttons/Admin-edit-button.tsx'
@@ -18,12 +37,11 @@ import AdminDashboardEditUserModal from './admin-dashboard-edit-user-modal/Admin
 
 interface IProps {
 	className?: string
-	user?: IUser
+	user?: UserDetails
 	isLoading: boolean
 	position?: number
 	order?: SortOrder
 	toggleOrder?: () => void
-	refetchUsers?: () => void
 }
 
 const AdminDashboardUsersGridItem: FC<IProps> = ({
@@ -33,31 +51,55 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 	position,
 	order,
 	toggleOrder,
-	refetchUsers,
 }) => {
-	const { adminDashboardUsersStore, notificationStore } = useStore()
-
+	/** HOOKS */
+	const { notificationStore } = useStore()
 	const { navigatoToProfile } = useNavigationPath()
+	const handleApiError = useApiErrorHandler()
+	const queryClient = useQueryClient()
 
-	const { execute: deleteUser, isLoading: isDeleting } = useLoading(
-		adminDashboardUsersStore.deleteUser
-	)
-
+	/** STATES */
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [editModelOpen, setEditModalOpen] = useState<boolean>(false)
 
-	const handleDelete = async (id: string) => {
-		if (isDeleting) return
-		const errors = await deleteUser(id)
-		if (errors.length === 0) {
+	/**
+	 * Function to invalidate related queries after mutations
+	 */
+	const invalidateRelatedQueries = (userId: string) => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: profilesKeys.profile(userId) },
+			{ queryKey: leaderboardKeys.all },
+			{ queryKey: authorCommentsKeys.all },
+			{ queryKey: authorLikesKeys.all },
+			{ queryKey: releaseMediaKeys.all },
+			{ queryKey: albumValuesKeys.all },
+			{ queryKey: releasesKeys.all },
+			{ queryKey: reviewsKeys.all },
+			{ queryKey: usersKeys.all },
+			{ queryKey: platformStatsKeys.all },
+			{ queryKey: authorsKeys.all },
+		]
+
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	}
+
+	/**
+	 * Mutation to delete user
+	 */
+	const deleteMutation = useMutation({
+		mutationFn: (id: string) => UserAPI.adminDelete(id),
+		onSuccess: (_, id) => {
 			notificationStore.addSuccessNotification(
 				'Вы успешно удалили пользователя!'
 			)
-			refetchUsers?.()
-		} else {
-			errors.forEach(error => notificationStore.addErrorNotification(error))
-		}
-	}
+			invalidateRelatedQueries(id)
+			setConfModalOpen(false)
+		},
+		onError: (error: unknown) => {
+			handleApiError(error, 'Не удалось удалить пользователя.')
+			setConfModalOpen(false)
+		},
+	})
 
 	return isLoading ? (
 		<SkeletonLoader className='w-full h-65 xl:h-12 rounded-lg' />
@@ -68,15 +110,15 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 					<ConfirmationModal
 						title={'Вы действительно хотите удалить пользователя?'}
 						isOpen={confModalOpen}
-						onConfirm={() => handleDelete(user.id)}
+						onConfirm={() => deleteMutation.mutate(user.id)}
 						onCancel={() => setConfModalOpen(false)}
-						isLoading={isDeleting}
+						isLoading={deleteMutation.isPending}
 					/>
 
 					<AdminDashboardEditUserModal
 						isOpen={editModelOpen}
-						userId={user.id}
 						onClose={() => setEditModalOpen(false)}
+						user={user}
 					/>
 				</>
 			)}
@@ -94,9 +136,9 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 						loading='lazy'
 						decoding='async'
 						src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-							user.avatar === ''
+							user.profile?.avatar === ''
 								? import.meta.env.VITE_DEFAULT_AVATAR
-								: user.avatar
+								: user.profile?.avatar
 						}`}
 						className='absolute right-0 top-0 xl:hidden rounded-lg size-22 aspect-square select-none object-cover'
 					/>
@@ -112,9 +154,9 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 								loading='lazy'
 								decoding='async'
 								src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-									user.avatar === ''
+									user.profile?.avatar === ''
 										? import.meta.env.VITE_DEFAULT_AVATAR
-										: user.avatar
+										: user.profile?.avatar
 								}`}
 								className='max-xl:hidden size-9 aspect-square rounded-full select-none object-cover'
 							/>
@@ -162,14 +204,11 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 							<span className='xl:hidden'>Роль: </span>
 							<div
 								className={`flex max-xl:ml-0.5 gap-x-1 items-center ${getRoleColor(
-									user.role
+									user.role.role
 								)}`}
 							>
-								<UserRoleSvg
-									role={{ role: user.role, id: '0' }}
-									className={'size-5'}
-								/>
-								<span>{user.role}</span>
+								<UserRoleSvg role={user.role} className={'size-5'} />
+								<span>{user.role.role}</span>
 							</div>
 						</>
 					) : (

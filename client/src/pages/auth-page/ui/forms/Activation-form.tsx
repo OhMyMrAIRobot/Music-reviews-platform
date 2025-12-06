@@ -1,52 +1,63 @@
-import { useEffect, useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
+import { observer } from 'mobx-react-lite'
+import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router'
+import { AuthAPI } from '../../../../api/auth-api'
 import FormButton from '../../../../components/form-elements/Form-button'
-import FormInfoContainer from '../../../../components/form-elements/Form-info-container'
 import FormInfoField from '../../../../components/form-elements/Form-info-field'
 import FormSubTitle from '../../../../components/form-elements/Form-subtitle'
 import FormTitle from '../../../../components/form-elements/Form-title'
-import { useLoading } from '../../../../hooks/use-loading'
+import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
 
-const ActivationForm = () => {
-	const { token } = useParams()
-
+const ActivationForm = observer(() => {
+	/** HOOKS */
 	const { notificationStore, authStore } = useStore()
-
+	const { token } = useParams()
 	const navigate = useNavigate()
-
 	const { navigateToMain } = useNavigationPath()
+	const handleApiError = useApiErrorHandler()
 
-	const [errors, setErrors] = useState<string[]>([])
+	/**
+	 * Mutation for account activation
+	 */
+	const { mutateAsync: activate } = useMutation({
+		mutationFn: (token: string) => AuthAPI.activate(token),
+		onSuccess: data => {
+			const { user, accessToken } = data
 
-	const { execute: resend, isLoading } = useLoading(authStore.resendActivation)
+			authStore.setAuthorization(user, accessToken)
+			notificationStore.addSuccessNotification('Аккаунт успешно активирован!')
 
+			navigate(navigateToMain)
+		},
+		onError: (error: unknown) => {
+			handleApiError(error, 'Ошибка при активации аккаунта!')
+		},
+	})
+
+	/**
+	 * Mutation for resending activation email
+	 */
+	const { mutateAsync: resend, isPending: isLoading } = useMutation({
+		mutationFn: () => AuthAPI.resendActivation(),
+		onSuccess: data => {
+			if (data.emailSent) {
+				notificationStore.addEmailSentNotification(data.emailSent)
+			}
+		},
+		onError: (error: unknown) => {
+			handleApiError(error, 'Ошибка при отправке письма активации!')
+		},
+	})
+
+	/** EFFECTS */
 	useEffect(() => {
 		if (token) {
-			authStore.activate(token).then(errors => {
-				if (errors.length === 0) {
-					notificationStore.addSuccessNotification(
-						'Аккаунт успешно активирован!'
-					)
-					navigate(navigateToMain)
-				} else {
-					setErrors(errors)
-				}
-			})
+			activate(token)
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
-
-	const handleResend = () => {
-		resend().then(result => {
-			if (Array.isArray(result)) {
-				setErrors(result)
-			} else {
-				notificationStore.addEmailSentNotification(result)
-			}
-		})
-	}
+	}, [activate, token])
 
 	return (
 		<div className='grid w-full sm:w-[350px] gap-6 text-center'>
@@ -67,20 +78,13 @@ const ActivationForm = () => {
 				<FormButton
 					title={isLoading ? 'Отправка...' : 'Отправить письмо активации'}
 					isInvert={true}
-					onClick={handleResend}
+					onClick={resend}
 					disabled={isLoading}
 					isLoading={isLoading}
 				/>
 			)}
-			{errors && (
-				<FormInfoContainer>
-					{errors.map(error => (
-						<FormInfoField key={error} text={error} isError={true} />
-					))}
-				</FormInfoContainer>
-			)}
 		</div>
 	)
-}
+})
 
 export default ActivationForm

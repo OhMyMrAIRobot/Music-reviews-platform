@@ -1,18 +1,21 @@
 import { FC } from 'react'
-import { IReleaseTypeRatings } from '../../../models/author/authors-response'
-import { ReleaseRatingTypesEnum } from '../../../models/release/release-rating/release-rating-types-enum'
-import { ReleaseTypesEnum } from '../../../models/release/release-type/release-types-enum'
+import { AuthorReleaseTypeRating } from '../../../types/author'
+import {
+	ReleaseRatingTypesEnum,
+	ReleaseTypesEnum,
+} from '../../../types/release'
 import AlbumSvg from '../../release/svg/Album-svg'
 import SingleSvg from '../../release/svg/Single-svg'
 import AuthorRatingsItem from './Author-ratings-item'
 
 interface IProps {
 	releaseType: ReleaseTypesEnum
-	stats: IReleaseTypeRatings[]
+	stats: AuthorReleaseTypeRating[]
 }
 
 const AuthorReleaseTypesRatings: FC<IProps> = ({ releaseType, stats }) => {
 	const ratings = stats.find(r => r.type === releaseType)
+
 	return (
 		ratings && (
 			<div className='flex items-center justify-center text-sm gap-x-2'>

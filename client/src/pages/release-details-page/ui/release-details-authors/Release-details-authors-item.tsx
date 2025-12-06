@@ -1,11 +1,11 @@
 import { FC } from 'react'
 import { Link } from 'react-router'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
-import { AuthorTypesEnum } from '../../../../models/author/author-type/author-types-enum'
-import { IReleaseDetailsAuthor } from '../../../../models/release/release-details/release-details-author'
+import { AuthorTypesEnum } from '../../../../types/author'
+import { ReleaseAuthor } from '../../../../types/release'
 
 interface IProps {
-	author: IReleaseDetailsAuthor
+	author: ReleaseAuthor
 	type: AuthorTypesEnum
 }
 

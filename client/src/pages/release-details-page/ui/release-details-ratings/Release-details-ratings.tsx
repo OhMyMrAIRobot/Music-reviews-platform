@@ -1,12 +1,11 @@
 import { observer } from 'mobx-react-lite'
 import { FC } from 'react'
 import TooltipSpan from '../../../../components/tooltip/Tooltip-span'
-import { IReleaseDetails } from '../../../../models/release/release-details/release-details'
-import { ReleaseRatingTypesEnum } from '../../../../models/release/release-rating/release-rating-types-enum'
+import { Release, ReleaseRatingTypesEnum } from '../../../../types/release'
 import ReleaseDetailsRatingsTooltip from './Release-details-ratings-tooltip'
 
 interface IProps {
-	release: IReleaseDetails
+	release: Release
 }
 
 const ReleaseDetailsRatings: FC<IProps> = observer(({ release }) => {
@@ -17,7 +16,7 @@ const ReleaseDetailsRatings: FC<IProps> = observer(({ release }) => {
 	]
 
 	const ratings = ratingOrder
-		.map(type => release?.ratings.find(r => r.type === type))
+		.map(type => release?.ratings.total.find(r => r.type === type))
 		.filter(r => r && r.total > 0)
 
 	return (
@@ -34,7 +33,7 @@ const ReleaseDetailsRatings: FC<IProps> = observer(({ release }) => {
 					className += 'border-2 border-[rgba(35,101,199)]'
 				}
 
-				const ratingDetails = release.ratingDetails.find(
+				const ratingDetails = release.ratings.details.find(
 					rd => rd.type === rating?.type
 				)
 

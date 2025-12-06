@@ -9,13 +9,12 @@ import {
 	useState,
 } from 'react'
 import ReleaseMediaReview from '../../../../../components/release/release-media/Release-media-review'
-import { IReleaseMedia } from '../../../../../models/release/release-media/release-media'
-import { CarouselRef } from '../../../../../types/carousel-ref'
-import { CarouselStateCallbacks } from '../../../../../types/carousel-state-callbacks'
-import mainPageStore from '../../../store/main-page-store'
+import { CarouselRef } from '../../../../../types/common/types/carousel-ref'
+import { CarouselStateCallbacks } from '../../../../../types/common/types/carousel-state-callbacks'
+import { ReleaseMedia } from '../../../../../types/release'
 
 interface IProps extends CarouselStateCallbacks {
-	items: IReleaseMedia[]
+	items: ReleaseMedia[]
 	isLoading: boolean
 }
 
@@ -89,11 +88,7 @@ const ReleaseMediaReviewsCarousel = observer(
 											className='flex-[0_0_100%] md:flex-[0_0_450px] md:max-w-[450px]'
 											key={item.id}
 										>
-											<ReleaseMediaReview
-												isLoading={isLoading}
-												media={item}
-												toggleFav={mainPageStore.toggleFavMedia}
-											/>
+											<ReleaseMediaReview isLoading={isLoading} media={item} />
 										</div>
 								  ))}
 						</div>

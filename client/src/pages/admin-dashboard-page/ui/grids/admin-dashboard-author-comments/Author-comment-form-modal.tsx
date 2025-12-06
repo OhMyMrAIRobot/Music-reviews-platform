@@ -1,71 +1,115 @@
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQueryClient,
+} from '@tanstack/react-query'
 import { FC, useEffect, useMemo, useState } from 'react'
+import { AuthorCommentAPI } from '../../../../../api/author/author-comment-api'
 import FormButton from '../../../../../components/form-elements/Form-button'
 import FormInput from '../../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../../components/form-elements/Form-label'
 import FormTextbox from '../../../../../components/form-elements/Form-textbox'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay'
-import { useLoading } from '../../../../../hooks/use-loading'
+import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler'
 import { useStore } from '../../../../../hooks/use-store'
-import { IAuthorComment } from '../../../../../models/author/author-comment/author-comment'
+import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys'
+import {
+	AuthorComment,
+	UpdateAuthorCommentData,
+} from '../../../../../types/author'
+import { constraints } from '../../../../../utils/constraints'
 
 interface IProps {
 	isOpen: boolean
 	onClose: () => void
-	comment: IAuthorComment
+	comment: AuthorComment
 }
 
 const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
-	const { adminDashboardAuthorCommentsStore, notificationStore } = useStore()
+	/** HOOKS */
+	const { notificationStore } = useStore()
+	const handleApiError = useApiErrorHandler()
+	const queryClient = useQueryClient()
 
-	const { execute: update, isLoading } = useLoading(
-		adminDashboardAuthorCommentsStore.updateComment
-	)
-
+	/** STATES */
 	const [title, setTitle] = useState<string>(comment.title)
 	const [text, setText] = useState<string>(comment.text)
 
+	/** EFFECTS */
 	useEffect(() => {
 		setTitle(comment.title)
 		setText(comment.text)
 	}, [comment])
 
-	const hasChanges = useMemo(() => {
-		return title !== comment.title || text !== comment.text
-	}, [title, comment.title, comment.text, text])
+	/**
+	 * Function to invalidate related queries after mutations
+	 */
+	const invalidateRelatedQueries = () => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: authorCommentsKeys.all },
+		]
 
-	const isFormValid = useMemo(() => {
-		return (
-			text.trim().length >= 300 &&
-			title.trim().length >= 5 &&
-			title.trim().length <= 100
-		)
-	}, [text, title])
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	}
 
-	const updateComment = async () => {
-		if (!isFormValid) return
-
-		const errors = await update(
-			comment.id,
-			title.trim() !== '' ? title.trim() : undefined,
-			text.trim() !== '' ? text.trim() : undefined
-		)
-		if (errors.length === 0) {
+	/**
+	 * Mutation to update the author comment
+	 */
+	const { mutateAsync: updateAsync, isPending } = useMutation({
+		mutationFn: ({ id, data }: { id: string; data: UpdateAuthorCommentData }) =>
+			AuthorCommentAPI.adminUpdate(id, data),
+		onSuccess: () => {
 			notificationStore.addSuccessNotification(
 				'Авторский комментарий успешно обновлен!'
 			)
 			onClose()
-		} else {
-			errors.forEach(error => {
-				notificationStore.addErrorNotification(error)
-			})
-		}
+			invalidateRelatedQueries()
+		},
+		onError: (error: unknown) => {
+			handleApiError(error, 'Не удалось обновить авторский комментарий!')
+		},
+	})
+
+	/**
+	 * Checks if there are changes in the form
+	 *
+	 * @returns {boolean} - True if there are changes, false otherwise
+	 */
+	const hasChanges = useMemo(() => {
+		return title !== comment.title || text !== comment.text
+	}, [title, comment.title, comment.text, text])
+
+	/**
+	 * Checks if the form is valid
+	 *
+	 * @returns {boolean} - True if the form is valid, false otherwise
+	 */
+	const isFormValid = useMemo(() => {
+		return (
+			text.trim().length <= constraints.authorComment.maxTextLength &&
+			text.trim().length >= constraints.authorComment.minTextLength &&
+			title.trim().length >= constraints.authorComment.minTitleLength &&
+			title.trim().length <= constraints.authorComment.maxTitleLength
+		)
+	}, [text, title])
+
+	const updateComment = async () => {
+		if (!isFormValid || isPending || !hasChanges) return
+
+		updateAsync({
+			id: comment.id,
+			data: {
+				title: title.trim() !== comment.title ? title.trim() : undefined,
+				text: text.trim() !== comment.text ? text.trim() : undefined,
+			},
+		})
 	}
 
 	return (
 		<ModalOverlay
 			isOpen={isOpen}
 			onCancel={onClose}
-			isLoading={isLoading}
+			isLoading={isPending}
 			className='max-lg:size-full'
 		>
 			<div
@@ -112,8 +156,8 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
 								title={'Сохранить'}
 								isInvert={true}
 								onClick={updateComment}
-								disabled={!hasChanges || isLoading || !isFormValid}
-								isLoading={isLoading}
+								disabled={!hasChanges || isPending || !isFormValid}
+								isLoading={isPending}
 							/>
 						</div>
 
@@ -122,7 +166,7 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
 								title={'Назад'}
 								isInvert={false}
 								onClick={onClose}
-								disabled={isLoading}
+								disabled={isPending}
 							/>
 						</div>
 					</div>

@@ -1,7 +1,9 @@
 import { FC } from 'react'
-import { IReleaseRating } from '../../../../models/release/release-rating'
-import { ReleaseRatingTypesEnum } from '../../../../models/release/release-rating/release-rating-types-enum'
-import { IReleaseRatingValues } from '../../../../models/release/release-rating/release-rating-values'
+import {
+	ReleaseRatingDetails,
+	ReleaseRatingTotal,
+	ReleaseRatingTypesEnum,
+} from '../../../../types/release'
 
 const DetailRow: FC<{ title: string; total: string; color: string }> = ({
 	title,
@@ -17,8 +19,8 @@ const DetailRow: FC<{ title: string; total: string; color: string }> = ({
 }
 
 interface IProps {
-	rating: IReleaseRating
-	ratingDetails?: IReleaseRatingValues
+	rating: ReleaseRatingTotal
+	ratingDetails?: ReleaseRatingDetails
 }
 
 const getTitle = (type: string) => {

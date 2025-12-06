@@ -1,93 +1,67 @@
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useEffect, useMemo, useState } from 'react'
+import { ReleaseAPI } from '../../api/release/release-api'
 import ComboBox from '../../components/buttons/Combo-box'
 import ReleasesGrid from '../../components/release/Releases-grid'
 import SkeletonLoader from '../../components/utils/Skeleton-loader'
-import { useLoading } from '../../hooks/use-loading'
-import { useStore } from '../../hooks/use-store'
-import { ReleaseSortFieldValues } from '../../models/release/release-sort/release-sort-field-values'
-import { ReleaseSortFields } from '../../models/release/release-sort/release-sort-fields'
-import { SortOrder } from '../../types/sort-order-type'
+import { useReleaseMeta } from '../../hooks/use-release-meta'
+import { releasesKeys } from '../../query-keys/releases-keys'
+import {
+	ReleaseSortFields,
+	ReleaseSortKey,
+	ReleaseTypesFilterOptions,
+	ReleasesQuery,
+	getKeyByLabel,
+	getSortParams,
+	getTypeIdByOption,
+} from '../../types/release'
+
+const limit = 12
 
 const ReleasesPage = () => {
-	const perPage = 12
-
-	const { releasesPageStore, metaStore } = useStore()
-
 	const [currentPage, setCurrentPage] = useState<number>(1)
-
 	const [selectedSort, setSelectedSort] = useState<string>(
 		ReleaseSortFields.PUBLISHED_NEW
 	)
-	const [selectedType, setSelectedType] = useState<string>('Все')
-
-	const { execute: fetchReleases, isLoading: isReleasesLoading } = useLoading(
-		releasesPageStore.fetchReleases
+	const [selectedType, setSelectedType] = useState<string>(
+		ReleaseTypesFilterOptions.ALL
 	)
 
-	const { execute: fetchReleaseTypes, isLoading: isTypesLoading } = useLoading(
-		metaStore.fetchReleaseTypes
+	const { types: releaseTypes, isLoading: isTypesLoading } = useReleaseMeta()
+
+	const selectedTypeId = useMemo(
+		() => getTypeIdByOption(selectedType, releaseTypes),
+		[releaseTypes, selectedType]
 	)
 
-	useEffect(() => {
-		if (metaStore.releaseTypes.length === 0) {
-			fetchReleaseTypes()
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	const { sortField, sortOrder } = useMemo(() => {
+		const key =
+			getKeyByLabel(selectedSort) ?? ('PUBLISHED_NEW' as ReleaseSortKey)
+		const params = getSortParams(key)
+		return { sortField: params.field, sortOrder: params.order }
+	}, [selectedSort])
 
 	useEffect(() => {
-		const type = metaStore.releaseTypes.find(
-			entry => entry.type === selectedType
-		)
+		setCurrentPage(1)
+	}, [selectedType])
 
-		let field = ''
-		let order: SortOrder = 'desc'
+	const query: ReleasesQuery = {
+		typeId: selectedTypeId,
+		sortField,
+		sortOrder,
+		limit,
+		offset: (currentPage - 1) * limit,
+	}
 
-		switch (selectedSort) {
-			case ReleaseSortFields.WITHOUT_TEXT_COUNT:
-				field = ReleaseSortFieldValues.WITHOUT_TEXT_COUNT
-				order = 'desc'
-				break
-			case ReleaseSortFields.TEXT_COUNT:
-				field = ReleaseSortFieldValues.TEXT_COUNT
-				order = 'desc'
-				break
-			case ReleaseSortFields.PUBLISHED_NEW:
-				field = ReleaseSortFieldValues.PUBLISHED
-				order = 'desc'
-				break
-			case ReleaseSortFields.PUBLISHED_OLD:
-				field = ReleaseSortFieldValues.PUBLISHED
-				order = 'asc'
-				break
-			case ReleaseSortFields.MEDIA_RATING:
-				field = ReleaseSortFieldValues.MEDIA_RATING
-				order = 'desc'
-				break
-			case ReleaseSortFields.WITH_TEXT_RATING:
-				field = ReleaseSortFieldValues.WITH_TEXT_RATING
-				order = 'desc'
-				break
-			case ReleaseSortFields.NO_TEXT_RATING:
-				field = ReleaseSortFieldValues.WITHOUT_TEXT_RATING
-				order = 'desc'
-				break
-		}
+	const { data, isPending: isReleasesLoading } = useQuery({
+		queryKey: releasesKeys.list(query),
+		queryFn: () => ReleaseAPI.findAll(query),
+		staleTime: 1000 * 60 * 5,
+		enabled: Boolean(releaseTypes),
+	})
 
-		fetchReleases(
-			type?.id ?? null,
-			field,
-			order,
-			perPage,
-			(currentPage - 1) * perPage
-		)
-	}, [
-		selectedType,
-		selectedSort,
-		currentPage,
-		metaStore.releaseTypes,
-		fetchReleases,
-	])
+	const items = data?.items ?? []
+	const count = data?.meta.count ?? 0
 
 	return (
 		<>
@@ -100,12 +74,9 @@ const ReleasesPage = () => {
 					Тип релиза:
 				</span>
 				<div className='w-full sm:w-55 h-10'>
-					{!isTypesLoading && metaStore.releaseTypes.length > 0 ? (
+					{!isTypesLoading && releaseTypes.length > 0 ? (
 						<ComboBox
-							options={[
-								'Все',
-								...metaStore.releaseTypes.map(entry => entry.type),
-							]}
+							options={Object.values(ReleaseTypesFilterOptions)}
 							onChange={setSelectedType}
 							className='border border-white/10'
 							value={selectedType}
@@ -129,12 +100,12 @@ const ReleasesPage = () => {
 			</div>
 
 			<ReleasesGrid
-				items={releasesPageStore.releases}
+				items={items}
 				isLoading={isReleasesLoading}
 				currentPage={currentPage}
 				setCurrentPage={setCurrentPage}
-				total={releasesPageStore.releasesCount}
-				perPage={perPage}
+				total={count}
+				perPage={limit}
 			/>
 		</>
 	)

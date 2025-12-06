@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import ComboBox from '../../../../components/buttons/Combo-box'
-import { ReleaseReviewSortField } from '../../../../models/review/release-review/release-review-sort-fields'
+import { ReleaseReviewSortFields } from '../../../../types/review'
 
 interface IProps {
 	count: number
@@ -29,7 +29,7 @@ const ReleaseDetailsReviewsHeader: FC<IProps> = ({
 				</p>
 
 				<ComboBox
-					options={Object.values(ReleaseReviewSortField)}
+					options={Object.values(ReleaseReviewSortFields)}
 					value={selectedSort}
 					onChange={setSelectedSort}
 					className='rounded-md border border-zinc-700 relative inline-block'

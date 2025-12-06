@@ -1,26 +1,36 @@
-import { observer } from 'mobx-react-lite'
-import { FC, useEffect, useRef, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { FC, useRef, useState } from 'react'
+import { ReviewAPI } from '../../../api/review/review-api'
 import CarouselContainer from '../../../components/carousel/Carousel-container'
 import LastReviewsCarousel from '../../../components/carousel/Last-reviews-carousel'
-import { useLoading } from '../../../hooks/use-loading'
-import { useStore } from '../../../hooks/use-store'
-import { CarouselRef } from '../../../types/carousel-ref'
+import { reviewsKeys } from '../../../query-keys/reviews-keys'
+import { SortOrdersEnum } from '../../../types/common'
+import { CarouselRef } from '../../../types/common/types/carousel-ref'
+import { ReviewsQuery, ReviewsSortFieldsEnum } from '../../../types/review'
 
 interface IProps {
 	id: string
 }
 
-const AuthorDetailsReviewsCarousel: FC<IProps> = observer(({ id }) => {
-	const { authorDetailsPageStore } = useStore()
+const limit = 25
 
-	const { execute: fetch, isLoading } = useLoading(
-		authorDetailsPageStore.fetchLastReviews
-	)
+const AuthorDetailsReviewsCarousel: FC<IProps> = ({ id }) => {
+	const query: ReviewsQuery = {
+		authorId: id,
+		limit,
+		offset: 0,
+		sortOrder: SortOrdersEnum.DESC,
+		sortField: ReviewsSortFieldsEnum.CREATED,
+		withTextOnly: true,
+	}
 
-	useEffect(() => {
-		fetch(id)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [id])
+	const { data, isPending } = useQuery({
+		queryKey: reviewsKeys.list(query),
+		queryFn: () => ReviewAPI.findAll(query),
+		staleTime: 1000 * 60 * 5,
+	})
+
+	const lastReviews = data?.items
 
 	const carouselRef = useRef<CarouselRef>(null)
 
@@ -28,7 +38,7 @@ const AuthorDetailsReviewsCarousel: FC<IProps> = observer(({ id }) => {
 	const [canScrollNext, setCanScrollNext] = useState(false)
 
 	return (
-		(isLoading || authorDetailsPageStore.lastReviews.length > 0) && (
+		(isPending || (lastReviews && lastReviews.length > 0)) && (
 			<CarouselContainer
 				title={'Последние рецензии'}
 				buttonTitle={''}
@@ -39,10 +49,9 @@ const AuthorDetailsReviewsCarousel: FC<IProps> = observer(({ id }) => {
 				carousel={
 					<LastReviewsCarousel
 						ref={carouselRef}
-						isLoading={isLoading}
-						items={authorDetailsPageStore.lastReviews}
+						isLoading={isPending}
+						items={lastReviews || []}
 						rowCount={1}
-						storeToggle={authorDetailsPageStore.toggleFavReview}
 						onCanScrollPrevChange={setCanScrollPrev}
 						onCanScrollNextChange={setCanScrollNext}
 					/>
@@ -52,6 +61,6 @@ const AuthorDetailsReviewsCarousel: FC<IProps> = observer(({ id }) => {
 			/>
 		)
 	)
-})
+}
 
 export default AuthorDetailsReviewsCarousel

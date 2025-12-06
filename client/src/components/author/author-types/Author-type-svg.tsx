@@ -1,12 +1,11 @@
 import { FC } from 'react'
-import { IAuthorType } from '../../../models/author/author-type/author-type'
-import { AuthorTypesEnum } from '../../../models/author/author-type/author-types-enum'
+import { AuthorType, AuthorTypesEnum } from '../../../types/author'
 import ArtistSvg from '../svg/Artist-svg'
 import DesignerSvg from '../svg/Designer-svg'
 import ProducerSvg from '../svg/Producer-svg'
 
 interface IProps {
-	type: IAuthorType
+	type: AuthorType
 	className: string
 }
 

@@ -1,14 +1,18 @@
 import { FC, useRef } from 'react'
 import { Link } from 'react-router'
-import LogoFullSvg from '../../../../components/svg/Logo-full-svg'
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
-import { NominationTypesEnum } from '../../../../models/nomination/nomination-type/nomination-type-enum'
-import { INominationWinnerParticipationItem } from '../../../../models/nomination/nomination-winner-participation/nomination-winner-participation-item'
-import { MonthEnum, MonthEnumType } from '../../../../types/month-enum-type'
+import {
+	MonthEnumType,
+	MonthsEnum,
+} from '../../../../types/common/enums/months-enum'
+import {
+	AuthorNominationWin,
+	NominationTypesEnum,
+} from '../../../../types/nomination'
 
 interface IProps {
-	item?: INominationWinnerParticipationItem
+	item?: AuthorNominationWin
 	isLoading: boolean
 }
 
@@ -126,13 +130,13 @@ const AuthorDetailsNominationsCarouselItem: FC<IProps> = ({
 								{item.nominationType}
 							</div>
 							<div className='text-[10px] lg:text-sm opacity-40 font-semibold'>
-								{MonthEnum[item.month as MonthEnumType]} {item.year}
+								{MonthsEnum[item.month as MonthEnumType]} {item.year}
 							</div>
 						</div>
 
-						<div className='max-w-[80px] lg:max-w-[115px] opacity-20'>
+						{/* <div className='max-w-[80px] lg:max-w-[115px] opacity-20'>
 							<LogoFullSvg className='w-full' />
-						</div>
+						</div> */}
 					</div>
 				</div>
 

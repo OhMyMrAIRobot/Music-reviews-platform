@@ -1,30 +1,22 @@
-import { observer } from 'mobx-react-lite'
+import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
+import { AuthorConfirmationAPI } from '../../../../../api/author/author-confirmation-api'
 import AuthorConfirmationStatusIcon from '../../../../../components/author/author-confirmation/Author-confirmation-status-icon'
 import AdminHeader from '../../../../../components/layout/admin-header/Admin-header'
 import Pagination from '../../../../../components/pagination/Pagination'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
-import { useLoading } from '../../../../../hooks/use-loading'
-import { useStore } from '../../../../../hooks/use-store'
-import { AuthorConfirmationStatusesFilterOptions } from '../../../../../models/author/author-confirmation/author-confirmation-statuses-filter-options'
-import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
-import { SortOrder } from '../../../../../types/sort-order-type'
+import { useAuthorConfirmationMeta } from '../../../../../hooks/use-author-confirmation-meta'
+import { authorConfirmationsKeys } from '../../../../../query-keys/authors-confirmations-keys'
+import { AuthorConfirmationStatusesFilterOptions } from '../../../../../types/author'
+import { AuthorConfirmationsQuery } from '../../../../../types/author/queries/author-confirmations-query'
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum'
+import { SortOrder } from '../../../../../types/common/types/sort-order'
 import AdminFilterButton from '../../buttons/Admin-filter-button'
-import AdminToggleSortOrderButton from '../../buttons/Admin-toggle-sort-order-button'
 import AdminDashboardAuthorConfirmationGridItem from './Admin-dashboard-author-confirmation-grid-item'
 
-const AdminDashboardAuthorConfirmationGrid = observer(() => {
-	const perPage = 10
+const limit = 10
 
-	const { adminDashboardAuthorConfirmationStore, metaStore } = useStore()
-
-	const { execute: fetchStatuses, isLoading: isStatusesLoading } = useLoading(
-		metaStore.fetchAuthorConfirmationStatuses
-	)
-	const { execute: fetch, isLoading: isConfirmationsLoading } = useLoading(
-		adminDashboardAuthorConfirmationStore.fetchAuthorConfirmations
-	)
-
+const AdminDashboardAuthorConfirmationGrid = () => {
 	const [searchText, setSearchText] = useState<string>('')
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [status, setStatus] = useState<AuthorConfirmationStatusesFilterOptions>(
@@ -32,43 +24,34 @@ const AdminDashboardAuthorConfirmationGrid = observer(() => {
 	)
 	const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC)
 
-	const fetchConfirmations = () => {
-		let statusId: string | null = null
-		if (status !== AuthorConfirmationStatusesFilterOptions.ALL) {
-			statusId =
-				metaStore.authorConfirmationStatuses.find(s => s.status === status)
-					?.id ?? null
-		}
-		return fetch(
-			perPage,
-			(currentPage - 1) * perPage,
-			statusId,
-			order,
-			searchText.trim() ? searchText.trim() : null
-		)
+	const { statuses, isLoading: isStatusesLoading } = useAuthorConfirmationMeta()
+
+	const statusId =
+		status !== AuthorConfirmationStatusesFilterOptions.ALL
+			? statuses.find(s => s.status === status)?.id
+			: undefined
+
+	const params: AuthorConfirmationsQuery = {
+		limit,
+		offset: (currentPage - 1) * limit,
+		order,
+		statusId,
+		search: searchText.trim() || undefined,
 	}
 
-	useEffect(() => {
-		if (metaStore.authorConfirmationStatuses.length === 0) {
-			fetchStatuses()
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	const { data, isPending: isConfirmationsLoading } = useQuery({
+		queryKey: authorConfirmationsKeys.list(params),
+		queryFn: () => AuthorConfirmationAPI.findAll(params),
+		staleTime: 1000 * 60 * 5,
+		enabled: !isStatusesLoading,
+	})
+
+	const confirmations = data?.items || []
+	const count = data?.meta.count || 0
 
 	useEffect(() => {
-		if (isConfirmationsLoading) return
 		setCurrentPage(1)
-		fetchConfirmations()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [searchText, status])
-
-	useEffect(() => {
-		if (isConfirmationsLoading) return
-		fetchConfirmations()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentPage, order])
-
-	const items = adminDashboardAuthorConfirmationStore.items
 
 	return (
 		<div className='flex flex-col h-screen' id='admin-author-confirmations'>
@@ -106,18 +89,6 @@ const AdminDashboardAuthorConfirmationGrid = observer(() => {
 						  )}
 				</div>
 
-				<AdminToggleSortOrderButton
-					title={'Дата подачи заявки'}
-					order={order}
-					toggleOrder={() =>
-						setOrder(
-							order === SortOrdersEnum.DESC
-								? SortOrdersEnum.ASC
-								: SortOrdersEnum.DESC
-						)
-					}
-				/>
-
 				<AdminDashboardAuthorConfirmationGridItem
 					className='bg-white/5 font-medium max-xl:hidden'
 					isLoading={false}
@@ -131,7 +102,7 @@ const AdminDashboardAuthorConfirmationGrid = observer(() => {
 					}
 				/>
 
-				{!isConfirmationsLoading && items.length === 0 && (
+				{!isConfirmationsLoading && confirmations.length === 0 && (
 					<span className='font-medium mx-auto mt-5 text-lg'>
 						Заявки на верификацию не найдены!
 					</span>
@@ -140,30 +111,29 @@ const AdminDashboardAuthorConfirmationGrid = observer(() => {
 				<div className='flex-1 overflow-y-auto mt-5'>
 					<div className='grid gap-y-5'>
 						{isConfirmationsLoading || isStatusesLoading
-							? Array.from({ length: perPage }).map((_, idx) => (
+							? Array.from({ length: limit }).map((_, idx) => (
 									<AdminDashboardAuthorConfirmationGridItem
 										key={`Author-confirmation-skeleton-${idx}`}
 										isLoading={true}
 									/>
 							  ))
-							: items.map((item, idx) => (
+							: confirmations.map((item, idx) => (
 									<AdminDashboardAuthorConfirmationGridItem
 										key={item.id}
 										item={item}
 										isLoading={false}
-										position={(currentPage - 1) * perPage + idx + 1}
-										refetch={fetchConfirmations}
+										position={(currentPage - 1) * limit + idx + 1}
 									/>
 							  ))}
 					</div>
 				</div>
 
-				{!isConfirmationsLoading && items.length > 0 && (
+				{!isConfirmationsLoading && confirmations.length > 0 && (
 					<div className='mt-5'>
 						<Pagination
 							currentPage={currentPage}
-							totalItems={adminDashboardAuthorConfirmationStore.count}
-							itemsPerPage={perPage}
+							totalItems={count}
+							itemsPerPage={limit}
 							setCurrentPage={setCurrentPage}
 							idToScroll={'admin-author-confirmations-grid'}
 						/>
@@ -172,6 +142,6 @@ const AdminDashboardAuthorConfirmationGrid = observer(() => {
 			</div>
 		</div>
 	)
-})
+}
 
 export default AdminDashboardAuthorConfirmationGrid

@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx'
-import { INotification } from '../models/notification/notification'
+import { INotification } from '../types/common'
 import { generateUUID } from '../utils/generate-uuid'
 
 class NotificationStore {

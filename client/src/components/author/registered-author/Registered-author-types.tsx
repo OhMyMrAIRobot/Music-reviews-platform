@@ -1,6 +1,5 @@
 import { FC } from 'react'
-import { IAuthorType } from '../../../models/author/author-type/author-type'
-import { AuthorTypesEnum } from '../../../models/author/author-type/author-types-enum'
+import { AuthorType, AuthorTypesEnum } from '../../../types/author'
 import Tooltip from '../../tooltip/Tooltip'
 import TooltipSpan from '../../tooltip/Tooltip-span'
 import RegisteredArtistSvg from './svg/Registered-artist-svg'
@@ -9,7 +8,7 @@ import RegisteredProducerSvg from './svg/Registered-producer-svg'
 
 interface IProps {
 	className: string
-	types: IAuthorType[]
+	types: AuthorType[]
 }
 
 const iconComponents = {

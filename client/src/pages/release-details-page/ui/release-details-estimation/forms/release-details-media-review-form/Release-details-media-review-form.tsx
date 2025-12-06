@@ -1,91 +1,167 @@
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQuery,
+	useQueryClient,
+} from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
 import { FC, useEffect, useMemo, useState } from 'react'
+import { ReleaseMediaAPI } from '../../../../../../api/release/release-media-api'
 import FormButton from '../../../../../../components/form-elements/Form-button'
 import FormInput from '../../../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../../../components/form-elements/Form-label'
-import { useLoading } from '../../../../../../hooks/use-loading'
+import { useApiErrorHandler } from '../../../../../../hooks/use-api-error-handler'
+import { useAuth } from '../../../../../../hooks/use-auth'
 import { useStore } from '../../../../../../hooks/use-store'
+import { leaderboardKeys } from '../../../../../../query-keys/leaderboard-keys'
+import { platformStatsKeys } from '../../../../../../query-keys/platform-stats-keys'
+import { profilesKeys } from '../../../../../../query-keys/profiles-keys'
+import { releaseMediaKeys } from '../../../../../../query-keys/release-media-keys'
+import {
+	CreateReleaseMediaData,
+	ReleaseMediaQuery,
+	UpdateReleaseMediaData,
+} from '../../../../../../types/release'
+import { constraints } from '../../../../../../utils/constraints'
 
 interface IProps {
 	releaseId: string
 }
 
 const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
-	const { releaseDetailsPageStore, notificationStore } = useStore()
+	/** HOOKS */
+	const { notificationStore, authStore } = useStore()
+	const { checkAuth } = useAuth()
+	const queryClient = useQueryClient()
+	const handleApiError = useApiErrorHandler()
 
-	const userReleaseMedia = releaseDetailsPageStore.userReleaseMedia
-
+	/** STATES */
 	const [title, setTitle] = useState<string>('')
 	const [url, setUrl] = useState<string>('')
 
-	const { execute: postReleaseMedia, isLoading: isPosting } = useLoading(
-		releaseDetailsPageStore.postMediaReview
-	)
-
-	const { execute: updateReleaseMedia, isLoading: isUpdating } = useLoading(
-		releaseDetailsPageStore.updateReleaseMedia
-	)
-
-	const { execute: deleteReleaseMedia, isLoading: isDeleting } = useLoading(
-		releaseDetailsPageStore.deleteReleaseMedia
-	)
-
-	const handleSubmit = async () => {
-		if (isPosting || !isValid || isDeleting || isUpdating) return
-
-		let errors: string[] = []
-		if (userReleaseMedia) {
-			if (hasChanges) {
-				errors = await updateReleaseMedia(
-					userReleaseMedia.id,
-					title !== userReleaseMedia.title ? title.trim() : undefined,
-					url !== userReleaseMedia.url ? url.trim() : undefined
-				)
-			} else {
-				return
-			}
-		} else {
-			errors = await postReleaseMedia(releaseId, title, url)
-		}
-
-		if (errors.length === 0) {
-			notificationStore.addSuccessNotification(
-				`Вы успешно ${
-					userReleaseMedia ? 'обновили' : 'добавили'
-				} медиарецензию. Ожидайте подтверждения!`
-			)
-		} else {
-			errors.forEach(err => notificationStore.addErrorNotification(err))
-		}
+	/**
+	 * Query to get user's media review for the release
+	 */
+	const query: ReleaseMediaQuery = {
+		releaseId,
+		userId: authStore.user?.id,
 	}
 
-	const handleDelete = async () => {
-		if (isPosting || isDeleting || isUpdating || !userReleaseMedia) return
+	/**
+	 * Function to invalidate related queries after mutations
+	 */
+	const invalidateRelatedQueries = () => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: releaseMediaKeys.all },
+			{ queryKey: profilesKeys.profile(authStore.user?.id || 'unknown') },
+			{ queryKey: platformStatsKeys.all },
+			{ queryKey: leaderboardKeys.all },
+		]
 
-		const errors = await deleteReleaseMedia(userReleaseMedia.id)
-
-		if (errors.length === 0) {
-			notificationStore.addSuccessNotification(
-				'Вы успешно удалили медиарецензию!'
-			)
-			setUrl('')
-			setTitle('')
-		} else {
-			errors.forEach(err => notificationStore.addErrorNotification(err))
-		}
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
 	}
 
+	/**
+	 * Fetch user's media review for the release
+	 */
+	const { data: userReleaseMediaData } = useQuery({
+		queryKey: releaseMediaKeys.list(query),
+		queryFn: () => ReleaseMediaAPI.findAll(query),
+		enabled: authStore.isAuth && !!authStore.user?.id,
+		staleTime: 1000 * 60 * 5,
+	})
+
+	/** User's media review for this release */
+	const userReleaseMedia =
+		userReleaseMediaData?.items.length === 1
+			? userReleaseMediaData?.items[0]
+			: null
+
+	/** EFFECTS */
 	useEffect(() => {
-		if (userReleaseMedia) {
-			setTitle(userReleaseMedia.title)
-			setUrl(userReleaseMedia.url)
-		}
+		setTitle(userReleaseMedia?.title ?? '')
+		setUrl(userReleaseMedia?.url ?? '')
 	}, [userReleaseMedia])
 
+	/**
+	 * Mutation for creating a new media review
+	 */
+	const { mutateAsync: createAsync, isPending: isCreating } = useMutation({
+		mutationFn: (data: CreateReleaseMediaData) => ReleaseMediaAPI.create(data),
+		onSuccess: () => {
+			notificationStore.addSuccessNotification(
+				'Медиарецензия успешно добавлена! Ожидайте подтверждения!'
+			)
+
+			invalidateRelatedQueries()
+		},
+		onError: (error: unknown) => {
+			handleApiError(error, 'Не удалось добавить медиарецензию.')
+		},
+	})
+
+	/**
+	 * Mutation for updating an existing media review
+	 */
+	const { mutateAsync: updateAsync, isPending: isUpdating } = useMutation({
+		mutationFn: (data: { id: string; updateData: UpdateReleaseMediaData }) =>
+			ReleaseMediaAPI.update(data.id, data.updateData),
+		onSuccess: () => {
+			notificationStore.addSuccessNotification(
+				'Медиарецензия успешно обновлена! Ожидайте подтверждения!'
+			)
+
+			invalidateRelatedQueries()
+		},
+		onError: (error: unknown) => {
+			handleApiError(error, 'Не удалось обновить медиарецензию.')
+		},
+	})
+
+	/**
+	 * Mutation for deleting an existing media review
+	 */
+	const { mutateAsync: deleteAsync, isPending: isDeleting } = useMutation({
+		mutationFn: (id: string) => ReleaseMediaAPI.delete(id),
+		onSuccess: () => {
+			notificationStore.addSuccessNotification('Медиарецензия успешно удалена!')
+
+			invalidateRelatedQueries()
+		},
+		onError: (error: unknown) => {
+			handleApiError(error, 'Не удалось удалить медиарецензию.')
+		},
+	})
+
+	/**
+	 * Check if any mutation is in progress
+	 *
+	 * @returns {boolean} - True if any mutation is in progress, false otherwise
+	 */
+	const isSubmitting = useMemo(
+		() => isCreating || isUpdating || isDeleting,
+		[isCreating, isUpdating, isDeleting]
+	)
+
+	/**
+	 * Check if the form inputs are valid
+	 *
+	 * @returns {boolean} - True if both title and url are non-empty, false otherwise
+	 */
 	const isValid = useMemo(() => {
-		return url.trim() && title.trim()
+		return (
+			title.trim().length >= constraints.releaseMedia.minTitleLength &&
+			title.trim().length <= constraints.releaseMedia.maxTitleLength &&
+			url.trim().length >= constraints.releaseMedia.minUrlLength &&
+			url.trim().length <= constraints.releaseMedia.maxUrlLength
+		)
 	}, [title, url])
 
+	/**
+	 * Check if there are any changes in the form compared to existing data
+	 *
+	 * @returns {boolean} - True if there are changes, false otherwise
+	 */
 	const hasChanges = useMemo(() => {
 		if (!userReleaseMedia) return true
 		return (
@@ -93,6 +169,38 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
 			userReleaseMedia.url.trim() !== url.trim()
 		)
 	}, [title, url, userReleaseMedia])
+
+	/**
+	 * Handle form submission for creating or updating media review
+	 */
+	const handleSubmit = async () => {
+		if (!checkAuth() || isSubmitting || !isValid || !hasChanges) return
+
+		if (userReleaseMedia) {
+			return updateAsync({
+				id: userReleaseMedia.id,
+				updateData: {
+					title: title !== userReleaseMedia.title ? title.trim() : undefined,
+					url: url !== userReleaseMedia.url ? url.trim() : undefined,
+				},
+			})
+		} else {
+			return createAsync({
+				releaseId,
+				title: title.trim(),
+				url: url.trim(),
+			})
+		}
+	}
+
+	/**
+	 * Handle deletion of the media review
+	 */
+	const handleDelete = async () => {
+		if (!checkAuth() || !userReleaseMedia || isSubmitting) return
+
+		return deleteAsync(userReleaseMedia.id)
+	}
 
 	return (
 		<div className='border bg-zinc-900 rounded-xl p-4 border-white/10'>
@@ -141,8 +249,8 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
 						title={userReleaseMedia ? 'Обновить' : 'Отправить'}
 						isInvert={true}
 						onClick={handleSubmit}
-						disabled={!isValid || isPosting || !hasChanges}
-						isLoading={isPosting}
+						disabled={!isValid || !hasChanges || isSubmitting}
+						isLoading={isCreating || isUpdating}
 					/>
 				</div>
 
@@ -152,7 +260,7 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
 							title={'Удалить'}
 							isInvert={false}
 							onClick={handleDelete}
-							disabled={!userReleaseMedia || isDeleting}
+							disabled={!userReleaseMedia || isSubmitting}
 							isLoading={isDeleting}
 						/>
 					</div>

@@ -1,30 +1,57 @@
-import { FC } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { FC, useState } from 'react'
+import { ReviewAPI } from '../../../../api/review/review-api.ts'
 import Pagination from '../../../../components/pagination/Pagination.tsx'
-import { IReleaseReview } from '../../../../models/review/release-review/release-review.ts'
+import { reviewsKeys } from '../../../../query-keys/reviews-keys.ts'
+import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum.ts'
+import { SortOrder } from '../../../../types/common/types/sort-order.ts'
+import {
+	ReleaseReviewSortFields,
+	ReviewsQuery,
+	ReviewsSortFieldsEnum,
+} from '../../../../types/review/index.ts'
 import ReleaseDetailsReviewsHeader from './Release-details-reviews-header.tsx'
 import ReleaseDetailsReviewsItem from './Release-details-reviews-item.tsx'
 
 interface IProps {
-	reviews: IReleaseReview[] | null
-	selectedSort: string
-	setSelectedSort: (val: string) => void
-	currentPage: number
-	setCurrentPage: (val: number) => void
-	totalItems: number
-	perPage: number
-	isLoading: boolean
+	releaseId: string
 }
 
-const ReleaseDetailsReviews: FC<IProps> = ({
-	reviews,
-	selectedSort,
-	setSelectedSort,
-	currentPage,
-	setCurrentPage,
-	totalItems,
-	perPage,
-	isLoading,
-}) => {
+const limit = 5
+
+const ReleaseDetailsReviews: FC<IProps> = ({ releaseId }) => {
+	const [currentPage, setCurrentPage] = useState<number>(1)
+	const [selectedSort, setSelectedSort] = useState<string>(
+		ReleaseReviewSortFields.NEW
+	)
+
+	let field: ReviewsSortFieldsEnum = ReviewsSortFieldsEnum.CREATED
+	let order: SortOrder = SortOrdersEnum.DESC
+
+	if (selectedSort === ReleaseReviewSortFields.OLD) {
+		order = SortOrdersEnum.ASC
+	} else if (selectedSort === ReleaseReviewSortFields.POPULAR) {
+		field = ReviewsSortFieldsEnum.LIKES
+	}
+
+	const query: ReviewsQuery = {
+		releaseId,
+		sortField: field,
+		sortOrder: order,
+		limit,
+		offset: (currentPage - 1) * limit,
+		withTextOnly: true,
+	}
+
+	const { data: reviewsData, isPending: isLoading } = useQuery({
+		queryKey: reviewsKeys.list(query),
+		queryFn: () => ReviewAPI.findAll(query),
+		staleTime: 1000 * 60 * 5,
+	})
+
+	const reviews = reviewsData?.items ?? []
+	const totalItems = reviewsData?.meta.count ?? 0
+
 	return (
 		<section
 			id='release-reviews'
@@ -50,7 +77,7 @@ const ReleaseDetailsReviews: FC<IProps> = ({
 							review =>
 								review.text && (
 									<ReleaseDetailsReviewsItem
-										key={review.userId}
+										key={review.user.id}
 										review={review}
 										isLoading={isLoading}
 									/>
@@ -63,7 +90,7 @@ const ReleaseDetailsReviews: FC<IProps> = ({
 					<Pagination
 						currentPage={currentPage}
 						totalItems={totalItems}
-						itemsPerPage={perPage}
+						itemsPerPage={limit}
 						setCurrentPage={setCurrentPage}
 						idToScroll='release-reviews'
 					/>

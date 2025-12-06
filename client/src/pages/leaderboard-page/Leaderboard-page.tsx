@@ -1,20 +1,24 @@
-import { useEffect } from 'react'
-import { useLoading } from '../../hooks/use-loading'
-import { useStore } from '../../hooks/use-store'
+import { useQuery } from '@tanstack/react-query'
+import { LeaderboardAPI } from '../../api/leaderboard-api'
+import { leaderboardKeys } from '../../query-keys/leaderboard-keys'
+import { LeaderboardQuery } from '../../types/leaderboard'
 import LeaderboardHeader from './ui/Leaderboard-header'
 import LeaderboardItem from './ui/Leaderboard-item'
 import LeaderboardTitle from './ui/Leaderboard-title'
 
+const query: LeaderboardQuery = {
+	limit: 90,
+	offset: 0,
+}
+
 const LeaderboardPage = () => {
-	const { leaderboardStore } = useStore()
+	const { data, isPending } = useQuery({
+		queryKey: leaderboardKeys.list(query),
+		queryFn: () => LeaderboardAPI.fetchLeaderboard(query),
+		staleTime: 1000 * 60 * 5,
+	})
 
-	const { execute: fetch, isLoading } = useLoading(
-		leaderboardStore.fetchLeaderboard
-	)
-
-	useEffect(() => {
-		fetch()
-	}, [fetch])
+	const items = data ?? []
 
 	return (
 		<div className='max-w-[1250px] mx-auto'>
@@ -22,21 +26,23 @@ const LeaderboardPage = () => {
 
 			<div className='mt-5 flex flex-col gap-y-3.5'>
 				<LeaderboardHeader />
-				{isLoading
+
+				{isPending
 					? Array.from({ length: 15 }).map((_, idx) => (
 							<LeaderboardItem
 								key={`leaderboard-skeleton-${idx}`}
-								isLoading={isLoading}
+								isLoading={isPending}
 							/>
 					  ))
-					: leaderboardStore.items.map(item => (
+					: items.map(item => (
 							<LeaderboardItem
-								key={item.userId}
+								key={item.user.id}
 								item={item}
-								isLoading={isLoading}
+								isLoading={isPending}
 							/>
 					  ))}
-				{leaderboardStore.items.length === 0 && !isLoading && (
+
+				{items.length === 0 && !isPending && (
 					<p className='text-center text-2xl font-semibold mt-10 w-full'>
 						Таблица лидеров пуста!
 					</p>

@@ -1,4 +1,11 @@
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQueryClient,
+} from '@tanstack/react-query'
 import { FC, useMemo, useState } from 'react'
+import { AuthorAPI } from '../../../api/author/author-api'
+import { AuthorConfirmationAPI } from '../../../api/author/author-confirmation-api'
 import FormButton from '../../../components/form-elements/Form-button'
 import FormCheckbox from '../../../components/form-elements/Form-checkbox'
 import FormInput from '../../../components/form-elements/Form-input'
@@ -6,63 +13,122 @@ import FormLabel from '../../../components/form-elements/Form-label'
 import FormMultiSelect, {
 	IMultiSelectValue,
 } from '../../../components/form-elements/Form-multi-select'
+import { useApiErrorHandler } from '../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../hooks/use-auth'
-import { useLoading } from '../../../hooks/use-loading'
 import { useStore } from '../../../hooks/use-store'
+import { authorConfirmationsKeys } from '../../../query-keys/authors-confirmations-keys'
+import { authorsKeys } from '../../../query-keys/authors-keys'
+import {
+	AuthorsQuery,
+	CreateAuthorConfirmationData,
+} from '../../../types/author'
+import { constraints } from '../../../utils/constraints'
 
 interface IProps {
 	show: boolean
 }
 
 const SendAuthorConfirmationForm: FC<IProps> = ({ show }) => {
-	const { authorConfirmationPageStore, notificationStore } = useStore()
-
+	/** HOOKS */
+	const { notificationStore } = useStore()
 	const { checkAuth } = useAuth()
+	const queryClient = useQueryClient()
+	const handleApiError = useApiErrorHandler()
 
+	/** STATES */
 	const [confirmation, setConfirmation] = useState<string>('')
 	const [checked, setChecked] = useState<boolean>(false)
 	const [authors, setAuthors] = useState<IMultiSelectValue[]>([])
 
-	const { execute: fetchAuthors, isLoading: isAuthorsLoading } = useLoading(
-		authorConfirmationPageStore.fetchAuthors
-	)
-
-	const { execute: create, isLoading: isCreating } = useLoading(
-		authorConfirmationPageStore.postAuthorConfirmation
-	)
-
+	/**
+	 * Function to load authors for multi-select
+	 *
+	 * @param {string} search - The search term
+	 * @param {number | null} limit - The maximum number of authors to load
+	 * @returns {Promise<IMultiSelectValue[]>} A promise that resolves to an array of multi-select values
+	 */
 	const loadAuthors = async (
 		search: string,
 		limit: number | null
 	): Promise<IMultiSelectValue[]> => {
-		await fetchAuthors(search.trim() !== '' ? search.trim() : null, limit)
+		const query: AuthorsQuery = {
+			search: search.trim() || undefined,
+			limit: limit || undefined,
+			offset: 0,
+		}
 
-		return authorConfirmationPageStore.authors.map(a => {
-			return { name: a.name, id: a.id }
+		const data = await queryClient.fetchQuery({
+			queryKey: authorsKeys.list(query),
+			queryFn: () => AuthorAPI.findAll(query),
+			staleTime: 1000 * 60 * 5,
 		})
+
+		const list = data?.items ?? []
+		return list.map((a: IMultiSelectValue) => ({
+			id: a.id,
+			name: a.name,
+		}))
 	}
 
-	const postAuthorConfirmation = async () => {
-		if (!checkAuth() || isCreating || isAuthorsLoading || !isFormValid) return
+	/**
+	 * Function to invalidate related queries after mutations
+	 */
+	const invalidateRelatedQueries = () => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: authorConfirmationsKeys.all },
+		]
+
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	}
+
+	/**
+	 * Create author confirmation mutation
+	 */
+	const { mutateAsync: createConfirmation, isPending: isCreating } =
+		useMutation({
+			mutationFn: (payload: CreateAuthorConfirmationData) =>
+				AuthorConfirmationAPI.create(payload),
+			onSuccess: async () => {
+				notificationStore.addSuccessNotification(
+					'Вы успешно оставили заявку на подтверждение!'
+				)
+				setChecked(false)
+				setAuthors([])
+				setConfirmation('')
+
+				invalidateRelatedQueries()
+			},
+			onError: (err: unknown) => {
+				handleApiError(err, 'Не удалось отправить заявку')
+			},
+		})
+
+	/**
+	 * Indicates if the form is valid
+	 *
+	 * @returns {boolean} True if the form is valid, false otherwise
+	 */
+	const isFormValid = useMemo(() => {
+		return (
+			confirmation.trim().length >=
+				constraints.authorConfirmation.minConfirmationLength &&
+			confirmation.trim().length <=
+				constraints.authorConfirmation.maxConfirmationLength &&
+			authors.length >= constraints.authorConfirmation.minArraySize &&
+			authors.length <= constraints.authorConfirmation.maxArraySize &&
+			checked
+		)
+	}, [authors.length, checked, confirmation])
+
+	/**
+	 * Handle post confirmation
+	 */
+	const handlePostConfirmation = async () => {
+		if (!checkAuth() || isCreating || !isFormValid) return
 
 		const authorIds = authors.map(a => a.id)
-		const errors = await create(confirmation, authorIds)
-
-		if (errors.length === 0) {
-			notificationStore.addSuccessNotification(
-				'Вы успешно оставили заявку на подтверждение!'
-			)
-			setChecked(false)
-			setAuthors([])
-			setConfirmation('')
-		} else {
-			errors.forEach(err => notificationStore.addErrorNotification(err))
-		}
+		return createConfirmation({ confirmation, authorIds })
 	}
-
-	const isFormValid = useMemo(() => {
-		return confirmation.trim().length > 5 && authors.length > 0 && checked
-	}, [authors.length, checked, confirmation])
 
 	return (
 		<div
@@ -101,6 +167,7 @@ const SendAuthorConfirmationForm: FC<IProps> = ({ show }) => {
 					setValue={setConfirmation}
 				/>
 			</div>
+
 			<div className='flex items-center w-full gap-2'>
 				<FormCheckbox
 					id={'confirmation-checkbox'}
@@ -115,11 +182,12 @@ const SendAuthorConfirmationForm: FC<IProps> = ({ show }) => {
 					isRequired={true}
 				/>
 			</div>
+
 			<FormButton
 				title={'Отправить'}
-				onClick={postAuthorConfirmation}
+				onClick={handlePostConfirmation}
 				isInvert={true}
-				disabled={!isFormValid || isAuthorsLoading || isCreating}
+				disabled={!isFormValid || isCreating}
 				isLoading={isCreating}
 			/>
 		</div>

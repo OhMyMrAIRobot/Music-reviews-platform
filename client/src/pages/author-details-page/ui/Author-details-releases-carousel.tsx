@@ -1,33 +1,43 @@
-import { observer } from 'mobx-react-lite'
-import { FC, useEffect, useRef, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { FC, useRef, useState } from 'react'
+import { ReleaseAPI } from '../../../api/release/release-api'
 import CarouselContainer from '../../../components/carousel/Carousel-container'
-import { useLoading } from '../../../hooks/use-loading'
-import { useStore } from '../../../hooks/use-store'
-import { CarouselRef } from '../../../types/carousel-ref'
+import { releasesKeys } from '../../../query-keys/releases-keys'
+import { SortOrdersEnum } from '../../../types/common/enums/sort-orders-enum'
+import { CarouselRef } from '../../../types/common/types/carousel-ref'
+import { ReleasesQuery, ReleasesSortFieldsEnum } from '../../../types/release'
 import LastReleasesCarousel from '../../main-page/ui/last-releases/carousel/Last-releases-carousel'
 
 interface IProps {
 	id: string
 }
 
-const AuthorDetailsReleasesCarousel: FC<IProps> = observer(({ id }) => {
-	const { authorDetailsPageStore } = useStore()
+const limit = 15
+const offset = 0
 
-	const { execute: fetch, isLoading } = useLoading(
-		authorDetailsPageStore.fetchTopReleases
-	)
+const AuthorDetailsReleasesCarousel: FC<IProps> = ({ id }) => {
+	const query: ReleasesQuery = {
+		authorId: id,
+		sortField: ReleasesSortFieldsEnum.ALL_RATING,
+		sortOrder: SortOrdersEnum.DESC,
+		limit,
+		offset,
+	}
 
-	useEffect(() => {
-		fetch(id)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [id])
+	const { data, isPending } = useQuery({
+		queryKey: releasesKeys.list(query),
+		queryFn: () => ReleaseAPI.findAll(query),
+		staleTime: 1000 * 60 * 5,
+	})
+
+	const topReleases = data?.items || []
 
 	const carouselRef = useRef<CarouselRef>(null)
 	const [canScrollPrev, setCanScrollPrev] = useState(false)
 	const [canScrollNext, setCanScrollNext] = useState(false)
 
 	return (
-		(isLoading || authorDetailsPageStore.topReleases.length > 0) && (
+		(isPending || (topReleases && topReleases.length > 0)) && (
 			<CarouselContainer
 				title={'Лучшие работы'}
 				buttonTitle={''}
@@ -37,8 +47,8 @@ const AuthorDetailsReleasesCarousel: FC<IProps> = observer(({ id }) => {
 				href='#'
 				carousel={
 					<LastReleasesCarousel
-						items={authorDetailsPageStore.topReleases}
-						isLoading={isLoading}
+						items={topReleases || []}
+						isLoading={isPending}
 						ref={carouselRef}
 						onCanScrollPrevChange={setCanScrollPrev}
 						onCanScrollNextChange={setCanScrollNext}
@@ -49,6 +59,6 @@ const AuthorDetailsReleasesCarousel: FC<IProps> = observer(({ id }) => {
 			/>
 		)
 	)
-})
+}
 
 export default AuthorDetailsReleasesCarousel

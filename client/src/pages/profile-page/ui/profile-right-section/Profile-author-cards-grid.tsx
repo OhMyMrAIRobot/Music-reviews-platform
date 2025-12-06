@@ -1,18 +1,34 @@
+import { useQuery } from '@tanstack/react-query'
 import { EmblaOptionsType } from 'embla-carousel'
 import useEmblaCarousel from 'embla-carousel-react'
 import { FC } from 'react'
+import { AuthorAPI } from '../../../../api/author/author-api'
 import AuthorCard from '../../../../components/author/authors-grid/Author-card'
-import { useStore } from '../../../../hooks/use-store'
+import { authorsKeys } from '../../../../query-keys/authors-keys'
+import { AuthorsQuery } from '../../../../types/author'
 
 interface IProps {
-	isLoading: boolean
+	userId: string
 }
 
-const ProfileAuthorCardsGrid: FC<IProps> = ({ isLoading }) => {
-	const { profilePageStore } = useStore()
+const options: EmblaOptionsType = { dragFree: true, align: 'start' }
 
-	const options: EmblaOptionsType = { dragFree: true, align: 'start' }
+const ProfileAuthorCardsGrid: FC<IProps> = ({ userId }) => {
 	const [emblaRef] = useEmblaCarousel(options)
+
+	const query: AuthorsQuery = {
+		onlyRegistered: true,
+		userId,
+	}
+
+	const { data, isLoading } = useQuery({
+		queryKey: authorsKeys.list(query),
+		queryFn: () => AuthorAPI.findAll(query),
+		enabled: !!userId,
+		staleTime: 1000 * 60 * 5,
+	})
+
+	const authorCards = data?.items || []
 
 	return (
 		<div className='embla w-full'>
@@ -25,7 +41,7 @@ const ProfileAuthorCardsGrid: FC<IProps> = ({ isLoading }) => {
 									isLoading={true}
 								/>
 						  ))
-						: profilePageStore.authorCards.map(author => (
+						: authorCards?.map(author => (
 								<AuthorCard key={author.id} author={author} isLoading={false} />
 						  ))}
 				</div>

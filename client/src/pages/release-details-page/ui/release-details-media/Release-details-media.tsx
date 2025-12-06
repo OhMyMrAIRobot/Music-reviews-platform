@@ -1,80 +1,91 @@
-import { observer } from 'mobx-react-lite'
-import { FC, useEffect, useRef, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { FC, useRef, useState } from 'react'
+import { ReleaseMediaAPI } from '../../../../api/release/release-media-api'
 import CarouselNavButton from '../../../../components/carousel/Carousel-nav-button'
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
-import { useLoading } from '../../../../hooks/use-loading'
+import { useReleaseMediaMeta } from '../../../../hooks/use-release-media-meta'
 import { useStore } from '../../../../hooks/use-store'
-import { ReleaseMediaStatusesEnum } from '../../../../models/release/release-media/release-media-status/release-media-statuses-enum'
-import { RolesEnum } from '../../../../models/role/roles-enum'
-import { CarouselRef } from '../../../../types/carousel-ref'
+import { releaseMediaKeys } from '../../../../query-keys/release-media-keys'
+import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum'
+import { CarouselRef } from '../../../../types/common/types/carousel-ref'
+import {
+	ReleaseMediaQuery,
+	ReleaseMediaStatusesEnum,
+} from '../../../../types/release'
+import { RolesEnum } from '../../../../types/user'
 import ReleaseDetailsMediaCarousel from './Release-details-media-carousel'
 
 interface IProps {
 	releaseId: string
 }
 
-const ReleaseDetailsMedia: FC<IProps> = observer(({ releaseId }) => {
-	const { releaseDetailsPageStore, metaStore, authStore } = useStore()
-
-	const { execute: fetchStatuses, isLoading: isStatusesLoading } = useLoading(
-		metaStore.fetchReleaseMediaStatuses
-	)
-
-	const { execute: _fetchReleaseMedia, isLoading: isReleaseMediaLoading } =
-		useLoading(releaseDetailsPageStore.fetchReleaseMedia)
-
-	const {
-		execute: _fetchUserReleaseMedia,
-		isLoading: isUserReleaseMediaLoading,
-	} = useLoading(releaseDetailsPageStore.fetchUserReleaseMedia)
-
-	useEffect(() => {
-		if (metaStore.releaseMediaStatuses.length === 0) {
-			fetchStatuses().then(() => {
-				Promise.all([fetchReleaseMedia(), fetchUserReleaseMedia()])
-			})
-		} else {
-			Promise.all([fetchReleaseMedia(), fetchUserReleaseMedia()])
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [releaseId, authStore.isAuth, authStore.user])
-
-	const fetchReleaseMedia = async () => {
-		const status = metaStore.releaseMediaStatuses.find(
-			el => el.status === ReleaseMediaStatusesEnum.APPROVED
-		)
-		if (!status) return
-
-		_fetchReleaseMedia(status.id, releaseId)
-	}
-
-	const fetchUserReleaseMedia = async () => {
-		if (
-			authStore.isAuth &&
-			authStore.user &&
-			authStore.user.role.role === RolesEnum.MEDIA
-		) {
-			_fetchUserReleaseMedia(releaseId, authStore.user.id)
-		}
-	}
+const ReleaseDetailsMedia: FC<IProps> = ({ releaseId }) => {
+	const { authStore } = useStore()
 
 	const carouselRef = useRef<CarouselRef>(null)
 
 	const [canScrollPrev, setCanScrollPrev] = useState(false)
 	const [canScrollNext, setCanScrollNext] = useState(false)
 
-	const userRelease = releaseDetailsPageStore.userReleaseMedia
+	const { statuses, isLoading: isReleaseMediaMetaLoading } =
+		useReleaseMediaMeta()
+
+	const statusId = statuses.find(
+		el => el.status === ReleaseMediaStatusesEnum.APPROVED
+	)?.id
+
+	const mediaQuery: ReleaseMediaQuery = {
+		statusId,
+		releaseId,
+		order: SortOrdersEnum.DESC,
+	}
+
+	const { data: releaseMediaData, isPending: isReleaseMediaLoading } = useQuery(
+		{
+			queryKey: releaseMediaKeys.list(mediaQuery),
+			queryFn: () => ReleaseMediaAPI.findAll(mediaQuery),
+			enabled: statuses.length > 0 && !isReleaseMediaMetaLoading,
+			staleTime: 1000 * 60 * 5,
+		}
+	)
+
+	const userMediaQuery: ReleaseMediaQuery = {
+		releaseId,
+		userId: authStore.user?.id,
+	}
+
+	const { data: userReleaseMediaData, isPending: isUserReleaseMediaLoading } =
+		useQuery({
+			queryKey: releaseMediaKeys.list(userMediaQuery),
+			queryFn: () => ReleaseMediaAPI.findAll(userMediaQuery),
+			enabled:
+				!!authStore.isAuth && authStore.user?.role.role === RolesEnum.MEDIA,
+			staleTime: 1000 * 60 * 5,
+		})
+
+	const releaseMedia = releaseMediaData?.items || []
+	const releaseMediaCount = releaseMediaData?.meta.count || 0
+	const userMedia =
+		userReleaseMediaData?.items.length === 1
+			? userReleaseMediaData?.items[0]
+			: null
+
+	const items =
+		userMedia && userMedia.status.status !== ReleaseMediaStatusesEnum.APPROVED
+			? [userMedia, ...releaseMedia]
+			: releaseMedia
+
+	const isLoading =
+		isReleaseMediaLoading ||
+		isReleaseMediaMetaLoading ||
+		(isUserReleaseMediaLoading &&
+			!!authStore.user &&
+			authStore.user.role.role === RolesEnum.MEDIA)
 
 	return (
 		<section
 			className={`gap-3 grid mt-5 w-full ${
-				!isStatusesLoading &&
-				!isStatusesLoading &&
-				!isUserReleaseMediaLoading &&
-				!releaseDetailsPageStore.userReleaseMedia &&
-				releaseDetailsPageStore.releaseMedia.length === 0
-					? 'hidden'
-					: ''
+				!isLoading && !userMedia && releaseMedia.length === 0 ? 'hidden' : ''
 			}`}
 		>
 			<div className='flex'>
@@ -83,12 +94,9 @@ const ReleaseDetailsMedia: FC<IProps> = observer(({ releaseId }) => {
 						Медиаматериалы
 					</div>
 
-					{!isReleaseMediaLoading &&
-					!isStatusesLoading &&
-					!isUserReleaseMediaLoading ? (
+					{!isLoading ? (
 						<div className='inline-flex items-center justify-center rounded-full size-10 lg:size-12 bg-white/5 select-none'>
-							{releaseDetailsPageStore.releaseMediaCount +
-								(releaseDetailsPageStore.userReleaseMedia ? 1 : 0)}
+							{releaseMediaCount + (userMedia ? 1 : 0)}
 						</div>
 					) : (
 						<SkeletonLoader className={'rounded-full size-10 lg:size-12'} />
@@ -115,21 +123,11 @@ const ReleaseDetailsMedia: FC<IProps> = observer(({ releaseId }) => {
 				ref={carouselRef}
 				onCanScrollPrevChange={setCanScrollPrev}
 				onCanScrollNextChange={setCanScrollNext}
-				isLoading={
-					isReleaseMediaLoading ||
-					isStatusesLoading ||
-					isUserReleaseMediaLoading
-				}
-				items={
-					userRelease &&
-					userRelease.releaseMediaStatus.status !==
-						ReleaseMediaStatusesEnum.APPROVED
-						? [userRelease, ...releaseDetailsPageStore.releaseMedia]
-						: releaseDetailsPageStore.releaseMedia
-				}
+				isLoading={isLoading}
+				items={items}
 			/>
 		</section>
 	)
-})
+}
 
 export default ReleaseDetailsMedia

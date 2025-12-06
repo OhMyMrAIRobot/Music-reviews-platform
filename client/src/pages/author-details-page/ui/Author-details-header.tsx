@@ -1,50 +1,92 @@
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQueryClient,
+} from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
 import { FC } from 'react'
+import { UserFavAuthorAPI } from '../../../api/author/user-fav-author-api'
 import AuthorNominations from '../../../components/author/author-nomination/Author-nominations'
 import AuthorTypes from '../../../components/author/author-types/Author-types'
 import RegisteredAuthorTypes from '../../../components/author/registered-author/Registered-author-types'
 import ToggleFavButton from '../../../components/buttons/Toggle-fav-button'
 import LikesCount from '../../../components/utils/Likes-count'
 import SkeletonLoader from '../../../components/utils/Skeleton-loader'
+import { useApiErrorHandler } from '../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../hooks/use-auth'
-import { useLoading } from '../../../hooks/use-loading'
 import { useStore } from '../../../hooks/use-store'
-import { IAuthor } from '../../../models/author/author'
+import { authorsKeys } from '../../../query-keys/authors-keys'
+import { leaderboardKeys } from '../../../query-keys/leaderboard-keys'
+import { profilesKeys } from '../../../query-keys/profiles-keys'
+import { Author } from '../../../types/author'
 
 interface IProps {
-	author?: IAuthor
+	author?: Author
 	isLoading: boolean
 }
 
 const AuthorDetailsHeader: FC<IProps> = observer(({ author, isLoading }) => {
+	/** HOOKS */
+	const { authStore, notificationStore } = useStore()
 	const { checkAuth } = useAuth()
+	const handleApiError = useApiErrorHandler()
+	const queryClient = useQueryClient()
 
-	const { authorDetailsPageStore, authStore, notificationStore } = useStore()
-
-	const { execute: toggle, isLoading: isToggling } = useLoading(
-		authorDetailsPageStore.toggleFavAuthor
-	)
-
+	/**
+	 * Current toggling state for like/unlike action
+	 */
 	const isFav =
 		author?.userFavAuthor?.some(val => val.userId === authStore.user?.id) ??
 		false
 
-	const toggleFavAuthor = async () => {
-		if (!checkAuth() || !author) {
-			return
-		}
+	/**
+	 * Function to invalidate related queries after mutations
+	 */
+	const invalidateRelatedQueries = () => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: profilesKeys.profile(authStore.user?.id ?? 'unknown') },
+			{ queryKey: profilesKeys.preferences(authStore.user?.id ?? 'unknown') },
+			{ queryKey: authorsKeys.all },
+			{ queryKey: leaderboardKeys.all },
+		]
 
-		const errors = await toggle(author.id, isFav)
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	}
 
-		if (errors.length === 0) {
+	/**
+	 * Mutation to toggle favorite author
+	 */
+	const toggleFavMutation = useMutation({
+		mutationFn: (id: string) =>
+			isFav
+				? UserFavAuthorAPI.deleteFromFav(id)
+				: UserFavAuthorAPI.addToFav(id),
+		onSuccess: () => {
 			notificationStore.addSuccessNotification(
 				isFav
-					? 'Вы убрали автора из списка понравившихся'
-					: 'Вы добавили автора в список понравившихся!'
+					? 'Автор успешно удален из избранного!'
+					: 'Автор успешно добавлен в избранное!'
 			)
-		} else {
-			errors.forEach(err => notificationStore.addErrorNotification(err))
-		}
+
+			invalidateRelatedQueries()
+		},
+		onError: (error: unknown) => {
+			handleApiError(
+				error,
+				isFav
+					? 'Не удалось убрать автора из избранного!'
+					: 'Не удалось добавить автора в избранное!'
+			)
+		},
+	})
+
+	/**
+	 * Function to toggle favorite author
+	 */
+	const toggleFav = () => {
+		if (!checkAuth() || !author || toggleFavMutation.isPending) return
+
+		return toggleFavMutation.mutate(author.id)
 	}
 
 	return isLoading ? (
@@ -75,9 +117,9 @@ const AuthorDetailsHeader: FC<IProps> = observer(({ author, isLoading }) => {
 									src={`${
 										import.meta.env.VITE_SERVER_URL
 									}/public/authors/avatars/${
-										author.img === ''
+										author.avatar === ''
 											? import.meta.env.VITE_DEFAULT_AVATAR
-											: author.img
+											: author.avatar
 									}`}
 									className='size-full object-cover object-center select-none'
 								/>
@@ -85,10 +127,10 @@ const AuthorDetailsHeader: FC<IProps> = observer(({ author, isLoading }) => {
 						)}
 
 						<ToggleFavButton
-							onClick={toggleFavAuthor}
+							onClick={toggleFav}
 							isLiked={isFav}
 							className='absolute top-3 right-3 z-300 size-10 lg:size-12'
-							toggling={isToggling}
+							toggling={toggleFavMutation.isPending}
 						/>
 
 						<div className='flex absolute bottom-5 lg:bottom-10 gap-3 z-300 w-full px-4 lg:px-10'>
@@ -109,16 +151,17 @@ const AuthorDetailsHeader: FC<IProps> = observer(({ author, isLoading }) => {
 
 							<div className='bg-zinc-950 px-3 py-1 lg:px-5 lg:py-3 rounded-xl items-center inline-flex'>
 								<LikesCount
-									count={author.favCount}
+									count={author.userFavAuthor.length}
 									className='size-4 lg:size-5'
 								/>
 							</div>
 
-							{(author.nominationsCount > 0 || author.winsCount > 0) && (
+							{(author.nominations.totalCount > 0 ||
+								author.nominations.winsCount > 0) && (
 								<div className='bg-zinc-800 border border-zinc-700 rounded-full flex space-x-1.5 lg:space-x-3 items-center py-[6px] px-3 mt-auto justify-center ml-auto'>
 									<AuthorNominations
-										winsCount={author.winsCount}
-										totalCount={author.nominationsCount}
+										winsCount={author.nominations.winsCount}
+										totalCount={author.nominations.totalCount}
 									/>
 								</div>
 							)}

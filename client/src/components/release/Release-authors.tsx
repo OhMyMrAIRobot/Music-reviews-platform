@@ -1,10 +1,10 @@
 import { FC } from 'react'
 import { Link } from 'react-router'
 import useNavigationPath from '../../hooks/use-navigation-path'
-import { IReleaseAuthor } from '../../models/release/release-author'
+import { ReleaseAuthor } from '../../types/release'
 
 interface IProps {
-	authors: IReleaseAuthor[]
+	authors: ReleaseAuthor[]
 	className?: string
 }
 

@@ -1,10 +1,28 @@
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQuery,
+	useQueryClient,
+} from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
 import { FC, useEffect, useMemo, useState } from 'react'
+import { AuthorCommentAPI } from '../../../../api/author/author-comment-api'
 import FormButton from '../../../../components/form-elements/Form-button'
 import ConfirmationModal from '../../../../components/modals/Confirmation-modal'
+import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../../hooks/use-auth'
-import { useLoading } from '../../../../hooks/use-loading'
 import { useStore } from '../../../../hooks/use-store'
+import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys'
+import { leaderboardKeys } from '../../../../query-keys/leaderboard-keys'
+import { platformStatsKeys } from '../../../../query-keys/platform-stats-keys'
+import { profilesKeys } from '../../../../query-keys/profiles-keys'
+import { releasesKeys } from '../../../../query-keys/releases-keys'
+import {
+	AuthorCommentsQuery,
+	CreateAuthorCommentData,
+	UpdateAuthorCommentData,
+} from '../../../../types/author'
+import { constraints } from '../../../../utils/constraints'
 import ReleaseDetailsReviewFormText from '../release-details-estimation/forms/release-details-review-form/Release-details-review-form-text'
 
 interface IProps {
@@ -12,100 +30,186 @@ interface IProps {
 }
 
 const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
-	const { releaseDetailsPageStore, notificationStore, authStore } = useStore()
+	/** HOOKS */
+	const { notificationStore, authStore } = useStore()
 	const { checkAuth } = useAuth()
+	const queryClient = useQueryClient()
+	const handleApiError = useApiErrorHandler()
 
-	const authorComment = releaseDetailsPageStore.authorComments.find(
-		c => c.userId === authStore.user?.id
-	)
-
+	/** STATES */
 	const [title, setTitle] = useState<string>('')
 	const [text, setText] = useState<string>('')
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 
-	const { execute: postComment, isLoading: isPosting } = useLoading(
-		releaseDetailsPageStore.postAuthorComment
-	)
-	const { execute: updateComment, isLoading: isUpdating } = useLoading(
-		releaseDetailsPageStore.updateAuthorComment
-	)
-	const { execute: deleteComment, isLoading: isDeleting } = useLoading(
-		releaseDetailsPageStore.deleteAuthorComment
-	)
-
-	const handleSubmit = async () => {
-		if (
-			!checkAuth() ||
-			isPosting ||
-			!isFormValid ||
-			!hasChanges ||
-			isUpdating ||
-			isDeleting
-		)
-			return
-
-		let errors = []
-		if (authorComment) {
-			errors = await updateComment(
-				authorComment.id,
-				title.trim() !== authorComment.title ? title.trim() : undefined,
-				text.trim() !== authorComment.text ? text.trim() : undefined
-			)
-		} else {
-			errors = await postComment(releaseId, title.trim(), text.trim())
-		}
-
-		if (errors.length === 0) {
-			notificationStore.addSuccessNotification(
-				`Вы успешно ${
-					authorComment ? 'изменили' : 'добавили'
-				} авторский комментарий!`
-			)
-		} else {
-			errors.forEach(err => notificationStore.addErrorNotification(err))
-		}
+	/**
+	 * Query to get existing author comment by the user for this release
+	 */
+	const query: AuthorCommentsQuery = {
+		releaseId,
 	}
 
-	const handleDelete = async () => {
-		if (!checkAuth() || !authorComment || isDeleting || isPosting || isUpdating)
-			return
+	const { data } = useQuery({
+		queryKey: authorCommentsKeys.list(query),
+		queryFn: () => AuthorCommentAPI.findAll(query),
+		staleTime: 1000 * 60 * 5,
+	})
 
-		const errors = await deleteComment(authorComment.id)
+	/** List of author comments */
+	const authorComments = data?.items
 
-		if (errors.length === 0) {
-			notificationStore.addSuccessNotification(
-				`Вы успешно удалили авторский комментарий!`
-			)
-			setTitle('')
-			setText('')
-		} else {
-			errors.forEach(err => notificationStore.addErrorNotification(err))
-		}
-	}
+	/** User's author comment for this release */
+	const userAuthorComment = authorComments?.find(
+		c => c.user.id === authStore.user?.id
+	)
 
+	/** EFFECTS */
 	useEffect(() => {
-		if (authorComment) {
-			setTitle(authorComment.title)
-			setText(authorComment.text)
+		if (userAuthorComment) {
+			setTitle(userAuthorComment.title)
+			setText(userAuthorComment.text)
 		}
-	}, [authorComment])
+	}, [userAuthorComment])
 
+	/**
+	 * Function to invalidate related queries after mutations
+	 */
+	const invalidateRelatedQueries = () => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: authorCommentsKeys.all },
+			{ queryKey: leaderboardKeys.all },
+			{ queryKey: platformStatsKeys.all },
+			{ queryKey: profilesKeys.profile(authStore.user?.id || 'unknown') },
+			{ queryKey: releasesKeys.all },
+		]
+
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	}
+
+	/**
+	 * Create mutation for adding a new author comment
+	 */
+	const { mutateAsync: asyncCreate, isPending: isCreating } = useMutation({
+		mutationFn: (data: CreateAuthorCommentData) =>
+			AuthorCommentAPI.create(data),
+		onSuccess: () => {
+			notificationStore.addSuccessNotification(
+				'Вы успешно добавили авторский комментарий!'
+			)
+
+			invalidateRelatedQueries()
+		},
+		onError(error: unknown) {
+			handleApiError(error, 'Не удалось добавить авторский комментарий.')
+		},
+	})
+
+	/**
+	 * Update mutation for editing an existing author comment
+	 */
+	const { mutateAsync: asyncUpdate, isPending: isUpdating } = useMutation({
+		mutationFn: ({ id, data }: { id: string; data: UpdateAuthorCommentData }) =>
+			AuthorCommentAPI.update(id, data),
+		onSuccess: () => {
+			notificationStore.addSuccessNotification(
+				'Вы успешно изменили авторский комментарий!'
+			)
+
+			invalidateRelatedQueries()
+		},
+		onError(error: unknown) {
+			handleApiError(error, 'Не удалось изменить авторский комментарий.')
+		},
+	})
+
+	/**
+	 * Delete mutation for removing an existing author comment
+	 */
+	const { mutateAsync: asyncDelete, isPending: isDeleting } = useMutation({
+		mutationFn: (id: string) => AuthorCommentAPI.delete(id),
+		onSuccess: () => {
+			notificationStore.addSuccessNotification(
+				'Вы успешно удалили авторский комментарий!'
+			)
+			setConfModalOpen(false)
+
+			invalidateRelatedQueries()
+		},
+		onError(error: unknown) {
+			handleApiError(error, 'Не удалось удалить авторский комментарий.')
+		},
+	})
+
+	/**
+	 * Check if any mutation is in progress
+	 *
+	 * @returns {boolean} - True if any mutation is in progress, false otherwise
+	 */
+	const isPending = useMemo(
+		() => isCreating || isUpdating || isDeleting,
+		[isCreating, isUpdating, isDeleting]
+	)
+
+	/**
+	 * Check if the form inputs are valid
+	 *
+	 * @returns {boolean} - True if the form is valid, false otherwise
+	 */
 	const isFormValid = useMemo(() => {
 		return (
-			title.trim().length <= 100 &&
-			title.trim().length >= 5 &&
-			text.trim().length >= 300
+			title.trim().length <= constraints.authorComment.maxTitleLength &&
+			title.trim().length >= constraints.authorComment.minTitleLength &&
+			text.trim().length >= constraints.authorComment.minTextLength &&
+			text.trim().length <= constraints.authorComment.maxTextLength
 		)
 	}, [text, title])
 
+	/**
+	 * Check if there are changes in the form compared to the existing author comment
+	 *
+	 * @returns {boolean} - True if there are changes, false otherwise
+	 */
 	const hasChanges = useMemo(() => {
-		if (!authorComment) return true
-		return authorComment.title !== title || authorComment.text !== text
-	}, [authorComment, text, title])
+		if (!userAuthorComment) return true
+		return userAuthorComment.title !== title || userAuthorComment.text !== text
+	}, [userAuthorComment, text, title])
+
+	/**
+	 * Handle form submission for creating or updating an author comment
+	 */
+	const handleSubmit = async () => {
+		if (!checkAuth() || !isFormValid || !hasChanges || isPending) return
+
+		if (userAuthorComment) {
+			return asyncUpdate({
+				id: userAuthorComment.id,
+				data: {
+					title:
+						title.trim() !== userAuthorComment.title ? title.trim() : undefined,
+					text:
+						text.trim() !== userAuthorComment.text ? text.trim() : undefined,
+				},
+			})
+		} else {
+			return asyncCreate({
+				title: title.trim(),
+				text: text.trim(),
+				releaseId: releaseId,
+			})
+		}
+	}
+
+	/**
+	 * Handle deletion of the existing author comment
+	 */
+	const handleDelete = async () => {
+		if (!checkAuth() || !userAuthorComment || isPending) return
+
+		return asyncDelete(userAuthorComment.id)
+	}
 
 	return (
 		<>
-			{confModalOpen && authorComment && (
+			{confModalOpen && userAuthorComment && (
 				<ConfirmationModal
 					title={'Вы действительно хотите удалить авторский комментарий?'}
 					isOpen={confModalOpen}
@@ -117,7 +221,7 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 			<div className='mt-10 mx-auto w-full'>
 				<h3 className='text-xl lg:text-2xl font-bold '>
 					{`${
-						authorComment ? 'Редактировать' : 'Оставить'
+						userAuthorComment ? 'Редактировать' : 'Оставить'
 					} авторский комментарий`}
 				</h3>
 				<div className='border bg-zinc-900 rounded-xl px-2.5 py-4 border-white/10 w-full max-w-200 mx-auto mt-5'>
@@ -130,33 +234,25 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 					/>
 
 					<div className='flex items-center justify-between mt-5'>
-						{authorComment && (
+						{userAuthorComment && (
 							<div className='w-40'>
 								<FormButton
 									title={'Удалить'}
 									isInvert={false}
 									onClick={() => setConfModalOpen(true)}
-									disabled={
-										!authorComment || isPosting || isUpdating || isDeleting
-									}
-									isLoading={isPosting || isUpdating || isDeleting}
+									disabled={!userAuthorComment || isPending}
+									isLoading={isDeleting}
 								/>
 							</div>
 						)}
 
 						<div className='w-40 ml-auto'>
 							<FormButton
-								title={authorComment ? 'Изменить' : 'Отправить'}
+								title={userAuthorComment ? 'Изменить' : 'Отправить'}
 								isInvert={true}
 								onClick={handleSubmit}
-								disabled={
-									isPosting ||
-									isUpdating ||
-									isDeleting ||
-									!isFormValid ||
-									!hasChanges
-								}
-								isLoading={isPosting || isUpdating || isDeleting}
+								disabled={isPending || !isFormValid || !hasChanges}
+								isLoading={isCreating || isUpdating}
 							/>
 						</div>
 					</div>

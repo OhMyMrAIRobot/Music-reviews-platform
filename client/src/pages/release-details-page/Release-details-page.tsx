@@ -1,16 +1,12 @@
-import { observer } from 'mobx-react-lite'
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router'
+import { ReleaseAPI } from '../../api/release/release-api'
 import Loader from '../../components/utils/Loader.tsx'
-import { useLoading } from '../../hooks/use-loading.ts'
 import useNavigationPath from '../../hooks/use-navigation-path'
-import { useStore } from '../../hooks/use-store.ts'
-import { ReleaseTypesEnum } from '../../models/release/release-type/release-types-enum.ts'
-import { ReleaseReviewSortFieldsEnum } from '../../models/review/release-review/release-review-sort-fields-enum.ts'
-import { ReleaseReviewSortField } from '../../models/review/release-review/release-review-sort-fields.ts'
-import { SortOrdersEnum } from '../../models/sort/sort-orders-enum.ts'
+import { releasesKeys } from '../../query-keys/releases-keys.ts'
 import authStore from '../../stores/auth-store.ts'
-import { SortOrder } from '../../types/sort-order-type.ts'
+import { ReleaseTypesEnum } from '../../types/release'
 import ReleaseDetailsAlbumValue from './ui/release-details-album-value/Release-details-album-value.tsx'
 import ReleaseDetailsAuthorComments from './ui/release-details-author-comments/Release-details-author-comments.tsx'
 import ReleaseDetailsEstimation from './ui/release-details-estimation/Release-details-estimation.tsx'
@@ -19,81 +15,54 @@ import ReleaseDetailsMedia from './ui/release-details-media/Release-details-medi
 import ReleaseDetailsReviews from './ui/release-details-reviews/Release-details-reviews.tsx'
 import SendAuthorCommentForm from './ui/send-author-comment-form/Send-author-comment-form.tsx'
 
-const ReleaseDetailsPage = observer(() => {
-	const { releaseDetailsPageStore } = useStore()
-
-	const perPage = 5
-	const release = releaseDetailsPageStore.releaseDetails
-	const reviews = releaseDetailsPageStore.releaseReviews
-
+const ReleaseDetailsPage = () => {
 	const { id } = useParams()
 
 	const navigate = useNavigate()
-
 	const { navigateToMain } = useNavigationPath()
 
-	const { execute: _fetchReviews, isLoading: isReviewLoading } = useLoading(
-		releaseDetailsPageStore.fetchReleaseReviews
-	)
+	const { data: release, isPending: isReleaseLoading } = useQuery({
+		queryKey: id ? releasesKeys.details(id) : releasesKeys.details('unknown'),
+		queryFn: () => (id ? ReleaseAPI.fetchById(id) : Promise.resolve(undefined)),
+		enabled: !!id,
+		staleTime: 1000 * 60 * 5,
+	})
 
-	const { execute: fetchReleaseDetails, isLoading: isReleaseLoading } =
-		useLoading(releaseDetailsPageStore.fetchReleaseDetails)
-
-	const [totalItems, setTotalItems] = useState(0)
-	const [currentPage, setCurrentPage] = useState<number>(1)
-	const [selectedSort, setSelectedSort] = useState<string>(
-		ReleaseReviewSortField.NEW
-	)
-
-	const fetchReviews = async (): Promise<void> => {
-		let field: ReleaseReviewSortFieldsEnum = ReleaseReviewSortFieldsEnum.CREATED
-		let order: SortOrder = SortOrdersEnum.DESC
-
-		if (selectedSort === ReleaseReviewSortField.OLD) {
-			order = SortOrdersEnum.ASC
-		} else if (selectedSort === ReleaseReviewSortField.POPULAR) {
-			field = ReleaseReviewSortFieldsEnum.LIKES
+	useEffect(() => {
+		if (!release && !isReleaseLoading) {
+			navigate(navigateToMain)
 		}
-		_fetchReviews(id, field, order, perPage, (currentPage - 1) * perPage).then(
-			() => setTotalItems(releaseDetailsPageStore.reviewsCount)
-		)
+	}, [isReleaseLoading, navigate, navigateToMain, release])
+
+	if (!id) {
+		return navigate(navigateToMain)
 	}
-
-	useEffect(() => {
-		if (id && id !== releaseDetailsPageStore.releaseDetails?.id) {
-			fetchReleaseDetails(id).then(() => {
-				if (!releaseDetailsPageStore.releaseDetails) {
-					navigate(navigateToMain)
-				}
-			})
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [fetchReleaseDetails, id, releaseDetailsPageStore.releaseDetails])
-
-	useEffect(() => {
-		fetchReviews()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentPage, selectedSort])
 
 	const registeredAuthorIds = authStore.user
 		? authStore.user.registeredAuthor.map(ra => ra.authorId)
 		: []
 
 	const isUserAuthor =
-		release?.artists.some(ra => registeredAuthorIds.includes(ra.id)) ||
-		release?.producers.some(rp => registeredAuthorIds.includes(rp.id)) ||
-		release?.designers.some(rd => registeredAuthorIds.includes(rd.id))
+		release?.authors.artists?.some(ra => registeredAuthorIds.includes(ra.id)) ||
+		release?.authors.producers?.some(rp =>
+			registeredAuthorIds.includes(rp.id)
+		) ||
+		release?.authors.designers?.some(rd => registeredAuthorIds.includes(rd.id))
 
-	return isReleaseLoading ? (
-		<div className='w-full'>
-			<Loader className={'mx-auto size-20 border-white'} />
-		</div>
-	) : (
+	if (isReleaseLoading) {
+		return (
+			<div className='w-full'>
+				<Loader className={'mx-auto size-20 border-white'} />
+			</div>
+		)
+	}
+
+	return (
 		release && (
 			<>
 				<ReleaseDetailsHeader release={release} />
 
-				{release.releaseType === ReleaseTypesEnum.ALBUM && (
+				{release.releaseType.type === ReleaseTypesEnum.ALBUM && (
 					<ReleaseDetailsAlbumValue releaseId={release.id} />
 				)}
 
@@ -104,25 +73,13 @@ const ReleaseDetailsPage = observer(() => {
 				{isUserAuthor ? (
 					<SendAuthorCommentForm releaseId={release.id} />
 				) : (
-					<ReleaseDetailsEstimation
-						release={release}
-						refetchReviews={fetchReviews}
-					/>
+					<ReleaseDetailsEstimation release={release} />
 				)}
 
-				<ReleaseDetailsReviews
-					reviews={reviews}
-					selectedSort={selectedSort}
-					setSelectedSort={setSelectedSort}
-					currentPage={currentPage}
-					setCurrentPage={setCurrentPage}
-					totalItems={totalItems}
-					isLoading={isReviewLoading}
-					perPage={perPage}
-				/>
+				<ReleaseDetailsReviews releaseId={id} />
 			</>
 		)
 	)
-})
+}
 
 export default ReleaseDetailsPage

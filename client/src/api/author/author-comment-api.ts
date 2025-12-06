@@ -1,7 +1,11 @@
 import axios from 'axios'
-import { IAuthorComment } from '../../models/author/author-comment/author-comment'
-import { IAuthorCommentsResponse } from '../../models/author/author-comment/author-comments-response'
-import { SortOrder } from '../../types/sort-order-type'
+import {
+	AuthorComment,
+	AuthorCommentsQuery,
+	AuthorCommentsResponse,
+	CreateAuthorCommentData,
+	UpdateAuthorCommentData,
+} from '../../types/author'
 import { api } from '../api-instance'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
@@ -14,77 +18,102 @@ const _api = axios.create({
 	},
 })
 
+/**
+ * API service for managing author comments.
+ * Provides methods for creating, reading, updating, and deleting author comments,
+ * including both user-facing and admin operations.
+ */
 export const AuthorCommentAPI = {
-	async create(
-		releaseId: string,
-		title: string,
-		text: string
-	): Promise<IAuthorComment> {
-		const { data } = await api.post<IAuthorComment>('author-comments', {
-			title,
-			text,
-			releaseId,
-		})
+	/**
+	 * Creates a new author comment.
+	 *
+	 * @param {CreateAuthorCommentData} formData - The data required to create the comment.
+	 * @returns {Promise<AuthorComment>} A promise that resolves to the newly created author comment.
+	 */
+	async create(formData: CreateAuthorCommentData): Promise<AuthorComment> {
+		const { data } = await api.post<AuthorComment>('author-comments', formData)
 
 		return data
 	},
 
-	async fetchByReleaseId(releaseId: string): Promise<IAuthorComment[]> {
-		const { data } = await _api.get<IAuthorComment[]>(`/release/${releaseId}`)
+	/**
+	 * Fetches a paginated list of author comments with optional filtering and sorting.
+	 *
+	 * @param {AuthorCommentsQuery} query - The query parameters for filtering comments.
+	 * @param {string} [query.releaseId] - Filter comments by release ID.
+	 * @param {string} [query.search] - Search term to filter comments by content.
+	 * @param {string} [query.sortOrder] - Sort order for the comments (e.g., 'ASC' or 'DESC').
+	 * @param {number} [query.limit] - Maximum number of comments to return.
+	 * @param {number} [query.offset] - Number of comments to skip (for pagination).
+	 * @returns {Promise<AuthorCommentsResponse>} A promise that resolves to the comments list response containing items and metadata.
+	 */
+	async findAll(query: AuthorCommentsQuery): Promise<AuthorCommentsResponse> {
+		const { releaseId, search, sortOrder, limit, offset } = query
 
-		return data
-	},
-
-	async fetchAll(
-		limit: number | null,
-		offset: number | null,
-		order: SortOrder | null,
-		query: string | null
-	): Promise<IAuthorCommentsResponse> {
-		const { data } = await _api.get<IAuthorCommentsResponse>(`?
-			${limit !== null ? `limit=${limit}&` : ''}
-			${offset !== null ? `offset=${offset}&` : ''}	
-			${order !== null ? `order=${order}&` : ''}	
-			${query !== null ? `query=${query}&` : ''}	
+		const { data } = await _api.get<AuthorCommentsResponse>(`?
+			${releaseId ? `releaseId=${releaseId}&` : ''}
+			${search ? `search=${search}&` : ''}	
+			${sortOrder ? `sortOrder=${sortOrder}&` : ''}	
+			${limit ? `limit=${limit}&` : ''}
+			${offset ? `offset=${offset}&` : ''}	
 		`)
 
 		return data
 	},
 
+	/**
+	 * Updates an existing author comment.
+	 *
+	 * @param {string} id - The ID of the comment to update.
+	 * @param {UpdateAuthorCommentData} formData - The data to update the comment with.
+	 * @returns {Promise<AuthorComment>} A promise that resolves to the updated author comment.
+	 */
 	async update(
 		id: string,
-		title?: string,
-		text?: string
-	): Promise<IAuthorComment> {
-		const { data } = await api.patch<IAuthorComment>(`author-comments/${id}`, {
-			title,
-			text,
-		})
-
-		return data
-	},
-
-	async delete(id: string) {
-		return api.delete(`author-comments/${id}`)
-	},
-
-	async adminUpdate(
-		id: string,
-		title?: string,
-		text?: string
-	): Promise<IAuthorComment> {
-		const { data } = await api.patch<IAuthorComment>(
-			`author-comments/admin/${id}`,
-			{
-				title,
-				text,
-			}
+		formData: UpdateAuthorCommentData
+	): Promise<AuthorComment> {
+		const { data } = await api.patch<AuthorComment>(
+			`author-comments/${id}`,
+			formData
 		)
 
 		return data
 	},
 
+	/**
+	 * Deletes an author comment by ID.
+	 *
+	 * @param {string} id - The ID of the comment to delete.
+	 */
+	async delete(id: string) {
+		return api.delete(`author-comments/${id}`)
+	},
+
+	/**
+	 * Updates an author comment as an admin user.
+	 *
+	 * @param {string} id - The ID of the comment to update.
+	 * @param {UpdateAuthorCommentData} formData - The data to update the comment with.
+	 * @returns {Promise<AuthorComment>} A promise that resolves to the updated author comment.
+	 */
+	async adminUpdate(
+		id: string,
+		formData: UpdateAuthorCommentData
+	): Promise<AuthorComment> {
+		const { data } = await api.patch<AuthorComment>(
+			`admin/author-comments/${id}`,
+			formData
+		)
+
+		return data
+	},
+
+	/**
+	 * Deletes an author comment by ID as an admin user.
+	 *
+	 * @param {string} id - The ID of the comment to delete.
+	 */
 	async adminDelete(id: string) {
-		return api.delete(`author-comments/admin/${id}`)
+		return api.delete(`admin/author-comments/${id}`)
 	},
 }

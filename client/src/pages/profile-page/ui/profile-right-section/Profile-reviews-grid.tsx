@@ -2,28 +2,19 @@ import { observer } from 'mobx-react-lite'
 import { FC } from 'react'
 import Pagination from '../../../../components/pagination/Pagination.tsx'
 import ReviewCard from '../../../../components/review/review-card/Review-card.tsx'
-import { IReview } from '../../../../models/review/review.ts'
+import { Review } from '../../../../types/review/index.ts'
 
 interface IProps {
-	items: IReview[]
+	items: Review[]
 	total: number
 	currentPage: number
 	perPage: number
 	setCurrentPage: (val: number) => void
 	isLoading: boolean
-	storeToggle?: (reviewId: string, isFav: boolean) => Promise<string[]>
 }
 
 const ProfileReviewsGrid: FC<IProps> = observer(
-	({
-		items,
-		total,
-		currentPage,
-		setCurrentPage,
-		perPage,
-		isLoading,
-		storeToggle,
-	}) => {
+	({ items, total, currentPage, setCurrentPage, perPage, isLoading }) => {
 		return (
 			<section>
 				<div className='gap-5 grid grid-cols-1 select-none'>
@@ -38,7 +29,6 @@ const ProfileReviewsGrid: FC<IProps> = observer(
 								<ReviewCard
 									key={review.id}
 									review={review}
-									storeToggle={storeToggle}
 									isLoading={isLoading}
 								/>
 						  ))}

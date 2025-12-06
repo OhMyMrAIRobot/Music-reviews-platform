@@ -1,37 +1,42 @@
-import { observer } from 'mobx-react-lite'
-import { useEffect, useState } from 'react'
-import AuthorComment from '../../components/author/author-comment/Author-comment'
+import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
+import { AuthorCommentAPI } from '../../api/author/author-comment-api'
+import AuthorCommentCard from '../../components/author/author-comment/Author-comment-card'
 import AuthorCommentColorSvg from '../../components/author/author-comment/svg/Author-comment-color-svg'
 import ComboBox from '../../components/buttons/Combo-box'
 import Pagination from '../../components/pagination/Pagination'
-import { useLoading } from '../../hooks/use-loading'
-import { useStore } from '../../hooks/use-store'
-import { ReviewSortFields } from '../../models/review/review-sort-fields'
-import { SortOrdersEnum } from '../../models/sort/sort-orders-enum'
+import { authorCommentsKeys } from '../../query-keys/author-comments-keys'
+import { AuthorCommentsQuery } from '../../types/author'
+import { SortOrdersEnum } from '../../types/common/enums/sort-orders-enum'
+import { ReviewSortFields } from '../../types/review'
 
-const AuthorCommentsPage = observer(() => {
-	const perPage = 12
+const limit = 12
 
-	const { authorCommentsPageStore } = useStore()
-
+const AuthorCommentsPage = () => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [selectedOrder, setSelectedOrder] = useState<string>(
 		ReviewSortFields.NEW
 	)
 
-	const { execute: fetch, isLoading } = useLoading(
-		authorCommentsPageStore.fetchAuthorComments
-	)
+	const sortOrder =
+		selectedOrder === ReviewSortFields.NEW
+			? SortOrdersEnum.DESC
+			: SortOrdersEnum.ASC
 
-	useEffect(() => {
-		fetch(
-			perPage,
-			(currentPage - 1) * perPage,
-			selectedOrder === ReviewSortFields.NEW
-				? SortOrdersEnum.DESC
-				: SortOrdersEnum.ASC
-		)
-	}, [currentPage, fetch, selectedOrder])
+	const query: AuthorCommentsQuery = {
+		limit,
+		sortOrder,
+		offset: (currentPage - 1) * limit,
+	}
+
+	const { data, isPending } = useQuery({
+		queryKey: authorCommentsKeys.list(query),
+		queryFn: () => AuthorCommentAPI.findAll(query),
+		staleTime: 1000 * 60 * 5,
+	})
+
+	const comments = data?.items ?? []
+	const totalCount = data?.meta.count ?? 0
 
 	return (
 		<>
@@ -58,36 +63,35 @@ const AuthorCommentsPage = observer(() => {
 
 			<section className='mt-5 overflow-hidden py-2'>
 				<div className='gap-3 xl:gap-5 grid md:grid-cols-2 xl:grid-cols-3 grid-cols-1'>
-					{isLoading
-						? Array.from({ length: perPage }).map((_, idx) => (
-								<AuthorComment
+					{isPending
+						? Array.from({ length: limit }).map((_, idx) => (
+								<AuthorCommentCard
 									key={`skeleton-author-comment-${idx}`}
 									isLoading={true}
 								/>
 						  ))
-						: authorCommentsPageStore.authorComments.map(comment => (
-								<AuthorComment
+						: comments.map(comment => (
+								<AuthorCommentCard
 									key={comment.id}
 									comment={comment}
 									isLoading={false}
 								/>
 						  ))}
 
-					{authorCommentsPageStore.authorComments.length === 0 &&
-						!isLoading && (
-							<p className='text-center text-2xl font-semibold mt-10 w-full absolute'>
-								Авторские комментарии не найдены!
-							</p>
-						)}
+					{comments.length === 0 && !isPending && (
+						<p className='text-center text-2xl font-semibold mt-10 w-full absolute'>
+							Авторские комментарии не найдены!
+						</p>
+					)}
 				</div>
 			</section>
 
-			{authorCommentsPageStore.authorComments.length > 0 && (
+			{comments.length > 0 && (
 				<div className='mt-20'>
 					<Pagination
 						currentPage={currentPage}
-						totalItems={authorCommentsPageStore.count}
-						itemsPerPage={perPage}
+						totalItems={totalCount}
+						itemsPerPage={limit}
 						setCurrentPage={setCurrentPage}
 						idToScroll={'author-comments'}
 					/>
@@ -95,6 +99,6 @@ const AuthorCommentsPage = observer(() => {
 			)}
 		</>
 	)
-})
+}
 
 export default AuthorCommentsPage

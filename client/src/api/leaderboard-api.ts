@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { ILeaderboardItem } from '../models/leaderboard/leaderboard-item'
+import { LeaderboardItem, LeaderboardQuery } from '../types/leaderboard'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL
 
@@ -11,14 +11,25 @@ const _api = axios.create({
 	},
 })
 
+/**
+ * API service for leaderboard data.
+ * Provides methods for fetching user leaderboard rankings and statistics.
+ */
 export const LeaderboardAPI = {
-	async fetchLeaderboard(
-		limit: number | null,
-		offset: number | null
-	): Promise<ILeaderboardItem[]> {
-		const { data } = await _api.get<ILeaderboardItem[]>(`?
-			${limit !== null ? `limit=${limit}&` : ''}
-			${offset !== null ? `offset=${offset}&` : ''}
+	/**
+	 * Fetches a paginated list of leaderboard items.
+	 *
+	 * @param {LeaderboardQuery} query - The query parameters for pagination.
+	 * @param {number} [query.limit] - Maximum number of leaderboard items to return.
+	 * @param {number} [query.offset] - Number of leaderboard items to skip (for pagination).
+	 * @returns {Promise<LeaderboardItem[]>} A promise that resolves to an array of leaderboard items.
+	 */
+	async fetchLeaderboard(query: LeaderboardQuery): Promise<LeaderboardItem[]> {
+		const { limit, offset } = query
+
+		const { data } = await _api.get<LeaderboardItem[]>(`?
+			${limit ? `limit=${limit}&` : ''}
+			${offset ? `offset=${offset}&` : ''}
 		`)
 
 		return data

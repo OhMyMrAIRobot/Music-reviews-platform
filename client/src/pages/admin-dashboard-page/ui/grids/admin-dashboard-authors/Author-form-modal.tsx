@@ -1,4 +1,10 @@
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQueryClient,
+} from '@tanstack/react-query'
 import { FC, useEffect, useMemo, useState } from 'react'
+import { AuthorAPI } from '../../../../../api/author/author-api.ts'
 import FormButton from '../../../../../components/form-elements/Form-button.tsx'
 import FormCheckbox from '../../../../../components/form-elements/Form-checkbox.tsx'
 import FormInput from '../../../../../components/form-elements/Form-input.tsx'
@@ -8,48 +14,148 @@ import FormMultiSelect, {
 } from '../../../../../components/form-elements/Form-multi-select.tsx'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
-import { useLoading } from '../../../../../hooks/use-loading.ts'
+import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler.ts'
+import { useAuthorMeta } from '../../../../../hooks/use-author-meta.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
-import { IAdminAuthor } from '../../../../../models/author/admin-author/admin-author.ts'
-import {} from '../../../../../models/author/admin-author/admin-authors-response.ts'
+import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys.ts'
+import { authorLikesKeys } from '../../../../../query-keys/author-likes-keys.ts'
+import { authorsKeys } from '../../../../../query-keys/authors-keys.ts'
+import { leaderboardKeys } from '../../../../../query-keys/leaderboard-keys.ts'
+import { platformStatsKeys } from '../../../../../query-keys/platform-stats-keys.ts'
+import { profilesKeys } from '../../../../../query-keys/profiles-keys.ts'
+import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys.ts'
+import { releasesKeys } from '../../../../../query-keys/releases-keys.ts'
+import { reviewsKeys } from '../../../../../query-keys/reviews-keys.ts'
+import { usersKeys } from '../../../../../query-keys/users-keys.ts'
+import { Author } from '../../../../../types/author/index.ts'
 import { arraysEqual } from '../../../../../utils/arrays-equal.ts'
+import buildAuthorFormData from '../../../../../utils/build-author-form-data'
+import { constraints } from '../../../../../utils/constraints.ts'
 import SelectImageLabel from '../../../../edit-profile-page/ui/labels/Select-image-label.tsx'
 import SelectedImageLabel from '../../../../edit-profile-page/ui/labels/Selected-image-label.tsx'
 
 interface IProps {
 	isOpen: boolean
 	onClose: () => void
-	refetchAuthors: () => void
-	author?: IAdminAuthor
+	author?: Author
 }
 
-const AuthorFormModal: FC<IProps> = ({
-	isOpen,
-	onClose,
-	refetchAuthors,
-	author,
-}) => {
-	const { metaStore, notificationStore, adminDashboardAuthorsStore } =
-		useStore()
+const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
+	/** HOOKS */
+	const { notificationStore } = useStore()
+	const { types, isLoading: isTypesLoading } = useAuthorMeta()
+	const handleApiError = useApiErrorHandler()
+	const queryClient = useQueryClient()
 
+	/** STATES */
 	const [avatar, setAvatar] = useState<File | null>(null)
 	const [cover, setCover] = useState<File | null>(null)
 	const [name, setName] = useState<string>('')
 	const [selectedTypes, setSelectedTypes] = useState<IMultiSelectValue[]>([])
 	const [deleteAvatar, setDeleteAvatar] = useState<boolean>(false)
 	const [deleteCover, setDeleteCover] = useState<boolean>(false)
-
 	const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string | null>(null)
 	const [coverPreviewUrl, setCoverPreviewUrl] = useState<string | null>(null)
 
-	const { execute: createAuthor, isLoading: isCreatingAuthor } = useLoading(
-		adminDashboardAuthorsStore.createAuthor
-	)
+	/** EFFECTS */
+	useEffect(() => {
+		if (author && isOpen) {
+			setName(author.name)
+			setSelectedTypes(
+				author.authorTypes.map(t => {
+					return { name: t.type, id: t.id }
+				})
+			)
 
-	const { execute: updateAuthor, isLoading: isUpdatingAuthor } = useLoading(
-		adminDashboardAuthorsStore.updateAuthor
-	)
+			if (author.avatar) {
+				setAvatarPreviewUrl(
+					`${import.meta.env.VITE_SERVER_URL}/public/authors/avatars/${
+						author.avatar
+					}`
+				)
+			}
 
+			if (author.cover) {
+				setCoverPreviewUrl(
+					`${import.meta.env.VITE_SERVER_URL}/public/authors/covers/${
+						author.cover
+					}`
+				)
+			}
+		} else {
+			resetForm()
+		}
+	}, [isOpen, author])
+
+	/**
+	 * Function to invalidate related queries after mutations
+	 */
+	const invalidateRelatedQueries = () => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: leaderboardKeys.all },
+			{ queryKey: authorCommentsKeys.all },
+			{ queryKey: authorLikesKeys.all },
+			{ queryKey: releaseMediaKeys.all },
+			{ queryKey: releasesKeys.all },
+			{ queryKey: reviewsKeys.all },
+			{ queryKey: usersKeys.all },
+			{ queryKey: platformStatsKeys.all },
+			{ queryKey: authorsKeys.all },
+			{ queryKey: profilesKeys.all },
+		]
+
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	}
+
+	/**
+	 * Mutation to create a new author
+	 */
+	const { mutateAsync: createAsync, isPending: isCreating } = useMutation({
+		mutationFn: (formData: FormData) => AuthorAPI.createAuthor(formData),
+		onSuccess: () => {
+			notificationStore.addSuccessNotification('Автор успешно добавлен!')
+			resetForm()
+			onClose()
+
+			invalidateRelatedQueries()
+		},
+		onError: (error: unknown) => {
+			handleApiError(error, 'Не удалось добавить автора!')
+		},
+	})
+
+	/**
+	 * Mutation to update an existing author
+	 */
+	const { mutateAsync: updateAsync, isPending: isUpdating } = useMutation({
+		mutationFn: ({ id, formData }: { id: string; formData: FormData }) =>
+			AuthorAPI.updateAuthor(id, formData),
+		onSuccess: () => {
+			notificationStore.addSuccessNotification('Автор успешно обновлен!')
+			resetForm()
+			onClose()
+
+			invalidateRelatedQueries()
+		},
+		onError: (error: unknown) => {
+			handleApiError(error, 'Не удалось обновить автора!')
+		},
+	})
+
+	/**
+	 * Indicates if any mutation is pending
+	 *
+	 * @return {boolean} True if creating or updating, false otherwise
+	 */
+	const isPending = useMemo(() => {
+		return isCreating || isUpdating
+	}, [isCreating, isUpdating])
+
+	/**
+	 * Handles avatar file selection
+	 *
+	 * @param {React.ChangeEvent<HTMLInputElement>} event - The file input change event
+	 */
 	const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (event.target.files && event.target.files[0]) {
 			const selectedFile = event.target.files[0]
@@ -60,6 +166,11 @@ const AuthorFormModal: FC<IProps> = ({
 		}
 	}
 
+	/**
+	 * Handles cover file selection
+	 *
+	 * @param {React.ChangeEvent<HTMLInputElement>} event - The file input change event
+	 */
 	const handleCoverChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (event.target.files && event.target.files[0]) {
 			const selectedFile = event.target.files[0]
@@ -70,57 +181,35 @@ const AuthorFormModal: FC<IProps> = ({
 		}
 	}
 
+	/**
+	 * Handles form submission for creating or updating an author
+	 */
 	const handleSubmit = async () => {
-		if (!isFormValid || isUpdatingAuthor || isCreatingAuthor) return
+		if (!isFormValid || !hasChanges || isPending) return
 
-		const formData = new FormData()
-
-		if (!author || author.name !== name) {
-			formData.append('name', name)
+		const values = {
+			name,
+			selectedTypes,
+			avatar,
+			cover,
+			deleteAvatar,
+			deleteCover,
 		}
 
-		if (
-			!author ||
-			!arraysEqual(
-				author.types.map(t => t.type).sort(),
-				selectedTypes.map(st => st.name).sort()
-			)
-		) {
-			selectedTypes.forEach(st => {
-				formData.append('types[]', st.id)
-			})
-		}
-
-		if (avatar) formData.append('avatarImg', avatar)
-		if (cover) formData.append('coverImg', cover)
-
-		if (deleteAvatar && !avatar)
-			formData.append('clearAvatar', JSON.stringify(true))
-		if (deleteCover && !cover)
-			formData.append('clearCover', JSON.stringify(true))
-
-		let errors: string[] = []
+		const formData = buildAuthorFormData(values, author)
 
 		if (author) {
-			errors = await updateAuthor(author.id, formData)
+			return updateAsync({ id: author.id, formData })
 		} else {
-			errors = await createAuthor(formData)
-		}
-
-		if (errors.length > 0) {
-			errors.forEach(err => notificationStore.addErrorNotification(err))
-		} else {
-			const message = author
-				? 'Автор успешно обновлен!'
-				: 'Автор успешно добавлен!'
-
-			notificationStore.addSuccessNotification(message)
-			resetForm()
-			onClose()
-			refetchAuthors()
+			return createAsync(formData)
 		}
 	}
 
+	/**
+	 * Indicates whether there are changes to be saved
+	 *
+	 * @return {boolean} True if there are changes, false otherwise
+	 */
 	const hasChanges = useMemo(() => {
 		if (!author) return true
 
@@ -128,7 +217,7 @@ const AuthorFormModal: FC<IProps> = ({
 
 		if (
 			!arraysEqual(
-				author.types.map(t => t.type).sort(),
+				author.authorTypes.map(t => t.type).sort(),
 				selectedTypes.map(st => st.name).sort()
 			)
 		)
@@ -141,6 +230,17 @@ const AuthorFormModal: FC<IProps> = ({
 		return false
 	}, [author, name, selectedTypes, avatar, cover, deleteAvatar, deleteCover])
 
+	const isFormValid = useMemo(
+		() =>
+			name.trim().length >= constraints.author.minNameLength &&
+			name.trim().length <= constraints.author.maxNameLength &&
+			selectedTypes.length > 0,
+		[name, selectedTypes]
+	)
+
+	/**
+	 * Resets the form fields to their initial state
+	 */
 	const resetForm = () => {
 		setName('')
 		setSelectedTypes([])
@@ -152,58 +252,25 @@ const AuthorFormModal: FC<IProps> = ({
 		setDeleteCover(false)
 	}
 
-	const { execute: fetchTypes, isLoading: isTypesLoading } = useLoading(
-		metaStore.fetchAuthorTypes
-	)
-
-	useEffect(() => {
-		if (metaStore.authorTypes.length === 0) {
-			fetchTypes()
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
-
-	useEffect(() => {
-		if (author && isOpen) {
-			setName(author.name)
-			setSelectedTypes(
-				author.types.map(t => {
-					return { name: t.type, id: t.id }
-				})
-			)
-
-			if (author.avatarImg) {
-				setAvatarPreviewUrl(
-					`${import.meta.env.VITE_SERVER_URL}/public/authors/avatars/${
-						author.avatarImg
-					}`
-				)
-			}
-
-			if (author.coverImg) {
-				setCoverPreviewUrl(
-					`${import.meta.env.VITE_SERVER_URL}/public/authors/covers/${
-						author.coverImg
-					}`
-				)
-			}
-		} else {
-			resetForm()
-		}
-	}, [isOpen, author])
-
+	/**
+	 * Loads options for the multi-select component
+	 *
+	 * @param {string} search - The search string
+	 * @param {number | null} limit - The maximum number of options to load
+	 * @return {Promise<IMultiSelectValue[]>} A promise that resolves to an array of multi-select values
+	 */
 	const loadOptions = async (
 		search: string,
 		limit: number | null
 	): Promise<IMultiSelectValue[]> => {
-		return metaStore.authorTypes.map(el => {
+		return types.map(el => {
 			return { name: el.type ?? search, id: el.id ?? limit }
 		})
 	}
 
+	/** CONSTANTS */
 	const title = author ? 'Редактирование автора' : 'Добавление автора'
 	const buttonText = author ? 'Сохранить' : 'Добавить'
-	const isFormValid = name.length > 0 && selectedTypes.length > 0
 
 	if (!isOpen) return null
 
@@ -211,7 +278,7 @@ const AuthorFormModal: FC<IProps> = ({
 		<ModalOverlay
 			isOpen={isOpen}
 			onCancel={onClose}
-			isLoading={isUpdatingAuthor || isCreatingAuthor}
+			isLoading={isPending}
 			className='max-lg:size-full'
 		>
 			{isTypesLoading ? (
@@ -263,7 +330,7 @@ const AuthorFormModal: FC<IProps> = ({
 							{author && (
 								<div
 									className={`flex gap-2 items-center mt-2 ${
-										author.avatarImg === '' || avatar
+										author.avatar === '' || avatar
 											? 'opacity-50 pointer-events-none'
 											: ''
 									}`}
@@ -318,7 +385,7 @@ const AuthorFormModal: FC<IProps> = ({
 							{author && (
 								<div
 									className={`flex gap-2 items-center mt-2 ${
-										author.coverImg === '' || cover
+										author.cover === '' || cover
 											? 'opacity-50 pointer-events-none'
 											: ''
 									}`}
@@ -377,12 +444,9 @@ const AuthorFormModal: FC<IProps> = ({
 								isInvert={true}
 								onClick={handleSubmit}
 								disabled={
-									!isFormValid ||
-									(!!author && !hasChanges) ||
-									isUpdatingAuthor ||
-									isCreatingAuthor
+									!isFormValid || (!!author && !hasChanges) || isPending
 								}
-								isLoading={isUpdatingAuthor || isCreatingAuthor}
+								isLoading={isPending}
 							/>
 						</div>
 
@@ -391,7 +455,7 @@ const AuthorFormModal: FC<IProps> = ({
 								title={'Назад'}
 								isInvert={false}
 								onClick={onClose}
-								disabled={isUpdatingAuthor || isCreatingAuthor}
+								disabled={isPending}
 							/>
 						</div>
 					</div>

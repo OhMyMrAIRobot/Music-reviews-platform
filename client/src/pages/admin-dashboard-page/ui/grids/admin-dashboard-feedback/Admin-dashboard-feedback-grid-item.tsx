@@ -1,13 +1,16 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { FC, useState } from 'react'
+import { FeedbackAPI } from '../../../../../api/feedback/feedback-api'
 import FeedbackStatusIcon from '../../../../../components/feedback/Feedback-status-icon'
 import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
-import { useLoading } from '../../../../../hooks/use-loading'
+import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler'
 import { useStore } from '../../../../../hooks/use-store'
-import { IFeedback } from '../../../../../models/feedback/feedback'
-import { SortOrdersEnum } from '../../../../../models/sort/sort-orders-enum'
-import { SortOrder } from '../../../../../types/sort-order-type'
+import { feedbackKeys } from '../../../../../query-keys/feedback-keys'
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum'
+import { SortOrder } from '../../../../../types/common/types/sort-order'
+import { Feedback } from '../../../../../types/feedback'
 import { getFeedbackStatusColor } from '../../../../../utils/get-feedback-status-color'
 import AdminDeleteButton from '../../buttons/Admin-delete-button'
 import AdminOpenButton from '../../buttons/Admin-open-button'
@@ -15,13 +18,12 @@ import FeedbackFormModal from './Feedback-form-modal'
 
 interface IProps {
 	className?: string
-	feedback?: IFeedback
+	feedback?: Feedback
 	position?: number
 	isLoading: boolean
 	order?: SortOrder
 	toggleOrder?: () => void
 	isDeleteLoading?: boolean
-	refetchFeedbacks?: () => void
 }
 
 const AdminDashboardFeedbackGridItem: FC<IProps> = ({
@@ -31,42 +33,31 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
 	isLoading,
 	order,
 	toggleOrder,
-	refetchFeedbacks,
 }) => {
-	const { adminDashboardFeedbackStore, notificationStore } = useStore()
+	/** HOOKS */
+	const { notificationStore } = useStore()
+	const queryClient = useQueryClient()
+	const handleApiError = useApiErrorHandler()
 
+	/** STATES */
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [detailsModalOpen, setDetailsModalOpen] = useState<boolean>(false)
 
-	const { execute: deleteFeedback, isLoading: isDeletingFeedback } = useLoading(
-		adminDashboardFeedbackStore.deleteFeedback
-	)
-
-	const toggle = () => {
-		if (toggleOrder) {
-			toggleOrder()
-		}
-	}
-
-	const handleRefetch = () => {
-		if (refetchFeedbacks) {
-			refetchFeedbacks()
-		}
-	}
-
-	const handleDelete = async (feedbackId: string) => {
-		if (isDeletingFeedback) return
-
-		const errors = await deleteFeedback(feedbackId)
-		if (errors.length === 0) {
+	/**
+	 * Mutation to delete the feedback
+	 */
+	const deleteMutation = useMutation({
+		mutationFn: (id: string) => FeedbackAPI.delete(id),
+		onSuccess: () => {
 			notificationStore.addSuccessNotification('Сообщение успешно удалено!')
-			handleRefetch()
-		} else {
-			errors.forEach(error => {
-				notificationStore.addErrorNotification(error)
-			})
-		}
-	}
+			queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
+			setConfModalOpen(false)
+		},
+		onError: (error: unknown) => {
+			handleApiError(error, 'Не удалось удалить сообщение!')
+			setConfModalOpen(false)
+		},
+	})
 
 	return isLoading ? (
 		<SkeletonLoader className='w-full xl:h-12 rounded-lg' />
@@ -78,9 +69,9 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
 						<ConfirmationModal
 							title={'Вы действительно хотите удалить сообщение?'}
 							isOpen={confModalOpen}
-							onConfirm={() => handleDelete(feedback.id)}
+							onConfirm={() => deleteMutation.mutate(feedback.id)}
 							onCancel={() => setConfModalOpen(false)}
-							isLoading={isDeletingFeedback}
+							isLoading={deleteMutation.isPending}
 						/>
 					)}
 
@@ -115,7 +106,7 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
 						</>
 					) : (
 						<button
-							onClick={toggle}
+							onClick={toggleOrder}
 							className='cursor-pointer hover:text-white flex items-center gap-x-1.5'
 						>
 							<span>Дата отправки</span>

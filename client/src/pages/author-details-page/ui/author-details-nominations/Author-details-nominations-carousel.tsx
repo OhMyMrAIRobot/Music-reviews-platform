@@ -8,13 +8,13 @@ import {
 	useImperativeHandle,
 	useState,
 } from 'react'
-import { INominationWinnerParticipationItem } from '../../../../models/nomination/nomination-winner-participation/nomination-winner-participation-item'
-import { CarouselRef } from '../../../../types/carousel-ref'
-import { CarouselStateCallbacks } from '../../../../types/carousel-state-callbacks'
+import { CarouselRef } from '../../../../types/common/types/carousel-ref'
+import { CarouselStateCallbacks } from '../../../../types/common/types/carousel-state-callbacks'
+import { AuthorNominationWin } from '../../../../types/nomination'
 import AuthorDetailsNominationsCarouselItem from './Author-details-nominations-carousel-item'
 
 interface IProps extends CarouselStateCallbacks {
-	items?: INominationWinnerParticipationItem[]
+	items?: AuthorNominationWin[]
 	isLoading: boolean
 }
 

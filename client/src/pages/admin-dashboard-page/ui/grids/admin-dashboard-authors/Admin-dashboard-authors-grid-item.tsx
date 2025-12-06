@@ -1,13 +1,28 @@
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQueryClient,
+} from '@tanstack/react-query'
 import { FC, useState } from 'react'
 import { Link } from 'react-router'
+import { AuthorAPI } from '../../../../../api/author/author-api.ts'
 import AuthorTypeSvg from '../../../../../components/author/author-types/Author-type-svg.tsx'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
-import { useLoading } from '../../../../../hooks/use-loading.ts'
+import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler.ts'
 import useNavigationPath from '../../../../../hooks/use-navigation-path.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
-import { IAdminAuthor } from '../../../../../models/author/admin-author/admin-author.ts'
-import {} from '../../../../../models/author/admin-author/admin-authors-response.ts'
+import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys.ts'
+import { authorLikesKeys } from '../../../../../query-keys/author-likes-keys.ts'
+import { authorsKeys } from '../../../../../query-keys/authors-keys.ts'
+import { leaderboardKeys } from '../../../../../query-keys/leaderboard-keys.ts'
+import { platformStatsKeys } from '../../../../../query-keys/platform-stats-keys.ts'
+import { profilesKeys } from '../../../../../query-keys/profiles-keys.ts'
+import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys.ts'
+import { releasesKeys } from '../../../../../query-keys/releases-keys.ts'
+import { reviewsKeys } from '../../../../../query-keys/reviews-keys.ts'
+import { usersKeys } from '../../../../../query-keys/users-keys.ts'
+import { Author } from '../../../../../types/author/'
 import { getAuthorTypeColor } from '../../../../../utils/get-author-type-color.ts'
 import AdminDeleteButton from '../../buttons/Admin-delete-button.tsx'
 import AdminEditButton from '../../buttons/Admin-edit-button.tsx'
@@ -16,10 +31,9 @@ import AuthorFormModal from './Author-form-modal.tsx'
 
 interface IProps {
 	className?: string
-	author?: IAdminAuthor
+	author?: Author
 	isLoading: boolean
 	position?: number
-	refetchAuthors?: () => void
 }
 
 const AdminDashboardAuthorsGridItem: FC<IProps> = ({
@@ -27,30 +41,53 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 	author,
 	isLoading,
 	position,
-	refetchAuthors,
 }) => {
-	const { adminDashboardAuthorsStore, notificationStore } = useStore()
-
+	/** HOOKS */
+	const { notificationStore } = useStore()
+	const queryClient = useQueryClient()
 	const { navigateToAuthorDetails } = useNavigationPath()
+	const handleApiError = useApiErrorHandler()
 
+	/** STATES */
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [editModalOpen, setEditModelOpen] = useState<boolean>(false)
 
-	const { execute: deleteAuthor, isLoading: isDeleting } = useLoading(
-		adminDashboardAuthorsStore.deleteAuthor
-	)
+	/**
+	 * Function to invalidate related queries after delete mutation
+	 */
+	const invalidateRelatedQueries = () => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: leaderboardKeys.all },
+			{ queryKey: authorCommentsKeys.all },
+			{ queryKey: authorLikesKeys.all },
+			{ queryKey: releaseMediaKeys.all },
+			{ queryKey: releasesKeys.all },
+			{ queryKey: reviewsKeys.all },
+			{ queryKey: usersKeys.all },
+			{ queryKey: platformStatsKeys.all },
+			{ queryKey: authorsKeys.all },
+			{ queryKey: profilesKeys.all },
+		]
 
-	const handleDelete = async (id: string) => {
-		if (isDeleting) return
-
-		const result = await deleteAuthor(id)
-		if (result.length === 0) {
-			notificationStore.addSuccessNotification('Вы успешно удалили автора!')
-			refetchAuthors?.()
-		} else {
-			result.forEach(err => notificationStore.addErrorNotification(err))
-		}
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
 	}
+
+	/**
+	 * Mutation to delete the author
+	 */
+	const deleteMutation = useMutation({
+		mutationFn: (id: string) => AuthorAPI.deleteAuthor(id),
+		onSuccess: () => {
+			notificationStore.addSuccessNotification('Вы успешно удалили автора!')
+			setConfModalOpen(false)
+
+			invalidateRelatedQueries()
+		},
+		onError: (error: unknown) => {
+			setConfModalOpen(false)
+			handleApiError(error, 'Не удалось удалить автора!')
+		},
+	})
 
 	return isLoading ? (
 		<SkeletonLoader className='w-full h-40 xl:h-12 rounded-lg' />
@@ -62,9 +99,9 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 						<ConfirmationModal
 							title={'Вы действительно хотите удалить автора?'}
 							isOpen={confModalOpen}
-							onConfirm={() => handleDelete(author.id)}
+							onConfirm={() => deleteMutation.mutate(author.id)}
 							onCancel={() => setConfModalOpen(false)}
-							isLoading={isDeleting}
+							isLoading={deleteMutation.isPending}
 						/>
 					)}
 
@@ -72,7 +109,6 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 						<AuthorFormModal
 							isOpen={editModalOpen}
 							onClose={() => setEditModelOpen(false)}
-							refetchAuthors={() => {}}
 							author={author}
 						/>
 					)}
@@ -91,9 +127,9 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 						loading='lazy'
 						decoding='async'
 						src={`${import.meta.env.VITE_SERVER_URL}/public/authors/avatars/${
-							author.avatarImg === ''
+							author.avatar === ''
 								? import.meta.env.VITE_DEFAULT_AVATAR
-								: author.avatarImg
+								: author.avatar
 						}`}
 						alt={author.name}
 						className='absolute top-0 right-0 size-22 rounded-lg object-cover aspect-square select-none xl:hidden'
@@ -109,9 +145,9 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 								src={`${
 									import.meta.env.VITE_SERVER_URL
 								}/public/authors/avatars/${
-									author.avatarImg === ''
+									author.avatar === ''
 										? import.meta.env.VITE_DEFAULT_AVATAR
-										: author.avatarImg
+										: author.avatar
 								}`}
 								alt={author.name}
 								className='size-9 object-cover aspect-square rounded-full select-none max-xl:hidden'
@@ -130,7 +166,7 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 					{author ? (
 						<>
 							<span className='xl:hidden max-xl:pr-1'>Тип автора:</span>
-							{author.types.map((type, idx) => (
+							{author.authorTypes.map((type, idx) => (
 								<span key={type.id} className='flex'>
 									<span
 										className={`flex items-center ${getAuthorTypeColor(
@@ -140,7 +176,7 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
 										<AuthorTypeSvg type={type} className={'size-5 mr-0.5'} />
 										{type.type}
 									</span>
-									{idx < author.types.length - 1 && (
+									{idx < author.authorTypes.length - 1 && (
 										<span className='mr-1 select-none'>,</span>
 									)}
 								</span>

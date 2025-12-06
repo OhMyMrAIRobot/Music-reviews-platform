@@ -1,14 +1,17 @@
 import { FC } from 'react'
 import ComboBox from '../../../components/buttons/Combo-box'
 import SkeletonLoader from '../../../components/utils/Skeleton-loader'
-import { MonthEnum, MonthEnumType } from '../../../types/month-enum-type'
+import {
+	MonthEnumType,
+	MonthsEnum,
+} from '../../../types/common/enums/months-enum'
 
 interface IProps {
 	selectedMonth: number
 	setSelectedMonth: (value: number) => void
 	selectedYear: number | null
 	setSelectedYear: (value: number | null) => void
-	minYear: number | null
+	minYear: number
 	maxYear: number
 	isLoading: boolean
 }
@@ -20,10 +23,11 @@ const ReleasesRatingPageHeader: FC<IProps> = ({
 	setSelectedYear,
 	minYear,
 	maxYear,
+	isLoading,
 }) => {
 	const handleMonthChange = (value: string) => {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const entry = Object.entries(MonthEnum).find(([_, name]) => name === value)
+		const entry = Object.entries(MonthsEnum).find(([_, name]) => name === value)
 		const month = entry ? parseInt(entry[0], 10) : selectedMonth
 		setSelectedMonth(month)
 	}
@@ -53,7 +57,7 @@ const ReleasesRatingPageHeader: FC<IProps> = ({
 				</p>
 				<div className='flex flex-col gap-y-2 md:flex-row md:gap-x-5'>
 					<div className='w-50 h-10'>
-						{!minYear ? (
+						{isLoading ? (
 							<SkeletonLoader className='size-full rounded-md' />
 						) : (
 							<ComboBox
@@ -70,15 +74,15 @@ const ReleasesRatingPageHeader: FC<IProps> = ({
 					</div>
 					{selectedYear !== null && (
 						<div className='w-50 h-10'>
-							{!minYear ? (
+							{isLoading ? (
 								<SkeletonLoader className='size-full rounded-md' />
 							) : (
 								<ComboBox
-									options={Object.values(MonthEnum)}
+									options={Object.values(MonthsEnum)}
 									onChange={handleMonthChange}
 									className='border border-white/10'
 									value={
-										MonthEnum[selectedMonth as MonthEnumType] ?? 'Неизвестно'
+										MonthsEnum[selectedMonth as MonthEnumType] ?? 'Неизвестно'
 									}
 								/>
 							)}

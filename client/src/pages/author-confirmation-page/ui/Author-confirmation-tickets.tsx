@@ -1,6 +1,8 @@
-import { FC, useEffect } from 'react'
-import { useLoading } from '../../../hooks/use-loading'
+import { useQuery } from '@tanstack/react-query'
+import { FC } from 'react'
+import { AuthorConfirmationAPI } from '../../../api/author/author-confirmation-api'
 import { useStore } from '../../../hooks/use-store'
+import { authorConfirmationsKeys } from '../../../query-keys/authors-confirmations-keys'
 import AuthorConfirmationItem from './Author-confirmation-item'
 
 interface IProps {
@@ -8,17 +10,19 @@ interface IProps {
 }
 
 const AuthorConfirmationTickets: FC<IProps> = ({ show }) => {
-	const { authorConfirmationPageStore } = useStore()
+	const { authStore } = useStore()
 
-	const { execute: fetch, isLoading } = useLoading(
-		authorConfirmationPageStore.fetchAuthorConfirmationsByUserId
-	)
+	const { data, isPending } = useQuery({
+		queryKey: authorConfirmationsKeys.list({
+			userId: authStore.user?.id ?? 'unknown',
+		}),
+		queryFn: () => AuthorConfirmationAPI.findMyConfirmations(),
+		staleTime: 1000 * 60 * 5,
+		enabled: show && !!authStore.user,
+		refetchOnMount: 'always',
+	})
 
-	useEffect(() => {
-		fetch()
-	}, [show, fetch])
-
-	const items = authorConfirmationPageStore.authorConfirmations
+	const items = data?.items ?? []
 
 	return (
 		<div
@@ -26,7 +30,7 @@ const AuthorConfirmationTickets: FC<IProps> = ({ show }) => {
 				show ? '' : 'opacity-0 pointer-events-none duration-200 transition-all'
 			}`}
 		>
-			{isLoading
+			{isPending
 				? Array.from({ length: 5 }).map((_, idx) => (
 						<AuthorConfirmationItem
 							key={`Skeleton-author-confirm-${idx}`}
@@ -40,7 +44,8 @@ const AuthorConfirmationTickets: FC<IProps> = ({ show }) => {
 							item={item}
 						/>
 				  ))}
-			{!isLoading && items.length === 0 && (
+
+			{!isPending && items.length === 0 && (
 				<span className='text-center text-xl font-medium'>
 					Заявки не найдены!
 				</span>

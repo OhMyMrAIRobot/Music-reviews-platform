@@ -1,66 +1,52 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useRef, useState } from 'react'
+import { ReleaseMediaAPI } from '../../../../api/release/release-media-api'
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
-import { useLoading } from '../../../../hooks/use-loading'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
-import { useStore } from '../../../../hooks/use-store'
-import { ReleaseMediaStatusesEnum } from '../../../../models/release/release-media/release-media-status/release-media-statuses-enum'
-import { ReleaseMediaTypesEnum } from '../../../../models/release/release-media/release-media-type/release-media-types-enum'
-import { CarouselRef } from '../../../../types/carousel-ref'
+import { useReleaseMediaMeta } from '../../../../hooks/use-release-media-meta'
+import { releaseMediaKeys } from '../../../../query-keys/release-media-keys'
+import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum'
+import { CarouselRef } from '../../../../types/common/types/carousel-ref'
+import {
+	ReleaseMediaQuery,
+	ReleaseMediaStatusesEnum,
+	ReleaseMediaTypesEnum,
+} from '../../../../types/release'
 import ReleaseMediaReviewsCarousel from './carousel/Release-media-reviews-carousel'
 
+const limit = 15
+const offset = 0
+const order = SortOrdersEnum.DESC
+
 const ReleaseMediaReviews = () => {
-	const { metaStore, mainPageStore } = useStore()
-
 	const { navigateToMediaReviews } = useNavigationPath()
+	const { statuses, types, isLoading: isMetaLoading } = useReleaseMediaMeta()
 
-	const { execute: fetchStatuses, isLoading: isStatusesLoading } = useLoading(
-		metaStore.fetchReleaseMediaStatuses
-	)
+	const typeId = types.find(
+		t => t.type === ReleaseMediaTypesEnum.MEDIA_REVIEW
+	)?.id
+	const statusId = statuses.find(
+		s => s.status === ReleaseMediaStatusesEnum.APPROVED
+	)?.id
 
-	const { execute: fetchTypes, isLoading: isTypesLoading } = useLoading(
-		metaStore.fetchReleaseMediaTypes
-	)
+	const query: ReleaseMediaQuery = {
+		limit,
+		offset,
+		statusId,
+		typeId,
+		order,
+	}
 
-	const { execute: fetchMedia, isLoading: isMediaLoading } = useLoading(
-		mainPageStore.fetchReleaseMedia
-	)
+	const { data: mediaData, isPending: isMediaLoading } = useQuery({
+		queryKey: releaseMediaKeys.list(query),
+		queryFn: () => ReleaseMediaAPI.findAll(query),
+		enabled: Boolean(typeId && statusId),
+		staleTime: 1000 * 60 * 5,
+	})
 
-	const fetchReleaseMedia = useCallback(() => {
-		if (isStatusesLoading || isTypesLoading) return
-		const typeId = metaStore.releaseMediaTypes.find(
-			t => t.type === ReleaseMediaTypesEnum.MEDIA_REVIEW
-		)?.id
-		const statusId = metaStore.releaseMediaStatuses.find(
-			s => s.status === ReleaseMediaStatusesEnum.APPROVED
-		)?.id
-
-		if (!typeId || !statusId) return
-
-		return fetchMedia(statusId, typeId)
-	}, [
-		isStatusesLoading,
-		isTypesLoading,
-		metaStore.releaseMediaTypes,
-		metaStore.releaseMediaStatuses,
-		fetchMedia,
-	])
-
-	useEffect(() => {
-		const promises = []
-		if (metaStore.releaseMediaStatuses.length === 0) {
-			promises.push(fetchStatuses())
-		}
-		if (metaStore.releaseMediaTypes.length === 0) {
-			promises.push(fetchTypes())
-		}
-		Promise.all(promises).then(() => {
-			fetchReleaseMedia()
-		})
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	const items = mediaData?.items ?? []
 
 	const carouselRef = useRef<CarouselRef>(null)
-
 	const [canScrollPrev, setCanScrollPrev] = useState(false)
 	const [canScrollNext, setCanScrollNext] = useState(false)
 
@@ -75,8 +61,8 @@ const ReleaseMediaReviews = () => {
 			carousel={
 				<ReleaseMediaReviewsCarousel
 					ref={carouselRef}
-					items={mainPageStore.releaseMedia}
-					isLoading={isMediaLoading || isStatusesLoading || isTypesLoading}
+					items={items}
+					isLoading={isMediaLoading || isMetaLoading}
 					onCanScrollPrevChange={setCanScrollPrev}
 					onCanScrollNextChange={setCanScrollNext}
 				/>
