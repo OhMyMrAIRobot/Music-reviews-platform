@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { AuthAPI } from '../../../../api/auth-api'
 import FormButton from '../../../../components/form-elements/Form-button'
 import FormInput from '../../../../components/form-elements/Form-input'
@@ -8,43 +8,77 @@ import FormSubTitle from '../../../../components/form-elements/Form-subtitle'
 import FormTitle from '../../../../components/form-elements/Form-title'
 import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import { useStore } from '../../../../hooks/use-store'
-import { SendResetPasswordData } from '../../../../types/auth'
+import {
+	AuthEmailSentStatusResponse,
+	SendResetPasswordData,
+} from '../../../../types/auth'
+import { constraints } from '../../../../utils/constraints'
 import { generateUUID } from '../../../../utils/generate-uuid'
 
 const ReqResetPasswordForm = () => {
+	/** HOOKS */
 	const { notificationStore } = useStore()
-
-	const [email, setEmail] = useState<string>('')
-
 	const handleApiError = useApiErrorHandler()
 
+	/** STATE */
+	const [email, setEmail] = useState<string>('')
+
+	/**
+	 * Mutation for sending the reset password request.
+	 */
 	const { mutateAsync: sendRequest, isPending: isLoading } = useMutation({
 		mutationFn: (data: SendResetPasswordData) =>
 			AuthAPI.sendResetPassword(data),
-		onSuccess: data => {
-			if (data.emailSent) {
-				notificationStore.addNotification({
-					id: generateUUID(),
-					text: 'Письмо с инструкциями по восстановлению пароля отправлено на вашу почту!',
-					isError: false,
-				})
-				setEmail('')
-			} else {
-				notificationStore.addNotification({
-					id: generateUUID(),
-					text: 'Ошибка при отправке письма. Повторите попытку позже!',
-					isError: true,
-				})
-			}
-		},
+		onSuccess: data => hadleResponse(data),
 		onError: (error: unknown) => {
-			handleApiError(error, 'Ошибка при отправке письма!')
+			handleApiError(
+				error,
+				'Ошибка при отправке письма для восстановления пароля!'
+			)
 		},
 	})
 
+	/**
+	 * Handles the response from the reset password request.
+	 *
+	 * @param data - The response data.
+	 */
+	const hadleResponse = (data: AuthEmailSentStatusResponse) => {
+		if (data.emailSent) {
+			notificationStore.addNotification({
+				id: generateUUID(),
+				text: 'Письмо с инструкциями по восстановлению пароля отправлено на вашу почту!',
+				isError: false,
+			})
+			setEmail('')
+		} else {
+			notificationStore.addNotification({
+				id: generateUUID(),
+				text: 'Ошибка при отправке письма для восстановления пароля. Повторите попытку позже!',
+				isError: true,
+			})
+		}
+	}
+
+	/**
+	 * Indicates whether the form is valid.
+	 *
+	 * @returns {boolean} True if the form is valid, false otherwise.
+	 */
+	const isFormValid = useMemo(() => {
+		return (
+			email.trim().length > constraints.user.minEmailLength &&
+			email.trim().length <= constraints.user.maxEmailLength
+		)
+	}, [email])
+
+	/**
+	 * Handles the form submission.
+	 */
 	const onSubmit = async () => {
-		if (isLoading || !email.trim()) return
-		await sendRequest({ email: email.trim() })
+		if (isLoading || !isFormValid) return
+
+		return sendRequest({ email: email.trim() })
 	}
 
 	return (
@@ -69,10 +103,10 @@ const ReqResetPasswordForm = () => {
 			</div>
 
 			<FormButton
-				title={isLoading ? 'Отправка...' : 'Отправить письмо для сброса'}
+				title={isLoading ? 'Отправка...' : 'Отправить письмо с инструкциями'}
 				onClick={onSubmit}
 				isInvert={true}
-				disabled={isLoading || !email.trim()}
+				disabled={isLoading || !isFormValid}
 				isLoading={isLoading}
 			/>
 		</div>
