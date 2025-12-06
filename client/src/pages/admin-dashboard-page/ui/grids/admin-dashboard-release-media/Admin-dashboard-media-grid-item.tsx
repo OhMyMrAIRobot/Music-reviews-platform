@@ -1,5 +1,8 @@
-import { useMutation } from '@tanstack/react-query'
-import { AxiosError } from 'axios'
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQueryClient,
+} from '@tanstack/react-query'
 import { FC, useState } from 'react'
 import { Link } from 'react-router'
 import { ReleaseMediaAPI } from '../../../../../api/release/release-media-api'
@@ -7,8 +10,13 @@ import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bo
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal'
 import ReleaseMediaStatusIcon from '../../../../../components/release/release-media/Release-media-status-icon'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
+import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../../hooks/use-store'
+import { leaderboardKeys } from '../../../../../query-keys/leaderboard-keys'
+import { platformStatsKeys } from '../../../../../query-keys/platform-stats-keys'
+import { profilesKeys } from '../../../../../query-keys/profiles-keys'
+import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys'
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum'
 import { SortOrder } from '../../../../../types/common/types/sort-order'
 import { ReleaseMedia } from '../../../../../types/release'
@@ -35,33 +43,45 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 	order,
 	toggleOrder,
 }) => {
+	/** HOOKS */
 	const { notificationStore } = useStore()
-
-	// const queryClient = useQueryClient()
-
+	const queryClient = useQueryClient()
 	const { navigateToReleaseDetails } = useNavigationPath()
+	const handleApiError = useApiErrorHandler()
 
+	/** STATES */
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
 
+	/**
+	 * Function to invalidate related queries after mutations
+	 */
+	const invalidateRelatedQueries = () => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: profilesKeys.all },
+			{ queryKey: releaseMediaKeys.all },
+			{ queryKey: leaderboardKeys.all },
+			{ queryKey: platformStatsKeys.all },
+		]
+
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	}
+
+	/**
+	 * Mutation to delete the media
+	 */
 	const deleteMutation = useMutation({
 		mutationFn: (id: string) => ReleaseMediaAPI.adminDelete(id),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification(
 				'Вы успешно удалили медиаматериал!'
 			)
-			// queryClient.invalidateQueries({ queryKey: releaseMediaKeys.all })
+			invalidateRelatedQueries()
 			setConfModalOpen(false)
 		},
 		onError: (error: unknown) => {
-			const axiosError = error as AxiosError<{ message: string | string[] }>
-			const errors = Array.isArray(axiosError.response?.data?.message)
-				? axiosError.response?.data?.message
-				: [axiosError.response?.data?.message]
-			errors
-				.filter((err): err is string => typeof err === 'string')
-				.forEach((err: string) => notificationStore.addErrorNotification(err))
 			setConfModalOpen(false)
+			handleApiError(error, 'Не удалось удалить медиа')
 		},
 	})
 

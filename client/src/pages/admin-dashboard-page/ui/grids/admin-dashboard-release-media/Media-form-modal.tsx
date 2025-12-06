@@ -1,4 +1,9 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQuery,
+	useQueryClient,
+} from '@tanstack/react-query'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { ReleaseAPI } from '../../../../../api/release/release-api'
 import { ReleaseMediaAPI } from '../../../../../api/release/release-media-api'
@@ -12,6 +17,8 @@ import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
 import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler'
 import { useReleaseMediaMeta } from '../../../../../hooks/use-release-media-meta'
 import { useStore } from '../../../../../hooks/use-store'
+import { platformStatsKeys } from '../../../../../query-keys/platform-stats-keys'
+import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys'
 import { releasesKeys } from '../../../../../query-keys/releases-keys'
 import {
 	AdminCreateReleaseMediaData,
@@ -19,6 +26,7 @@ import {
 	ReleaseMedia,
 	ReleasesQuery,
 } from '../../../../../types/release'
+import { constraints } from '../../../../../utils/constraints'
 
 interface IProps {
 	isOpen: boolean
@@ -27,14 +35,13 @@ interface IProps {
 }
 
 const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
+	/** HOOKS */
 	const { notificationStore } = useStore()
-
 	const { statuses, types, isLoading: isMetaLoading } = useReleaseMediaMeta()
-
 	const handleApiError = useApiErrorHandler()
+	const queryClient = useQueryClient()
 
-	// const queryClient = useQueryClient()
-
+	/** STATES */
 	const [title, setTitle] = useState<string>('')
 	const [url, setUrl] = useState<string>('')
 	const [type, setType] = useState<string>('')
@@ -42,36 +49,97 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 	const [release, setRelease] = useState<string>('')
 	const [searchReleases, setSearchReleases] = useState<string>('')
 
+	/** EFFECTS */
+	useEffect(() => {
+		if (isOpen && media) {
+			setTitle(media.title)
+			setUrl(media.url)
+			setStatus(media.status.status)
+			setType(media.type.type)
+			setRelease(media.release.title)
+		}
+	}, [isOpen, media])
+
+	/**
+	 * Query to load releases for the release select input
+	 */
 	const query: ReleasesQuery = {
 		search: searchReleases.trim() ?? undefined,
 		limit: 20,
 		offset: 0,
 	}
 
+	/**
+	 * Fetch releases for the release select input
+	 */
 	const { data: releasesData, isPending: isReleasesLoading } = useQuery({
 		queryKey: releasesKeys.list(query),
 		queryFn: () => ReleaseAPI.findAll(query),
-		enabled: !!searchReleases.trim() && isOpen,
+		enabled: isOpen,
 		staleTime: 1000 * 60 * 5,
 	})
 
 	const releases = releasesData?.items || []
 
-	const createMutation = useMutation({
+	/**
+	 * Function to load releases for the release select input.
+	 * Fetches filtered releases from the server for the given search string
+	 * so the single-select receives up-to-date options while the user types.
+	 *
+	 * @param {string} search - The search string
+	 * @returns {Promise<string[]>} - A promise that resolves to an array of release titles
+	 */
+	const loadReleases = async (search: string): Promise<string[]> => {
+		// Build a query that includes the current search term
+		const query: ReleasesQuery = {
+			search: search.trim() || undefined,
+			limit: 20,
+			offset: 0,
+		}
+
+		// Fetch matching releases directly (ensures fresh, filtered results)
+		const data = await queryClient.fetchQuery({
+			queryKey: releasesKeys.list(query),
+			queryFn: () => ReleaseAPI.findAll(query),
+		})
+
+		const items = data?.items || []
+		return items.map(r => r.title)
+	}
+
+	/**
+	 * Function to invalidate related queries after mutations
+	 */
+	const invalidateRelatedQueries = () => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: releaseMediaKeys.all },
+			{ queryKey: platformStatsKeys.all },
+		]
+
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	}
+
+	/**
+	 * Mutation to create the media
+	 */
+	const { mutateAsync: createAsync, isPending: isCreating } = useMutation({
 		mutationFn: (data: AdminCreateReleaseMediaData) =>
 			ReleaseMediaAPI.adminCreate(data),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification('Медиа успешно добавлено!')
-			// queryClient.invalidateQueries({ queryKey: releaseMediaKeys.all })
+			invalidateRelatedQueries()
 			clearForm()
 			onClose()
 		},
 		onError: (error: unknown) => {
-			handleApiError(error)
+			handleApiError(error, 'Не удалось добавить медиа!')
 		},
 	})
 
-	const updateMutation = useMutation({
+	/**
+	 * Mutation to update the media
+	 */
+	const { mutateAsync: updateAsync, isPending: isUpdating } = useMutation({
 		mutationFn: ({
 			id,
 			data,
@@ -81,17 +149,62 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 		}) => ReleaseMediaAPI.adminUpdate(id, data),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification('Медиа успешно обновлено!')
-			// queryClient.invalidateQueries({ queryKey: releaseMediaKeys.all })
+			invalidateRelatedQueries()
 			clearForm()
 			onClose()
 		},
 		onError: (error: unknown) => {
-			handleApiError(error)
+			handleApiError(error, 'Не удалось обновить медиа!')
 		},
 	})
 
+	/**
+	 * Indicates whether a mutation is pending
+	 *
+	 * @return {boolean} True if a mutation is pending, false otherwise
+	 */
+	const isPending = useMemo(() => {
+		return isCreating || isUpdating
+	}, [isCreating, isUpdating])
+
+	/**
+	 * Indicates whether the form is valid
+	 *
+	 * @return {boolean} True if the form is valid, false otherwise
+	 */
+	const isFormValid = useMemo(() => {
+		return (
+			title.trim().length >= constraints.releaseMedia.minTitleLength &&
+			title.trim().length <= constraints.releaseMedia.maxTitleLength &&
+			url.trim().length >= constraints.releaseMedia.minUrlLength &&
+			url.trim().length <= constraints.releaseMedia.maxUrlLength &&
+			status &&
+			type &&
+			release
+		)
+	}, [release, status, title, type, url])
+
+	/**
+	 * Indicates whether there are changes to be saved
+	 *
+	 * @return {boolean} True if there are changes, false otherwise
+	 */
+	const hasChanges = useMemo(() => {
+		if (!media) return true
+		return (
+			title.trim() !== media.title ||
+			url.trim() !== media.url ||
+			type !== media.type.type ||
+			status !== media.status.status ||
+			release !== media.release.title
+		)
+	}, [media, release, status, title, type, url])
+
+	/**
+	 * Handler for form submission
+	 */
 	const handleSubmit = () => {
-		if (createMutation.isPending || updateMutation.isPending) return
+		if (isPending || !isFormValid || !hasChanges) return
 
 		const typeId = types.find(t => t.type === type)?.id
 		const statusId = statuses.find(s => s.status === status)?.id
@@ -99,7 +212,7 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 
 		if (!media) {
 			if (typeId && statusId && releaseId)
-				createMutation.mutate({
+				return createAsync({
 					title: title.trim(),
 					url: url.trim(),
 					releaseId: releaseId,
@@ -107,7 +220,7 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 					releaseMediaStatusId: statusId,
 				})
 		} else {
-			updateMutation.mutate({
+			return updateAsync({
 				id: media.id,
 				data: {
 					title: title.trim() !== media.title ? title.trim() : undefined,
@@ -121,11 +234,9 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 		}
 	}
 
-	const loadReleases = async (search: string): Promise<string[]> => {
-		setSearchReleases(search)
-		return releases.map(r => r.title)
-	}
-
+	/**
+	 * Clears the form fields
+	 */
 	const clearForm = () => {
 		setTitle('')
 		setUrl('')
@@ -135,31 +246,7 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 		setSearchReleases('')
 	}
 
-	const isFormValid = useMemo(() => {
-		return title && url && status && type && release
-	}, [release, status, title, type, url])
-
-	const hasChanges = useMemo(() => {
-		if (!media) return true
-		return (
-			title.trim() !== media.title ||
-			url.trim() !== media.url ||
-			type !== media.type.type ||
-			status !== media.status.status ||
-			release !== media.release.title
-		)
-	}, [media, release, status, title, type, url])
-
-	useEffect(() => {
-		if (isOpen && media) {
-			setTitle(media.title)
-			setUrl(media.url)
-			setStatus(media.status.status)
-			setType(media.type.type)
-			setRelease(media.release.title)
-		}
-	}, [isOpen, media])
-
+	/** CONSTANTS */
 	const formTitle = media ? 'Редактирование медиа' : 'Добавление медиа'
 	const buttonText = media ? 'Сохранить' : 'Добавить'
 
@@ -169,7 +256,7 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 		<ModalOverlay
 			isOpen={isOpen}
 			onCancel={onClose}
-			isLoading={createMutation.isPending || updateMutation.isPending}
+			isLoading={isPending}
 			className='max-lg:size-full'
 		>
 			{isMetaLoading ? (
@@ -270,15 +357,8 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 									title={buttonText}
 									isInvert={true}
 									onClick={handleSubmit}
-									disabled={
-										createMutation.isPending ||
-										!isFormValid ||
-										!hasChanges ||
-										updateMutation.isPending
-									}
-									isLoading={
-										createMutation.isPending || updateMutation.isPending
-									}
+									disabled={isPending || !isFormValid || !hasChanges}
+									isLoading={isPending}
 								/>
 							</div>
 
