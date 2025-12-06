@@ -48,7 +48,7 @@ const ReleaseDetailsReviewForm: FC<IProps> = observer(
 		const queryClient = useQueryClient()
 		const handleApiError = useApiErrorHandler()
 
-		/** STATE */
+		/** STATES */
 		const [title, setTitle] = useState<string>('')
 		const [text, setText] = useState<string>('')
 		const [rhymes, setRhymes] = useState<number>(5)

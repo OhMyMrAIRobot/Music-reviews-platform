@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { AuthAPI } from '../../../../api/auth-api'
 import FormButton from '../../../../components/form-elements/Form-button'
 import FormInput from '../../../../components/form-elements/Form-input'
@@ -11,17 +11,21 @@ import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
 import { LoginData } from '../../../../types/auth'
+import { constraints } from '../../../../utils/constraints'
 
 const LoginForm = () => {
+	/** HOOKS */
+	const { navigateToRegistration, navigateToRequestReset } = useNavigationPath()
+	const { authStore, notificationStore } = useStore()
+	const handleApiError = useApiErrorHandler()
+
+	/** STATES */
 	const [email, setEmail] = useState<string>('')
 	const [password, setPassword] = useState<string>('')
 
-	const { navigateToRegistration, navigateToRequestReset } = useNavigationPath()
-
-	const { authStore, notificationStore } = useStore()
-
-	const handleApiError = useApiErrorHandler()
-
+	/**
+	 * Mutation for logging in.
+	 */
 	const { mutateAsync: login, isPending: isLoading } = useMutation({
 		mutationFn: ({ email, password }: LoginData) =>
 			AuthAPI.login({ email, password }),
@@ -35,9 +39,27 @@ const LoginForm = () => {
 		},
 	})
 
-	const handleLogin = async () => {
-		if (!email.trim() || !password || isLoading) return
-		await login({ email: email.trim(), password })
+	/**
+	 * Indicates whether the form is valid.
+	 *
+	 * @return {boolean} True if the form is valid, false otherwise.
+	 */
+	const isFormValid = useMemo(() => {
+		return (
+			email.trim().length >= constraints.user.minEmailLength &&
+			email.trim().length <= constraints.user.maxEmailLength &&
+			password.length >= constraints.user.minPasswordLength &&
+			password.length <= constraints.user.maxPasswordLength
+		)
+	}, [email, password])
+
+	/**
+	 * Handles the form submission.
+	 */
+	const handleSubmit = async () => {
+		if (isLoading || !isFormValid) return
+
+		return login({ email: email.trim(), password })
 	}
 
 	return (
@@ -87,9 +109,9 @@ const LoginForm = () => {
 				<div className='grid gap-2'>
 					<FormButton
 						title={isLoading ? 'Загрузка...' : 'Войти'}
-						onClick={handleLogin}
+						onClick={handleSubmit}
 						isInvert={true}
-						disabled={isLoading || !email.trim() || !password}
+						disabled={isLoading || !isFormValid}
 						isLoading={isLoading}
 					/>
 

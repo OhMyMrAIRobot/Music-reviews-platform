@@ -35,7 +35,7 @@ const SendAuthorConfirmationForm: FC<IProps> = ({ show }) => {
 	const queryClient = useQueryClient()
 	const handleApiError = useApiErrorHandler()
 
-	/** STATE */
+	/** STATES */
 	const [confirmation, setConfirmation] = useState<string>('')
 	const [checked, setChecked] = useState<boolean>(false)
 	const [authors, setAuthors] = useState<IMultiSelectValue[]>([])

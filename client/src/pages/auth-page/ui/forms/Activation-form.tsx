@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
+import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { AuthAPI } from '../../../../api/auth-api'
@@ -10,23 +11,25 @@ import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
 
-const ActivationForm = () => {
-	const { token } = useParams()
-
+const ActivationForm = observer(() => {
+	/** HOOKS */
 	const { notificationStore, authStore } = useStore()
-
+	const { token } = useParams()
 	const navigate = useNavigate()
-
 	const { navigateToMain } = useNavigationPath()
-
 	const handleApiError = useApiErrorHandler()
 
+	/**
+	 * Mutation for account activation
+	 */
 	const { mutateAsync: activate } = useMutation({
 		mutationFn: (token: string) => AuthAPI.activate(token),
 		onSuccess: data => {
 			const { user, accessToken } = data
+
 			authStore.setAuthorization(user, accessToken)
 			notificationStore.addSuccessNotification('Аккаунт успешно активирован!')
+
 			navigate(navigateToMain)
 		},
 		onError: (error: unknown) => {
@@ -34,6 +37,9 @@ const ActivationForm = () => {
 		},
 	})
 
+	/**
+	 * Mutation for resending activation email
+	 */
 	const { mutateAsync: resend, isPending: isLoading } = useMutation({
 		mutationFn: () => AuthAPI.resendActivation(),
 		onSuccess: data => {
@@ -46,6 +52,7 @@ const ActivationForm = () => {
 		},
 	})
 
+	/** EFFECTS */
 	useEffect(() => {
 		if (token) {
 			activate(token)
@@ -78,6 +85,6 @@ const ActivationForm = () => {
 			)}
 		</div>
 	)
-}
+})
 
 export default ActivationForm

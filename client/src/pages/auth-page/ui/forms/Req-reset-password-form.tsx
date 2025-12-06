@@ -20,7 +20,7 @@ const ReqResetPasswordForm = () => {
 	const { notificationStore } = useStore()
 	const handleApiError = useApiErrorHandler()
 
-	/** STATE */
+	/** STATES */
 	const [email, setEmail] = useState<string>('')
 
 	/**

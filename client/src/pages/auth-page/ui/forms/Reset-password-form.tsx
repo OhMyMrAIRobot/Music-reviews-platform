@@ -29,7 +29,7 @@ const ResetPasswordForm = () => {
 	const { navigateToMain } = useNavigationPath()
 	const handleApiError = useApiErrorHandler()
 
-	/** STATE */
+	/** STATES */
 	const [formData, setFormData] = useState<ResetPasswordFormState>({
 		password: '',
 		passwordConfirm: '',

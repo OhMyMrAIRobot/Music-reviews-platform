@@ -11,7 +11,11 @@ import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
 import { RegisterData } from '../../../../types/auth'
+import { constraints } from '../../../../utils/constraints'
 
+/**
+ * Represents state of registration form.
+ */
 type RegistrationFormState = {
 	email: string
 	nickname: string
@@ -22,12 +26,12 @@ type RegistrationFormState = {
 }
 
 const RegistrationForm = () => {
+	/** HOOKS */
 	const { authStore, notificationStore } = useStore()
-
 	const { navigateToLogin } = useNavigationPath()
-
 	const handleApiError = useApiErrorHandler()
 
+	/** STATES */
 	const [formData, setFormData] = useState<RegistrationFormState>({
 		email: '',
 		nickname: '',
@@ -37,6 +41,9 @@ const RegistrationForm = () => {
 		policyChecked: false,
 	})
 
+	/**
+	 * Mutation for user registration
+	 */
 	const { mutateAsync: register, isPending: isLoading } = useMutation({
 		mutationFn: (data: RegisterData) => AuthAPI.register(data),
 		onSuccess: data => {
@@ -52,6 +59,12 @@ const RegistrationForm = () => {
 		},
 	})
 
+	/**
+	 * Handles changes in form inputs.
+	 *
+	 * @param field - The field to update.
+	 * @param value - The new value for the field.
+	 */
 	const handleChange = (
 		field: keyof typeof formData,
 		value: string | boolean
@@ -59,6 +72,17 @@ const RegistrationForm = () => {
 		setFormData(prev => ({ ...prev, [field]: value }))
 	}
 
+	/**
+	 * Renders an input field.
+	 *
+	 * @param id - The ID of the input field.
+	 * @param label - The label for the input field.
+	 * @param type - The type of the input field.
+	 * @param placeholder - The placeholder text for the input field.
+	 * @param description - An optional description for the input field.
+	 *
+	 * @returns The rendered input field.
+	 */
 	const renderInput = (
 		id: keyof typeof formData,
 		label: string,
@@ -83,6 +107,15 @@ const RegistrationForm = () => {
 		</div>
 	)
 
+	/**
+	 * Renders a checkbox with a link.
+	 *
+	 * @param id - The ID of the checkbox field.
+	 * @param linkText - The text for the link.
+	 * @param linkHref - The href for the link.
+	 *
+	 * @returns The rendered checkbox with a link.
+	 */
 	const renderCheckbox = (
 		id: keyof typeof formData,
 		linkText: string,
@@ -106,39 +139,35 @@ const RegistrationForm = () => {
 		</div>
 	)
 
-	const handleRegistration = async () => {
-		if (!isFormValid || isLoading) return
-
-		if (formData.password !== formData.passwordConfirm) {
-			notificationStore.addErrorNotification('Пароли не совпадают!')
-			return
-		}
-		if (!formData.agreementChecked) {
-			notificationStore.addErrorNotification(
-				'Вы должны принять условия пользовательского соглашения!'
-			)
-			return
-		}
-		if (!formData.policyChecked) {
-			notificationStore.addErrorNotification(
-				'Вы должны принять условия политики обработки персональных данных!'
-			)
-			return
-		}
-
-		await register(formData)
-	}
-
+	/**
+	 * Indicates whether the form is valid for submission.
+	 *
+	 * @return {boolean} True if the form is valid, false otherwise.
+	 */
 	const isFormValid = useMemo(() => {
 		return (
 			formData.agreementChecked &&
 			formData.policyChecked &&
-			formData.email.trim() &&
-			formData.nickname.trim() &&
-			formData.password &&
-			formData.passwordConfirm
+			formData.email.trim().length >= constraints.user.minEmailLength &&
+			formData.email.trim().length <= constraints.user.maxEmailLength &&
+			formData.nickname.trim().length >= constraints.user.minNicknameLength &&
+			formData.nickname.trim().length <= constraints.user.maxNicknameLength &&
+			formData.password.length >= constraints.user.minPasswordLength &&
+			formData.password.length <= constraints.user.maxPasswordLength &&
+			formData.passwordConfirm.length >= constraints.user.minPasswordLength &&
+			formData.passwordConfirm.length <= constraints.user.maxPasswordLength &&
+			formData.password === formData.passwordConfirm
 		)
 	}, [formData])
+
+	/**
+	 * Handles form submission.
+	 */
+	const handleSubmit = async () => {
+		if (!isFormValid || isLoading) return
+
+		return register(formData)
+	}
 
 	return (
 		<div className='grid w-full sm:w-[350px] gap-2 py-10'>
@@ -171,7 +200,7 @@ const RegistrationForm = () => {
 				<FormButton
 					title={isLoading ? 'Регистрация...' : 'Создать аккаунт'}
 					isInvert={true}
-					onClick={handleRegistration}
+					onClick={handleSubmit}
 					disabled={isLoading || !isFormValid}
 					isLoading={isLoading}
 				/>

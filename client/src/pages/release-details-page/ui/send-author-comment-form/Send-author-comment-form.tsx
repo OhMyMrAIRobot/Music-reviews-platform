@@ -36,7 +36,7 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 	const queryClient = useQueryClient()
 	const handleApiError = useApiErrorHandler()
 
-	/** STATE */
+	/** STATES */
 	const [title, setTitle] = useState<string>('')
 	const [text, setText] = useState<string>('')
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
