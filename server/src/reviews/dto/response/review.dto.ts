@@ -7,10 +7,10 @@
  */
 export type ReviewDto = {
   /** Review entity id */
-  id: string;
+  id: string | null;
 
   /** Review title */
-  title: string;
+  title: string | null;
 
   /** Review text */
   text: string;

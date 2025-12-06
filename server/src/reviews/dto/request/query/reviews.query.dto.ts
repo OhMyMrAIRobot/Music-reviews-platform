@@ -60,6 +60,11 @@ export class ReviewsQueryDto {
   @IsSortOrder()
   sortOrder?: SortOrder;
 
+  @IsOptional()
+  @Type(() => Boolean)
+  @IsBoolean({ message: 'Поле withTextOnly должно быть булевым значением' })
+  withTextOnly?: boolean;
+
   /** Pagination limit (integer). */
   @IsOptional()
   @Type(() => Number)

@@ -133,6 +133,7 @@ export class ReviewsService {
       limit: query.limit,
       offset: query.offset,
       releaseId: query.releaseId,
+      withTextOnly: query.withTextOnly,
     });
 
     return response.result;
@@ -274,6 +275,7 @@ export class ReviewsService {
     sortField?: ReviewSortFieldsEnum;
     sortOrder?: SortOrder;
     authorLikesOnly?: boolean;
+    withTextOnly?: boolean;
     limit?: number;
     offset?: number;
   }): Promise<ReviewsRawQueryDto> {
@@ -287,6 +289,7 @@ export class ReviewsService {
       sortField = null,
       sortOrder = null,
       authorLikesOnly = null,
+      withTextOnly = null,
       limit = null,
       offset = null,
     } = params;
@@ -313,6 +316,7 @@ export class ReviewsService {
 							${sortField}::text AS sort_field,
 							${sortOrder}::text AS sort_order,
 							${authorLikesOnly}::boolean AS author_likes_only,
+              ${withTextOnly}::boolean AS with_text_only,
 							${limit}::int AS limit_,
 							${offset}::int AS offset_
 			),
@@ -322,8 +326,7 @@ export class ReviewsService {
 							FROM "Reviews" rev
 									JOIN params p ON TRUE
 							WHERE (p.id_ IS NULL OR rev.id = p.id_)
-                  AND rev.title IS NOT NULL 
-                  AND rev.text IS NOT NULL
+                  AND (p.with_text_only IS NULL OR p.with_text_only = FALSE OR (rev.title IS NOT NULL AND rev.text IS NOT NULL))
 									AND (p.user_id IS NULL OR rev.user_id = p.user_id)
                   AND (p.release_id IS NULL OR rev.release_id = p.release_id)
 									AND (p.fav_user_id IS NULL OR EXISTS (

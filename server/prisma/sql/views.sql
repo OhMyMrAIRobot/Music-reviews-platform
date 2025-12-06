@@ -499,8 +499,7 @@ SELECT
 
     (
         SELECT COUNT(*)
-        FROM "Release_ratings" rr
-        JOIN "Release_rating_types" rrt ON rr.release_rating_type_id = rrt.id
-        WHERE rrt.type = 'Оценка без рецензии'
+        FROM "Reviews" rev
+        WHERE rev.text IS NULL
     )::int AS "withoutTextRatings"
 ;

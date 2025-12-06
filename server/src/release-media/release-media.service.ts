@@ -377,7 +377,7 @@ export class ReleaseMediaService {
                                               'id', u.id,
                                               'nickname', u.nickname,
                                               'avatar', up.avatar,
-                                              'point', up.points,
+                                              'points', up.points,
                                               'rank', tul.rank
                                               )
                                       ELSE NULL
