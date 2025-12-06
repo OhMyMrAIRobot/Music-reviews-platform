@@ -202,11 +202,11 @@ export class ProfilesService {
         return updatedProfile;
       });
 
-      if (dto.clearAvatar || avatar) {
+      if ((dto.clearAvatar || avatar) && profile.avatar) {
         await this.fileService.deleteFile('avatars/' + profile.avatar);
       }
 
-      if (dto.clearCover || cover) {
+      if ((dto.clearCover || cover) && profile.coverImage) {
         await this.fileService.deleteFile('covers/' + profile.coverImage);
       }
 

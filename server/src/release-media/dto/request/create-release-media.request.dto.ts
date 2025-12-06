@@ -15,10 +15,10 @@ export class CreateReleaseMediaRequestDto {
   })
   title: string;
 
-  /** Link to the media; must be a valid URL (1-255 characters). */
+  /** Link to the media; must be a valid URL (5-255 characters). */
   @IsUrl({}, { message: 'URL должен быть корректным!' })
-  @Length(1, 255, {
-    message: 'URL должен быть длиной от 1 до 255 символов!',
+  @Length(5, 255, {
+    message: 'URL должен быть длиной от 5 до 255 символов!',
   })
   url: string;
 

@@ -37,7 +37,11 @@ export class UpdateProfileRequestDto {
    */
   @IsOptional()
   @IsBoolean({ message: 'Поле clearAvatar должно быть булевым значением!' })
-  @Type(() => Boolean)
+  @Transform(({ value }) => {
+    if (value === 'true' || value === true) return true;
+    if (value === 'false' || value === false) return false;
+    return undefined;
+  })
   clearAvatar?: boolean;
 
   /**
@@ -45,7 +49,11 @@ export class UpdateProfileRequestDto {
    */
   @IsOptional()
   @IsBoolean({ message: 'Поле clearCover должно быть булевым значением!' })
-  @Type(() => Boolean)
+  @Transform(({ value }) => {
+    if (value === 'true' || value === true) return true;
+    if (value === 'false' || value === false) return false;
+    return undefined;
+  })
   clearCover?: boolean;
 
   /**
