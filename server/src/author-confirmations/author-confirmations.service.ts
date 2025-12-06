@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'prisma/prisma.service';
@@ -118,6 +118,8 @@ export class AuthorConfirmationsService {
    * Side effects:
    * - When the new status is `APPROVED`, a `registeredAuthor` record is
    *   created linking the user and the author.
+   * - When the new status is `PENDING` or `REJECTED`, the `registeredAuthor`
+   *   record is deleted if it exists.
    *
    * Returns the updated `AuthorConfirmationDto`.
    */
@@ -130,22 +132,22 @@ export class AuthorConfirmationsService {
       dto.statusId,
     );
 
-    if (
-      (exist.status.status as AuthorConfirmationStatusesEnum) !==
-      AuthorConfirmationStatusesEnum.PENDING
-    ) {
-      throw new BadRequestException(
-        'Вы не можете изменить статус принятой / отклонённой заявки!',
-      );
-    }
-
     const result = await this.prisma.$transaction(async (prisma) => {
-      if (
-        (newStatus.status as AuthorConfirmationStatusesEnum) ===
-        AuthorConfirmationStatusesEnum.APPROVED
-      ) {
+      const newStatusEnum = newStatus.status as AuthorConfirmationStatusesEnum;
+
+      if (newStatusEnum === AuthorConfirmationStatusesEnum.APPROVED) {
         await prisma.registeredAuthor.create({
           data: {
+            authorId: exist.authorId,
+            userId: exist.userId,
+          },
+        });
+      } else if (
+        newStatusEnum === AuthorConfirmationStatusesEnum.PENDING ||
+        newStatusEnum === AuthorConfirmationStatusesEnum.REJECTED
+      ) {
+        await prisma.registeredAuthor.deleteMany({
+          where: {
             authorId: exist.authorId,
             userId: exist.userId,
           },
@@ -171,13 +173,25 @@ export class AuthorConfirmationsService {
   /**
    * Delete a confirmation by id.
    *
-   * Ensures the entity exists and then performs a deletion.
+   * Also deletes the associated `registeredAuthor` record if it exists,
+   * ensuring cleanup of all related data.
+   *
+   * Ensures the entity exists before performing deletion.
    */
   async delete(id: string) {
-    await this.findOne(id);
+    const exist = await this.findOne(id);
 
-    await this.prisma.authorConfirmation.delete({
-      where: { id },
+    await this.prisma.$transaction(async (prisma) => {
+      await prisma.registeredAuthor.deleteMany({
+        where: {
+          authorId: exist.authorId,
+          userId: exist.userId,
+        },
+      });
+
+      await prisma.authorConfirmation.delete({
+        where: { id },
+      });
     });
 
     return;

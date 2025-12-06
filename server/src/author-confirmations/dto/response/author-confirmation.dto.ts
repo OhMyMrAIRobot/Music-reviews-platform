@@ -33,6 +33,7 @@ class Author {
   name: string;
 
   @Expose()
+  @Transform(({ obj }: { obj: { avatarImg: string } }) => obj.avatarImg ?? '')
   img: string;
 }
 
