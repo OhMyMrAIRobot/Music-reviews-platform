@@ -111,7 +111,10 @@ const ReleaseDetailsReviewForm: FC<IProps> = observer(
 				invalidateRelatedQueries()
 			},
 			onError: (error: unknown) => {
-				handleApiError(error)
+				handleApiError(
+					error,
+					`Не удалось добавить ${isReview ? 'рецензию' : 'оценку'}.`
+				)
 			},
 		})
 
@@ -129,7 +132,10 @@ const ReleaseDetailsReviewForm: FC<IProps> = observer(
 				invalidateRelatedQueries()
 			},
 			onError: (error: unknown) => {
-				handleApiError(error)
+				handleApiError(
+					error,
+					`Не удалось обновить ${isReview ? 'рецензию' : 'оценку'}.`
+				)
 			},
 		})
 
@@ -147,7 +153,10 @@ const ReleaseDetailsReviewForm: FC<IProps> = observer(
 				invalidateRelatedQueries()
 			},
 			onError: (error: unknown) => {
-				handleApiError(error)
+				handleApiError(
+					error,
+					`Не удалось удалить ${isReview ? 'рецензию' : 'оценку'}.`
+				)
 			},
 		})
 

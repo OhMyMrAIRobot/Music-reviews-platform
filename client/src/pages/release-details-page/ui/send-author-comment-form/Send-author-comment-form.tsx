@@ -22,6 +22,7 @@ import {
 	CreateAuthorCommentData,
 	UpdateAuthorCommentData,
 } from '../../../../types/author'
+import { constraints } from '../../../../utils/constraints'
 import ReleaseDetailsReviewFormText from '../release-details-estimation/forms/release-details-review-form/Release-details-review-form-text'
 
 interface IProps {
@@ -29,18 +30,20 @@ interface IProps {
 }
 
 const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
+	/** HOOKS */
 	const { notificationStore, authStore } = useStore()
-
 	const { checkAuth } = useAuth()
-
 	const queryClient = useQueryClient()
-
 	const handleApiError = useApiErrorHandler()
 
+	/** STATE */
 	const [title, setTitle] = useState<string>('')
 	const [text, setText] = useState<string>('')
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 
+	/**
+	 * Query to get existing author comment by the user for this release
+	 */
 	const query: AuthorCommentsQuery = {
 		releaseId,
 	}
@@ -51,13 +54,25 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 		staleTime: 1000 * 60 * 5,
 	})
 
+	/** List of author comments */
 	const authorComments = data?.items
 
-	const authorComment = authorComments?.find(
+	/** User's author comment for this release */
+	const userAuthorComment = authorComments?.find(
 		c => c.user.id === authStore.user?.id
 	)
 
-	// All queries need to be invalidated after mutations
+	/** EFFECTS */
+	useEffect(() => {
+		if (userAuthorComment) {
+			setTitle(userAuthorComment.title)
+			setText(userAuthorComment.text)
+		}
+	}, [userAuthorComment])
+
+	/**
+	 * Function to invalidate related queries after mutations
+	 */
 	const invalidateRelatedQueries = () => {
 		const keysToInvalidate: InvalidateQueryFilters[] = [
 			{ queryKey: authorCommentsKeys.all },
@@ -70,15 +85,16 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
 	}
 
-	const createMutation = useMutation({
+	/**
+	 * Create mutation for adding a new author comment
+	 */
+	const { mutateAsync: asyncCreate, isPending: isCreating } = useMutation({
 		mutationFn: (data: CreateAuthorCommentData) =>
 			AuthorCommentAPI.create(data),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification(
 				'Вы успешно добавили авторский комментарий!'
 			)
-			setTitle('')
-			setText('')
 
 			invalidateRelatedQueries()
 		},
@@ -87,7 +103,10 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 		},
 	})
 
-	const updateMutation = useMutation({
+	/**
+	 * Update mutation for editing an existing author comment
+	 */
+	const { mutateAsync: asyncUpdate, isPending: isUpdating } = useMutation({
 		mutationFn: ({ id, data }: { id: string; data: UpdateAuthorCommentData }) =>
 			AuthorCommentAPI.update(id, data),
 		onSuccess: () => {
@@ -102,15 +121,16 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 		},
 	})
 
-	const deleteMutation = useMutation({
+	/**
+	 * Delete mutation for removing an existing author comment
+	 */
+	const { mutateAsync: asyncDelete, isPending: isDeleting } = useMutation({
 		mutationFn: (id: string) => AuthorCommentAPI.delete(id),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification(
 				'Вы успешно удалили авторский комментарий!'
 			)
 			setConfModalOpen(false)
-			setTitle('')
-			setText('')
 
 			invalidateRelatedQueries()
 		},
@@ -119,28 +139,58 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 		},
 	})
 
-	const handleSubmit = async () => {
-		if (
-			!checkAuth() ||
-			createMutation.isPending ||
-			!isFormValid ||
-			!hasChanges ||
-			updateMutation.isPending ||
-			deleteMutation.isPending
-		)
-			return
+	/**
+	 * Check if any mutation is in progress
+	 *
+	 * @returns {boolean} - True if any mutation is in progress, false otherwise
+	 */
+	const isPending = useMemo(
+		() => isCreating || isUpdating || isDeleting,
+		[isCreating, isUpdating, isDeleting]
+	)
 
-		if (authorComment) {
-			return updateMutation.mutateAsync({
-				id: authorComment.id,
+	/**
+	 * Check if the form inputs are valid
+	 *
+	 * @returns {boolean} - True if the form is valid, false otherwise
+	 */
+	const isFormValid = useMemo(() => {
+		return (
+			title.trim().length <= constraints.authorComment.maxTitleLength &&
+			title.trim().length >= constraints.authorComment.minTitleLength &&
+			text.trim().length >= constraints.authorComment.minTextLength &&
+			text.trim().length <= constraints.authorComment.maxTextLength
+		)
+	}, [text, title])
+
+	/**
+	 * Check if there are changes in the form compared to the existing author comment
+	 *
+	 * @returns {boolean} - True if there are changes, false otherwise
+	 */
+	const hasChanges = useMemo(() => {
+		if (!userAuthorComment) return true
+		return userAuthorComment.title !== title || userAuthorComment.text !== text
+	}, [userAuthorComment, text, title])
+
+	/**
+	 * Handle form submission for creating or updating an author comment
+	 */
+	const handleSubmit = async () => {
+		if (!checkAuth() || !isFormValid || !hasChanges || isPending) return
+
+		if (userAuthorComment) {
+			return asyncUpdate({
+				id: userAuthorComment.id,
 				data: {
 					title:
-						title.trim() !== authorComment.title ? title.trim() : undefined,
-					text: text.trim() !== authorComment.text ? text.trim() : undefined,
+						title.trim() !== userAuthorComment.title ? title.trim() : undefined,
+					text:
+						text.trim() !== userAuthorComment.text ? text.trim() : undefined,
 				},
 			})
 		} else {
-			return createMutation.mutateAsync({
+			return asyncCreate({
 				title: title.trim(),
 				text: text.trim(),
 				releaseId: releaseId,
@@ -148,54 +198,30 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 		}
 	}
 
+	/**
+	 * Handle deletion of the existing author comment
+	 */
 	const handleDelete = async () => {
-		if (
-			!checkAuth() ||
-			!authorComment ||
-			deleteMutation.isPending ||
-			createMutation.isPending ||
-			updateMutation.isPending
-		)
-			return
+		if (!checkAuth() || !userAuthorComment || isPending) return
 
-		return deleteMutation.mutateAsync(authorComment.id)
+		return asyncDelete(userAuthorComment.id)
 	}
-
-	useEffect(() => {
-		if (authorComment) {
-			setTitle(authorComment.title)
-			setText(authorComment.text)
-		}
-	}, [authorComment])
-
-	const isFormValid = useMemo(() => {
-		return (
-			title.trim().length <= 100 &&
-			title.trim().length >= 5 &&
-			text.trim().length >= 300
-		)
-	}, [text, title])
-
-	const hasChanges = useMemo(() => {
-		if (!authorComment) return true
-		return authorComment.title !== title || authorComment.text !== text
-	}, [authorComment, text, title])
 
 	return (
 		<>
-			{confModalOpen && authorComment && (
+			{confModalOpen && userAuthorComment && (
 				<ConfirmationModal
 					title={'Вы действительно хотите удалить авторский комментарий?'}
 					isOpen={confModalOpen}
 					onConfirm={handleDelete}
 					onCancel={() => setConfModalOpen(false)}
-					isLoading={deleteMutation.isPending}
+					isLoading={isDeleting}
 				/>
 			)}
 			<div className='mt-10 mx-auto w-full'>
 				<h3 className='text-xl lg:text-2xl font-bold '>
 					{`${
-						authorComment ? 'Редактировать' : 'Оставить'
+						userAuthorComment ? 'Редактировать' : 'Оставить'
 					} авторский комментарий`}
 				</h3>
 				<div className='border bg-zinc-900 rounded-xl px-2.5 py-4 border-white/10 w-full max-w-200 mx-auto mt-5'>
@@ -208,44 +234,25 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 					/>
 
 					<div className='flex items-center justify-between mt-5'>
-						{authorComment && (
+						{userAuthorComment && (
 							<div className='w-40'>
 								<FormButton
 									title={'Удалить'}
 									isInvert={false}
 									onClick={() => setConfModalOpen(true)}
-									disabled={
-										!authorComment ||
-										createMutation.isPending ||
-										updateMutation.isPending ||
-										deleteMutation.isPending
-									}
-									isLoading={
-										createMutation.isPending ||
-										updateMutation.isPending ||
-										deleteMutation.isPending
-									}
+									disabled={!userAuthorComment || isPending}
+									isLoading={isDeleting}
 								/>
 							</div>
 						)}
 
 						<div className='w-40 ml-auto'>
 							<FormButton
-								title={authorComment ? 'Изменить' : 'Отправить'}
+								title={userAuthorComment ? 'Изменить' : 'Отправить'}
 								isInvert={true}
 								onClick={handleSubmit}
-								disabled={
-									createMutation.isPending ||
-									updateMutation.isPending ||
-									deleteMutation.isPending ||
-									!isFormValid ||
-									!hasChanges
-								}
-								isLoading={
-									createMutation.isPending ||
-									updateMutation.isPending ||
-									deleteMutation.isPending
-								}
+								disabled={isPending || !isFormValid || !hasChanges}
+								isLoading={isCreating || isUpdating}
 							/>
 						</div>
 					</div>
