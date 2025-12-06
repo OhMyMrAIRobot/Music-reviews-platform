@@ -6,6 +6,8 @@ import { ROUTES } from './routes-enum'
 const AuthRoute = observer(() => {
 	const { authStore } = useStore()
 
+	if (authStore.isUserLoading) return
+
 	return authStore.isAuth ? <Outlet /> : <Navigate to={ROUTES.MAIN} replace />
 })
 

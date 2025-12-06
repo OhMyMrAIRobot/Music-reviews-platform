@@ -1,70 +1,38 @@
-import { useMutation } from '@tanstack/react-query'
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQueryClient,
+} from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ProfileAPI } from '../../../../api/user/profile-api'
 import FormButton from '../../../../components/form-elements/Form-button'
 import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../../hooks/use-auth'
 import { useStore } from '../../../../hooks/use-store'
+import { leaderboardKeys } from '../../../../query-keys/leaderboard-keys'
+import { profilesKeys } from '../../../../query-keys/profiles-keys'
 import buildProfileFormData from '../../../../utils/build-profile-form-data'
 import EditProfilePageSection from '../Edit-profile-page-section'
 import SelectImageLabel from '../labels/Select-image-label'
 import SelectedImageLabel from '../labels/Selected-image-label'
 
 const UploadCoverForm = observer(() => {
-	const { checkAuth } = useAuth()
-
+	/** HOOKS */
 	const { authStore, notificationStore } = useStore()
+	const { checkAuth } = useAuth()
+	const queryClient = useQueryClient()
+	const handleApiError = useApiErrorHandler()
 
+	/** STATES */
 	const [file, setFile] = useState<File | null>(null)
 	const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 
-	// const queryClient = useQueryClient()
-	const handleApiError = useApiErrorHandler()
-
-	const uploadMutation = useMutation({
-		mutationFn: (formData: FormData) => ProfileAPI.update(formData),
-		onSuccess: () => {
-			const userId = authStore.user?.id
-			if (userId) {
-				// queryClient.invalidateQueries({ queryKey: profileKeys.profile(userId) })
-			}
-			notificationStore.addSuccessNotification('Обложка успешно обновлена!')
-			setFile(null)
-			if (previewUrl) {
-				URL.revokeObjectURL(previewUrl)
-				setPreviewUrl(null)
-			}
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Ошибка при загрузке обложки!')
-		},
-	})
-
-	const deleteMutation = useMutation({
-		mutationFn: () => {
-			const formData = buildProfileFormData({ clearCover: true })
-			return ProfileAPI.update(formData)
-		},
-		onSuccess: () => {
-			const userId = authStore.user?.id
-			if (userId) {
-				// queryClient.invalidateQueries({ queryKey: profileKeys.profile(userId) })
-			}
-			notificationStore.addSuccessNotification('Обложка успешно удалена!')
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Ошибка при удалении обложки!')
-		},
-	})
-
-	const handleDelete = async () => {
-		if (!checkAuth() || uploadMutation.isPending || deleteMutation.isPending)
-			return
-
-		deleteMutation.mutate()
-	}
-
+	/**
+	 * Function to handle file input change
+	 *
+	 * @param {React.ChangeEvent<HTMLInputElement>} event - The change event from the file input
+	 */
 	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (event.target.files && event.target.files[0]) {
 			const selectedFile = event.target.files[0]
@@ -75,9 +43,82 @@ const UploadCoverForm = observer(() => {
 		}
 	}
 
+	/**
+	 * Function to invalidate related queries after mutations
+	 */
+	const invalidateRelatedQueries = (userId: string) => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: profilesKeys.profile(userId) },
+			{ queryKey: leaderboardKeys.all },
+		]
+
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	}
+
+	/**
+	 * Upload cover mutation
+	 */
+	const { mutateAsync: uploadAsync, isPending: isUploading } = useMutation({
+		mutationFn: (formData: FormData) => ProfileAPI.update(formData),
+		onSuccess: profile => {
+			authStore.setProfile(profile)
+			notificationStore.addSuccessNotification('Обложка успешно обновлена!')
+			setFile(null)
+			if (previewUrl) {
+				URL.revokeObjectURL(previewUrl)
+				setPreviewUrl(null)
+			}
+
+			if (authStore.user?.id) {
+				invalidateRelatedQueries(authStore.user.id)
+			}
+		},
+		onError: (error: unknown) => {
+			handleApiError(error, 'Ошибка при загрузке обложки!')
+		},
+	})
+
+	/**
+	 * Delete cover mutation
+	 */
+	const { mutateAsync: deleteAsync, isPending: isDeleting } = useMutation({
+		mutationFn: () => {
+			const formData = buildProfileFormData({ clearCover: true })
+			return ProfileAPI.update(formData)
+		},
+		onSuccess: profile => {
+			authStore.setProfile(profile)
+			notificationStore.addSuccessNotification('Обложка успешно удалена!')
+
+			if (authStore.user?.id) {
+				invalidateRelatedQueries(authStore.user.id)
+			}
+			setFile(null)
+			if (previewUrl) {
+				URL.revokeObjectURL(previewUrl)
+				setPreviewUrl(null)
+			}
+		},
+		onError: (error: unknown) => {
+			handleApiError(error, 'Ошибка при удалении обложки!')
+		},
+	})
+
+	/**
+	 * Indicates if any mutation is in progress
+	 *
+	 * @returns {boolean} True if any mutation is pending, false otherwise
+	 */
+	const isPending = useMemo(
+		() => isUploading || isDeleting,
+		[isUploading, isDeleting]
+	)
+
+	/**
+	 * Function to handle form submission for uploading cover
+	 */
 	const handleSubmit = async () => {
-		if (!checkAuth() || uploadMutation.isPending || deleteMutation.isPending)
-			return
+		if (!checkAuth() || isPending) return
 
 		if (!file) {
 			notificationStore.addErrorNotification('Выберите изображение!')
@@ -86,7 +127,16 @@ const UploadCoverForm = observer(() => {
 
 		const formData = buildProfileFormData({ cover: file })
 
-		uploadMutation.mutate(formData)
+		return uploadAsync(formData)
+	}
+
+	/**
+	 * Function to handle cover deletion
+	 */
+	const handleDelete = async () => {
+		if (!checkAuth() || isPending) return
+
+		return deleteAsync()
 	}
 
 	return (
@@ -127,29 +177,21 @@ const UploadCoverForm = observer(() => {
 				<div className='grid grid-cols-1 sm:flex justify-between gap-2 w-full'>
 					<div className='w-full sm:w-38'>
 						<FormButton
-							title={uploadMutation.isPending ? 'Сохранение...' : 'Сохранить'}
+							title={isUploading ? 'Сохранение...' : 'Сохранить'}
 							isInvert={true}
 							onClick={handleSubmit}
-							disabled={
-								!file || uploadMutation.isPending || deleteMutation.isPending
-							}
-							isLoading={uploadMutation.isPending}
+							disabled={!file || isPending}
+							isLoading={isUploading}
 						/>
 					</div>
 
 					<div className='w-full sm:w-42'>
 						<FormButton
-							title={
-								deleteMutation.isPending ? 'Удаление...' : 'Удалить обложку'
-							}
+							title={isDeleting ? 'Удаление...' : 'Удалить обложку'}
 							isInvert={false}
 							onClick={handleDelete}
-							disabled={
-								authStore.profile?.cover === '' ||
-								deleteMutation.isPending ||
-								uploadMutation.isPending
-							}
-							isLoading={deleteMutation.isPending}
+							disabled={authStore.profile?.cover === '' || isPending}
+							isLoading={isDeleting}
 						/>
 					</div>
 				</div>

@@ -8,6 +8,8 @@ import { ROUTES } from './routes-enum'
 const AdminRoute = observer(() => {
 	const { authStore } = useStore()
 
+	if (authStore.isUserLoading) return
+
 	const role = authStore.user?.role.role
 
 	return role === RolesEnum.ADMIN || role === RolesEnum.ROOT_ADMIN ? (

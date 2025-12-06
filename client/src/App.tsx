@@ -58,6 +58,10 @@ export const App = observer(() => {
 		}
 	}, [profileData, authStore])
 
+	useEffect(() => {
+		authStore.setUserLoading(isFetching)
+	}, [isFetching, authStore])
+
 	const { pathname } = useLocation()
 
 	useLayoutEffect(() => {

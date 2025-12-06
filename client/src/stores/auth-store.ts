@@ -7,6 +7,7 @@ class AuthStore {
 	user: User | null = null
 	profile: Profile | null = null
 	isProfileLoading: boolean = true
+	isUserLoading: boolean = true
 
 	constructor() {
 		makeAutoObservable(this)
@@ -26,6 +27,10 @@ class AuthStore {
 
 	setUser(user: User | null) {
 		this.user = user
+	}
+
+	setUserLoading(value: boolean) {
+		this.isUserLoading = value
 	}
 
 	setAuthorization(user: User, token: string) {
