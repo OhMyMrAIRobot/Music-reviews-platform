@@ -11,7 +11,19 @@ const _api = axios.create({
 	},
 })
 
+/**
+ * API service for leaderboard data.
+ * Provides methods for fetching user leaderboard rankings and statistics.
+ */
 export const LeaderboardAPI = {
+	/**
+	 * Fetches a paginated list of leaderboard items.
+	 *
+	 * @param {LeaderboardQuery} query - The query parameters for pagination.
+	 * @param {number} [query.limit] - Maximum number of leaderboard items to return.
+	 * @param {number} [query.offset] - Number of leaderboard items to skip (for pagination).
+	 * @returns {Promise<LeaderboardItem[]>} A promise that resolves to an array of leaderboard items.
+	 */
 	async fetchLeaderboard(query: LeaderboardQuery): Promise<LeaderboardItem[]> {
 		const { limit, offset } = query
 

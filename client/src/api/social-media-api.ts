@@ -9,7 +9,16 @@ const _api = axios.create({
 	},
 })
 
+/**
+ * API service for social media links and platforms.
+ * Provides methods for fetching social media information.
+ */
 export const SocialMediaAPI = {
+	/**
+	 * Fetches all available social media platforms and links.
+	 *
+	 * @returns {Promise<SocialMedia[]>} A promise that resolves to an array of social media objects.
+	 */
 	async findAll(): Promise<SocialMedia[]> {
 		const { data } = await _api.get<SocialMedia[]>('/')
 		return data

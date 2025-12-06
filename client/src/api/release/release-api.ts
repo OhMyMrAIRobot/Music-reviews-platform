@@ -16,17 +16,15 @@ const _api = axios.create({
 })
 
 /**
- * ReleaseAPI
- *
- * Thin wrapper around HTTP requests related to releases.
- * Each method returns the `data` part of the Axios response and
- * maps to the corresponding backend endpoint.
+ * API service for managing releases.
+ * Provides methods for fetching release types, retrieving release lists,
+ * and performing CRUD operations on release entries.
  */
 export const ReleaseAPI = {
 	/**
-	 * Fetch available release types from the server.
+	 * Fetches all available release types from the server.
 	 *
-	 * @returns {Promise<ReleaseType[]>} - array of release type objects
+	 * @returns {Promise<ReleaseType[]>} A promise that resolves to an array of release types.
 	 */
 	async fetchReleaseTypes(): Promise<ReleaseType[]> {
 		const { data } = await axios.get<ReleaseType[]>(
@@ -36,13 +34,20 @@ export const ReleaseAPI = {
 	},
 
 	/**
-	 * Fetch paginated releases with query parameters.
+	 * Fetches a paginated list of releases with optional filtering, sorting, and pagination.
 	 *
-	 * The `query` parameter is converted into query string parameters;
-	 * empty values are passed.
-	 *
-	 * @param {ReleasesQuery} query - filtering, sorting and pagination options
-	 * @returns {Promise<ReleasesResponse>} - object with `items` and `total` fields
+	 * @param {ReleasesQuery} query - The query parameters for filtering releases.
+	 * @param {string} [query.authorId] - Filter releases by author ID.
+	 * @param {string} [query.typeId] - Filter releases by type ID.
+	 * @param {string} [query.search] - Search term to filter releases by title or content.
+	 * @param {string} [query.sortField] - Field to sort releases by.
+	 * @param {string} [query.sortOrder] - Sort order (e.g., 'ASC' or 'DESC').
+	 * @param {boolean} [query.last24h] - If true, return only releases from the last 24 hours.
+	 * @param {number} [query.year] - Filter releases by year.
+	 * @param {number} [query.month] - Filter releases by month (requires year).
+	 * @param {number} [query.limit] - Maximum number of releases to return.
+	 * @param {number} [query.offset] - Number of releases to skip (for pagination).
+	 * @returns {Promise<ReleasesResponse>} A promise that resolves to the releases list response containing items and metadata.
 	 */
 	async findAll(query: ReleasesQuery): Promise<ReleasesResponse> {
 		const { data } = await _api.get<ReleasesResponse>(`?
@@ -61,10 +66,10 @@ export const ReleaseAPI = {
 	},
 
 	/**
-	 * Fetch a single release by its id.
+	 * Fetches a single release by ID.
 	 *
-	 * @param {string} id - release identifier
-	 * @returns {Promise<Release>} - the release object
+	 * @param {string} id - The ID of the release to retrieve.
+	 * @returns {Promise<Release>} A promise that resolves to the release object.
 	 */
 	async fetchById(id: string): Promise<Release> {
 		const { data } = await _api.get<Release>(`${id}`)
@@ -72,10 +77,10 @@ export const ReleaseAPI = {
 	},
 
 	/**
-	 * Create a new release using multipart/form-data.
+	 * Creates a new release with the provided form data.
 	 *
-	 * @param {FormData} formData - form payload containing release fields and files
-	 * @returns {Promise<Release>} - created release object
+	 * @param {FormData} formData - The form data containing release information (image, title, etc.).
+	 * @returns {Promise<Release>} A promise that resolves to the newly created release object.
 	 */
 	async create(formData: FormData): Promise<Release> {
 		const { data } = await api.post<Release>('/releases', formData, {
@@ -87,11 +92,11 @@ export const ReleaseAPI = {
 	},
 
 	/**
-	 * Update an existing release. Uses `PATCH` with multipart/form-data.
+	 * Updates an existing release with the provided form data.
 	 *
-	 * @param {string} id - id of the release to update
-	 * @param {FormData} formData - updated fields and files
-	 * @returns {Promise<Release>} - updated release object
+	 * @param {string} id - The ID of the release to update.
+	 * @param {FormData} formData - The form data containing updated release information.
+	 * @returns {Promise<Release>} A promise that resolves to the updated release object.
 	 */
 	async update(id: string, formData: FormData): Promise<Release> {
 		const { data } = await api.patch<Release>(`/releases/${id}`, formData, {
@@ -103,12 +108,11 @@ export const ReleaseAPI = {
 	},
 
 	/**
-	 * Delete a release by id.
+	 * Deletes a release by ID.
 	 *
-	 * @param {string} id - id of the release to delete
-	 * @returns {Promise<void>} - resolves when deletion completes
+	 * @param {string} id - The ID of the release to delete.
 	 */
-	async delete(id: string): Promise<void> {
-		await api.delete(`/releases/${id}`)
+	async delete(id: string) {
+		return api.delete(`/releases/${id}`)
 	},
 }
