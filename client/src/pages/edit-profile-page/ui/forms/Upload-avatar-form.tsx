@@ -1,63 +1,42 @@
-import { useMutation } from '@tanstack/react-query'
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQueryClient,
+} from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ProfileAPI } from '../../../../api/user/profile-api'
 import FormButton from '../../../../components/form-elements/Form-button'
 import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../../hooks/use-auth'
 import { useStore } from '../../../../hooks/use-store'
+import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys'
+import { leaderboardKeys } from '../../../../query-keys/leaderboard-keys'
+import { profilesKeys } from '../../../../query-keys/profiles-keys'
+import { releaseMediaKeys } from '../../../../query-keys/release-media-keys'
+import { reviewsKeys } from '../../../../query-keys/reviews-keys'
+import { usersKeys } from '../../../../query-keys/users-keys'
 import buildProfileFormData from '../../../../utils/build-profile-form-data'
 import EditProfilePageSection from '../Edit-profile-page-section'
 import SelectImageLabel from '../labels/Select-image-label'
 import SelectedImageLabel from '../labels/Selected-image-label'
 
 const UploadAvatarForm = observer(() => {
-	const { checkAuth } = useAuth()
-
+	/** HOOKS */
 	const { authStore, notificationStore } = useStore()
+	const { checkAuth } = useAuth()
+	const queryClient = useQueryClient()
+	const handleApiError = useApiErrorHandler()
 
+	/** STATES */
 	const [file, setFile] = useState<File | null>(null)
 	const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 
-	// const queryClient = useQueryClient()
-	const handleApiError = useApiErrorHandler()
-
-	const uploadMutation = useMutation({
-		mutationFn: (formData: FormData) => ProfileAPI.update(formData),
-		onSuccess: () => {
-			const userId = authStore.user?.id
-			if (userId) {
-				// queryClient.invalidateQueries({ queryKey: profileKeys.profile(userId) })
-			}
-			notificationStore.addSuccessNotification('Аватар успешно обновлён!')
-			setFile(null)
-			if (previewUrl) {
-				URL.revokeObjectURL(previewUrl)
-				setPreviewUrl(null)
-			}
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Ошибка при загрузке аватара!')
-		},
-	})
-
-	const deleteMutation = useMutation({
-		mutationFn: () => {
-			const formData = buildProfileFormData({ clearAvatar: true })
-			return ProfileAPI.update(formData)
-		},
-		onSuccess: () => {
-			const userId = authStore.user?.id
-			if (userId) {
-				// queryClient.invalidateQueries({ queryKey: profileKeys.profile(userId) })
-			}
-			notificationStore.addSuccessNotification('Аватар успешно удалён!')
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Ошибка при удалении аватара!')
-		},
-	})
-
+	/**
+	 * Function to handle file input change
+	 *
+	 * @param {React.ChangeEvent<HTMLInputElement>} event - The change event from the file input
+	 */
 	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (event.target.files && event.target.files[0]) {
 			const selectedFile = event.target.files[0]
@@ -68,9 +47,87 @@ const UploadAvatarForm = observer(() => {
 		}
 	}
 
+	/**
+	 * Function to invalidate related queries after mutations
+	 */
+	const invalidateRelatedQueries = (userId: string) => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: profilesKeys.profile(userId) },
+			{ queryKey: leaderboardKeys.all },
+			{ queryKey: authorCommentsKeys.all },
+			{ queryKey: authorCommentsKeys.all },
+			{ queryKey: releaseMediaKeys.all },
+			{ queryKey: reviewsKeys.all },
+			{ queryKey: usersKeys.all },
+		]
+
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	}
+
+	/**
+	 * Upload avatar mutation
+	 */
+	const { mutateAsync: uploadAsync, isPending: isUploading } = useMutation({
+		mutationFn: (formData: FormData) => ProfileAPI.update(formData),
+		onSuccess: data => {
+			authStore.setProfile(data)
+			notificationStore.addSuccessNotification('Аватар успешно обновлён!')
+			setFile(null)
+			if (previewUrl) {
+				URL.revokeObjectURL(previewUrl)
+				setPreviewUrl(null)
+			}
+
+			if (authStore.user?.id) {
+				invalidateRelatedQueries(authStore.user.id)
+			}
+		},
+		onError: (error: unknown) => {
+			handleApiError(error, 'Ошибка при загрузке аватара!')
+		},
+	})
+
+	/**
+	 * Delete avatar mutation
+	 */
+	const { mutateAsync: deleteAsync, isPending: isDeleting } = useMutation({
+		mutationFn: () => {
+			const formData = buildProfileFormData({ clearAvatar: true })
+			return ProfileAPI.update(formData)
+		},
+		onSuccess: data => {
+			authStore.setProfile(data)
+			notificationStore.addSuccessNotification('Аватар успешно удалён!')
+			setFile(null)
+			if (previewUrl) {
+				URL.revokeObjectURL(previewUrl)
+				setPreviewUrl(null)
+			}
+
+			if (authStore.user?.id) {
+				invalidateRelatedQueries(authStore.user.id)
+			}
+		},
+		onError: (error: unknown) => {
+			handleApiError(error, 'Ошибка при удалении аватара!')
+		},
+	})
+
+	/**
+	 * Indicates if any mutation is in progress
+	 *
+	 * @returns {boolean} True if any mutation is pending, false otherwise
+	 */
+	const isPending = useMemo(
+		() => isUploading || isDeleting,
+		[isUploading, isDeleting]
+	)
+
+	/**
+	 * Handle form submission for uploading avatar
+	 */
 	const handleSubmit = async () => {
-		if (!checkAuth() || uploadMutation.isPending || deleteMutation.isPending)
-			return
+		if (!checkAuth() || isPending) return
 
 		if (!file) {
 			notificationStore.addErrorNotification('Выберите изображение!')
@@ -78,14 +135,15 @@ const UploadAvatarForm = observer(() => {
 		}
 		const formData = buildProfileFormData({ avatar: file })
 
-		uploadMutation.mutate(formData)
+		return uploadAsync(formData)
 	}
 
+	/**
+	 * Handle avatar deletion
+	 */
 	const handleDelete = async () => {
-		if (!checkAuth() || uploadMutation.isPending || deleteMutation.isPending)
-			return
-
-		deleteMutation.mutate()
+		if (!checkAuth() || isPending) return
+		return deleteAsync()
 	}
 
 	return (
@@ -126,29 +184,21 @@ const UploadAvatarForm = observer(() => {
 				<div className='grid grid-cols-1 sm:flex justify-between gap-2 w-full'>
 					<div className='w-full sm:w-38'>
 						<FormButton
-							title={uploadMutation.isPending ? 'Сохранение...' : 'Сохранить'}
+							title={isUploading ? 'Сохранение...' : 'Сохранить'}
 							isInvert={true}
 							onClick={handleSubmit}
-							disabled={
-								!file || uploadMutation.isPending || deleteMutation.isPending
-							}
-							isLoading={uploadMutation.isPending}
+							disabled={!file || isPending}
+							isLoading={isUploading}
 						/>
 					</div>
 
 					<div className='w-full sm:w-42'>
 						<FormButton
-							title={
-								deleteMutation.isPending ? 'Удаление...' : 'Удалить аватар'
-							}
+							title={isDeleting ? 'Удаление...' : 'Удалить аватар'}
 							isInvert={false}
 							onClick={handleDelete}
-							disabled={
-								authStore.profile?.avatar === '' ||
-								deleteMutation.isPending ||
-								uploadMutation.isPending
-							}
-							isLoading={deleteMutation.isPending}
+							disabled={authStore.profile?.avatar === '' || isPending}
+							isLoading={isDeleting}
 						/>
 					</div>
 				</div>
