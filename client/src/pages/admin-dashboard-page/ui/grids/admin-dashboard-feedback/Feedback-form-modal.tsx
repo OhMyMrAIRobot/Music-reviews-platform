@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { FC, useEffect, useState } from 'react'
 import { FeedbackAPI } from '../../../../../api/feedback/feedback-api'
 import { FeedbackReplyAPI } from '../../../../../api/feedback/feedback-reply-api'
@@ -26,16 +26,20 @@ interface IProps {
 }
 
 const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
+	/** HOOKS */
+	const queryClient = useQueryClient()
 	const { notificationStore } = useStore()
-
 	const { statuses, isLoading: isMetaLoading } = useFeedbackMeta()
-
 	const handleApiError = useApiErrorHandler()
 
+	/** STATES */
 	const [reply, setReply] = useState<FeedbackReply | null>(null)
 	const [showReply, setShowReply] = useState<boolean>(false)
 	const [replyText, setReplyText] = useState<string>('')
 
+	/**
+	 * Query to get the reply for the feedback
+	 */
 	const { data: replyData, isPending: isReplyLoading } = useQuery({
 		queryKey: feedbackKeys.reply(feedback.id),
 		queryFn: () => FeedbackReplyAPI.findByFeedbackId(feedback.id),
@@ -45,6 +49,9 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
 		staleTime: 1000 * 60 * 5,
 	})
 
+	/**
+	 * Mutation to update the feedback status
+	 */
 	const updateStatusMutation = useMutation({
 		mutationFn: (statusId: string) =>
 			FeedbackAPI.update(feedback.id, { feedbackStatusId: statusId }),
@@ -52,13 +59,16 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
 			notificationStore.addSuccessNotification(
 				'Вы успешно отметили сообщение как прочитанное!'
 			)
-			// queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
+			queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
 		},
 		onError: (error: unknown) => {
-			handleApiError(error)
+			handleApiError(error, 'Не удалось обновить статус сообщения')
 		},
 	})
 
+	/**
+	 * Mutation to create a reply for the feedback
+	 */
 	const createReplyMutation = useMutation({
 		mutationFn: (replyData: CreateFeedbackReplyData) =>
 			FeedbackReplyAPI.create(replyData),
@@ -67,18 +77,18 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
 			setReply(data)
 			setShowReply(false)
 			setReplyText('')
-			// queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
-			// queryClient.invalidateQueries({
-			// 	queryKey: feedbackKeys.reply(feedback.id),
-			// })
-
 			onClose()
+
+			queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
 		},
 		onError: (error: unknown) => {
-			handleApiError(error)
+			handleApiError(error, 'Не удалось отправить ответ')
 		},
 	})
 
+	/**
+	 * Handler to update the feedback status to "READ"
+	 */
 	const updateReadStatus = () => {
 		if (feedback.feedbackStatus.status !== FeedbackStatusesEnum.NEW) {
 			notificationStore.addErrorNotification(
@@ -92,12 +102,15 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
 		)
 
 		if (newStatus) {
-			updateStatusMutation.mutate(newStatus.id)
+			return updateStatusMutation.mutate(newStatus.id)
 		}
 	}
 
+	/**
+	 * Handler to post a reply to the feedback
+	 */
 	const postReply = () => {
-		if (reply || replyText.trim().length === 0) return
+		if (reply || !replyText.trim().length) return
 
 		createReplyMutation.mutate({
 			message: replyText,
@@ -105,6 +118,7 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
 		})
 	}
 
+	/** EFFECTS */
 	useEffect(() => {
 		setReply(null)
 		setReplyText('')
@@ -133,7 +147,7 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
 						{`${!reply && showReply ? 'Написание' : 'Просмотр'} ${
 							showReply ? 'ответа' : 'сообщения'
 						}`}
-					</h1>{' '}
+					</h1>
 					{!(showReply && !reply) && (
 						<div className='border-b border-white/10 px-6 py-4 flex gap-2 w-full flex-col font-medium h-38'>
 							{!showReply && (
