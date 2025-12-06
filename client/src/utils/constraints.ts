@@ -35,4 +35,14 @@ export const constraints = {
 		minMessageLength: 100,
 		maxMessageLength: 4000,
 	} as const,
+
+	/** User */
+	user: {
+		minEmailLength: 1,
+		maxEmailLength: 60,
+		minNicknameLength: 3,
+		maxNicknameLength: 20,
+		minPasswordLength: 6,
+		maxPasswordLength: 64,
+	} as const,
 } as const
