@@ -1,117 +1,142 @@
 # Music Reviews Platform
-Не финальная версия приложения (в данный момент происходит миграция на TanStack Query)
 
-## 1. Краткое описание
-Платформа для управления и просмотра музыкальных релизов, авторов, отзывов, медиа-материалов, рейтингов, комментариев и пользовательского контента. Включает административную панель (dashboard) и публичные страницы. Проект построен как монорепозиторий с двумя приложениями: `client` (React + Vite) и `server` (NestJS + Prisma + PostgreSQL).
+## 1. Short Summary
 
-## 2. Основной функционал
-- Управление релизами (создание, редактирование, типы, медиа).
-- Верификация авторов и подтверждение статусов.
-- Система отзывов, комментариев, рейтингов и избранного.
-- Лента и статистика (список самых активных пользователей, платформенная аналитика).
-- Модерация пользовательского контента (обратная связь, подтверждения авторов).
-- Адаптивный интерфейс.
-- Уведомления и обработка ошибок (через централизованный NotificationStore / React Query callbacks).
+The application is a platform that unites creators (authors) and listeners of modern music. Here, users analyze music releases and write reviews, and the authors receive feedback in the form of constructive criticism. Registered artists and producers can mark their favorite reviews of their releases with "Author's likes", as well as leave "Author's comments" in their release cards.
 
-## 3. Технологический стек
-**Frontend (client):**
-- React 18 + TypeScript
+## 2. Main Functionality
+
+- Registration / Authentication with email verification
+- Reset password via email
+- Role management (User, Media, Admin, Root Admin)
+- Content management via Admin Dashboard
+- Various aggregated lists with searchability and pagination
+- A favorites system that allows users to mark releases, reviews, and authors as favourite
+- User profiles with the ability to specify social networks, as well as uploading avatar and cover
+- A custom rating system that allows users to rate a release, including adding a review to it, as well as attaching a media review for media users
+- A system of monthly nominations and awards that allows users to select the best works/authors from the last month in various categories
+- A verification system for authors that allows them to leave "Author's comments" on their releases, as well as mark reviews of their releases with "Author's likes"
+- Built-in gamification implemented through receiving points for various actions on the platform
+- Email-based feedback
+- Fully responsive interface of the entire application
+- Custom centralized notification system
+
+## 3. Tech Stack
+
+**Frontend:**
+
+- TypeScript
+- React 19
+- React Router
 - Vite
 - MobX
-- TanStack React Query
+- TanStack Query
 - TailwindCSS
-- React Router
-- Модульная архитектура страниц / компонентов
+- Axios
+- Embla-carousel-react
 
-**Backend (server):**
-- NestJS
+**Backend:**
+
 - TypeScript
+- NestJS
 - Prisma ORM
 - PostgreSQL
-- JWT
 
-**Инфраструктура и инструменты:**
-- ESLint (статический анализ)
-- .env конфигурация (отдельно для клиента и сервера)
-- Axios для HTTP (на клиенте выделен `api-instance.ts`)
+## 4. Repository architecture and structure
 
-## 4. Архитектура и структура репозитория
+The application is a `monorepository` and is built on the principle of `client-server` architecture
+
 ```
 project-root/
-  client/                 # фронтенд приложение
-    src/
-      api/                # слой запросов к REST API
-      components/         # переиспользуемые UI компоненты
-      contexts/           # контекст-обертки (UI, store)
-      hooks/              # кастомные React hooks
-      pages/              # страницы
-      providers/          # контекст-провайдеры
-      routes/             # навигация
-      types/              # вспомогательные типы
-      query-keys/         # ключи для React Query
-      models/             # типы и интерфейсы доменной области
-      stores/             # MobX сторы
-      utils/              # вспомогательные функции
-  server/                 # backend (NestJS)
-    public/               # статические файлы (аватары, обложки, медиа)
-    prisma/               # схема, миграции, сиды
-    src/
-      auth/               # аутентификация (стратегии, guards)
-      authors/            # управление авторами
-      decorators          # кастомные декораторы
-      author-types/       # типы авторов
-      feedbacks/          # отзывы/обратная связь
-      mails/              # шаблоны email-ответов
-      feedback-statuses/  # статусы обратной связи
-      releases/           # релизы и связанные сущности
-      reviews/            # отзывы о релизах
-      profiles/           # профили пользователей
-      leaderboard/        # статистика и рейтинги
-      roles/              # роли и права
-      social-media/       # соц. медиа атрибуты
-      uploads/            # управление пользовательской загрузкой
-      ...
+├── /client
+│   ├── /src
+│   │    ├── /api           # The REST API request layer
+│   │    ├── /components    # Reusable UI components
+│   │    ├── /contexts      # React contexts
+│   │    ├── /hooks         # Custom React hooks
+│   │    ├── /pages         # Pages that encapsulate specialized components
+│   │    ├── /providers     # Context providers
+│   │    ├── /routes        # Route definitions
+│   │    ├── /types         # Types and interfaces distributed by domain names
+│   │    ├── /query-keys    # TanStack Query keys
+│   │    ├── /stores        # MobX global stores
+│   │    ├── /utils         # Utility functions
+│   │    └── main.tsx       # React entry point
+│   ├── public/             # Public assets (icons, logos)
+│   ├── index.html          # Main HTML file
+│   ├── vite.config.ts       # Contains build and development settings for the Vite bundler
+│   └── package.json        # Lists frontend project dependencies, scripts, and metadata
+│
+├── /server
+│   ├── /public                     # Static files (avatars, covers, assets)
+│   ├── /prisma                       # Database related folder (schemas, sql, seeders)
+│   │   ├── /schema                       # Prisma schemas
+│   │   ├── /sql                          # Raw PostgreSql functions, procedures, triggers and views
+│   │   └── ...
+│   ├── /src                          # NestJS modules and utils
+│   │   ├── /auth                         # Authentication module (strategies, guards, types, services, controllers)
+│   │   ├── /author-confirmations         # Module for managing author verification requests
+│   │   ├── /author-confirmation-statuses # Module for managing statuses of author confirmation requests
+│   │   ├── /album-values                 # Module for managing the "Album Value" ratings
+│   │   ├── /album-value-votes            # Module for processing "Album Value" ratings from users
+│   │   ├── /author-comments              # Module for processing comments from verified authors
+│   │   ├── /author-types                 # Module for managing types of authors
+│   │   ├── /authors                      # Module for managing authors
+│   │   ├── /feedback                     # Module for managing feedback
+│   │   ├── /feedback-replies             # Module for processing feedback replies
+│   │   ├── /feedback-statuses            # Module for managing statuses of feedback
+│   │   ├── /leaderboard                  # Module for managing leaderboard of the most active users
+│   │   ├── /nominations                  # Module for managing nominations (candidates, winners, votes etc.)
+│   │   ├── /nomination-types             # Module for managing types of nominations
+│   │   ├── /profiles                     # Module for managing user profiles
+│   │   ├── /registered-authors           # Module for managing verified authors
+│   │   ├── /release-media                # Module for managing release media entries
+│   │   ├── /release-media-types          # Module for managing types of release media entries
+│   │   ├── /release-media-statuses       # Module for managing statuses of release media entries
+│   │   ├── /release-types                # Module for managing types of releases
+│   │   ├── /releases                     # Module for managing releases
+│   │   ├── /reviews                      # Module for managing user's reviews and marks
+│   │   ├── /roles                        # Module for role management
+│   │   ├── /social-media                 # Module for managing social media
+│   │   ├── /user-fav-authors             # Module for managing user's favourite authors
+│   │   ├── /user-fav-media               # Module for managing user's favourite media
+│   │   ├── /user-fav-releases            # Module for managing user's favourite releases
+│   │   ├── /user-fav-reviews             # Module for managing user's favourite reviews
+│   │   ├── /users                         # Module for managing users
+│   │   ├── /file                         # Module for file management
+│   │   ├── /shared                       # Shared folder
+│   │   │   ├── /decorators                   # Shared custom decorators
+│   │   │   ├── /exceptions                   # Shared custom exceptions
+│   │   │   ├── /guards                       # Shared custom guards
+│   │   │   ├── /types                        # Shared types and interfaces
+│   │   │   └── /utils                        # Shared utility functions
+│   │   └── /mails                        # Module for email management
+│   ├── prisma.config.ts       # Contains build and development settings for the Prisma
+│   └── package.json        # Lists backend project dependencies, scripts, and metadata
+└── README.md
 ```
 
-### Ключевые принципы архитектуры
-- Разделение ответственности: каждый модуль NestJS инкапсулирует свою область.
-- На клиенте — слои: API + Hooks + Query Keys + Components + Pages.
-- Данные поднимаются через React Query, локальное состояние минимально.
-- Чёткая типизация интерфейсов домена в папке `models/`.
+## 5. Database (PostgreSQL + Prisma)
 
-## 5. База данных (PostgreSQL + Prisma)
-**Основные сущности (Список всех сущностей можно найти в `server/prisma/**`):**
-- User / Profile — учётные записи и расширенная информация.
-- Author — сущность автора (связь с пользователем / профилем), типы авторов (author-types), подтверждения.
-- Release — музыкальный релиз (artists, designers, producers, rating types, media). Отдельные таблицы для связей N:M.
-- Review — отзывы о релизах (оценки, текст, пользовательские взаимодействия).
-- Feedback — пользовательская обратная связь (статусы модерации).
-- AuthorConfirmation — заявки на верификацию авторов (статусы: PENDING, APPROVED, REJECTED).
-- SocialMedia, Roles, Nominations, Leaderboard — поддерживающие и аналитические структуры.
-- и др.
+### Schema
 
-**Особенности:**
-- Использование enum-типов для статусов (на уровне модели и UI).
-- Жёсткая целостность через внешние ключи и каскадные ограничения.
-- Миграции управляются через Prisma (`prisma migrate dev`).
-- Сидирование (`seed.ts`) для начальных данных (статусы, роли и т.п.).
-- Использование представлений, триггеров, функций и процедур.
+![schema](assets/public.png)
 
-## 6. Слой данных на клиенте (React Query)
-- Ключи запросов централизованы (`query-keys/*`), что упрощает инвалидацию.
-- Метаданные (статусы, типы) грузятся отдельными hooks (`use-*meta`) с бесконечным `staleTime` для оптимизации.
-- Мутации (создание/обновление/удаление) используют `onSuccess` для инвалидации соответствующих ключей и генерации уведомлений. (В данный момент на стадии доработки)
-- Обработка ошибок унифицирована (AxiosError -> показ уведомлений пользователю).
+**Features:**
 
-## 7. UI / Компонентный подход
-- Множество атомарных кнопок и модальных окон (`components/buttons/*`, `components/modals/*`).
-- Скелетоны (`SkeletonLoader`) для состояния загрузки.
-- Пагинация — универсальный компонент.
-- Фильтры и сортировки — повторяемый шаблон (статусы, типы, порядок `ASC/DESC`).
+- Prisma is used to describe database models
+- Rigid integrity through foreign keys and cascading constraints
+- Views, triggers, functions, and procedures are described separately in raw sql (`../prisma/sql/*`)
+- Raw sql is also used for complex aggregated queries instead of Prisma queries
+- Seeding (`server/prisma/seed.ts`) for data filling
 
-## 8. Качество кода
-- TypeScript повсеместно (строгая типизация домена).
-- ESLint конфигурации отдельно для клиентской и серверной части.
-- Читабельные, сегментированные папки, минимум «god objects».
-- Отделение бизнес-логики (NestJS services) от транспортного слоя (controllers).
-- Использование DTO и валидации (decorators в сервере).
+## 6. Future plans
+
+- Internationalization, including automatic translation of reviews
+- Integration with Spotify API with the ability to listen to the release directly on the website, as well as making playlists
+- Integration with the Genius API to view song lyrics directly on the website
+- Frontend render optimization
+
+## 7. Preview
+
+Will be available soon
