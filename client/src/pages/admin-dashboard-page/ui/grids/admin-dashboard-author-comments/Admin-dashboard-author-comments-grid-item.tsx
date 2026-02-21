@@ -3,7 +3,7 @@ import { Link } from 'react-router'
 import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
-import { useRemoveAuthorCommentMutation } from '../../../../../hooks/mutations'
+import { useAdminRemoveAuthorCommentMutation } from '../../../../../hooks/mutations'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
 import { AuthorComment } from '../../../../../types/author'
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum'
@@ -31,7 +31,7 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = ({
 }) => {
 	const { navigateToReleaseDetails, navigatoToProfile } = useNavigationPath()
 
-	const { mutateAsync, isPending } = useRemoveAuthorCommentMutation({
+	const { mutateAsync, isPending } = useAdminRemoveAuthorCommentMutation({
 		onSettled: () => {
 			setConfModalOpen(false)
 		},

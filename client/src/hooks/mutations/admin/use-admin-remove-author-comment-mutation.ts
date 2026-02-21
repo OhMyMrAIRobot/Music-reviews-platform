@@ -3,16 +3,16 @@ import {
 	useMutation,
 	useQueryClient,
 } from '@tanstack/react-query'
-import { AuthorCommentAPI } from '../../api/author/author-comment-api'
-import { authorCommentsKeys } from '../../query-keys/author-comments-keys'
-import { authorsKeys } from '../../query-keys/authors-keys'
-import { leaderboardKeys } from '../../query-keys/leaderboard-keys'
-import { platformStatsKeys } from '../../query-keys/platform-stats-keys'
-import { profilesKeys } from '../../query-keys/profiles-keys'
-import { releasesKeys } from '../../query-keys/releases-keys'
-import { UseMutationParams } from '../../types/common'
-import { useApiErrorHandler } from '../use-api-error-handler'
-import { useStore } from '../use-store'
+import { AuthorCommentAPI } from '../../../api/author/author-comment-api'
+import { authorCommentsKeys } from '../../../query-keys/author-comments-keys'
+import { authorsKeys } from '../../../query-keys/authors-keys'
+import { leaderboardKeys } from '../../../query-keys/leaderboard-keys'
+import { platformStatsKeys } from '../../../query-keys/platform-stats-keys'
+import { profilesKeys } from '../../../query-keys/profiles-keys'
+import { releasesKeys } from '../../../query-keys/releases-keys'
+import { UseMutationParams } from '../../../types/common'
+import { useApiErrorHandler } from '../../use-api-error-handler'
+import { useStore } from '../../use-store'
 
 /**
  * Custom React hook that returns a React Query mutation used to delete an author comment. On success the hook:
@@ -22,7 +22,7 @@ import { useStore } from '../use-store'
  * @param {UseMutationParams} [options] - Optional lifecycle callbacks forwarded to the underlying `useMutation` hook.
  * @returns The React Query mutation object for removing an author comment.
  */
-export const useRemoveAuthorCommentMutation = ({
+export const useAdminRemoveAuthorCommentMutation = ({
 	onSuccess,
 	onError,
 	onSettled,
