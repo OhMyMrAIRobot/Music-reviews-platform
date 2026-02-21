@@ -1,14 +1,10 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
-import { AuthAPI } from '../../../../api/auth-api'
-import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
+import { useLogoutMutation } from '../../../../hooks/mutations'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
-import { authKeys } from '../../../../query-keys/auth-keys'
 import { RolesEnum } from '../../../../types/user'
-import { generateUUID } from '../../../../utils/generate-uuid'
 import SettingsSvg from '../../../svg/Settings-svg'
 import ShieldSvg from '../../../svg/Shield-svg'
 import SkeletonLoader from '../../../utils/Skeleton-loader'
@@ -17,17 +13,19 @@ import ProfileSvg from '../svg/Profile-svg'
 import PopupProfileButton from './Popup-profile-button'
 
 const ProfileButton = observer(() => {
-	const { authStore, notificationStore } = useStore()
+	const { authStore } = useStore()
 
 	const { navigatoToProfile, navigateToEditProfile, navigateToAdminReleases } =
 		useNavigationPath()
 
-	const handleApiError = useApiErrorHandler()
+	const { mutateAsync: logout } = useLogoutMutation({
+		onSuccess: () => {
+			setIsOpen(false)
+		},
+	})
 
 	const [isOpen, setIsOpen] = useState<boolean>(false)
 	const popUpProfRef = useRef<HTMLDivElement | null>(null)
-
-	const queryClient = useQueryClient()
 
 	const handleClickOutside = (event: MouseEvent) => {
 		if (
@@ -45,24 +43,6 @@ const ProfileButton = observer(() => {
 			document.removeEventListener('click', handleClickOutside)
 		}
 	}, [])
-
-	const { mutateAsync: logOut } = useMutation({
-		mutationFn: AuthAPI.logout,
-		onSuccess: () => {
-			authStore.unsetAuthorization()
-			setIsOpen(false)
-			notificationStore.addNotification({
-				id: generateUUID(),
-				text: 'Вы успешно вышли из аккаунта!',
-				isError: false,
-			})
-
-			queryClient.invalidateQueries({ queryKey: authKeys.auth })
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Произошла ошибка при выходе!')
-		},
-	})
 
 	const isLoading = authStore.isProfileLoading
 
@@ -138,7 +118,7 @@ const ProfileButton = observer(() => {
 				<PopupProfileButton
 					text='Выйти из профиля'
 					icon={<LogoutSvg className='size-4.5' />}
-					onClick={logOut}
+					onClick={logout}
 				/>
 			</div>
 		</div>
