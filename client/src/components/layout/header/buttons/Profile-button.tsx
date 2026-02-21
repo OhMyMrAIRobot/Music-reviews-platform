@@ -57,7 +57,6 @@ const ProfileButton = observer(() => {
 				isError: false,
 			})
 
-			// Invalidate auth-user-related queries
 			queryClient.invalidateQueries({ queryKey: authKeys.auth })
 		},
 		onError: (error: unknown) => {

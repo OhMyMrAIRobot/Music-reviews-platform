@@ -28,7 +28,8 @@ const AuthorDetailsPage = () => {
 	})
 
 	if (!id || (!author && !isPending)) {
-		return navigate(navigateToMain)
+		navigate(navigateToMain)
+		return <></>
 	}
 
 	return (
