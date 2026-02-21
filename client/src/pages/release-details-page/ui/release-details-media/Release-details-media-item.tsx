@@ -2,8 +2,8 @@ import { observer } from 'mobx-react-lite'
 import { FC, useState } from 'react'
 import HourglassSvg from '../../../../components/svg/Hourglass-svg'
 import RejectSvg from '../../../../components/svg/Reject-svg'
+import { useToggleFavMedia } from '../../../../hooks/mutations/use-toggle-fav-media'
 import { useStore } from '../../../../hooks/use-store'
-import { useToggleFavMedia } from '../../../../hooks/use-toggle-fav-media'
 import {
 	ReleaseMedia,
 	ReleaseMediaStatusesEnum,
@@ -19,7 +19,7 @@ const ReleaseDetailsMediaItem: FC<IProps> = observer(({ releaseMedia }) => {
 	const { authStore } = useStore()
 	const isFav =
 		releaseMedia.userFavMedia.some(
-			item => item.userId === authStore.user?.id
+			item => item.userId === authStore.user?.id,
 		) ?? false
 
 	const { toggleFav, toggling } = useToggleFavMedia(releaseMedia, isFav)
@@ -86,7 +86,7 @@ const ReleaseDetailsMediaItem: FC<IProps> = observer(({ releaseMedia }) => {
 						isApproved ? '' : 'opacity-35'
 					}`}
 					src={`https://img.youtube.com/vi/${parseYoutubeId(
-						releaseMedia.url
+						releaseMedia.url,
 					)}/mqdefault.jpg`}
 				/>
 

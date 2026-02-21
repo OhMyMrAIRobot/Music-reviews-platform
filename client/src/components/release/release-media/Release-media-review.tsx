@@ -1,9 +1,9 @@
 import { observer } from 'mobx-react-lite'
 import { FC } from 'react'
 import { Link } from 'react-router'
+import { useToggleFavMedia } from '../../../hooks/mutations/use-toggle-fav-media'
 import useNavigationPath from '../../../hooks/use-navigation-path'
 import { useStore } from '../../../hooks/use-store'
-import { useToggleFavMedia } from '../../../hooks/use-toggle-fav-media'
 import { ReleaseMedia } from '../../../types/release'
 import { parseYoutubeId } from '../../../utils/parse-youtube-id'
 import ReviewAuthor from '../../review/review-card/Review-author'
@@ -77,7 +77,7 @@ const ReleaseMediaReview: FC<IProps> = observer(({ media, isLoading }) => {
 						decoding='async'
 						className={'rounded-md object-cover object-center '}
 						src={`https://img.youtube.com/vi/${parseYoutubeId(
-							media.url
+							media.url,
 						)}/mqdefault.jpg`}
 					/>
 				</div>

@@ -6,9 +6,9 @@ import ReviewLikes from '../../../../components/review/review-card/Review-likes'
 import ReviewMarks from '../../../../components/review/review-card/Review-marks'
 import ReviewUserImage from '../../../../components/review/review-card/Review-user-image'
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
+import { useToggleFavReview } from '../../../../hooks/mutations/use-toggle-fav-review'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
-import { useToggleFavReview } from '../../../../hooks/use-toggle-fav-review'
 import { Review } from '../../../../types/review'
 
 interface IProps {
@@ -63,7 +63,7 @@ const ReleaseDetailsReviewsItem: FC<IProps> = observer(
 				</div>
 			)
 		)
-	}
+	},
 )
 
 export default ReleaseDetailsReviewsItem
