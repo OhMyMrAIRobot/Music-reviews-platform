@@ -1,23 +1,10 @@
-import {
-	useMutation,
-	useQueryClient,
-	type InvalidateQueryFilters,
-} from '@tanstack/react-query'
 import { FC, useState } from 'react'
 import { Link } from 'react-router'
-import { AuthorCommentAPI } from '../../../../../api/author/author-comment-api'
 import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
-import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler'
+import { useRemoveAuthorCommentMutation } from '../../../../../hooks/mutations'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
-import { useStore } from '../../../../../hooks/use-store'
-import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys'
-import { authorsKeys } from '../../../../../query-keys/authors-keys'
-import { leaderboardKeys } from '../../../../../query-keys/leaderboard-keys'
-import { platformStatsKeys } from '../../../../../query-keys/platform-stats-keys'
-import { profilesKeys } from '../../../../../query-keys/profiles-keys'
-import { releasesKeys } from '../../../../../query-keys/releases-keys'
 import { AuthorComment } from '../../../../../types/author'
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum'
 import { SortOrder } from '../../../../../types/common/types/sort-order'
@@ -42,50 +29,16 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = ({
 	order,
 	toggleOrder,
 }) => {
-	/** HOOKS */
-	const { notificationStore } = useStore()
-	const handleApiError = useApiErrorHandler()
 	const { navigateToReleaseDetails, navigatoToProfile } = useNavigationPath()
-	const queryClient = useQueryClient()
 
-	/** STATES */
-	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
-	const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
-
-	/**
-	 * Function to invalidate related queries after mutations
-	 */
-	const invalidateRelatedQueries = () => {
-		const keysToInvalidate: InvalidateQueryFilters[] = [
-			{ queryKey: authorCommentsKeys.all },
-			{ queryKey: releasesKeys.all },
-			{ queryKey: authorsKeys.all },
-			{ queryKey: profilesKeys.all },
-			{ queryKey: leaderboardKeys.all },
-			{ queryKey: platformStatsKeys.all },
-		]
-
-		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
-	}
-
-	/**
-	 * Mutation to delete the author comment
-	 */
-	const deleteMutation = useMutation({
-		mutationFn: (id: string) => AuthorCommentAPI.adminDelete(id),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification(
-				'Вы успешно удалили авторский комментарий!'
-			)
+	const { mutateAsync, isPending } = useRemoveAuthorCommentMutation({
+		onSettled: () => {
 			setConfModalOpen(false)
-
-			invalidateRelatedQueries()
-		},
-		onError: (error: unknown) => {
-			setConfModalOpen(false)
-			handleApiError(error, 'Не удалось удалить авторский комментарий!')
 		},
 	})
+
+	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
+	const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
 
 	return isLoading ? (
 		<SkeletonLoader className='w-full h-75 xl:h-12 rounded-lg' />
@@ -97,9 +50,9 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = ({
 						<ConfirmationModal
 							title={'Вы действительно хотите удалить авторский комментарий?'}
 							isOpen={confModalOpen}
-							onConfirm={() => deleteMutation.mutate(comment.id)}
+							onConfirm={() => mutateAsync(comment.id)}
 							onCancel={() => setConfModalOpen(false)}
-							isLoading={deleteMutation.isPending}
+							isLoading={isPending}
 						/>
 					)}
 
