@@ -14,6 +14,7 @@ import FormMultiSelect, {
 } from '../../../../../components/form-elements/Form-multi-select.tsx'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
+import { useAdminCreateAuthorMutation } from '../../../../../hooks/mutations/index.ts'
 import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler.ts'
 import { useAuthorMeta } from '../../../../../hooks/use-author-meta.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
@@ -64,14 +65,14 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 			setSelectedTypes(
 				author.authorTypes.map(t => {
 					return { name: t.type, id: t.id }
-				})
+				}),
 			)
 
 			if (author.avatar) {
 				setAvatarPreviewUrl(
 					`${import.meta.env.VITE_SERVER_URL}/public/authors/avatars/${
 						author.avatar
-					}`
+					}`,
 				)
 			}
 
@@ -79,7 +80,7 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 				setCoverPreviewUrl(
 					`${import.meta.env.VITE_SERVER_URL}/public/authors/covers/${
 						author.cover
-					}`
+					}`,
 				)
 			}
 		} else {
@@ -107,22 +108,13 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
 	}
 
-	/**
-	 * Mutation to create a new author
-	 */
-	const { mutateAsync: createAsync, isPending: isCreating } = useMutation({
-		mutationFn: (formData: FormData) => AuthorAPI.createAuthor(formData),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification('Автор успешно добавлен!')
-			resetForm()
-			onClose()
-
-			invalidateRelatedQueries()
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Не удалось добавить автора!')
-		},
-	})
+	const { mutateAsync: createAsync, isPending: isCreating } =
+		useAdminCreateAuthorMutation({
+			onSuccess: () => {
+				resetForm()
+				onClose()
+			},
+		})
 
 	/**
 	 * Mutation to update an existing author
@@ -218,7 +210,7 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 		if (
 			!arraysEqual(
 				author.authorTypes.map(t => t.type).sort(),
-				selectedTypes.map(st => st.name).sort()
+				selectedTypes.map(st => st.name).sort(),
 			)
 		)
 			return true
@@ -235,7 +227,7 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 			name.trim().length >= constraints.author.minNameLength &&
 			name.trim().length <= constraints.author.maxNameLength &&
 			selectedTypes.length > 0,
-		[name, selectedTypes]
+		[name, selectedTypes],
 	)
 
 	/**
@@ -261,7 +253,7 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 	 */
 	const loadOptions = async (
 		search: string,
-		limit: number | null
+		limit: number | null,
 	): Promise<IMultiSelectValue[]> => {
 		return types.map(el => {
 			return { name: el.type ?? search, id: el.id ?? limit }
