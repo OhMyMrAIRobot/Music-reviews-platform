@@ -1,13 +1,9 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { FC, useState } from 'react'
-import { FeedbackAPI } from '../../../../../api/feedback/feedback-api'
 import FeedbackStatusIcon from '../../../../../components/feedback/Feedback-status-icon'
 import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
-import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler'
-import { useStore } from '../../../../../hooks/use-store'
-import { feedbackKeys } from '../../../../../query-keys/feedback-keys'
+import { useAdminRemoveFeedbackMutation } from '../../../../../hooks/mutations'
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum'
 import { SortOrder } from '../../../../../types/common/types/sort-order'
 import { Feedback } from '../../../../../types/feedback'
@@ -34,27 +30,11 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
 	order,
 	toggleOrder,
 }) => {
-	/** HOOKS */
-	const { notificationStore } = useStore()
-	const queryClient = useQueryClient()
-	const handleApiError = useApiErrorHandler()
-
-	/** STATES */
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [detailsModalOpen, setDetailsModalOpen] = useState<boolean>(false)
 
-	/**
-	 * Mutation to delete the feedback
-	 */
-	const deleteMutation = useMutation({
-		mutationFn: (id: string) => FeedbackAPI.delete(id),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification('Сообщение успешно удалено!')
-			queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
-			setConfModalOpen(false)
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Не удалось удалить сообщение!')
+	const { mutateAsync, isPending } = useAdminRemoveFeedbackMutation({
+		onSettled() {
 			setConfModalOpen(false)
 		},
 	})
@@ -69,9 +49,9 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
 						<ConfirmationModal
 							title={'Вы действительно хотите удалить сообщение?'}
 							isOpen={confModalOpen}
-							onConfirm={() => deleteMutation.mutate(feedback.id)}
+							onConfirm={() => mutateAsync(feedback.id)}
 							onCancel={() => setConfModalOpen(false)}
-							isLoading={deleteMutation.isPending}
+							isLoading={isPending}
 						/>
 					)}
 
@@ -125,7 +105,7 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
 							<span className='xl:hidden'>Статус: </span>
 							<div
 								className={`flex gap-x-1 items-center ${getFeedbackStatusColor(
-									feedback.feedbackStatus.status
+									feedback.feedbackStatus.status,
 								)}`}
 							>
 								<FeedbackStatusIcon
