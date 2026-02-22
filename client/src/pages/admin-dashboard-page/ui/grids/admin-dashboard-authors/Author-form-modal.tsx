@@ -1,10 +1,4 @@
-import {
-	InvalidateQueryFilters,
-	useMutation,
-	useQueryClient,
-} from '@tanstack/react-query'
 import { FC, useEffect, useMemo, useState } from 'react'
-import { AuthorAPI } from '../../../../../api/author/author-api.ts'
 import FormButton from '../../../../../components/form-elements/Form-button.tsx'
 import FormCheckbox from '../../../../../components/form-elements/Form-checkbox.tsx'
 import FormInput from '../../../../../components/form-elements/Form-input.tsx'
@@ -14,20 +8,11 @@ import FormMultiSelect, {
 } from '../../../../../components/form-elements/Form-multi-select.tsx'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
-import { useAdminCreateAuthorMutation } from '../../../../../hooks/mutations/index.ts'
-import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler.ts'
+import {
+	useAdminCreateAuthorMutation,
+	useAdminUpdateAuthorMutation,
+} from '../../../../../hooks/mutations/index.ts'
 import { useAuthorMeta } from '../../../../../hooks/use-author-meta.ts'
-import { useStore } from '../../../../../hooks/use-store.ts'
-import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys.ts'
-import { authorLikesKeys } from '../../../../../query-keys/author-likes-keys.ts'
-import { authorsKeys } from '../../../../../query-keys/authors-keys.ts'
-import { leaderboardKeys } from '../../../../../query-keys/leaderboard-keys.ts'
-import { platformStatsKeys } from '../../../../../query-keys/platform-stats-keys.ts'
-import { profilesKeys } from '../../../../../query-keys/profiles-keys.ts'
-import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys.ts'
-import { releasesKeys } from '../../../../../query-keys/releases-keys.ts'
-import { reviewsKeys } from '../../../../../query-keys/reviews-keys.ts'
-import { usersKeys } from '../../../../../query-keys/users-keys.ts'
 import { Author } from '../../../../../types/author/index.ts'
 import { arraysEqual } from '../../../../../utils/arrays-equal.ts'
 import buildAuthorFormData from '../../../../../utils/build-author-form-data'
@@ -42,11 +27,7 @@ interface IProps {
 }
 
 const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
-	/** HOOKS */
-	const { notificationStore } = useStore()
 	const { types, isLoading: isTypesLoading } = useAuthorMeta()
-	const handleApiError = useApiErrorHandler()
-	const queryClient = useQueryClient()
 
 	/** STATES */
 	const [avatar, setAvatar] = useState<File | null>(null)
@@ -88,51 +69,16 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 		}
 	}, [isOpen, author])
 
-	/**
-	 * Function to invalidate related queries after mutations
-	 */
-	const invalidateRelatedQueries = () => {
-		const keysToInvalidate: InvalidateQueryFilters[] = [
-			{ queryKey: leaderboardKeys.all },
-			{ queryKey: authorCommentsKeys.all },
-			{ queryKey: authorLikesKeys.all },
-			{ queryKey: releaseMediaKeys.all },
-			{ queryKey: releasesKeys.all },
-			{ queryKey: reviewsKeys.all },
-			{ queryKey: usersKeys.all },
-			{ queryKey: platformStatsKeys.all },
-			{ queryKey: authorsKeys.all },
-			{ queryKey: profilesKeys.all },
-		]
-
-		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	const onSuccess = () => {
+		resetForm()
+		onClose()
 	}
 
 	const { mutateAsync: createAsync, isPending: isCreating } =
-		useAdminCreateAuthorMutation({
-			onSuccess: () => {
-				resetForm()
-				onClose()
-			},
-		})
+		useAdminCreateAuthorMutation({ onSuccess })
 
-	/**
-	 * Mutation to update an existing author
-	 */
-	const { mutateAsync: updateAsync, isPending: isUpdating } = useMutation({
-		mutationFn: ({ id, formData }: { id: string; formData: FormData }) =>
-			AuthorAPI.updateAuthor(id, formData),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification('Автор успешно обновлен!')
-			resetForm()
-			onClose()
-
-			invalidateRelatedQueries()
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Не удалось обновить автора!')
-		},
-	})
+	const { mutateAsync: updateAsync, isPending: isUpdating } =
+		useAdminUpdateAuthorMutation({ onSuccess })
 
 	/**
 	 * Indicates if any mutation is pending
