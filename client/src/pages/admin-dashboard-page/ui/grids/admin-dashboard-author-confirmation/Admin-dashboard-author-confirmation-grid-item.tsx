@@ -12,6 +12,7 @@ import ConfirmationModal from '../../../../../components/modals/Confirmation-mod
 import RejectSvg from '../../../../../components/svg/Reject-svg'
 import TickRoundedSvg from '../../../../../components/svg/Tick-rounded-svg'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
+import { useAdminRemoveAuthorConfirmationMutation } from '../../../../../hooks/mutations'
 import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler'
 import { useAuthorConfirmationMeta } from '../../../../../hooks/use-author-confirmation-meta'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
@@ -59,10 +60,16 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
 	const handleApiError = useApiErrorHandler()
 	const queryClient = useQueryClient()
 
-	/** STATES */
 	const [deleteConfModalOpen, setDeleteConfModalOpen] = useState<boolean>(false)
 	const [rejectModalOpen, setRejectModalOpen] = useState<boolean>(false)
 	const [approveModalOpen, setApproveModalOpen] = useState<boolean>(false)
+
+	const { mutateAsync: deleteAsync, isPending: isDeleting } =
+		useAdminRemoveAuthorConfirmationMutation({
+			onSettled: () => {
+				setDeleteConfModalOpen(false)
+			},
+		})
 
 	/**
 	 * Function to invalidate related queries after mutations
@@ -84,25 +91,6 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
 	}
 
 	/**
-	 * Mutation to delete the author confirmation
-	 */
-	const { mutateAsync: deleteAsync, isPending: isDeleting } = useMutation({
-		mutationFn: (id: string) => AuthorConfirmationAPI.delete(id),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification(
-				'Вы успешно удалили заявку на верификацию!'
-			)
-			setDeleteConfModalOpen(false)
-			invalidateRelatedQueries()
-		},
-		onError: (error: unknown) => {
-			setDeleteConfModalOpen(false)
-
-			handleApiError(error, 'Не удалось удалить заявку на верификацию!')
-		},
-	})
-
-	/**
 	 * Mutation to update the author confirmation status
 	 */
 	const { mutateAsync: updateAsync, isPending: isUpdating } = useMutation({
@@ -110,7 +98,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
 			AuthorConfirmationAPI.update(id, { statusId }),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification(
-				'Вы успешно обновили статус заявки на верификацию!'
+				'Вы успешно обновили статус заявки на верификацию!',
 			)
 			setRejectModalOpen(false)
 			setApproveModalOpen(false)
@@ -131,7 +119,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
 	 */
 	const isPending = useMemo(
 		() => isDeleting || isUpdating,
-		[isDeleting, isUpdating]
+		[isDeleting, isUpdating],
 	)
 
 	/**
@@ -148,7 +136,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
 	 */
 	const handleUpdate = async (
 		id: string,
-		status: AuthorConfirmationStatusesEnum
+		status: AuthorConfirmationStatusesEnum,
 	) => {
 		if (isPending) return
 
@@ -186,7 +174,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
 									item.id,
 									approveModalOpen
 										? AuthorConfirmationStatusesEnum.APPROVED
-										: AuthorConfirmationStatusesEnum.REJECTED
+										: AuthorConfirmationStatusesEnum.REJECTED,
 								)
 							}}
 							onCancel={() => {
@@ -269,7 +257,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
 							<span className='xl:hidden'>Статус: </span>
 							<div
 								className={`flex gap-x-1 items-center ${getReleaseMediaStatusColor(
-									item.status.status
+									item.status.status,
 								)}`}
 							>
 								<AuthorConfirmationStatusIcon
