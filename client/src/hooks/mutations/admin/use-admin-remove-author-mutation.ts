@@ -33,7 +33,7 @@ export const useAdminRemoveAuthorMutation = ({
 	onSuccess,
 	onError,
 	onSettled,
-}: UseMutationParams) => {
+}: UseMutationParams = {}) => {
 	const { notificationStore } = useStore()
 	const queryClient = useQueryClient()
 	const handleApiError = useApiErrorHandler()

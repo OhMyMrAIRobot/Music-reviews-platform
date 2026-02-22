@@ -31,7 +31,7 @@ export const useAdminUpdateAuthorMutation = ({
 	onSuccess,
 	onError,
 	onSettled,
-}: UseMutationParams) => {
+}: UseMutationParams = {}) => {
 	const { notificationStore } = useStore()
 	const handleApiError = useApiErrorHandler()
 	const queryClient = useQueryClient()
