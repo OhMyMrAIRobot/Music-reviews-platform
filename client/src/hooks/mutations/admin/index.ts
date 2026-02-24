@@ -1,5 +1,6 @@
 export * from './use-admin-create-author-mutation'
 export * from './use-admin-create-feedback-reply-mutation'
+export * from './use-admin-create-media-mutation'
 export * from './use-admin-remove-author-comment-mutation'
 export * from './use-admin-remove-author-confirmation-mutation'
 export * from './use-admin-remove-author-mutation'

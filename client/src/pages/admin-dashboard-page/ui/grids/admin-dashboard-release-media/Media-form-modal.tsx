@@ -14,6 +14,7 @@ import FormLabel from '../../../../../components/form-elements/Form-label'
 import FormSingleSelect from '../../../../../components/form-elements/Form-single-select'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
+import { useAdminCreateMediaMutation } from '../../../../../hooks/mutations'
 import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler'
 import { useReleaseMediaMeta } from '../../../../../hooks/use-release-media-meta'
 import { useStore } from '../../../../../hooks/use-store'
@@ -21,7 +22,6 @@ import { platformStatsKeys } from '../../../../../query-keys/platform-stats-keys
 import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys'
 import { releasesKeys } from '../../../../../query-keys/releases-keys'
 import {
-	AdminCreateReleaseMediaData,
 	AdminUpdateReleaseMediaData,
 	ReleaseMedia,
 	ReleasesQuery,
@@ -107,6 +107,14 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 		return items.map(r => r.title)
 	}
 
+	const { mutateAsync: createAsync, isPending: isCreating } =
+		useAdminCreateMediaMutation({
+			onSuccess: () => {
+				clearForm()
+				onClose()
+			},
+		})
+
 	/**
 	 * Function to invalidate related queries after mutations
 	 */
@@ -118,23 +126,6 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 
 		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
 	}
-
-	/**
-	 * Mutation to create the media
-	 */
-	const { mutateAsync: createAsync, isPending: isCreating } = useMutation({
-		mutationFn: (data: AdminCreateReleaseMediaData) =>
-			ReleaseMediaAPI.adminCreate(data),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification('Медиа успешно добавлено!')
-			invalidateRelatedQueries()
-			clearForm()
-			onClose()
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Не удалось добавить медиа!')
-		},
-	})
 
 	/**
 	 * Mutation to update the media
