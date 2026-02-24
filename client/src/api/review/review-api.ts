@@ -89,9 +89,11 @@ export const ReviewAPI = {
 	 * @returns {Promise<Review>} A promise that resolves to the updated review object.
 	 */
 	async update(id: string, formData: UpdateReviewData): Promise<Review> {
-		return api.patch(`/reviews/${id}`, {
+		const { data } = await api.patch(`/reviews/${id}`, {
 			...formData,
 		})
+
+		return data
 	},
 
 	/**
@@ -109,10 +111,15 @@ export const ReviewAPI = {
 	 * @param {string} reviewId - The ID of the review to update.
 	 * @param {UpdateReviewData} reviewData - The data to update the review with.
 	 */
-	async adminUpdate(reviewId: string, reviewData: UpdateReviewData) {
-		return api.patch(`admin/reviews/${reviewId}`, {
+	async adminUpdate(
+		reviewId: string,
+		reviewData: UpdateReviewData,
+	): Promise<Review> {
+		const { data } = await api.patch(`admin/reviews/${reviewId}`, {
 			...reviewData,
 		})
+
+		return data
 	},
 
 	/**
