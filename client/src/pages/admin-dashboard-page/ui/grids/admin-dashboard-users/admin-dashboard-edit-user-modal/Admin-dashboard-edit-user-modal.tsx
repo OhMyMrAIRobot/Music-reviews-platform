@@ -7,7 +7,6 @@ import { observer } from 'mobx-react-lite'
 import { FC, useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { ProfileAPI } from '../../../../../../api/user/profile-api.ts'
-import { UserAPI } from '../../../../../../api/user/user-api.ts'
 import ComboBox from '../../../../../../components/buttons/Combo-box.tsx'
 import FormButton from '../../../../../../components/form-elements/Form-button.tsx'
 import FormDelimiter from '../../../../../../components/form-elements/Form-delimiter.tsx'
@@ -18,6 +17,7 @@ import ModalOverlay from '../../../../../../components/modals/Modal-overlay.tsx'
 import MoveToSvg from '../../../../../../components/svg/Move-to-svg.tsx'
 import TrashSvg from '../../../../../../components/svg/Trash-svg.tsx'
 import SkeletonLoader from '../../../../../../components/utils/Skeleton-loader.tsx'
+import { useAdminUpdateUserMutation } from '../../../../../../hooks/mutations/index.ts'
 import { useApiErrorHandler } from '../../../../../../hooks/use-api-error-handler.ts'
 import useNavigationPath from '../../../../../../hooks/use-navigation-path.ts'
 import { useRoleMeta } from '../../../../../../hooks/use-role-meta.ts'
@@ -33,7 +33,6 @@ import { usersKeys } from '../../../../../../query-keys/users-keys.ts'
 import { UpdateProfileData } from '../../../../../../types/profile/index.ts'
 import {
 	AdminAvailableRolesEnum,
-	AdminUpdateUserData,
 	RolesEnum,
 	RootAdminAvalaibleRolesEnum,
 	UserDetails,
@@ -101,22 +100,8 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 			keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
 		}
 
-		/**
-		 * Mutation to update user data (admin)
-		 */
-		const updateUserMutation = useMutation({
-			mutationFn: (data: { id: string; updateData: AdminUpdateUserData }) =>
-				UserAPI.adminUpdate(data.id, data.updateData),
-			onSuccess: () => {
-				notificationStore.addSuccessNotification(
-					'Информация о пользователе успешно обновлена'
-				)
-				invalidateUserRelatedQueries()
-			},
-			onError: (error: unknown) => {
-				handleApiError(error, 'Ошибка при обновлении информации о пользователе')
-			},
-		})
+		const { mutateAsync: updateUserData, isPending: isUserPending } =
+			useAdminUpdateUserMutation()
 
 		/**
 		 * Mutation to update profile data (admin)
@@ -151,7 +136,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 				const found = socialsArr.find(el => el.id === socialId)
 				return found?.url ?? ''
 			},
-			[user]
+			[user],
 		)
 
 		/**
@@ -163,7 +148,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 				setEmail(user.email ?? '')
 				setRole(user.role.role ?? '')
 				setStatus(
-					user.isActive ? UserStatusesEnum.ACTIVE : UserStatusesEnum.NON_ACTIVE
+					user.isActive ? UserStatusesEnum.ACTIVE : UserStatusesEnum.NON_ACTIVE,
 				)
 				if (authStore.user?.role.role === RolesEnum.ADMIN)
 					setAvailableRoles(AdminAvailableRolesEnum)
@@ -212,14 +197,14 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 					return { socialId: s.id, url }
 				})
 				.filter(
-					(item): item is { socialId: string; url?: string } => item !== null
+					(item): item is { socialId: string; url?: string } => item !== null,
 				)
 
 			const hasProfileChanges = bioChanged || changedSocials.length > 0
 
 			// Call only necessary mutations
 			if (hasUserChanges) {
-				updateUserMutation.mutate({
+				updateUserData({
 					id: user.id,
 					updateData: {
 						nickname: nicknameChanged ? nickname.trim() : undefined,
@@ -247,9 +232,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 			<ModalOverlay
 				isOpen={isOpen}
 				onCancel={onClose}
-				isLoading={
-					updateUserMutation.isPending || updateProfileMutation.isPending
-				}
+				isLoading={isUserPending || updateProfileMutation.isPending}
 				className='max-lg:size-full'
 			>
 				{isRolesLoading ? (
@@ -337,7 +320,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 									<h6 className='font-medium text-sm'>{user.email}</h6>
 									<span
 										className={`${getRoleColor(
-											user.role.role
+											user.role.role,
 										)} font-medium text-sm`}
 									>
 										{user.role.role}
@@ -430,7 +413,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 													key={`Social-inputs-skeleton-${idx}`}
 													className='w-full h-10 rounded-md'
 												/>
-										  ))
+											))
 										: socials.map(social => {
 												return (
 													<FormInput
@@ -446,7 +429,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 														}
 													/>
 												)
-										  })}
+											})}
 								</div>
 
 								<FormDelimiter />
@@ -459,7 +442,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 											onClick={handleSubmit}
 											disabled={
 												authStore.user?.id === user.id ||
-												updateUserMutation.isPending ||
+												isUserPending ||
 												isRolesLoading ||
 												nickname.length === 0 ||
 												email.length === 0 ||
@@ -479,10 +462,10 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 													!socials.some(
 														s =>
 															(socialValues[s.id] ?? '').trim() !==
-															(getUserSocialUrl(s.id) ?? '').trim()
+															(getUserSocialUrl(s.id) ?? '').trim(),
 													))
 											}
-											isLoading={updateUserMutation.isPending}
+											isLoading={isUserPending}
 										/>
 									</div>
 
@@ -491,7 +474,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 											title={'Назад'}
 											isInvert={false}
 											onClick={onClose}
-											disabled={updateUserMutation.isPending}
+											disabled={isUserPending}
 										/>
 									</div>
 								</div>
@@ -501,7 +484,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 				)}
 			</ModalOverlay>
 		)
-	}
+	},
 )
 
 export default AdminDashboardEditUserModal
