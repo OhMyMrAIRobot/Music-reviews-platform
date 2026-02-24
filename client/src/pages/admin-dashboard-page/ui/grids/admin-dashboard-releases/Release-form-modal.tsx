@@ -16,6 +16,7 @@ import FormMultiSelect, {
 } from '../../../../../components/form-elements/Form-multi-select.tsx'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
+import { useAdminCreateReleaseMutation } from '../../../../../hooks/mutations/index.ts'
 import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler.ts'
 import { useReleaseMeta } from '../../../../../hooks/use-release-meta.ts'
 import { useStore } from '../../../../../hooks/use-store.ts'
@@ -24,7 +25,6 @@ import { authorCommentsKeys } from '../../../../../query-keys/author-comments-ke
 import { authorLikesKeys } from '../../../../../query-keys/author-likes-keys.ts'
 import { authorsKeys } from '../../../../../query-keys/authors-keys.ts'
 import { nominationsKeys } from '../../../../../query-keys/nominations-keys.ts'
-import { platformStatsKeys } from '../../../../../query-keys/platform-stats-keys.ts'
 import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys.ts'
 import { releasesKeys } from '../../../../../query-keys/releases-keys.ts'
 import { reviewsKeys } from '../../../../../query-keys/reviews-keys.ts'
@@ -56,7 +56,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 	const [type, setType] = useState<string>('')
 	const [date, setDate] = useState<string>('')
 	const [selectedArtists, setSelectedArtists] = useState<IMultiSelectValue[]>(
-		[]
+		[],
 	)
 	const [selectedProducers, setSelectedProducers] = useState<
 		IMultiSelectValue[]
@@ -74,7 +74,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 			setType(release.releaseType.type)
 			if (release.img) {
 				setCoverPreviewUrl(
-					`${import.meta.env.VITE_SERVER_URL}/public/releases/${release.img}`
+					`${import.meta.env.VITE_SERVER_URL}/public/releases/${release.img}`,
 				)
 			}
 			setSelectedArtists(release.authors.artists)
@@ -84,19 +84,6 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 			resetForm()
 		}
 	}, [isOpen, release])
-
-	/**
-	 * Function to invalidate related queries after create mutation
-	 */
-	const invalidateRelatedQueriesCreate = () => {
-		const keysToInvalidate: InvalidateQueryFilters[] = [
-			{ queryKey: releasesKeys.all },
-			{ queryKey: authorsKeys.all },
-			{ queryKey: platformStatsKeys.all },
-		]
-
-		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
-	}
 
 	/**
 	 * Function to invalidate related queries after update mutation
@@ -116,21 +103,13 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
 	}
 
-	/**
-	 * Mutation to create a new release
-	 */
-	const { mutateAsync: createAsync, isPending: isCreating } = useMutation({
-		mutationFn: (formData: FormData) => ReleaseAPI.create(formData),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification('Релиз успешно добавлен!')
-			resetForm()
-			onClose()
-			invalidateRelatedQueriesCreate()
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Не удалось добавить релиз')
-		},
-	})
+	const { mutateAsync: createAsync, isPending: isCreating } =
+		useAdminCreateReleaseMutation({
+			onSuccess: () => {
+				resetForm()
+				onClose()
+			},
+		})
 
 	/**
 	 * Mutation to update an existing release
@@ -157,7 +136,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 	 */
 	const isPending = useMemo(
 		() => isCreating || isUpdating,
-		[isCreating, isUpdating]
+		[isCreating, isUpdating],
 	)
 
 	/**
@@ -215,7 +194,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 		if (
 			!arraysEqual(
 				release.authors.artists.map(entry => entry.name).sort(),
-				selectedArtists.map(sa => sa.name).sort()
+				selectedArtists.map(sa => sa.name).sort(),
 			)
 		)
 			return true
@@ -223,7 +202,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 		if (
 			!arraysEqual(
 				release.authors.producers.map(entry => entry.name).sort(),
-				selectedProducers.map(sp => sp.name).sort()
+				selectedProducers.map(sp => sp.name).sort(),
 			)
 		)
 			return true
@@ -231,7 +210,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 		if (
 			!arraysEqual(
 				release.authors.designers.map(entry => entry.name).sort(),
-				selectedDesigners.map(sd => sd.name).sort()
+				selectedDesigners.map(sd => sd.name).sort(),
 			)
 		)
 			return true
@@ -273,7 +252,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 	 */
 	const loadAuthors = async (
 		search: string,
-		limit: number | null
+		limit: number | null,
 	): Promise<IMultiSelectValue[]> => {
 		const query: AuthorsQuery = {
 			search: search.trim() || undefined,
@@ -304,7 +283,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 			title.trim().length <= constraints.release.maxTitleLength &&
 			type !== '' &&
 			date !== '',
-		[title, type, date]
+		[title, type, date],
 	)
 
 	/** CONSTANTS */
