@@ -1,11 +1,6 @@
-import {
-	InvalidateQueryFilters,
-	useMutation,
-	useQueryClient,
-} from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { AuthorAPI } from '../../../../../api/author/author-api.ts'
-import { ReleaseAPI } from '../../../../../api/release/release-api.ts'
 import ComboBox from '../../../../../components/buttons/Combo-box.tsx'
 import FormButton from '../../../../../components/form-elements/Form-button.tsx'
 import FormCheckbox from '../../../../../components/form-elements/Form-checkbox.tsx'
@@ -16,18 +11,12 @@ import FormMultiSelect, {
 } from '../../../../../components/form-elements/Form-multi-select.tsx'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
-import { useAdminCreateReleaseMutation } from '../../../../../hooks/mutations/index.ts'
-import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler.ts'
+import {
+	useAdminCreateReleaseMutation,
+	useAdminUpdateReleaseMutation,
+} from '../../../../../hooks/mutations/index.ts'
 import { useReleaseMeta } from '../../../../../hooks/use-release-meta.ts'
-import { useStore } from '../../../../../hooks/use-store.ts'
-import { albumValuesKeys } from '../../../../../query-keys/album-values-keys.ts'
-import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys.ts'
-import { authorLikesKeys } from '../../../../../query-keys/author-likes-keys.ts'
 import { authorsKeys } from '../../../../../query-keys/authors-keys.ts'
-import { nominationsKeys } from '../../../../../query-keys/nominations-keys.ts'
-import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys.ts'
-import { releasesKeys } from '../../../../../query-keys/releases-keys.ts'
-import { reviewsKeys } from '../../../../../query-keys/reviews-keys.ts'
 import { AuthorsQuery } from '../../../../../types/author/index.ts'
 import { IReleaseFormValues, Release } from '../../../../../types/release'
 import { arraysEqual } from '../../../../../utils/arrays-equal.ts'
@@ -43,10 +32,7 @@ interface IProps {
 }
 
 const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
-	/** HOOKS */
 	const { types, isLoading: isTypesLoading } = useReleaseMeta()
-	const { notificationStore } = useStore()
-	const handleApiError = useApiErrorHandler()
 	const queryClient = useQueryClient()
 
 	/** STATES */
@@ -85,49 +71,16 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 		}
 	}, [isOpen, release])
 
-	/**
-	 * Function to invalidate related queries after update mutation
-	 */
-	const invalidateRelatedQueriesUpdate = () => {
-		const keysToInvalidate: InvalidateQueryFilters[] = [
-			{ queryKey: releasesKeys.all },
-			{ queryKey: authorsKeys.all },
-			{ queryKey: reviewsKeys.all },
-			{ queryKey: releaseMediaKeys.all },
-			{ queryKey: authorLikesKeys.all },
-			{ queryKey: authorCommentsKeys.all },
-			{ queryKey: albumValuesKeys.all },
-			{ queryKey: nominationsKeys.all },
-		]
-
-		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	const onSuccess = () => {
+		resetForm()
+		onClose()
 	}
 
 	const { mutateAsync: createAsync, isPending: isCreating } =
-		useAdminCreateReleaseMutation({
-			onSuccess: () => {
-				resetForm()
-				onClose()
-			},
-		})
+		useAdminCreateReleaseMutation({ onSuccess })
 
-	/**
-	 * Mutation to update an existing release
-	 */
-	const { mutateAsync: updateAsync, isPending: isUpdating } = useMutation({
-		mutationFn: ({ id, formData }: { id: string; formData: FormData }) =>
-			ReleaseAPI.update(id, formData),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification('Релиз успешно обновлен')
-			resetForm()
-			onClose()
-
-			invalidateRelatedQueriesUpdate()
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Не удалось обновить релиз')
-		},
-	})
+	const { mutateAsync: updateAsync, isPending: isUpdating } =
+		useAdminUpdateReleaseMutation({ onSuccess })
 
 	/**
 	 * Indicator whether any mutation is pending
