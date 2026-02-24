@@ -3,12 +3,12 @@ import {
 	useMutation,
 	useQueryClient,
 } from '@tanstack/react-query'
-import { AuthorCommentAPI } from '../../../api/author/author-comment-api'
-import { authorCommentsKeys } from '../../../query-keys/author-comments-keys'
-import { UpdateAuthorCommentData } from '../../../types/author'
-import { UseMutationParams } from '../../../types/common'
-import { useApiErrorHandler } from '../../use-api-error-handler'
-import { useStore } from '../../use-store'
+import { AuthorCommentAPI } from '../../../../api/author/author-comment-api'
+import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys'
+import { UpdateAuthorCommentData } from '../../../../types/author'
+import { UseMutationParams } from '../../../../types/common'
+import { useApiErrorHandler } from '../../../use-api-error-handler'
+import { useStore } from '../../../use-store'
 
 export const useAdminUpdateAuthorCommentMutation = ({
 	onSuccess,
