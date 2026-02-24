@@ -1,12 +1,6 @@
-import {
-	InvalidateQueryFilters,
-	useMutation,
-	useQueryClient,
-} from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
 import { FC, useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { ProfileAPI } from '../../../../../../api/user/profile-api.ts'
 import ComboBox from '../../../../../../components/buttons/Combo-box.tsx'
 import FormButton from '../../../../../../components/form-elements/Form-button.tsx'
 import FormDelimiter from '../../../../../../components/form-elements/Form-delimiter.tsx'
@@ -17,19 +11,14 @@ import ModalOverlay from '../../../../../../components/modals/Modal-overlay.tsx'
 import MoveToSvg from '../../../../../../components/svg/Move-to-svg.tsx'
 import TrashSvg from '../../../../../../components/svg/Trash-svg.tsx'
 import SkeletonLoader from '../../../../../../components/utils/Skeleton-loader.tsx'
-import { useAdminUpdateUserMutation } from '../../../../../../hooks/mutations/index.ts'
-import { useApiErrorHandler } from '../../../../../../hooks/use-api-error-handler.ts'
+import {
+	useAdminUpdateProfileMutation,
+	useAdminUpdateUserMutation,
+} from '../../../../../../hooks/mutations/index.ts'
 import useNavigationPath from '../../../../../../hooks/use-navigation-path.ts'
 import { useRoleMeta } from '../../../../../../hooks/use-role-meta.ts'
 import { useSocialMeta } from '../../../../../../hooks/use-social-meta.ts'
 import { useStore } from '../../../../../../hooks/use-store.ts'
-import { authorCommentsKeys } from '../../../../../../query-keys/author-comments-keys.ts'
-import { authorLikesKeys } from '../../../../../../query-keys/author-likes-keys.ts'
-import { leaderboardKeys } from '../../../../../../query-keys/leaderboard-keys.ts'
-import { profilesKeys } from '../../../../../../query-keys/profiles-keys.ts'
-import { releaseMediaKeys } from '../../../../../../query-keys/release-media-keys.ts'
-import { reviewsKeys } from '../../../../../../query-keys/reviews-keys.ts'
-import { usersKeys } from '../../../../../../query-keys/users-keys.ts'
 import { UpdateProfileData } from '../../../../../../types/profile/index.ts'
 import {
 	AdminAvailableRolesEnum,
@@ -50,12 +39,10 @@ interface IProps {
 const AdminDashboardEditUserModal: FC<IProps> = observer(
 	({ isOpen, onClose, user }) => {
 		/** HOOKS */
-		const { authStore, notificationStore } = useStore()
+		const { authStore } = useStore()
 		const { navigatoToProfile } = useNavigationPath()
 		const { roles, isLoading: isRolesLoading } = useRoleMeta()
 		const { socials, isLoading: isSocialsLoading } = useSocialMeta()
-		const handleApiError = useApiErrorHandler()
-		const queryClient = useQueryClient()
 
 		/** STATES */
 		const [nickname, setNickname] = useState<string>('')
@@ -71,56 +58,11 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 			Record<string, string>
 		>({})
 
-		/**
-		 * Function to invalidate user related queries after mutations
-		 */
-		const invalidateUserRelatedQueries = () => {
-			const keysToInvalidate: InvalidateQueryFilters[] = [
-				{ queryKey: profilesKeys.profile(user.id) },
-				{ queryKey: leaderboardKeys.all },
-				{ queryKey: authorCommentsKeys.all },
-				{ queryKey: authorLikesKeys.all },
-				{ queryKey: releaseMediaKeys.all },
-				{ queryKey: reviewsKeys.all },
-				{ queryKey: usersKeys.all },
-			]
-
-			keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
-		}
-
-		/**
-		 * Function to invalidate profile related queries after mutations
-		 */
-		const invalidateProfileRelatedQueries = () => {
-			const keysToInvalidate: InvalidateQueryFilters[] = [
-				{ queryKey: profilesKeys.profile(user.id) },
-				{ queryKey: usersKeys.all },
-			]
-
-			keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
-		}
-
 		const { mutateAsync: updateUserData, isPending: isUserPending } =
 			useAdminUpdateUserMutation()
 
-		/**
-		 * Mutation to update profile data (admin)
-		 */
-		const updateProfileMutation = useMutation({
-			mutationFn: (data: { id: string; updateData: UpdateProfileData }) =>
-				ProfileAPI.adminUpdate(data.id, data.updateData),
-			onSuccess: (_, { updateData }) => {
-				notificationStore.addSuccessNotification('Вы успешно обновили профиль!')
-				if (updateData.clearAvatar || updateData.clearCover) {
-					invalidateUserRelatedQueries()
-				} else {
-					invalidateProfileRelatedQueries()
-				}
-			},
-			onError: (error: unknown) => {
-				handleApiError(error, 'Ошибка при обновлении профиля')
-			},
-		})
+		const { mutateAsync: updateProfileData, isPending: isProfilePending } =
+			useAdminUpdateProfileMutation()
 
 		/**
 		 * Gets the URL of a user's social media by social ID.
@@ -220,7 +162,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 				if (bioChanged) profilePayload.bio = bio
 				if (changedSocials.length > 0) profilePayload.socials = changedSocials
 
-				updateProfileMutation.mutate({
+				updateProfileData({
 					id: user.id,
 					updateData: profilePayload,
 				})
@@ -232,7 +174,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 			<ModalOverlay
 				isOpen={isOpen}
 				onCancel={onClose}
-				isLoading={isUserPending || updateProfileMutation.isPending}
+				isLoading={isUserPending || isProfilePending}
 				className='max-lg:size-full'
 			>
 				{isRolesLoading ? (
@@ -280,37 +222,33 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 
 									<div className='md:w-45'>
 										<EditUserModalButton
-											disabled={
-												user.profile?.avatar === '' ||
-												updateProfileMutation.isPending
-											}
+											disabled={user.profile?.avatar === '' || isProfilePending}
 											title={'Удалить аватар'}
 											onClick={() =>
-												updateProfileMutation.mutate({
+												updateProfileData({
 													id: user.id,
 													updateData: { clearAvatar: true },
 												})
 											}
 											svg={<TrashSvg className={'size-4'} />}
-											isLoading={updateProfileMutation.isPending}
+											isLoading={isProfilePending}
 										/>
 									</div>
 
 									<div className='md:w-45'>
 										<EditUserModalButton
 											disabled={
-												user.profile?.coverImage === '' ||
-												updateProfileMutation.isPending
+												user.profile?.coverImage === '' || isProfilePending
 											}
 											title={'Удалить обложку'}
 											onClick={() => {
-												updateProfileMutation.mutate({
+												updateProfileData({
 													id: user.id,
 													updateData: { clearCover: true },
 												})
 											}}
 											svg={<TrashSvg className={'size-4'} />}
-											isLoading={updateProfileMutation.isPending}
+											isLoading={isProfilePending}
 										/>
 									</div>
 								</div>
