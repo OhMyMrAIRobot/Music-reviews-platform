@@ -1,3 +1,4 @@
+export * from './release'
 export * from './use-admin-create-author-mutation'
 export * from './use-admin-create-feedback-reply-mutation'
 export * from './use-admin-create-media-mutation'
