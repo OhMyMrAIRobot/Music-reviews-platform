@@ -3,14 +3,14 @@ import {
 	useMutation,
 	useQueryClient,
 } from '@tanstack/react-query'
-import { ReleaseMediaAPI } from '../../../api/release/release-media-api'
-import { leaderboardKeys } from '../../../query-keys/leaderboard-keys'
-import { platformStatsKeys } from '../../../query-keys/platform-stats-keys'
-import { profilesKeys } from '../../../query-keys/profiles-keys'
-import { releaseMediaKeys } from '../../../query-keys/release-media-keys'
-import { UseMutationParams } from '../../../types/common'
-import { useApiErrorHandler } from '../../use-api-error-handler'
-import { useStore } from '../../use-store'
+import { ReleaseMediaAPI } from '../../../../api/release/release-media-api'
+import { leaderboardKeys } from '../../../../query-keys/leaderboard-keys'
+import { platformStatsKeys } from '../../../../query-keys/platform-stats-keys'
+import { profilesKeys } from '../../../../query-keys/profiles-keys'
+import { releaseMediaKeys } from '../../../../query-keys/release-media-keys'
+import { UseMutationParams } from '../../../../types/common'
+import { useApiErrorHandler } from '../../../use-api-error-handler'
+import { useStore } from '../../../use-store'
 /**
  * Custom React hook that returns a React Query mutation to delete a release
  * media item. On success the hook:
