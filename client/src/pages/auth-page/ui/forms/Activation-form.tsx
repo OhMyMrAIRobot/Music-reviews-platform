@@ -1,41 +1,22 @@
 import { useMutation } from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router'
+import { useParams } from 'react-router'
 import { AuthAPI } from '../../../../api/auth-api'
 import FormButton from '../../../../components/form-elements/Form-button'
 import FormInfoField from '../../../../components/form-elements/Form-info-field'
 import FormSubTitle from '../../../../components/form-elements/Form-subtitle'
 import FormTitle from '../../../../components/form-elements/Form-title'
+import { useActivateUserMutation } from '../../../../hooks/mutations'
 import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
-import useNavigationPath from '../../../../hooks/use-navigation-path'
 import { useStore } from '../../../../hooks/use-store'
 
 const ActivationForm = observer(() => {
-	/** HOOKS */
 	const { notificationStore, authStore } = useStore()
 	const { token } = useParams()
-	const navigate = useNavigate()
-	const { navigateToMain } = useNavigationPath()
 	const handleApiError = useApiErrorHandler()
 
-	/**
-	 * Mutation for account activation
-	 */
-	const { mutateAsync: activate } = useMutation({
-		mutationFn: (token: string) => AuthAPI.activate(token),
-		onSuccess: data => {
-			const { user, accessToken } = data
-
-			authStore.setAuthorization(user, accessToken)
-			notificationStore.addSuccessNotification('Аккаунт успешно активирован!')
-
-			navigate(navigateToMain)
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Ошибка при активации аккаунта!')
-		},
-	})
+	const { mutateAsync: activate } = useActivateUserMutation()
 
 	/**
 	 * Mutation for resending activation email

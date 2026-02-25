@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { AuthAPI } from '../../api/auth-api'
-import { authKeys } from '../../query-keys/auth-keys'
-import authStore from '../../stores/auth-store'
-import { UseMutationParams } from '../../types/common'
-import { generateUUID } from '../../utils/generate-uuid'
-import { useApiErrorHandler } from '../use-api-error-handler'
-import { useStore } from '../use-store'
+import { AuthAPI } from '../../../api/auth-api'
+import { authKeys } from '../../../query-keys/auth-keys'
+import authStore from '../../../stores/auth-store'
+import { UseMutationParams } from '../../../types/common'
+import { generateUUID } from '../../../utils/generate-uuid'
+import { useApiErrorHandler } from '../../use-api-error-handler'
+import { useStore } from '../../use-store'
 
 /**
  * Custom React hook that returns a React Query mutation used to log the current user out. The mutation calls `AuthAPI.logout` and on success it:
