@@ -9,7 +9,10 @@ import { FC, useEffect, useMemo, useState } from 'react'
 import { ReviewAPI } from '../../../../../../api/review/review-api'
 import TickSvg from '../../../../../../components/svg/Tick-svg'
 import Loader from '../../../../../../components/utils/Loader'
-import { useCreateReviewMutation } from '../../../../../../hooks/mutations/review/use-create-review-mutation'
+import {
+	useCreateReviewMutation,
+	useUpdateReviewMutation,
+} from '../../../../../../hooks/mutations'
 import { useApiErrorHandler } from '../../../../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../../../../hooks/use-auth'
 import { useStore } from '../../../../../../hooks/use-store'
@@ -18,11 +21,7 @@ import { platformStatsKeys } from '../../../../../../query-keys/platform-stats-k
 import { profilesKeys } from '../../../../../../query-keys/profiles-keys'
 import { releasesKeys } from '../../../../../../query-keys/releases-keys'
 import { reviewsKeys } from '../../../../../../query-keys/reviews-keys'
-import {
-	Review,
-	ReviewsQuery,
-	UpdateReviewData,
-} from '../../../../../../types/review'
+import { Review, ReviewsQuery } from '../../../../../../types/review'
 import { calculateTotalReviewMark } from '../../../../../../utils/calculate-total-review-mark'
 import { constraints } from '../../../../../../utils/constraints'
 import ReleaseDetailsEstimationDeleteButton from '../../buttons/Release-details-estimation-delete-button'
@@ -102,26 +101,8 @@ const ReleaseDetailsReviewForm: FC<IProps> = observer(
 		const { mutateAsync: createAsync, isPending: isCreating } =
 			useCreateReviewMutation()
 
-		/**
-		 * Update a review mutation
-		 */
-		const { mutateAsync: updateAsync, isPending: isUpdating } = useMutation({
-			mutationFn: ({ id, data }: { id: string; data: UpdateReviewData }) =>
-				ReviewAPI.update(id, data),
-			onSuccess: () => {
-				notificationStore.addSuccessNotification(
-					`Вы успешно обновили ${isReview ? 'рецензию' : 'оценку'}!`,
-				)
-
-				invalidateRelatedQueries()
-			},
-			onError: (error: unknown) => {
-				handleApiError(
-					error,
-					`Не удалось обновить ${isReview ? 'рецензию' : 'оценку'}.`,
-				)
-			},
-		})
+		const { mutateAsync: updateAsync, isPending: isUpdating } =
+			useUpdateReviewMutation()
 
 		/**
 		 * Delete a review mutation
