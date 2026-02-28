@@ -10,7 +10,10 @@ import { ReleaseMediaAPI } from '../../../../../../api/release/release-media-api
 import FormButton from '../../../../../../components/form-elements/Form-button'
 import FormInput from '../../../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../../../components/form-elements/Form-label'
-import { useCreateMediaMutation } from '../../../../../../hooks/mutations'
+import {
+	useCreateMediaMutation,
+	useUpdateMediaMutation,
+} from '../../../../../../hooks/mutations'
 import { useApiErrorHandler } from '../../../../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../../../../hooks/use-auth'
 import { useStore } from '../../../../../../hooks/use-store'
@@ -18,10 +21,7 @@ import { leaderboardKeys } from '../../../../../../query-keys/leaderboard-keys'
 import { platformStatsKeys } from '../../../../../../query-keys/platform-stats-keys'
 import { profilesKeys } from '../../../../../../query-keys/profiles-keys'
 import { releaseMediaKeys } from '../../../../../../query-keys/release-media-keys'
-import {
-	ReleaseMediaQuery,
-	UpdateReleaseMediaData,
-} from '../../../../../../types/release'
+import { ReleaseMediaQuery } from '../../../../../../types/release'
 import { constraints } from '../../../../../../utils/constraints'
 
 interface IProps {
@@ -86,23 +86,8 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
 	const { mutateAsync: createAsync, isPending: isCreating } =
 		useCreateMediaMutation()
 
-	/**
-	 * Mutation for updating an existing media review
-	 */
-	const { mutateAsync: updateAsync, isPending: isUpdating } = useMutation({
-		mutationFn: (data: { id: string; updateData: UpdateReleaseMediaData }) =>
-			ReleaseMediaAPI.update(data.id, data.updateData),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification(
-				'Медиарецензия успешно обновлена! Ожидайте подтверждения!',
-			)
-
-			invalidateRelatedQueries()
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Не удалось обновить медиарецензию.')
-		},
-	})
+	const { mutateAsync: updateAsync, isPending: isUpdating } =
+		useUpdateMediaMutation()
 
 	/**
 	 * Mutation for deleting an existing media review
