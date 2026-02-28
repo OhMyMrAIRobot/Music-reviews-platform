@@ -9,7 +9,10 @@ import { FC, useEffect, useMemo, useState } from 'react'
 import { AuthorCommentAPI } from '../../../../api/author/author-comment-api'
 import FormButton from '../../../../components/form-elements/Form-button'
 import ConfirmationModal from '../../../../components/modals/Confirmation-modal'
-import { useCreateAuthorCommentMutation } from '../../../../hooks/mutations'
+import {
+	useCreateAuthorCommentMutation,
+	useUpdateAuthorCommentMutation,
+} from '../../../../hooks/mutations'
 import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../../hooks/use-auth'
 import { useStore } from '../../../../hooks/use-store'
@@ -18,10 +21,7 @@ import { leaderboardKeys } from '../../../../query-keys/leaderboard-keys'
 import { platformStatsKeys } from '../../../../query-keys/platform-stats-keys'
 import { profilesKeys } from '../../../../query-keys/profiles-keys'
 import { releasesKeys } from '../../../../query-keys/releases-keys'
-import {
-	AuthorCommentsQuery,
-	UpdateAuthorCommentData,
-} from '../../../../types/author'
+import { AuthorCommentsQuery } from '../../../../types/author'
 import { constraints } from '../../../../utils/constraints'
 import ReleaseDetailsReviewFormText from '../release-details-estimation/forms/release-details-review-form/Release-details-review-form-text'
 
@@ -88,23 +88,8 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 	const { mutateAsync: asyncCreate, isPending: isCreating } =
 		useCreateAuthorCommentMutation()
 
-	/**
-	 * Update mutation for editing an existing author comment
-	 */
-	const { mutateAsync: asyncUpdate, isPending: isUpdating } = useMutation({
-		mutationFn: ({ id, data }: { id: string; data: UpdateAuthorCommentData }) =>
-			AuthorCommentAPI.update(id, data),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification(
-				'Вы успешно изменили авторский комментарий!',
-			)
-
-			invalidateRelatedQueries()
-		},
-		onError(error: unknown) {
-			handleApiError(error, 'Не удалось изменить авторский комментарий.')
-		},
-	})
+	const { mutateAsync: asyncUpdate, isPending: isUpdating } =
+		useUpdateAuthorCommentMutation()
 
 	/**
 	 * Delete mutation for removing an existing author comment
