@@ -1,9 +1,4 @@
-import {
-	InvalidateQueryFilters,
-	useMutation,
-	useQuery,
-	useQueryClient,
-} from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { AlbumValueAPI } from '../../../../../../api/album-value-api'
@@ -12,14 +7,12 @@ import TickSvg from '../../../../../../components/svg/Tick-svg'
 import Loader from '../../../../../../components/utils/Loader'
 import {
 	useCreateAlbumValueMutation,
+	useRemoveAlbumValueMutation,
 	useUpdateAlbumValueMutation,
 } from '../../../../../../hooks/mutations'
-import { useApiErrorHandler } from '../../../../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../../../../hooks/use-auth'
 import { useStore } from '../../../../../../hooks/use-store'
 import { albumValuesKeys } from '../../../../../../query-keys/album-values-keys'
-import { leaderboardKeys } from '../../../../../../query-keys/leaderboard-keys'
-import { profilesKeys } from '../../../../../../query-keys/profiles-keys'
 import { Release, ReleaseTypesEnum } from '../../../../../../types/release'
 import { getAlbumValueInfluenceMultiplier } from '../../../../../../utils/get-album-value-influence-multiplier'
 import { round2 } from '../../../../../../utils/round2'
@@ -36,10 +29,8 @@ interface IProps {
 
 const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ release }) => {
 	/** HOOKS */
-	const { notificationStore, authStore } = useStore()
+	const { authStore } = useStore()
 	const { checkAuth } = useAuth()
-	const queryClient = useQueryClient()
-	const handleApiError = useApiErrorHandler()
 
 	/** STATES */
 	const [rarityGenre, setRarityGenre] = useState<number>(0.5)
@@ -70,7 +61,6 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ release }) => {
 		retry: false,
 	})
 
-	/** User's album value vote for this release */
 	const userVote = userAlbumValueVote
 
 	/** EFFECTS */
@@ -89,41 +79,14 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ release }) => {
 		setReleaseAnticip(userVote?.influenceReleaseAnticip ?? 0.5)
 	}, [userVote])
 
-	/**
-	 * Function to invalidate related queries after mutations
-	 */
-	const invalidateRelatedQueries = () => {
-		const keysToInvalidate: InvalidateQueryFilters[] = [
-			{ queryKey: albumValuesKeys.all },
-			{ queryKey: profilesKeys.profile(authStore.user?.id || 'unknown') },
-			{ queryKey: leaderboardKeys.all },
-		]
-
-		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
-	}
-
 	const { mutateAsync: createAsync, isPending: isCreating } =
 		useCreateAlbumValueMutation()
 
 	const { mutateAsync: updateAsync, isPending: isUpdating } =
 		useUpdateAlbumValueMutation()
 
-	/**
-	 * Delete mutation for deleting an existing album value vote
-	 */
-	const { mutateAsync: deleteAsync, isPending: isDeleting } = useMutation({
-		mutationFn: (id: string) => AlbumValueAPI.deleteAlbumValueVote(id),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification(
-				'Вы успешно удалили голос за ценность альбома!',
-			)
-
-			invalidateRelatedQueries()
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Не удалось удалить голос за ценность альбома.')
-		},
-	})
+	const { mutateAsync: deleteAsync, isPending: isDeleting } =
+		useRemoveAlbumValueMutation()
 
 	/**
 	 * Indicates if any mutation is in progress
