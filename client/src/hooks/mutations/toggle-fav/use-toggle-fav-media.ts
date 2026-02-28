@@ -3,15 +3,15 @@ import {
 	useMutation,
 	useQueryClient,
 } from '@tanstack/react-query'
-import { UserFavMediaAPI } from '../../api/release/user-fav-media-api'
-import { leaderboardKeys } from '../../query-keys/leaderboard-keys'
-import { profilesKeys } from '../../query-keys/profiles-keys'
-import { releaseMediaKeys } from '../../query-keys/release-media-keys'
-import { UseToggleFavResult } from '../../types/common'
-import { ReleaseMedia } from '../../types/release'
-import { useApiErrorHandler } from '../use-api-error-handler'
-import { useAuth } from '../use-auth'
-import { useStore } from '../use-store'
+import { UserFavMediaAPI } from '../../../api/release/user-fav-media-api'
+import { leaderboardKeys } from '../../../query-keys/leaderboard-keys'
+import { profilesKeys } from '../../../query-keys/profiles-keys'
+import { releaseMediaKeys } from '../../../query-keys/release-media-keys'
+import { UseToggleFavResult } from '../../../types/common'
+import { ReleaseMedia } from '../../../types/release'
+import { useApiErrorHandler } from '../../use-api-error-handler'
+import { useAuth } from '../../use-auth'
+import { useStore } from '../../use-store'
 
 /**
  * Custom hook to toggle favorite media

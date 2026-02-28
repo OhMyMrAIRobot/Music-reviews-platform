@@ -3,16 +3,16 @@ import {
 	useMutation,
 	useQueryClient,
 } from '@tanstack/react-query'
-import { UserFavReviewAPI } from '../../api/review/user-fav-review-api'
-import { authorLikesKeys } from '../../query-keys/author-likes-keys'
-import { leaderboardKeys } from '../../query-keys/leaderboard-keys'
-import { profilesKeys } from '../../query-keys/profiles-keys'
-import { reviewsKeys } from '../../query-keys/reviews-keys'
-import { UseToggleFavResult } from '../../types/common'
-import { Review } from '../../types/review'
-import { useApiErrorHandler } from '../use-api-error-handler'
-import { useAuth } from '../use-auth'
-import { useStore } from '../use-store'
+import { UserFavReviewAPI } from '../../../api/review/user-fav-review-api'
+import { authorLikesKeys } from '../../../query-keys/author-likes-keys'
+import { leaderboardKeys } from '../../../query-keys/leaderboard-keys'
+import { profilesKeys } from '../../../query-keys/profiles-keys'
+import { reviewsKeys } from '../../../query-keys/reviews-keys'
+import { UseToggleFavResult } from '../../../types/common'
+import { Review } from '../../../types/review'
+import { useApiErrorHandler } from '../../use-api-error-handler'
+import { useAuth } from '../../use-auth'
+import { useStore } from '../../use-store'
 
 /**
  * Custom hook to toggle favorite review

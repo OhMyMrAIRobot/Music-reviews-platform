@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { FC, useState } from 'react'
 import HourglassSvg from '../../../../components/svg/Hourglass-svg'
 import RejectSvg from '../../../../components/svg/Reject-svg'
-import { useToggleFavMedia } from '../../../../hooks/mutations/use-toggle-fav-media'
+import { useToggleFavMedia } from '../../../../hooks/mutations/toggle-fav/use-toggle-fav-media'
 import { useStore } from '../../../../hooks/use-store'
 import {
 	ReleaseMedia,

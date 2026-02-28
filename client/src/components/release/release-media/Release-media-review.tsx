@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { FC } from 'react'
 import { Link } from 'react-router'
-import { useToggleFavMedia } from '../../../hooks/mutations/use-toggle-fav-media'
+import { useToggleFavMedia } from '../../../hooks/mutations/toggle-fav/use-toggle-fav-media'
 import useNavigationPath from '../../../hooks/use-navigation-path'
 import { useStore } from '../../../hooks/use-store'
 import { ReleaseMedia } from '../../../types/release'

@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { FC, useState } from 'react'
 import { Link } from 'react-router'
-import { useToggleFavReview } from '../../../hooks/mutations/use-toggle-fav-review.ts'
+import { useToggleFavReview } from '../../../hooks/mutations/toggle-fav/use-toggle-fav-review.ts'
 import useNavigationPath from '../../../hooks/use-navigation-path.ts'
 import { useStore } from '../../../hooks/use-store'
 import { Review } from '../../../types/review'
