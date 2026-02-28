@@ -9,6 +9,7 @@ import { FC, useEffect, useMemo, useState } from 'react'
 import { AuthorCommentAPI } from '../../../../api/author/author-comment-api'
 import FormButton from '../../../../components/form-elements/Form-button'
 import ConfirmationModal from '../../../../components/modals/Confirmation-modal'
+import { useCreateAuthorCommentMutation } from '../../../../hooks/mutations'
 import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../../hooks/use-auth'
 import { useStore } from '../../../../hooks/use-store'
@@ -19,7 +20,6 @@ import { profilesKeys } from '../../../../query-keys/profiles-keys'
 import { releasesKeys } from '../../../../query-keys/releases-keys'
 import {
 	AuthorCommentsQuery,
-	CreateAuthorCommentData,
 	UpdateAuthorCommentData,
 } from '../../../../types/author'
 import { constraints } from '../../../../utils/constraints'
@@ -59,7 +59,7 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 
 	/** User's author comment for this release */
 	const userAuthorComment = authorComments?.find(
-		c => c.user.id === authStore.user?.id
+		c => c.user.id === authStore.user?.id,
 	)
 
 	/** EFFECTS */
@@ -85,23 +85,8 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
 	}
 
-	/**
-	 * Create mutation for adding a new author comment
-	 */
-	const { mutateAsync: asyncCreate, isPending: isCreating } = useMutation({
-		mutationFn: (data: CreateAuthorCommentData) =>
-			AuthorCommentAPI.create(data),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification(
-				'Вы успешно добавили авторский комментарий!'
-			)
-
-			invalidateRelatedQueries()
-		},
-		onError(error: unknown) {
-			handleApiError(error, 'Не удалось добавить авторский комментарий.')
-		},
-	})
+	const { mutateAsync: asyncCreate, isPending: isCreating } =
+		useCreateAuthorCommentMutation()
 
 	/**
 	 * Update mutation for editing an existing author comment
@@ -111,7 +96,7 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 			AuthorCommentAPI.update(id, data),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification(
-				'Вы успешно изменили авторский комментарий!'
+				'Вы успешно изменили авторский комментарий!',
 			)
 
 			invalidateRelatedQueries()
@@ -128,7 +113,7 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 		mutationFn: (id: string) => AuthorCommentAPI.delete(id),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification(
-				'Вы успешно удалили авторский комментарий!'
+				'Вы успешно удалили авторский комментарий!',
 			)
 			setConfModalOpen(false)
 
@@ -146,7 +131,7 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 	 */
 	const isPending = useMemo(
 		() => isCreating || isUpdating || isDeleting,
-		[isCreating, isUpdating, isDeleting]
+		[isCreating, isUpdating, isDeleting],
 	)
 
 	/**
