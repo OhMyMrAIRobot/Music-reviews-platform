@@ -1,19 +1,9 @@
-import {
-	InvalidateQueryFilters,
-	useMutation,
-	useQueryClient,
-} from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
 import { FC } from 'react'
-import { UserFavReleaseAPI } from '../../../api/release/user-fav-release-api'
 import ToggleFavButton from '../../../components/buttons/Toggle-fav-button'
 import LikesCount from '../../../components/utils/Likes-count'
-import { useApiErrorHandler } from '../../../hooks/use-api-error-handler'
-import { useAuth } from '../../../hooks/use-auth'
+import { useToogleFavRelease } from '../../../hooks/mutations'
 import { useStore } from '../../../hooks/use-store'
-import { leaderboardKeys } from '../../../query-keys/leaderboard-keys'
-import { profilesKeys } from '../../../query-keys/profiles-keys'
-import { releasesKeys } from '../../../query-keys/releases-keys'
 import { Release } from '../../../types/release'
 import ReleaseDetailsAuthors from './release-details-authors/Release-details-authors'
 import ReleaseDetailsNominations from './Release-details-nominations'
@@ -24,64 +14,13 @@ interface IProps {
 }
 
 const ReleaseDetailsHeader: FC<IProps> = observer(({ release }) => {
-	/** HOOKS */
-	const { authStore, notificationStore } = useStore()
-	const { checkAuth } = useAuth()
-	const handleApiError = useApiErrorHandler()
-	const queryClient = useQueryClient()
+	const { authStore } = useStore()
 
-	/**
-	 * Current toggling state for like/unlike action
-	 */
 	const isFav = release.userFavRelease?.some(
-		fav => fav.userId === authStore.user?.id
+		fav => fav.userId === authStore.user?.id,
 	)
 
-	/**
-	 * Function to invalidate related queries after mutations
-	 */
-	const invalidateRelatedQueries = () => {
-		const keysToInvalidate: InvalidateQueryFilters[] = [
-			{ queryKey: releasesKeys.all },
-			{ queryKey: profilesKeys.profile(authStore.user?.id ?? 'unknown') },
-			{ queryKey: profilesKeys.preferences(authStore.user?.id ?? 'unknown') },
-			{ queryKey: leaderboardKeys.all },
-		]
-
-		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
-	}
-
-	/**
-	 * Mutation to toggle favorite review
-	 */
-	const toggleFavMutation = useMutation({
-		mutationFn: () =>
-			isFav
-				? UserFavReleaseAPI.deleteFromFav(release.id)
-				: UserFavReleaseAPI.addToFav(release.id),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification(
-				isFav
-					? 'Релиз успешно удален из понравившихся!'
-					: 'Релиз успешно добавлен в понравившиеся!'
-			)
-			invalidateRelatedQueries()
-		},
-		onError: (error: unknown) => {
-			handleApiError(
-				error,
-				isFav
-					? 'Не удалось убрать релиз из понравившихся!'
-					: 'Не удалось добавить релиз в понравившиеся!'
-			)
-		},
-	})
-
-	const toggleFav = () => {
-		if (!checkAuth() || toggleFavMutation.isPending) return
-
-		return toggleFavMutation.mutate()
-	}
+	const { toggleFav, toggling } = useToogleFavRelease(release, isFav)
 
 	return (
 		<div className='lg:p-5 lg:bg-zinc-900 lg:border lg:border-white/10 rounded-2xl flex items-center lg:items-start max-lg:flex-col gap-y-3 relative'>
@@ -139,7 +78,7 @@ const ReleaseDetailsHeader: FC<IProps> = observer(({ release }) => {
 					onClick={toggleFav}
 					isLiked={isFav}
 					className='size-10 lg:size-12'
-					toggling={toggleFavMutation.isPending}
+					toggling={toggling}
 				/>
 			</div>
 		</div>
