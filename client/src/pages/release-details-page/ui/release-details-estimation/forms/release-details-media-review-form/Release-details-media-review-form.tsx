@@ -10,6 +10,7 @@ import { ReleaseMediaAPI } from '../../../../../../api/release/release-media-api
 import FormButton from '../../../../../../components/form-elements/Form-button'
 import FormInput from '../../../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../../../components/form-elements/Form-label'
+import { useCreateMediaMutation } from '../../../../../../hooks/mutations'
 import { useApiErrorHandler } from '../../../../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../../../../hooks/use-auth'
 import { useStore } from '../../../../../../hooks/use-store'
@@ -18,7 +19,6 @@ import { platformStatsKeys } from '../../../../../../query-keys/platform-stats-k
 import { profilesKeys } from '../../../../../../query-keys/profiles-keys'
 import { releaseMediaKeys } from '../../../../../../query-keys/release-media-keys'
 import {
-	CreateReleaseMediaData,
 	ReleaseMediaQuery,
 	UpdateReleaseMediaData,
 } from '../../../../../../types/release'
@@ -83,22 +83,8 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
 		setUrl(userReleaseMedia?.url ?? '')
 	}, [userReleaseMedia])
 
-	/**
-	 * Mutation for creating a new media review
-	 */
-	const { mutateAsync: createAsync, isPending: isCreating } = useMutation({
-		mutationFn: (data: CreateReleaseMediaData) => ReleaseMediaAPI.create(data),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification(
-				'Медиарецензия успешно добавлена! Ожидайте подтверждения!'
-			)
-
-			invalidateRelatedQueries()
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Не удалось добавить медиарецензию.')
-		},
-	})
+	const { mutateAsync: createAsync, isPending: isCreating } =
+		useCreateMediaMutation()
 
 	/**
 	 * Mutation for updating an existing media review
@@ -108,7 +94,7 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
 			ReleaseMediaAPI.update(data.id, data.updateData),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification(
-				'Медиарецензия успешно обновлена! Ожидайте подтверждения!'
+				'Медиарецензия успешно обновлена! Ожидайте подтверждения!',
 			)
 
 			invalidateRelatedQueries()
@@ -140,7 +126,7 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
 	 */
 	const isSubmitting = useMemo(
 		() => isCreating || isUpdating || isDeleting,
-		[isCreating, isUpdating, isDeleting]
+		[isCreating, isUpdating, isDeleting],
 	)
 
 	/**
