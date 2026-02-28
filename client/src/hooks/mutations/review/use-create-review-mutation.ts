@@ -1,0 +1,66 @@
+import {
+	InvalidateQueryFilters,
+	useMutation,
+	useQueryClient,
+} from '@tanstack/react-query'
+import { ReviewAPI } from '../../../api/review/review-api'
+import { leaderboardKeys } from '../../../query-keys/leaderboard-keys'
+import { platformStatsKeys } from '../../../query-keys/platform-stats-keys'
+import { profilesKeys } from '../../../query-keys/profiles-keys'
+import { releasesKeys } from '../../../query-keys/releases-keys'
+import { reviewsKeys } from '../../../query-keys/reviews-keys'
+import { UseMutationParams } from '../../../types/common'
+import { CreateReviewData } from '../../../types/review'
+import { useApiErrorHandler } from '../../use-api-error-handler'
+import { useStore } from '../../use-store'
+
+/**
+ * Custom React hook returning a React Query mutation to create a review.
+ * On success the hook shows a success notification and invalidates
+ * related queries so the UI reflects the new review.
+ *
+ * @param {UseMutationParams} [options] - Optional lifecycle callbacks to forward to the underlying `useMutation` hook.
+ * @returns The React Query mutation object for creating review.
+ */
+export const useCreateReviewMutation = ({
+	onSuccess,
+	onError,
+	onSettled,
+}: UseMutationParams = {}) => {
+	const { authStore, notificationStore } = useStore()
+	const queryClient = useQueryClient()
+	const handleApiError = useApiErrorHandler()
+
+	const invalidateRelatedQueries = (releaseId: string) => {
+		const keysToInvalidate: InvalidateQueryFilters[] = [
+			{ queryKey: releasesKeys.details(releaseId) },
+			{ queryKey: profilesKeys.profile(authStore.user?.id || 'unknown') },
+			{ queryKey: leaderboardKeys.all },
+			{ queryKey: platformStatsKeys.all },
+			{ queryKey: reviewsKeys.all },
+			{ queryKey: releasesKeys.all },
+		]
+
+		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	}
+	const mutation = useMutation({
+		mutationFn: (data: CreateReviewData) => ReviewAPI.create(data),
+		onSuccess: data => {
+			notificationStore.addSuccessNotification(
+				`Вы успешно добавили ${data.text ? 'рецензию' : 'оценку'}!`,
+			)
+			invalidateRelatedQueries(data.release.id)
+			onSuccess?.()
+		},
+		onError: (error: unknown, data) => {
+			handleApiError(
+				error,
+				`Не удалось добавить ${data.text ? 'рецензию' : 'оценку'}.`,
+			)
+			onError?.(error)
+		},
+		onSettled,
+	})
+
+	return mutation
+}
