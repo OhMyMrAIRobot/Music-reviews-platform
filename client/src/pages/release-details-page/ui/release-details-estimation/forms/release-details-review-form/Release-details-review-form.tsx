@@ -1,9 +1,4 @@
-import {
-	InvalidateQueryFilters,
-	useMutation,
-	useQuery,
-	useQueryClient,
-} from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { ReviewAPI } from '../../../../../../api/review/review-api'
@@ -11,15 +6,11 @@ import TickSvg from '../../../../../../components/svg/Tick-svg'
 import Loader from '../../../../../../components/utils/Loader'
 import {
 	useCreateReviewMutation,
+	useRemoveReviewMutation,
 	useUpdateReviewMutation,
 } from '../../../../../../hooks/mutations'
-import { useApiErrorHandler } from '../../../../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../../../../hooks/use-auth'
 import { useStore } from '../../../../../../hooks/use-store'
-import { leaderboardKeys } from '../../../../../../query-keys/leaderboard-keys'
-import { platformStatsKeys } from '../../../../../../query-keys/platform-stats-keys'
-import { profilesKeys } from '../../../../../../query-keys/profiles-keys'
-import { releasesKeys } from '../../../../../../query-keys/releases-keys'
 import { reviewsKeys } from '../../../../../../query-keys/reviews-keys'
 import { Review, ReviewsQuery } from '../../../../../../types/review'
 import { calculateTotalReviewMark } from '../../../../../../utils/calculate-total-review-mark'
@@ -41,13 +32,9 @@ interface IProps {
 
 const ReleaseDetailsReviewForm: FC<IProps> = observer(
 	({ isReview, releaseId }) => {
-		/** HOOKS */
-		const { authStore, notificationStore } = useStore()
+		const { authStore } = useStore()
 		const { checkAuth } = useAuth()
-		const queryClient = useQueryClient()
-		const handleApiError = useApiErrorHandler()
 
-		/** STATES */
 		const [title, setTitle] = useState<string>('')
 		const [text, setText] = useState<string>('')
 		const [rhymes, setRhymes] = useState<number>(5)
@@ -82,48 +69,16 @@ const ReleaseDetailsReviewForm: FC<IProps> = observer(
 				? reviewsData?.items[0]
 				: null
 
-		/**
-		 * Invalidate related queries after mutations
-		 */
-		const invalidateRelatedQueries = () => {
-			const keysToInvalidate: InvalidateQueryFilters[] = [
-				{ queryKey: releasesKeys.details(releaseId) },
-				{ queryKey: profilesKeys.profile(authStore.user?.id || 'unknown') },
-				{ queryKey: leaderboardKeys.all },
-				{ queryKey: platformStatsKeys.all },
-				{ queryKey: reviewsKeys.all },
-				{ queryKey: releasesKeys.all },
-			]
-
-			keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
-		}
-
 		const { mutateAsync: createAsync, isPending: isCreating } =
 			useCreateReviewMutation()
 
 		const { mutateAsync: updateAsync, isPending: isUpdating } =
 			useUpdateReviewMutation()
 
-		/**
-		 * Delete a review mutation
-		 */
-		const { mutateAsync: deleteAsync, isPending: isDeleting } = useMutation({
-			mutationFn: (id: string) => ReviewAPI.delete(id),
-			onSuccess: () => {
-				notificationStore.addSuccessNotification(
-					`Вы успешно удалили ${isReview ? 'рецензию' : 'оценку'}!`,
-				)
-				setDefaultValues(null)
-
-				invalidateRelatedQueries()
-			},
-			onError: (error: unknown) => {
-				handleApiError(
-					error,
-					`Не удалось удалить ${isReview ? 'рецензию' : 'оценку'}.`,
-				)
-			},
-		})
+		const { mutateAsync: deleteAsync, isPending: isDeleting } =
+			useRemoveReviewMutation({
+				onSuccess: () => setDefaultValues(null),
+			})
 
 		/** EFFECTS */
 		useEffect(() => {
@@ -261,7 +216,7 @@ const ReleaseDetailsReviewForm: FC<IProps> = observer(
 		const deleteReview = async () => {
 			if (!checkAuth() || !userReview || isSubmitting) return
 
-			return deleteAsync(userReview.id)
+			return deleteAsync({ id: userReview.id, isReview })
 		}
 
 		return (

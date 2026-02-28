@@ -10,22 +10,13 @@ import { profilesKeys } from '../../../query-keys/profiles-keys'
 import { releasesKeys } from '../../../query-keys/releases-keys'
 import { reviewsKeys } from '../../../query-keys/reviews-keys'
 import { UseMutationParams } from '../../../types/common'
-import { UpdateReviewData } from '../../../types/review'
 import { useApiErrorHandler } from '../../use-api-error-handler'
 import { useStore } from '../../use-store'
 
-/**
- * Custom React hook returning a React Query mutation to remove an existing review.
- * On success the hook shows a success notification and invalidates
- * related queries so the UI reflects the removed review.
- *
- * @param {UseMutationParams} [options] - Optional lifecycle callbacks to forward to the underlying `useMutation` hook.
- * @returns The React Query mutation object for removing review.
- */
-export const useUpdateReviewMutation = ({
+export const useRemoveReviewMutation = ({
+	onSettled,
 	onSuccess,
 	onError,
-	onSettled,
 }: UseMutationParams = {}) => {
 	const { authStore, notificationStore } = useStore()
 	const queryClient = useQueryClient()
@@ -44,19 +35,19 @@ export const useUpdateReviewMutation = ({
 		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
 	}
 	const mutation = useMutation({
-		mutationFn: ({ id, data }: { id: string; data: UpdateReviewData }) =>
-			ReviewAPI.update(id, data),
-		onSuccess: data => {
+		mutationFn: ({ id }: { id: string; isReview: boolean }) =>
+			ReviewAPI.delete(id),
+		onSuccess: (_, data) => {
 			notificationStore.addSuccessNotification(
-				`Вы успешно обновили ${data.text ? 'рецензию' : 'оценку'}!`,
+				`Вы успешно удалили ${data.isReview ? 'рецензию' : 'оценку'}!`,
 			)
-			invalidateRelatedQueries(data.release.id)
+			invalidateRelatedQueries(data.id)
 			onSuccess?.()
 		},
 		onError: (error: unknown, data) => {
 			handleApiError(
 				error,
-				`Не удалось обновить ${data.data.text ? 'рецензию' : 'оценку'}.`,
+				`Не удалось удалить ${data.isReview ? 'рецензию' : 'оценку'}.`,
 			)
 			onError?.(error)
 		},
