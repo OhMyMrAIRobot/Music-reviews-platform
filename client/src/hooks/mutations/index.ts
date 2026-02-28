@@ -1,4 +1,5 @@
 export * from './admin'
+export * from './album-value'
 export * from './author-comment'
 export * from './media'
 export * from './review'

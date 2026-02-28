@@ -10,16 +10,14 @@ import { AlbumValueAPI } from '../../../../../../api/album-value-api'
 import AlbumValue from '../../../../../../components/album-value/Album-value'
 import TickSvg from '../../../../../../components/svg/Tick-svg'
 import Loader from '../../../../../../components/utils/Loader'
+import { useCreateAlbumValueMutation } from '../../../../../../hooks/mutations'
 import { useApiErrorHandler } from '../../../../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../../../../hooks/use-auth'
 import { useStore } from '../../../../../../hooks/use-store'
 import { albumValuesKeys } from '../../../../../../query-keys/album-values-keys'
 import { leaderboardKeys } from '../../../../../../query-keys/leaderboard-keys'
 import { profilesKeys } from '../../../../../../query-keys/profiles-keys'
-import {
-	CreateAlbumValueVoteData,
-	UpdateAlbumValueVoteData,
-} from '../../../../../../types/album-value'
+import { UpdateAlbumValueVoteData } from '../../../../../../types/album-value'
 import { Release, ReleaseTypesEnum } from '../../../../../../types/release'
 import { getAlbumValueInfluenceMultiplier } from '../../../../../../utils/get-album-value-influence-multiplier'
 import { round2 } from '../../../../../../utils/round2'
@@ -102,23 +100,8 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ release }) => {
 		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
 	}
 
-	/**
-	 * Create mutation for posting a new album value vote
-	 */
-	const { mutateAsync: createAsync, isPending: isCreating } = useMutation({
-		mutationFn: (data: CreateAlbumValueVoteData) =>
-			AlbumValueAPI.postAlbumValueVote(data),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification(
-				'Вы успешно оставили голос за ценность альбома!'
-			)
-
-			invalidateRelatedQueries()
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Не удалось добавить голос за ценность альбома.')
-		},
-	})
+	const { mutateAsync: createAsync, isPending: isCreating } =
+		useCreateAlbumValueMutation()
 
 	/**
 	 * Update mutation for updating an existing album value vote
@@ -133,7 +116,7 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ release }) => {
 		}) => AlbumValueAPI.updateAlbumValueVote(id, data),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification(
-				'Вы успешно изменили голос за ценность альбома!'
+				'Вы успешно изменили голос за ценность альбома!',
 			)
 
 			invalidateRelatedQueries()
@@ -150,7 +133,7 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ release }) => {
 		mutationFn: (id: string) => AlbumValueAPI.deleteAlbumValueVote(id),
 		onSuccess: () => {
 			notificationStore.addSuccessNotification(
-				'Вы успешно удалили голос за ценность альбома!'
+				'Вы успешно удалили голос за ценность альбома!',
 			)
 
 			invalidateRelatedQueries()
@@ -167,7 +150,7 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ release }) => {
 	 */
 	const isPending = useMemo(
 		() => isCreating || isUpdating || isDeleting,
-		[isCreating, isUpdating, isDeleting]
+		[isCreating, isUpdating, isDeleting],
 	)
 
 	/**
@@ -369,7 +352,7 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ release }) => {
 						influence={{
 							total: releaseAnticip + authorPopularity,
 							multiplier: getAlbumValueInfluenceMultiplier(
-								releaseAnticip + authorPopularity
+								releaseAnticip + authorPopularity,
 							),
 							releaseAnticip: releaseAnticip,
 							authorPopularity: authorPopularity,
@@ -384,8 +367,8 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ release }) => {
 								(rhymes + structure + individuality + styleImplementation) *
 								0.025 *
 								getAlbumValueInfluenceMultiplier(
-									releaseAnticip + authorPopularity
-								)
+									releaseAnticip + authorPopularity,
+								),
 						)}
 					/>
 				</div>
