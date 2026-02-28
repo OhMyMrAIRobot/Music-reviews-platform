@@ -10,14 +10,16 @@ import { AlbumValueAPI } from '../../../../../../api/album-value-api'
 import AlbumValue from '../../../../../../components/album-value/Album-value'
 import TickSvg from '../../../../../../components/svg/Tick-svg'
 import Loader from '../../../../../../components/utils/Loader'
-import { useCreateAlbumValueMutation } from '../../../../../../hooks/mutations'
+import {
+	useCreateAlbumValueMutation,
+	useUpdateAlbumValueMutation,
+} from '../../../../../../hooks/mutations'
 import { useApiErrorHandler } from '../../../../../../hooks/use-api-error-handler'
 import { useAuth } from '../../../../../../hooks/use-auth'
 import { useStore } from '../../../../../../hooks/use-store'
 import { albumValuesKeys } from '../../../../../../query-keys/album-values-keys'
 import { leaderboardKeys } from '../../../../../../query-keys/leaderboard-keys'
 import { profilesKeys } from '../../../../../../query-keys/profiles-keys'
-import { UpdateAlbumValueVoteData } from '../../../../../../types/album-value'
 import { Release, ReleaseTypesEnum } from '../../../../../../types/release'
 import { getAlbumValueInfluenceMultiplier } from '../../../../../../utils/get-album-value-influence-multiplier'
 import { round2 } from '../../../../../../utils/round2'
@@ -103,28 +105,8 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ release }) => {
 	const { mutateAsync: createAsync, isPending: isCreating } =
 		useCreateAlbumValueMutation()
 
-	/**
-	 * Update mutation for updating an existing album value vote
-	 */
-	const { mutateAsync: updateAsync, isPending: isUpdating } = useMutation({
-		mutationFn: ({
-			id,
-			data,
-		}: {
-			id: string
-			data: UpdateAlbumValueVoteData
-		}) => AlbumValueAPI.updateAlbumValueVote(id, data),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification(
-				'Вы успешно изменили голос за ценность альбома!',
-			)
-
-			invalidateRelatedQueries()
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Не удалось изменить голос за ценность альбома.')
-		},
-	})
+	const { mutateAsync: updateAsync, isPending: isUpdating } =
+		useUpdateAlbumValueMutation()
 
 	/**
 	 * Delete mutation for deleting an existing album value vote
