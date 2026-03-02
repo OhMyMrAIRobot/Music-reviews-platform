@@ -1,86 +1,32 @@
-import {
-	InvalidateQueryFilters,
-	useMutation,
-	useQueryClient,
-} from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
 import { useMemo, useState } from 'react'
-import { UserAPI } from '../../../../api/user/user-api'
 import FormButton from '../../../../components/form-elements/Form-button'
 import FormInput from '../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../components/form-elements/Form-label'
-import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
+import { useUpdateUserMutation } from '../../../../hooks/mutations'
 import { useAuth } from '../../../../hooks/use-auth'
 import { useStore } from '../../../../hooks/use-store'
-import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys'
-import { authorLikesKeys } from '../../../../query-keys/author-likes-keys'
-import { leaderboardKeys } from '../../../../query-keys/leaderboard-keys'
-import { profilesKeys } from '../../../../query-keys/profiles-keys'
-import { releaseMediaKeys } from '../../../../query-keys/release-media-keys'
-import { reviewsKeys } from '../../../../query-keys/reviews-keys'
-import { usersKeys } from '../../../../query-keys/users-keys'
-import { UpdateUserData } from '../../../../types/user'
 import { constraints } from '../../../../utils/constraints'
 import EditProfilePageSection from '../Edit-profile-page-section'
 
 const UpdateUserInfoForm = observer(() => {
-	/** HOOKS */
-	const { authStore, notificationStore } = useStore()
+	const { authStore } = useStore()
 	const { checkAuth } = useAuth()
-	const queryClient = useQueryClient()
-	const handleApiError = useApiErrorHandler()
 
 	/** STATES */
 	const [email, setEmail] = useState<string>(authStore.user?.email ?? '')
 	const [nickname, setNickname] = useState<string>(
-		authStore.user?.nickname ?? ''
+		authStore.user?.nickname ?? '',
 	)
 	const [newPassword, setNewPassword] = useState<string>('')
 	const [newPasswordConfirm, setNewPasswordConfirm] = useState<string>('')
 	const [password, setPassword] = useState<string>('')
 
-	/**
-	 * Function to invalidate related queries after mutations
-	 */
-	const invalidateRelatedQueries = (userId: string) => {
-		const keysToInvalidate: InvalidateQueryFilters[] = [
-			{ queryKey: profilesKeys.profile(userId) },
-			{ queryKey: leaderboardKeys.all },
-			{ queryKey: authorCommentsKeys.all },
-			{ queryKey: authorLikesKeys.all },
-			{ queryKey: releaseMediaKeys.all },
-			{ queryKey: reviewsKeys.all },
-			{ queryKey: usersKeys.all },
-		]
-
-		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
-	}
-
-	/**
-	 * Mutation to update user info
-	 */
-	const { mutateAsync, isPending } = useMutation({
-		mutationFn: (data: UpdateUserData) => UserAPI.update(data),
-		onSuccess: data => {
-			const { user, accessToken, emailSent } = data
-
-			authStore.setAuthorization(user, accessToken)
-			notificationStore.addSuccessNotification(
-				'Вы успешно обновили данные об аккаунте!'
-			)
-
-			if (emailSent) {
-				notificationStore.addEmailSentNotification(emailSent)
-			}
-
+	const { mutateAsync, isPending } = useUpdateUserMutation({
+		onSettled: () => {
 			setPassword('')
 			setNewPassword('')
 			setNewPasswordConfirm('')
-
-			invalidateRelatedQueries(user.id)
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Ошибка при обновлении данных аккаунта!')
 		},
 	})
 
