@@ -8,11 +8,11 @@ import FormLabel from '../../../../../components/form-elements/Form-label'
 import FormSingleSelect from '../../../../../components/form-elements/Form-single-select'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
+import { useReleaseMediaMeta } from '../../../../../hooks/meta'
 import {
 	useAdminCreateMediaMutation,
 	useAdminUpdateMediaMutation,
 } from '../../../../../hooks/mutations'
-import { useReleaseMediaMeta } from '../../../../../hooks/use-release-media-meta'
 import { releasesKeys } from '../../../../../query-keys/releases-keys'
 import { ReleaseMedia, ReleasesQuery } from '../../../../../types/release'
 import { constraints } from '../../../../../utils/constraints'

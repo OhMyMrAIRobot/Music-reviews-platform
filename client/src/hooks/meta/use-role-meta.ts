@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { RolesAPI } from '../api/role-api'
-import { usersKeys } from '../query-keys/users-keys'
+import { RolesAPI } from '../../api/role-api'
+import { usersKeys } from '../../query-keys/users-keys'
 
 /**
  * Custom hook to fetch and manage user roles metadata.

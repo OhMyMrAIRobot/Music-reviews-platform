@@ -5,7 +5,7 @@ import FeedbackStatusIcon from '../../../../../components/feedback/Feedback-stat
 import AdminHeader from '../../../../../components/layout/admin-header/Admin-header'
 import Pagination from '../../../../../components/pagination/Pagination'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
-import { useFeedbackMeta } from '../../../../../hooks/use-feedback-meta'
+import { useFeedbackMeta } from '../../../../../hooks/meta'
 import { feedbackKeys } from '../../../../../query-keys/feedback-keys'
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum'
 import { SortOrder } from '../../../../../types/common/types/sort-order'
@@ -24,7 +24,7 @@ const AdminDashboardFeedbackGrid = () => {
 	const [searchText, setSearchText] = useState<string>('')
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [activeStatus, setActiveStatus] = useState<string>(
-		FeedbackStatusesFilterEnum.ALL
+		FeedbackStatusesFilterEnum.ALL,
 	)
 	const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC)
 
@@ -72,7 +72,7 @@ const AdminDashboardFeedbackGrid = () => {
 									key={`skeleton-button-${idx}`}
 									className='w-20 h-4 rounded-lg mr-5 mb-1'
 								/>
-						  ))
+							))
 						: Object.values(FeedbackStatusesFilterEnum).map(option => (
 								<AdminFilterButton
 									key={option}
@@ -85,7 +85,7 @@ const AdminDashboardFeedbackGrid = () => {
 									isActive={activeStatus === option}
 									onClick={() => setActiveStatus(option)}
 								/>
-						  ))}
+							))}
 				</div>
 
 				<AdminDashboardFeedbackGridItem
@@ -95,7 +95,7 @@ const AdminDashboardFeedbackGrid = () => {
 						setOrder(
 							order === SortOrdersEnum.DESC
 								? SortOrdersEnum.ASC
-								: SortOrdersEnum.DESC
+								: SortOrdersEnum.DESC,
 						)
 					}
 					isLoading={isLoading}
@@ -109,7 +109,7 @@ const AdminDashboardFeedbackGrid = () => {
 										key={`Feedback-skeleton-${idx}`}
 										isLoading={true}
 									/>
-							  ))
+								))
 							: feedback.map((feedbackItem, idx) => (
 									<AdminDashboardFeedbackGridItem
 										key={feedbackItem.id}
@@ -117,7 +117,7 @@ const AdminDashboardFeedbackGrid = () => {
 										isLoading={false}
 										position={(currentPage - 1) * limit + idx + 1}
 									/>
-							  ))}
+								))}
 					</div>
 				</div>
 

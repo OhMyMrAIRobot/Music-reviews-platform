@@ -6,11 +6,11 @@ import FormLabel from '../../../../../components/form-elements/Form-label'
 import FormTextbox from '../../../../../components/form-elements/Form-textbox'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
+import { useFeedbackMeta } from '../../../../../hooks/meta'
 import {
 	useAdminCreateFeedbackReplyMutation,
 	useAdminUpdateFeedbackMutation,
 } from '../../../../../hooks/mutations'
-import { useFeedbackMeta } from '../../../../../hooks/use-feedback-meta'
 import { useStore } from '../../../../../hooks/use-store'
 import { feedbackKeys } from '../../../../../query-keys/feedback-keys'
 import {

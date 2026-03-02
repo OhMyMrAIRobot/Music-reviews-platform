@@ -2,8 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 import { useRef, useState } from 'react'
 import { ReleaseMediaAPI } from '../../../../api/release/release-media-api'
 import CarouselContainer from '../../../../components/carousel/Carousel-container'
+import { useReleaseMediaMeta } from '../../../../hooks/meta'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
-import { useReleaseMediaMeta } from '../../../../hooks/use-release-media-meta'
 import { releaseMediaKeys } from '../../../../query-keys/release-media-keys'
 import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum'
 import { CarouselRef } from '../../../../types/common/types/carousel-ref'
@@ -23,10 +23,10 @@ const ReleaseMediaReviews = () => {
 	const { statuses, types, isLoading: isMetaLoading } = useReleaseMediaMeta()
 
 	const typeId = types.find(
-		t => t.type === ReleaseMediaTypesEnum.MEDIA_REVIEW
+		t => t.type === ReleaseMediaTypesEnum.MEDIA_REVIEW,
 	)?.id
 	const statusId = statuses.find(
-		s => s.status === ReleaseMediaStatusesEnum.APPROVED
+		s => s.status === ReleaseMediaStatusesEnum.APPROVED,
 	)?.id
 
 	const query: ReleaseMediaQuery = {

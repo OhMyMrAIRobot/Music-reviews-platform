@@ -5,7 +5,7 @@ import AuthorConfirmationStatusIcon from '../../../../../components/author/autho
 import AdminHeader from '../../../../../components/layout/admin-header/Admin-header'
 import Pagination from '../../../../../components/pagination/Pagination'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
-import { useAuthorConfirmationMeta } from '../../../../../hooks/use-author-confirmation-meta'
+import { useAuthorConfirmationMeta } from '../../../../../hooks/meta'
 import { authorConfirmationsKeys } from '../../../../../query-keys/authors-confirmations-keys'
 import { AuthorConfirmationStatusesFilterOptions } from '../../../../../types/author'
 import { AuthorConfirmationsQuery } from '../../../../../types/author/queries/author-confirmations-query'
@@ -20,7 +20,7 @@ const AdminDashboardAuthorConfirmationGrid = () => {
 	const [searchText, setSearchText] = useState<string>('')
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [status, setStatus] = useState<AuthorConfirmationStatusesFilterOptions>(
-		AuthorConfirmationStatusesFilterOptions.ALL
+		AuthorConfirmationStatusesFilterOptions.ALL,
 	)
 	const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC)
 
@@ -68,7 +68,7 @@ const AdminDashboardAuthorConfirmationGrid = () => {
 									key={`skeleton-button-${idx}`}
 									className='w-20 h-4 rounded-lg mr-5 mb-1'
 								/>
-						  ))
+							))
 						: Object.values(AuthorConfirmationStatusesFilterOptions).map(
 								option => (
 									<AdminFilterButton
@@ -85,8 +85,8 @@ const AdminDashboardAuthorConfirmationGrid = () => {
 										isActive={status === option}
 										onClick={() => setStatus(option)}
 									/>
-								)
-						  )}
+								),
+							)}
 				</div>
 
 				<AdminDashboardAuthorConfirmationGridItem
@@ -97,7 +97,7 @@ const AdminDashboardAuthorConfirmationGrid = () => {
 						setOrder(
 							order === SortOrdersEnum.DESC
 								? SortOrdersEnum.ASC
-								: SortOrdersEnum.DESC
+								: SortOrdersEnum.DESC,
 						)
 					}
 				/>
@@ -116,7 +116,7 @@ const AdminDashboardAuthorConfirmationGrid = () => {
 										key={`Author-confirmation-skeleton-${idx}`}
 										isLoading={true}
 									/>
-							  ))
+								))
 							: confirmations.map((item, idx) => (
 									<AdminDashboardAuthorConfirmationGridItem
 										key={item.id}
@@ -124,7 +124,7 @@ const AdminDashboardAuthorConfirmationGrid = () => {
 										isLoading={false}
 										position={(currentPage - 1) * limit + idx + 1}
 									/>
-							  ))}
+								))}
 					</div>
 				</div>
 

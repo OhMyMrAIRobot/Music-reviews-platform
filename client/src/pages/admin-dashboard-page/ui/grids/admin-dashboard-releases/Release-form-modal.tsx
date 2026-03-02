@@ -11,11 +11,11 @@ import FormMultiSelect, {
 } from '../../../../../components/form-elements/Form-multi-select.tsx'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
+import { useReleaseMeta } from '../../../../../hooks/meta'
 import {
 	useAdminCreateReleaseMutation,
 	useAdminUpdateReleaseMutation,
 } from '../../../../../hooks/mutations/index.ts'
-import { useReleaseMeta } from '../../../../../hooks/use-release-meta.ts'
 import { authorsKeys } from '../../../../../query-keys/authors-keys.ts'
 import { AuthorsQuery } from '../../../../../types/author/index.ts'
 import { IReleaseFormValues, Release } from '../../../../../types/release'

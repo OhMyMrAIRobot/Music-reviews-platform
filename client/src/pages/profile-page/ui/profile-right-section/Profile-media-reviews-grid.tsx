@@ -3,7 +3,7 @@ import { FC, useState } from 'react'
 import { ReleaseMediaAPI } from '../../../../api/release/release-media-api'
 import Pagination from '../../../../components/pagination/Pagination'
 import ReleaseMediaReview from '../../../../components/release/release-media/Release-media-review'
-import { useReleaseMediaMeta } from '../../../../hooks/use-release-media-meta'
+import { useReleaseMediaMeta } from '../../../../hooks/meta'
 import { releaseMediaKeys } from '../../../../query-keys/release-media-keys'
 import {
 	ReleaseMediaQuery,
@@ -23,10 +23,10 @@ const ProfileMediaReviewsGrid: FC<IProps> = ({ userId }) => {
 	const { statuses, types, isLoading: isMetaLoading } = useReleaseMediaMeta()
 
 	const typeId = types.find(
-		t => t.type === ReleaseMediaTypesEnum.MEDIA_REVIEW
+		t => t.type === ReleaseMediaTypesEnum.MEDIA_REVIEW,
 	)?.id
 	const statusId = statuses.find(
-		s => s.status === ReleaseMediaStatusesEnum.APPROVED
+		s => s.status === ReleaseMediaStatusesEnum.APPROVED,
 	)?.id
 
 	const query: ReleaseMediaQuery = {
@@ -55,14 +55,14 @@ const ProfileMediaReviewsGrid: FC<IProps> = ({ userId }) => {
 								key={`Skeleton-media-review-${idx}`}
 								isLoading={true}
 							/>
-					  ))
+						))
 					: items.map(media => (
 							<ReleaseMediaReview
 								key={media.id}
 								media={media}
 								isLoading={false}
 							/>
-					  ))}
+						))}
 			</div>
 
 			{!isMediaLoading && !isMediaLoading && items.length === 0 && (

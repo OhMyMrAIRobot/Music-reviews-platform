@@ -3,7 +3,7 @@ import { FC, useRef, useState } from 'react'
 import { ReleaseMediaAPI } from '../../../../api/release/release-media-api'
 import CarouselNavButton from '../../../../components/carousel/Carousel-nav-button'
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
-import { useReleaseMediaMeta } from '../../../../hooks/use-release-media-meta'
+import { useReleaseMediaMeta } from '../../../../hooks/meta'
 import { useStore } from '../../../../hooks/use-store'
 import { releaseMediaKeys } from '../../../../query-keys/release-media-keys'
 import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum'
@@ -31,7 +31,7 @@ const ReleaseDetailsMedia: FC<IProps> = ({ releaseId }) => {
 		useReleaseMediaMeta()
 
 	const statusId = statuses.find(
-		el => el.status === ReleaseMediaStatusesEnum.APPROVED
+		el => el.status === ReleaseMediaStatusesEnum.APPROVED,
 	)?.id
 
 	const mediaQuery: ReleaseMediaQuery = {
@@ -46,7 +46,7 @@ const ReleaseDetailsMedia: FC<IProps> = ({ releaseId }) => {
 			queryFn: () => ReleaseMediaAPI.findAll(mediaQuery),
 			enabled: statuses.length > 0 && !isReleaseMediaMetaLoading,
 			staleTime: 1000 * 60 * 5,
-		}
+		},
 	)
 
 	const userMediaQuery: ReleaseMediaQuery = {

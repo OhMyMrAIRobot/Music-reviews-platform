@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { SocialMediaAPI } from '../api/social-media-api'
-import { socialMediaKeys } from '../query-keys/social-media-keys'
+import { SocialMediaAPI } from '../../api/social-media-api'
+import { socialMediaKeys } from '../../query-keys/social-media-keys'
 
 /**
  * Custom hook to fetch and manage social media metadata.

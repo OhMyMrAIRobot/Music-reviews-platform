@@ -8,11 +8,11 @@ import FormMultiSelect, {
 } from '../../../../../components/form-elements/Form-multi-select.tsx'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
+import { useAuthorMeta } from '../../../../../hooks/meta'
 import {
 	useAdminCreateAuthorMutation,
 	useAdminUpdateAuthorMutation,
 } from '../../../../../hooks/mutations/index.ts'
-import { useAuthorMeta } from '../../../../../hooks/use-author-meta.ts'
 import { Author } from '../../../../../types/author/index.ts'
 import { arraysEqual } from '../../../../../utils/arrays-equal.ts'
 import buildAuthorFormData from '../../../../../utils/build-author-form-data'

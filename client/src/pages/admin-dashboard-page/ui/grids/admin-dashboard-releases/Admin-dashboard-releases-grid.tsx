@@ -5,7 +5,7 @@ import AdminHeader from '../../../../../components/layout/admin-header/Admin-hea
 import Pagination from '../../../../../components/pagination/Pagination.tsx'
 import ReleaseTypeIcon from '../../../../../components/release/Release-type-icon.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
-import { useReleaseMeta } from '../../../../../hooks/use-release-meta.ts'
+import { useReleaseMeta } from '../../../../../hooks/meta'
 import { releasesKeys } from '../../../../../query-keys/releases-keys.ts'
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum.ts'
 import { SortOrder } from '../../../../../types/common/types/sort-order.ts'
@@ -24,7 +24,7 @@ const AdminDashboardReleasesGrid = () => {
 	const [searchText, setSearchText] = useState<string>('')
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [activeType, setActiveType] = useState<string>(
-		ReleaseTypesFilterOptions.ALL
+		ReleaseTypesFilterOptions.ALL,
 	)
 	const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC)
 
@@ -76,7 +76,7 @@ const AdminDashboardReleasesGrid = () => {
 									key={`skeleton-button-${idx}`}
 									className='w-20 h-4 rounded-lg mr-5 mb-1'
 								/>
-						  ))
+							))
 						: Object.values(ReleaseTypesFilterOptions).map(type => (
 								<AdminFilterButton
 									key={type}
@@ -89,7 +89,7 @@ const AdminDashboardReleasesGrid = () => {
 									isActive={activeType === type}
 									onClick={() => setActiveType(type)}
 								/>
-						  ))}
+							))}
 
 					<div className='ml-auto max-sm:hidden'>
 						<AdminFilterButton
@@ -116,7 +116,7 @@ const AdminDashboardReleasesGrid = () => {
 						setOrder(
 							order === SortOrdersEnum.DESC
 								? SortOrdersEnum.ASC
-								: SortOrdersEnum.DESC
+								: SortOrdersEnum.DESC,
 						)
 					}
 				/>
@@ -135,7 +135,7 @@ const AdminDashboardReleasesGrid = () => {
 										key={`Release-skeleton-${idx}`}
 										isLoading={isReleasesLoading}
 									/>
-							  ))
+								))
 							: releases.map((release, idx) => (
 									<AdminDashboardReleasesGridItem
 										key={release.id}
@@ -143,7 +143,7 @@ const AdminDashboardReleasesGrid = () => {
 										isLoading={isReleasesLoading}
 										position={(currentPage - 1) * limit + idx + 1}
 									/>
-							  ))}
+								))}
 					</div>
 				</div>
 

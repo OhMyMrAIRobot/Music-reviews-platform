@@ -4,7 +4,7 @@ import { AuthorAPI } from '../../api/author/author-api'
 import AuthorsGrid from '../../components/author/authors-grid/Authors-grid'
 import ComboBox from '../../components/buttons/Combo-box'
 import SkeletonLoader from '../../components/utils/Skeleton-loader'
-import { useAuthorMeta } from '../../hooks/use-author-meta'
+import { useAuthorMeta } from '../../hooks/meta'
 import { authorsKeys } from '../../query-keys/authors-keys'
 import { AuthorsQuery, AuthorTypesFilterOptions } from '../../types/author'
 
@@ -16,7 +16,7 @@ const limit = 10
 
 const AuthorsPage: FC<IProps> = ({ onlyRegistered }) => {
 	const [selectedAuthorType, setSelectedAuthorType] = useState<string>(
-		AuthorTypesFilterOptions.ALL
+		AuthorTypesFilterOptions.ALL,
 	)
 	const [currentPage, setCurrentPage] = useState<number>(1)
 

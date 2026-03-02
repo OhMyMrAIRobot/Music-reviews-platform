@@ -5,7 +5,7 @@ import AdminHeader from '../../../../../components/layout/admin-header/Admin-hea
 import Pagination from '../../../../../components/pagination/Pagination'
 import ReleaseMediaStatusIcon from '../../../../../components/release/release-media/Release-media-status-icon'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
-import { useReleaseMediaMeta } from '../../../../../hooks/use-release-media-meta'
+import { useReleaseMediaMeta } from '../../../../../hooks/meta'
 import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys'
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum'
 import { SortOrder } from '../../../../../types/common/types/sort-order'
@@ -27,10 +27,10 @@ const AdminDashboardMediaGrid = () => {
 	const [searchText, setSearchText] = useState<string>('')
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [activeStatus, setActiveStatus] = useState<string>(
-		ReleaseMediaStatusesFilterOptions.ALL
+		ReleaseMediaStatusesFilterOptions.ALL,
 	)
 	const [activeType, setActiveType] = useState<string>(
-		ReleaseMediaTypesFilterOptions.ALL
+		ReleaseMediaTypesFilterOptions.ALL,
 	)
 	const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC)
 
@@ -86,7 +86,7 @@ const AdminDashboardMediaGrid = () => {
 									key={`status-skeleton-button-${idx}`}
 									className='w-20 h-4 rounded-lg mr-5 mb-1'
 								/>
-						  ))
+							))
 						: Object.values(ReleaseMediaStatusesFilterOptions).map(option => (
 								<AdminFilterButton
 									key={option}
@@ -102,7 +102,7 @@ const AdminDashboardMediaGrid = () => {
 									isActive={activeStatus === option}
 									onClick={() => setActiveStatus(option)}
 								/>
-						  ))}
+							))}
 
 					<div className='max-sm:hidden ml-auto'>
 						<AdminFilterButton
@@ -120,7 +120,7 @@ const AdminDashboardMediaGrid = () => {
 									key={`type-skeleton-button-${idx}`}
 									className='w-20 h-4 rounded-lg mr-5 mb-1'
 								/>
-						  ))
+							))
 						: Object.values(ReleaseMediaTypesFilterOptions).map(option => (
 								<AdminFilterButton
 									key={option}
@@ -132,7 +132,7 @@ const AdminDashboardMediaGrid = () => {
 									isActive={activeType === option}
 									onClick={() => setActiveType(option)}
 								/>
-						  ))}
+							))}
 				</div>
 
 				<div className='sm:hidden mt-2 text-white/80 border-b border-white/10'>
@@ -151,7 +151,7 @@ const AdminDashboardMediaGrid = () => {
 						setOrder(
 							order === SortOrdersEnum.DESC
 								? SortOrdersEnum.ASC
-								: SortOrdersEnum.DESC
+								: SortOrdersEnum.DESC,
 						)
 					}
 				/>
@@ -164,7 +164,7 @@ const AdminDashboardMediaGrid = () => {
 										key={`Media-skeleton-${idx}`}
 										isLoading={isMediaLoading}
 									/>
-							  ))
+								))
 							: media.map((mediaItem, idx) => (
 									<AdminDashboardMediaGridItem
 										key={mediaItem.id}
@@ -172,7 +172,7 @@ const AdminDashboardMediaGrid = () => {
 										isLoading={isMediaLoading}
 										position={(currentPage - 1) * limit + idx + 1}
 									/>
-							  ))}
+								))}
 					</div>
 				</div>
 

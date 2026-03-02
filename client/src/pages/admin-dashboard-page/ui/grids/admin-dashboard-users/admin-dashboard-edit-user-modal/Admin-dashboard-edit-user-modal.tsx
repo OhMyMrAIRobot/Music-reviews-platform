@@ -11,13 +11,12 @@ import ModalOverlay from '../../../../../../components/modals/Modal-overlay.tsx'
 import MoveToSvg from '../../../../../../components/svg/Move-to-svg.tsx'
 import TrashSvg from '../../../../../../components/svg/Trash-svg.tsx'
 import SkeletonLoader from '../../../../../../components/utils/Skeleton-loader.tsx'
+import { useRoleMeta, useSocialMeta } from '../../../../../../hooks/meta'
 import {
 	useAdminUpdateProfileMutation,
 	useAdminUpdateUserMutation,
 } from '../../../../../../hooks/mutations/index.ts'
 import useNavigationPath from '../../../../../../hooks/use-navigation-path.ts'
-import { useRoleMeta } from '../../../../../../hooks/use-role-meta.ts'
-import { useSocialMeta } from '../../../../../../hooks/use-social-meta.ts'
 import { useStore } from '../../../../../../hooks/use-store.ts'
 import { UpdateProfileData } from '../../../../../../types/profile/index.ts'
 import {

@@ -6,11 +6,11 @@ import ConfirmationModal from '../../../../../components/modals/Confirmation-mod
 import RejectSvg from '../../../../../components/svg/Reject-svg'
 import TickRoundedSvg from '../../../../../components/svg/Tick-rounded-svg'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
+import { useAuthorConfirmationMeta } from '../../../../../hooks/meta'
 import {
 	useAdminRemoveAuthorConfirmationMutation,
 	useAdminUpdateAuthorConfirmationMutation,
 } from '../../../../../hooks/mutations'
-import { useAuthorConfirmationMeta } from '../../../../../hooks/use-author-confirmation-meta'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
 import {
 	AuthorConfirmation,

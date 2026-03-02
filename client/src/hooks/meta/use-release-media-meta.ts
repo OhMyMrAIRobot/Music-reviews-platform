@@ -1,6 +1,6 @@
 import { useQueries } from '@tanstack/react-query'
-import { ReleaseMediaAPI } from '../api/release/release-media-api'
-import { releaseMediaKeys } from '../query-keys/release-media-keys'
+import { ReleaseMediaAPI } from '../../api/release/release-media-api'
+import { releaseMediaKeys } from '../../query-keys/release-media-keys'
 
 /**
  * Custom hook to fetch and manage release media metadata, including statuses and types.
