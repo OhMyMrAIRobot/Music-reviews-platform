@@ -4,7 +4,8 @@ import ToggleFavButton from '../../../components/buttons/Toggle-fav-button'
 import LikesCount from '../../../components/utils/Likes-count'
 import { useToogleFavRelease } from '../../../hooks/mutations'
 import { useStore } from '../../../hooks/use-store'
-import { Release } from '../../../types/release'
+import { Release, ReleaseTypesEnum } from '../../../types/release'
+import { ReleaseDetailsLyrics } from './lyrics'
 import ReleaseDetailsAuthors from './release-details-authors/Release-details-authors'
 import ReleaseDetailsNominations from './Release-details-nominations'
 import ReleaseDetailsRatings from './release-details-ratings/Release-details-ratings'
@@ -59,7 +60,12 @@ const ReleaseDetailsHeader: FC<IProps> = observer(({ release }) => {
 				</div>
 
 				<div className='flex max-lg:flex-col items-center max-lg:space-y-5 lg:items-end lg:justify-between'>
-					<ReleaseDetailsRatings release={release} />
+					<div className='grid gap-y-4 lg:flex lg:gap-8 lg:items-end'>
+						<ReleaseDetailsRatings release={release} />
+						{release.releaseType.type === ReleaseTypesEnum.SINGLE && (
+							<ReleaseDetailsLyrics releaseId={release.id} />
+						)}
+					</div>
 					<ReleaseDetailsNominations nominations={release.nominationTypes} />
 				</div>
 			</div>

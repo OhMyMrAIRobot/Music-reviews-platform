@@ -61,4 +61,5 @@ export type Release = {
 
 	/** Array of nomination types associated with the release */
 	nominationTypes: NominationTypesEnum[]
+	hasLyrics: boolean
 }

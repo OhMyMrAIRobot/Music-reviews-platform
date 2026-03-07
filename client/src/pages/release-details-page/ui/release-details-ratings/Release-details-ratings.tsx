@@ -19,6 +19,10 @@ const ReleaseDetailsRatings: FC<IProps> = observer(({ release }) => {
 		.map(type => release?.ratings.total.find(r => r.type === type))
 		.filter(r => r && r.total > 0)
 
+	if (!ratings.length) {
+		return null
+	}
+
 	return (
 		<div className='flex justify-center lg:justify-start gap-x-3 select-none'>
 			{ratings.map(rating => {
@@ -34,7 +38,7 @@ const ReleaseDetailsRatings: FC<IProps> = observer(({ release }) => {
 				}
 
 				const ratingDetails = release.ratings.details.find(
-					rd => rd.type === rating?.type
+					rd => rd.type === rating?.type,
 				)
 
 				return (

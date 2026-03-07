@@ -17,5 +17,5 @@ createRoot(document.getElementById('root')!).render(
 				</SidebarOverlayProvider>
 			</BrowserRouter>
 		</StoreContextProvider>
-	</QueryClientProvider>
+	</QueryClientProvider>,
 )

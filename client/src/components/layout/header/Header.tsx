@@ -27,7 +27,7 @@ const Header = observer(() => {
 	} = useNavigationPath()
 
 	return (
-		<header className='sticky top-0 z-1000 w-full bg-[#09090B]/60 border-b border-[#27272A]/40 backdrop-blur-3xl'>
+		<header className='sticky top-0 z-800 w-full bg-[#09090B]/60 border-b border-[#27272A]/40 backdrop-blur-3xl'>
 			<div className='2xl:container flex mx-auto h-16 rounded-xl items-center p-5'>
 				<Link
 					to={navigateToMain}
