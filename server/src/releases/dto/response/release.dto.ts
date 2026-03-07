@@ -79,4 +79,5 @@ export type ReleaseDto = {
   hasAuthorComments: boolean;
   /** Record creation timestamp (ISO) */
   createdAt: string;
+  hasLyrics: boolean;
 };
