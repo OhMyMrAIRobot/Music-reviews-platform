@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query'
-import { AuthorConfirmationAPI } from '../../api/author/author-confirmation-api'
-import { authorConfirmationsKeys } from '../../query-keys/authors-confirmations-keys'
+import { useQuery } from "@tanstack/react-query";
+import { AuthorConfirmationAPI } from "../../api/author/author-confirmation-api";
+import { authorConfirmationsKeys } from "../../query-keys/authors-confirmations-keys";
 
 /**
  * Custom hook to fetch and manage author confirmation statuses metadata.
@@ -12,15 +12,15 @@ import { authorConfirmationsKeys } from '../../query-keys/authors-confirmations-
  * - `isLoading`: Boolean indicating if the data is currently being fetched.
  */
 export function useAuthorConfirmationMeta() {
-	const { data: statuses = [], isPending } = useQuery({
-		queryKey: authorConfirmationsKeys.statuses,
-		queryFn: () => AuthorConfirmationAPI.fetchStatuses(),
-		staleTime: Infinity,
-		gcTime: 1000 * 60 * 60 * 24,
-	})
+  const { data: statuses = [], isPending } = useQuery({
+    queryKey: authorConfirmationsKeys.statuses,
+    queryFn: () => AuthorConfirmationAPI.fetchStatuses(),
+    staleTime: Infinity,
+    gcTime: 1000 * 60 * 60 * 24,
+  });
 
-	return {
-		statuses,
-		isLoading: isPending,
-	}
+  return {
+    statuses,
+    isLoading: isPending,
+  };
 }

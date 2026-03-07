@@ -1,3 +1,3 @@
-export * from './role'
-export * from './user'
-export * from './user-details'
+export * from "./role";
+export * from "./user";
+export * from "./user-details";

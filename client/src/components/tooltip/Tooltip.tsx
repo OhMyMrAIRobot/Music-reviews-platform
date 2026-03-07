@@ -1,17 +1,17 @@
-import { FC, ReactNode } from 'react'
+import { FC, ReactNode } from "react";
 
 interface IProps {
-	children: ReactNode
+  children: ReactNode;
 }
 
 const Tooltip: FC<IProps> = ({ children }) => {
-	return (
-		<div
-			className={`bg-zinc-950 border-2 border-gray-600 rounded-xl text-white text-sm font-medium px-3 py-1 md:max-w-45 lg:max-w-full lg:whitespace-nowrap overflow-hidden`}
-		>
-			{children}
-		</div>
-	)
-}
+  return (
+    <div
+      className={`bg-zinc-950 border-2 border-gray-600 rounded-xl text-white text-sm font-medium px-3 py-1 md:max-w-45 lg:max-w-full lg:whitespace-nowrap overflow-hidden`}
+    >
+      {children}
+    </div>
+  );
+};
 
-export default Tooltip
+export default Tooltip;

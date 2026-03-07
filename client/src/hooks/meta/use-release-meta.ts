@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query'
-import { ReleaseAPI } from '../../api/release/release-api'
-import { releasesKeys } from '../../query-keys/releases-keys'
+import { useQuery } from "@tanstack/react-query";
+import { ReleaseAPI } from "../../api/release/release-api";
+import { releasesKeys } from "../../query-keys/releases-keys";
 
 /**
  * Custom hook to fetch and manage release metadata, specifically release types.
@@ -12,15 +12,15 @@ import { releasesKeys } from '../../query-keys/releases-keys'
  * - `isLoading`: Boolean indicating if the data is currently being fetched.
  */
 export function useReleaseMeta() {
-	const { data: types = [], isPending } = useQuery({
-		queryKey: releasesKeys.types,
-		queryFn: () => ReleaseAPI.fetchReleaseTypes(),
-		staleTime: Infinity,
-		gcTime: 1000 * 60 * 60 * 24,
-	})
+  const { data: types = [], isPending } = useQuery({
+    queryKey: releasesKeys.types,
+    queryFn: () => ReleaseAPI.fetchReleaseTypes(),
+    staleTime: Infinity,
+    gcTime: 1000 * 60 * 60 * 24,
+  });
 
-	return {
-		types,
-		isLoading: isPending,
-	}
+  return {
+    types,
+    isLoading: isPending,
+  };
 }

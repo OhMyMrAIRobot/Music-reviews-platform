@@ -1,27 +1,27 @@
-import { FC } from 'react'
-import TelegramSvg from '../../../../../components/svg/Telegram-svg'
-import TwitchSvg from '../../../../../components/svg/Twitch-svg'
-import VkSvg from '../../../../../components/svg/Vk-svg'
-import YouTubeSvg from '../../../../../components/svg/YouTube-svg'
-import { SocialMediaEnum } from '../../../../../types/social-media'
+import { FC } from "react";
+import TelegramSvg from "../../../../../components/svg/Telegram-svg";
+import TwitchSvg from "../../../../../components/svg/Twitch-svg";
+import VkSvg from "../../../../../components/svg/Vk-svg";
+import YouTubeSvg from "../../../../../components/svg/YouTube-svg";
+import { SocialMediaEnum } from "../../../../../types/social-media";
 
 interface IProps {
-	name: string
+  name: string;
 }
 
 const ProfileSocialIcon: FC<IProps> = ({ name }) => {
-	switch (name) {
-		case SocialMediaEnum.TELEGRAM:
-			return <TelegramSvg className={'size-5'} />
-		case SocialMediaEnum.TWITCH:
-			return <TwitchSvg className={'size-5'} />
-		case SocialMediaEnum.VK:
-			return <VkSvg className={'size-5'} />
-		case SocialMediaEnum.YOUTUBE:
-			return <YouTubeSvg className={'size-5'} />
-		default:
-			return null
-	}
-}
+  switch (name) {
+    case SocialMediaEnum.TELEGRAM:
+      return <TelegramSvg className={"size-5"} />;
+    case SocialMediaEnum.TWITCH:
+      return <TwitchSvg className={"size-5"} />;
+    case SocialMediaEnum.VK:
+      return <VkSvg className={"size-5"} />;
+    case SocialMediaEnum.YOUTUBE:
+      return <YouTubeSvg className={"size-5"} />;
+    default:
+      return null;
+  }
+};
 
-export default ProfileSocialIcon
+export default ProfileSocialIcon;

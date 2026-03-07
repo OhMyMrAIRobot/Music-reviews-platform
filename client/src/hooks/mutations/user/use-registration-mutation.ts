@@ -1,9 +1,9 @@
-import { useMutation } from '@tanstack/react-query'
-import { AuthAPI } from '../../../api/auth-api'
-import { RegisterData } from '../../../types/auth'
-import { UseMutationParams } from '../../../types/common'
-import { useApiErrorHandler } from '../../use-api-error-handler'
-import { useStore } from '../../use-store'
+import { useMutation } from "@tanstack/react-query";
+import { AuthAPI } from "../../../api/auth-api";
+import { RegisterData } from "../../../types/auth";
+import { UseMutationParams } from "../../../types/common";
+import { useApiErrorHandler } from "../../use-api-error-handler";
+import { useStore } from "../../use-store";
 
 /**
  * Custom React hook returning a React Query mutation that registers a new
@@ -19,30 +19,32 @@ import { useStore } from '../../use-store'
  * @returns The React Query mutation object for user registration.
  */
 export const useRegistrationMutation = ({
-	onSuccess,
-	onError,
-	onSettled,
+  onSuccess,
+  onError,
+  onSettled,
 }: UseMutationParams = {}) => {
-	const { authStore, notificationStore } = useStore()
-	const handleApiError = useApiErrorHandler()
+  const { authStore, notificationStore } = useStore();
+  const handleApiError = useApiErrorHandler();
 
-	const mutation = useMutation({
-		mutationFn: (data: RegisterData) => AuthAPI.register(data),
-		onSuccess: data => {
-			const { user, accessToken, emailSent } = data
-			authStore.setAuthorization(user, accessToken)
-			notificationStore.addSuccessNotification('Вы успешно зарегистрировались!')
-			if (emailSent) {
-				notificationStore.addEmailSentNotification(emailSent)
-			}
-			onSuccess?.()
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Ошибка при регистрации!')
-			onError?.(error)
-		},
-		onSettled,
-	})
+  const mutation = useMutation({
+    mutationFn: (data: RegisterData) => AuthAPI.register(data),
+    onSuccess: (data) => {
+      const { user, accessToken, emailSent } = data;
+      authStore.setAuthorization(user, accessToken);
+      notificationStore.addSuccessNotification(
+        "Вы успешно зарегистрировались!",
+      );
+      if (emailSent) {
+        notificationStore.addEmailSentNotification(emailSent);
+      }
+      onSuccess?.();
+    },
+    onError: (error: unknown) => {
+      handleApiError(error, "Ошибка при регистрации!");
+      onError?.(error);
+    },
+    onSettled,
+  });
 
-	return mutation
-}
+  return mutation;
+};

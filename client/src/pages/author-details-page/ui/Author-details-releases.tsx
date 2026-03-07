@@ -1,60 +1,60 @@
-import { useQuery } from '@tanstack/react-query'
-import { FC } from 'react'
-import { ReleaseAPI } from '../../../api/release/release-api'
-import ReleasesColumn from '../../../components/release/releases-column/Releases-column'
-import { releasesKeys } from '../../../query-keys/releases-keys'
-import { SortOrdersEnum } from '../../../types/common/enums/sort-orders-enum'
+import { useQuery } from "@tanstack/react-query";
+import { FC } from "react";
+import { ReleaseAPI } from "../../../api/release/release-api";
+import ReleasesColumn from "../../../components/release/releases-column/Releases-column";
+import { releasesKeys } from "../../../query-keys/releases-keys";
+import { SortOrdersEnum } from "../../../types/common/enums/sort-orders-enum";
 import {
-	ReleasesQuery,
-	ReleasesSortFieldsEnum,
-	ReleaseTypesEnum,
-} from '../../../types/release'
+  ReleasesQuery,
+  ReleasesSortFieldsEnum,
+  ReleaseTypesEnum,
+} from "../../../types/release";
 
 interface IProps {
-	id: string
+  id: string;
 }
 
 const AuthorDetailsReleases: FC<IProps> = ({ id }) => {
-	const query: ReleasesQuery = {
-		authorId: id,
-		sortField: ReleasesSortFieldsEnum.PUBLISHED,
-		sortOrder: SortOrdersEnum.DESC,
-	}
+  const query: ReleasesQuery = {
+    authorId: id,
+    sortField: ReleasesSortFieldsEnum.PUBLISHED,
+    sortOrder: SortOrdersEnum.DESC,
+  };
 
-	const { data, isPending } = useQuery({
-		queryKey: releasesKeys.list(query),
-		queryFn: () => ReleaseAPI.findAll(query),
-		staleTime: 1000 * 60 * 5,
-	})
+  const { data, isPending } = useQuery({
+    queryKey: releasesKeys.list(query),
+    queryFn: () => ReleaseAPI.findAll(query),
+    staleTime: 1000 * 60 * 5,
+  });
 
-	const releases = data?.items || []
+  const releases = data?.items || [];
 
-	const tracks = releases.filter(
-		val => val.releaseType.type === ReleaseTypesEnum.SINGLE
-	)
+  const tracks = releases.filter(
+    (val) => val.releaseType.type === ReleaseTypesEnum.SINGLE,
+  );
 
-	const albums = releases.filter(
-		val => val.releaseType.type === ReleaseTypesEnum.ALBUM
-	)
+  const albums = releases.filter(
+    (val) => val.releaseType.type === ReleaseTypesEnum.ALBUM,
+  );
 
-	return (
-		<section className='flex flex-col gap-y-2'>
-			<h2 className='text-lg lg:text-2xl font-semibold'>Релизы автора</h2>
-			<div className='grid grid-cols-1 lg:grid-cols-2 gap-5'>
-				<ReleasesColumn
-					title={'Треки'}
-					releases={tracks}
-					isLoading={isPending}
-				/>
+  return (
+    <section className="flex flex-col gap-y-2">
+      <h2 className="text-lg lg:text-2xl font-semibold">Релизы автора</h2>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <ReleasesColumn
+          title={"Треки"}
+          releases={tracks}
+          isLoading={isPending}
+        />
 
-				<ReleasesColumn
-					title={'Альбомы'}
-					releases={albums}
-					isLoading={isPending}
-				/>
-			</div>
-		</section>
-	)
-}
+        <ReleasesColumn
+          title={"Альбомы"}
+          releases={albums}
+          isLoading={isPending}
+        />
+      </div>
+    </section>
+  );
+};
 
-export default AuthorDetailsReleases
+export default AuthorDetailsReleases;

@@ -4,10 +4,10 @@
  * Available user roles in the system.
  */
 export enum RolesEnum {
-	USER = 'Пользователь',
-	MEDIA = 'Медиа',
-	ADMIN = 'Администратор',
-	ROOT_ADMIN = 'Гл. Администратор',
+  USER = "Пользователь",
+  MEDIA = "Медиа",
+  ADMIN = "Администратор",
+  ROOT_ADMIN = "Гл. Администратор",
 }
 
 /**
@@ -16,8 +16,8 @@ export enum RolesEnum {
  * Roles that can be assigned by an Admin.
  */
 export enum AdminAvailableRolesEnum {
-	USER = 'Пользователь',
-	MEDIA = 'Медиа',
+  USER = "Пользователь",
+  MEDIA = "Медиа",
 }
 
 /**
@@ -26,7 +26,7 @@ export enum AdminAvailableRolesEnum {
  * Roles that can be assigned by a Root admin.
  */
 export enum RootAdminAvalaibleRolesEnum {
-	USER = 'Пользователь',
-	MEDIA = 'Медиа',
-	ADMIN = 'Администратор',
+  USER = "Пользователь",
+  MEDIA = "Медиа",
+  ADMIN = "Администратор",
 }

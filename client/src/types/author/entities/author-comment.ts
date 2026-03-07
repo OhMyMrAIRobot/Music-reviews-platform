@@ -1,5 +1,5 @@
-import { AuthorType } from '.'
-import { ReviewUser } from '../../review'
+import { AuthorType } from ".";
+import { ReviewUser } from "../../review";
 
 /**
  * Represents a AuthorComment entity.
@@ -8,30 +8,30 @@ import { ReviewUser } from '../../review'
  * author/user info and related release summary.
  */
 export type AuthorComment = {
-	id: string
-	title: string
-	text: string
-	/** Creation timestamp in ISO format */
-	createdAt: string
-	user: ReviewUser
-	release: Release
-	author: Author
-}
+  id: string;
+  title: string;
+  text: string;
+  /** Creation timestamp in ISO format */
+  createdAt: string;
+  user: ReviewUser;
+  release: Release;
+  author: Author;
+};
 
 /**
  * Release — brief release information included with an author comment.
  */
 type Release = {
-	id: string
-	title: string
-	img: string
-}
+  id: string;
+  title: string;
+  img: string;
+};
 
 /**
  * Author — summary information about the author (types and aggregates).
  */
 type Author = {
-	type: AuthorType[]
-	totalComments: number
-	totalAuthorLikes: number
-}
+  type: AuthorType[];
+  totalComments: number;
+  totalAuthorLikes: number;
+};

@@ -1,1 +1,1 @@
-export * from './platform-stats'
+export * from "./platform-stats";

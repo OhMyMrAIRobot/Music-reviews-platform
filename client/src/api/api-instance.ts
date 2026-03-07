@@ -1,7 +1,7 @@
-import axios from 'axios'
-import { AuthResponse } from '../types/auth'
+import axios from "axios";
+import { AuthResponse } from "../types/auth";
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL
+const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 /**
  * Configured Axios instance for API requests.
@@ -10,21 +10,21 @@ const SERVER_URL = import.meta.env.VITE_SERVER_URL
  * and includes JSON content-type headers.
  */
 export const api = axios.create({
-	baseURL: SERVER_URL,
-	withCredentials: true,
-	headers: {
-		'Content-type': 'application/json',
-	},
-})
+  baseURL: SERVER_URL,
+  withCredentials: true,
+  headers: {
+    "Content-type": "application/json",
+  },
+});
 
 /**
  * Request interceptor to add Authorization header with Bearer token from localStorage.
  * Automatically attaches the access token to every outgoing request.
  */
-api.interceptors.request.use(config => {
-	config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`
-	return config
-})
+api.interceptors.request.use((config) => {
+  config.headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
+  return config;
+});
 
 /**
  * Response interceptor to handle authentication errors and token refresh.
@@ -33,23 +33,23 @@ api.interceptors.request.use(config => {
  * Rejects the promise if refresh fails or for other errors.
  */
 api.interceptors.response.use(
-	config => {
-		return config
-	},
-	async error => {
-		const originalRequest = error.config
-		if (error.response?.status === 401 && !originalRequest._isRetry) {
-			originalRequest._isRetry = true
+  (config) => {
+    return config;
+  },
+  async (error) => {
+    const originalRequest = error.config;
+    if (error.response?.status === 401 && !originalRequest._isRetry) {
+      originalRequest._isRetry = true;
 
-			const { data } = await axios.post<AuthResponse>(
-				`${SERVER_URL}/auth/refresh`,
-				{},
-				{ withCredentials: true }
-			)
-			localStorage.setItem('token', data.accessToken)
-			return api.request(originalRequest)
-		}
+      const { data } = await axios.post<AuthResponse>(
+        `${SERVER_URL}/auth/refresh`,
+        {},
+        { withCredentials: true },
+      );
+      localStorage.setItem("token", data.accessToken);
+      return api.request(originalRequest);
+    }
 
-		return Promise.reject(error)
-	}
-)
+    return Promise.reject(error);
+  },
+);

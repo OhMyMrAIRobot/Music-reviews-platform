@@ -1,1 +1,1 @@
-export * from './nomination-types-enum'
+export * from "./nomination-types-enum";

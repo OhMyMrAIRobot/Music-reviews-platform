@@ -2,6 +2,6 @@
  * Represents an `AuthorType` entity.
  */
 export type AuthorType = {
-	id: string
-	type: string
-}
+  id: string;
+  type: string;
+};

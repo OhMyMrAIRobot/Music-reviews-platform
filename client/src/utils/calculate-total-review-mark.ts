@@ -1,15 +1,15 @@
-import { ReviewValues } from '../types/review'
+import { ReviewValues } from "../types/review";
 
 export const calculateTotalReviewMark = (
-	reviewData: Omit<ReviewValues, 'total'>
+  reviewData: Omit<ReviewValues, "total">,
 ): number => {
-	const baseScore =
-		reviewData.rhymes +
-		reviewData.structure +
-		reviewData.realization +
-		reviewData.individuality
-	const multipliedBaseScore = baseScore * 1.4
-	const atmosphereMultiplier = 1 + (reviewData.atmosphere - 1) * 0.06747
+  const baseScore =
+    reviewData.rhymes +
+    reviewData.structure +
+    reviewData.realization +
+    reviewData.individuality;
+  const multipliedBaseScore = baseScore * 1.4;
+  const atmosphereMultiplier = 1 + (reviewData.atmosphere - 1) * 0.06747;
 
-	return Math.round(multipliedBaseScore * atmosphereMultiplier)
-}
+  return Math.round(multipliedBaseScore * atmosphereMultiplier);
+};

@@ -1,11 +1,11 @@
 export type PlatformStats = {
-	totalUsers: number
-	registeredAuthors: number
-	authorLikes: number
-	authorComments: number
-	totalTracks: number
-	totalAlbums: number
-	mediaReviews: number
-	reviews: number
-	withoutTextRatings: number
-}
+  totalUsers: number;
+  registeredAuthors: number;
+  authorLikes: number;
+  authorComments: number;
+  totalTracks: number;
+  totalAlbums: number;
+  mediaReviews: number;
+  reviews: number;
+  withoutTextRatings: number;
+};

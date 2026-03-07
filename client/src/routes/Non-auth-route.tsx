@@ -1,14 +1,14 @@
-import { observer } from 'mobx-react-lite'
-import { Navigate, Outlet } from 'react-router'
-import { useStore } from '../hooks/use-store'
-import { ROUTES } from './routes-enum'
+import { observer } from "mobx-react-lite";
+import { Navigate, Outlet } from "react-router";
+import { useStore } from "../hooks/use-store";
+import { ROUTES } from "./routes-enum";
 
 const NonAuthRoute = observer(() => {
-	const { authStore } = useStore()
+  const { authStore } = useStore();
 
-	if (authStore.isUserLoading) return
+  if (authStore.isUserLoading) return;
 
-	return authStore.isAuth ? <Navigate to={ROUTES.MAIN} replace /> : <Outlet />
-})
+  return authStore.isAuth ? <Navigate to={ROUTES.MAIN} replace /> : <Outlet />;
+});
 
-export default NonAuthRoute
+export default NonAuthRoute;

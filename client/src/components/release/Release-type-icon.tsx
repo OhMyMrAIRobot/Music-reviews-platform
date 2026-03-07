@@ -1,22 +1,22 @@
-import { FC } from 'react'
-import { ReleaseTypesEnum } from '../../types/release'
-import AlbumSvg from './svg/Album-svg'
-import SingleSvg from './svg/Single-svg'
+import { FC } from "react";
+import { ReleaseTypesEnum } from "../../types/release";
+import AlbumSvg from "./svg/Album-svg";
+import SingleSvg from "./svg/Single-svg";
 
 interface IProps {
-	type: string
-	className: string
+  type: string;
+  className: string;
 }
 
 const ReleaseTypeIcon: FC<IProps> = ({ type, className }) => {
-	switch (type) {
-		case ReleaseTypesEnum.ALBUM:
-			return <AlbumSvg className={className} />
-		case ReleaseTypesEnum.SINGLE:
-			return <SingleSvg className={className} />
-		default:
-			return null
-	}
-}
+  switch (type) {
+    case ReleaseTypesEnum.ALBUM:
+      return <AlbumSvg className={className} />;
+    case ReleaseTypesEnum.SINGLE:
+      return <SingleSvg className={className} />;
+    default:
+      return null;
+  }
+};
 
-export default ReleaseTypeIcon
+export default ReleaseTypeIcon;

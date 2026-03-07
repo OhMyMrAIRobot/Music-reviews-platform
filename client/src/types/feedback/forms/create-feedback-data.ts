@@ -7,12 +7,12 @@
  * - `message` must be a non-empty string 100..4000 chars
  */
 export type CreateFeedbackData = {
-	/** Sender e-mail address. */
-	email: string
+  /** Sender e-mail address. */
+  email: string;
 
-	/** Short title/subject for the feedback message. */
-	title: string
+  /** Short title/subject for the feedback message. */
+  title: string;
 
-	/** Full feedback message body. */
-	message: string
-}
+  /** Full feedback message body. */
+  message: string;
+};

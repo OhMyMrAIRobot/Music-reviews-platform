@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router'
+import { useLocation } from "react-router";
 
 /**
  * Custom hook to determine if a given path is the currently active route.
@@ -9,17 +9,17 @@ import { useLocation } from 'react-router'
  * - `isActive`: Function to check if a target path matches the current pathname.
  */
 export const useActivePath = () => {
-	const { pathname } = useLocation()
+  const { pathname } = useLocation();
 
-	/**
-	 * Checks if the provided target path exactly matches the current pathname.
-	 *
-	 * @param targetPath - The path to compare against the current pathname.
-	 * @returns True if the target path matches the current pathname, false otherwise.
-	 */
-	const isActive = (targetPath: string) => {
-		return pathname === targetPath
-	}
+  /**
+   * Checks if the provided target path exactly matches the current pathname.
+   *
+   * @param targetPath - The path to compare against the current pathname.
+   * @returns True if the target path matches the current pathname, false otherwise.
+   */
+  const isActive = (targetPath: string) => {
+    return pathname === targetPath;
+  };
 
-	return { isActive }
-}
+  return { isActive };
+};

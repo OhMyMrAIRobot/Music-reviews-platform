@@ -1,4 +1,4 @@
-import { ProfilePreference } from '..'
+import { ProfilePreference } from "..";
 
 /**
  * Response with the profile's preferences.
@@ -7,18 +7,18 @@ import { ProfilePreference } from '..'
  * `artists`, `producers`, `tracks` and `albums`.
  */
 export type ProfilePreferencesResponse = {
-	/** User unique identifier */
-	userId: string
+  /** User unique identifier */
+  userId: string;
 
-	/** List of favorite artists */
-	artists: ProfilePreference[]
+  /** List of favorite artists */
+  artists: ProfilePreference[];
 
-	/** List of favorite producers */
-	producers: ProfilePreference[]
+  /** List of favorite producers */
+  producers: ProfilePreference[];
 
-	/** List of favorite tracks */
-	tracks: ProfilePreference[]
+  /** List of favorite tracks */
+  tracks: ProfilePreference[];
 
-	/** List of favorite albums */
-	albums: ProfilePreference[]
-}
+  /** List of favorite albums */
+  albums: ProfilePreference[];
+};

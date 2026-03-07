@@ -1,1 +1,1 @@
-export * from './album-values-response'
+export * from "./album-values-response";

@@ -6,8 +6,8 @@
  * - `feedbackId` must be a valid entity id
  */
 export type CreateFeedbackReplyData = {
-	/** Full reply message to be sent to the user. */
-	message: string
-	/** Parent feedback id this reply belongs to. */
-	feedbackId: string
-}
+  /** Full reply message to be sent to the user. */
+  message: string;
+  /** Parent feedback id this reply belongs to. */
+  feedbackId: string;
+};

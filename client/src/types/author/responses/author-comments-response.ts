@@ -1,4 +1,4 @@
-import { AuthorComment } from '../entities'
+import { AuthorComment } from "../entities";
 
 /**
  * AuthorCommentsResponse — standard paginated response shape returned by
@@ -6,14 +6,14 @@ import { AuthorComment } from '../entities'
  * `AuthorComment`) and `meta` information.
  */
 export type AuthorCommentsResponse = {
-	meta: MetaInfo
-	items: AuthorComment[]
-}
+  meta: MetaInfo;
+  items: AuthorComment[];
+};
 
 /**
  * MetaInfo — pagination and metadata for author-comments list responses.
  */
 type MetaInfo = {
-	/** Total number of matching comments */
-	count: number
-}
+  /** Total number of matching comments */
+  count: number;
+};

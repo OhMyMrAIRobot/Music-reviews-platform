@@ -1,2 +1,2 @@
-export * from './release-media-response'
-export * from './releases-response'
+export * from "./release-media-response";
+export * from "./releases-response";

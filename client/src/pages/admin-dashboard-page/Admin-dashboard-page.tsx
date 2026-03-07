@@ -1,15 +1,15 @@
-import { Outlet } from 'react-router'
-import AdminSidebar from '../../components/layout/admin-sidebar/Admin-sidebar'
+import { Outlet } from "react-router";
+import AdminSidebar from "../../components/layout/admin-sidebar/Admin-sidebar";
 
 const AdminDashboardPage = () => {
-	return (
-		<div className='bg-white/5 flex'>
-			<AdminSidebar />
-			<div className='ml-12 lg:ml-55 w-full relative'>
-				<Outlet />
-			</div>
-		</div>
-	)
-}
+  return (
+    <div className="bg-white/5 flex">
+      <AdminSidebar />
+      <div className="ml-12 lg:ml-55 w-full relative">
+        <Outlet />
+      </div>
+    </div>
+  );
+};
 
-export default AdminDashboardPage
+export default AdminDashboardPage;

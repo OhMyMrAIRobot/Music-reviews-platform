@@ -1,10 +1,10 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { FeedbackReplyAPI } from '../../../../api/feedback/feedback-reply-api'
-import { feedbackKeys } from '../../../../query-keys/feedback-keys'
-import { UseMutationParams } from '../../../../types/common'
-import { CreateFeedbackReplyData } from '../../../../types/feedback'
-import { useApiErrorHandler } from '../../../use-api-error-handler'
-import { useStore } from '../../../use-store'
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { FeedbackReplyAPI } from "../../../../api/feedback/feedback-reply-api";
+import { feedbackKeys } from "../../../../query-keys/feedback-keys";
+import { UseMutationParams } from "../../../../types/common";
+import { CreateFeedbackReplyData } from "../../../../types/feedback";
+import { useApiErrorHandler } from "../../../use-api-error-handler";
+import { useStore } from "../../../use-store";
 /**
  * Custom React hook returning a React Query mutation for creating a reply to
  * a user feedback.
@@ -16,28 +16,28 @@ import { useStore } from '../../../use-store'
  * @returns The React Query mutation object for creating feedback replies.
  */
 export const useAdminCreateFeedbackReplyMutation = ({
-	onSuccess,
-	onError,
-	onSettled,
+  onSuccess,
+  onError,
+  onSettled,
 }: UseMutationParams = {}) => {
-	const { notificationStore } = useStore()
-	const queryClient = useQueryClient()
-	const handleApiError = useApiErrorHandler()
+  const { notificationStore } = useStore();
+  const queryClient = useQueryClient();
+  const handleApiError = useApiErrorHandler();
 
-	const mutation = useMutation({
-		mutationFn: (replyData: CreateFeedbackReplyData) =>
-			FeedbackReplyAPI.create(replyData),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification('Ответ успешно отправлен!')
-			queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
-			onSuccess?.()
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Не удалось отправить ответ')
-			onError?.(error)
-		},
-		onSettled,
-	})
+  const mutation = useMutation({
+    mutationFn: (replyData: CreateFeedbackReplyData) =>
+      FeedbackReplyAPI.create(replyData),
+    onSuccess: () => {
+      notificationStore.addSuccessNotification("Ответ успешно отправлен!");
+      queryClient.invalidateQueries({ queryKey: feedbackKeys.all });
+      onSuccess?.();
+    },
+    onError: (error: unknown) => {
+      handleApiError(error, "Не удалось отправить ответ");
+      onError?.(error);
+    },
+    onSettled,
+  });
 
-	return mutation
-}
+  return mutation;
+};

@@ -1,2 +1,2 @@
-export * from './author-nominations'
-export * from './author-release-type-rating'
+export * from "./author-nominations";
+export * from "./author-release-type-rating";

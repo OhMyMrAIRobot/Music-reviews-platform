@@ -1,21 +1,21 @@
-import { FC, ReactNode, useState } from 'react'
-import { SidebarOverlayContext } from '../contexts/sidebar-overlay-context'
+import { FC, ReactNode, useState } from "react";
+import { SidebarOverlayContext } from "../contexts/sidebar-overlay-context";
 
 interface IProps {
-	children: ReactNode
+  children: ReactNode;
 }
 
 export const SidebarOverlayProvider: FC<IProps> = ({ children }) => {
-	const [isSidebarOverlayOpen, setIsSidebarOverlayOpen] = useState(false)
+  const [isSidebarOverlayOpen, setIsSidebarOverlayOpen] = useState(false);
 
-	const openSidebarOverlay = () => setIsSidebarOverlayOpen(true)
-	const closeSidebarOverlay = () => setIsSidebarOverlayOpen(false)
+  const openSidebarOverlay = () => setIsSidebarOverlayOpen(true);
+  const closeSidebarOverlay = () => setIsSidebarOverlayOpen(false);
 
-	return (
-		<SidebarOverlayContext.Provider
-			value={{ isSidebarOverlayOpen, openSidebarOverlay, closeSidebarOverlay }}
-		>
-			{children}
-		</SidebarOverlayContext.Provider>
-	)
-}
+  return (
+    <SidebarOverlayContext.Provider
+      value={{ isSidebarOverlayOpen, openSidebarOverlay, closeSidebarOverlay }}
+    >
+      {children}
+    </SidebarOverlayContext.Provider>
+  );
+};

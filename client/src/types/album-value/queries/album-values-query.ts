@@ -1,5 +1,5 @@
-import { AlbumValueTiersEnum } from '..'
-import { SortOrder } from '../../common/types/sort-order'
+import { AlbumValueTiersEnum } from "..";
+import { SortOrder } from "../../common/types/sort-order";
 
 /**
  * Query for listing album values.
@@ -8,15 +8,15 @@ import { SortOrder } from '../../common/types/sort-order'
  * are optional and control filtering, sorting and pagination of results.
  */
 export class AlbumValuesQuery {
-	/** Optional sort order for numeric fields (asc/desc). */
-	sortOrder?: SortOrder
+  /** Optional sort order for numeric fields (asc/desc). */
+  sortOrder?: SortOrder;
 
-	/** Optional list of tier slugs to filter results to specific tiers. */
-	tiers?: AlbumValueTiersEnum[]
+  /** Optional list of tier slugs to filter results to specific tiers. */
+  tiers?: AlbumValueTiersEnum[];
 
-	/** Optional integer limit for pagination. */
-	limit?: number
+  /** Optional integer limit for pagination. */
+  limit?: number;
 
-	/** Optional integer offset for pagination. */
-	offset?: number
+  /** Optional integer offset for pagination. */
+  offset?: number;
 }

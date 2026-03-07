@@ -1,13 +1,13 @@
-import { useMutation } from '@tanstack/react-query'
-import { AuthAPI } from '../../../api/auth-api'
+import { useMutation } from "@tanstack/react-query";
+import { AuthAPI } from "../../../api/auth-api";
 import {
-	AuthEmailSentStatusResponse,
-	SendResetPasswordData,
-} from '../../../types/auth'
-import { UseMutationParams } from '../../../types/common'
-import { generateUUID } from '../../../utils/generate-uuid'
-import { useApiErrorHandler } from '../../use-api-error-handler'
-import { useStore } from '../../use-store'
+  AuthEmailSentStatusResponse,
+  SendResetPasswordData,
+} from "../../../types/auth";
+import { UseMutationParams } from "../../../types/common";
+import { generateUUID } from "../../../utils/generate-uuid";
+import { useApiErrorHandler } from "../../use-api-error-handler";
+import { useStore } from "../../use-store";
 
 /**
  * Custom React hook returning a React Query mutation that requests a password
@@ -21,45 +21,45 @@ import { useStore } from '../../use-store'
  *   The React Query mutation object for requesting password reset.
  */
 export const useRequestResetPasswordMutation = ({
-	onSuccess,
-	onError,
-	onSettled,
+  onSuccess,
+  onError,
+  onSettled,
 }: UseMutationParams = {}) => {
-	const { notificationStore } = useStore()
-	const handleApiError = useApiErrorHandler()
+  const { notificationStore } = useStore();
+  const handleApiError = useApiErrorHandler();
 
-	const mutation = useMutation({
-		mutationFn: (data: SendResetPasswordData) =>
-			AuthAPI.sendResetPassword(data),
-		onSuccess: data => {
-			handleResponse(data)
-			onSuccess?.()
-		},
-		onError: (error: unknown) => {
-			handleApiError(
-				error,
-				'Ошибка при отправке письма для восстановления пароля!',
-			)
-			onError?.(error)
-		},
-		onSettled,
-	})
+  const mutation = useMutation({
+    mutationFn: (data: SendResetPasswordData) =>
+      AuthAPI.sendResetPassword(data),
+    onSuccess: (data) => {
+      handleResponse(data);
+      onSuccess?.();
+    },
+    onError: (error: unknown) => {
+      handleApiError(
+        error,
+        "Ошибка при отправке письма для восстановления пароля!",
+      );
+      onError?.(error);
+    },
+    onSettled,
+  });
 
-	const handleResponse = (data: AuthEmailSentStatusResponse) => {
-		if (data.emailSent) {
-			notificationStore.addNotification({
-				id: generateUUID(),
-				text: 'Письмо с инструкциями по восстановлению пароля отправлено на вашу почту!',
-				isError: false,
-			})
-		} else {
-			notificationStore.addNotification({
-				id: generateUUID(),
-				text: 'Ошибка при отправке письма для восстановления пароля. Повторите попытку позже!',
-				isError: true,
-			})
-		}
-	}
+  const handleResponse = (data: AuthEmailSentStatusResponse) => {
+    if (data.emailSent) {
+      notificationStore.addNotification({
+        id: generateUUID(),
+        text: "Письмо с инструкциями по восстановлению пароля отправлено на вашу почту!",
+        isError: false,
+      });
+    } else {
+      notificationStore.addNotification({
+        id: generateUUID(),
+        text: "Ошибка при отправке письма для восстановления пароля. Повторите попытку позже!",
+        isError: true,
+      });
+    }
+  };
 
-	return mutation
-}
+  return mutation;
+};

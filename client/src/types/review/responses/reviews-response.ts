@@ -1,4 +1,4 @@
-import { Review } from '../entities'
+import { Review } from "../entities";
 
 /**
  * ReviewsResponse
@@ -7,15 +7,15 @@ import { Review } from '../entities'
  * array and a `meta` object with pagination/statistics fields.
  */
 export type ReviewsResponse = {
-	/** Array of review items matching the query */
-	items: Review[]
+  /** Array of review items matching the query */
+  items: Review[];
 
-	/** Additional metadata about the result set */
-	meta: MetaInfo
-}
+  /** Additional metadata about the result set */
+  meta: MetaInfo;
+};
 
 /** Metadata returned with review lists */
 type MetaInfo = {
-	/** Total number of reviews matching the filters */
-	count: number
-}
+  /** Total number of reviews matching the filters */
+  count: number;
+};

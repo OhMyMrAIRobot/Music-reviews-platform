@@ -1,14 +1,14 @@
-import { AuthorConfirmationStatusesEnum } from '../types/author'
+import { AuthorConfirmationStatusesEnum } from "../types/author";
 
 export const getAuthorConfirmationStatusColor = (status: string): string => {
-	switch (status) {
-		case AuthorConfirmationStatusesEnum.APPROVED:
-			return 'text-green-600'
-		case AuthorConfirmationStatusesEnum.PENDING:
-			return 'text-yellow-600'
-		case AuthorConfirmationStatusesEnum.REJECTED:
-			return 'text-red-600'
-		default:
-			return ''
-	}
-}
+  switch (status) {
+    case AuthorConfirmationStatusesEnum.APPROVED:
+      return "text-green-600";
+    case AuthorConfirmationStatusesEnum.PENDING:
+      return "text-yellow-600";
+    case AuthorConfirmationStatusesEnum.REJECTED:
+      return "text-red-600";
+    default:
+      return "";
+  }
+};

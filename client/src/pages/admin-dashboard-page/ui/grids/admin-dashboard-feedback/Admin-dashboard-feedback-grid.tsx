@@ -1,146 +1,146 @@
-import { useQuery } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
-import { FeedbackAPI } from '../../../../../api/feedback/feedback-api'
-import FeedbackStatusIcon from '../../../../../components/feedback/Feedback-status-icon'
-import AdminHeader from '../../../../../components/layout/admin-header/Admin-header'
-import Pagination from '../../../../../components/pagination/Pagination'
-import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
-import { useFeedbackMeta } from '../../../../../hooks/meta'
-import { feedbackKeys } from '../../../../../query-keys/feedback-keys'
-import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum'
-import { SortOrder } from '../../../../../types/common/types/sort-order'
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { FeedbackAPI } from "../../../../../api/feedback/feedback-api";
+import FeedbackStatusIcon from "../../../../../components/feedback/Feedback-status-icon";
+import AdminHeader from "../../../../../components/layout/admin-header/Admin-header";
+import Pagination from "../../../../../components/pagination/Pagination";
+import SkeletonLoader from "../../../../../components/utils/Skeleton-loader";
+import { useFeedbackMeta } from "../../../../../hooks/meta";
+import { feedbackKeys } from "../../../../../query-keys/feedback-keys";
+import { SortOrdersEnum } from "../../../../../types/common/enums/sort-orders-enum";
+import { SortOrder } from "../../../../../types/common/types/sort-order";
 import {
-	FeedbackQuery,
-	FeedbackStatusesFilterEnum,
-} from '../../../../../types/feedback'
-import AdminFilterButton from '../../buttons/Admin-filter-button'
-import AdminDashboardFeedbackGridItem from './Admin-dashboard-feedback-grid-item'
+  FeedbackQuery,
+  FeedbackStatusesFilterEnum,
+} from "../../../../../types/feedback";
+import AdminFilterButton from "../../buttons/Admin-filter-button";
+import AdminDashboardFeedbackGridItem from "./Admin-dashboard-feedback-grid-item";
 
-const limit = 10
+const limit = 10;
 
 const AdminDashboardFeedbackGrid = () => {
-	const { statuses, isLoading: isMetaLoading } = useFeedbackMeta()
+  const { statuses, isLoading: isMetaLoading } = useFeedbackMeta();
 
-	const [searchText, setSearchText] = useState<string>('')
-	const [currentPage, setCurrentPage] = useState<number>(1)
-	const [activeStatus, setActiveStatus] = useState<string>(
-		FeedbackStatusesFilterEnum.ALL,
-	)
-	const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC)
+  const [searchText, setSearchText] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [activeStatus, setActiveStatus] = useState<string>(
+    FeedbackStatusesFilterEnum.ALL,
+  );
+  const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC);
 
-	const statusId =
-		activeStatus !== FeedbackStatusesFilterEnum.ALL
-			? statuses.find(status => status.status === activeStatus)?.id
-			: undefined
+  const statusId =
+    activeStatus !== FeedbackStatusesFilterEnum.ALL
+      ? statuses.find((status) => status.status === activeStatus)?.id
+      : undefined;
 
-	const query: FeedbackQuery = {
-		statusId,
-		search: searchText.trim() || undefined,
-		order,
-		limit,
-		offset: (currentPage - 1) * limit,
-	}
+  const query: FeedbackQuery = {
+    statusId,
+    search: searchText.trim() || undefined,
+    order,
+    limit,
+    offset: (currentPage - 1) * limit,
+  };
 
-	const { data, isPending: isFeedbackLoading } = useQuery({
-		queryKey: feedbackKeys.list(query),
-		queryFn: () => FeedbackAPI.findAll(query),
-		enabled: !isMetaLoading,
-		staleTime: 1000 * 60 * 5,
-	})
+  const { data, isPending: isFeedbackLoading } = useQuery({
+    queryKey: feedbackKeys.list(query),
+    queryFn: () => FeedbackAPI.findAll(query),
+    enabled: !isMetaLoading,
+    staleTime: 1000 * 60 * 5,
+  });
 
-	const feedback = data?.items || []
-	const count = data?.meta.count || 0
+  const feedback = data?.items || [];
+  const count = data?.meta.count || 0;
 
-	useEffect(() => {
-		setCurrentPage(1)
-	}, [searchText, activeStatus])
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchText, activeStatus]);
 
-	const isLoading = isMetaLoading || isFeedbackLoading
+  const isLoading = isMetaLoading || isFeedbackLoading;
 
-	return (
-		<div className='flex flex-col h-screen' id='admin-feedback'>
-			<AdminHeader title={'Сообщения'} setText={setSearchText} />
+  return (
+    <div className="flex flex-col h-screen" id="admin-feedback">
+      <AdminHeader title={"Сообщения"} setText={setSearchText} />
 
-			<div
-				id='admin-feedback-grid'
-				className='flex flex-col overflow-hidden p-5'
-			>
-				<div className='flex flex-wrap gap-y-2 xl:mb-5 text-white/80 border-b border-white/10'>
-					{isMetaLoading
-						? Array.from({ length: 5 }).map((_, idx) => (
-								<SkeletonLoader
-									key={`skeleton-button-${idx}`}
-									className='w-20 h-4 rounded-lg mr-5 mb-1'
-								/>
-							))
-						: Object.values(FeedbackStatusesFilterEnum).map(option => (
-								<AdminFilterButton
-									key={option}
-									title={
-										<span className={`flex items-center px-2 gap-x-1`}>
-											<FeedbackStatusIcon status={option} className='size-5' />
-											{option}
-										</span>
-									}
-									isActive={activeStatus === option}
-									onClick={() => setActiveStatus(option)}
-								/>
-							))}
-				</div>
+      <div
+        id="admin-feedback-grid"
+        className="flex flex-col overflow-hidden p-5"
+      >
+        <div className="flex flex-wrap gap-y-2 xl:mb-5 text-white/80 border-b border-white/10">
+          {isMetaLoading
+            ? Array.from({ length: 5 }).map((_, idx) => (
+                <SkeletonLoader
+                  key={`skeleton-button-${idx}`}
+                  className="w-20 h-4 rounded-lg mr-5 mb-1"
+                />
+              ))
+            : Object.values(FeedbackStatusesFilterEnum).map((option) => (
+                <AdminFilterButton
+                  key={option}
+                  title={
+                    <span className={`flex items-center px-2 gap-x-1`}>
+                      <FeedbackStatusIcon status={option} className="size-5" />
+                      {option}
+                    </span>
+                  }
+                  isActive={activeStatus === option}
+                  onClick={() => setActiveStatus(option)}
+                />
+              ))}
+        </div>
 
-				<AdminDashboardFeedbackGridItem
-					className='bg-white/5 font-medium max-xl:hidden'
-					order={order}
-					toggleOrder={() =>
-						setOrder(
-							order === SortOrdersEnum.DESC
-								? SortOrdersEnum.ASC
-								: SortOrdersEnum.DESC,
-						)
-					}
-					isLoading={isLoading}
-				/>
+        <AdminDashboardFeedbackGridItem
+          className="bg-white/5 font-medium max-xl:hidden"
+          order={order}
+          toggleOrder={() =>
+            setOrder(
+              order === SortOrdersEnum.DESC
+                ? SortOrdersEnum.ASC
+                : SortOrdersEnum.DESC,
+            )
+          }
+          isLoading={isLoading}
+        />
 
-				<div className='flex-1 overflow-y-auto mt-5'>
-					<div className='grid gap-y-5'>
-						{isLoading
-							? Array.from({ length: limit }).map((_, idx) => (
-									<AdminDashboardFeedbackGridItem
-										key={`Feedback-skeleton-${idx}`}
-										isLoading={true}
-									/>
-								))
-							: feedback.map((feedbackItem, idx) => (
-									<AdminDashboardFeedbackGridItem
-										key={feedbackItem.id}
-										feedback={feedbackItem}
-										isLoading={false}
-										position={(currentPage - 1) * limit + idx + 1}
-									/>
-								))}
-					</div>
-				</div>
+        <div className="flex-1 overflow-y-auto mt-5">
+          <div className="grid gap-y-5">
+            {isLoading
+              ? Array.from({ length: limit }).map((_, idx) => (
+                  <AdminDashboardFeedbackGridItem
+                    key={`Feedback-skeleton-${idx}`}
+                    isLoading={true}
+                  />
+                ))
+              : feedback.map((feedbackItem, idx) => (
+                  <AdminDashboardFeedbackGridItem
+                    key={feedbackItem.id}
+                    feedback={feedbackItem}
+                    isLoading={false}
+                    position={(currentPage - 1) * limit + idx + 1}
+                  />
+                ))}
+          </div>
+        </div>
 
-				{!isLoading && count === 0 && (
-					<span className='font-medium mx-auto mt-5 text-lg'>
-						Сообщения не найдены!
-					</span>
-				)}
+        {!isLoading && count === 0 && (
+          <span className="font-medium mx-auto mt-5 text-lg">
+            Сообщения не найдены!
+          </span>
+        )}
 
-				{!isLoading && count > 0 && (
-					<div className='mt-5'>
-						<Pagination
-							currentPage={currentPage}
-							totalItems={count}
-							itemsPerPage={limit}
-							setCurrentPage={setCurrentPage}
-							idToScroll={'admin-feedback-grid'}
-						/>
-					</div>
-				)}
-			</div>
-		</div>
-	)
-}
+        {!isLoading && count > 0 && (
+          <div className="mt-5">
+            <Pagination
+              currentPage={currentPage}
+              totalItems={count}
+              itemsPerPage={limit}
+              setCurrentPage={setCurrentPage}
+              idToScroll={"admin-feedback-grid"}
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
-export default AdminDashboardFeedbackGrid
+export default AdminDashboardFeedbackGrid;

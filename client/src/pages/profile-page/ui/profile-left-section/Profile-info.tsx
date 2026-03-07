@@ -1,66 +1,66 @@
-import { FC } from 'react'
-import RegisteredAuthorTypes from '../../../../components/author/registered-author/Registered-author-types'
-import UserRoleSpan from '../../../../components/user/User-role-span'
-import { Profile } from '../../../../types/profile'
-import ProfileSocialItem from './profile-social-item/Profile-social-item'
+import { FC } from "react";
+import RegisteredAuthorTypes from "../../../../components/author/registered-author/Registered-author-types";
+import UserRoleSpan from "../../../../components/user/User-role-span";
+import { Profile } from "../../../../types/profile";
+import ProfileSocialItem from "./profile-social-item/Profile-social-item";
 
 interface IProps {
-	profile: Profile
+  profile: Profile;
 }
 
 const ProfileInfo: FC<IProps> = ({ profile }) => {
-	return (
-		<div className='xl:border xl:border-white/10 p-5 -mt-20 xl:mt-0 xl:bg-zinc-900 flex flex-col items-center rounded-2xl'>
-			<div className='relative select-none'>
-				<img
-					loading='lazy'
-					decoding='async'
-					src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-						profile.avatar === ''
-							? import.meta.env.VITE_DEFAULT_AVATAR
-							: profile.avatar
-					}`}
-					className='rounded-full size-[100px] lg:size-[130px] block aspect-square object-cover'
-				/>
-			</div>
+  return (
+    <div className="xl:border xl:border-white/10 p-5 -mt-20 xl:mt-0 xl:bg-zinc-900 flex flex-col items-center rounded-2xl">
+      <div className="relative select-none">
+        <img
+          loading="lazy"
+          decoding="async"
+          src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
+            profile.avatar === ""
+              ? import.meta.env.VITE_DEFAULT_AVATAR
+              : profile.avatar
+          }`}
+          className="rounded-full size-[100px] lg:size-[130px] block aspect-square object-cover"
+        />
+      </div>
 
-			<h1 className='text-xl text-center lg:text-[24px] font-bold mt-2.5 flex items-center gap-1.5'>
-				<div>{profile.user.nickname}</div>
+      <h1 className="text-xl text-center lg:text-[24px] font-bold mt-2.5 flex items-center gap-1.5">
+        <div>{profile.user.nickname}</div>
 
-				<UserRoleSpan role={profile.user.role.role} />
-				{profile.user.isAuthor && (
-					<RegisteredAuthorTypes
-						className={'size-7'}
-						types={profile.user.authorTypes}
-					/>
-				)}
-			</h1>
+        <UserRoleSpan role={profile.user.role.role} />
+        {profile.user.isAuthor && (
+          <RegisteredAuthorTypes
+            className={"size-7"}
+            types={profile.user.authorTypes}
+          />
+        )}
+      </h1>
 
-			<div className='text-sm text-zinc-400 font-medium'>
-				Дата регистрации: {profile.createdAt}
-			</div>
+      <div className="text-sm text-zinc-400 font-medium">
+        Дата регистрации: {profile.createdAt}
+      </div>
 
-			{profile.bio && (
-				<div className='text-sm leading-5 mt-2.5 text-zinc-300 text-center'>
-					{profile.bio}
-				</div>
-			)}
+      {profile.bio && (
+        <div className="text-sm leading-5 mt-2.5 text-zinc-300 text-center">
+          {profile.bio}
+        </div>
+      )}
 
-			<div className='flex space-x-2 mt-5'>
-				{profile.socials.map(
-					social =>
-						social.name &&
-						social.url && (
-							<ProfileSocialItem
-								name={social.name}
-								href={social.url}
-								key={social.name}
-							/>
-						)
-				)}
-			</div>
-		</div>
-	)
-}
+      <div className="flex space-x-2 mt-5">
+        {profile.socials.map(
+          (social) =>
+            social.name &&
+            social.url && (
+              <ProfileSocialItem
+                name={social.name}
+                href={social.url}
+                key={social.name}
+              />
+            ),
+        )}
+      </div>
+    </div>
+  );
+};
 
-export default ProfileInfo
+export default ProfileInfo;

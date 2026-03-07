@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query'
-import { AuthorAPI } from '../../api/author/author-api'
-import { authorsKeys } from '../../query-keys/authors-keys'
+import { useQuery } from "@tanstack/react-query";
+import { AuthorAPI } from "../../api/author/author-api";
+import { authorsKeys } from "../../query-keys/authors-keys";
 
 /**
  * Custom hook to fetch and manage author types metadata.
@@ -12,15 +12,15 @@ import { authorsKeys } from '../../query-keys/authors-keys'
  * - `isLoading`: Boolean indicating if the data is currently being fetched.
  */
 export function useAuthorMeta() {
-	const { data: types = [], isPending } = useQuery({
-		queryKey: authorsKeys.types,
-		queryFn: () => AuthorAPI.fetchAuthorTypes(),
-		staleTime: Infinity,
-		gcTime: 1000 * 60 * 60 * 24,
-	})
+  const { data: types = [], isPending } = useQuery({
+    queryKey: authorsKeys.types,
+    queryFn: () => AuthorAPI.fetchAuthorTypes(),
+    staleTime: Infinity,
+    gcTime: 1000 * 60 * 60 * 24,
+  });
 
-	return {
-		types,
-		isLoading: isPending,
-	}
+  return {
+    types,
+    isLoading: isPending,
+  };
 }
