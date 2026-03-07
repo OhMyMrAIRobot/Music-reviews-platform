@@ -1,3 +1,4 @@
+export * from './lyrics'
 export * from './release'
 export * from './release-media'
 export * from './release-media-status'
