@@ -5,6 +5,7 @@ import { AlbumValueVotesModule } from 'src/album-value-votes/album-value-votes.m
 import { AlbumValuesModule } from 'src/album-values/album-values.module';
 import { NominationTypesModule } from 'src/nomination-types/nomination-types.module';
 import { NominationsModule } from 'src/nominations/nominations.module';
+import { ReleaseLyricsModule } from 'src/release-lyrics/release-lyrics.module';
 import { AuthModule } from '../auth/auth.module';
 import { AuthorCommentsModule } from '../author-comments/author-comments.module';
 import { AuthorConfirmationStatusesModule } from '../author-confirmation-statuses/author-confirmation-statuses.module';
@@ -70,6 +71,7 @@ import { AppService } from './app.service';
     NominationTypesModule,
     AlbumValueVotesModule,
     AlbumValuesModule,
+    ReleaseLyricsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

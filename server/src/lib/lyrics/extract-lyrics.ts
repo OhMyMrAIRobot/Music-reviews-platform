@@ -3,7 +3,6 @@ import axios from 'axios';
 import * as cheerio from 'cheerio';
 
 export async function extractLyrics(url: string) {
-  console.log(url);
   const { data } = await axios.get(url);
 
   const $ = cheerio.load(data);
