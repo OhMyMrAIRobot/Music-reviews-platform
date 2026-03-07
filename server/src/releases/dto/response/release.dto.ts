@@ -1,4 +1,5 @@
 import { NominationTypesEnum } from 'src/nomination-types/types/nomination-types.enum';
+import { ReleaseTypesEnum } from 'src/release-types/types/release-types.enum';
 import { ReleaseRatingTypesEnum } from 'src/releases/types/release-rating-types.enum';
 
 /**
@@ -6,7 +7,7 @@ import { ReleaseRatingTypesEnum } from 'src/releases/types/release-rating-types.
  */
 type ReleaseType = {
   id: string;
-  type: string;
+  type: ReleaseTypesEnum;
 };
 
 /**
@@ -78,4 +79,5 @@ export type ReleaseDto = {
   hasAuthorComments: boolean;
   /** Record creation timestamp (ISO) */
   createdAt: string;
+  hasLyrics: boolean;
 };

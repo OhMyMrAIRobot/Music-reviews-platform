@@ -518,7 +518,13 @@ export class ReleasesService {
                                       )
                               )
                           ),
-                          'nominationTypes', COALESCE(nom.nominationTypes, '[]'::jsonb)) AS release_json,
+                            'nominationTypes', COALESCE(nom.nominationTypes, '[]'::jsonb),
+                            'hasLyrics', EXISTS (
+                              SELECT 1
+                              FROM "Release_lyrics" rl
+                              WHERE rl.release_id = r.id
+                            )
+                          ) AS release_json,
                           COALESCE(lr.reviews_count_24h, 0) AS reviews24_count
 
               FROM filtered_releases r
