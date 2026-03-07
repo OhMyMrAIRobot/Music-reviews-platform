@@ -14,7 +14,7 @@ const Sidebar = () => {
 	return (
 		<>
 			<SidebarOverlay />
-			<div className='relative z-2000'>
+			<div className='relative z-999'>
 				<aside className='fixed inset-y-0 hidden whitespace-nowrap left-0 w-13.5 hover:w-66 border-r bg-zinc-950 group overflow-hidden lg:flex flex-col border-white/10 transition-all duration-200'>
 					<SidebarSection items={sidebarFirstGroup} />
 					<SidebarDelimiter />
