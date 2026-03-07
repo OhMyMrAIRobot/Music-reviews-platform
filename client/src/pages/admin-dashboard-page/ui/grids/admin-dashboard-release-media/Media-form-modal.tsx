@@ -1,12 +1,6 @@
-import {
-	InvalidateQueryFilters,
-	useMutation,
-	useQuery,
-	useQueryClient,
-} from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { ReleaseAPI } from '../../../../../api/release/release-api'
-import { ReleaseMediaAPI } from '../../../../../api/release/release-media-api'
 import ComboBox from '../../../../../components/buttons/Combo-box'
 import FormButton from '../../../../../components/form-elements/Form-button'
 import FormInput from '../../../../../components/form-elements/Form-input'
@@ -14,18 +8,13 @@ import FormLabel from '../../../../../components/form-elements/Form-label'
 import FormSingleSelect from '../../../../../components/form-elements/Form-single-select'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
-import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler'
-import { useReleaseMediaMeta } from '../../../../../hooks/use-release-media-meta'
-import { useStore } from '../../../../../hooks/use-store'
-import { platformStatsKeys } from '../../../../../query-keys/platform-stats-keys'
-import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys'
-import { releasesKeys } from '../../../../../query-keys/releases-keys'
+import { useReleaseMediaMeta } from '../../../../../hooks/meta'
 import {
-	AdminCreateReleaseMediaData,
-	AdminUpdateReleaseMediaData,
-	ReleaseMedia,
-	ReleasesQuery,
-} from '../../../../../types/release'
+	useAdminCreateMediaMutation,
+	useAdminUpdateMediaMutation,
+} from '../../../../../hooks/mutations'
+import { releasesKeys } from '../../../../../query-keys/releases-keys'
+import { ReleaseMedia, ReleasesQuery } from '../../../../../types/release'
 import { constraints } from '../../../../../utils/constraints'
 
 interface IProps {
@@ -35,10 +24,7 @@ interface IProps {
 }
 
 const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
-	/** HOOKS */
-	const { notificationStore } = useStore()
 	const { statuses, types, isLoading: isMetaLoading } = useReleaseMediaMeta()
-	const handleApiError = useApiErrorHandler()
 	const queryClient = useQueryClient()
 
 	/** STATES */
@@ -107,56 +93,16 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 		return items.map(r => r.title)
 	}
 
-	/**
-	 * Function to invalidate related queries after mutations
-	 */
-	const invalidateRelatedQueries = () => {
-		const keysToInvalidate: InvalidateQueryFilters[] = [
-			{ queryKey: releaseMediaKeys.all },
-			{ queryKey: platformStatsKeys.all },
-		]
-
-		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	const onSuccess = () => {
+		clearForm()
+		onClose()
 	}
 
-	/**
-	 * Mutation to create the media
-	 */
-	const { mutateAsync: createAsync, isPending: isCreating } = useMutation({
-		mutationFn: (data: AdminCreateReleaseMediaData) =>
-			ReleaseMediaAPI.adminCreate(data),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification('Медиа успешно добавлено!')
-			invalidateRelatedQueries()
-			clearForm()
-			onClose()
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Не удалось добавить медиа!')
-		},
-	})
+	const { mutateAsync: createAsync, isPending: isCreating } =
+		useAdminCreateMediaMutation({ onSuccess })
 
-	/**
-	 * Mutation to update the media
-	 */
-	const { mutateAsync: updateAsync, isPending: isUpdating } = useMutation({
-		mutationFn: ({
-			id,
-			data,
-		}: {
-			id: string
-			data: AdminUpdateReleaseMediaData
-		}) => ReleaseMediaAPI.adminUpdate(id, data),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification('Медиа успешно обновлено!')
-			invalidateRelatedQueries()
-			clearForm()
-			onClose()
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Не удалось обновить медиа!')
-		},
-	})
+	const { mutateAsync: updateAsync, isPending: isUpdating } =
+		useAdminUpdateMediaMutation({ onSuccess })
 
 	/**
 	 * Indicates whether a mutation is pending

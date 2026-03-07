@@ -1,16 +1,12 @@
-import { useMutation } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
-import { useNavigate, useParams } from 'react-router'
-import { AuthAPI } from '../../../../api/auth-api'
+import { useParams } from 'react-router'
 import FormButton from '../../../../components/form-elements/Form-button'
 import FormInput from '../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../components/form-elements/Form-label'
 import FormSubTitle from '../../../../components/form-elements/Form-subtitle'
 import FormTitle from '../../../../components/form-elements/Form-title'
-import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
-import useNavigationPath from '../../../../hooks/use-navigation-path'
+import { useResetPasswordMutation } from '../../../../hooks/mutations'
 import { useStore } from '../../../../hooks/use-store'
-import { ResetPasswordData } from '../../../../types/auth'
 import { constraints } from '../../../../utils/constraints'
 
 /**
@@ -22,18 +18,16 @@ type ResetPasswordFormState = {
 }
 
 const ResetPasswordForm = () => {
-	/** HOOKS */
 	const { token } = useParams()
-	const { authStore, notificationStore } = useStore()
-	const navigate = useNavigate()
-	const { navigateToMain } = useNavigationPath()
-	const handleApiError = useApiErrorHandler()
+	const { notificationStore } = useStore()
 
-	/** STATES */
 	const [formData, setFormData] = useState<ResetPasswordFormState>({
 		password: '',
 		passwordConfirm: '',
 	})
+
+	const { mutateAsync: reset, isPending: isLoading } =
+		useResetPasswordMutation()
 
 	/**
 	 * Indeicates whether the form is valid.
@@ -47,25 +41,6 @@ const ResetPasswordForm = () => {
 			formData.password === formData.passwordConfirm
 		)
 	}, [formData])
-
-	/**
-	 * Mutation for resetting the password.
-	 */
-	const { mutateAsync: reset, isPending: isLoading } = useMutation({
-		mutationFn: ({ password, token }: ResetPasswordData) =>
-			AuthAPI.resetPassword({ password, token }),
-		onSuccess: data => {
-			const { user, accessToken } = data
-			authStore.setAuthorization(user, accessToken)
-			notificationStore.addSuccessNotification(
-				'Ваш пароль был успешно сброшен!'
-			)
-			navigate(navigateToMain)
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Ошибка при сбросе пароля!')
-		},
-	})
 
 	/**
 	 * Handles the form submission.
@@ -89,7 +64,7 @@ const ResetPasswordForm = () => {
 	 */
 	const handleChange = (
 		field: keyof typeof formData,
-		value: string | boolean
+		value: string | boolean,
 	) => {
 		setFormData(prev => ({ ...prev, [field]: value }))
 	}
@@ -110,7 +85,7 @@ const ResetPasswordForm = () => {
 		label: string,
 		type: string,
 		placeholder?: string,
-		description?: string
+		description?: string,
 	) => (
 		<div className='grid gap-1'>
 			<FormLabel name={label} htmlFor={id} />

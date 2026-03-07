@@ -1,27 +1,18 @@
-import {
-	InvalidateQueryFilters,
-	useMutation,
-	useQuery,
-	useQueryClient,
-} from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { AuthorCommentAPI } from '../../../../api/author/author-comment-api'
 import FormButton from '../../../../components/form-elements/Form-button'
 import ConfirmationModal from '../../../../components/modals/Confirmation-modal'
-import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
+import {
+	useCreateAuthorCommentMutation,
+	useRemoveAuthorCommentMutation,
+	useUpdateAuthorCommentMutation,
+} from '../../../../hooks/mutations'
 import { useAuth } from '../../../../hooks/use-auth'
 import { useStore } from '../../../../hooks/use-store'
 import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys'
-import { leaderboardKeys } from '../../../../query-keys/leaderboard-keys'
-import { platformStatsKeys } from '../../../../query-keys/platform-stats-keys'
-import { profilesKeys } from '../../../../query-keys/profiles-keys'
-import { releasesKeys } from '../../../../query-keys/releases-keys'
-import {
-	AuthorCommentsQuery,
-	CreateAuthorCommentData,
-	UpdateAuthorCommentData,
-} from '../../../../types/author'
+import { AuthorCommentsQuery } from '../../../../types/author'
 import { constraints } from '../../../../utils/constraints'
 import ReleaseDetailsReviewFormText from '../release-details-estimation/forms/release-details-review-form/Release-details-review-form-text'
 
@@ -30,13 +21,9 @@ interface IProps {
 }
 
 const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
-	/** HOOKS */
-	const { notificationStore, authStore } = useStore()
+	const { authStore } = useStore()
 	const { checkAuth } = useAuth()
-	const queryClient = useQueryClient()
-	const handleApiError = useApiErrorHandler()
 
-	/** STATES */
 	const [title, setTitle] = useState<string>('')
 	const [text, setText] = useState<string>('')
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
@@ -59,7 +46,7 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 
 	/** User's author comment for this release */
 	const userAuthorComment = authorComments?.find(
-		c => c.user.id === authStore.user?.id
+		c => c.user.id === authStore.user?.id,
 	)
 
 	/** EFFECTS */
@@ -70,74 +57,16 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 		}
 	}, [userAuthorComment])
 
-	/**
-	 * Function to invalidate related queries after mutations
-	 */
-	const invalidateRelatedQueries = () => {
-		const keysToInvalidate: InvalidateQueryFilters[] = [
-			{ queryKey: authorCommentsKeys.all },
-			{ queryKey: leaderboardKeys.all },
-			{ queryKey: platformStatsKeys.all },
-			{ queryKey: profilesKeys.profile(authStore.user?.id || 'unknown') },
-			{ queryKey: releasesKeys.all },
-		]
+	const { mutateAsync: asyncCreate, isPending: isCreating } =
+		useCreateAuthorCommentMutation()
 
-		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
-	}
+	const { mutateAsync: asyncUpdate, isPending: isUpdating } =
+		useUpdateAuthorCommentMutation()
 
-	/**
-	 * Create mutation for adding a new author comment
-	 */
-	const { mutateAsync: asyncCreate, isPending: isCreating } = useMutation({
-		mutationFn: (data: CreateAuthorCommentData) =>
-			AuthorCommentAPI.create(data),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification(
-				'Вы успешно добавили авторский комментарий!'
-			)
-
-			invalidateRelatedQueries()
-		},
-		onError(error: unknown) {
-			handleApiError(error, 'Не удалось добавить авторский комментарий.')
-		},
-	})
-
-	/**
-	 * Update mutation for editing an existing author comment
-	 */
-	const { mutateAsync: asyncUpdate, isPending: isUpdating } = useMutation({
-		mutationFn: ({ id, data }: { id: string; data: UpdateAuthorCommentData }) =>
-			AuthorCommentAPI.update(id, data),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification(
-				'Вы успешно изменили авторский комментарий!'
-			)
-
-			invalidateRelatedQueries()
-		},
-		onError(error: unknown) {
-			handleApiError(error, 'Не удалось изменить авторский комментарий.')
-		},
-	})
-
-	/**
-	 * Delete mutation for removing an existing author comment
-	 */
-	const { mutateAsync: asyncDelete, isPending: isDeleting } = useMutation({
-		mutationFn: (id: string) => AuthorCommentAPI.delete(id),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification(
-				'Вы успешно удалили авторский комментарий!'
-			)
-			setConfModalOpen(false)
-
-			invalidateRelatedQueries()
-		},
-		onError(error: unknown) {
-			handleApiError(error, 'Не удалось удалить авторский комментарий.')
-		},
-	})
+	const { mutateAsync: asyncDelete, isPending: isDeleting } =
+		useRemoveAuthorCommentMutation({
+			onSettled: () => setConfModalOpen(false),
+		})
 
 	/**
 	 * Check if any mutation is in progress
@@ -146,7 +75,7 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 	 */
 	const isPending = useMemo(
 		() => isCreating || isUpdating || isDeleting,
-		[isCreating, isUpdating, isDeleting]
+		[isCreating, isUpdating, isDeleting],
 	)
 
 	/**

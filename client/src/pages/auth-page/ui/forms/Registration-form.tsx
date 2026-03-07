@@ -1,16 +1,12 @@
-import { useMutation } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
-import { AuthAPI } from '../../../../api/auth-api'
 import FormButton from '../../../../components/form-elements/Form-button'
 import FormCheckbox from '../../../../components/form-elements/Form-checkbox'
 import FormInput from '../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../components/form-elements/Form-label'
 import FormTitle from '../../../../components/form-elements/Form-title'
 import PreventableLink from '../../../../components/utils/Preventable-link'
-import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
+import { useRegistrationMutation } from '../../../../hooks/mutations'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
-import { useStore } from '../../../../hooks/use-store'
-import { RegisterData } from '../../../../types/auth'
 import { constraints } from '../../../../utils/constraints'
 
 /**
@@ -26,12 +22,7 @@ type RegistrationFormState = {
 }
 
 const RegistrationForm = () => {
-	/** HOOKS */
-	const { authStore, notificationStore } = useStore()
 	const { navigateToLogin } = useNavigationPath()
-	const handleApiError = useApiErrorHandler()
-
-	/** STATES */
 	const [formData, setFormData] = useState<RegistrationFormState>({
 		email: '',
 		nickname: '',
@@ -41,23 +32,8 @@ const RegistrationForm = () => {
 		policyChecked: false,
 	})
 
-	/**
-	 * Mutation for user registration
-	 */
-	const { mutateAsync: register, isPending: isLoading } = useMutation({
-		mutationFn: (data: RegisterData) => AuthAPI.register(data),
-		onSuccess: data => {
-			const { user, accessToken, emailSent } = data
-			authStore.setAuthorization(user, accessToken)
-			notificationStore.addSuccessNotification('Вы успешно зарегистрировались!')
-			if (emailSent) {
-				notificationStore.addEmailSentNotification(emailSent)
-			}
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Ошибка при регистрации!')
-		},
-	})
+	const { mutateAsync: register, isPending: isLoading } =
+		useRegistrationMutation()
 
 	/**
 	 * Handles changes in form inputs.
@@ -67,7 +43,7 @@ const RegistrationForm = () => {
 	 */
 	const handleChange = (
 		field: keyof typeof formData,
-		value: string | boolean
+		value: string | boolean,
 	) => {
 		setFormData(prev => ({ ...prev, [field]: value }))
 	}
@@ -88,7 +64,7 @@ const RegistrationForm = () => {
 		label: string,
 		type: string,
 		placeholder?: string,
-		description?: string
+		description?: string,
 	) => (
 		<div className='grid gap-1'>
 			<FormLabel name={label} htmlFor={id} />
@@ -119,7 +95,7 @@ const RegistrationForm = () => {
 	const renderCheckbox = (
 		id: keyof typeof formData,
 		linkText: string,
-		linkHref: string
+		linkHref: string,
 	) => (
 		<div className='flex items-center space-x-2 select-none'>
 			<FormCheckbox
@@ -178,7 +154,7 @@ const RegistrationForm = () => {
 					'Email',
 					'email',
 					'Ваш email',
-					'Будет также логином для авторизации'
+					'Будет также логином для авторизации',
 				)}
 				{renderInput('nickname', 'Отображаемое имя', 'text', '', 'Ваш никнейм')}
 				{renderInput('password', 'Пароль', 'password')}
@@ -188,12 +164,12 @@ const RegistrationForm = () => {
 					{renderCheckbox(
 						'agreementChecked',
 						'Пользовательского соглашения',
-						'/'
+						'/',
 					)}
 					{renderCheckbox(
 						'policyChecked',
 						'Политики обработки персональных данных',
-						'/'
+						'/',
 					)}
 				</div>
 

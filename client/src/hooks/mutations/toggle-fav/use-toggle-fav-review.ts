@@ -3,16 +3,16 @@ import {
 	useMutation,
 	useQueryClient,
 } from '@tanstack/react-query'
-import { UserFavReviewAPI } from '../api/review/user-fav-review-api'
-import { authorLikesKeys } from '../query-keys/author-likes-keys'
-import { leaderboardKeys } from '../query-keys/leaderboard-keys'
-import { profilesKeys } from '../query-keys/profiles-keys'
-import { reviewsKeys } from '../query-keys/reviews-keys'
-import { UseToggleFavResult } from '../types/common'
-import { Review } from '../types/review'
-import { useApiErrorHandler } from './use-api-error-handler'
-import { useAuth } from './use-auth'
-import { useStore } from './use-store'
+import { UserFavReviewAPI } from '../../../api/review/user-fav-review-api'
+import { authorLikesKeys } from '../../../query-keys/author-likes-keys'
+import { leaderboardKeys } from '../../../query-keys/leaderboard-keys'
+import { profilesKeys } from '../../../query-keys/profiles-keys'
+import { reviewsKeys } from '../../../query-keys/reviews-keys'
+import { UseToggleFavResult } from '../../../types/common'
+import { Review } from '../../../types/review'
+import { useApiErrorHandler } from '../../use-api-error-handler'
+import { useAuth } from '../../use-auth'
+import { useStore } from '../../use-store'
 
 /**
  * Custom hook to toggle favorite review
@@ -23,7 +23,7 @@ import { useStore } from './use-store'
  */
 export const useToggleFavReview = (
 	review: Review | undefined,
-	isFav: boolean
+	isFav: boolean,
 ): UseToggleFavResult => {
 	/** HOOKS */
 	const { authStore, notificationStore } = useStore()
@@ -59,7 +59,7 @@ export const useToggleFavReview = (
 			notificationStore.addSuccessNotification(
 				isFav
 					? 'Рецензия успешно удалена из понравившихся!'
-					: 'Рецензия успешно добавлена в понравившиеся!'
+					: 'Рецензия успешно добавлена в понравившиеся!',
 			)
 			invalidateRelatedQueries(review)
 		},
@@ -68,7 +68,7 @@ export const useToggleFavReview = (
 				error,
 				isFav
 					? 'Не удалось убрать рецензию из понравившихся!'
-					: 'Не удалось добавить рецензию в понравившиеся!'
+					: 'Не удалось добавить рецензию в понравившиеся!',
 			)
 		},
 	})

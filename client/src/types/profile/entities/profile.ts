@@ -1,5 +1,5 @@
-import { IRole } from '../../../models/role/role'
 import { AuthorType } from '../../author'
+import { Role } from '../../user'
 
 /**
  * Represents an user's profile.
@@ -47,7 +47,7 @@ type User = {
 	nickname: string
 
 	/** User's role */
-	role: IRole
+	role: Role
 
 	/** Whether the user is also a registered author */
 	isAuthor: boolean

@@ -1,22 +1,11 @@
-import {
-	InvalidateQueryFilters,
-	useMutation,
-	useQueryClient,
-} from '@tanstack/react-query'
 import { FC, useEffect, useMemo, useState } from 'react'
-import { AuthorCommentAPI } from '../../../../../api/author/author-comment-api'
 import FormButton from '../../../../../components/form-elements/Form-button'
 import FormInput from '../../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../../components/form-elements/Form-label'
 import FormTextbox from '../../../../../components/form-elements/Form-textbox'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay'
-import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler'
-import { useStore } from '../../../../../hooks/use-store'
-import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys'
-import {
-	AuthorComment,
-	UpdateAuthorCommentData,
-} from '../../../../../types/author'
+import { useAdminUpdateAuthorCommentMutation } from '../../../../../hooks/mutations'
+import { AuthorComment } from '../../../../../types/author'
 import { constraints } from '../../../../../utils/constraints'
 
 interface IProps {
@@ -26,47 +15,17 @@ interface IProps {
 }
 
 const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
-	/** HOOKS */
-	const { notificationStore } = useStore()
-	const handleApiError = useApiErrorHandler()
-	const queryClient = useQueryClient()
-
-	/** STATES */
 	const [title, setTitle] = useState<string>(comment.title)
 	const [text, setText] = useState<string>(comment.text)
 
-	/** EFFECTS */
 	useEffect(() => {
 		setTitle(comment.title)
 		setText(comment.text)
 	}, [comment])
 
-	/**
-	 * Function to invalidate related queries after mutations
-	 */
-	const invalidateRelatedQueries = () => {
-		const keysToInvalidate: InvalidateQueryFilters[] = [
-			{ queryKey: authorCommentsKeys.all },
-		]
-
-		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
-	}
-
-	/**
-	 * Mutation to update the author comment
-	 */
-	const { mutateAsync: updateAsync, isPending } = useMutation({
-		mutationFn: ({ id, data }: { id: string; data: UpdateAuthorCommentData }) =>
-			AuthorCommentAPI.adminUpdate(id, data),
+	const { mutateAsync, isPending } = useAdminUpdateAuthorCommentMutation({
 		onSuccess: () => {
-			notificationStore.addSuccessNotification(
-				'Авторский комментарий успешно обновлен!'
-			)
 			onClose()
-			invalidateRelatedQueries()
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Не удалось обновить авторский комментарий!')
 		},
 	})
 
@@ -96,7 +55,7 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
 	const updateComment = async () => {
 		if (!isFormValid || isPending || !hasChanges) return
 
-		updateAsync({
+		mutateAsync({
 			id: comment.id,
 			data: {
 				title: title.trim() !== comment.title ? title.trim() : undefined,

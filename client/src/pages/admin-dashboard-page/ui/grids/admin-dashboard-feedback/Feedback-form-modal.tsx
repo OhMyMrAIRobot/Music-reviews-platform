@@ -1,14 +1,16 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { FC, useEffect, useState } from 'react'
-import { FeedbackAPI } from '../../../../../api/feedback/feedback-api'
 import { FeedbackReplyAPI } from '../../../../../api/feedback/feedback-reply-api'
 import FormButton from '../../../../../components/form-elements/Form-button'
 import FormLabel from '../../../../../components/form-elements/Form-label'
 import FormTextbox from '../../../../../components/form-elements/Form-textbox'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
-import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler'
-import { useFeedbackMeta } from '../../../../../hooks/use-feedback-meta'
+import { useFeedbackMeta } from '../../../../../hooks/meta'
+import {
+	useAdminCreateFeedbackReplyMutation,
+	useAdminUpdateFeedbackMutation,
+} from '../../../../../hooks/mutations'
 import { useStore } from '../../../../../hooks/use-store'
 import { feedbackKeys } from '../../../../../query-keys/feedback-keys'
 import {
@@ -27,13 +29,9 @@ interface IProps {
 }
 
 const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
-	/** HOOKS */
-	const queryClient = useQueryClient()
 	const { notificationStore } = useStore()
 	const { statuses, isLoading: isMetaLoading } = useFeedbackMeta()
-	const handleApiError = useApiErrorHandler()
 
-	/** STATES */
 	const [reply, setReply] = useState<FeedbackReply | null>(null)
 	const [showReply, setShowReply] = useState<boolean>(false)
 	const [replyText, setReplyText] = useState<string>('')
@@ -51,41 +49,27 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
 	})
 
 	/**
-	 * Mutation to update the feedback status
+	 * Mutation to update a feedback status
 	 */
-	const updateStatusMutation = useMutation({
-		mutationFn: (statusId: string) =>
-			FeedbackAPI.update(feedback.id, { feedbackStatusId: statusId }),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification(
-				'Вы успешно отметили сообщение как прочитанное!'
-			)
-			queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Не удалось обновить статус сообщения')
-		},
-	})
+	const { mutateAsync: updateStatusMutation, isPending: isStatusUpdating } =
+		useAdminUpdateFeedbackMutation()
 
 	/**
 	 * Mutation to create a reply for the feedback
 	 */
-	const createReplyMutation = useMutation({
-		mutationFn: (replyData: CreateFeedbackReplyData) =>
-			FeedbackReplyAPI.create(replyData),
-		onSuccess: data => {
-			notificationStore.addSuccessNotification('Ответ успешно отправлен!')
-			setReply(data)
-			setShowReply(false)
-			setReplyText('')
-			onClose()
+	const { mutateAsync: createReplyMutation, isPending: isReplyCreating } =
+		useAdminCreateFeedbackReplyMutation()
 
-			queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Не удалось отправить ответ')
-		},
-	})
+	const createReply = (replyData: CreateFeedbackReplyData) => {
+		return createReplyMutation(replyData, {
+			onSuccess(data) {
+				setReply(data)
+				setShowReply(false)
+				setReplyText('')
+				onClose()
+			},
+		})
+	}
 
 	/**
 	 * Handler to update the feedback status to "READ"
@@ -93,17 +77,20 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
 	const updateReadStatus = () => {
 		if (feedback.feedbackStatus.status !== FeedbackStatusesEnum.NEW) {
 			notificationStore.addErrorNotification(
-				'Вы не можете отметить данное сообщение как прочитанное!'
+				'Вы не можете отметить данное сообщение как прочитанное!',
 			)
 			return
 		}
 
 		const newStatus = statuses.find(
-			entry => entry.status === FeedbackStatusesEnum.READ
+			entry => entry.status === FeedbackStatusesEnum.READ,
 		)
 
 		if (newStatus) {
-			return updateStatusMutation.mutate(newStatus.id)
+			return updateStatusMutation({
+				feedbackId: feedback.id,
+				statusId: newStatus.id,
+			})
 		}
 	}
 
@@ -118,7 +105,7 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
 		)
 			return
 
-		createReplyMutation.mutate({
+		createReply({
 			message: replyText,
 			feedbackId: feedback.id,
 		})
@@ -137,9 +124,7 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
 		<ModalOverlay
 			isOpen={isOpen}
 			onCancel={onClose}
-			isLoading={
-				updateStatusMutation.isPending || createReplyMutation.isPending
-			}
+			isLoading={isStatusUpdating || isReplyCreating}
 			className='max-lg:size-full'
 		>
 			{isReplyLoading &&
@@ -171,7 +156,7 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
 									{`Статус: `}
 									<span
 										className={`${getFeedbackStatusColor(
-											feedback.feedbackStatus.status
+											feedback.feedbackStatus.status,
 										)}`}
 									>
 										{feedback.feedbackStatus.status}
@@ -225,10 +210,8 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
 												title={'Отправить'}
 												isInvert={true}
 												onClick={postReply}
-												disabled={
-													!replyText.trim() || createReplyMutation.isPending
-												}
-												isLoading={createReplyMutation.isPending}
+												disabled={!replyText.trim() || isReplyCreating}
+												isLoading={isReplyCreating}
 											/>
 										</div>
 										<div className='w-full sm:w-25'>
@@ -239,7 +222,7 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
 													setShowReply(false)
 													setReplyText('')
 												}}
-												disabled={createReplyMutation.isPending}
+												disabled={isReplyCreating}
 											/>
 										</div>
 									</>
@@ -252,10 +235,9 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
 											onClick={updateReadStatus}
 											disabled={
 												feedback.feedbackStatus.status !==
-													FeedbackStatusesEnum.NEW ||
-												updateStatusMutation.isPending
+													FeedbackStatusesEnum.NEW || isStatusUpdating
 											}
-											isLoading={updateStatusMutation.isPending}
+											isLoading={isStatusUpdating}
 										/>
 									</div>
 								) : (
@@ -280,10 +262,7 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
 								title={'Закрыть'}
 								isInvert={false}
 								onClick={onClose}
-								disabled={
-									createReplyMutation.isPending ||
-									updateStatusMutation.isPending
-								}
+								disabled={isReplyCreating || isStatusUpdating}
 							/>
 						</div>
 					</div>

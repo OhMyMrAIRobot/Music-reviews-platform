@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { ReleaseAPI } from '../api/release/release-api'
-import { releasesKeys } from '../query-keys/releases-keys'
+import { ReleaseAPI } from '../../api/release/release-api'
+import { releasesKeys } from '../../query-keys/releases-keys'
 
 /**
  * Custom hook to fetch and manage release metadata, specifically release types.

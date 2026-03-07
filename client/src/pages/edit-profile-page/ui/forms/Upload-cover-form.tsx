@@ -1,30 +1,18 @@
-import {
-	InvalidateQueryFilters,
-	useMutation,
-	useQueryClient,
-} from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
 import { useMemo, useState } from 'react'
-import { ProfileAPI } from '../../../../api/user/profile-api'
 import FormButton from '../../../../components/form-elements/Form-button'
-import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
+import { useUpdateProfileMutation } from '../../../../hooks/mutations'
 import { useAuth } from '../../../../hooks/use-auth'
 import { useStore } from '../../../../hooks/use-store'
-import { leaderboardKeys } from '../../../../query-keys/leaderboard-keys'
-import { profilesKeys } from '../../../../query-keys/profiles-keys'
 import buildProfileFormData from '../../../../utils/build-profile-form-data'
 import EditProfilePageSection from '../Edit-profile-page-section'
 import SelectImageLabel from '../labels/Select-image-label'
 import SelectedImageLabel from '../labels/Selected-image-label'
 
 const UploadCoverForm = observer(() => {
-	/** HOOKS */
 	const { authStore, notificationStore } = useStore()
 	const { checkAuth } = useAuth()
-	const queryClient = useQueryClient()
-	const handleApiError = useApiErrorHandler()
 
-	/** STATES */
 	const [file, setFile] = useState<File | null>(null)
 	const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 
@@ -43,66 +31,25 @@ const UploadCoverForm = observer(() => {
 		}
 	}
 
-	/**
-	 * Function to invalidate related queries after mutations
-	 */
-	const invalidateRelatedQueries = (userId: string) => {
-		const keysToInvalidate: InvalidateQueryFilters[] = [
-			{ queryKey: profilesKeys.profile(userId) },
-			{ queryKey: leaderboardKeys.all },
-		]
-
-		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	const onSuccess = () => {
+		setFile(null)
+		if (previewUrl) {
+			URL.revokeObjectURL(previewUrl)
+			setPreviewUrl(null)
+		}
 	}
 
 	/**
 	 * Upload cover mutation
 	 */
-	const { mutateAsync: uploadAsync, isPending: isUploading } = useMutation({
-		mutationFn: (formData: FormData) => ProfileAPI.update(formData),
-		onSuccess: profile => {
-			authStore.setProfile(profile)
-			notificationStore.addSuccessNotification('Обложка успешно обновлена!')
-			setFile(null)
-			if (previewUrl) {
-				URL.revokeObjectURL(previewUrl)
-				setPreviewUrl(null)
-			}
-
-			if (authStore.user?.id) {
-				invalidateRelatedQueries(authStore.user.id)
-			}
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Ошибка при загрузке обложки!')
-		},
-	})
+	const { mutateAsync: uploadAsync, isPending: isUploading } =
+		useUpdateProfileMutation({ onSuccess })
 
 	/**
 	 * Delete cover mutation
 	 */
-	const { mutateAsync: deleteAsync, isPending: isDeleting } = useMutation({
-		mutationFn: () => {
-			const formData = buildProfileFormData({ clearCover: true })
-			return ProfileAPI.update(formData)
-		},
-		onSuccess: profile => {
-			authStore.setProfile(profile)
-			notificationStore.addSuccessNotification('Обложка успешно удалена!')
-
-			if (authStore.user?.id) {
-				invalidateRelatedQueries(authStore.user.id)
-			}
-			setFile(null)
-			if (previewUrl) {
-				URL.revokeObjectURL(previewUrl)
-				setPreviewUrl(null)
-			}
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Ошибка при удалении обложки!')
-		},
-	})
+	const { mutateAsync: deleteAsync, isPending: isDeleting } =
+		useUpdateProfileMutation({ onSuccess })
 
 	/**
 	 * Indicates if any mutation is in progress
@@ -111,7 +58,7 @@ const UploadCoverForm = observer(() => {
 	 */
 	const isPending = useMemo(
 		() => isUploading || isDeleting,
-		[isUploading, isDeleting]
+		[isUploading, isDeleting],
 	)
 
 	/**
@@ -135,8 +82,8 @@ const UploadCoverForm = observer(() => {
 	 */
 	const handleDelete = async () => {
 		if (!checkAuth() || isPending) return
-
-		return deleteAsync()
+		const formData = buildProfileFormData({ clearCover: true })
+		return deleteAsync(formData)
 	}
 
 	return (

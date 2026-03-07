@@ -1,11 +1,6 @@
-import {
-	InvalidateQueryFilters,
-	useMutation,
-	useQueryClient,
-} from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { FC, useMemo, useState } from 'react'
 import { AuthorAPI } from '../../../api/author/author-api'
-import { AuthorConfirmationAPI } from '../../../api/author/author-confirmation-api'
 import FormButton from '../../../components/form-elements/Form-button'
 import FormCheckbox from '../../../components/form-elements/Form-checkbox'
 import FormInput from '../../../components/form-elements/Form-input'
@@ -13,15 +8,10 @@ import FormLabel from '../../../components/form-elements/Form-label'
 import FormMultiSelect, {
 	IMultiSelectValue,
 } from '../../../components/form-elements/Form-multi-select'
-import { useApiErrorHandler } from '../../../hooks/use-api-error-handler'
+import { useSendAuthorConfirmation } from '../../../hooks/mutations'
 import { useAuth } from '../../../hooks/use-auth'
-import { useStore } from '../../../hooks/use-store'
-import { authorConfirmationsKeys } from '../../../query-keys/authors-confirmations-keys'
 import { authorsKeys } from '../../../query-keys/authors-keys'
-import {
-	AuthorsQuery,
-	CreateAuthorConfirmationData,
-} from '../../../types/author'
+import { AuthorsQuery } from '../../../types/author'
 import { constraints } from '../../../utils/constraints'
 
 interface IProps {
@@ -29,13 +19,9 @@ interface IProps {
 }
 
 const SendAuthorConfirmationForm: FC<IProps> = ({ show }) => {
-	/** HOOKS */
-	const { notificationStore } = useStore()
 	const { checkAuth } = useAuth()
 	const queryClient = useQueryClient()
-	const handleApiError = useApiErrorHandler()
 
-	/** STATES */
 	const [confirmation, setConfirmation] = useState<string>('')
 	const [checked, setChecked] = useState<boolean>(false)
 	const [authors, setAuthors] = useState<IMultiSelectValue[]>([])
@@ -49,7 +35,7 @@ const SendAuthorConfirmationForm: FC<IProps> = ({ show }) => {
 	 */
 	const loadAuthors = async (
 		search: string,
-		limit: number | null
+		limit: number | null,
 	): Promise<IMultiSelectValue[]> => {
 		const query: AuthorsQuery = {
 			search: search.trim() || undefined,
@@ -70,36 +56,12 @@ const SendAuthorConfirmationForm: FC<IProps> = ({ show }) => {
 		}))
 	}
 
-	/**
-	 * Function to invalidate related queries after mutations
-	 */
-	const invalidateRelatedQueries = () => {
-		const keysToInvalidate: InvalidateQueryFilters[] = [
-			{ queryKey: authorConfirmationsKeys.all },
-		]
-
-		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
-	}
-
-	/**
-	 * Create author confirmation mutation
-	 */
 	const { mutateAsync: createConfirmation, isPending: isCreating } =
-		useMutation({
-			mutationFn: (payload: CreateAuthorConfirmationData) =>
-				AuthorConfirmationAPI.create(payload),
-			onSuccess: async () => {
-				notificationStore.addSuccessNotification(
-					'Вы успешно оставили заявку на подтверждение!'
-				)
+		useSendAuthorConfirmation({
+			onSuccess: () => {
+				setConfirmation('')
 				setChecked(false)
 				setAuthors([])
-				setConfirmation('')
-
-				invalidateRelatedQueries()
-			},
-			onError: (err: unknown) => {
-				handleApiError(err, 'Не удалось отправить заявку')
 			},
 		})
 

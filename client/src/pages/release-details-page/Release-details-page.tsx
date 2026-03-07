@@ -35,7 +35,8 @@ const ReleaseDetailsPage = () => {
 	}, [isReleaseLoading, navigate, navigateToMain, release])
 
 	if (!id) {
-		return navigate(navigateToMain)
+		navigate(navigateToMain)
+		return <></>
 	}
 
 	const registeredAuthorIds = authStore.user
@@ -45,7 +46,7 @@ const ReleaseDetailsPage = () => {
 	const isUserAuthor =
 		release?.authors.artists?.some(ra => registeredAuthorIds.includes(ra.id)) ||
 		release?.authors.producers?.some(rp =>
-			registeredAuthorIds.includes(rp.id)
+			registeredAuthorIds.includes(rp.id),
 		) ||
 		release?.authors.designers?.some(rd => registeredAuthorIds.includes(rd.id))
 

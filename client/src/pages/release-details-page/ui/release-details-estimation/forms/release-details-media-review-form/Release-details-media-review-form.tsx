@@ -1,27 +1,19 @@
-import {
-	InvalidateQueryFilters,
-	useMutation,
-	useQuery,
-	useQueryClient,
-} from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { ReleaseMediaAPI } from '../../../../../../api/release/release-media-api'
 import FormButton from '../../../../../../components/form-elements/Form-button'
 import FormInput from '../../../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../../../components/form-elements/Form-label'
-import { useApiErrorHandler } from '../../../../../../hooks/use-api-error-handler'
+import {
+	useCreateMediaMutation,
+	useRemoveMediaMutation,
+	useUpdateMediaMutation,
+} from '../../../../../../hooks/mutations'
 import { useAuth } from '../../../../../../hooks/use-auth'
 import { useStore } from '../../../../../../hooks/use-store'
-import { leaderboardKeys } from '../../../../../../query-keys/leaderboard-keys'
-import { platformStatsKeys } from '../../../../../../query-keys/platform-stats-keys'
-import { profilesKeys } from '../../../../../../query-keys/profiles-keys'
 import { releaseMediaKeys } from '../../../../../../query-keys/release-media-keys'
-import {
-	CreateReleaseMediaData,
-	ReleaseMediaQuery,
-	UpdateReleaseMediaData,
-} from '../../../../../../types/release'
+import { ReleaseMediaQuery } from '../../../../../../types/release'
 import { constraints } from '../../../../../../utils/constraints'
 
 interface IProps {
@@ -29,13 +21,9 @@ interface IProps {
 }
 
 const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
-	/** HOOKS */
-	const { notificationStore, authStore } = useStore()
+	const { authStore } = useStore()
 	const { checkAuth } = useAuth()
-	const queryClient = useQueryClient()
-	const handleApiError = useApiErrorHandler()
 
-	/** STATES */
 	const [title, setTitle] = useState<string>('')
 	const [url, setUrl] = useState<string>('')
 
@@ -45,20 +33,6 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
 	const query: ReleaseMediaQuery = {
 		releaseId,
 		userId: authStore.user?.id,
-	}
-
-	/**
-	 * Function to invalidate related queries after mutations
-	 */
-	const invalidateRelatedQueries = () => {
-		const keysToInvalidate: InvalidateQueryFilters[] = [
-			{ queryKey: releaseMediaKeys.all },
-			{ queryKey: profilesKeys.profile(authStore.user?.id || 'unknown') },
-			{ queryKey: platformStatsKeys.all },
-			{ queryKey: leaderboardKeys.all },
-		]
-
-		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
 	}
 
 	/**
@@ -83,55 +57,14 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
 		setUrl(userReleaseMedia?.url ?? '')
 	}, [userReleaseMedia])
 
-	/**
-	 * Mutation for creating a new media review
-	 */
-	const { mutateAsync: createAsync, isPending: isCreating } = useMutation({
-		mutationFn: (data: CreateReleaseMediaData) => ReleaseMediaAPI.create(data),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification(
-				'Медиарецензия успешно добавлена! Ожидайте подтверждения!'
-			)
+	const { mutateAsync: createAsync, isPending: isCreating } =
+		useCreateMediaMutation()
 
-			invalidateRelatedQueries()
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Не удалось добавить медиарецензию.')
-		},
-	})
+	const { mutateAsync: updateAsync, isPending: isUpdating } =
+		useUpdateMediaMutation()
 
-	/**
-	 * Mutation for updating an existing media review
-	 */
-	const { mutateAsync: updateAsync, isPending: isUpdating } = useMutation({
-		mutationFn: (data: { id: string; updateData: UpdateReleaseMediaData }) =>
-			ReleaseMediaAPI.update(data.id, data.updateData),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification(
-				'Медиарецензия успешно обновлена! Ожидайте подтверждения!'
-			)
-
-			invalidateRelatedQueries()
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Не удалось обновить медиарецензию.')
-		},
-	})
-
-	/**
-	 * Mutation for deleting an existing media review
-	 */
-	const { mutateAsync: deleteAsync, isPending: isDeleting } = useMutation({
-		mutationFn: (id: string) => ReleaseMediaAPI.delete(id),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification('Медиарецензия успешно удалена!')
-
-			invalidateRelatedQueries()
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Не удалось удалить медиарецензию.')
-		},
-	})
+	const { mutateAsync: deleteAsync, isPending: isDeleting } =
+		useRemoveMediaMutation()
 
 	/**
 	 * Check if any mutation is in progress
@@ -140,7 +73,7 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
 	 */
 	const isSubmitting = useMemo(
 		() => isCreating || isUpdating || isDeleting,
-		[isCreating, isUpdating, isDeleting]
+		[isCreating, isUpdating, isDeleting],
 	)
 
 	/**

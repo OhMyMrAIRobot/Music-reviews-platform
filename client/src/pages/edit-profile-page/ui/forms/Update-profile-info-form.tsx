@@ -1,32 +1,22 @@
-import {
-	InvalidateQueryFilters,
-	useMutation,
-	useQueryClient,
-} from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
-import { ProfileAPI } from '../../../../api/user/profile-api'
 import FormButton from '../../../../components/form-elements/Form-button'
 import FormInput from '../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../components/form-elements/Form-label'
 import FormTextbox from '../../../../components/form-elements/Form-textbox'
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader'
-import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
+import { useSocialMeta } from '../../../../hooks/meta'
+import { useUpdateProfileMutation } from '../../../../hooks/mutations'
 import { useAuth } from '../../../../hooks/use-auth'
-import { useSocialMeta } from '../../../../hooks/use-social-meta'
 import { useStore } from '../../../../hooks/use-store'
-import { profilesKeys } from '../../../../query-keys/profiles-keys'
-import { usersKeys } from '../../../../query-keys/users-keys'
 import { UpdateProfileData } from '../../../../types/profile'
 import buildProfileFormData from '../../../../utils/build-profile-form-data'
 import EditProfilePageSection from '../Edit-profile-page-section'
 
 const UpdateProfileInfoForm = observer(() => {
 	/** HOOKS */
-	const { authStore, notificationStore } = useStore()
+	const { authStore } = useStore()
 	const { checkAuth } = useAuth()
-	const queryClient = useQueryClient()
-	const handleApiError = useApiErrorHandler()
 	const { socials, isLoading } = useSocialMeta()
 
 	/** STATES */
@@ -50,41 +40,13 @@ const UpdateProfileInfoForm = observer(() => {
 		}
 	}, [socials, authStore.profile])
 
-	/**
-	 * Function to invalidate related queries after mutations
-	 */
-	const invalidateRelatedQueries = (userId: string) => {
-		const keysToInvalidate: InvalidateQueryFilters[] = [
-			{ queryKey: profilesKeys.profile(userId) },
-			{ queryKey: usersKeys.all },
-		]
-
-		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
-	}
-
-	/**
-	 * Mutation to update profile info
-	 */
-	const updateMutation = useMutation({
-		mutationFn: (formData: FormData) => ProfileAPI.update(formData),
-		onSuccess: () => {
-			if (authStore.user?.id) {
-				invalidateRelatedQueries(authStore.user.id)
-			}
-			notificationStore.addSuccessNotification(
-				'Описание профиля успешно обновлено!'
-			)
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Ошибка при обновлении описания профиля!')
-		},
-	})
+	const { mutateAsync, isPending } = useUpdateProfileMutation()
 
 	/**
 	 * Handle form submission
 	 */
 	const handleSubmit = async () => {
-		if (!checkAuth() || updateMutation.isPending) return
+		if (!checkAuth() || isPending) return
 
 		const changedSocials = socials
 			.map(s => {
@@ -95,7 +57,7 @@ const UpdateProfileInfoForm = observer(() => {
 				return { socialId: s.id, url }
 			})
 			.filter(
-				(item): item is { socialId: string; url?: string } => item !== null
+				(item): item is { socialId: string; url?: string } => item !== null,
 			)
 
 		const payload: UpdateProfileData = {
@@ -105,7 +67,7 @@ const UpdateProfileInfoForm = observer(() => {
 
 		const formData = buildProfileFormData(payload)
 
-		updateMutation.mutate(formData)
+		mutateAsync(formData)
 	}
 
 	return (
@@ -138,7 +100,7 @@ const UpdateProfileInfoForm = observer(() => {
 								key={`Social-inputs-skeleton-${idx}`}
 								className='w-full h-10 rounded-md'
 							/>
-					  ))
+						))
 					: socials.map(social => (
 							<FormInput
 								id={`social-input-${social.id}`}
@@ -150,12 +112,12 @@ const UpdateProfileInfoForm = observer(() => {
 									setSocialValues(prev => ({ ...prev, [social.id]: val }))
 								}
 							/>
-					  ))}
+						))}
 			</div>
 			<div className='pt-3 lg:pt-6 border-t border-white/5 w-full'>
 				<div className='w-full sm:w-38'>
 					<FormButton
-						title={updateMutation.isPending ? 'Сохранение...' : 'Сохранить'}
+						title={isPending ? 'Сохранение...' : 'Сохранить'}
 						isInvert={true}
 						onClick={handleSubmit}
 						disabled={
@@ -163,11 +125,11 @@ const UpdateProfileInfoForm = observer(() => {
 								!socials.some(
 									s =>
 										(socialValues[s.id] ?? '').trim() !==
-										(initialSocialValues[s.id] ?? '').trim()
+										(initialSocialValues[s.id] ?? '').trim(),
 								)) ||
-							updateMutation.isPending
+							isPending
 						}
-						isLoading={updateMutation.isPending}
+						isLoading={isPending}
 					/>
 				</div>
 			</div>

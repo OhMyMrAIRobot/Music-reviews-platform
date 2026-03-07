@@ -4,7 +4,7 @@ import { ReleaseAPI } from '../../api/release/release-api'
 import ComboBox from '../../components/buttons/Combo-box'
 import ReleasesGrid from '../../components/release/Releases-grid'
 import SkeletonLoader from '../../components/utils/Skeleton-loader'
-import { useReleaseMeta } from '../../hooks/use-release-meta'
+import { useReleaseMeta } from '../../hooks/meta'
 import { releasesKeys } from '../../query-keys/releases-keys'
 import {
 	ReleaseSortFields,
@@ -21,17 +21,17 @@ const limit = 12
 const ReleasesPage = () => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [selectedSort, setSelectedSort] = useState<string>(
-		ReleaseSortFields.PUBLISHED_NEW
+		ReleaseSortFields.PUBLISHED_NEW,
 	)
 	const [selectedType, setSelectedType] = useState<string>(
-		ReleaseTypesFilterOptions.ALL
+		ReleaseTypesFilterOptions.ALL,
 	)
 
 	const { types: releaseTypes, isLoading: isTypesLoading } = useReleaseMeta()
 
 	const selectedTypeId = useMemo(
 		() => getTypeIdByOption(selectedType, releaseTypes),
-		[releaseTypes, selectedType]
+		[releaseTypes, selectedType],
 	)
 
 	const { sortField, sortOrder } = useMemo(() => {

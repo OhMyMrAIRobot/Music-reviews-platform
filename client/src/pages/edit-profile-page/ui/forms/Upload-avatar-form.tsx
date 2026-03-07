@@ -1,35 +1,18 @@
-import {
-	InvalidateQueryFilters,
-	useMutation,
-	useQueryClient,
-} from '@tanstack/react-query'
 import { observer } from 'mobx-react-lite'
 import { useMemo, useState } from 'react'
-import { ProfileAPI } from '../../../../api/user/profile-api'
 import FormButton from '../../../../components/form-elements/Form-button'
-import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
+import { useUpdateProfileMutation } from '../../../../hooks/mutations'
 import { useAuth } from '../../../../hooks/use-auth'
 import { useStore } from '../../../../hooks/use-store'
-import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys'
-import { authorLikesKeys } from '../../../../query-keys/author-likes-keys'
-import { leaderboardKeys } from '../../../../query-keys/leaderboard-keys'
-import { profilesKeys } from '../../../../query-keys/profiles-keys'
-import { releaseMediaKeys } from '../../../../query-keys/release-media-keys'
-import { reviewsKeys } from '../../../../query-keys/reviews-keys'
-import { usersKeys } from '../../../../query-keys/users-keys'
 import buildProfileFormData from '../../../../utils/build-profile-form-data'
 import EditProfilePageSection from '../Edit-profile-page-section'
 import SelectImageLabel from '../labels/Select-image-label'
 import SelectedImageLabel from '../labels/Selected-image-label'
 
 const UploadAvatarForm = observer(() => {
-	/** HOOKS */
 	const { authStore, notificationStore } = useStore()
 	const { checkAuth } = useAuth()
-	const queryClient = useQueryClient()
-	const handleApiError = useApiErrorHandler()
 
-	/** STATES */
 	const [file, setFile] = useState<File | null>(null)
 	const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 
@@ -48,71 +31,25 @@ const UploadAvatarForm = observer(() => {
 		}
 	}
 
-	/**
-	 * Function to invalidate related queries after mutations
-	 */
-	const invalidateRelatedQueries = (userId: string) => {
-		const keysToInvalidate: InvalidateQueryFilters[] = [
-			{ queryKey: profilesKeys.profile(userId) },
-			{ queryKey: leaderboardKeys.all },
-			{ queryKey: authorCommentsKeys.all },
-			{ queryKey: authorLikesKeys.all },
-			{ queryKey: releaseMediaKeys.all },
-			{ queryKey: reviewsKeys.all },
-			{ queryKey: usersKeys.all },
-		]
-
-		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
+	const onSuccess = () => {
+		setFile(null)
+		if (previewUrl) {
+			URL.revokeObjectURL(previewUrl)
+			setPreviewUrl(null)
+		}
 	}
 
 	/**
 	 * Upload avatar mutation
 	 */
-	const { mutateAsync: uploadAsync, isPending: isUploading } = useMutation({
-		mutationFn: (formData: FormData) => ProfileAPI.update(formData),
-		onSuccess: data => {
-			authStore.setProfile(data)
-			notificationStore.addSuccessNotification('Аватар успешно обновлён!')
-			setFile(null)
-			if (previewUrl) {
-				URL.revokeObjectURL(previewUrl)
-				setPreviewUrl(null)
-			}
-
-			if (authStore.user?.id) {
-				invalidateRelatedQueries(authStore.user.id)
-			}
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Ошибка при загрузке аватара!')
-		},
-	})
+	const { mutateAsync: uploadAsync, isPending: isUploading } =
+		useUpdateProfileMutation({ onSuccess })
 
 	/**
 	 * Delete avatar mutation
 	 */
-	const { mutateAsync: deleteAsync, isPending: isDeleting } = useMutation({
-		mutationFn: () => {
-			const formData = buildProfileFormData({ clearAvatar: true })
-			return ProfileAPI.update(formData)
-		},
-		onSuccess: data => {
-			authStore.setProfile(data)
-			notificationStore.addSuccessNotification('Аватар успешно удалён!')
-			setFile(null)
-			if (previewUrl) {
-				URL.revokeObjectURL(previewUrl)
-				setPreviewUrl(null)
-			}
-
-			if (authStore.user?.id) {
-				invalidateRelatedQueries(authStore.user.id)
-			}
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Ошибка при удалении аватара!')
-		},
-	})
+	const { mutateAsync: deleteAsync, isPending: isDeleting } =
+		useUpdateProfileMutation({ onSuccess })
 
 	/**
 	 * Indicates if any mutation is in progress
@@ -121,7 +58,7 @@ const UploadAvatarForm = observer(() => {
 	 */
 	const isPending = useMemo(
 		() => isUploading || isDeleting,
-		[isUploading, isDeleting]
+		[isUploading, isDeleting],
 	)
 
 	/**
@@ -144,7 +81,8 @@ const UploadAvatarForm = observer(() => {
 	 */
 	const handleDelete = async () => {
 		if (!checkAuth() || isPending) return
-		return deleteAsync()
+		const formData = buildProfileFormData({ clearAvatar: true })
+		return deleteAsync(formData)
 	}
 
 	return (

@@ -1,46 +1,31 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
-import { FeedbackAPI } from '../../api/feedback/feedback-api'
 import FormButton from '../../components/form-elements/Form-button'
 import FormInput from '../../components/form-elements/Form-input'
 import FormLabel from '../../components/form-elements/Form-label'
 import FormSubTitle from '../../components/form-elements/Form-subtitle'
 import FormTextbox from '../../components/form-elements/Form-textbox'
 import FormTitle from '../../components/form-elements/Form-title'
-import { useApiErrorHandler } from '../../hooks/use-api-error-handler'
-import { useStore } from '../../hooks/use-store'
-import { feedbackKeys } from '../../query-keys/feedback-keys'
+import { useSendFeedbackMutation } from '../../hooks/mutations'
 import { CreateFeedbackData } from '../../types/feedback'
 import { constraints } from '../../utils/constraints'
 
 const FeedbackPage = () => {
-	/** HOOKS */
-	const { notificationStore } = useStore()
-	const handleApiError = useApiErrorHandler()
-	const queryClient = useQueryClient()
-
-	/** STATES */
 	const [feedbackData, setFeedbackData] = useState<CreateFeedbackData>({
 		email: '',
 		title: '',
 		message: '',
 	})
 
-	/**
-	 * Mutation to send feedback
-	 */
-	const { mutateAsync: sendAsync, isPending: isSending } = useMutation({
-		mutationFn: (payload: CreateFeedbackData) => FeedbackAPI.create(payload),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification('Отзыв успешно отправлен!')
-			setFeedbackData({ email: '', title: '', message: '' })
-
-			queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
-		},
-		onError: (error: unknown) => {
-			handleApiError(error)
-		},
-	})
+	const { mutateAsync: sendAsync, isPending: isSending } =
+		useSendFeedbackMutation({
+			onSuccess: () => {
+				setFeedbackData({
+					email: '',
+					title: '',
+					message: '',
+				})
+			},
+		})
 
 	/**
 	 * Checks if the form is valid

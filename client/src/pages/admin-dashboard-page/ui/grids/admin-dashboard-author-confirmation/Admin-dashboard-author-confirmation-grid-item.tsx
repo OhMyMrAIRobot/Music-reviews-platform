@@ -1,30 +1,17 @@
-import {
-	InvalidateQueryFilters,
-	useMutation,
-	useQueryClient,
-} from '@tanstack/react-query'
 import { FC, useMemo, useState } from 'react'
 import { Link } from 'react-router'
-import { AuthorConfirmationAPI } from '../../../../../api/author/author-confirmation-api'
 import AuthorConfirmationStatusIcon from '../../../../../components/author/author-confirmation/Author-confirmation-status-icon'
 import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal'
 import RejectSvg from '../../../../../components/svg/Reject-svg'
 import TickRoundedSvg from '../../../../../components/svg/Tick-rounded-svg'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
-import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler'
-import { useAuthorConfirmationMeta } from '../../../../../hooks/use-author-confirmation-meta'
+import { useAuthorConfirmationMeta } from '../../../../../hooks/meta'
+import {
+	useAdminRemoveAuthorConfirmationMutation,
+	useAdminUpdateAuthorConfirmationMutation,
+} from '../../../../../hooks/mutations'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
-import { useStore } from '../../../../../hooks/use-store'
-import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys'
-import { authorLikesKeys } from '../../../../../query-keys/author-likes-keys'
-import { authorConfirmationsKeys } from '../../../../../query-keys/authors-confirmations-keys'
-import { authorsKeys } from '../../../../../query-keys/authors-keys'
-import { leaderboardKeys } from '../../../../../query-keys/leaderboard-keys'
-import { platformStatsKeys } from '../../../../../query-keys/platform-stats-keys'
-import { profilesKeys } from '../../../../../query-keys/profiles-keys'
-import { releasesKeys } from '../../../../../query-keys/releases-keys'
-import { reviewsKeys } from '../../../../../query-keys/reviews-keys'
 import {
 	AuthorConfirmation,
 	AuthorConfirmationStatusesEnum,
@@ -52,77 +39,27 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
 	order,
 	toggleOrder,
 }) => {
-	/** HOOKS */
-	const { notificationStore } = useStore()
 	const { statuses } = useAuthorConfirmationMeta()
 	const { navigatoToProfile, navigateToAuthorDetails } = useNavigationPath()
-	const handleApiError = useApiErrorHandler()
-	const queryClient = useQueryClient()
 
-	/** STATES */
 	const [deleteConfModalOpen, setDeleteConfModalOpen] = useState<boolean>(false)
 	const [rejectModalOpen, setRejectModalOpen] = useState<boolean>(false)
 	const [approveModalOpen, setApproveModalOpen] = useState<boolean>(false)
 
-	/**
-	 * Function to invalidate related queries after mutations
-	 */
-	const invalidateRelatedQueries = () => {
-		const keysToInvalidate: InvalidateQueryFilters[] = [
-			{ queryKey: authorConfirmationsKeys.all },
-			{ queryKey: authorCommentsKeys.all },
-			{ queryKey: platformStatsKeys.all },
-			{ queryKey: reviewsKeys.all },
-			{ queryKey: releasesKeys.all },
-			{ queryKey: authorsKeys.all },
-			{ queryKey: leaderboardKeys.all },
-			{ queryKey: profilesKeys.all },
-			{ queryKey: authorLikesKeys.all },
-		]
+	const { mutateAsync: deleteAsync, isPending: isDeleting } =
+		useAdminRemoveAuthorConfirmationMutation({
+			onSettled: () => {
+				setDeleteConfModalOpen(false)
+			},
+		})
 
-		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
-	}
-
-	/**
-	 * Mutation to delete the author confirmation
-	 */
-	const { mutateAsync: deleteAsync, isPending: isDeleting } = useMutation({
-		mutationFn: (id: string) => AuthorConfirmationAPI.delete(id),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification(
-				'Вы успешно удалили заявку на верификацию!'
-			)
-			setDeleteConfModalOpen(false)
-			invalidateRelatedQueries()
-		},
-		onError: (error: unknown) => {
-			setDeleteConfModalOpen(false)
-
-			handleApiError(error, 'Не удалось удалить заявку на верификацию!')
-		},
-	})
-
-	/**
-	 * Mutation to update the author confirmation status
-	 */
-	const { mutateAsync: updateAsync, isPending: isUpdating } = useMutation({
-		mutationFn: ({ id, statusId }: { id: string; statusId: string }) =>
-			AuthorConfirmationAPI.update(id, { statusId }),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification(
-				'Вы успешно обновили статус заявки на верификацию!'
-			)
-			setRejectModalOpen(false)
-			setApproveModalOpen(false)
-
-			invalidateRelatedQueries()
-		},
-		onError: (error: unknown) => {
-			setRejectModalOpen(false)
-			setApproveModalOpen(false)
-			handleApiError(error, 'Не удалось обновить статус заявки на верификацию!')
-		},
-	})
+	const { mutateAsync: updateAsync, isPending: isUpdating } =
+		useAdminUpdateAuthorConfirmationMutation({
+			onSettled: () => {
+				setRejectModalOpen(false)
+				setApproveModalOpen(false)
+			},
+		})
 
 	/**
 	 * Indicates if any mutation is pending
@@ -131,7 +68,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
 	 */
 	const isPending = useMemo(
 		() => isDeleting || isUpdating,
-		[isDeleting, isUpdating]
+		[isDeleting, isUpdating],
 	)
 
 	/**
@@ -148,7 +85,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
 	 */
 	const handleUpdate = async (
 		id: string,
-		status: AuthorConfirmationStatusesEnum
+		status: AuthorConfirmationStatusesEnum,
 	) => {
 		if (isPending) return
 
@@ -186,7 +123,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
 									item.id,
 									approveModalOpen
 										? AuthorConfirmationStatusesEnum.APPROVED
-										: AuthorConfirmationStatusesEnum.REJECTED
+										: AuthorConfirmationStatusesEnum.REJECTED,
 								)
 							}}
 							onCancel={() => {
@@ -269,7 +206,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
 							<span className='xl:hidden'>Статус: </span>
 							<div
 								className={`flex gap-x-1 items-center ${getReleaseMediaStatusColor(
-									item.status.status
+									item.status.status,
 								)}`}
 							>
 								<AuthorConfirmationStatusIcon

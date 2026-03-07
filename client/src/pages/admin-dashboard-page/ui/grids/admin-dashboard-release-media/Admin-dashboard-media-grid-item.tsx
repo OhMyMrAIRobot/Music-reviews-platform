@@ -1,22 +1,11 @@
-import {
-	InvalidateQueryFilters,
-	useMutation,
-	useQueryClient,
-} from '@tanstack/react-query'
 import { FC, useState } from 'react'
 import { Link } from 'react-router'
-import { ReleaseMediaAPI } from '../../../../../api/release/release-media-api'
 import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg'
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal'
 import ReleaseMediaStatusIcon from '../../../../../components/release/release-media/Release-media-status-icon'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader'
-import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler'
+import { useAdminRemoveMediaMutation } from '../../../../../hooks/mutations'
 import useNavigationPath from '../../../../../hooks/use-navigation-path'
-import { useStore } from '../../../../../hooks/use-store'
-import { leaderboardKeys } from '../../../../../query-keys/leaderboard-keys'
-import { platformStatsKeys } from '../../../../../query-keys/platform-stats-keys'
-import { profilesKeys } from '../../../../../query-keys/profiles-keys'
-import { releaseMediaKeys } from '../../../../../query-keys/release-media-keys'
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum'
 import { SortOrder } from '../../../../../types/common/types/sort-order'
 import { ReleaseMedia } from '../../../../../types/release'
@@ -43,45 +32,14 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 	order,
 	toggleOrder,
 }) => {
-	/** HOOKS */
-	const { notificationStore } = useStore()
-	const queryClient = useQueryClient()
 	const { navigateToReleaseDetails } = useNavigationPath()
-	const handleApiError = useApiErrorHandler()
 
-	/** STATES */
 	const [confModalOpen, setConfModalOpen] = useState<boolean>(false)
 	const [editModalOpen, setEditModalOpen] = useState<boolean>(false)
 
-	/**
-	 * Function to invalidate related queries after mutations
-	 */
-	const invalidateRelatedQueries = () => {
-		const keysToInvalidate: InvalidateQueryFilters[] = [
-			{ queryKey: profilesKeys.all },
-			{ queryKey: releaseMediaKeys.all },
-			{ queryKey: leaderboardKeys.all },
-			{ queryKey: platformStatsKeys.all },
-		]
-
-		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
-	}
-
-	/**
-	 * Mutation to delete the media
-	 */
-	const deleteMutation = useMutation({
-		mutationFn: (id: string) => ReleaseMediaAPI.adminDelete(id),
+	const { mutateAsync, isPending } = useAdminRemoveMediaMutation({
 		onSuccess: () => {
-			notificationStore.addSuccessNotification(
-				'Вы успешно удалили медиаматериал!'
-			)
-			invalidateRelatedQueries()
 			setConfModalOpen(false)
-		},
-		onError: (error: unknown) => {
-			setConfModalOpen(false)
-			handleApiError(error, 'Не удалось удалить медиа')
 		},
 	})
 
@@ -95,9 +53,9 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 						<ConfirmationModal
 							title={'Вы действительно хотите удалить медиаматериал?'}
 							isOpen={confModalOpen}
-							onConfirm={() => deleteMutation.mutate(media.id)}
+							onConfirm={() => mutateAsync(media.id)}
 							onCancel={() => setConfModalOpen(false)}
-							isLoading={deleteMutation.isPending}
+							isLoading={isPending}
 						/>
 					)}
 
@@ -196,7 +154,7 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
 							<span className='xl:hidden pr-1'>Статус: </span>
 							<div
 								className={`flex gap-x-1 items-center ${getReleaseMediaStatusColor(
-									media.status.status
+									media.status.status,
 								)}`}
 							>
 								<ReleaseMediaStatusIcon

@@ -5,7 +5,7 @@ import AuthorTypeSvg from '../../../../../components/author/author-types/Author-
 import AdminHeader from '../../../../../components/layout/admin-header/Admin-header.tsx'
 import Pagination from '../../../../../components/pagination/Pagination.tsx'
 import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
-import { useAuthorMeta } from '../../../../../hooks/use-author-meta.ts'
+import { useAuthorMeta } from '../../../../../hooks/meta'
 import { authorsKeys } from '../../../../../query-keys/authors-keys.ts'
 import {
 	AuthorsQuery,
@@ -21,7 +21,7 @@ const AdminDashboardAuthorsGrid = () => {
 	const [searchText, setSearchText] = useState<string>('')
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [activeType, setActiveType] = useState<string>(
-		AuthorTypesFilterOptions.ALL
+		AuthorTypesFilterOptions.ALL,
 	)
 	const [addModalOpen, setAddModalOpen] = useState<boolean>(false)
 
@@ -72,7 +72,7 @@ const AdminDashboardAuthorsGrid = () => {
 									key={`skeleton-button-${idx}`}
 									className='w-20 h-4 rounded-lg mr-5 mb-1'
 								/>
-						  ))
+							))
 						: Object.values(AuthorTypesFilterOptions).map(option => (
 								<AdminFilterButton
 									key={option}
@@ -88,7 +88,7 @@ const AdminDashboardAuthorsGrid = () => {
 									isActive={activeType === option}
 									onClick={() => setActiveType(option)}
 								/>
-						  ))}
+							))}
 					<div className='max-sm:hidden ml-auto'>
 						<AdminFilterButton
 							title={'Добавить автора'}
@@ -125,7 +125,7 @@ const AdminDashboardAuthorsGrid = () => {
 										key={`Author-skeleton-${idx}`}
 										isLoading={isPending}
 									/>
-							  ))
+								))
 							: authors.map((author, idx) => (
 									<AdminDashboardAuthorsGridItem
 										key={author.id}
@@ -133,7 +133,7 @@ const AdminDashboardAuthorsGrid = () => {
 										isLoading={isPending}
 										position={(currentPage - 1) * limit + idx + 1}
 									/>
-							  ))}
+								))}
 					</div>
 				</div>
 

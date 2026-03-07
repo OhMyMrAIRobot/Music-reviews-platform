@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { AuthorAPI } from '../api/author/author-api'
-import { authorsKeys } from '../query-keys/authors-keys'
+import { AuthorAPI } from '../../api/author/author-api'
+import { authorsKeys } from '../../query-keys/authors-keys'
 
 /**
  * Custom hook to fetch and manage author types metadata.

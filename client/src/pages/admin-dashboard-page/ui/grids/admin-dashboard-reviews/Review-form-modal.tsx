@@ -1,21 +1,12 @@
-import {
-	InvalidateQueryFilters,
-	useMutation,
-	useQueryClient,
-} from '@tanstack/react-query'
 import { FC, useEffect, useMemo, useState } from 'react'
-import { ReviewAPI } from '../../../../../api/review/review-api'
 import FormButton from '../../../../../components/form-elements/Form-button'
 import FormInput from '../../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../../components/form-elements/Form-label'
 import FormTextbox from '../../../../../components/form-elements/Form-textbox'
 import ModalOverlay from '../../../../../components/modals/Modal-overlay'
-import { useApiErrorHandler } from '../../../../../hooks/use-api-error-handler'
+import { useAdminUpdateReviewMutation } from '../../../../../hooks/mutations'
 import { useAuth } from '../../../../../hooks/use-auth'
-import { useStore } from '../../../../../hooks/use-store'
-import { releasesKeys } from '../../../../../query-keys/releases-keys'
-import { reviewsKeys } from '../../../../../query-keys/reviews-keys'
-import { Review, UpdateReviewData } from '../../../../../types/review'
+import { Review } from '../../../../../types/review'
 import { constraints } from '../../../../../utils/constraints'
 
 interface IProps {
@@ -25,53 +16,18 @@ interface IProps {
 }
 
 const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
-	/** HOOKS */
-	const { notificationStore } = useStore()
-	const queryClient = useQueryClient()
-	const handleApiError = useApiErrorHandler()
 	const { checkAuth } = useAuth()
 
-	/** STATES */
 	const [title, setTitle] = useState<string>(review.title ?? '')
 	const [text, setText] = useState<string>(review.text ?? '')
 
-	/** EFFECTS */
 	useEffect(() => {
 		setTitle(review.title ?? '')
 		setText(review.text ?? '')
 	}, [review])
 
-	/**
-	 * Function to invalidate related queries after mutations
-	 */
-	const invalidateRelatedQueries = () => {
-		const keysToInvalidate: InvalidateQueryFilters[] = [
-			{ queryKey: reviewsKeys.all },
-			{ queryKey: releasesKeys.details(review.release.id) },
-		]
-
-		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
-	}
-
-	/**
-	 * Mutation to update the review
-	 */
-	const { mutateAsync, isPending } = useMutation({
-		mutationFn: ({
-			reviewId,
-			reviewData,
-		}: {
-			reviewId: string
-			reviewData: UpdateReviewData
-		}) => ReviewAPI.adminUpdate(reviewId, reviewData),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification('Рецензия успешно обновлена!')
-			invalidateRelatedQueries()
-			onClose()
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Не удалось обновить рецензию')
-		},
+	const { mutateAsync, isPending } = useAdminUpdateReviewMutation({
+		onSuccess: () => onClose(),
 	})
 
 	/**

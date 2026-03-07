@@ -1,43 +1,21 @@
-import { useMutation } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
-import { AuthAPI } from '../../../../api/auth-api'
 import FormButton from '../../../../components/form-elements/Form-button'
 import FormInput from '../../../../components/form-elements/Form-input'
 import FormLabel from '../../../../components/form-elements/Form-label'
 import FormSubTitle from '../../../../components/form-elements/Form-subtitle'
 import FormTitle from '../../../../components/form-elements/Form-title'
 import PreventableLink from '../../../../components/utils/Preventable-link'
-import { useApiErrorHandler } from '../../../../hooks/use-api-error-handler'
+import { useLoginMutation } from '../../../../hooks/mutations'
 import useNavigationPath from '../../../../hooks/use-navigation-path'
-import { useStore } from '../../../../hooks/use-store'
-import { LoginData } from '../../../../types/auth'
 import { constraints } from '../../../../utils/constraints'
 
 const LoginForm = () => {
-	/** HOOKS */
 	const { navigateToRegistration, navigateToRequestReset } = useNavigationPath()
-	const { authStore, notificationStore } = useStore()
-	const handleApiError = useApiErrorHandler()
 
-	/** STATES */
 	const [email, setEmail] = useState<string>('')
 	const [password, setPassword] = useState<string>('')
 
-	/**
-	 * Mutation for logging in.
-	 */
-	const { mutateAsync: login, isPending: isLoading } = useMutation({
-		mutationFn: ({ email, password }: LoginData) =>
-			AuthAPI.login({ email, password }),
-		onSuccess: data => {
-			const { user, accessToken } = data
-			authStore.setAuthorization(user, accessToken)
-			notificationStore.addSuccessNotification('Вы успешно вошли!')
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Ошибка при выполнении входа!')
-		},
-	})
+	const { mutateAsync: login, isPending: isLoading } = useLoginMutation()
 
 	/**
 	 * Indicates whether the form is valid.
