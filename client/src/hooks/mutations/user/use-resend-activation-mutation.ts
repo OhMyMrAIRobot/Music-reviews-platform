@@ -1,8 +1,8 @@
-import { useMutation } from '@tanstack/react-query'
-import { AuthAPI } from '../../../api/auth-api'
-import { UseMutationParams } from '../../../types/common'
-import { useApiErrorHandler } from '../../use-api-error-handler'
-import { useStore } from '../../use-store'
+import { useMutation } from "@tanstack/react-query";
+import { AuthAPI } from "../../../api/auth-api";
+import { UseMutationParams } from "../../../types/common";
+import { useApiErrorHandler } from "../../use-api-error-handler";
+import { useStore } from "../../use-store";
 
 /**
  * Custom React hook returning a React Query mutation which requests the
@@ -13,27 +13,27 @@ import { useStore } from '../../use-store'
  * @returns The React Query mutation object for resending activation email.
  */
 export const useResendActivationMutation = ({
-	onSuccess,
-	onError,
-	onSettled,
+  onSuccess,
+  onError,
+  onSettled,
 }: UseMutationParams = {}) => {
-	const { notificationStore } = useStore()
-	const handleApiError = useApiErrorHandler()
+  const { notificationStore } = useStore();
+  const handleApiError = useApiErrorHandler();
 
-	const mutation = useMutation({
-		mutationFn: () => AuthAPI.resendActivation(),
-		onSuccess: data => {
-			if (data.emailSent) {
-				notificationStore.addEmailSentNotification(data.emailSent)
-			}
-			onSuccess?.()
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Ошибка при отправке письма активации!')
-			onError?.(error)
-		},
-		onSettled,
-	})
+  const mutation = useMutation({
+    mutationFn: () => AuthAPI.resendActivation(),
+    onSuccess: (data) => {
+      if (data.emailSent) {
+        notificationStore.addEmailSentNotification(data.emailSent);
+      }
+      onSuccess?.();
+    },
+    onError: (error: unknown) => {
+      handleApiError(error, "Ошибка при отправке письма активации!");
+      onError?.(error);
+    },
+    onSettled,
+  });
 
-	return mutation
-}
+  return mutation;
+};

@@ -2,6 +2,6 @@
  * Represents `AuthorConfirmationStatus` entity
  */
 export type AuthorConfirmationStatus = {
-	id: string
-	status: string
-}
+  id: string;
+  status: string;
+};

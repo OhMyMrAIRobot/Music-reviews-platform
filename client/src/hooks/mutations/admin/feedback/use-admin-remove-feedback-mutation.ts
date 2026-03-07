@@ -1,9 +1,9 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { FeedbackAPI } from '../../../../api/feedback/feedback-api'
-import { feedbackKeys } from '../../../../query-keys/feedback-keys'
-import { UseMutationParams } from '../../../../types/common'
-import { useApiErrorHandler } from '../../../use-api-error-handler'
-import { useStore } from '../../../use-store'
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { FeedbackAPI } from "../../../../api/feedback/feedback-api";
+import { feedbackKeys } from "../../../../query-keys/feedback-keys";
+import { UseMutationParams } from "../../../../types/common";
+import { useApiErrorHandler } from "../../../use-api-error-handler";
+import { useStore } from "../../../use-store";
 /**
  * Custom React hook returning a React Query mutation for deleting a feedback
  * message. On success the hook shows a success notification
@@ -13,27 +13,27 @@ import { useStore } from '../../../use-store'
  * @returns The React Query mutation object for removing feedback.
  */
 export const useAdminRemoveFeedbackMutation = ({
-	onSuccess,
-	onError,
-	onSettled,
+  onSuccess,
+  onError,
+  onSettled,
 }: UseMutationParams = {}) => {
-	const { notificationStore } = useStore()
-	const queryClient = useQueryClient()
-	const handleApiError = useApiErrorHandler()
+  const { notificationStore } = useStore();
+  const queryClient = useQueryClient();
+  const handleApiError = useApiErrorHandler();
 
-	const mutation = useMutation({
-		mutationFn: (id: string) => FeedbackAPI.delete(id),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification('Сообщение успешно удалено!')
-			queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
-			onSuccess?.()
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Не удалось удалить сообщение!')
-			onError?.(error)
-		},
-		onSettled,
-	})
+  const mutation = useMutation({
+    mutationFn: (id: string) => FeedbackAPI.delete(id),
+    onSuccess: () => {
+      notificationStore.addSuccessNotification("Сообщение успешно удалено!");
+      queryClient.invalidateQueries({ queryKey: feedbackKeys.all });
+      onSuccess?.();
+    },
+    onError: (error: unknown) => {
+      handleApiError(error, "Не удалось удалить сообщение!");
+      onError?.(error);
+    },
+    onSettled,
+  });
 
-	return mutation
-}
+  return mutation;
+};

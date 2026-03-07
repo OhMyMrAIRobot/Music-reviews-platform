@@ -1,4 +1,4 @@
-import { AlbumValue } from '../entities'
+import { AlbumValue } from "../entities";
 
 /**
  * Standard paginated response shape for album values endpoints.
@@ -7,12 +7,12 @@ import { AlbumValue } from '../entities'
  * of `AlbumValue` objects.
  */
 export type AlbumValuesResponse = {
-	meta: MetaInfo
-	items: AlbumValue[]
-}
+  meta: MetaInfo;
+  items: AlbumValue[];
+};
 
 /** Basic pagination / collection metadata. */
 type MetaInfo = {
-	/** Total number of items available for the current query. */
-	count: number
-}
+  /** Total number of items available for the current query. */
+  count: number;
+};

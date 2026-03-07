@@ -1,4 +1,4 @@
-import { ReleaseMedia } from '..'
+import { ReleaseMedia } from "..";
 
 /**
  * Standard response wrapper returned by listing endpoints for release media.
@@ -7,15 +7,15 @@ import { ReleaseMedia } from '..'
  * with the payload entries.
  */
 export type ReleaseMediaResponse = {
-	/** Pagination / collection metadata */
-	meta: MetaInfo
+  /** Pagination / collection metadata */
+  meta: MetaInfo;
 
-	/** Array of release media items */
-	items: ReleaseMedia[]
-}
+  /** Array of release media items */
+  items: ReleaseMedia[];
+};
 
 /** Meta information included with list responses. */
 type MetaInfo = {
-	/** Total number of records matching the query */
-	count: number
-}
+  /** Total number of records matching the query */
+  count: number;
+};

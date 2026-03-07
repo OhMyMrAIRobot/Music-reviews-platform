@@ -4,4 +4,4 @@
  * - `'author'` — nomination targets an author
  * - `'release'` — nomination targets a release
  */
-export type NominationEntityKind = 'author' | 'release'
+export type NominationEntityKind = "author" | "release";

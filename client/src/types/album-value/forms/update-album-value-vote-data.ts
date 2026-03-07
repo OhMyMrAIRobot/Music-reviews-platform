@@ -1,4 +1,4 @@
-import { CreateAlbumValueVoteData } from './create-album-value-vote-data'
+import { CreateAlbumValueVoteData } from "./create-album-value-vote-data";
 
 /**
  * UpdateAlbumValueVoteData
@@ -6,5 +6,5 @@ import { CreateAlbumValueVoteData } from './create-album-value-vote-data'
  * Partial request body for updating an album value vote.
  */
 export type UpdateAlbumValueVoteData = Partial<
-	Omit<CreateAlbumValueVoteData, 'releaseId'>
->
+  Omit<CreateAlbumValueVoteData, "releaseId">
+>;

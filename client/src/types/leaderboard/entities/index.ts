@@ -1,1 +1,1 @@
-export * from './leaderboard-item'
+export * from "./leaderboard-item";

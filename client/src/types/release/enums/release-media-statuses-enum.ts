@@ -5,7 +5,7 @@
  * release, used in API responses and UI.
  */
 export enum ReleaseMediaStatusesEnum {
-	PENDING = 'Ожидание',
-	APPROVED = 'Принято',
-	REJECTED = 'Отклонено',
+  PENDING = "Ожидание",
+  APPROVED = "Принято",
+  REJECTED = "Отклонено",
 }

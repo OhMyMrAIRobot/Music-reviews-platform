@@ -1,3 +1,3 @@
 export const platformStatsKeys = {
-	all: ['platformStats'] as const,
-}
+  all: ["platformStats"] as const,
+};

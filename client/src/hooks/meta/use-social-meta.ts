@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query'
-import { SocialMediaAPI } from '../../api/social-media-api'
-import { socialMediaKeys } from '../../query-keys/social-media-keys'
+import { useQuery } from "@tanstack/react-query";
+import { SocialMediaAPI } from "../../api/social-media-api";
+import { socialMediaKeys } from "../../query-keys/social-media-keys";
 
 /**
  * Custom hook to fetch and manage social media metadata.
@@ -12,15 +12,15 @@ import { socialMediaKeys } from '../../query-keys/social-media-keys'
  * - `isLoading`: Boolean indicating if the data is currently being fetched.
  */
 export function useSocialMeta() {
-	const { data: socials = [], isPending } = useQuery({
-		queryKey: socialMediaKeys.socials,
-		queryFn: () => SocialMediaAPI.findAll(),
-		staleTime: Infinity,
-		gcTime: 1000 * 60 * 60 * 24,
-	})
+  const { data: socials = [], isPending } = useQuery({
+    queryKey: socialMediaKeys.socials,
+    queryFn: () => SocialMediaAPI.findAll(),
+    staleTime: Infinity,
+    gcTime: 1000 * 60 * 60 * 24,
+  });
 
-	return {
-		socials: socials,
-		isLoading: isPending,
-	}
+  return {
+    socials: socials,
+    isLoading: isPending,
+  };
 }

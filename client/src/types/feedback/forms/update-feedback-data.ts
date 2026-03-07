@@ -5,8 +5,8 @@
  * entity identifier.
  */
 export type UpdateFeedbackData = {
-	/**
-	 * Target feedback status id (entity identifier).
-	 */
-	feedbackStatusId: string
-}
+  /**
+   * Target feedback status id (entity identifier).
+   */
+  feedbackStatusId: string;
+};

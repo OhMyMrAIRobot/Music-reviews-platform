@@ -1,5 +1,5 @@
-import { useCallback } from 'react'
-import { useStore } from './use-store'
+import { useCallback } from "react";
+import { useStore } from "./use-store";
 
 /**
  * Custom hook providing authentication utilities.
@@ -10,32 +10,32 @@ import { useStore } from './use-store'
  * - `checkAuth`: Function to verify user authentication and account activation status.
  */
 export const useAuth = () => {
-	const { authStore, notificationStore } = useStore()
+  const { authStore, notificationStore } = useStore();
 
-	/**
-	 * Checks if the user is authenticated and has an active account.
-	 * If not authenticated, shows an error notification about requiring authorization.
-	 * If authenticated but account is not active, shows an error notification about needing to activate the account.
-	 *
-	 * @returns True if the user is authenticated and has an active account, false otherwise.
-	 */
-	const checkAuth = useCallback(() => {
-		if (!authStore.isAuth) {
-			notificationStore.addErrorNotification(
-				'Для выполнения этого действия требуется авторизация!'
-			)
-			return false
-		}
+  /**
+   * Checks if the user is authenticated and has an active account.
+   * If not authenticated, shows an error notification about requiring authorization.
+   * If authenticated but account is not active, shows an error notification about needing to activate the account.
+   *
+   * @returns True if the user is authenticated and has an active account, false otherwise.
+   */
+  const checkAuth = useCallback(() => {
+    if (!authStore.isAuth) {
+      notificationStore.addErrorNotification(
+        "Для выполнения этого действия требуется авторизация!",
+      );
+      return false;
+    }
 
-		if (!authStore.user?.isActive) {
-			notificationStore.addErrorNotification(
-				'Для выполнения этого действия требуется активировать аккаунт!'
-			)
-			return false
-		}
+    if (!authStore.user?.isActive) {
+      notificationStore.addErrorNotification(
+        "Для выполнения этого действия требуется активировать аккаунт!",
+      );
+      return false;
+    }
 
-		return true
-	}, [authStore.isAuth, authStore.user?.isActive, notificationStore])
+    return true;
+  }, [authStore.isAuth, authStore.user?.isActive, notificationStore]);
 
-	return { checkAuth }
-}
+  return { checkAuth };
+};

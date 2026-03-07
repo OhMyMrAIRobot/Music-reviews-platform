@@ -1,447 +1,447 @@
-import { useQueryClient } from '@tanstack/react-query'
-import { FC, useEffect, useMemo, useState } from 'react'
-import { AuthorAPI } from '../../../../../api/author/author-api.ts'
-import ComboBox from '../../../../../components/buttons/Combo-box.tsx'
-import FormButton from '../../../../../components/form-elements/Form-button.tsx'
-import FormCheckbox from '../../../../../components/form-elements/Form-checkbox.tsx'
-import FormInput from '../../../../../components/form-elements/Form-input.tsx'
-import FormLabel from '../../../../../components/form-elements/Form-label.tsx'
+import { useQueryClient } from "@tanstack/react-query";
+import { FC, useEffect, useMemo, useState } from "react";
+import { AuthorAPI } from "../../../../../api/author/author-api.ts";
+import ComboBox from "../../../../../components/buttons/Combo-box.tsx";
+import FormButton from "../../../../../components/form-elements/Form-button.tsx";
+import FormCheckbox from "../../../../../components/form-elements/Form-checkbox.tsx";
+import FormInput from "../../../../../components/form-elements/Form-input.tsx";
+import FormLabel from "../../../../../components/form-elements/Form-label.tsx";
 import FormMultiSelect, {
-	IMultiSelectValue,
-} from '../../../../../components/form-elements/Form-multi-select.tsx'
-import ModalOverlay from '../../../../../components/modals/Modal-overlay.tsx'
-import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
-import { useReleaseMeta } from '../../../../../hooks/meta'
+  IMultiSelectValue,
+} from "../../../../../components/form-elements/Form-multi-select.tsx";
+import ModalOverlay from "../../../../../components/modals/Modal-overlay.tsx";
+import SkeletonLoader from "../../../../../components/utils/Skeleton-loader.tsx";
+import { useReleaseMeta } from "../../../../../hooks/meta";
 import {
-	useAdminCreateReleaseMutation,
-	useAdminUpdateReleaseMutation,
-} from '../../../../../hooks/mutations/index.ts'
-import { authorsKeys } from '../../../../../query-keys/authors-keys.ts'
-import { AuthorsQuery } from '../../../../../types/author/index.ts'
-import { IReleaseFormValues, Release } from '../../../../../types/release'
-import { arraysEqual } from '../../../../../utils/arrays-equal.ts'
-import buildReleaseFormData from '../../../../../utils/build-release-form-data'
-import { constraints } from '../../../../../utils/constraints.ts'
-import SelectImageLabel from '../../../../edit-profile-page/ui/labels/Select-image-label.tsx'
-import SelectedImageLabel from '../../../../edit-profile-page/ui/labels/Selected-image-label.tsx'
+  useAdminCreateReleaseMutation,
+  useAdminUpdateReleaseMutation,
+} from "../../../../../hooks/mutations/index.ts";
+import { authorsKeys } from "../../../../../query-keys/authors-keys.ts";
+import { AuthorsQuery } from "../../../../../types/author/index.ts";
+import { IReleaseFormValues, Release } from "../../../../../types/release";
+import { arraysEqual } from "../../../../../utils/arrays-equal.ts";
+import buildReleaseFormData from "../../../../../utils/build-release-form-data";
+import { constraints } from "../../../../../utils/constraints.ts";
+import SelectImageLabel from "../../../../edit-profile-page/ui/labels/Select-image-label.tsx";
+import SelectedImageLabel from "../../../../edit-profile-page/ui/labels/Selected-image-label.tsx";
 
 interface IProps {
-	isOpen: boolean
-	onClose: () => void
-	release?: Release
+  isOpen: boolean;
+  onClose: () => void;
+  release?: Release;
 }
 
 const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
-	const { types, isLoading: isTypesLoading } = useReleaseMeta()
-	const queryClient = useQueryClient()
+  const { types, isLoading: isTypesLoading } = useReleaseMeta();
+  const queryClient = useQueryClient();
 
-	/** STATES */
-	const [cover, setCover] = useState<File | null>(null)
-	const [coverPreviewUrl, setCoverPreviewUrl] = useState<string | null>(null)
-	const [title, setTitle] = useState<string>('')
-	const [type, setType] = useState<string>('')
-	const [date, setDate] = useState<string>('')
-	const [selectedArtists, setSelectedArtists] = useState<IMultiSelectValue[]>(
-		[],
-	)
-	const [selectedProducers, setSelectedProducers] = useState<
-		IMultiSelectValue[]
-	>([])
-	const [selectedDesigners, setSelectedDesigners] = useState<
-		IMultiSelectValue[]
-	>([])
-	const [deleteCover, setDeleteCover] = useState<boolean>(false)
+  /** STATES */
+  const [cover, setCover] = useState<File | null>(null);
+  const [coverPreviewUrl, setCoverPreviewUrl] = useState<string | null>(null);
+  const [title, setTitle] = useState<string>("");
+  const [type, setType] = useState<string>("");
+  const [date, setDate] = useState<string>("");
+  const [selectedArtists, setSelectedArtists] = useState<IMultiSelectValue[]>(
+    [],
+  );
+  const [selectedProducers, setSelectedProducers] = useState<
+    IMultiSelectValue[]
+  >([]);
+  const [selectedDesigners, setSelectedDesigners] = useState<
+    IMultiSelectValue[]
+  >([]);
+  const [deleteCover, setDeleteCover] = useState<boolean>(false);
 
-	/** EFFECTS */
-	useEffect(() => {
-		if (release && isOpen) {
-			setTitle(release.title)
-			setDate(release.publishDate.split('T')[0])
-			setType(release.releaseType.type)
-			if (release.img) {
-				setCoverPreviewUrl(
-					`${import.meta.env.VITE_SERVER_URL}/public/releases/${release.img}`,
-				)
-			}
-			setSelectedArtists(release.authors.artists)
-			setSelectedProducers(release.authors.producers)
-			setSelectedDesigners(release.authors.designers)
-		} else {
-			resetForm()
-		}
-	}, [isOpen, release])
+  /** EFFECTS */
+  useEffect(() => {
+    if (release && isOpen) {
+      setTitle(release.title);
+      setDate(release.publishDate.split("T")[0]);
+      setType(release.releaseType.type);
+      if (release.img) {
+        setCoverPreviewUrl(
+          `${import.meta.env.VITE_SERVER_URL}/public/releases/${release.img}`,
+        );
+      }
+      setSelectedArtists(release.authors.artists);
+      setSelectedProducers(release.authors.producers);
+      setSelectedDesigners(release.authors.designers);
+    } else {
+      resetForm();
+    }
+  }, [isOpen, release]);
 
-	const onSuccess = () => {
-		resetForm()
-		onClose()
-	}
+  const onSuccess = () => {
+    resetForm();
+    onClose();
+  };
 
-	const { mutateAsync: createAsync, isPending: isCreating } =
-		useAdminCreateReleaseMutation({ onSuccess })
+  const { mutateAsync: createAsync, isPending: isCreating } =
+    useAdminCreateReleaseMutation({ onSuccess });
 
-	const { mutateAsync: updateAsync, isPending: isUpdating } =
-		useAdminUpdateReleaseMutation({ onSuccess })
+  const { mutateAsync: updateAsync, isPending: isUpdating } =
+    useAdminUpdateReleaseMutation({ onSuccess });
 
-	/**
-	 * Indicator whether any mutation is pending
-	 *
-	 * @returns {boolean} True if any mutation is pending, false otherwise
-	 */
-	const isPending = useMemo(
-		() => isCreating || isUpdating,
-		[isCreating, isUpdating],
-	)
+  /**
+   * Indicator whether any mutation is pending
+   *
+   * @returns {boolean} True if any mutation is pending, false otherwise
+   */
+  const isPending = useMemo(
+    () => isCreating || isUpdating,
+    [isCreating, isUpdating],
+  );
 
-	/**
-	 * Handles the form submission for creating or updating a release.
-	 */
-	const handleSubmit = async () => {
-		if (!isFormValid || isPending) return
+  /**
+   * Handles the form submission for creating or updating a release.
+   */
+  const handleSubmit = async () => {
+    if (!isFormValid || isPending) return;
 
-		const values: IReleaseFormValues = {
-			cover,
-			coverPreviewUrl,
-			title,
-			type,
-			publishDate: date,
-			selectedArtists,
-			selectedProducers,
-			selectedDesigners,
-			deleteCover,
-		}
+    const values: IReleaseFormValues = {
+      cover,
+      coverPreviewUrl,
+      title,
+      type,
+      publishDate: date,
+      selectedArtists,
+      selectedProducers,
+      selectedDesigners,
+      deleteCover,
+    };
 
-		const formData = buildReleaseFormData(values, types, release)
+    const formData = buildReleaseFormData(values, types, release);
 
-		if (release) {
-			return updateAsync({ id: release.id, formData })
-		} else {
-			return createAsync(formData)
-		}
-	}
+    if (release) {
+      return updateAsync({ id: release.id, formData });
+    } else {
+      return createAsync(formData);
+    }
+  };
 
-	/**
-	 * Resets the form to its initial state.
-	 */
-	const resetForm = () => {
-		setCover(null)
-		setCoverPreviewUrl(null)
-		setTitle('')
-		setType('')
-		setDate('')
-		setSelectedArtists([])
-		setSelectedDesigners([])
-		setSelectedProducers([])
-	}
+  /**
+   * Resets the form to its initial state.
+   */
+  const resetForm = () => {
+    setCover(null);
+    setCoverPreviewUrl(null);
+    setTitle("");
+    setType("");
+    setDate("");
+    setSelectedArtists([]);
+    setSelectedDesigners([]);
+    setSelectedProducers([]);
+  };
 
-	/**
-	 * Determines if there are any changes in the form compared to the initial release data.
-	 */
-	const hasChanges = useMemo(() => {
-		if (!release) return true
-		if (cover) return true
-		if (release.title !== title) return true
-		if (release.releaseType.type !== type) return true
-		if (release.publishDate !== date) return true
-		if (deleteCover) return true
+  /**
+   * Determines if there are any changes in the form compared to the initial release data.
+   */
+  const hasChanges = useMemo(() => {
+    if (!release) return true;
+    if (cover) return true;
+    if (release.title !== title) return true;
+    if (release.releaseType.type !== type) return true;
+    if (release.publishDate !== date) return true;
+    if (deleteCover) return true;
 
-		if (
-			!arraysEqual(
-				release.authors.artists.map(entry => entry.name).sort(),
-				selectedArtists.map(sa => sa.name).sort(),
-			)
-		)
-			return true
+    if (
+      !arraysEqual(
+        release.authors.artists.map((entry) => entry.name).sort(),
+        selectedArtists.map((sa) => sa.name).sort(),
+      )
+    )
+      return true;
 
-		if (
-			!arraysEqual(
-				release.authors.producers.map(entry => entry.name).sort(),
-				selectedProducers.map(sp => sp.name).sort(),
-			)
-		)
-			return true
+    if (
+      !arraysEqual(
+        release.authors.producers.map((entry) => entry.name).sort(),
+        selectedProducers.map((sp) => sp.name).sort(),
+      )
+    )
+      return true;
 
-		if (
-			!arraysEqual(
-				release.authors.designers.map(entry => entry.name).sort(),
-				selectedDesigners.map(sd => sd.name).sort(),
-			)
-		)
-			return true
+    if (
+      !arraysEqual(
+        release.authors.designers.map((entry) => entry.name).sort(),
+        selectedDesigners.map((sd) => sd.name).sort(),
+      )
+    )
+      return true;
 
-		return false
-	}, [
-		cover,
-		date,
-		deleteCover,
-		release,
-		selectedArtists,
-		selectedDesigners,
-		selectedProducers,
-		title,
-		type,
-	])
+    return false;
+  }, [
+    cover,
+    date,
+    deleteCover,
+    release,
+    selectedArtists,
+    selectedDesigners,
+    selectedProducers,
+    title,
+    type,
+  ]);
 
-	/**
-	 * Handles the change event for the cover image input.
-	 *
-	 * @param {React.ChangeEvent<HTMLInputElement>} event - The change event.
-	 */
-	const handleCoverChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		if (event.target.files && event.target.files[0]) {
-			const selectedFile = event.target.files[0]
-			setCover(selectedFile)
+  /**
+   * Handles the change event for the cover image input.
+   *
+   * @param {React.ChangeEvent<HTMLInputElement>} event - The change event.
+   */
+  const handleCoverChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const selectedFile = event.target.files[0];
+      setCover(selectedFile);
 
-			const fileUrl = URL.createObjectURL(selectedFile)
-			setCoverPreviewUrl(fileUrl)
-		}
-	}
+      const fileUrl = URL.createObjectURL(selectedFile);
+      setCoverPreviewUrl(fileUrl);
+    }
+  };
 
-	/**
-	 * Loads authors based on the search query and limit.
-	 *
-	 * @param {string} search - The search query.
-	 * @param {number | null} limit - The maximum number of authors to load.
-	 * @returns {Promise<IMultiSelectValue[]>} A promise that resolves to an array of multi-select values representing authors.
-	 */
-	const loadAuthors = async (
-		search: string,
-		limit: number | null,
-	): Promise<IMultiSelectValue[]> => {
-		const query: AuthorsQuery = {
-			search: search.trim() || undefined,
-			limit: limit ?? undefined,
-			offset: 0,
-		}
+  /**
+   * Loads authors based on the search query and limit.
+   *
+   * @param {string} search - The search query.
+   * @param {number | null} limit - The maximum number of authors to load.
+   * @returns {Promise<IMultiSelectValue[]>} A promise that resolves to an array of multi-select values representing authors.
+   */
+  const loadAuthors = async (
+    search: string,
+    limit: number | null,
+  ): Promise<IMultiSelectValue[]> => {
+    const query: AuthorsQuery = {
+      search: search.trim() || undefined,
+      limit: limit ?? undefined,
+      offset: 0,
+    };
 
-		const data = await queryClient.fetchQuery({
-			queryKey: authorsKeys.list(query),
-			queryFn: () => AuthorAPI.findAll(query),
-		})
-		const items = data?.items || []
+    const data = await queryClient.fetchQuery({
+      queryKey: authorsKeys.list(query),
+      queryFn: () => AuthorAPI.findAll(query),
+    });
+    const items = data?.items || [];
 
-		return items.map(a => ({
-			id: a.id,
-			name: a.name,
-		}))
-	}
+    return items.map((a) => ({
+      id: a.id,
+      name: a.name,
+    }));
+  };
 
-	/**
-	 * Indicates whether the form is valid for submission.
-	 *
-	 * @returns {boolean} True if the form is valid, false otherwise.
-	 */
-	const isFormValid = useMemo(
-		() =>
-			title.trim().length >= constraints.release.minTitleLength &&
-			title.trim().length <= constraints.release.maxTitleLength &&
-			type !== '' &&
-			date !== '',
-		[title, type, date],
-	)
+  /**
+   * Indicates whether the form is valid for submission.
+   *
+   * @returns {boolean} True if the form is valid, false otherwise.
+   */
+  const isFormValid = useMemo(
+    () =>
+      title.trim().length >= constraints.release.minTitleLength &&
+      title.trim().length <= constraints.release.maxTitleLength &&
+      type !== "" &&
+      date !== "",
+    [title, type, date],
+  );
 
-	/** CONSTANTS */
-	const formTitle = release ? 'Редактирование релиза' : 'Добавление релиза'
-	const buttonText = release ? 'Сохранить' : 'Добавить'
+  /** CONSTANTS */
+  const formTitle = release ? "Редактирование релиза" : "Добавление релиза";
+  const buttonText = release ? "Сохранить" : "Добавить";
 
-	if (!isOpen) return null
+  if (!isOpen) return null;
 
-	return (
-		<ModalOverlay
-			isOpen={isOpen}
-			onCancel={onClose}
-			isLoading={isPending}
-			className='max-lg:size-full'
-		>
-			{isTypesLoading ? (
-				<SkeletonLoader className='w-full lg:w-240 h-140 size-full rounded-xl' />
-			) : (
-				<div
-					className={`relative rounded-xl w-full lg:w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6 overflow-y-scroll max-h-full`}
-				>
-					<h1 className='border-b border-white/10 text-3xl font-bold py-4 text-center'>
-						{formTitle}
-					</h1>
+  return (
+    <ModalOverlay
+      isOpen={isOpen}
+      onCancel={onClose}
+      isLoading={isPending}
+      className="max-lg:size-full"
+    >
+      {isTypesLoading ? (
+        <SkeletonLoader className="w-full lg:w-240 h-140 size-full rounded-xl" />
+      ) : (
+        <div
+          className={`relative rounded-xl w-full lg:w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6 overflow-y-scroll max-h-full`}
+        >
+          <h1 className="border-b border-white/10 text-3xl font-bold py-4 text-center">
+            {formTitle}
+          </h1>
 
-					<div className='border-b border-white/10 p-6 flex gap-10 w-full'>
-						<div className='grid gap-2 lg:max-w-[30%] overflow-hidden w-full'>
-							<h3 className='text-2xl font-semibold leading-none tracking-tight'>
-								Обложка релиза
-							</h3>
+          <div className="border-b border-white/10 p-6 flex gap-10 w-full">
+            <div className="grid gap-2 lg:max-w-[30%] overflow-hidden w-full">
+              <h3 className="text-2xl font-semibold leading-none tracking-tight">
+                Обложка релиза
+              </h3>
 
-							<div className='w-full lg:w-[250px]'>
-								<SelectImageLabel htmlfor='cover' />
-							</div>
+              <div className="w-full lg:w-[250px]">
+                <SelectImageLabel htmlfor="cover" />
+              </div>
 
-							<input
-								onChange={handleCoverChange}
-								className='hidden'
-								id='cover'
-								accept='image/*'
-								type='file'
-							/>
-							<SelectedImageLabel file={cover} />
+              <input
+                onChange={handleCoverChange}
+                className="hidden"
+                id="cover"
+                accept="image/*"
+                type="file"
+              />
+              <SelectedImageLabel file={cover} />
 
-							<div className='relative size-36 rounded-full overflow-hidden select-none'>
-								<img
-									alt='avatar'
-									loading='lazy'
-									decoding='async'
-									src={
-										coverPreviewUrl ||
-										`${import.meta.env.VITE_SERVER_URL}/public/releases/${
-											import.meta.env.VITE_DEFAULT_COVER
-										}`
-									}
-									className='object-cover size-full'
-								/>
-							</div>
+              <div className="relative size-36 rounded-full overflow-hidden select-none">
+                <img
+                  alt="avatar"
+                  loading="lazy"
+                  decoding="async"
+                  src={
+                    coverPreviewUrl ||
+                    `${import.meta.env.VITE_SERVER_URL}/public/releases/${
+                      import.meta.env.VITE_DEFAULT_COVER
+                    }`
+                  }
+                  className="object-cover size-full"
+                />
+              </div>
 
-							{release && (
-								<div
-									className={`flex gap-2 items-center mt-2 ${
-										release.img === '' || cover
-											? 'opacity-50 pointer-events-none'
-											: ''
-									}`}
-								>
-									<FormCheckbox
-										id={'cover-checkbox'}
-										checked={deleteCover}
-										setChecked={setDeleteCover}
-									/>
-									<FormLabel
-										name={'Удалить обложку'}
-										htmlFor={'cover-checkbox'}
-										isRequired={false}
-									/>
-								</div>
-							)}
-						</div>
-					</div>
+              {release && (
+                <div
+                  className={`flex gap-2 items-center mt-2 ${
+                    release.img === "" || cover
+                      ? "opacity-50 pointer-events-none"
+                      : ""
+                  }`}
+                >
+                  <FormCheckbox
+                    id={"cover-checkbox"}
+                    checked={deleteCover}
+                    setChecked={setDeleteCover}
+                  />
+                  <FormLabel
+                    name={"Удалить обложку"}
+                    htmlFor={"cover-checkbox"}
+                    isRequired={false}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
 
-					<div className='grid grid-cols-1 lg:grid-cols-2 p-6 border-b border-white/10 gap-3 lg:gap-6'>
-						<div className='grid grid-rows-3 gap-y-3'>
-							<div className='grid gap-2 w-full'>
-								<FormLabel
-									name={'Название релиза'}
-									htmlFor={'release-title'}
-									isRequired={true}
-								/>
-								<FormInput
-									id={'release-title'}
-									placeholder={'Название релиза...'}
-									type={'text'}
-									value={title}
-									setValue={setTitle}
-								/>
-							</div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 p-6 border-b border-white/10 gap-3 lg:gap-6">
+            <div className="grid grid-rows-3 gap-y-3">
+              <div className="grid gap-2 w-full">
+                <FormLabel
+                  name={"Название релиза"}
+                  htmlFor={"release-title"}
+                  isRequired={true}
+                />
+                <FormInput
+                  id={"release-title"}
+                  placeholder={"Название релиза..."}
+                  type={"text"}
+                  value={title}
+                  setValue={setTitle}
+                />
+              </div>
 
-							<div className='grid gap-2 w-full'>
-								<FormLabel
-									name={'Тип релиза'}
-									htmlFor={'release-type'}
-									isRequired={true}
-								/>
+              <div className="grid gap-2 w-full">
+                <FormLabel
+                  name={"Тип релиза"}
+                  htmlFor={"release-type"}
+                  isRequired={true}
+                />
 
-								<ComboBox
-									options={types.map(entry => entry.type)}
-									value={type || undefined}
-									onChange={setType}
-									placeholder='Тип релиза'
-									className='border border-white/15'
-								/>
-							</div>
+                <ComboBox
+                  options={types.map((entry) => entry.type)}
+                  value={type || undefined}
+                  onChange={setType}
+                  placeholder="Тип релиза"
+                  className="border border-white/15"
+                />
+              </div>
 
-							<div className='grid gap-2 w-full'>
-								<FormLabel
-									name={'Дата публикации'}
-									htmlFor={'release-date'}
-									isRequired={true}
-								/>
-								<FormInput
-									id={'release-date'}
-									placeholder={''}
-									type={'date'}
-									value={date}
-									setValue={setDate}
-								/>
-							</div>
-						</div>
+              <div className="grid gap-2 w-full">
+                <FormLabel
+                  name={"Дата публикации"}
+                  htmlFor={"release-date"}
+                  isRequired={true}
+                />
+                <FormInput
+                  id={"release-date"}
+                  placeholder={""}
+                  type={"date"}
+                  value={date}
+                  setValue={setDate}
+                />
+              </div>
+            </div>
 
-						<div className='grid grid-rows-3 gap-3'>
-							<div className='grid gap-2 w-full'>
-								<FormLabel
-									name={'Артисты'}
-									htmlFor={'release-artists'}
-									isRequired={false}
-								/>
-								<FormMultiSelect
-									id={'release-artists'}
-									placeholder={'Артисты'}
-									value={selectedArtists}
-									onChange={setSelectedArtists}
-									loadOptions={loadAuthors}
-								/>
-							</div>
+            <div className="grid grid-rows-3 gap-3">
+              <div className="grid gap-2 w-full">
+                <FormLabel
+                  name={"Артисты"}
+                  htmlFor={"release-artists"}
+                  isRequired={false}
+                />
+                <FormMultiSelect
+                  id={"release-artists"}
+                  placeholder={"Артисты"}
+                  value={selectedArtists}
+                  onChange={setSelectedArtists}
+                  loadOptions={loadAuthors}
+                />
+              </div>
 
-							<div className='grid gap-2 w-full'>
-								<FormLabel
-									name={'Продюсеры'}
-									htmlFor={'release-producers'}
-									isRequired={false}
-								/>
-								<FormMultiSelect
-									id={'release-producers'}
-									placeholder={'Продюсеры'}
-									value={selectedProducers}
-									onChange={setSelectedProducers}
-									loadOptions={loadAuthors}
-								/>
-							</div>
+              <div className="grid gap-2 w-full">
+                <FormLabel
+                  name={"Продюсеры"}
+                  htmlFor={"release-producers"}
+                  isRequired={false}
+                />
+                <FormMultiSelect
+                  id={"release-producers"}
+                  placeholder={"Продюсеры"}
+                  value={selectedProducers}
+                  onChange={setSelectedProducers}
+                  loadOptions={loadAuthors}
+                />
+              </div>
 
-							<div className='grid gap-2 w-full'>
-								<FormLabel
-									name={'Дизайнеры'}
-									htmlFor={'release-designers'}
-									isRequired={false}
-								/>
-								<FormMultiSelect
-									id={'release-designers'}
-									placeholder={'Дизайнеры'}
-									value={selectedDesigners}
-									onChange={setSelectedDesigners}
-									loadOptions={loadAuthors}
-								/>
-							</div>
-						</div>
-					</div>
+              <div className="grid gap-2 w-full">
+                <FormLabel
+                  name={"Дизайнеры"}
+                  htmlFor={"release-designers"}
+                  isRequired={false}
+                />
+                <FormMultiSelect
+                  id={"release-designers"}
+                  placeholder={"Дизайнеры"}
+                  value={selectedDesigners}
+                  onChange={setSelectedDesigners}
+                  loadOptions={loadAuthors}
+                />
+              </div>
+            </div>
+          </div>
 
-					<div className='w-full pt-6 px-6 grid sm:flex gap-3 sm:justify-start'>
-						<div className='w-full sm:w-30'>
-							<FormButton
-								title={buttonText}
-								isInvert={true}
-								onClick={handleSubmit}
-								disabled={
-									!isFormValid || (!!release && !hasChanges) || isPending
-								}
-								isLoading={isPending}
-							/>
-						</div>
+          <div className="w-full pt-6 px-6 grid sm:flex gap-3 sm:justify-start">
+            <div className="w-full sm:w-30">
+              <FormButton
+                title={buttonText}
+                isInvert={true}
+                onClick={handleSubmit}
+                disabled={
+                  !isFormValid || (!!release && !hasChanges) || isPending
+                }
+                isLoading={isPending}
+              />
+            </div>
 
-						<div className='w-full sm:w-25'>
-							<FormButton
-								title={'Назад'}
-								isInvert={false}
-								onClick={onClose}
-								disabled={isPending}
-							/>
-						</div>
-					</div>
-				</div>
-			)}
-		</ModalOverlay>
-	)
-}
+            <div className="w-full sm:w-25">
+              <FormButton
+                title={"Назад"}
+                isInvert={false}
+                onClick={onClose}
+                disabled={isPending}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+    </ModalOverlay>
+  );
+};
 
-export default ReleaseFormModal
+export default ReleaseFormModal;

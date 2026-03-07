@@ -1,1 +1,1 @@
-export * from './album-values-query'
+export * from "./album-values-query";

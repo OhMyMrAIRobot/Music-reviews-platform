@@ -3,9 +3,9 @@
  *
  */
 export type AuthorLikesQuery = {
-	/** Maximum number of items to return (pagination limit). */
-	limit?: number
+  /** Maximum number of items to return (pagination limit). */
+  limit?: number;
 
-	/** Number of items to skip (pagination offset). */
-	offset?: number
-}
+  /** Number of items to skip (pagination offset). */
+  offset?: number;
+};

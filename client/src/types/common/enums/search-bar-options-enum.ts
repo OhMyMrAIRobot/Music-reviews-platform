@@ -3,6 +3,6 @@
  * bar for filtering search results.
  */
 export enum SearchBarOptionsEnum {
-	AUTHORS = 'Авторы',
-	RELEASES = 'Релизы',
+  AUTHORS = "Авторы",
+  RELEASES = "Релизы",
 }

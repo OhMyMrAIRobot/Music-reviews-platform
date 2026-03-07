@@ -1,4 +1,4 @@
-import { AuthorLike } from '../entities'
+import { AuthorLike } from "../entities";
 
 /**
  * AuthorLikesResponse — standard paginated response shape used by the
@@ -6,14 +6,14 @@ import { AuthorLike } from '../entities'
  * metadata about the overall result set.
  */
 export type AuthorLikesResponse = {
-	meta: MetaInfo
-	items: AuthorLike[]
-}
+  meta: MetaInfo;
+  items: AuthorLike[];
+};
 
 /**
  * MetaInfo — pagination / metadata for lists of author-likes.
  */
 type MetaInfo = {
-	/** Total number of matching items */
-	count: number
-}
+  /** Total number of matching items */
+  count: number;
+};

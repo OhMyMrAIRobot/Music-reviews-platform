@@ -1,1 +1,1 @@
-export * from './album-value-tiers-enum'
+export * from "./album-value-tiers-enum";

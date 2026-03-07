@@ -1,7 +1,7 @@
 export const ProfilePageSections = Object.freeze({
-	AUTHOR_CARDS: 'Карточки автора',
-	PREFER: 'Предпочтения',
-	REVIEWS: 'Рецензии и оценки',
-	MEDIA_REVIEWS: 'Медиарецензии',
-	LIKES: 'Понравилось',
-})
+  AUTHOR_CARDS: "Карточки автора",
+  PREFER: "Предпочтения",
+  REVIEWS: "Рецензии и оценки",
+  MEDIA_REVIEWS: "Медиарецензии",
+  LIKES: "Понравилось",
+});

@@ -1,0 +1,9 @@
+node_modules
+out
+build
+dist
+public
+*.log
+.DS_Store
+package-lock.json
+README.md

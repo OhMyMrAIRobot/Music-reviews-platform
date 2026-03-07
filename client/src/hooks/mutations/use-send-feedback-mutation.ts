@@ -1,10 +1,10 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { FeedbackAPI } from '../../api/feedback/feedback-api'
-import { feedbackKeys } from '../../query-keys/feedback-keys'
-import { UseMutationParams } from '../../types/common'
-import { CreateFeedbackData } from '../../types/feedback'
-import { useApiErrorHandler } from '../use-api-error-handler'
-import { useStore } from '../use-store'
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { FeedbackAPI } from "../../api/feedback/feedback-api";
+import { feedbackKeys } from "../../query-keys/feedback-keys";
+import { UseMutationParams } from "../../types/common";
+import { CreateFeedbackData } from "../../types/feedback";
+import { useApiErrorHandler } from "../use-api-error-handler";
+import { useStore } from "../use-store";
 
 /**
  * Custom React hook returning a React Query mutation to send a feedback.
@@ -14,27 +14,27 @@ import { useStore } from '../use-store'
  * @returns The React Query mutation object for sending feedback.
  */
 export const useSendFeedbackMutation = ({
-	onSuccess,
-	onError,
-	onSettled,
+  onSuccess,
+  onError,
+  onSettled,
 }: UseMutationParams = {}) => {
-	const { notificationStore } = useStore()
-	const handleApiError = useApiErrorHandler()
-	const queryClient = useQueryClient()
+  const { notificationStore } = useStore();
+  const handleApiError = useApiErrorHandler();
+  const queryClient = useQueryClient();
 
-	const mutation = useMutation({
-		mutationFn: (payload: CreateFeedbackData) => FeedbackAPI.create(payload),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification('Отзыв успешно отправлен!')
-			queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
-			onSuccess?.()
-		},
-		onError: (error: unknown) => {
-			handleApiError(error)
-			onError?.(error)
-		},
-		onSettled,
-	})
+  const mutation = useMutation({
+    mutationFn: (payload: CreateFeedbackData) => FeedbackAPI.create(payload),
+    onSuccess: () => {
+      notificationStore.addSuccessNotification("Отзыв успешно отправлен!");
+      queryClient.invalidateQueries({ queryKey: feedbackKeys.all });
+      onSuccess?.();
+    },
+    onError: (error: unknown) => {
+      handleApiError(error);
+      onError?.(error);
+    },
+    onSettled,
+  });
 
-	return mutation
-}
+  return mutation;
+};

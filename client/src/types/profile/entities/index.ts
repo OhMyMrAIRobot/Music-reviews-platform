@@ -1,2 +1,2 @@
-export * from './profile'
-export * from './profile-preference'
+export * from "./profile";
+export * from "./profile-preference";

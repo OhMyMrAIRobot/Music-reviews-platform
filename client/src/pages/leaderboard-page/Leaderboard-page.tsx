@@ -1,55 +1,55 @@
-import { useQuery } from '@tanstack/react-query'
-import { LeaderboardAPI } from '../../api/leaderboard-api'
-import { leaderboardKeys } from '../../query-keys/leaderboard-keys'
-import { LeaderboardQuery } from '../../types/leaderboard'
-import LeaderboardHeader from './ui/Leaderboard-header'
-import LeaderboardItem from './ui/Leaderboard-item'
-import LeaderboardTitle from './ui/Leaderboard-title'
+import { useQuery } from "@tanstack/react-query";
+import { LeaderboardAPI } from "../../api/leaderboard-api";
+import { leaderboardKeys } from "../../query-keys/leaderboard-keys";
+import { LeaderboardQuery } from "../../types/leaderboard";
+import LeaderboardHeader from "./ui/Leaderboard-header";
+import LeaderboardItem from "./ui/Leaderboard-item";
+import LeaderboardTitle from "./ui/Leaderboard-title";
 
 const query: LeaderboardQuery = {
-	limit: 90,
-	offset: 0,
-}
+  limit: 90,
+  offset: 0,
+};
 
 const LeaderboardPage = () => {
-	const { data, isPending } = useQuery({
-		queryKey: leaderboardKeys.list(query),
-		queryFn: () => LeaderboardAPI.fetchLeaderboard(query),
-		staleTime: 1000 * 60 * 5,
-	})
+  const { data, isPending } = useQuery({
+    queryKey: leaderboardKeys.list(query),
+    queryFn: () => LeaderboardAPI.fetchLeaderboard(query),
+    staleTime: 1000 * 60 * 5,
+  });
 
-	const items = data ?? []
+  const items = data ?? [];
 
-	return (
-		<div className='max-w-[1250px] mx-auto'>
-			<LeaderboardTitle />
+  return (
+    <div className="max-w-[1250px] mx-auto">
+      <LeaderboardTitle />
 
-			<div className='mt-5 flex flex-col gap-y-3.5'>
-				<LeaderboardHeader />
+      <div className="mt-5 flex flex-col gap-y-3.5">
+        <LeaderboardHeader />
 
-				{isPending
-					? Array.from({ length: 15 }).map((_, idx) => (
-							<LeaderboardItem
-								key={`leaderboard-skeleton-${idx}`}
-								isLoading={isPending}
-							/>
-					  ))
-					: items.map(item => (
-							<LeaderboardItem
-								key={item.user.id}
-								item={item}
-								isLoading={isPending}
-							/>
-					  ))}
+        {isPending
+          ? Array.from({ length: 15 }).map((_, idx) => (
+              <LeaderboardItem
+                key={`leaderboard-skeleton-${idx}`}
+                isLoading={isPending}
+              />
+            ))
+          : items.map((item) => (
+              <LeaderboardItem
+                key={item.user.id}
+                item={item}
+                isLoading={isPending}
+              />
+            ))}
 
-				{items.length === 0 && !isPending && (
-					<p className='text-center text-2xl font-semibold mt-10 w-full'>
-						Таблица лидеров пуста!
-					</p>
-				)}
-			</div>
-		</div>
-	)
-}
+        {items.length === 0 && !isPending && (
+          <p className="text-center text-2xl font-semibold mt-10 w-full">
+            Таблица лидеров пуста!
+          </p>
+        )}
+      </div>
+    </div>
+  );
+};
 
-export default LeaderboardPage
+export default LeaderboardPage;

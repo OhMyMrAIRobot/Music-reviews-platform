@@ -1,15 +1,15 @@
 import {
-	InvalidateQueryFilters,
-	useMutation,
-	useQueryClient,
-} from '@tanstack/react-query'
-import { ReleaseMediaAPI } from '../../../../api/release/release-media-api'
-import { platformStatsKeys } from '../../../../query-keys/platform-stats-keys'
-import { releaseMediaKeys } from '../../../../query-keys/release-media-keys'
-import { UseMutationParams } from '../../../../types/common'
-import { AdminUpdateReleaseMediaData } from '../../../../types/release'
-import { useApiErrorHandler } from '../../../use-api-error-handler'
-import { useStore } from '../../../use-store'
+  InvalidateQueryFilters,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { ReleaseMediaAPI } from "../../../../api/release/release-media-api";
+import { platformStatsKeys } from "../../../../query-keys/platform-stats-keys";
+import { releaseMediaKeys } from "../../../../query-keys/release-media-keys";
+import { UseMutationParams } from "../../../../types/common";
+import { AdminUpdateReleaseMediaData } from "../../../../types/release";
+import { useApiErrorHandler } from "../../../use-api-error-handler";
+import { useStore } from "../../../use-store";
 /**
  * Custom React hook that returns a React Query mutation for updating a
  * release media item. On success the hook:
@@ -21,41 +21,41 @@ import { useStore } from '../../../use-store'
  * @returns The React Query mutation object for updating release media.
  */
 export const useAdminUpdateMediaMutation = ({
-	onSuccess,
-	onError,
-	onSettled,
+  onSuccess,
+  onError,
+  onSettled,
 }: UseMutationParams = {}) => {
-	const { notificationStore } = useStore()
-	const handleApiError = useApiErrorHandler()
-	const queryClient = useQueryClient()
+  const { notificationStore } = useStore();
+  const handleApiError = useApiErrorHandler();
+  const queryClient = useQueryClient();
 
-	const invalidateRelatedQueries = () => {
-		const keysToInvalidate: InvalidateQueryFilters[] = [
-			{ queryKey: releaseMediaKeys.all },
-			{ queryKey: platformStatsKeys.all },
-		]
+  const invalidateRelatedQueries = () => {
+    const keysToInvalidate: InvalidateQueryFilters[] = [
+      { queryKey: releaseMediaKeys.all },
+      { queryKey: platformStatsKeys.all },
+    ];
 
-		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
-	}
-	const mutation = useMutation({
-		mutationFn: ({
-			id,
-			data,
-		}: {
-			id: string
-			data: AdminUpdateReleaseMediaData
-		}) => ReleaseMediaAPI.adminUpdate(id, data),
-		onSuccess: () => {
-			notificationStore.addSuccessNotification('Медиа успешно обновлено!')
-			invalidateRelatedQueries()
-			onSuccess?.()
-		},
-		onError: (error: unknown) => {
-			handleApiError(error, 'Не удалось обновить медиа!')
-			onError?.(error)
-		},
-		onSettled,
-	})
+    keysToInvalidate.forEach((key) => queryClient.invalidateQueries(key));
+  };
+  const mutation = useMutation({
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: AdminUpdateReleaseMediaData;
+    }) => ReleaseMediaAPI.adminUpdate(id, data),
+    onSuccess: () => {
+      notificationStore.addSuccessNotification("Медиа успешно обновлено!");
+      invalidateRelatedQueries();
+      onSuccess?.();
+    },
+    onError: (error: unknown) => {
+      handleApiError(error, "Не удалось обновить медиа!");
+      onError?.(error);
+    },
+    onSettled,
+  });
 
-	return mutation
-}
+  return mutation;
+};

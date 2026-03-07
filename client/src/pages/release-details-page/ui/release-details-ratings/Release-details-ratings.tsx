@@ -1,66 +1,66 @@
-import { observer } from 'mobx-react-lite'
-import { FC } from 'react'
-import TooltipSpan from '../../../../components/tooltip/Tooltip-span'
-import { Release, ReleaseRatingTypesEnum } from '../../../../types/release'
-import ReleaseDetailsRatingsTooltip from './Release-details-ratings-tooltip'
+import { observer } from "mobx-react-lite";
+import { FC } from "react";
+import TooltipSpan from "../../../../components/tooltip/Tooltip-span";
+import { Release, ReleaseRatingTypesEnum } from "../../../../types/release";
+import ReleaseDetailsRatingsTooltip from "./Release-details-ratings-tooltip";
 
 interface IProps {
-	release: Release
+  release: Release;
 }
 
 const ReleaseDetailsRatings: FC<IProps> = observer(({ release }) => {
-	const ratingOrder = [
-		ReleaseRatingTypesEnum.MEDIA,
-		ReleaseRatingTypesEnum.WITH_TEXT,
-		ReleaseRatingTypesEnum.WITHOUT_TEXT,
-	]
+  const ratingOrder = [
+    ReleaseRatingTypesEnum.MEDIA,
+    ReleaseRatingTypesEnum.WITH_TEXT,
+    ReleaseRatingTypesEnum.WITHOUT_TEXT,
+  ];
 
-	const ratings = ratingOrder
-		.map(type => release?.ratings.total.find(r => r.type === type))
-		.filter(r => r && r.total > 0)
+  const ratings = ratingOrder
+    .map((type) => release?.ratings.total.find((r) => r.type === type))
+    .filter((r) => r && r.total > 0);
 
-	if (!ratings.length) {
-		return null
-	}
+  if (!ratings.length) {
+    return null;
+  }
 
-	return (
-		<div className='flex justify-center lg:justify-start gap-x-3 select-none'>
-			{ratings.map(rating => {
-				let className =
-					'w-20 h-8 lg:w-22 lg:h-10 rounded-3xl flex items-center justify-center text-xl lg:text-2xl font-bold relative '
+  return (
+    <div className="flex justify-center lg:justify-start gap-x-3 select-none">
+      {ratings.map((rating) => {
+        let className =
+          "w-20 h-8 lg:w-22 lg:h-10 rounded-3xl flex items-center justify-center text-xl lg:text-2xl font-bold relative ";
 
-				if (rating?.type === ReleaseRatingTypesEnum.MEDIA) {
-					className += 'bg-[rgba(255,255,255,.1)]'
-				} else if (rating?.type === ReleaseRatingTypesEnum.WITH_TEXT) {
-					className += 'bg-[rgba(35,101,199)]'
-				} else if (rating?.type === ReleaseRatingTypesEnum.WITHOUT_TEXT) {
-					className += 'border-2 border-[rgba(35,101,199)]'
-				}
+        if (rating?.type === ReleaseRatingTypesEnum.MEDIA) {
+          className += "bg-[rgba(255,255,255,.1)]";
+        } else if (rating?.type === ReleaseRatingTypesEnum.WITH_TEXT) {
+          className += "bg-[rgba(35,101,199)]";
+        } else if (rating?.type === ReleaseRatingTypesEnum.WITHOUT_TEXT) {
+          className += "border-2 border-[rgba(35,101,199)]";
+        }
 
-				const ratingDetails = release.ratings.details.find(
-					rd => rd.type === rating?.type,
-				)
+        const ratingDetails = release.ratings.details.find(
+          (rd) => rd.type === rating?.type,
+        );
 
-				return (
-					rating && (
-						<TooltipSpan
-							key={rating.type}
-							tooltip={
-								<ReleaseDetailsRatingsTooltip
-									rating={rating}
-									key={rating.type}
-									ratingDetails={ratingDetails}
-								/>
-							}
-							spanClassName={className}
-						>
-							{rating?.total}
-						</TooltipSpan>
-					)
-				)
-			})}
-		</div>
-	)
-})
+        return (
+          rating && (
+            <TooltipSpan
+              key={rating.type}
+              tooltip={
+                <ReleaseDetailsRatingsTooltip
+                  rating={rating}
+                  key={rating.type}
+                  ratingDetails={ratingDetails}
+                />
+              }
+              spanClassName={className}
+            >
+              {rating?.total}
+            </TooltipSpan>
+          )
+        );
+      })}
+    </div>
+  );
+});
 
-export default ReleaseDetailsRatings
+export default ReleaseDetailsRatings;

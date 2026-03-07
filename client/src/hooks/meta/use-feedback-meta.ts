@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query'
-import { FeedbackAPI } from '../../api/feedback/feedback-api'
-import { feedbackKeys } from '../../query-keys/feedback-keys'
+import { useQuery } from "@tanstack/react-query";
+import { FeedbackAPI } from "../../api/feedback/feedback-api";
+import { feedbackKeys } from "../../query-keys/feedback-keys";
 
 /**
  * Custom hook to fetch and manage feedback statuses metadata.
@@ -12,15 +12,15 @@ import { feedbackKeys } from '../../query-keys/feedback-keys'
  * - `isLoading`: Boolean indicating if the data is currently being fetched.
  */
 export function useFeedbackMeta() {
-	const { data: statuses = [], isPending } = useQuery({
-		queryKey: feedbackKeys.statuses,
-		queryFn: () => FeedbackAPI.fetchFeedbackStatuses(),
-		staleTime: Infinity,
-		gcTime: 1000 * 60 * 60 * 24,
-	})
+  const { data: statuses = [], isPending } = useQuery({
+    queryKey: feedbackKeys.statuses,
+    queryFn: () => FeedbackAPI.fetchFeedbackStatuses(),
+    staleTime: Infinity,
+    gcTime: 1000 * 60 * 60 * 24,
+  });
 
-	return {
-		statuses,
-		isLoading: isPending,
-	}
+  return {
+    statuses,
+    isLoading: isPending,
+  };
 }

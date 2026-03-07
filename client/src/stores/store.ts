@@ -1,10 +1,10 @@
-import AuthStore from './auth-store'
+import AuthStore from "./auth-store";
 
-import NotificationStore from './notification-store'
+import NotificationStore from "./notification-store";
 
 class Store {
-	authStore = AuthStore
-	notificationStore = NotificationStore
+  authStore = AuthStore;
+  notificationStore = NotificationStore;
 }
 
-export default Store
+export default Store;

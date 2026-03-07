@@ -1,18 +1,18 @@
 import {
-	InvalidateQueryFilters,
-	useMutation,
-	useQueryClient,
-} from '@tanstack/react-query'
-import { UserFavReviewAPI } from '../../../api/review/user-fav-review-api'
-import { authorLikesKeys } from '../../../query-keys/author-likes-keys'
-import { leaderboardKeys } from '../../../query-keys/leaderboard-keys'
-import { profilesKeys } from '../../../query-keys/profiles-keys'
-import { reviewsKeys } from '../../../query-keys/reviews-keys'
-import { UseToggleFavResult } from '../../../types/common'
-import { Review } from '../../../types/review'
-import { useApiErrorHandler } from '../../use-api-error-handler'
-import { useAuth } from '../../use-auth'
-import { useStore } from '../../use-store'
+  InvalidateQueryFilters,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { UserFavReviewAPI } from "../../../api/review/user-fav-review-api";
+import { authorLikesKeys } from "../../../query-keys/author-likes-keys";
+import { leaderboardKeys } from "../../../query-keys/leaderboard-keys";
+import { profilesKeys } from "../../../query-keys/profiles-keys";
+import { reviewsKeys } from "../../../query-keys/reviews-keys";
+import { UseToggleFavResult } from "../../../types/common";
+import { Review } from "../../../types/review";
+import { useApiErrorHandler } from "../../use-api-error-handler";
+import { useAuth } from "../../use-auth";
+import { useStore } from "../../use-store";
 
 /**
  * Custom hook to toggle favorite review
@@ -22,65 +22,65 @@ import { useStore } from '../../use-store'
  * @returns {UseToggleFavResult} An object containing the toggleFav function and toggling state.
  */
 export const useToggleFavReview = (
-	review: Review | undefined,
-	isFav: boolean,
+  review: Review | undefined,
+  isFav: boolean,
 ): UseToggleFavResult => {
-	/** HOOKS */
-	const { authStore, notificationStore } = useStore()
-	const { checkAuth } = useAuth()
-	const handleApiError = useApiErrorHandler()
-	const queryClient = useQueryClient()
+  /** HOOKS */
+  const { authStore, notificationStore } = useStore();
+  const { checkAuth } = useAuth();
+  const handleApiError = useApiErrorHandler();
+  const queryClient = useQueryClient();
 
-	/**
-	 * Function to invalidate related queries after mutations
-	 */
-	const invalidateRelatedQueries = (review: Review) => {
-		const keysToInvalidate: InvalidateQueryFilters[] = [
-			{ queryKey: reviewsKeys.all },
-			{ queryKey: profilesKeys.profile(authStore.user?.id ?? 'unknown') },
-			{ queryKey: profilesKeys.preferences(authStore.user?.id ?? 'unknown') },
-			{ queryKey: profilesKeys.profile(review.user.id) },
-			{ queryKey: leaderboardKeys.all },
-			{ queryKey: authorLikesKeys.all },
-		]
+  /**
+   * Function to invalidate related queries after mutations
+   */
+  const invalidateRelatedQueries = (review: Review) => {
+    const keysToInvalidate: InvalidateQueryFilters[] = [
+      { queryKey: reviewsKeys.all },
+      { queryKey: profilesKeys.profile(authStore.user?.id ?? "unknown") },
+      { queryKey: profilesKeys.preferences(authStore.user?.id ?? "unknown") },
+      { queryKey: profilesKeys.profile(review.user.id) },
+      { queryKey: leaderboardKeys.all },
+      { queryKey: authorLikesKeys.all },
+    ];
 
-		keysToInvalidate.forEach(key => queryClient.invalidateQueries(key))
-	}
+    keysToInvalidate.forEach((key) => queryClient.invalidateQueries(key));
+  };
 
-	/**
-	 * Mutation to toggle favorite review
-	 */
-	const toggleFavMutation = useMutation({
-		mutationFn: (review: Review) =>
-			isFav
-				? UserFavReviewAPI.deleteFromFav(review.id)
-				: UserFavReviewAPI.addToFav(review.id),
-		onSuccess: (_, review) => {
-			notificationStore.addSuccessNotification(
-				isFav
-					? 'Рецензия успешно удалена из понравившихся!'
-					: 'Рецензия успешно добавлена в понравившиеся!',
-			)
-			invalidateRelatedQueries(review)
-		},
-		onError: (error: unknown) => {
-			handleApiError(
-				error,
-				isFav
-					? 'Не удалось убрать рецензию из понравившихся!'
-					: 'Не удалось добавить рецензию в понравившиеся!',
-			)
-		},
-	})
+  /**
+   * Mutation to toggle favorite review
+   */
+  const toggleFavMutation = useMutation({
+    mutationFn: (review: Review) =>
+      isFav
+        ? UserFavReviewAPI.deleteFromFav(review.id)
+        : UserFavReviewAPI.addToFav(review.id),
+    onSuccess: (_, review) => {
+      notificationStore.addSuccessNotification(
+        isFav
+          ? "Рецензия успешно удалена из понравившихся!"
+          : "Рецензия успешно добавлена в понравившиеся!",
+      );
+      invalidateRelatedQueries(review);
+    },
+    onError: (error: unknown) => {
+      handleApiError(
+        error,
+        isFav
+          ? "Не удалось убрать рецензию из понравившихся!"
+          : "Не удалось добавить рецензию в понравившиеся!",
+      );
+    },
+  });
 
-	/**
-	 * Function to toggle favorite review
-	 */
-	const toggleFav = () => {
-		if (!checkAuth() || !review || toggleFavMutation.isPending) return
+  /**
+   * Function to toggle favorite review
+   */
+  const toggleFav = () => {
+    if (!checkAuth() || !review || toggleFavMutation.isPending) return;
 
-		return toggleFavMutation.mutate(review)
-	}
+    return toggleFavMutation.mutate(review);
+  };
 
-	return { toggleFav, toggling: toggleFavMutation.isPending }
-}
+  return { toggleFav, toggling: toggleFavMutation.isPending };
+};

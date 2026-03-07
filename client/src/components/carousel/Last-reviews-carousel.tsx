@@ -1,123 +1,123 @@
-import { EmblaOptionsType } from 'embla-carousel'
-import useEmblaCarousel from 'embla-carousel-react'
-import { observer } from 'mobx-react-lite'
+import { EmblaOptionsType } from "embla-carousel";
+import useEmblaCarousel from "embla-carousel-react";
+import { observer } from "mobx-react-lite";
 import {
-	forwardRef,
-	useCallback,
-	useEffect,
-	useImperativeHandle,
-	useState,
-} from 'react'
-import { CarouselRef } from '../../types/common/types/carousel-ref.ts'
-import { CarouselStateCallbacks } from '../../types/common/types/carousel-state-callbacks.ts'
-import { Review } from '../../types/review/index.ts'
-import ReviewCard from '../review/review-card/Review-card'
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from "react";
+import { CarouselRef } from "../../types/common/types/carousel-ref.ts";
+import { CarouselStateCallbacks } from "../../types/common/types/carousel-state-callbacks.ts";
+import { Review } from "../../types/review/index.ts";
+import ReviewCard from "../review/review-card/Review-card";
 
 interface IProps extends CarouselStateCallbacks {
-	items: Review[]
-	rowCount: number
-	isLoading: boolean
+  items: Review[];
+  rowCount: number;
+  isLoading: boolean;
 }
 
 const LastReviewsCarousel = observer(
-	forwardRef<CarouselRef, IProps>(
-		(
-			{
-				items,
-				rowCount,
-				isLoading,
-				onCanScrollPrevChange,
-				onCanScrollNextChange,
-			},
-			ref
-		) => {
-			const options: EmblaOptionsType = {
-				align: 'start',
-				slidesToScroll: 'auto',
-			}
-			const [emblaRef, emblaApi] = useEmblaCarousel(options)
-			const [, setCanScrollPrev] = useState(false)
-			const [, setCanScrollNext] = useState(false)
+  forwardRef<CarouselRef, IProps>(
+    (
+      {
+        items,
+        rowCount,
+        isLoading,
+        onCanScrollPrevChange,
+        onCanScrollNextChange,
+      },
+      ref,
+    ) => {
+      const options: EmblaOptionsType = {
+        align: "start",
+        slidesToScroll: "auto",
+      };
+      const [emblaRef, emblaApi] = useEmblaCarousel(options);
+      const [, setCanScrollPrev] = useState(false);
+      const [, setCanScrollNext] = useState(false);
 
-			const updateScrollState = useCallback(() => {
-				if (!emblaApi) return
+      const updateScrollState = useCallback(() => {
+        if (!emblaApi) return;
 
-				const newCanScrollPrev = emblaApi.canScrollPrev()
-				const newCanScrollNext = emblaApi.canScrollNext()
+        const newCanScrollPrev = emblaApi.canScrollPrev();
+        const newCanScrollNext = emblaApi.canScrollNext();
 
-				setCanScrollPrev(newCanScrollPrev)
-				setCanScrollNext(newCanScrollNext)
+        setCanScrollPrev(newCanScrollPrev);
+        setCanScrollNext(newCanScrollNext);
 
-				onCanScrollPrevChange(newCanScrollPrev)
-				onCanScrollNextChange(newCanScrollNext)
-			}, [emblaApi, onCanScrollPrevChange, onCanScrollNextChange])
+        onCanScrollPrevChange(newCanScrollPrev);
+        onCanScrollNextChange(newCanScrollNext);
+      }, [emblaApi, onCanScrollPrevChange, onCanScrollNextChange]);
 
-			useEffect(() => {
-				if (!emblaApi) return
+      useEffect(() => {
+        if (!emblaApi) return;
 
-				updateScrollState()
+        updateScrollState();
 
-				emblaApi.on('select', updateScrollState)
-				emblaApi.on('reInit', updateScrollState)
-				emblaApi.on('resize', updateScrollState)
+        emblaApi.on("select", updateScrollState);
+        emblaApi.on("reInit", updateScrollState);
+        emblaApi.on("resize", updateScrollState);
 
-				return () => {
-					emblaApi.off('select', updateScrollState)
-					emblaApi.off('reInit', updateScrollState)
-					emblaApi.off('resize', updateScrollState)
-				}
-			}, [emblaApi, updateScrollState])
+        return () => {
+          emblaApi.off("select", updateScrollState);
+          emblaApi.off("reInit", updateScrollState);
+          emblaApi.off("resize", updateScrollState);
+        };
+      }, [emblaApi, updateScrollState]);
 
-			useImperativeHandle(
-				ref,
-				() => ({
-					scrollPrev: () => emblaApi?.scrollPrev(),
-					scrollNext: () => emblaApi?.scrollNext(),
-				}),
-				[emblaApi]
-			)
+      useImperativeHandle(
+        ref,
+        () => ({
+          scrollPrev: () => emblaApi?.scrollPrev(),
+          scrollNext: () => emblaApi?.scrollNext(),
+        }),
+        [emblaApi],
+      );
 
-			return (
-				<div className='embla w-full select-none'>
-					<div ref={emblaRef} className='embla__viewport pt-2'>
-						<div className='embla__container gap-1 touch-pan-y touch-pinch-zoom'>
-							{Array.from({
-								length: Math.ceil(
-									isLoading ? 15 / rowCount : items.length / rowCount
-								),
-							}).map((_, idx) => (
-								<div
-									className='flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_33%] px-1'
-									key={idx}
-								>
-									<div className={`grid grid-rows-${rowCount} gap-4`}>
-										{isLoading
-											? // SCELETON
-											  Array.from({ length: rowCount }).map((_, i) => (
-													<ReviewCard
-														key={`last-review-skeleton-${idx}-${i}`}
-														isLoading={isLoading}
-													/>
-											  ))
-											: // ITEM VIEW
-											  items
-													.slice(idx * rowCount, idx * rowCount + rowCount)
-													.map(review => (
-														<ReviewCard
-															review={review}
-															key={review.id}
-															isLoading={isLoading}
-														/>
-													))}
-									</div>
-								</div>
-							))}
-						</div>
-					</div>
-				</div>
-			)
-		}
-	)
-)
+      return (
+        <div className="embla w-full select-none">
+          <div ref={emblaRef} className="embla__viewport pt-2">
+            <div className="embla__container gap-1 touch-pan-y touch-pinch-zoom">
+              {Array.from({
+                length: Math.ceil(
+                  isLoading ? 15 / rowCount : items.length / rowCount,
+                ),
+              }).map((_, idx) => (
+                <div
+                  className="flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_33%] px-1"
+                  key={idx}
+                >
+                  <div className={`grid grid-rows-${rowCount} gap-4`}>
+                    {isLoading
+                      ? // SCELETON
+                        Array.from({ length: rowCount }).map((_, i) => (
+                          <ReviewCard
+                            key={`last-review-skeleton-${idx}-${i}`}
+                            isLoading={isLoading}
+                          />
+                        ))
+                      : // ITEM VIEW
+                        items
+                          .slice(idx * rowCount, idx * rowCount + rowCount)
+                          .map((review) => (
+                            <ReviewCard
+                              review={review}
+                              key={review.id}
+                              isLoading={isLoading}
+                            />
+                          ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    },
+  ),
+);
 
-export default LastReviewsCarousel
+export default LastReviewsCarousel;

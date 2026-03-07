@@ -1,5 +1,5 @@
-import { UserFavReview } from '.'
-import { AuthorFavReview, ReviewUser, ReviewValues } from '../subtypes'
+import { UserFavReview } from ".";
+import { AuthorFavReview, ReviewUser, ReviewValues } from "../subtypes";
 
 /**
  * Represents a Review entity.
@@ -8,41 +8,41 @@ import { AuthorFavReview, ReviewUser, ReviewValues } from '../subtypes'
  * author/user info and related release summary.
  */
 export type Review = {
-	/** Review entity id */
-	id: string
+  /** Review entity id */
+  id: string;
 
-	/** Review title */
-	title: string | null
+  /** Review title */
+  title: string | null;
 
-	/** Review text */
-	text: string | null
+  /** Review text */
+  text: string | null;
 
-	/** Numerical review values and computed total score */
-	values: ReviewValues
+  /** Numerical review values and computed total score */
+  values: ReviewValues;
 
-	/** Short user summary for the review author */
-	user: ReviewUser
+  /** Short user summary for the review author */
+  user: ReviewUser;
 
-	/** Short release summary the review targets */
-	release: Release
+  /** Short release summary the review targets */
+  release: Release;
 
-	/**
-	 * List of users who favorited this review.
-	 */
-	userFavReview: UserFavReview[]
+  /**
+   * List of users who favorited this review.
+   */
+  userFavReview: UserFavReview[];
 
-	/**
-	 * List of registered authors who favourited this review.
-	 */
-	authorFavReview: AuthorFavReview[]
+  /**
+   * List of registered authors who favourited this review.
+   */
+  authorFavReview: AuthorFavReview[];
 
-	/** ISO timestamp when the review was created */
-	createdAt: string
-}
+  /** ISO timestamp when the review was created */
+  createdAt: string;
+};
 
 /** Short release summary returned with a review */
 type Release = {
-	id: string
-	title: string
-	img: string
-}
+  id: string;
+  title: string;
+  img: string;
+};

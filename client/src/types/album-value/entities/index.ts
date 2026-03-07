@@ -1,2 +1,2 @@
-export * from './album-value'
-export * from './album-value-vote'
+export * from "./album-value";
+export * from "./album-value-vote";

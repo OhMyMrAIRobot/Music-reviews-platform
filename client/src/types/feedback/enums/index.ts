@@ -1,1 +1,1 @@
-export * from './feedback-statuses-enum'
+export * from "./feedback-statuses-enum";

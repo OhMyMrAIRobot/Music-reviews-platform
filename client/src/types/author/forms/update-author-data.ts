@@ -1,4 +1,4 @@
-import { CreateAuthorData } from './create-author-data'
+import { CreateAuthorData } from "./create-author-data";
 
 /**
  * Describes form data for updating an existing author.
@@ -9,13 +9,13 @@ import { CreateAuthorData } from './create-author-data'
  * the stored avatar or cover images.
  */
 export type UpdateAuthorData = Partial<CreateAuthorData> & {
-	/**
-	 * If true, the author's avatar will be cleared/removed.
-	 */
+  /**
+   * If true, the author's avatar will be cleared/removed.
+   */
 
-	clearAvatar?: boolean
-	/**
-	 * If true, the author's cover image will be cleared/removed.
-	 */
-	clearCover?: boolean
-}
+  clearAvatar?: boolean;
+  /**
+   * If true, the author's cover image will be cleared/removed.
+   */
+  clearCover?: boolean;
+};
