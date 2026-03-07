@@ -30,9 +30,17 @@ export const searchGeniusSong = async (
   };
 
   const { data } = await axios.get(reqUrl, { headers });
+
+  let founded = data?.response?.hits ?? [];
+  if (data?.response?.hits?.length === 0) {
+    const reqUrlTitle = `${searchUrl}${encodeURIComponent(title)}`;
+    const { data } = await axios.get(reqUrlTitle, { headers });
+    founded = data?.response?.hits ?? [];
+  }
+
   let result: string | null = null;
 
-  data.response.hits.forEach((song) => {
+  founded.forEach((song) => {
     const fullTitle = song.result.full_title.toLowerCase();
 
     let matchTitle = false;
