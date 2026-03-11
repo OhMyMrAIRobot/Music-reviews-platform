@@ -1,12 +1,12 @@
-import { AuthResponseWithEmailStatus } from "../../types/auth";
+import { AuthResponseWithEmailStatus } from '../../types/auth';
 import {
   AdminUpdateUserData,
   UpdateUserData,
   UserDetails,
   UsersQuery,
   UsersResponse,
-} from "../../types/user";
-import { api } from "../api-instance";
+} from '../../types/user';
+import { api } from '../api-instance';
 
 /**
  * API service for managing users.
@@ -29,11 +29,11 @@ export const UserAPI = {
     const { search, role, order, limit, offset } = query;
 
     const { data } = await api.get<UsersResponse>(`/users?
-			${search ? `search=${search}&` : ""}
-			${role ? `role=${role}&` : ""}
-			${order ? `order=${order}&` : ""}
-			${limit ? `limit=${limit}&` : ""}
-			${offset ? `offset=${offset}&` : ""}
+			${search ? `search=${search}&` : ''}
+			${role ? `role=${role}&` : ''}
+			${order ? `order=${order}&` : ''}
+			${limit ? `limit=${limit}&` : ''}
+			${offset ? `offset=${offset}&` : ''}
 			`);
     return data;
   },
@@ -57,8 +57,8 @@ export const UserAPI = {
    */
   async update(formData: UpdateUserData): Promise<AuthResponseWithEmailStatus> {
     const { data } = await api.patch<AuthResponseWithEmailStatus>(
-      "/users",
-      formData,
+      '/users',
+      formData
     );
     return data;
   },
@@ -79,7 +79,7 @@ export const UserAPI = {
    */
   async adminUpdate(
     id: string,
-    updateData: AdminUpdateUserData,
+    updateData: AdminUpdateUserData
   ): Promise<UserDetails> {
     const { data } = await api.patch<UserDetails>(`/users/${id}`, updateData);
     return data;

@@ -1,5 +1,5 @@
-import { FC } from "react";
-import MoveToSvg from "../../../../components/svg/Move-to-svg.tsx";
+import { FC } from 'react';
+import MoveToSvg from '../../../../components/svg/Move-to-svg.tsx';
 
 interface IProps {
   onClick?: () => void;
@@ -11,7 +11,7 @@ const AdminNavigateButton: FC<IProps> = ({ onClick }) => {
       onClick={onClick}
       className="border border-white/15 size-8 flex items-center justify-center rounded-lg cursor-pointer text-white/70 hover:text-white hover:border-white/70 transition-colors duration-200"
     >
-      <MoveToSvg className={"size-4"} />
+      <MoveToSvg className={'size-4'} />
     </button>
   );
 };

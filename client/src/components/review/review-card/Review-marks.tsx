@@ -1,7 +1,7 @@
-import { FC } from "react";
-import { ReviewValues } from "../../../types/review";
-import TooltipSpan from "../../tooltip/Tooltip-span";
-import ReviewToolTip from "./Review-tooltip";
+import { FC } from 'react';
+import { ReviewValues } from '../../../types/review';
+import TooltipSpan from '../../tooltip/Tooltip-span';
+import ReviewToolTip from './Review-tooltip';
 
 interface IProps {
   values: ReviewValues;

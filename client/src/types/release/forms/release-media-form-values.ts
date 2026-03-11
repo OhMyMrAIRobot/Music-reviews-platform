@@ -17,7 +17,7 @@ export type CreateReleaseMediaData = {
  */
 export type UpdateReleaseMediaData = Omit<
   Partial<CreateReleaseMediaData>,
-  "releaseId"
+  'releaseId'
 >;
 
 /**

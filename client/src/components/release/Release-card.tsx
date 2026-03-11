@@ -1,13 +1,13 @@
-import { FC } from "react";
-import { Link } from "react-router";
-import useNavigationPath from "../../hooks/use-navigation-path";
-import { Release } from "../../types/release";
-import SkeletonLoader from "../utils/Skeleton-loader";
-import ReleaseAuthorActions from "./Release-author-actions";
-import ReleaseAuthors from "./Release-authors";
-import ReleaseRatings from "./Release-ratings";
-import ReleaseReviewsCount from "./Release-reviews-count";
-import ReleaseTypeIcon from "./Release-type-icon";
+import { FC } from 'react';
+import { Link } from 'react-router';
+import useNavigationPath from '../../hooks/use-navigation-path';
+import { Release } from '../../types/release';
+import SkeletonLoader from '../utils/Skeleton-loader';
+import ReleaseAuthorActions from './Release-author-actions';
+import ReleaseAuthors from './Release-authors';
+import ReleaseRatings from './Release-ratings';
+import ReleaseReviewsCount from './Release-reviews-count';
+import ReleaseTypeIcon from './Release-type-icon';
 
 interface IProps {
   release?: Release;
@@ -33,7 +33,7 @@ const ReleaseCard: FC<IProps> = ({ release, isLoading }) => {
               decoding="async"
               className="rounded-lg"
               src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
-                release.img === ""
+                release.img === ''
                   ? import.meta.env.VITE_DEFAULT_COVER
                   : release.img
               }`}
@@ -49,7 +49,7 @@ const ReleaseCard: FC<IProps> = ({ release, isLoading }) => {
           <div className="absolute bottom-1.5 right-1.5 bg-zinc-900 size-6 rounded-full flex items-center justify-center">
             <ReleaseTypeIcon
               type={release.releaseType.type}
-              className={"relative size-4"}
+              className={'relative size-4'}
             />
           </div>
         </Link>
@@ -73,7 +73,7 @@ const ReleaseCard: FC<IProps> = ({ release, isLoading }) => {
         <div className="flex items-center px-1 pb-1 gap-1 text-white mt-auto pt-5">
           <ReleaseRatings
             ratings={release.ratings.total}
-            className={"size-7 text-xs"}
+            className={'size-7 text-xs'}
             showHint={false}
           />
         </div>

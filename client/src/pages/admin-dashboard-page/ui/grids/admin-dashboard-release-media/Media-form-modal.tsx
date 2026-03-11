@@ -1,21 +1,21 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { FC, useEffect, useMemo, useState } from "react";
-import { ReleaseAPI } from "../../../../../api/release/release-api";
-import ComboBox from "../../../../../components/buttons/Combo-box";
-import FormButton from "../../../../../components/form-elements/Form-button";
-import FormInput from "../../../../../components/form-elements/Form-input";
-import FormLabel from "../../../../../components/form-elements/Form-label";
-import FormSingleSelect from "../../../../../components/form-elements/Form-single-select";
-import ModalOverlay from "../../../../../components/modals/Modal-overlay";
-import SkeletonLoader from "../../../../../components/utils/Skeleton-loader";
-import { useReleaseMediaMeta } from "../../../../../hooks/meta";
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { FC, useEffect, useMemo, useState } from 'react';
+import { ReleaseAPI } from '../../../../../api/release/release-api';
+import ComboBox from '../../../../../components/buttons/Combo-box';
+import FormButton from '../../../../../components/form-elements/Form-button';
+import FormInput from '../../../../../components/form-elements/Form-input';
+import FormLabel from '../../../../../components/form-elements/Form-label';
+import FormSingleSelect from '../../../../../components/form-elements/Form-single-select';
+import ModalOverlay from '../../../../../components/modals/Modal-overlay';
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader';
+import { useReleaseMediaMeta } from '../../../../../hooks/meta';
 import {
   useAdminCreateMediaMutation,
   useAdminUpdateMediaMutation,
-} from "../../../../../hooks/mutations";
-import { releasesKeys } from "../../../../../query-keys/releases-keys";
-import { ReleaseMedia, ReleasesQuery } from "../../../../../types/release";
-import { constraints } from "../../../../../utils/constraints";
+} from '../../../../../hooks/mutations';
+import { releasesKeys } from '../../../../../query-keys/releases-keys';
+import { ReleaseMedia, ReleasesQuery } from '../../../../../types/release';
+import { constraints } from '../../../../../utils/constraints';
 
 interface IProps {
   isOpen: boolean;
@@ -28,12 +28,12 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
   const queryClient = useQueryClient();
 
   /** STATES */
-  const [title, setTitle] = useState<string>("");
-  const [url, setUrl] = useState<string>("");
-  const [type, setType] = useState<string>("");
-  const [status, setStatus] = useState<string>("");
-  const [release, setRelease] = useState<string>("");
-  const [searchReleases, setSearchReleases] = useState<string>("");
+  const [title, setTitle] = useState<string>('');
+  const [url, setUrl] = useState<string>('');
+  const [type, setType] = useState<string>('');
+  const [status, setStatus] = useState<string>('');
+  const [release, setRelease] = useState<string>('');
+  const [searchReleases, setSearchReleases] = useState<string>('');
 
   /** EFFECTS */
   useEffect(() => {
@@ -184,17 +184,17 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
    * Clears the form fields
    */
   const clearForm = () => {
-    setTitle("");
-    setUrl("");
-    setStatus("");
-    setType("");
-    setRelease("");
-    setSearchReleases("");
+    setTitle('');
+    setUrl('');
+    setStatus('');
+    setType('');
+    setRelease('');
+    setSearchReleases('');
   };
 
   /** CONSTANTS */
-  const formTitle = media ? "Редактирование медиа" : "Добавление медиа";
-  const buttonText = media ? "Сохранить" : "Добавить";
+  const formTitle = media ? 'Редактирование медиа' : 'Добавление медиа';
+  const buttonText = media ? 'Сохранить' : 'Добавить';
 
   if (!isOpen) return null;
 
@@ -219,14 +219,14 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
             <div className="w-full grid lg:grid-cols-2 p-6 border-b border-white/10 gap-3 lg:gap-6">
               <div className="grid gap-2 w-full">
                 <FormLabel
-                  name={"Заголовок"}
-                  htmlFor={"media-title-input"}
+                  name={'Заголовок'}
+                  htmlFor={'media-title-input'}
                   isRequired={true}
                 />
                 <FormInput
-                  id={"media-title-input"}
-                  placeholder={"Заголовок..."}
-                  type={"text"}
+                  id={'media-title-input'}
+                  placeholder={'Заголовок...'}
+                  type={'text'}
                   value={title}
                   setValue={setTitle}
                 />
@@ -234,14 +234,14 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 
               <div className="grid gap-2 w-full">
                 <FormLabel
-                  name={"Ссылка на медиа"}
-                  htmlFor={"media-url-input"}
+                  name={'Ссылка на медиа'}
+                  htmlFor={'media-url-input'}
                   isRequired={true}
                 />
                 <FormInput
-                  id={"media-url-input"}
-                  placeholder={"https://www.youtube.com/..."}
-                  type={"text"}
+                  id={'media-url-input'}
+                  placeholder={'https://www.youtube.com/...'}
+                  type={'text'}
                   value={url}
                   setValue={setUrl}
                 />
@@ -249,8 +249,8 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 
               <div className="grid gap-2 w-full">
                 <FormLabel
-                  name={"Тип медиа"}
-                  htmlFor={"media-type"}
+                  name={'Тип медиа'}
+                  htmlFor={'media-type'}
                   isRequired={true}
                 />
 
@@ -265,8 +265,8 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 
               <div className="grid gap-2 w-full">
                 <FormLabel
-                  name={"Cтатус медиа"}
-                  htmlFor={"media-status"}
+                  name={'Cтатус медиа'}
+                  htmlFor={'media-status'}
                   isRequired={true}
                 />
 
@@ -281,14 +281,14 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 
               <div className="grid gap-2 w-full">
                 <FormLabel
-                  name={"Название релиза"}
-                  htmlFor={"media-release-input"}
+                  name={'Название релиза'}
+                  htmlFor={'media-release-input'}
                   isRequired={true}
                 />
 
                 <FormSingleSelect
-                  id={"media-release-input"}
-                  placeholder={"Введите название релиза..."}
+                  id={'media-release-input'}
+                  placeholder={'Введите название релиза...'}
                   value={release}
                   onChange={setRelease}
                   loadOptions={loadReleases}
@@ -310,7 +310,7 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 
               <div className="w-full sm:w-25">
                 <FormButton
-                  title={"Назад"}
+                  title={'Назад'}
                   isInvert={false}
                   onClick={onClose}
                   disabled={false}

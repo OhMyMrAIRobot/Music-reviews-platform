@@ -1,6 +1,6 @@
-import { FC, useEffect, useRef, useState } from "react";
-import TickSvg from "../svg/Tick-svg";
-import SkeletonLoader from "../utils/Skeleton-loader";
+import { FC, useEffect, useRef, useState } from 'react';
+import TickSvg from '../svg/Tick-svg';
+import SkeletonLoader from '../utils/Skeleton-loader';
 
 interface IProps {
   id: string;
@@ -21,11 +21,11 @@ const FormSingleSelect: FC<IProps> = ({
   isLoading,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [options, setOptions] = useState<string[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const prevSearchRef = useRef<string>("");
+  const prevSearchRef = useRef<string>('');
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -58,9 +58,9 @@ const FormSingleSelect: FC<IProps> = ({
   };
 
   useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
       if (timerRef.current) clearTimeout(timerRef.current);
     };
   }, []);
@@ -68,7 +68,7 @@ const FormSingleSelect: FC<IProps> = ({
   const handleSelect = (option: string) => {
     onChange(option);
     setIsOpen(false);
-    setSearch("");
+    setSearch('');
   };
 
   return (
@@ -79,7 +79,7 @@ const FormSingleSelect: FC<IProps> = ({
           setTimeout(() => inputRef.current?.focus(), 0);
         }}
         className={`w-full min-h-10 rounded-md border px-3 py-2 text-sm outline-none border-white/15 focus:border-white transition-colors flex items-center flex-wrap gap-1 cursor-text ${
-          isOpen ? "border-white" : ""
+          isOpen ? 'border-white' : ''
         }`}
       >
         {value && (
@@ -96,7 +96,7 @@ const FormSingleSelect: FC<IProps> = ({
           onChange={(e) => setSearch(e.target.value)}
           onClick={() => setIsOpen(true)}
           className="flex-1 min-w-20 bg-transparent outline-none"
-          placeholder={!value ? placeholder : ""}
+          placeholder={!value ? placeholder : ''}
         />
       </div>
 
@@ -120,7 +120,7 @@ const FormSingleSelect: FC<IProps> = ({
               >
                 <div
                   className={`${
-                    value === option ? "opacity-100" : "opacity-0"
+                    value === option ? 'opacity-100' : 'opacity-0'
                   }`}
                 >
                   <TickSvg className="size-4" />
@@ -130,11 +130,11 @@ const FormSingleSelect: FC<IProps> = ({
             ))
           ) : (
             <div className="p-2 text-gray-400">
-              {search.trim() === ""
+              {search.trim() === ''
                 ? placeholder
                 : options.length === 0
-                  ? "Нет доступных опций"
-                  : "Ничего не найдено"}
+                  ? 'Нет доступных опций'
+                  : 'Ничего не найдено'}
             </div>
           )}
         </div>

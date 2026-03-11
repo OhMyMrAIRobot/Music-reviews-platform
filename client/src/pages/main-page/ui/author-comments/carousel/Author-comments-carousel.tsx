@@ -1,16 +1,16 @@
-import { EmblaOptionsType } from "embla-carousel";
-import useEmblaCarousel from "embla-carousel-react";
+import { EmblaOptionsType } from 'embla-carousel';
+import useEmblaCarousel from 'embla-carousel-react';
 import {
   forwardRef,
   useCallback,
   useEffect,
   useImperativeHandle,
   useState,
-} from "react";
-import AuthorCommentCard from "../../../../../components/author/author-comment/Author-comment-card";
-import { AuthorComment } from "../../../../../types/author";
-import { CarouselRef } from "../../../../../types/common/types/carousel-ref";
-import { CarouselStateCallbacks } from "../../../../../types/common/types/carousel-state-callbacks";
+} from 'react';
+import AuthorCommentCard from '../../../../../components/author/author-comment/Author-comment-card';
+import { AuthorComment } from '../../../../../types/author';
+import { CarouselRef } from '../../../../../types/common/types/carousel-ref';
+import { CarouselStateCallbacks } from '../../../../../types/common/types/carousel-state-callbacks';
 
 interface IProps extends CarouselStateCallbacks {
   items: AuthorComment[];
@@ -20,7 +20,7 @@ interface IProps extends CarouselStateCallbacks {
 const AuthorCommentsCarousel = forwardRef<CarouselRef, IProps>(
   ({ items, isLoading, onCanScrollPrevChange, onCanScrollNextChange }, ref) => {
     const options: EmblaOptionsType = {
-      align: "start",
+      align: 'start',
       slidesToScroll: 1,
     };
     const [emblaRef, emblaApi] = useEmblaCarousel(options);
@@ -45,14 +45,14 @@ const AuthorCommentsCarousel = forwardRef<CarouselRef, IProps>(
 
       updateScrollState();
 
-      emblaApi.on("select", updateScrollState);
-      emblaApi.on("reInit", updateScrollState);
-      emblaApi.on("resize", updateScrollState);
+      emblaApi.on('select', updateScrollState);
+      emblaApi.on('reInit', updateScrollState);
+      emblaApi.on('resize', updateScrollState);
 
       return () => {
-        emblaApi.off("select", updateScrollState);
-        emblaApi.off("reInit", updateScrollState);
-        emblaApi.off("resize", updateScrollState);
+        emblaApi.off('select', updateScrollState);
+        emblaApi.off('reInit', updateScrollState);
+        emblaApi.off('resize', updateScrollState);
       };
     }, [emblaApi, updateScrollState]);
 
@@ -62,7 +62,7 @@ const AuthorCommentsCarousel = forwardRef<CarouselRef, IProps>(
         scrollPrev: () => emblaApi?.scrollPrev(),
         scrollNext: () => emblaApi?.scrollNext(),
       }),
-      [emblaApi],
+      [emblaApi]
     );
 
     return (
@@ -90,7 +90,7 @@ const AuthorCommentsCarousel = forwardRef<CarouselRef, IProps>(
         </div>
       </div>
     );
-  },
+  }
 );
 
 export default AuthorCommentsCarousel;

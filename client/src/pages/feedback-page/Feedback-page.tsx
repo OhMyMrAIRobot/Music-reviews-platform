@@ -1,28 +1,28 @@
-import { useMemo, useState } from "react";
-import FormButton from "../../components/form-elements/Form-button";
-import FormInput from "../../components/form-elements/Form-input";
-import FormLabel from "../../components/form-elements/Form-label";
-import FormSubTitle from "../../components/form-elements/Form-subtitle";
-import FormTextbox from "../../components/form-elements/Form-textbox";
-import FormTitle from "../../components/form-elements/Form-title";
-import { useSendFeedbackMutation } from "../../hooks/mutations";
-import { CreateFeedbackData } from "../../types/feedback";
-import { constraints } from "../../utils/constraints";
+import { useMemo, useState } from 'react';
+import FormButton from '../../components/form-elements/Form-button';
+import FormInput from '../../components/form-elements/Form-input';
+import FormLabel from '../../components/form-elements/Form-label';
+import FormSubTitle from '../../components/form-elements/Form-subtitle';
+import FormTextbox from '../../components/form-elements/Form-textbox';
+import FormTitle from '../../components/form-elements/Form-title';
+import { useSendFeedbackMutation } from '../../hooks/mutations';
+import { CreateFeedbackData } from '../../types/feedback';
+import { constraints } from '../../utils/constraints';
 
 const FeedbackPage = () => {
   const [feedbackData, setFeedbackData] = useState<CreateFeedbackData>({
-    email: "",
-    title: "",
-    message: "",
+    email: '',
+    title: '',
+    message: '',
   });
 
   const { mutateAsync: sendAsync, isPending: isSending } =
     useSendFeedbackMutation({
       onSuccess: () => {
         setFeedbackData({
-          email: "",
-          title: "",
-          message: "",
+          email: '',
+          title: '',
+          message: '',
         });
       },
     });
@@ -66,49 +66,49 @@ const FeedbackPage = () => {
   return (
     <div className="grid w-full md:w-[400px] gap-5 mx-auto">
       <div className="grid gap-3 text-center">
-        <FormTitle title={"Связаться с нами"} />
+        <FormTitle title={'Связаться с нами'} />
         <FormSubTitle
           title={
-            "Отправьте сообщение об ошибке, нарушениях или предложениях по улучшению"
+            'Отправьте сообщение об ошибке, нарушениях или предложениях по улучшению'
           }
         />
       </div>
 
       <div className="grid gap-2">
-        <FormLabel name={"Email"} htmlFor={"email"} />
+        <FormLabel name={'Email'} htmlFor={'email'} />
         <FormInput
-          id={"email"}
-          placeholder={"mail@example.com"}
-          type={"email"}
+          id={'email'}
+          placeholder={'mail@example.com'}
+          type={'email'}
           value={feedbackData.email}
-          setValue={(value) => handleChange("email", value)}
+          setValue={(value) => handleChange('email', value)}
         />
       </div>
 
       <div className="grid gap-2">
-        <FormLabel name={"Заголовок"} htmlFor={"title"} />
+        <FormLabel name={'Заголовок'} htmlFor={'title'} />
         <FormInput
-          id={"title"}
+          id={'title'}
           placeholder={`Краткий заголовок (от ${constraints.feedback.minTitleLength} до ${constraints.feedback.maxTitleLength} символов)`}
-          type={"text"}
+          type={'text'}
           value={feedbackData.title}
-          setValue={(value) => handleChange("title", value)}
+          setValue={(value) => handleChange('title', value)}
         />
       </div>
 
       <div className="grid gap-2">
-        <FormLabel name={"Описание"} htmlFor={"message"} />
+        <FormLabel name={'Описание'} htmlFor={'message'} />
         <FormTextbox
-          id={"message"}
+          id={'message'}
           placeholder={`Текст (от ${constraints.feedback.minMessageLength} до ${constraints.feedback.maxMessageLength} символов)`}
           value={feedbackData.message}
-          setValue={(value) => handleChange("message", value)}
+          setValue={(value) => handleChange('message', value)}
           className="h-50"
         />
       </div>
 
       <FormButton
-        title={isSending ? "Отправка..." : "Отправить"}
+        title={isSending ? 'Отправка...' : 'Отправить'}
         isInvert={true}
         onClick={send}
         disabled={isSending || !isFormValid}

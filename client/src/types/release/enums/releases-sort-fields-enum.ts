@@ -3,19 +3,19 @@
  */
 export enum ReleasesSortFieldsEnum {
   /** Sort by publication date */
-  PUBLISHED = "published",
+  PUBLISHED = 'published',
   /** Number of reviews without text */
-  WITHOUT_TEXT_COUNT = "withoutTextCount",
+  WITHOUT_TEXT_COUNT = 'withoutTextCount',
   /** Number of reviews with text */
-  TEXT_COUNT = "withTextCount",
+  TEXT_COUNT = 'withTextCount',
   /** Rating by media reviews */
-  MEDIA_RATING = "mediaRating",
+  MEDIA_RATING = 'mediaRating',
   /** Total count (withText + withoutText) */
-  TOTAL_COUNT = "totalCount",
+  TOTAL_COUNT = 'totalCount',
   /** Rating without text */
-  WITHOUT_TEXT_RATING = "withoutTextRating",
+  WITHOUT_TEXT_RATING = 'withoutTextRating',
   /** Rating with text */
-  WITH_TEXT_RATING = "withTextRating",
+  WITH_TEXT_RATING = 'withTextRating',
   /** Aggregate rating (all types combined) */
-  ALL_RATING = "allRating",
+  ALL_RATING = 'allRating',
 }

@@ -1,4 +1,4 @@
-import { NominationEntityKind } from "..";
+import { NominationEntityKind } from '..';
 
 /**
  * Represents data for creating the user's nomination vote request.

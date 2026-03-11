@@ -1,8 +1,8 @@
-import { FC } from "react";
-import { NominationTypesEnum } from "../../types/nomination/enums/nomination-types-enum";
-import AlbumOfMonthNominationSvg from "./svg/Album-of-month-nomination-svg";
-import CoverOfMonthNominationSvg from "./svg/Cover-of-month-nomination-svg";
-import HitOfMonthNominationSvg from "./svg/Hit-of-month-nomination-svg";
+import { FC } from 'react';
+import { NominationTypesEnum } from '../../types/nomination/enums/nomination-types-enum';
+import AlbumOfMonthNominationSvg from './svg/Album-of-month-nomination-svg';
+import CoverOfMonthNominationSvg from './svg/Cover-of-month-nomination-svg';
+import HitOfMonthNominationSvg from './svg/Hit-of-month-nomination-svg';
 
 interface IProps {
   nomination: string;

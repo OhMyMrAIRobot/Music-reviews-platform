@@ -2,13 +2,13 @@ import {
   InvalidateQueryFilters,
   useMutation,
   useQueryClient,
-} from "@tanstack/react-query";
-import { AuthorConfirmationAPI } from "../../api/author/author-confirmation-api";
-import { authorConfirmationsKeys } from "../../query-keys/authors-confirmations-keys";
-import { CreateAuthorConfirmationData } from "../../types/author";
-import { UseMutationParams } from "../../types/common";
-import { useApiErrorHandler } from "../use-api-error-handler";
-import { useStore } from "../use-store";
+} from '@tanstack/react-query';
+import { AuthorConfirmationAPI } from '../../api/author/author-confirmation-api';
+import { authorConfirmationsKeys } from '../../query-keys/authors-confirmations-keys';
+import { CreateAuthorConfirmationData } from '../../types/author';
+import { UseMutationParams } from '../../types/common';
+import { useApiErrorHandler } from '../use-api-error-handler';
+import { useStore } from '../use-store';
 
 /**
  * Custom React hook returning a React Query mutation to send a author confirmation request.
@@ -37,13 +37,13 @@ export const useSendAuthorConfirmation = ({
       AuthorConfirmationAPI.create(payload),
     onSuccess: async () => {
       notificationStore.addSuccessNotification(
-        "Вы успешно оставили заявку на подтверждение!",
+        'Вы успешно оставили заявку на подтверждение!'
       );
       invalidateRelatedQueries();
       onSuccess?.();
     },
     onError: (err: unknown) => {
-      handleApiError(err, "Не удалось отправить заявку");
+      handleApiError(err, 'Не удалось отправить заявку');
       onError?.(err);
     },
     onSettled,

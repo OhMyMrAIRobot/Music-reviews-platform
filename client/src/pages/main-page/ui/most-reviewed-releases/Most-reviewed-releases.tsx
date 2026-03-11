@@ -1,14 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { ReleaseAPI } from "../../../../api/release/release-api";
-import { releasesKeys } from "../../../../query-keys/releases-keys";
-import { SortOrdersEnum } from "../../../../types/common/enums/sort-orders-enum";
+import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
+import { ReleaseAPI } from '../../../../api/release/release-api';
+import { releasesKeys } from '../../../../query-keys/releases-keys';
+import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum';
 import {
   ReleasesQuery,
   ReleasesSortFieldsEnum,
-} from "../../../../types/release";
-import MostReviewedCarousel from "./carousel/Most-reviewed-carousel";
-import MostReviewedSwiper from "./swiper/Most-reviewed-swiper";
+} from '../../../../types/release';
+import MostReviewedCarousel from './carousel/Most-reviewed-carousel';
+import MostReviewedSwiper from './swiper/Most-reviewed-swiper';
 
 const query: ReleasesQuery = {
   sortField: ReleasesSortFieldsEnum.TOTAL_COUNT,

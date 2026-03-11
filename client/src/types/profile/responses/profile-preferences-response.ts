@@ -1,4 +1,4 @@
-import { ProfilePreference } from "..";
+import { ProfilePreference } from '..';
 
 /**
  * Response with the profile's preferences.

@@ -1,7 +1,7 @@
-import { FC } from "react";
-import { Profile } from "../../../../types/profile";
-import ProfileInfo from "./Profile-info";
-import ProfileStats from "./profile-stats/Profile-stats";
+import { FC } from 'react';
+import { Profile } from '../../../../types/profile';
+import ProfileInfo from './Profile-info';
+import ProfileStats from './profile-stats/Profile-stats';
 
 interface IProps {
   profile: Profile;
@@ -15,7 +15,7 @@ const ProfileLeftSection: FC<IProps> = ({ profile }) => {
           loading="lazy"
           decoding="async"
           src={`${import.meta.env.VITE_SERVER_URL}/public/covers/${
-            profile.cover === ""
+            profile.cover === ''
               ? import.meta.env.VITE_DEFAULT_COVER
               : profile.cover
           }`}

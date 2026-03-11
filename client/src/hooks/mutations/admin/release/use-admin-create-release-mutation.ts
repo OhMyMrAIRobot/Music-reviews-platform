@@ -2,14 +2,14 @@ import {
   InvalidateQueryFilters,
   useMutation,
   useQueryClient,
-} from "@tanstack/react-query";
-import { ReleaseAPI } from "../../../../api/release/release-api";
-import { authorsKeys } from "../../../../query-keys/authors-keys";
-import { platformStatsKeys } from "../../../../query-keys/platform-stats-keys";
-import { releasesKeys } from "../../../../query-keys/releases-keys";
-import { UseMutationParams } from "../../../../types/common";
-import { useApiErrorHandler } from "../../../use-api-error-handler";
-import { useStore } from "../../../use-store";
+} from '@tanstack/react-query';
+import { ReleaseAPI } from '../../../../api/release/release-api';
+import { authorsKeys } from '../../../../query-keys/authors-keys';
+import { platformStatsKeys } from '../../../../query-keys/platform-stats-keys';
+import { releasesKeys } from '../../../../query-keys/releases-keys';
+import { UseMutationParams } from '../../../../types/common';
+import { useApiErrorHandler } from '../../../use-api-error-handler';
+import { useStore } from '../../../use-store';
 
 /**
  * useAdminCreateReleaseMutation
@@ -44,12 +44,12 @@ export const useAdminCreateReleaseMutation = ({
   const mutation = useMutation({
     mutationFn: (formData: FormData) => ReleaseAPI.create(formData),
     onSuccess: () => {
-      notificationStore.addSuccessNotification("Релиз успешно добавлен!");
+      notificationStore.addSuccessNotification('Релиз успешно добавлен!');
       invalidateRelatedQueriesCreate();
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, "Не удалось добавить релиз");
+      handleApiError(error, 'Не удалось добавить релиз');
       onError?.(error);
     },
     onSettled,

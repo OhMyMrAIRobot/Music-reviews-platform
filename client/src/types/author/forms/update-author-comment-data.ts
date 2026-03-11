@@ -1,4 +1,4 @@
-import { CreateAuthorCommentData } from "./create-author-comment-data";
+import { CreateAuthorCommentData } from './create-author-comment-data';
 
 /**
  * UpdateAuthorCommentData — partial payload for updating an author's
@@ -6,5 +6,5 @@ import { CreateAuthorCommentData } from "./create-author-comment-data";
  */
 export type UpdateAuthorCommentData = Omit<
   Partial<CreateAuthorCommentData>,
-  "releaseId"
+  'releaseId'
 >;

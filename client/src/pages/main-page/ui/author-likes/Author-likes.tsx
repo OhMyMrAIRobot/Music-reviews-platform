@@ -1,13 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
-import { useRef, useState } from "react";
-import { UserFavReviewAPI } from "../../../../api/review/user-fav-review-api";
-import AuthorLikeColorSvg from "../../../../components/author/author-like/svg/Author-like-color-svg";
-import CarouselContainer from "../../../../components/carousel/Carousel-container";
-import useNavigationPath from "../../../../hooks/use-navigation-path";
-import { authorLikesKeys } from "../../../../query-keys/author-likes-keys";
-import { CarouselRef } from "../../../../types/common/types/carousel-ref";
-import { AuthorLikesQuery } from "../../../../types/review";
-import AuthorLikesCarousel from "./carousel/Author-likes-carousel";
+import { useQuery } from '@tanstack/react-query';
+import { useRef, useState } from 'react';
+import { UserFavReviewAPI } from '../../../../api/review/user-fav-review-api';
+import AuthorLikeColorSvg from '../../../../components/author/author-like/svg/Author-like-color-svg';
+import CarouselContainer from '../../../../components/carousel/Carousel-container';
+import useNavigationPath from '../../../../hooks/use-navigation-path';
+import { authorLikesKeys } from '../../../../query-keys/author-likes-keys';
+import { CarouselRef } from '../../../../types/common/types/carousel-ref';
+import { AuthorLikesQuery } from '../../../../types/review';
+import AuthorLikesCarousel from './carousel/Author-likes-carousel';
 
 const query: AuthorLikesQuery = {
   limit: 20,
@@ -39,7 +39,7 @@ const AuthorLikes = () => {
           Понравилось авторам
         </div>
       }
-      buttonTitle={"Все авторские лайки"}
+      buttonTitle={'Все авторские лайки'}
       showButton={true}
       href={navigateToAuthorLikes}
       handlePrev={() => carouselRef.current?.scrollPrev()}

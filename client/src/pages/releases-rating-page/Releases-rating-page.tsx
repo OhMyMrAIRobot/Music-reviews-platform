@@ -1,15 +1,15 @@
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { ReleaseAPI } from "../../api/release/release-api";
-import ReleasesColumn from "../../components/release/releases-column/Releases-column";
-import { releasesKeys } from "../../query-keys/releases-keys";
-import { SortOrdersEnum } from "../../types/common/enums/sort-orders-enum";
+import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
+import { ReleaseAPI } from '../../api/release/release-api';
+import ReleasesColumn from '../../components/release/releases-column/Releases-column';
+import { releasesKeys } from '../../query-keys/releases-keys';
+import { SortOrdersEnum } from '../../types/common/enums/sort-orders-enum';
 import {
   ReleasesQuery,
   ReleasesSortFieldsEnum,
   ReleaseTypesEnum,
-} from "../../types/release";
-import ReleasesRatingPageHeader from "./ui/Releases-rating-page-header";
+} from '../../types/release';
+import ReleasesRatingPageHeader from './ui/Releases-rating-page-header';
 
 const ReleasesRatingPage = () => {
   const [month, setMonth] = useState<number>(new Date().getMonth() + 1);
@@ -34,10 +34,10 @@ const ReleasesRatingPage = () => {
   const maxYear = data?.meta.maxPublishYear;
 
   const tracks = releases.filter(
-    (val) => val.releaseType.type === ReleaseTypesEnum.SINGLE,
+    (val) => val.releaseType.type === ReleaseTypesEnum.SINGLE
   );
   const albums = releases.filter(
-    (val) => val.releaseType.type === ReleaseTypesEnum.ALBUM,
+    (val) => val.releaseType.type === ReleaseTypesEnum.ALBUM
   );
 
   return (
@@ -53,12 +53,12 @@ const ReleasesRatingPage = () => {
       />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-5 space-y-5">
         <ReleasesColumn
-          title={"Треки"}
+          title={'Треки'}
           releases={tracks}
           isLoading={isPending}
         />
         <ReleasesColumn
-          title={"Альбомы"}
+          title={'Альбомы'}
           releases={albums}
           isLoading={isPending}
         />

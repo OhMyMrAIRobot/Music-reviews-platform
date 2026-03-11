@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 import {
   AdminCreateReleaseMediaData,
   AdminUpdateReleaseMediaData,
@@ -9,13 +9,13 @@ import {
   ReleaseMediaStatus,
   ReleaseMediaType,
   UpdateReleaseMediaData,
-} from "../../types/release";
-import { api } from "../api-instance";
+} from '../../types/release';
+import { api } from '../api-instance';
 
 const _api = axios.create({
   baseURL: `${import.meta.env.VITE_SERVER_URL}/`,
   headers: {
-    "Content-type": "application/json",
+    'Content-type': 'application/json',
   },
 });
 
@@ -32,7 +32,7 @@ export const ReleaseMediaAPI = {
    */
   async fetchStatuses(): Promise<ReleaseMediaStatus[]> {
     const { data } = await _api.get<ReleaseMediaStatus[]>(
-      "/release-media-statuses",
+      '/release-media-statuses'
     );
     return data;
   },
@@ -43,7 +43,7 @@ export const ReleaseMediaAPI = {
    * @returns {Promise<ReleaseMediaType[]>} A promise that resolves to an array of media types.
    */
   async fetchTypes(): Promise<ReleaseMediaType[]> {
-    const { data } = await _api.get<ReleaseMediaType[]>("/release-media-types");
+    const { data } = await _api.get<ReleaseMediaType[]>('/release-media-types');
     return data;
   },
 
@@ -75,15 +75,15 @@ export const ReleaseMediaAPI = {
 
     const { data } = await _api.get<ReleaseMediaResponse>(
       `/release-media?
-			${statusId ? `statusId=${statusId}&` : ""}
-			${typeId ? `typeId=${typeId}&` : ""}
-			${releaseId ? `releaseId=${releaseId}&` : ""}
-			${userId ? `userId=${userId}&` : ""}
-			${search ? `search=${search}&` : ""}
-			${order ? `order=${order}&` : ""}
-			${limit ? `limit=${limit}&` : ""}
-			${offset ? `offset=${offset}` : ""}
-			`,
+			${statusId ? `statusId=${statusId}&` : ''}
+			${typeId ? `typeId=${typeId}&` : ''}
+			${releaseId ? `releaseId=${releaseId}&` : ''}
+			${userId ? `userId=${userId}&` : ''}
+			${search ? `search=${search}&` : ''}
+			${order ? `order=${order}&` : ''}
+			${limit ? `limit=${limit}&` : ''}
+			${offset ? `offset=${offset}` : ''}
+			`
     );
     return data;
   },
@@ -109,11 +109,11 @@ export const ReleaseMediaAPI = {
    */
   async update(
     id: string,
-    updateData: UpdateReleaseMediaData,
+    updateData: UpdateReleaseMediaData
   ): Promise<ReleaseMedia> {
     const { data } = await api.patch<ReleaseMedia>(
       `/release-media/${id}`,
-      updateData,
+      updateData
     );
 
     return data;
@@ -135,11 +135,11 @@ export const ReleaseMediaAPI = {
    * @returns {Promise<ReleaseMedia>} A promise that resolves to the newly created release media object.
    */
   async adminCreate(
-    formData: AdminCreateReleaseMediaData,
+    formData: AdminCreateReleaseMediaData
   ): Promise<ReleaseMedia> {
     const { data } = await api.post<ReleaseMedia>(
       `admin/release-media`,
-      formData,
+      formData
     );
 
     return data;
@@ -154,11 +154,11 @@ export const ReleaseMediaAPI = {
    */
   async adminUpdate(
     id: string,
-    formData: AdminUpdateReleaseMediaData,
+    formData: AdminUpdateReleaseMediaData
   ): Promise<ReleaseMedia> {
     const { data } = await api.patch<ReleaseMedia>(
       `admin/release-media/${id}`,
-      formData,
+      formData
     );
 
     return data;

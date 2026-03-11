@@ -1,17 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
-import { EmblaOptionsType } from "embla-carousel";
-import useEmblaCarousel from "embla-carousel-react";
-import { FC } from "react";
-import { AuthorAPI } from "../../../../api/author/author-api";
-import AuthorCard from "../../../../components/author/authors-grid/Author-card";
-import { authorsKeys } from "../../../../query-keys/authors-keys";
-import { AuthorsQuery } from "../../../../types/author";
+import { useQuery } from '@tanstack/react-query';
+import { EmblaOptionsType } from 'embla-carousel';
+import useEmblaCarousel from 'embla-carousel-react';
+import { FC } from 'react';
+import { AuthorAPI } from '../../../../api/author/author-api';
+import AuthorCard from '../../../../components/author/authors-grid/Author-card';
+import { authorsKeys } from '../../../../query-keys/authors-keys';
+import { AuthorsQuery } from '../../../../types/author';
 
 interface IProps {
   userId: string;
 }
 
-const options: EmblaOptionsType = { dragFree: true, align: "start" };
+const options: EmblaOptionsType = { dragFree: true, align: 'start' };
 
 const ProfileAuthorCardsGrid: FC<IProps> = ({ userId }) => {
   const [emblaRef] = useEmblaCarousel(options);

@@ -1,12 +1,12 @@
-import { FC } from "react";
-import { Link } from "react-router";
-import useNavigationPath from "../../../hooks/use-navigation-path";
-import { AuthorComment } from "../../../types/author";
-import ReviewAuthor from "../../review/review-card/Review-author";
-import ReviewUserImage from "../../review/review-card/Review-user-image";
-import RegisteredAuthorGivenLikes from "../registered-author/Registered-author-given-likes";
-import RegisteredAuthorTypes from "../registered-author/Registered-author-types";
-import RegisteredAuthorWrittenComments from "../registered-author/Registered-author-written-comments";
+import { FC } from 'react';
+import { Link } from 'react-router';
+import useNavigationPath from '../../../hooks/use-navigation-path';
+import { AuthorComment } from '../../../types/author';
+import ReviewAuthor from '../../review/review-card/Review-author';
+import ReviewUserImage from '../../review/review-card/Review-user-image';
+import RegisteredAuthorGivenLikes from '../registered-author/Registered-author-given-likes';
+import RegisteredAuthorTypes from '../registered-author/Registered-author-types';
+import RegisteredAuthorWrittenComments from '../registered-author/Registered-author-written-comments';
 
 interface IProps {
   comment: AuthorComment;
@@ -30,7 +30,7 @@ const AuthorCommentHeader: FC<IProps> = ({ comment, showRelease = false }) => {
             <ReviewAuthor user={comment.user} />
           </Link>
           <RegisteredAuthorTypes
-            className={"size-5"}
+            className={'size-5'}
             types={comment.author.type}
           />
           <RegisteredAuthorGivenLikes
@@ -54,7 +54,7 @@ const AuthorCommentHeader: FC<IProps> = ({ comment, showRelease = false }) => {
             decoding="async"
             alt={comment.release.id}
             src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
-              comment.release.img === ""
+              comment.release.img === ''
                 ? import.meta.env.VITE_DEFAULT_COVER
                 : comment.release.img
             }`}

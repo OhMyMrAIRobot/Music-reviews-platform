@@ -1,16 +1,16 @@
-import { FC, useState } from "react";
-import { Link } from "react-router";
-import AuthorTypeSvg from "../../../../../components/author/author-types/Author-type-svg.tsx";
-import ConfirmationModal from "../../../../../components/modals/Confirmation-modal.tsx";
-import SkeletonLoader from "../../../../../components/utils/Skeleton-loader.tsx";
-import { useAdminRemoveAuthorMutation } from "../../../../../hooks/mutations/index.ts";
-import useNavigationPath from "../../../../../hooks/use-navigation-path.ts";
-import { Author } from "../../../../../types/author/";
-import { getAuthorTypeColor } from "../../../../../utils/get-author-type-color.ts";
-import AdminDeleteButton from "../../buttons/Admin-delete-button.tsx";
-import AdminEditButton from "../../buttons/Admin-edit-button.tsx";
-import AdminNavigateButton from "../../buttons/Admin-navigate-button.tsx";
-import AuthorFormModal from "./Author-form-modal.tsx";
+import { FC, useState } from 'react';
+import { Link } from 'react-router';
+import AuthorTypeSvg from '../../../../../components/author/author-types/Author-type-svg.tsx';
+import ConfirmationModal from '../../../../../components/modals/Confirmation-modal.tsx';
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx';
+import { useAdminRemoveAuthorMutation } from '../../../../../hooks/mutations/index.ts';
+import useNavigationPath from '../../../../../hooks/use-navigation-path.ts';
+import { Author } from '../../../../../types/author/';
+import { getAuthorTypeColor } from '../../../../../utils/get-author-type-color.ts';
+import AdminDeleteButton from '../../buttons/Admin-delete-button.tsx';
+import AdminEditButton from '../../buttons/Admin-edit-button.tsx';
+import AdminNavigateButton from '../../buttons/Admin-navigate-button.tsx';
+import AuthorFormModal from './Author-form-modal.tsx';
 
 interface IProps {
   className?: string;
@@ -20,7 +20,7 @@ interface IProps {
 }
 
 const AdminDashboardAuthorsGridItem: FC<IProps> = ({
-  className = "",
+  className = '',
   author,
   isLoading,
   position,
@@ -44,7 +44,7 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
         <>
           {confModalOpen && (
             <ConfirmationModal
-              title={"Вы действительно хотите удалить автора?"}
+              title={'Вы действительно хотите удалить автора?'}
               isOpen={confModalOpen}
               onConfirm={() => mutateAsync(author.id)}
               onCancel={() => setConfModalOpen(false)}
@@ -66,7 +66,7 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
       >
         <div className="xl:col-span-1 text-ellipsis line-clamp-1">
           <span className="xl:hidden"># </span>
-          {position ?? "#"}
+          {position ?? '#'}
         </div>
 
         {author && (
@@ -74,7 +74,7 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
             loading="lazy"
             decoding="async"
             src={`${import.meta.env.VITE_SERVER_URL}/public/authors/avatars/${
-              author.avatar === ""
+              author.avatar === ''
                 ? import.meta.env.VITE_DEFAULT_AVATAR
                 : author.avatar
             }`}
@@ -92,7 +92,7 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
                 src={`${
                   import.meta.env.VITE_SERVER_URL
                 }/public/authors/avatars/${
-                  author.avatar === ""
+                  author.avatar === ''
                     ? import.meta.env.VITE_DEFAULT_AVATAR
                     : author.avatar
                 }`}
@@ -105,7 +105,7 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
               </span>
             </>
           ) : (
-            "Имя автора"
+            'Имя автора'
           )}
         </div>
 
@@ -117,10 +117,10 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
                 <span key={type.id} className="flex">
                   <span
                     className={`flex items-center ${getAuthorTypeColor(
-                      type.type,
+                      type.type
                     )}`}
                   >
-                    <AuthorTypeSvg type={type} className={"size-5 mr-0.5"} />
+                    <AuthorTypeSvg type={type} className={'size-5 mr-0.5'} />
                     {type.type}
                   </span>
                   {idx < author.authorTypes.length - 1 && (
@@ -130,7 +130,7 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
               ))}
             </>
           ) : (
-            "Тип автора"
+            'Тип автора'
           )}
         </div>
 

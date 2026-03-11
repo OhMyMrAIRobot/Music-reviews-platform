@@ -1,4 +1,4 @@
-import { ReleaseMediaTypesEnum } from "..";
+import { ReleaseMediaTypesEnum } from '..';
 
 /**
  * Represents an `ReleaseMediaType` entity.

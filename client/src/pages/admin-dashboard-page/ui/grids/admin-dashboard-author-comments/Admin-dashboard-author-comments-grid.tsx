@@ -1,18 +1,18 @@
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { AuthorCommentAPI } from "../../../../../api/author/author-comment-api";
-import AdminHeader from "../../../../../components/layout/admin-header/Admin-header";
-import Pagination from "../../../../../components/pagination/Pagination";
-import { authorCommentsKeys } from "../../../../../query-keys/author-comments-keys";
-import { AuthorCommentsQuery } from "../../../../../types/author";
-import { SortOrdersEnum } from "../../../../../types/common/enums/sort-orders-enum";
-import { SortOrder } from "../../../../../types/common/types/sort-order";
-import AdminDashboardAuthorCommentsGridItem from "./Admin-dashboard-author-comments-grid-item";
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { AuthorCommentAPI } from '../../../../../api/author/author-comment-api';
+import AdminHeader from '../../../../../components/layout/admin-header/Admin-header';
+import Pagination from '../../../../../components/pagination/Pagination';
+import { authorCommentsKeys } from '../../../../../query-keys/author-comments-keys';
+import { AuthorCommentsQuery } from '../../../../../types/author';
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum';
+import { SortOrder } from '../../../../../types/common/types/sort-order';
+import AdminDashboardAuthorCommentsGridItem from './Admin-dashboard-author-comments-grid-item';
 
 const limit = 10;
 
 const AdminDashboardAuthorCommentsGrid = () => {
-  const [searchText, setSearchText] = useState<string>("");
+  const [searchText, setSearchText] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC);
 
@@ -38,7 +38,7 @@ const AdminDashboardAuthorCommentsGrid = () => {
 
   return (
     <div className="flex flex-col h-screen" id="admin-author-comments">
-      <AdminHeader title={"Комментарии авторов"} setText={setSearchText} />
+      <AdminHeader title={'Комментарии авторов'} setText={setSearchText} />
 
       <div
         id="admin-author-comments-grid"
@@ -52,7 +52,7 @@ const AdminDashboardAuthorCommentsGrid = () => {
             setOrder(
               order === SortOrdersEnum.DESC
                 ? SortOrdersEnum.ASC
-                : SortOrdersEnum.DESC,
+                : SortOrdersEnum.DESC
             )
           }
         />
@@ -90,7 +90,7 @@ const AdminDashboardAuthorCommentsGrid = () => {
               totalItems={count}
               itemsPerPage={limit}
               setCurrentPage={setCurrentPage}
-              idToScroll={"admin-author-comments-grid"}
+              idToScroll={'admin-author-comments-grid'}
             />
           </div>
         )}

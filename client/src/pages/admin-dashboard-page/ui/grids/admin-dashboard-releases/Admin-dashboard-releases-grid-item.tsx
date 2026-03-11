@@ -1,20 +1,20 @@
-import { FC, useState } from "react";
-import { Link } from "react-router";
-import ArrowBottomSvg from "../../../../../components/layout/header/svg/Arrow-bottom-svg.tsx";
-import ConfirmationModal from "../../../../../components/modals/Confirmation-modal.tsx";
-import ReleaseTypeIcon from "../../../../../components/release/Release-type-icon.tsx";
-import SkeletonLoader from "../../../../../components/utils/Skeleton-loader.tsx";
-import { useAdminRemoveReleaseMutation } from "../../../../../hooks/mutations/index.ts";
-import useNavigationPath from "../../../../../hooks/use-navigation-path.ts";
-import { AuthorTypesEnum } from "../../../../../types/author/index.ts";
-import { SortOrdersEnum } from "../../../../../types/common/enums/sort-orders-enum.ts";
-import { SortOrder } from "../../../../../types/common/types/sort-order.ts";
-import { Release } from "../../../../../types/release/index.ts";
-import { getAuthorTypeColor } from "../../../../../utils/get-author-type-color.ts";
-import { getReleaseTypeColor } from "../../../../../utils/get-release-type-color.ts";
-import AdminDeleteButton from "../../buttons/Admin-delete-button.tsx";
-import AdminEditButton from "../../buttons/Admin-edit-button.tsx";
-import ReleaseFormModal from "./Release-form-modal.tsx";
+import { FC, useState } from 'react';
+import { Link } from 'react-router';
+import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg.tsx';
+import ConfirmationModal from '../../../../../components/modals/Confirmation-modal.tsx';
+import ReleaseTypeIcon from '../../../../../components/release/Release-type-icon.tsx';
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx';
+import { useAdminRemoveReleaseMutation } from '../../../../../hooks/mutations/index.ts';
+import useNavigationPath from '../../../../../hooks/use-navigation-path.ts';
+import { AuthorTypesEnum } from '../../../../../types/author/index.ts';
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum.ts';
+import { SortOrder } from '../../../../../types/common/types/sort-order.ts';
+import { Release } from '../../../../../types/release/index.ts';
+import { getAuthorTypeColor } from '../../../../../utils/get-author-type-color.ts';
+import { getReleaseTypeColor } from '../../../../../utils/get-release-type-color.ts';
+import AdminDeleteButton from '../../buttons/Admin-delete-button.tsx';
+import AdminEditButton from '../../buttons/Admin-edit-button.tsx';
+import ReleaseFormModal from './Release-form-modal.tsx';
 
 interface IProps {
   className?: string;
@@ -26,7 +26,7 @@ interface IProps {
 }
 
 const AdminDashboardReleasesGridItem: FC<IProps> = ({
-  className = "",
+  className = '',
   release,
   order,
   isLoading,
@@ -56,7 +56,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
         <>
           {confModalOpen && (
             <ConfirmationModal
-              title={"Вы действительно хотите удалить релиз?"}
+              title={'Вы действительно хотите удалить релиз?'}
               isOpen={confModalOpen}
               onConfirm={() => handleDelete()}
               onCancel={() => setConfModalOpen(false)}
@@ -79,7 +79,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
       >
         <div className="xl:col-span-1 text-ellipsis line-clamp-1">
           <span className="xl:hidden"># </span>
-          {position ?? "#"}
+          {position ?? '#'}
         </div>
 
         {release && (
@@ -87,7 +87,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
             loading="lazy"
             decoding="async"
             src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
-              release.img === ""
+              release.img === ''
                 ? import.meta.env.VITE_DEFAULT_COVER
                 : release.img
             }`}
@@ -106,7 +106,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
                 loading="lazy"
                 decoding="async"
                 src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
-                  release.img === ""
+                  release.img === ''
                     ? import.meta.env.VITE_DEFAULT_COVER
                     : release.img
                 }`}
@@ -132,12 +132,12 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
               <span className="xl:hidden">Тип релиза: </span>
               <div
                 className={`flex max-xl:ml-1 gap-x-1 items-center ${getReleaseTypeColor(
-                  release.releaseType.type,
+                  release.releaseType.type
                 )}`}
               >
                 <ReleaseTypeIcon
                   type={release.releaseType.type}
-                  className={"size-5"}
+                  className={'size-5'}
                 />
                 <span>{release.releaseType.type}</span>
               </div>
@@ -161,7 +161,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
               <span>Дата создания</span>
               <ArrowBottomSvg
                 className={`size-3 ${
-                  order === SortOrdersEnum.ASC ? "rotate-180" : ""
+                  order === SortOrdersEnum.ASC ? 'rotate-180' : ''
                 }`}
               />
             </button>
@@ -179,12 +179,12 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
                   <span key={ra.id}>
                     <span
                       className={` ${getAuthorTypeColor(
-                        AuthorTypesEnum.ARTIST,
+                        AuthorTypesEnum.ARTIST
                       )}`}
                     >
                       {ra.name}
                     </span>
-                    {idx < release.authors.artists.length - 1 && ", "}
+                    {idx < release.authors.artists.length - 1 && ', '}
                   </span>
                 ))
               )}
@@ -205,12 +205,12 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
                   <span key={rp.id}>
                     <span
                       className={` ${getAuthorTypeColor(
-                        AuthorTypesEnum.PRODUCER,
+                        AuthorTypesEnum.PRODUCER
                       )}`}
                     >
                       {rp.name}
                     </span>
-                    {idx < release.authors.producers.length - 1 && ", "}
+                    {idx < release.authors.producers.length - 1 && ', '}
                   </span>
                 ))
               )}
@@ -231,12 +231,12 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
                   <span key={rd.id}>
                     <span
                       className={` ${getAuthorTypeColor(
-                        AuthorTypesEnum.DESIGNER,
+                        AuthorTypesEnum.DESIGNER
                       )}`}
                     >
                       {rd.name}
                     </span>
-                    {idx < release.authors.designers.length - 1 && ", "}
+                    {idx < release.authors.designers.length - 1 && ', '}
                   </span>
                 ))
               )}
@@ -253,7 +253,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
               <AdminDeleteButton onClick={() => setConfModalOpen(true)} />
             </div>
           ) : (
-            "Действие"
+            'Действие'
           )}
         </div>
       </div>

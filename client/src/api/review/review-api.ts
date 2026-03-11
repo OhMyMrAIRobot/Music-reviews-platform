@@ -1,18 +1,18 @@
-import axios from "axios";
+import axios from 'axios';
 import {
   CreateReviewData,
   Review,
   ReviewsQuery,
   ReviewsResponse,
   UpdateReviewData,
-} from "../../types/review";
-import { api } from "../api-instance";
+} from '../../types/review';
+import { api } from '../api-instance';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 const _api = axios.create({
   baseURL: `${SERVER_URL}/reviews`,
   headers: {
-    "Content-type": "application/json",
+    'Content-type': 'application/json',
   },
 });
 
@@ -41,17 +41,17 @@ export const ReviewAPI = {
    */
   async findAll(query: ReviewsQuery): Promise<ReviewsResponse> {
     const { data } = await _api.get<ReviewsResponse>(`/?
-			${query.userId ? `userId=${query.userId}&` : ""}
-			${query.authorId ? `authorId=${query.authorId}&` : ""}
-			${query.releaseId ? `releaseId=${query.releaseId}&` : ""}
-			${query.favUserId ? `favUserId=${query.favUserId}&` : ""}
-			${query.search ? `search=${query.search}&` : ""}
-			${query.hasAuthorLikes ? `hasAuthorLikes=${query.hasAuthorLikes}&` : ""}
-			${query.sortField ? `sortField=${query.sortField}&` : ""}
-			${query.sortOrder ? `sortOrder=${query.sortOrder}&` : ""}
-			${query.withTextOnly ? `withTextOnly=${query.withTextOnly}&` : ""}
-			${query.limit ? `limit=${query.limit}&` : ""}
-			${query.offset ? `offset=${query.offset}` : ""}
+			${query.userId ? `userId=${query.userId}&` : ''}
+			${query.authorId ? `authorId=${query.authorId}&` : ''}
+			${query.releaseId ? `releaseId=${query.releaseId}&` : ''}
+			${query.favUserId ? `favUserId=${query.favUserId}&` : ''}
+			${query.search ? `search=${query.search}&` : ''}
+			${query.hasAuthorLikes ? `hasAuthorLikes=${query.hasAuthorLikes}&` : ''}
+			${query.sortField ? `sortField=${query.sortField}&` : ''}
+			${query.sortOrder ? `sortOrder=${query.sortOrder}&` : ''}
+			${query.withTextOnly ? `withTextOnly=${query.withTextOnly}&` : ''}
+			${query.limit ? `limit=${query.limit}&` : ''}
+			${query.offset ? `offset=${query.offset}` : ''}
 			`);
 
     return data;
@@ -75,7 +75,7 @@ export const ReviewAPI = {
    * @returns {Promise<Review>} A promise that resolves to the newly created review object.
    */
   async create(formData: CreateReviewData): Promise<Review> {
-    const { data } = await api.post("/reviews", {
+    const { data } = await api.post('/reviews', {
       ...formData,
     });
     return data;
@@ -113,7 +113,7 @@ export const ReviewAPI = {
    */
   async adminUpdate(
     reviewId: string,
-    reviewData: UpdateReviewData,
+    reviewData: UpdateReviewData
   ): Promise<Review> {
     const { data } = await api.patch(`admin/reviews/${reviewId}`, {
       ...reviewData,

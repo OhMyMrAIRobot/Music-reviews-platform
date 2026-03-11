@@ -1,1 +1,1 @@
-export * from "./nomination-winners-query";
+export * from './nomination-winners-query';

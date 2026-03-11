@@ -1,11 +1,11 @@
-import { FC } from "react";
-import { Link } from "react-router";
-import SkeletonLoader from "../../../../components/utils/Skeleton-loader";
-import useNavigationPath from "../../../../hooks/use-navigation-path";
+import { FC } from 'react';
+import { Link } from 'react-router';
+import SkeletonLoader from '../../../../components/utils/Skeleton-loader';
+import useNavigationPath from '../../../../hooks/use-navigation-path';
 import {
   NominationTypesEnum,
   NominationWinner,
-} from "../../../../types/nomination";
+} from '../../../../types/nomination';
 
 interface IProps {
   item?: NominationWinner;
@@ -21,18 +21,18 @@ const NominationWinnerCard: FC<IProps> = ({ item, isLoading }) => {
 
   const imgPath = item
     ? `${VITE_SERVER_URL}/public/${
-        item.entityKind === "author"
+        item.entityKind === 'author'
           ? `authors/avatars/${item.author.avatarImg || VITE_DEFAULT_AVATAR}`
           : `releases/${item.release.img || VITE_DEFAULT_COVER}`
       }`
-    : "";
+    : '';
 
   return isLoading || !item ? (
-    <SkeletonLoader className={"w-full h-100 rounded-[26px]"} />
+    <SkeletonLoader className={'w-full h-100 rounded-[26px]'} />
   ) : (
     <Link
       to={
-        item.entityKind === "author"
+        item.entityKind === 'author'
           ? navigateToAuthorDetails(item.entityId)
           : navigateToReleaseDetails(item.entityId)
       }
@@ -54,22 +54,22 @@ const NominationWinnerCard: FC<IProps> = ({ item, isLoading }) => {
             decoding="async"
             src={imgPath}
             className={
-              "rounded-[17px] transition-all duration-500 lg:group-hover:rounded-[25px] w-full aspect-square"
+              'rounded-[17px] transition-all duration-500 lg:group-hover:rounded-[25px] w-full aspect-square'
             }
           />
         </div>
 
         <div className="h-full flex flex-col items-center justify-center">
           <span className="text-base lg:text-[22px] font-semibold tracking-tighter leading-6">
-            {item.entityKind === "author"
+            {item.entityKind === 'author'
               ? item.author.name
               : item.release.title}
           </span>
-          {item.entityKind === "release" && (
+          {item.entityKind === 'release' && (
             <span className="text-base text-white opacity-40 font-medium mt-0.5">
               {item.type === NominationTypesEnum.COVER_OF_MONTH
-                ? item.release.designers.join(", ")
-                : item.release.artists.join(", ")}
+                ? item.release.designers.join(', ')
+                : item.release.artists.join(', ')}
             </span>
           )}
         </div>

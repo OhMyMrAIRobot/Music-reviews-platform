@@ -1,19 +1,19 @@
-import { FC, useState } from "react";
-import { Link } from "react-router";
-import ArrowBottomSvg from "../../../../../components/layout/header/svg/Arrow-bottom-svg";
-import ConfirmationModal from "../../../../../components/modals/Confirmation-modal";
-import ReleaseMediaStatusIcon from "../../../../../components/release/release-media/Release-media-status-icon";
-import SkeletonLoader from "../../../../../components/utils/Skeleton-loader";
-import { useAdminRemoveMediaMutation } from "../../../../../hooks/mutations";
-import useNavigationPath from "../../../../../hooks/use-navigation-path";
-import { SortOrdersEnum } from "../../../../../types/common/enums/sort-orders-enum";
-import { SortOrder } from "../../../../../types/common/types/sort-order";
-import { ReleaseMedia } from "../../../../../types/release";
-import { getReleaseMediaStatusColor } from "../../../../../utils/get-release-media-status-color";
-import AdminDeleteButton from "../../buttons/Admin-delete-button";
-import AdminEditButton from "../../buttons/Admin-edit-button";
-import AdminNavigateButton from "../../buttons/Admin-navigate-button";
-import MediaFormModal from "./Media-form-modal";
+import { FC, useState } from 'react';
+import { Link } from 'react-router';
+import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg';
+import ConfirmationModal from '../../../../../components/modals/Confirmation-modal';
+import ReleaseMediaStatusIcon from '../../../../../components/release/release-media/Release-media-status-icon';
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader';
+import { useAdminRemoveMediaMutation } from '../../../../../hooks/mutations';
+import useNavigationPath from '../../../../../hooks/use-navigation-path';
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum';
+import { SortOrder } from '../../../../../types/common/types/sort-order';
+import { ReleaseMedia } from '../../../../../types/release';
+import { getReleaseMediaStatusColor } from '../../../../../utils/get-release-media-status-color';
+import AdminDeleteButton from '../../buttons/Admin-delete-button';
+import AdminEditButton from '../../buttons/Admin-edit-button';
+import AdminNavigateButton from '../../buttons/Admin-navigate-button';
+import MediaFormModal from './Media-form-modal';
 
 interface IProps {
   className?: string;
@@ -27,7 +27,7 @@ interface IProps {
 const AdminDashboardMediaGridItem: FC<IProps> = ({
   position,
   isLoading,
-  className = "",
+  className = '',
   media,
   order,
   toggleOrder,
@@ -51,7 +51,7 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
         <>
           {confModalOpen && (
             <ConfirmationModal
-              title={"Вы действительно хотите удалить медиаматериал?"}
+              title={'Вы действительно хотите удалить медиаматериал?'}
               isOpen={confModalOpen}
               onConfirm={() => mutateAsync(media.id)}
               onCancel={() => setConfModalOpen(false)}
@@ -73,7 +73,7 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
       >
         <div className="xl:col-span-1 text-ellipsis line-clamp-1">
           <span className="xl:hidden"># </span>
-          {position ?? "#"}
+          {position ?? '#'}
         </div>
 
         <div className="xl:col-span-2 h-full flex items-center mr-2">
@@ -86,7 +86,7 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
                 loading="lazy"
                 decoding="async"
                 src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
-                  media.release.img === ""
+                  media.release.img === ''
                     ? import.meta.env.VITE_DEFAULT_COVER
                     : media.release.img
                 }`}
@@ -141,7 +141,7 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
               <span>Дата публикации</span>
               <ArrowBottomSvg
                 className={`size-3 ${
-                  order === SortOrdersEnum.ASC ? "rotate-180" : ""
+                  order === SortOrdersEnum.ASC ? 'rotate-180' : ''
                 }`}
               />
             </button>
@@ -154,12 +154,12 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
               <span className="xl:hidden pr-1">Статус: </span>
               <div
                 className={`flex gap-x-1 items-center ${getReleaseMediaStatusColor(
-                  media.status.status,
+                  media.status.status
                 )}`}
               >
                 <ReleaseMediaStatusIcon
                   status={media.status.status}
-                  className={"size-5"}
+                  className={'size-5'}
                 />
                 <span>{media.status.status}</span>
               </div>
@@ -183,7 +183,7 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
               />
             </div>
           ) : (
-            "Действие"
+            'Действие'
           )}
         </div>
       </div>

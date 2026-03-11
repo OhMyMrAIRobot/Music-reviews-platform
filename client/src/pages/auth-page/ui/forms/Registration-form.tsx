@@ -1,13 +1,13 @@
-import { useMemo, useState } from "react";
-import FormButton from "../../../../components/form-elements/Form-button";
-import FormCheckbox from "../../../../components/form-elements/Form-checkbox";
-import FormInput from "../../../../components/form-elements/Form-input";
-import FormLabel from "../../../../components/form-elements/Form-label";
-import FormTitle from "../../../../components/form-elements/Form-title";
-import PreventableLink from "../../../../components/utils/Preventable-link";
-import { useRegistrationMutation } from "../../../../hooks/mutations";
-import useNavigationPath from "../../../../hooks/use-navigation-path";
-import { constraints } from "../../../../utils/constraints";
+import { useMemo, useState } from 'react';
+import FormButton from '../../../../components/form-elements/Form-button';
+import FormCheckbox from '../../../../components/form-elements/Form-checkbox';
+import FormInput from '../../../../components/form-elements/Form-input';
+import FormLabel from '../../../../components/form-elements/Form-label';
+import FormTitle from '../../../../components/form-elements/Form-title';
+import PreventableLink from '../../../../components/utils/Preventable-link';
+import { useRegistrationMutation } from '../../../../hooks/mutations';
+import useNavigationPath from '../../../../hooks/use-navigation-path';
+import { constraints } from '../../../../utils/constraints';
 
 /**
  * Represents state of registration form.
@@ -24,10 +24,10 @@ type RegistrationFormState = {
 const RegistrationForm = () => {
   const { navigateToLogin } = useNavigationPath();
   const [formData, setFormData] = useState<RegistrationFormState>({
-    email: "",
-    nickname: "",
-    password: "",
-    passwordConfirm: "",
+    email: '',
+    nickname: '',
+    password: '',
+    passwordConfirm: '',
     agreementChecked: false,
     policyChecked: false,
   });
@@ -43,7 +43,7 @@ const RegistrationForm = () => {
    */
   const handleChange = (
     field: keyof typeof formData,
-    value: string | boolean,
+    value: string | boolean
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -64,7 +64,7 @@ const RegistrationForm = () => {
     label: string,
     type: string,
     placeholder?: string,
-    description?: string,
+    description?: string
   ) => (
     <div className="grid gap-1">
       <FormLabel name={label} htmlFor={id} />
@@ -75,7 +75,7 @@ const RegistrationForm = () => {
       )}
       <FormInput
         id={id}
-        placeholder={placeholder || ""}
+        placeholder={placeholder || ''}
         type={type}
         value={formData[id] as string}
         setValue={(value) => handleChange(id, value)}
@@ -95,13 +95,13 @@ const RegistrationForm = () => {
   const renderCheckbox = (
     id: keyof typeof formData,
     linkText: string,
-    linkHref: string,
+    linkHref: string
   ) => (
     <div className="flex items-center space-x-2 select-none">
       <FormCheckbox
         checked={formData[id] as boolean}
         setChecked={(value) => handleChange(id, value)}
-        id={""}
+        id={''}
       />
 
       <span className="text-sm font-medium">
@@ -147,34 +147,34 @@ const RegistrationForm = () => {
 
   return (
     <div className="grid w-full sm:w-[350px] gap-2 py-10">
-      <FormTitle title={"Создать аккаунт"} className="text-center mb-4" />
+      <FormTitle title={'Создать аккаунт'} className="text-center mb-4" />
       <div className="grid gap-3">
         {renderInput(
-          "email",
-          "Email",
-          "email",
-          "Ваш email",
-          "Будет также логином для авторизации",
+          'email',
+          'Email',
+          'email',
+          'Ваш email',
+          'Будет также логином для авторизации'
         )}
-        {renderInput("nickname", "Отображаемое имя", "text", "", "Ваш никнейм")}
-        {renderInput("password", "Пароль", "password")}
-        {renderInput("passwordConfirm", "Подтвердите пароль", "password")}
+        {renderInput('nickname', 'Отображаемое имя', 'text', '', 'Ваш никнейм')}
+        {renderInput('password', 'Пароль', 'password')}
+        {renderInput('passwordConfirm', 'Подтвердите пароль', 'password')}
 
         <div className="my-3 grid gap-3">
           {renderCheckbox(
-            "agreementChecked",
-            "Пользовательского соглашения",
-            "/",
+            'agreementChecked',
+            'Пользовательского соглашения',
+            '/'
           )}
           {renderCheckbox(
-            "policyChecked",
-            "Политики обработки персональных данных",
-            "/",
+            'policyChecked',
+            'Политики обработки персональных данных',
+            '/'
           )}
         </div>
 
         <FormButton
-          title={isLoading ? "Регистрация..." : "Создать аккаунт"}
+          title={isLoading ? 'Регистрация...' : 'Создать аккаунт'}
           isInvert={true}
           onClick={handleSubmit}
           disabled={isLoading || !isFormValid}
@@ -187,7 +187,7 @@ const RegistrationForm = () => {
             <button
               disabled={isLoading}
               className={`hover:underline cursor-pointer underline-offset-4 ${
-                isLoading ? "opacity-50 pointer-events-none" : ""
+                isLoading ? 'opacity-50 pointer-events-none' : ''
               }`}
             >
               Войти

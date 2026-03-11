@@ -1,14 +1,14 @@
-import { observer } from "mobx-react-lite";
-import { FC, useState } from "react";
-import { Link } from "react-router";
-import { useToggleFavReview } from "../../../hooks/mutations/toggle-fav/use-toggle-fav-review.ts";
-import useNavigationPath from "../../../hooks/use-navigation-path.ts";
-import { useStore } from "../../../hooks/use-store";
-import { Review } from "../../../types/review";
-import MoveToSvg from "../../svg/Move-to-svg.tsx";
-import SkeletonLoader from "../../utils/Skeleton-loader.tsx";
-import ReviewHeader from "./Review-header";
-import ReviewLikes from "./Review-likes";
+import { observer } from 'mobx-react-lite';
+import { FC, useState } from 'react';
+import { Link } from 'react-router';
+import { useToggleFavReview } from '../../../hooks/mutations/toggle-fav/use-toggle-fav-review.ts';
+import useNavigationPath from '../../../hooks/use-navigation-path.ts';
+import { useStore } from '../../../hooks/use-store';
+import { Review } from '../../../types/review';
+import MoveToSvg from '../../svg/Move-to-svg.tsx';
+import SkeletonLoader from '../../utils/Skeleton-loader.tsx';
+import ReviewHeader from './Review-header';
+import ReviewLikes from './Review-likes';
 
 interface IProps {
   review?: Review;
@@ -65,7 +65,7 @@ const ReviewCard: FC<IProps> = observer(({ review, isLoading }) => {
             <MoveToSvg className="size-6 text-zinc-400 stroke-white fill-zinc-400" />
             <div
               className={`absolute -top-10 left-1/1 -translate-x-1/1 bg-zinc-950 border-2 border-gray-600 rounded-xl text-white text-xs font-semibold px-3 py-2 shadow z-100 whitespace-nowrap transition-all duration-300 ${
-                show ? "opacity-100 visible" : "opacity-0 invisible"
+                show ? 'opacity-100 visible' : 'opacity-0 invisible'
               }`}
             >
               Перейти к релизу

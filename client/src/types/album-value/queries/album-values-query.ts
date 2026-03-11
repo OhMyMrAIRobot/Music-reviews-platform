@@ -1,5 +1,5 @@
-import { AlbumValueTiersEnum } from "..";
-import { SortOrder } from "../../common/types/sort-order";
+import { AlbumValueTiersEnum } from '..';
+import { SortOrder } from '../../common/types/sort-order';
 
 /**
  * Query for listing album values.

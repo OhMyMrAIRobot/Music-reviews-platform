@@ -1,12 +1,12 @@
-import { FC } from "react";
-import { Link } from "react-router";
-import useNavigationPath from "../../../hooks/use-navigation-path";
-import { Release } from "../../../types/release";
-import SkeletonLoader from "../../utils/Skeleton-loader";
-import ReleaseAuthorActions from "../Release-author-actions";
-import ReleaseAuthors from "../Release-authors";
-import ReleaseRatings from "../Release-ratings";
-import ReleaseReviewsCount from "../Release-reviews-count";
+import { FC } from 'react';
+import { Link } from 'react-router';
+import useNavigationPath from '../../../hooks/use-navigation-path';
+import { Release } from '../../../types/release';
+import SkeletonLoader from '../../utils/Skeleton-loader';
+import ReleaseAuthorActions from '../Release-author-actions';
+import ReleaseAuthors from '../Release-authors';
+import ReleaseRatings from '../Release-ratings';
+import ReleaseReviewsCount from '../Release-reviews-count';
 
 interface IProps {
   release?: Release;
@@ -29,7 +29,7 @@ const ReleasesColumnItem: FC<IProps> = ({ release, isLoading }) => {
             loading="lazy"
             decoding="async"
             src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
-              release.img === ""
+              release.img === ''
                 ? import.meta.env.VITE_DEFAULT_COVER
                 : release.img
             }`}
@@ -68,7 +68,7 @@ const ReleasesColumnItem: FC<IProps> = ({ release, isLoading }) => {
         <div className="flex items-center gap-[5px] select-none ml-auto">
           <ReleaseRatings
             ratings={release.ratings.total}
-            className={"size-[30px] lg:size-[45px] text-sm lg:text-[22px]"}
+            className={'size-[30px] lg:size-[45px] text-sm lg:text-[22px]'}
             showHint={true}
           />
         </div>

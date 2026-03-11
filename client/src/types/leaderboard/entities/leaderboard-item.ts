@@ -29,5 +29,5 @@ type Stats = {
 /** Top likers who are registered authors (count + minimal user info). */
 type TopAuthorLiker = {
   count: number;
-  user: Pick<User, "id" | "nickname" | "avatar">;
+  user: Pick<User, 'id' | 'nickname' | 'avatar'>;
 };

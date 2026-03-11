@@ -1,19 +1,19 @@
-import { FC, useState } from "react";
-import { Link } from "react-router";
-import FormButton from "../../../components/form-elements/Form-button";
-import TickRoundedSvg from "../../../components/svg/Tick-rounded-svg";
-import Tooltip from "../../../components/tooltip/Tooltip";
-import TooltipSpan from "../../../components/tooltip/Tooltip-span";
-import SkeletonLoader from "../../../components/utils/Skeleton-loader";
-import { useAuth } from "../../../hooks/use-auth";
-import useNavigationPath from "../../../hooks/use-navigation-path";
-import { useStore } from "../../../hooks/use-store";
+import { FC, useState } from 'react';
+import { Link } from 'react-router';
+import FormButton from '../../../components/form-elements/Form-button';
+import TickRoundedSvg from '../../../components/svg/Tick-rounded-svg';
+import Tooltip from '../../../components/tooltip/Tooltip';
+import TooltipSpan from '../../../components/tooltip/Tooltip-span';
+import SkeletonLoader from '../../../components/utils/Skeleton-loader';
+import { useAuth } from '../../../hooks/use-auth';
+import useNavigationPath from '../../../hooks/use-navigation-path';
+import { useStore } from '../../../hooks/use-store';
 import {
   NominationCandidate,
   NominationEntityKind,
   NominationType,
   NominationUserVote,
-} from "../../../types/nomination";
+} from '../../../types/nomination';
 
 interface IProps {
   isLoading: boolean;
@@ -25,7 +25,7 @@ interface IProps {
   postVote?: (
     nominationTypeId: string,
     entityKind: NominationEntityKind,
-    entityId: string,
+    entityId: string
   ) => void;
 }
 
@@ -49,10 +49,10 @@ const NominationVotesSectionItem: FC<IProps> = ({
   const [isPosting, setIsPosting] = useState(false);
 
   const navPath = candidate
-    ? candidate.entityKind === "author"
+    ? candidate.entityKind === 'author'
       ? navigateToAuthorDetails(candidate.id)
       : navigateToReleaseDetails(candidate.id)
-    : "#";
+    : '#';
 
   const handleClick = async () => {
     if (!checkAuth() || isPosting || !nominationType || !candidate || !postVote)
@@ -62,9 +62,9 @@ const NominationVotesSectionItem: FC<IProps> = ({
       await postVote(
         nominationType.id,
         candidate.entityKind as NominationEntityKind,
-        candidate.id,
+        candidate.id
       );
-      notificationStore.addSuccessNotification("Вы успешно проголосовали!");
+      notificationStore.addSuccessNotification('Вы успешно проголосовали!');
       setVoted?.(true);
     } finally {
       setIsPosting(false);
@@ -75,7 +75,7 @@ const NominationVotesSectionItem: FC<IProps> = ({
     userVotes?.some(
       (v) =>
         v.nominationType.type === nominationType?.type &&
-        v.entityId === candidate?.id,
+        v.entityId === candidate?.id
     ) ?? false;
 
   return (
@@ -92,7 +92,7 @@ const NominationVotesSectionItem: FC<IProps> = ({
               loading="lazy"
               decoding="async"
               src={`${VITE_SERVER_URL}/public/${
-                candidate.entityKind === "author"
+                candidate.entityKind === 'author'
                   ? `authors/avatars/${candidate.img || VITE_DEFAULT_AVATAR}`
                   : `releases/${candidate.img || VITE_DEFAULT_COVER}`
               }`}
@@ -106,13 +106,13 @@ const NominationVotesSectionItem: FC<IProps> = ({
         ) : (
           <div className="flex flex-col min-w-0">
             <span className="font-medium opacity-90 hover:opacity-100 hover:underline underline-offset-4 transition-all duration-200 truncate">
-              {candidate.entityKind === "author"
+              {candidate.entityKind === 'author'
                 ? candidate.name
                 : candidate.title}
             </span>
-            {candidate.entityKind === "release" && (
+            {candidate.entityKind === 'release' && (
               <span className="font-medium opacity-40 truncate">
-                {candidate.authors.join(", ")}
+                {candidate.authors.join(', ')}
               </span>
             )}
           </div>
@@ -127,10 +127,10 @@ const NominationVotesSectionItem: FC<IProps> = ({
             <TooltipSpan
               tooltip={
                 <Tooltip>
-                  Вы проголосовали за{" "}
-                  {candidate?.entityKind === "author"
-                    ? "данного автора!"
-                    : "данный релиз!"}
+                  Вы проголосовали за{' '}
+                  {candidate?.entityKind === 'author'
+                    ? 'данного автора!'
+                    : 'данный релиз!'}
                 </Tooltip>
               }
               spanClassName="relative"

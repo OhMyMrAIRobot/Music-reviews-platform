@@ -1,10 +1,10 @@
-import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "react-router";
-import { AuthAPI } from "../../../api/auth-api";
-import { UseMutationParams } from "../../../types/common";
-import { useApiErrorHandler } from "../../use-api-error-handler";
-import useNavigationPath from "../../use-navigation-path";
-import { useStore } from "../../use-store";
+import { useMutation } from '@tanstack/react-query';
+import { useNavigate } from 'react-router';
+import { AuthAPI } from '../../../api/auth-api';
+import { UseMutationParams } from '../../../types/common';
+import { useApiErrorHandler } from '../../use-api-error-handler';
+import useNavigationPath from '../../use-navigation-path';
+import { useStore } from '../../use-store';
 
 /**
  * Custom React hook returning a React Query mutation used to activate a
@@ -32,13 +32,13 @@ export const useActivateUserMutation = ({
     onSuccess: (data) => {
       const { user, accessToken } = data;
       authStore.setAuthorization(user, accessToken);
-      notificationStore.addSuccessNotification("Аккаунт успешно активирован!");
+      notificationStore.addSuccessNotification('Аккаунт успешно активирован!');
       navigate(navigateToMain);
 
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, "Ошибка при активации аккаунта!");
+      handleApiError(error, 'Ошибка при активации аккаунта!');
       onError?.(error);
     },
     onSettled,

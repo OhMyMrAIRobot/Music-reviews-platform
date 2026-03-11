@@ -1,9 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
-import { FC } from "react";
-import { AuthorConfirmationAPI } from "../../../api/author/author-confirmation-api";
-import { useStore } from "../../../hooks/use-store";
-import { authorConfirmationsKeys } from "../../../query-keys/authors-confirmations-keys";
-import AuthorConfirmationItem from "./Author-confirmation-item";
+import { useQuery } from '@tanstack/react-query';
+import { FC } from 'react';
+import { AuthorConfirmationAPI } from '../../../api/author/author-confirmation-api';
+import { useStore } from '../../../hooks/use-store';
+import { authorConfirmationsKeys } from '../../../query-keys/authors-confirmations-keys';
+import AuthorConfirmationItem from './Author-confirmation-item';
 
 interface IProps {
   show: boolean;
@@ -14,12 +14,12 @@ const AuthorConfirmationTickets: FC<IProps> = ({ show }) => {
 
   const { data, isPending } = useQuery({
     queryKey: authorConfirmationsKeys.list({
-      userId: authStore.user?.id ?? "unknown",
+      userId: authStore.user?.id ?? 'unknown',
     }),
     queryFn: () => AuthorConfirmationAPI.findMyConfirmations(),
     staleTime: 1000 * 60 * 5,
     enabled: show && !!authStore.user,
-    refetchOnMount: "always",
+    refetchOnMount: 'always',
   });
 
   const items = data?.items ?? [];
@@ -27,7 +27,7 @@ const AuthorConfirmationTickets: FC<IProps> = ({ show }) => {
   return (
     <div
       className={`grid gap-4 ${
-        show ? "" : "opacity-0 pointer-events-none duration-200 transition-all"
+        show ? '' : 'opacity-0 pointer-events-none duration-200 transition-all'
       }`}
     >
       {isPending

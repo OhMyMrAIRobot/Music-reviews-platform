@@ -1,8 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
-import { LyricsApi } from "../../../api/lyrics-api";
-import ModalOverlay from "../../../components/modals/Modal-overlay";
-import SkeletonLoader from "../../../components/utils/Skeleton-loader";
-import { releasesKeys } from "../../../query-keys/releases-keys";
+import { useQuery } from '@tanstack/react-query';
+import { LyricsApi } from '../../../api/lyrics-api';
+import ModalOverlay from '../../../components/modals/Modal-overlay';
+import SkeletonLoader from '../../../components/utils/Skeleton-loader';
+import { releasesKeys } from '../../../query-keys/releases-keys';
 
 interface IProps {
   releaseId: string;
@@ -11,16 +11,16 @@ interface IProps {
 }
 
 const renderLyrics = (text: string) => {
-  return text.split("\n").map((rawLine, idx) => {
-    const line = rawLine.replace(/\r/g, "");
+  return text.split('\n').map((rawLine, idx) => {
+    const line = rawLine.replace(/\r/g, '');
     const trimmed = line.trim();
 
-    if (trimmed === "") {
+    if (trimmed === '') {
       return <div key={idx} className="h-2" />;
     }
 
     if (/^\[.*\]$/.test(trimmed)) {
-      const content = trimmed.replace(/^\[|\]$/g, "");
+      const content = trimmed.replace(/^\[|\]$/g, '');
       return (
         <p
           key={idx}

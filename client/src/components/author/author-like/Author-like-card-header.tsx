@@ -1,7 +1,7 @@
-import { FC } from "react";
-import { Link } from "react-router";
-import useNavigationPath from "../../../hooks/use-navigation-path";
-import { AuthorLike } from "../../../types/review";
+import { FC } from 'react';
+import { Link } from 'react-router';
+import useNavigationPath from '../../../hooks/use-navigation-path';
+import { AuthorLike } from '../../../types/review';
 
 interface IProps {
   authorLike: AuthorLike;
@@ -23,7 +23,7 @@ const AuthorLikeCardHeader: FC<IProps> = ({ authorLike }) => {
             decoding="async"
             alt={authorLike.review.user.nickname}
             src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-              authorLike.review.user.avatar === ""
+              authorLike.review.user.avatar === ''
                 ? import.meta.env.VITE_DEFAULT_AVATAR
                 : authorLike.review.user.avatar
             }`}
@@ -44,7 +44,7 @@ const AuthorLikeCardHeader: FC<IProps> = ({ authorLike }) => {
             decoding="async"
             alt={authorLike.release.title}
             src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
-              authorLike.release.img === ""
+              authorLike.release.img === ''
                 ? import.meta.env.VITE_DEFAULT_COVER
                 : authorLike.release.img
             }`}

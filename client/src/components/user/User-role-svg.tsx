@@ -1,9 +1,9 @@
-import { FC } from "react";
-import { Role, RolesEnum } from "../../types/user";
-import UserLockSvg from "../svg/User-lock-svg";
-import UserShieldSvg from "../svg/User-shield-svg";
-import UserSvg from "../svg/User-svg";
-import UserTickSvg from "../svg/User-tick-svg";
+import { FC } from 'react';
+import { Role, RolesEnum } from '../../types/user';
+import UserLockSvg from '../svg/User-lock-svg';
+import UserShieldSvg from '../svg/User-shield-svg';
+import UserSvg from '../svg/User-svg';
+import UserTickSvg from '../svg/User-tick-svg';
 
 interface IProps {
   role: Role;

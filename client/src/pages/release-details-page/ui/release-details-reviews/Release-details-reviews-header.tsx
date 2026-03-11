@@ -1,6 +1,6 @@
-import { FC } from "react";
-import ComboBox from "../../../../components/buttons/Combo-box";
-import { ReleaseReviewSortFields } from "../../../../types/review";
+import { FC } from 'react';
+import ComboBox from '../../../../components/buttons/Combo-box';
+import { ReleaseReviewSortFields } from '../../../../types/review';
 
 interface IProps {
   count: number;

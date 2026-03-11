@@ -1,4 +1,4 @@
-import { AuthorLike } from "../entities";
+import { AuthorLike } from '../entities';
 
 /**
  * AuthorLikesResponse — standard paginated response shape used by the

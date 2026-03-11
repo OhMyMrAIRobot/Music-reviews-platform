@@ -1,39 +1,39 @@
-import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
-import { ReleaseMediaAPI } from "../../api/release/release-media-api";
-import ComboBox from "../../components/buttons/Combo-box";
-import Pagination from "../../components/pagination/Pagination";
-import ReleaseMediaReview from "../../components/release/release-media/Release-media-review";
-import { useReleaseMediaMeta } from "../../hooks/meta";
-import { releaseMediaKeys } from "../../query-keys/release-media-keys";
-import { SortOrdersEnum } from "../../types/common/enums/sort-orders-enum";
-import type { SortOrder } from "../../types/common/types/sort-order";
+import { useQuery } from '@tanstack/react-query';
+import { useMemo, useState } from 'react';
+import { ReleaseMediaAPI } from '../../api/release/release-media-api';
+import ComboBox from '../../components/buttons/Combo-box';
+import Pagination from '../../components/pagination/Pagination';
+import ReleaseMediaReview from '../../components/release/release-media/Release-media-review';
+import { useReleaseMediaMeta } from '../../hooks/meta';
+import { releaseMediaKeys } from '../../query-keys/release-media-keys';
+import { SortOrdersEnum } from '../../types/common/enums/sort-orders-enum';
+import type { SortOrder } from '../../types/common/types/sort-order';
 import {
   ReleaseMediaQuery,
   ReleaseMediaStatusesEnum,
   ReleaseMediaTypesEnum,
-} from "../../types/release";
-import { ReviewSortFields } from "../../types/review";
+} from '../../types/release';
+import { ReviewSortFields } from '../../types/review';
 
 const limit = 12;
 
 const MediaReviewsPage = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [selectedOrder, setSelectedOrder] = useState<string>(
-    ReviewSortFields.NEW,
+    ReviewSortFields.NEW
   );
 
   const { statuses, types, isLoading: isMetaLoading } = useReleaseMediaMeta();
 
   const typeId = useMemo(
     () => types.find((t) => t.type === ReleaseMediaTypesEnum.MEDIA_REVIEW)?.id,
-    [types],
+    [types]
   );
 
   const statusId = useMemo(
     () =>
       statuses.find((s) => s.status === ReleaseMediaStatusesEnum.APPROVED)?.id,
-    [statuses],
+    [statuses]
   );
 
   const order: SortOrder = useMemo(
@@ -41,7 +41,7 @@ const MediaReviewsPage = () => {
       selectedOrder === ReviewSortFields.NEW
         ? SortOrdersEnum.DESC
         : SortOrdersEnum.ASC,
-    [selectedOrder],
+    [selectedOrder]
   );
 
   const query: ReleaseMediaQuery = {
@@ -122,7 +122,7 @@ const MediaReviewsPage = () => {
             totalItems={total}
             itemsPerPage={limit}
             setCurrentPage={setCurrentPage}
-            idToScroll={"media-reviews"}
+            idToScroll={'media-reviews'}
           />
         </div>
       )}

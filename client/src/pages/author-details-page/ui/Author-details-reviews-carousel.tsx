@@ -1,12 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
-import { FC, useRef, useState } from "react";
-import { ReviewAPI } from "../../../api/review/review-api";
-import CarouselContainer from "../../../components/carousel/Carousel-container";
-import LastReviewsCarousel from "../../../components/carousel/Last-reviews-carousel";
-import { reviewsKeys } from "../../../query-keys/reviews-keys";
-import { SortOrdersEnum } from "../../../types/common";
-import { CarouselRef } from "../../../types/common/types/carousel-ref";
-import { ReviewsQuery, ReviewsSortFieldsEnum } from "../../../types/review";
+import { useQuery } from '@tanstack/react-query';
+import { FC, useRef, useState } from 'react';
+import { ReviewAPI } from '../../../api/review/review-api';
+import CarouselContainer from '../../../components/carousel/Carousel-container';
+import LastReviewsCarousel from '../../../components/carousel/Last-reviews-carousel';
+import { reviewsKeys } from '../../../query-keys/reviews-keys';
+import { SortOrdersEnum } from '../../../types/common';
+import { CarouselRef } from '../../../types/common/types/carousel-ref';
+import { ReviewsQuery, ReviewsSortFieldsEnum } from '../../../types/review';
 
 interface IProps {
   id: string;
@@ -40,10 +40,10 @@ const AuthorDetailsReviewsCarousel: FC<IProps> = ({ id }) => {
   return (
     (isPending || (lastReviews && lastReviews.length > 0)) && (
       <CarouselContainer
-        title={"Последние рецензии"}
-        buttonTitle={""}
+        title={'Последние рецензии'}
+        buttonTitle={''}
         showButton={false}
-        href={"#"}
+        href={'#'}
         handlePrev={() => carouselRef.current?.scrollPrev()}
         handleNext={() => carouselRef.current?.scrollNext()}
         carousel={

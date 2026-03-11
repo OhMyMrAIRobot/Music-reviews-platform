@@ -1,17 +1,17 @@
-import { FC } from "react";
-import { Link } from "react-router";
-import useNavigationPath from "../../../hooks/use-navigation-path";
-import { AuthorFavReview } from "../../../types/review";
-import Tooltip from "../../tooltip/Tooltip";
-import TooltipSpan from "../../tooltip/Tooltip-span";
-import Loader from "../../utils/Loader";
+import { FC } from 'react';
+import { Link } from 'react-router';
+import useNavigationPath from '../../../hooks/use-navigation-path';
+import { AuthorFavReview } from '../../../types/review';
+import Tooltip from '../../tooltip/Tooltip';
+import TooltipSpan from '../../tooltip/Tooltip-span';
+import Loader from '../../utils/Loader';
 
 interface IProps {
   toggling: boolean;
   isLiked: boolean;
   likesCount: number;
   toggleFavReview: () => void;
-  authorLikes: Omit<AuthorFavReview, "reviewId">[];
+  authorLikes: Omit<AuthorFavReview, 'reviewId'>[];
 }
 
 const ReviewLikes: FC<IProps> = ({
@@ -29,23 +29,23 @@ const ReviewLikes: FC<IProps> = ({
         disabled={toggling}
         onClick={toggleFavReview}
         className={`flex items-center justify-center gap-1 px-4 h-8 lg:h-10 border rounded-full cursor-pointer group select-none ${
-          isLiked ? "bg-white/20 border-white/40" : "bg-white/5 border-white/5"
-        } ${toggling ? "opacity-50" : "opacity-100"}`}
+          isLiked ? 'bg-white/20 border-white/40' : 'bg-white/5 border-white/5'
+        } ${toggling ? 'opacity-50' : 'opacity-100'}`}
       >
         {toggling ? (
           <div className="size-6 lg:size-7 flex items-center justify-center">
-            <Loader className={"size-3 lg:size-5"} />
+            <Loader className={'size-3 lg:size-5'} />
           </div>
         ) : (
           <img
             loading="lazy"
             decoding="async"
-            alt={"heart"}
+            alt={'heart'}
             src={`${import.meta.env.VITE_SERVER_URL}/public/assets/heart.png`}
             className={`w-6 lg:w-7 transition-opacity duration-300 ${
               isLiked
-                ? "opacity-100"
-                : "opacity-50 hover:opacity-100 group-hover:opacity-100"
+                ? 'opacity-100'
+                : 'opacity-50 hover:opacity-100 group-hover:opacity-100'
             }`}
           />
         )}
@@ -64,7 +64,7 @@ const ReviewLikes: FC<IProps> = ({
         >
           <Link to={navigatoToProfile(like.userId)} className="relative">
             <img
-              alt={"author-like"}
+              alt={'author-like'}
               src={`${
                 import.meta.env.VITE_SERVER_URL
               }/public/assets/author-like.png`}
@@ -75,7 +75,7 @@ const ReviewLikes: FC<IProps> = ({
               loading="lazy"
               decoding="async"
               src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-                like.avatar === ""
+                like.avatar === ''
                   ? import.meta.env.VITE_DEFAULT_AVATAR
                   : like.avatar
               }`}

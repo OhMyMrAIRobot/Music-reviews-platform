@@ -1,17 +1,17 @@
-import { EmblaOptionsType } from "embla-carousel";
-import useEmblaCarousel from "embla-carousel-react";
-import { observer } from "mobx-react-lite";
+import { EmblaOptionsType } from 'embla-carousel';
+import useEmblaCarousel from 'embla-carousel-react';
+import { observer } from 'mobx-react-lite';
 import {
   forwardRef,
   useCallback,
   useEffect,
   useImperativeHandle,
   useState,
-} from "react";
-import ReleaseMediaReview from "../../../../../components/release/release-media/Release-media-review";
-import { CarouselRef } from "../../../../../types/common/types/carousel-ref";
-import { CarouselStateCallbacks } from "../../../../../types/common/types/carousel-state-callbacks";
-import { ReleaseMedia } from "../../../../../types/release";
+} from 'react';
+import ReleaseMediaReview from '../../../../../components/release/release-media/Release-media-review';
+import { CarouselRef } from '../../../../../types/common/types/carousel-ref';
+import { CarouselStateCallbacks } from '../../../../../types/common/types/carousel-state-callbacks';
+import { ReleaseMedia } from '../../../../../types/release';
 
 interface IProps extends CarouselStateCallbacks {
   items: ReleaseMedia[];
@@ -22,10 +22,10 @@ const ReleaseMediaReviewsCarousel = observer(
   forwardRef<CarouselRef, IProps>(
     (
       { items, isLoading, onCanScrollPrevChange, onCanScrollNextChange },
-      ref,
+      ref
     ) => {
       const options: EmblaOptionsType = {
-        align: "start",
+        align: 'start',
         slidesToScroll: 1,
       };
       const [emblaRef, emblaApi] = useEmblaCarousel(options);
@@ -50,14 +50,14 @@ const ReleaseMediaReviewsCarousel = observer(
 
         updateScrollState();
 
-        emblaApi.on("select", updateScrollState);
-        emblaApi.on("reInit", updateScrollState);
-        emblaApi.on("resize", updateScrollState);
+        emblaApi.on('select', updateScrollState);
+        emblaApi.on('reInit', updateScrollState);
+        emblaApi.on('resize', updateScrollState);
 
         return () => {
-          emblaApi.off("select", updateScrollState);
-          emblaApi.off("reInit", updateScrollState);
-          emblaApi.off("resize", updateScrollState);
+          emblaApi.off('select', updateScrollState);
+          emblaApi.off('reInit', updateScrollState);
+          emblaApi.off('resize', updateScrollState);
         };
       }, [emblaApi, updateScrollState]);
 
@@ -67,7 +67,7 @@ const ReleaseMediaReviewsCarousel = observer(
           scrollPrev: () => emblaApi?.scrollPrev(),
           scrollNext: () => emblaApi?.scrollNext(),
         }),
-        [emblaApi],
+        [emblaApi]
       );
 
       return (
@@ -95,8 +95,8 @@ const ReleaseMediaReviewsCarousel = observer(
           </div>
         </div>
       );
-    },
-  ),
+    }
+  )
 );
 
 export default ReleaseMediaReviewsCarousel;

@@ -1,10 +1,10 @@
-import { FC } from "react";
-import { AuthorType, AuthorTypesEnum } from "../../../types/author";
-import Tooltip from "../../tooltip/Tooltip";
-import TooltipSpan from "../../tooltip/Tooltip-span";
-import RegisteredArtistSvg from "./svg/Registered-artist-svg";
-import RegisteredDesignerSvg from "./svg/Registered-designer-svg";
-import RegisteredProducerSvg from "./svg/Registered-producer-svg";
+import { FC } from 'react';
+import { AuthorType, AuthorTypesEnum } from '../../../types/author';
+import Tooltip from '../../tooltip/Tooltip';
+import TooltipSpan from '../../tooltip/Tooltip-span';
+import RegisteredArtistSvg from './svg/Registered-artist-svg';
+import RegisteredDesignerSvg from './svg/Registered-designer-svg';
+import RegisteredProducerSvg from './svg/Registered-producer-svg';
 
 interface IProps {
   className: string;

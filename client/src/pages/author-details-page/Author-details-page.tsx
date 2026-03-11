@@ -1,14 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
-import { useNavigate, useParams } from "react-router";
-import { AuthorAPI } from "../../api/author/author-api";
-import useNavigationPath from "../../hooks/use-navigation-path";
-import { authorsKeys } from "../../query-keys/authors-keys";
-import AuthorDetailsHeader from "./ui/Author-details-header";
-import AuthorDetailsReleases from "./ui/Author-details-releases";
-import AuthorDetailsReleasesCarousel from "./ui/Author-details-releases-carousel";
-import AuthorDetailsReviewsCarousel from "./ui/Author-details-reviews-carousel";
-import AuthorDetailsStats from "./ui/Author-details-stats";
-import AuthorDetailsNominations from "./ui/author-details-nominations/Author-details-nominations";
+import { useQuery } from '@tanstack/react-query';
+import { useNavigate, useParams } from 'react-router';
+import { AuthorAPI } from '../../api/author/author-api';
+import useNavigationPath from '../../hooks/use-navigation-path';
+import { authorsKeys } from '../../query-keys/authors-keys';
+import AuthorDetailsHeader from './ui/Author-details-header';
+import AuthorDetailsReleases from './ui/Author-details-releases';
+import AuthorDetailsReleasesCarousel from './ui/Author-details-releases-carousel';
+import AuthorDetailsReviewsCarousel from './ui/Author-details-reviews-carousel';
+import AuthorDetailsStats from './ui/Author-details-stats';
+import AuthorDetailsNominations from './ui/author-details-nominations/Author-details-nominations';
 
 const AuthorDetailsPage = () => {
   const { id } = useParams();
@@ -17,7 +17,7 @@ const AuthorDetailsPage = () => {
 
   const queryKey = id
     ? authorsKeys.details(id)
-    : ["authors", { id: "unknown" }];
+    : ['authors', { id: 'unknown' }];
   const queryFn = id
     ? () => AuthorAPI.findById(id)
     : () => Promise.resolve(undefined);

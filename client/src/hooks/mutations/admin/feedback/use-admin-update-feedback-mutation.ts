@@ -1,9 +1,9 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { FeedbackAPI } from "../../../../api/feedback/feedback-api";
-import { feedbackKeys } from "../../../../query-keys/feedback-keys";
-import { UseMutationParams } from "../../../../types/common";
-import { useApiErrorHandler } from "../../../use-api-error-handler";
-import { useStore } from "../../../use-store";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { FeedbackAPI } from '../../../../api/feedback/feedback-api';
+import { feedbackKeys } from '../../../../query-keys/feedback-keys';
+import { UseMutationParams } from '../../../../types/common';
+import { useApiErrorHandler } from '../../../use-api-error-handler';
+import { useStore } from '../../../use-store';
 
 /**
  * Custom React hook returning a React Query mutation for updating a feedback
@@ -33,13 +33,13 @@ export const useAdminUpdateFeedbackMutation = ({
     }) => FeedbackAPI.update(feedbackId, { feedbackStatusId: statusId }),
     onSuccess: () => {
       notificationStore.addSuccessNotification(
-        "Вы успешно отметили сообщение как прочитанное!",
+        'Вы успешно отметили сообщение как прочитанное!'
       );
       queryClient.invalidateQueries({ queryKey: feedbackKeys.all });
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, "Не удалось обновить статус сообщения");
+      handleApiError(error, 'Не удалось обновить статус сообщения');
       onError?.(error);
     },
     onSettled,

@@ -1,8 +1,8 @@
-import { EmblaOptionsType } from "embla-carousel";
-import useEmblaCarousel from "embla-carousel-react";
-import { FC } from "react";
-import { ProfilePreference } from "../../../../../types/profile";
-import ProfilePreferencesItem from "./Profile-preferences-item";
+import { EmblaOptionsType } from 'embla-carousel';
+import useEmblaCarousel from 'embla-carousel-react';
+import { FC } from 'react';
+import { ProfilePreference } from '../../../../../types/profile';
+import ProfilePreferencesItem from './Profile-preferences-item';
 
 interface IProps {
   title: string;
@@ -17,7 +17,7 @@ const ProfilePreferencesGridRow: FC<IProps> = ({
   isAuthor,
   isLoading,
 }) => {
-  const options: EmblaOptionsType = { dragFree: true, align: "start" };
+  const options: EmblaOptionsType = { dragFree: true, align: 'start' };
   const [emblaRef] = useEmblaCarousel(options);
 
   return (

@@ -3,7 +3,7 @@ import {
   NominationEntityKind,
   NominationReleaseMeta,
   NominationTypesEnum,
-} from "..";
+} from '..';
 
 /**
  * Represents a winner for a specific month.
@@ -17,7 +17,7 @@ export type NominationWinner =
  * Winner item when the winning entity is a release.
  */
 interface IReleaseNominationWinner extends Winner {
-  entityKind: "release";
+  entityKind: 'release';
   author?: never;
 
   /** Release metadata */
@@ -28,7 +28,7 @@ interface IReleaseNominationWinner extends Winner {
  * Winner item when the winning entity is an author.
  */
 interface IAuthorNominationWinner extends Winner {
-  entityKind: "author";
+  entityKind: 'author';
   release?: never;
 
   /** Author metadata */

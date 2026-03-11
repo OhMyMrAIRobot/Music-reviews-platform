@@ -1,1 +1,1 @@
-export * from "./auth-form-values";
+export * from './auth-form-values';

@@ -1,6 +1,6 @@
-import AuthStore from "./auth-store";
+import AuthStore from './auth-store';
 
-import NotificationStore from "./notification-store";
+import NotificationStore from './notification-store';
 
 class Store {
   authStore = AuthStore;

@@ -1,17 +1,17 @@
-import { observer } from "mobx-react-lite";
-import { useEffect, useState } from "react";
-import FormButton from "../../../../components/form-elements/Form-button";
-import FormInput from "../../../../components/form-elements/Form-input";
-import FormLabel from "../../../../components/form-elements/Form-label";
-import FormTextbox from "../../../../components/form-elements/Form-textbox";
-import SkeletonLoader from "../../../../components/utils/Skeleton-loader";
-import { useSocialMeta } from "../../../../hooks/meta";
-import { useUpdateProfileMutation } from "../../../../hooks/mutations";
-import { useAuth } from "../../../../hooks/use-auth";
-import { useStore } from "../../../../hooks/use-store";
-import { UpdateProfileData } from "../../../../types/profile";
-import buildProfileFormData from "../../../../utils/build-profile-form-data";
-import EditProfilePageSection from "../Edit-profile-page-section";
+import { observer } from 'mobx-react-lite';
+import { useEffect, useState } from 'react';
+import FormButton from '../../../../components/form-elements/Form-button';
+import FormInput from '../../../../components/form-elements/Form-input';
+import FormLabel from '../../../../components/form-elements/Form-label';
+import FormTextbox from '../../../../components/form-elements/Form-textbox';
+import SkeletonLoader from '../../../../components/utils/Skeleton-loader';
+import { useSocialMeta } from '../../../../hooks/meta';
+import { useUpdateProfileMutation } from '../../../../hooks/mutations';
+import { useAuth } from '../../../../hooks/use-auth';
+import { useStore } from '../../../../hooks/use-store';
+import { UpdateProfileData } from '../../../../types/profile';
+import buildProfileFormData from '../../../../utils/build-profile-form-data';
+import EditProfilePageSection from '../Edit-profile-page-section';
 
 const UpdateProfileInfoForm = observer(() => {
   /** HOOKS */
@@ -20,7 +20,7 @@ const UpdateProfileInfoForm = observer(() => {
   const { socials, isLoading } = useSocialMeta();
 
   /** STATES */
-  const [bio, setBio] = useState<string>(authStore.profile?.bio ?? "");
+  const [bio, setBio] = useState<string>(authStore.profile?.bio ?? '');
   const [socialValues, setSocialValues] = useState<Record<string, string>>({});
   const [initialSocialValues, setInitialSocialValues] = useState<
     Record<string, string>
@@ -32,7 +32,7 @@ const UpdateProfileInfoForm = observer(() => {
       const map: Record<string, string> = {};
       socials.forEach((s) => {
         const initial =
-          authStore.profile?.socials.find((el) => el.id === s.id)?.url ?? "";
+          authStore.profile?.socials.find((el) => el.id === s.id)?.url ?? '';
         map[s.id] = initial;
       });
       setSocialValues(map);
@@ -50,14 +50,14 @@ const UpdateProfileInfoForm = observer(() => {
 
     const changedSocials = socials
       .map((s) => {
-        const url = (socialValues[s.id] ?? "").trim();
-        const initial = (initialSocialValues[s.id] ?? "").trim();
+        const url = (socialValues[s.id] ?? '').trim();
+        const initial = (initialSocialValues[s.id] ?? '').trim();
         if (url === initial) return null;
-        if (url === "") return { socialId: s.id };
+        if (url === '') return { socialId: s.id };
         return { socialId: s.id, url };
       })
       .filter(
-        (item): item is { socialId: string; url?: string } => item !== null,
+        (item): item is { socialId: string; url?: string } => item !== null
       );
 
     const payload: UpdateProfileData = {
@@ -78,13 +78,13 @@ const UpdateProfileInfoForm = observer(() => {
       <div className="flex flex-col gap-4">
         <div className="grid gap-3">
           <FormLabel
-            name={"Описание профиля"}
-            htmlFor={"bio"}
+            name={'Описание профиля'}
+            htmlFor={'bio'}
             isRequired={false}
           />
           <FormTextbox
-            id={"bio"}
-            placeholder={"Описание профиля"}
+            id={'bio'}
+            placeholder={'Описание профиля'}
             value={bio}
             setValue={setBio}
             className="h-30"
@@ -93,7 +93,7 @@ const UpdateProfileInfoForm = observer(() => {
       </div>
 
       <div className="grid gap-3">
-        <FormLabel name={"Социальные сети"} htmlFor={""} isRequired={false} />
+        <FormLabel name={'Социальные сети'} htmlFor={''} isRequired={false} />
         {isLoading
           ? Array.from({ length: 4 }).map((_, idx) => (
               <SkeletonLoader
@@ -107,7 +107,7 @@ const UpdateProfileInfoForm = observer(() => {
                 key={social.id}
                 placeholder={social.name}
                 type="url"
-                value={socialValues[social.id] ?? ""}
+                value={socialValues[social.id] ?? ''}
                 setValue={(val: string) =>
                   setSocialValues((prev) => ({ ...prev, [social.id]: val }))
                 }
@@ -117,15 +117,15 @@ const UpdateProfileInfoForm = observer(() => {
       <div className="pt-3 lg:pt-6 border-t border-white/5 w-full">
         <div className="w-full sm:w-38">
           <FormButton
-            title={isPending ? "Сохранение..." : "Сохранить"}
+            title={isPending ? 'Сохранение...' : 'Сохранить'}
             isInvert={true}
             onClick={handleSubmit}
             disabled={
-              (bio === (authStore.profile?.bio || "") &&
+              (bio === (authStore.profile?.bio || '') &&
                 !socials.some(
                   (s) =>
-                    (socialValues[s.id] ?? "").trim() !==
-                    (initialSocialValues[s.id] ?? "").trim(),
+                    (socialValues[s.id] ?? '').trim() !==
+                    (initialSocialValues[s.id] ?? '').trim()
                 )) ||
               isPending
             }

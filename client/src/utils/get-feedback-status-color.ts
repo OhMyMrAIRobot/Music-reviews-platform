@@ -1,14 +1,14 @@
-import { FeedbackStatusesEnum } from "../types/feedback";
+import { FeedbackStatusesEnum } from '../types/feedback';
 
 export const getFeedbackStatusColor = (status: string) => {
   switch (status) {
     case FeedbackStatusesEnum.NEW:
-      return "text-green-400";
+      return 'text-green-400';
     case FeedbackStatusesEnum.READ:
-      return "text-orange-400";
+      return 'text-orange-400';
     case FeedbackStatusesEnum.ANSWERED:
-      return "text-blue-400";
+      return 'text-blue-400';
     default:
-      return "";
+      return '';
   }
 };

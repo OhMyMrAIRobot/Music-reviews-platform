@@ -1,5 +1,5 @@
-import { AuthorType } from "../../author";
-import { Role } from "../../user";
+import { AuthorType } from '../../author';
+import { Role } from '../../user';
 
 /**
  * Represents an user's profile.

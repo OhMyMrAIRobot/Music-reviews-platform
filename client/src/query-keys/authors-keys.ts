@@ -1,8 +1,8 @@
-import { AuthorsQuery } from "../types/author";
+import { AuthorsQuery } from '../types/author';
 
 export const authorsKeys = {
-  types: ["authorTypes"] as const,
-  all: ["authors"] as const,
-  list: (params: AuthorsQuery) => ["authors", params] as const,
-  details: (id: string) => ["authors", "details", id] as const,
+  types: ['authorTypes'] as const,
+  all: ['authors'] as const,
+  list: (params: AuthorsQuery) => ['authors', params] as const,
+  details: (id: string) => ['authors', 'details', id] as const,
 };

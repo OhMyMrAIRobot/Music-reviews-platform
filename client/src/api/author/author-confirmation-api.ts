@@ -1,13 +1,13 @@
-import axios from "axios";
+import axios from 'axios';
 import {
   AuthorConfirmation,
   AuthorConfirmationsResponse,
   AuthorConfirmationStatus,
   CreateAuthorConfirmationData,
   UpdateAuthorConfirmationData,
-} from "../../types/author";
-import { AuthorConfirmationsQuery } from "../../types/author/queries/author-confirmations-query";
-import { api } from "../api-instance";
+} from '../../types/author';
+import { AuthorConfirmationsQuery } from '../../types/author/queries/author-confirmations-query';
+import { api } from '../api-instance';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
@@ -24,7 +24,7 @@ export const AuthorConfirmationAPI = {
    */
   async fetchStatuses(): Promise<AuthorConfirmationStatus[]> {
     const { data } = await axios.get<AuthorConfirmationStatus[]>(
-      `${SERVER_URL}/author-confirmation-statuses/`,
+      `${SERVER_URL}/author-confirmation-statuses/`
     );
 
     return data;
@@ -37,7 +37,7 @@ export const AuthorConfirmationAPI = {
    */
   async findMyConfirmations(): Promise<AuthorConfirmationsResponse> {
     const { data } = await api.get<AuthorConfirmationsResponse>(
-      "/author-confirmations/my-confirmations",
+      '/author-confirmations/my-confirmations'
     );
 
     return data;
@@ -56,18 +56,18 @@ export const AuthorConfirmationAPI = {
    * @returns {Promise<AuthorConfirmationsResponse>} A promise that resolves to the confirmations list response containing items and metadata.
    */
   async findAll(
-    query: AuthorConfirmationsQuery,
+    query: AuthorConfirmationsQuery
   ): Promise<AuthorConfirmationsResponse> {
     const { userId, statusId, search, order, limit, offset } = query;
     const { data } = await api.get<AuthorConfirmationsResponse>(
       `/author-confirmations?
-			${userId ? `userId=${userId}&` : ""}
-			${statusId ? `statusId=${statusId}&` : ""}
-			${order ? `order=${order}&` : ""}
-			${search ? `search=${search}&` : ""}
-			${limit ? `limit=${limit}&` : ""}
-			${offset ? `offset=${offset}&` : ""}
-			`,
+			${userId ? `userId=${userId}&` : ''}
+			${statusId ? `statusId=${statusId}&` : ''}
+			${order ? `order=${order}&` : ''}
+			${search ? `search=${search}&` : ''}
+			${limit ? `limit=${limit}&` : ''}
+			${offset ? `offset=${offset}&` : ''}
+			`
     );
 
     return data;
@@ -80,9 +80,9 @@ export const AuthorConfirmationAPI = {
    * @returns {Promise<AuthorConfirmation>} A promise that resolves to the newly created author confirmation.
    */
   async create(
-    formData: CreateAuthorConfirmationData,
+    formData: CreateAuthorConfirmationData
   ): Promise<AuthorConfirmation> {
-    const { data } = await api.post("/author-confirmations", formData);
+    const { data } = await api.post('/author-confirmations', formData);
 
     return data;
   },
@@ -96,11 +96,11 @@ export const AuthorConfirmationAPI = {
    */
   async update(
     id: string,
-    formData: UpdateAuthorConfirmationData,
+    formData: UpdateAuthorConfirmationData
   ): Promise<AuthorConfirmation> {
     const { data } = await api.patch<AuthorConfirmation>(
       `/author-confirmations/${id}`,
-      formData,
+      formData
     );
 
     return data;

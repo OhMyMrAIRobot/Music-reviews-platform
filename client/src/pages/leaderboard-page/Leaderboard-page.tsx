@@ -1,10 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
-import { LeaderboardAPI } from "../../api/leaderboard-api";
-import { leaderboardKeys } from "../../query-keys/leaderboard-keys";
-import { LeaderboardQuery } from "../../types/leaderboard";
-import LeaderboardHeader from "./ui/Leaderboard-header";
-import LeaderboardItem from "./ui/Leaderboard-item";
-import LeaderboardTitle from "./ui/Leaderboard-title";
+import { useQuery } from '@tanstack/react-query';
+import { LeaderboardAPI } from '../../api/leaderboard-api';
+import { leaderboardKeys } from '../../query-keys/leaderboard-keys';
+import { LeaderboardQuery } from '../../types/leaderboard';
+import LeaderboardHeader from './ui/Leaderboard-header';
+import LeaderboardItem from './ui/Leaderboard-item';
+import LeaderboardTitle from './ui/Leaderboard-title';
 
 const query: LeaderboardQuery = {
   limit: 90,

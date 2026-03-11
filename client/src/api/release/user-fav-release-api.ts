@@ -1,5 +1,5 @@
-import { UserFavRelease } from "../../types/release";
-import { api } from "../api-instance";
+import { UserFavRelease } from '../../types/release';
+import { api } from '../api-instance';
 
 /**
  * API service for managing user favorite releases.
@@ -14,7 +14,7 @@ export const UserFavReleaseAPI = {
    */
   async addToFav(releaseId: string): Promise<UserFavRelease> {
     const { data } = await api.post<UserFavRelease>(
-      `/user-fav-releases/${releaseId}`,
+      `/user-fav-releases/${releaseId}`
     );
     return data;
   },
@@ -27,7 +27,7 @@ export const UserFavReleaseAPI = {
    */
   async deleteFromFav(releaseId: string): Promise<UserFavRelease> {
     const { data } = await api.delete<UserFavRelease>(
-      `/user-fav-releases/${releaseId}`,
+      `/user-fav-releases/${releaseId}`
     );
     return data;
   },

@@ -1,8 +1,8 @@
-import { observer } from "mobx-react-lite";
-import { FC } from "react";
-import { makeStepLabeler } from "../../../../../../utils/make-step-labeler";
-import ReleaseDetailsAlbumValueFormSlider from "./Release-details-album-value-form-slider";
-import ReleaseDetailsAlbumValueSection from "./Release-details-album-value-section";
+import { observer } from 'mobx-react-lite';
+import { FC } from 'react';
+import { makeStepLabeler } from '../../../../../../utils/make-step-labeler';
+import ReleaseDetailsAlbumValueFormSlider from './Release-details-album-value-form-slider';
+import ReleaseDetailsAlbumValueSection from './Release-details-album-value-section';
 
 interface IProps {
   depth: number;
@@ -11,14 +11,14 @@ interface IProps {
 
 const getDepthValueText = makeStepLabeler(
   [
-    "Музыка без слов или слова как повторяющийся набор звуков (чаще электронная музыка)",
-    "Незамысловатый развлекательный посыл с заурядными драмами и конфликтами (репрезенты, диссы, карикатура, пародия или юмор)",
-    "Чувственная саморефлексия о позиционировании личности в современном обществе или о переживании личной драмы",
-    "Глубокие рассуждения об общественной жизни и текущих явлениях социума",
-    "Осознанное донесение вневременных или высоких смыслов как суть релиза (религия, Вселенная, жизнь и смерть, исторические процессы)",
+    'Музыка без слов или слова как повторяющийся набор звуков (чаще электронная музыка)',
+    'Незамысловатый развлекательный посыл с заурядными драмами и конфликтами (репрезенты, диссы, карикатура, пародия или юмор)',
+    'Чувственная саморефлексия о позиционировании личности в современном обществе или о переживании личной драмы',
+    'Глубокие рассуждения об общественной жизни и текущих явлениях социума',
+    'Осознанное донесение вневременных или высоких смыслов как суть релиза (религия, Вселенная, жизнь и смерть, исторические процессы)',
   ],
   1,
-  1,
+  1
 );
 
 const ReleaseDetailsAlbumValueFormDepth: FC<IProps> = observer(
@@ -26,8 +26,8 @@ const ReleaseDetailsAlbumValueFormDepth: FC<IProps> = observer(
     return (
       <ReleaseDetailsAlbumValueSection
         pos={3}
-        title={"Глубина"}
-        minMaxText={"(от 1 до 5)"}
+        title={'Глубина'}
+        minMaxText={'(от 1 до 5)'}
         description={
           <>
             <p>
@@ -37,7 +37,7 @@ const ReleaseDetailsAlbumValueFormDepth: FC<IProps> = observer(
           </>
         }
         value={`${depth}`}
-        maxValue={"5"}
+        maxValue={'5'}
       >
         <div className="xl:pl-10">
           <ReleaseDetailsAlbumValueFormSlider
@@ -47,13 +47,13 @@ const ReleaseDetailsAlbumValueFormDepth: FC<IProps> = observer(
             min={1}
             max={5}
             step={1}
-            valueTitle={""}
+            valueTitle={''}
             valueDescription={getDepthValueText(depth)}
           />
         </div>
       </ReleaseDetailsAlbumValueSection>
     );
-  },
+  }
 );
 
 export default ReleaseDetailsAlbumValueFormDepth;

@@ -1,4 +1,4 @@
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode, useState } from 'react';
 
 interface IProps {
   children: ReactNode;
@@ -29,8 +29,8 @@ const TooltipSpan: FC<IProps> = ({
       {children}
       <div
         className={`absolute z-2000 bg-zinc-950 bottom-full mb-0.5 rounded-xl transition-all duration-300 ${
-          show ? "opacity-100 visible" : "opacity-0 invisible"
-        } ${centered ? "left-1/2 -translate-x-1/2" : "right-0 translate-x-0"}`}
+          show ? 'opacity-100 visible' : 'opacity-0 invisible'
+        } ${centered ? 'left-1/2 -translate-x-1/2' : 'right-0 translate-x-0'}`}
       >
         {tooltip}
       </div>

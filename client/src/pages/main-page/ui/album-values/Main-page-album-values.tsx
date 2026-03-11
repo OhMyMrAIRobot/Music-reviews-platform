@@ -1,12 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
-import { useRef, useState } from "react";
-import { AlbumValueAPI } from "../../../../api/album-value-api";
-import CarouselContainer from "../../../../components/carousel/Carousel-container";
-import useNavigationPath from "../../../../hooks/use-navigation-path";
-import { albumValuesKeys } from "../../../../query-keys/album-values-keys";
-import { AlbumValuesQuery } from "../../../../types/album-value";
-import { CarouselRef } from "../../../../types/common/types/carousel-ref";
-import MainPageAlbumValuesCarousel from "./Main-page-album-values-carousel";
+import { useQuery } from '@tanstack/react-query';
+import { useRef, useState } from 'react';
+import { AlbumValueAPI } from '../../../../api/album-value-api';
+import CarouselContainer from '../../../../components/carousel/Carousel-container';
+import useNavigationPath from '../../../../hooks/use-navigation-path';
+import { albumValuesKeys } from '../../../../query-keys/album-values-keys';
+import { AlbumValuesQuery } from '../../../../types/album-value';
+import { CarouselRef } from '../../../../types/common/types/carousel-ref';
+import MainPageAlbumValuesCarousel from './Main-page-album-values-carousel';
 
 const query: AlbumValuesQuery = {
   limit: 15,
@@ -30,8 +30,8 @@ const MainPageAlbumValues = () => {
 
   return (
     <CarouselContainer
-      title={"Ценность альбомов"}
-      buttonTitle={"Каталог ценности альбомов"}
+      title={'Ценность альбомов'}
+      buttonTitle={'Каталог ценности альбомов'}
       showButton={true}
       href={navigateToAlbumValues}
       handlePrev={() => carouselRef.current?.scrollPrev()}

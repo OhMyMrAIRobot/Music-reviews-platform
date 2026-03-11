@@ -1,6 +1,6 @@
-import { FC } from "react";
-import NoTextReviewSvg from "../review/svg/No-text-review-svg";
-import TextReviewSvg from "../review/svg/Text-review-svg";
+import { FC } from 'react';
+import NoTextReviewSvg from '../review/svg/No-text-review-svg';
+import TextReviewSvg from '../review/svg/Text-review-svg';
 
 interface IProps {
   textCount: number;

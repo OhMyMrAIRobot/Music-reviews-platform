@@ -1,20 +1,20 @@
-import { useQuery } from "@tanstack/react-query";
-import { observer } from "mobx-react-lite";
-import { FC, useEffect, useMemo, useState } from "react";
-import { AuthorCommentAPI } from "../../../../api/author/author-comment-api";
-import FormButton from "../../../../components/form-elements/Form-button";
-import ConfirmationModal from "../../../../components/modals/Confirmation-modal";
+import { useQuery } from '@tanstack/react-query';
+import { observer } from 'mobx-react-lite';
+import { FC, useEffect, useMemo, useState } from 'react';
+import { AuthorCommentAPI } from '../../../../api/author/author-comment-api';
+import FormButton from '../../../../components/form-elements/Form-button';
+import ConfirmationModal from '../../../../components/modals/Confirmation-modal';
 import {
   useCreateAuthorCommentMutation,
   useRemoveAuthorCommentMutation,
   useUpdateAuthorCommentMutation,
-} from "../../../../hooks/mutations";
-import { useAuth } from "../../../../hooks/use-auth";
-import { useStore } from "../../../../hooks/use-store";
-import { authorCommentsKeys } from "../../../../query-keys/author-comments-keys";
-import { AuthorCommentsQuery } from "../../../../types/author";
-import { constraints } from "../../../../utils/constraints";
-import ReleaseDetailsReviewFormText from "../release-details-estimation/forms/release-details-review-form/Release-details-review-form-text";
+} from '../../../../hooks/mutations';
+import { useAuth } from '../../../../hooks/use-auth';
+import { useStore } from '../../../../hooks/use-store';
+import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys';
+import { AuthorCommentsQuery } from '../../../../types/author';
+import { constraints } from '../../../../utils/constraints';
+import ReleaseDetailsReviewFormText from '../release-details-estimation/forms/release-details-review-form/Release-details-review-form-text';
 
 interface IProps {
   releaseId: string;
@@ -24,8 +24,8 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
   const { authStore } = useStore();
   const { checkAuth } = useAuth();
 
-  const [title, setTitle] = useState<string>("");
-  const [text, setText] = useState<string>("");
+  const [title, setTitle] = useState<string>('');
+  const [text, setText] = useState<string>('');
   const [confModalOpen, setConfModalOpen] = useState<boolean>(false);
 
   /**
@@ -46,7 +46,7 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 
   /** User's author comment for this release */
   const userAuthorComment = authorComments?.find(
-    (c) => c.user.id === authStore.user?.id,
+    (c) => c.user.id === authStore.user?.id
   );
 
   /** EFFECTS */
@@ -75,7 +75,7 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
    */
   const isPending = useMemo(
     () => isCreating || isUpdating || isDeleting,
-    [isCreating, isUpdating, isDeleting],
+    [isCreating, isUpdating, isDeleting]
   );
 
   /**
@@ -140,7 +140,7 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
     <>
       {confModalOpen && userAuthorComment && (
         <ConfirmationModal
-          title={"Вы действительно хотите удалить авторский комментарий?"}
+          title={'Вы действительно хотите удалить авторский комментарий?'}
           isOpen={confModalOpen}
           onConfirm={handleDelete}
           onCancel={() => setConfModalOpen(false)}
@@ -150,7 +150,7 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
       <div className="mt-10 mx-auto w-full">
         <h3 className="text-xl lg:text-2xl font-bold ">
           {`${
-            userAuthorComment ? "Редактировать" : "Оставить"
+            userAuthorComment ? 'Редактировать' : 'Оставить'
           } авторский комментарий`}
         </h3>
         <div className="border bg-zinc-900 rounded-xl px-2.5 py-4 border-white/10 w-full max-w-200 mx-auto mt-5">
@@ -166,7 +166,7 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
             {userAuthorComment && (
               <div className="w-40">
                 <FormButton
-                  title={"Удалить"}
+                  title={'Удалить'}
                   isInvert={false}
                   onClick={() => setConfModalOpen(true)}
                   disabled={!userAuthorComment || isPending}
@@ -177,7 +177,7 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 
             <div className="w-40 ml-auto">
               <FormButton
-                title={userAuthorComment ? "Изменить" : "Отправить"}
+                title={userAuthorComment ? 'Изменить' : 'Отправить'}
                 isInvert={true}
                 onClick={handleSubmit}
                 disabled={isPending || !isFormValid || !hasChanges}

@@ -1,5 +1,5 @@
-import { FC } from "react";
-import { ReviewUser } from "../../../types/review";
+import { FC } from 'react';
+import { ReviewUser } from '../../../types/review';
 
 interface IProps {
   user: ReviewUser;

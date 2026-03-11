@@ -1,17 +1,17 @@
-import { EmblaOptionsType } from "embla-carousel";
-import useEmblaCarousel from "embla-carousel-react";
-import { observer } from "mobx-react-lite";
+import { EmblaOptionsType } from 'embla-carousel';
+import useEmblaCarousel from 'embla-carousel-react';
+import { observer } from 'mobx-react-lite';
 import {
   forwardRef,
   useCallback,
   useEffect,
   useImperativeHandle,
   useState,
-} from "react";
-import { CarouselRef } from "../../types/common/types/carousel-ref.ts";
-import { CarouselStateCallbacks } from "../../types/common/types/carousel-state-callbacks.ts";
-import { Review } from "../../types/review/index.ts";
-import ReviewCard from "../review/review-card/Review-card";
+} from 'react';
+import { CarouselRef } from '../../types/common/types/carousel-ref.ts';
+import { CarouselStateCallbacks } from '../../types/common/types/carousel-state-callbacks.ts';
+import { Review } from '../../types/review/index.ts';
+import ReviewCard from '../review/review-card/Review-card';
 
 interface IProps extends CarouselStateCallbacks {
   items: Review[];
@@ -29,11 +29,11 @@ const LastReviewsCarousel = observer(
         onCanScrollPrevChange,
         onCanScrollNextChange,
       },
-      ref,
+      ref
     ) => {
       const options: EmblaOptionsType = {
-        align: "start",
-        slidesToScroll: "auto",
+        align: 'start',
+        slidesToScroll: 'auto',
       };
       const [emblaRef, emblaApi] = useEmblaCarousel(options);
       const [, setCanScrollPrev] = useState(false);
@@ -57,14 +57,14 @@ const LastReviewsCarousel = observer(
 
         updateScrollState();
 
-        emblaApi.on("select", updateScrollState);
-        emblaApi.on("reInit", updateScrollState);
-        emblaApi.on("resize", updateScrollState);
+        emblaApi.on('select', updateScrollState);
+        emblaApi.on('reInit', updateScrollState);
+        emblaApi.on('resize', updateScrollState);
 
         return () => {
-          emblaApi.off("select", updateScrollState);
-          emblaApi.off("reInit", updateScrollState);
-          emblaApi.off("resize", updateScrollState);
+          emblaApi.off('select', updateScrollState);
+          emblaApi.off('reInit', updateScrollState);
+          emblaApi.off('resize', updateScrollState);
         };
       }, [emblaApi, updateScrollState]);
 
@@ -74,7 +74,7 @@ const LastReviewsCarousel = observer(
           scrollPrev: () => emblaApi?.scrollPrev(),
           scrollNext: () => emblaApi?.scrollNext(),
         }),
-        [emblaApi],
+        [emblaApi]
       );
 
       return (
@@ -83,7 +83,7 @@ const LastReviewsCarousel = observer(
             <div className="embla__container gap-1 touch-pan-y touch-pinch-zoom">
               {Array.from({
                 length: Math.ceil(
-                  isLoading ? 15 / rowCount : items.length / rowCount,
+                  isLoading ? 15 / rowCount : items.length / rowCount
                 ),
               }).map((_, idx) => (
                 <div
@@ -116,8 +116,8 @@ const LastReviewsCarousel = observer(
           </div>
         </div>
       );
-    },
-  ),
+    }
+  )
 );
 
 export default LastReviewsCarousel;

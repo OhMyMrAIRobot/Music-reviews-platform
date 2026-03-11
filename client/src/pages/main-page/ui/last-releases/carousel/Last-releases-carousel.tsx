@@ -1,16 +1,16 @@
-import { EmblaOptionsType } from "embla-carousel";
-import useEmblaCarousel from "embla-carousel-react";
+import { EmblaOptionsType } from 'embla-carousel';
+import useEmblaCarousel from 'embla-carousel-react';
 import {
   forwardRef,
   useCallback,
   useEffect,
   useImperativeHandle,
   useState,
-} from "react";
-import ReleaseCard from "../../../../../components/release/Release-card";
-import { CarouselRef } from "../../../../../types/common/types/carousel-ref";
-import { CarouselStateCallbacks } from "../../../../../types/common/types/carousel-state-callbacks";
-import { Release } from "../../../../../types/release";
+} from 'react';
+import ReleaseCard from '../../../../../components/release/Release-card';
+import { CarouselRef } from '../../../../../types/common/types/carousel-ref';
+import { CarouselStateCallbacks } from '../../../../../types/common/types/carousel-state-callbacks';
+import { Release } from '../../../../../types/release';
 
 interface IProps extends CarouselStateCallbacks {
   items: Release[];
@@ -19,7 +19,7 @@ interface IProps extends CarouselStateCallbacks {
 
 const LastReleasesCarousel = forwardRef<CarouselRef, IProps>(
   ({ items, isLoading, onCanScrollPrevChange, onCanScrollNextChange }, ref) => {
-    const options: EmblaOptionsType = { align: "start", slidesToScroll: 1 };
+    const options: EmblaOptionsType = { align: 'start', slidesToScroll: 1 };
     const [emblaRef, emblaApi] = useEmblaCarousel(options);
     const [, setCanScrollPrev] = useState(false);
     const [, setCanScrollNext] = useState(false);
@@ -42,14 +42,14 @@ const LastReleasesCarousel = forwardRef<CarouselRef, IProps>(
 
       updateScrollState();
 
-      emblaApi.on("select", updateScrollState);
-      emblaApi.on("reInit", updateScrollState);
-      emblaApi.on("resize", updateScrollState);
+      emblaApi.on('select', updateScrollState);
+      emblaApi.on('reInit', updateScrollState);
+      emblaApi.on('resize', updateScrollState);
 
       return () => {
-        emblaApi.off("select", updateScrollState);
-        emblaApi.off("reInit", updateScrollState);
-        emblaApi.off("resize", updateScrollState);
+        emblaApi.off('select', updateScrollState);
+        emblaApi.off('reInit', updateScrollState);
+        emblaApi.off('resize', updateScrollState);
       };
     }, [emblaApi, updateScrollState]);
 
@@ -59,7 +59,7 @@ const LastReleasesCarousel = forwardRef<CarouselRef, IProps>(
         scrollPrev: () => emblaApi?.scrollPrev(),
         scrollNext: () => emblaApi?.scrollNext(),
       }),
-      [emblaApi],
+      [emblaApi]
     );
 
     return (
@@ -89,7 +89,7 @@ const LastReleasesCarousel = forwardRef<CarouselRef, IProps>(
         </div>
       </div>
     );
-  },
+  }
 );
 
 export default LastReleasesCarousel;

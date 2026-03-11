@@ -1,13 +1,13 @@
-@import "tailwindcss";
-@import "swiper/css";
+@import 'tailwindcss';
+@import 'swiper/css';
 
 :root {
   /* font-family: ui-sans-serif, system-ui, sans-serif, Apple Color Emoji,
 		Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji; */
   font-family: Inter, sans-serif;
   font-feature-settings:
-    "liga" 1,
-    "calt" 1; /* fix for Chrome */
+    'liga' 1,
+    'calt' 1; /* fix for Chrome */
   line-height: 1.5;
   font-style: normal;
 

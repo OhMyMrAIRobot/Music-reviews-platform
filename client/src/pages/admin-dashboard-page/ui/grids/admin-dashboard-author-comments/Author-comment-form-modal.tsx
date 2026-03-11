@@ -1,12 +1,12 @@
-import { FC, useEffect, useMemo, useState } from "react";
-import FormButton from "../../../../../components/form-elements/Form-button";
-import FormInput from "../../../../../components/form-elements/Form-input";
-import FormLabel from "../../../../../components/form-elements/Form-label";
-import FormTextbox from "../../../../../components/form-elements/Form-textbox";
-import ModalOverlay from "../../../../../components/modals/Modal-overlay";
-import { useAdminUpdateAuthorCommentMutation } from "../../../../../hooks/mutations";
-import { AuthorComment } from "../../../../../types/author";
-import { constraints } from "../../../../../utils/constraints";
+import { FC, useEffect, useMemo, useState } from 'react';
+import FormButton from '../../../../../components/form-elements/Form-button';
+import FormInput from '../../../../../components/form-elements/Form-input';
+import FormLabel from '../../../../../components/form-elements/Form-label';
+import FormTextbox from '../../../../../components/form-elements/Form-textbox';
+import ModalOverlay from '../../../../../components/modals/Modal-overlay';
+import { useAdminUpdateAuthorCommentMutation } from '../../../../../hooks/mutations';
+import { AuthorComment } from '../../../../../types/author';
+import { constraints } from '../../../../../utils/constraints';
 
 interface IProps {
   isOpen: boolean;
@@ -81,14 +81,14 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
 
           <div className="grid gap-2">
             <FormLabel
-              name={"Заголовок"}
-              htmlFor={"comment-title-input"}
+              name={'Заголовок'}
+              htmlFor={'comment-title-input'}
               isRequired={false}
             />
             <FormInput
-              id={"comment-title-input"}
-              placeholder={"Заголовок..."}
-              type={"text"}
+              id={'comment-title-input'}
+              placeholder={'Заголовок...'}
+              type={'text'}
               value={title}
               setValue={setTitle}
             />
@@ -96,13 +96,13 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
 
           <div className="flex-1 flex flex-col gap-2">
             <FormLabel
-              name={"Комментарий"}
-              htmlFor={"comment-text-input"}
+              name={'Комментарий'}
+              htmlFor={'comment-text-input'}
               isRequired={false}
             />
             <FormTextbox
-              id={"comment-text-input"}
-              placeholder={"Комментарий..."}
+              id={'comment-text-input'}
+              placeholder={'Комментарий...'}
               value={text}
               setValue={setText}
               className="h-full min-h-30 lg:h-60"
@@ -112,7 +112,7 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
           <div className="grid sm:flex gap-3 sm:justify-start">
             <div className="w-full sm:w-30">
               <FormButton
-                title={"Сохранить"}
+                title={'Сохранить'}
                 isInvert={true}
                 onClick={updateComment}
                 disabled={!hasChanges || isPending || !isFormValid}
@@ -122,7 +122,7 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
 
             <div className="w-full sm:w-25">
               <FormButton
-                title={"Назад"}
+                title={'Назад'}
                 isInvert={false}
                 onClick={onClose}
                 disabled={isPending}

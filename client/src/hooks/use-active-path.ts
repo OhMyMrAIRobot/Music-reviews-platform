@@ -1,4 +1,4 @@
-import { useLocation } from "react-router";
+import { useLocation } from 'react-router';
 
 /**
  * Custom hook to determine if a given path is the currently active route.

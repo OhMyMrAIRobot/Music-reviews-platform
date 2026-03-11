@@ -1,10 +1,10 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { FeedbackAPI } from "../../api/feedback/feedback-api";
-import { feedbackKeys } from "../../query-keys/feedback-keys";
-import { UseMutationParams } from "../../types/common";
-import { CreateFeedbackData } from "../../types/feedback";
-import { useApiErrorHandler } from "../use-api-error-handler";
-import { useStore } from "../use-store";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { FeedbackAPI } from '../../api/feedback/feedback-api';
+import { feedbackKeys } from '../../query-keys/feedback-keys';
+import { UseMutationParams } from '../../types/common';
+import { CreateFeedbackData } from '../../types/feedback';
+import { useApiErrorHandler } from '../use-api-error-handler';
+import { useStore } from '../use-store';
 
 /**
  * Custom React hook returning a React Query mutation to send a feedback.
@@ -25,7 +25,7 @@ export const useSendFeedbackMutation = ({
   const mutation = useMutation({
     mutationFn: (payload: CreateFeedbackData) => FeedbackAPI.create(payload),
     onSuccess: () => {
-      notificationStore.addSuccessNotification("Отзыв успешно отправлен!");
+      notificationStore.addSuccessNotification('Отзыв успешно отправлен!');
       queryClient.invalidateQueries({ queryKey: feedbackKeys.all });
       onSuccess?.();
     },

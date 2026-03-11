@@ -1,6 +1,6 @@
-import { makeAutoObservable } from "mobx";
-import { INotification } from "../types/common";
-import { generateUUID } from "../utils/generate-uuid";
+import { makeAutoObservable } from 'mobx';
+import { INotification } from '../types/common';
+import { generateUUID } from '../utils/generate-uuid';
 
 class NotificationStore {
   notifications: INotification[] = [];
@@ -22,7 +22,7 @@ class NotificationStore {
 
   removeNotification(id: string) {
     this.notifications = this.notifications.filter(
-      (notification) => notification.id !== id,
+      (notification) => notification.id !== id
     );
   }
 
@@ -30,8 +30,8 @@ class NotificationStore {
     this.addNotification({
       id: generateUUID(),
       text: isSent
-        ? "Письмо с активацией отправлено на вашу почту!"
-        : "Ошибка при отправке письма с активацией. Повторите попытку позже!",
+        ? 'Письмо с активацией отправлено на вашу почту!'
+        : 'Ошибка при отправке письма с активацией. Повторите попытку позже!',
       isError: !isSent,
     });
   }

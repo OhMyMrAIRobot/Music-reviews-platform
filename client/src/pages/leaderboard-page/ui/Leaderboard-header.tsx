@@ -1,9 +1,9 @@
-import AuthorLikeColorSvg from "../../../components/author/author-like/svg/Author-like-color-svg";
-import NoTextReviewSvg from "../../../components/review/svg/No-text-review-svg";
-import TextReviewSvg from "../../../components/review/svg/Text-review-svg";
-import LogoSmallSvg from "../../../components/svg/Logo-small-svg";
-import PixelHeartFillSvg from "../../../components/svg/Pixel-heart-fill-svg";
-import PixelHeartSvg from "../../../components/svg/Pixel-heart-svg";
+import AuthorLikeColorSvg from '../../../components/author/author-like/svg/Author-like-color-svg';
+import NoTextReviewSvg from '../../../components/review/svg/No-text-review-svg';
+import TextReviewSvg from '../../../components/review/svg/Text-review-svg';
+import LogoSmallSvg from '../../../components/svg/Logo-small-svg';
+import PixelHeartFillSvg from '../../../components/svg/Pixel-heart-fill-svg';
+import PixelHeartSvg from '../../../components/svg/Pixel-heart-svg';
 
 const LeaderboardHeader = () => {
   return (
@@ -30,8 +30,8 @@ const LeaderboardHeader = () => {
       </div>
 
       <div className="w-[100px] h-full bg-zinc-950 border border-white/10 rounded-lg flex items-center gap-2 text-center justify-center mr-2">
-        <PixelHeartFillSvg className={"w-5 h-4.5"} />
-        <PixelHeartSvg className={"w-5 h-4.5"} />
+        <PixelHeartFillSvg className={'w-5 h-4.5'} />
+        <PixelHeartSvg className={'w-5 h-4.5'} />
       </div>
 
       <div className="w-[160px]  h-full bg-zinc-950 border border-white/10 rounded-lg flex items-center text-center justify-center ml-auto">

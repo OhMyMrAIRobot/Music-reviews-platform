@@ -1,5 +1,5 @@
-import { AuthorType } from ".";
-import { ReviewUser } from "../../review";
+import { AuthorType } from '.';
+import { ReviewUser } from '../../review';
 
 /**
  * Represents a AuthorComment entity.

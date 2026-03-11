@@ -1,5 +1,5 @@
-import { FC } from "react";
-import FooterSocialItem, { IFooterSocialItemProps } from "./Footer-social-item";
+import { FC } from 'react';
+import FooterSocialItem, { IFooterSocialItemProps } from './Footer-social-item';
 
 interface IProps {
   items: IFooterSocialItemProps[];

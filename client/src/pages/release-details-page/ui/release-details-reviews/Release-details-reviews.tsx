@@ -1,17 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
-import { FC, useState } from "react";
-import { ReviewAPI } from "../../../../api/review/review-api.ts";
-import Pagination from "../../../../components/pagination/Pagination.tsx";
-import { reviewsKeys } from "../../../../query-keys/reviews-keys.ts";
-import { SortOrdersEnum } from "../../../../types/common/enums/sort-orders-enum.ts";
-import { SortOrder } from "../../../../types/common/types/sort-order.ts";
+import { useQuery } from '@tanstack/react-query';
+import { FC, useState } from 'react';
+import { ReviewAPI } from '../../../../api/review/review-api.ts';
+import Pagination from '../../../../components/pagination/Pagination.tsx';
+import { reviewsKeys } from '../../../../query-keys/reviews-keys.ts';
+import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum.ts';
+import { SortOrder } from '../../../../types/common/types/sort-order.ts';
 import {
   ReleaseReviewSortFields,
   ReviewsQuery,
   ReviewsSortFieldsEnum,
-} from "../../../../types/review/index.ts";
-import ReleaseDetailsReviewsHeader from "./Release-details-reviews-header.tsx";
-import ReleaseDetailsReviewsItem from "./Release-details-reviews-item.tsx";
+} from '../../../../types/review/index.ts';
+import ReleaseDetailsReviewsHeader from './Release-details-reviews-header.tsx';
+import ReleaseDetailsReviewsItem from './Release-details-reviews-item.tsx';
 
 interface IProps {
   releaseId: string;
@@ -22,7 +22,7 @@ const limit = 5;
 const ReleaseDetailsReviews: FC<IProps> = ({ releaseId }) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [selectedSort, setSelectedSort] = useState<string>(
-    ReleaseReviewSortFields.NEW,
+    ReleaseReviewSortFields.NEW
   );
 
   let field: ReviewsSortFieldsEnum = ReviewsSortFieldsEnum.CREATED;
@@ -81,7 +81,7 @@ const ReleaseDetailsReviews: FC<IProps> = ({ releaseId }) => {
                     review={review}
                     isLoading={isLoading}
                   />
-                ),
+                )
             )}
       </div>
 

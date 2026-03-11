@@ -1,13 +1,13 @@
-import { observer } from "mobx-react-lite";
-import { useMemo, useState } from "react";
-import FormButton from "../../../../components/form-elements/Form-button";
-import { useUpdateProfileMutation } from "../../../../hooks/mutations";
-import { useAuth } from "../../../../hooks/use-auth";
-import { useStore } from "../../../../hooks/use-store";
-import buildProfileFormData from "../../../../utils/build-profile-form-data";
-import EditProfilePageSection from "../Edit-profile-page-section";
-import SelectImageLabel from "../labels/Select-image-label";
-import SelectedImageLabel from "../labels/Selected-image-label";
+import { observer } from 'mobx-react-lite';
+import { useMemo, useState } from 'react';
+import FormButton from '../../../../components/form-elements/Form-button';
+import { useUpdateProfileMutation } from '../../../../hooks/mutations';
+import { useAuth } from '../../../../hooks/use-auth';
+import { useStore } from '../../../../hooks/use-store';
+import buildProfileFormData from '../../../../utils/build-profile-form-data';
+import EditProfilePageSection from '../Edit-profile-page-section';
+import SelectImageLabel from '../labels/Select-image-label';
+import SelectedImageLabel from '../labels/Selected-image-label';
 
 const UploadCoverForm = observer(() => {
   const { authStore, notificationStore } = useStore();
@@ -58,7 +58,7 @@ const UploadCoverForm = observer(() => {
    */
   const isPending = useMemo(
     () => isUploading || isDeleting,
-    [isUploading, isDeleting],
+    [isUploading, isDeleting]
   );
 
   /**
@@ -68,7 +68,7 @@ const UploadCoverForm = observer(() => {
     if (!checkAuth() || isPending) return;
 
     if (!file) {
-      notificationStore.addErrorNotification("Выберите изображение!");
+      notificationStore.addErrorNotification('Выберите изображение!');
       return;
     }
 
@@ -111,7 +111,7 @@ const UploadCoverForm = observer(() => {
           src={
             previewUrl ||
             `${import.meta.env.VITE_SERVER_URL}/public/covers/${
-              authStore.profile?.cover === ""
+              authStore.profile?.cover === ''
                 ? import.meta.env.VITE_DEFAULT_COVER
                 : authStore.profile?.cover
             }`
@@ -124,7 +124,7 @@ const UploadCoverForm = observer(() => {
         <div className="grid grid-cols-1 sm:flex justify-between gap-2 w-full">
           <div className="w-full sm:w-38">
             <FormButton
-              title={isUploading ? "Сохранение..." : "Сохранить"}
+              title={isUploading ? 'Сохранение...' : 'Сохранить'}
               isInvert={true}
               onClick={handleSubmit}
               disabled={!file || isPending}
@@ -134,10 +134,10 @@ const UploadCoverForm = observer(() => {
 
           <div className="w-full sm:w-42">
             <FormButton
-              title={isDeleting ? "Удаление..." : "Удалить обложку"}
+              title={isDeleting ? 'Удаление...' : 'Удалить обложку'}
               isInvert={false}
               onClick={handleDelete}
-              disabled={authStore.profile?.cover === "" || isPending}
+              disabled={authStore.profile?.cover === '' || isPending}
               isLoading={isDeleting}
             />
           </div>

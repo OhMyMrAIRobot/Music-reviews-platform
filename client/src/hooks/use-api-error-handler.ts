@@ -1,4 +1,4 @@
-import { useStore } from "./use-store";
+import { useStore } from './use-store';
 
 /**
  * Type representing an API error structure, typically from Axios responses.
@@ -25,7 +25,7 @@ export const useApiErrorHandler = () => {
    * @param error - The error object, typically from an API call (e.g., Axios error).
    * @param defaultMessage - The default message to display if no specific error messages are found. Defaults to 'Произошла ошибка!'.
    */
-  return (error: unknown, defaultMessage: string = "Произошла ошибка!") => {
+  return (error: unknown, defaultMessage: string = 'Произошла ошибка!') => {
     const axiosError = error as ApiError;
     const messages = axiosError?.response?.data?.message || [defaultMessage];
     const messageArray = Array.isArray(messages) ? messages : [messages];

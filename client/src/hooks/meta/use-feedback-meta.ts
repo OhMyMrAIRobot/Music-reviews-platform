@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
-import { FeedbackAPI } from "../../api/feedback/feedback-api";
-import { feedbackKeys } from "../../query-keys/feedback-keys";
+import { useQuery } from '@tanstack/react-query';
+import { FeedbackAPI } from '../../api/feedback/feedback-api';
+import { feedbackKeys } from '../../query-keys/feedback-keys';
 
 /**
  * Custom hook to fetch and manage feedback statuses metadata.

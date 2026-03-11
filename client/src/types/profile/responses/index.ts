@@ -1,1 +1,1 @@
-export * from "./profile-preferences-response";
+export * from './profile-preferences-response';

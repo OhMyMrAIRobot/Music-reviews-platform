@@ -1,15 +1,15 @@
-import { FC, useState } from "react";
-import { Link } from "react-router";
-import SwitchButton from "../../../../components/buttons/Switch-button";
-import useNavigationPath from "../../../../hooks/use-navigation-path";
-import { useStore } from "../../../../hooks/use-store";
-import { Release, ReleaseTypesEnum } from "../../../../types/release";
-import { RolesEnum } from "../../../../types/user";
-import { ReleaseDetailsPageSections } from "../../types/release-details-page-sections";
-import ReleaseDetailsEstimationWarning from "./Release-details-estimation-warning";
-import ReleaseDetailsAlbumValueForm from "./forms/release-details-album-value-form/Release-details-album-value-form";
-import ReleaseDetailsMediaReviewForm from "./forms/release-details-media-review-form/Release-details-media-review-form";
-import ReleaseDetailsReviewForm from "./forms/release-details-review-form/Release-details-review-form";
+import { FC, useState } from 'react';
+import { Link } from 'react-router';
+import SwitchButton from '../../../../components/buttons/Switch-button';
+import useNavigationPath from '../../../../hooks/use-navigation-path';
+import { useStore } from '../../../../hooks/use-store';
+import { Release, ReleaseTypesEnum } from '../../../../types/release';
+import { RolesEnum } from '../../../../types/user';
+import { ReleaseDetailsPageSections } from '../../types/release-details-page-sections';
+import ReleaseDetailsEstimationWarning from './Release-details-estimation-warning';
+import ReleaseDetailsAlbumValueForm from './forms/release-details-album-value-form/Release-details-album-value-form';
+import ReleaseDetailsMediaReviewForm from './forms/release-details-media-review-form/Release-details-media-review-form';
+import ReleaseDetailsReviewForm from './forms/release-details-review-form/Release-details-review-form';
 
 interface IProps {
   release: Release;
@@ -21,7 +21,7 @@ const ReleaseDetailsEstimation: FC<IProps> = ({ release }) => {
   const { navigateToLogin } = useNavigationPath();
 
   const [section, setSection] = useState<ReleaseDetailsPageSections>(
-    ReleaseDetailsPageSections.REVIEW,
+    ReleaseDetailsPageSections.REVIEW
   );
 
   if (!authStore.isAuth)

@@ -2,19 +2,19 @@ import {
   InvalidateQueryFilters,
   useMutation,
   useQueryClient,
-} from "@tanstack/react-query";
-import { ReviewAPI } from "../../../../api/review/review-api";
-import { authorsKeys } from "../../../../query-keys/authors-keys";
-import { leaderboardKeys } from "../../../../query-keys/leaderboard-keys";
-import { platformStatsKeys } from "../../../../query-keys/platform-stats-keys";
-import { profilesKeys } from "../../../../query-keys/profiles-keys";
-import { releaseMediaKeys } from "../../../../query-keys/release-media-keys";
-import { releasesKeys } from "../../../../query-keys/releases-keys";
-import { reviewsKeys } from "../../../../query-keys/reviews-keys";
-import { usersKeys } from "../../../../query-keys/users-keys";
-import { UseMutationParams } from "../../../../types/common";
-import { useApiErrorHandler } from "../../../use-api-error-handler";
-import { useStore } from "../../../use-store";
+} from '@tanstack/react-query';
+import { ReviewAPI } from '../../../../api/review/review-api';
+import { authorsKeys } from '../../../../query-keys/authors-keys';
+import { leaderboardKeys } from '../../../../query-keys/leaderboard-keys';
+import { platformStatsKeys } from '../../../../query-keys/platform-stats-keys';
+import { profilesKeys } from '../../../../query-keys/profiles-keys';
+import { releaseMediaKeys } from '../../../../query-keys/release-media-keys';
+import { releasesKeys } from '../../../../query-keys/releases-keys';
+import { reviewsKeys } from '../../../../query-keys/reviews-keys';
+import { usersKeys } from '../../../../query-keys/users-keys';
+import { UseMutationParams } from '../../../../types/common';
+import { useApiErrorHandler } from '../../../use-api-error-handler';
+import { useStore } from '../../../use-store';
 
 /**
  * Custom React hook returning a React Query mutation for deleting a review.
@@ -51,12 +51,12 @@ export const useAdminRemoveReviewMutation = ({
   const mutation = useMutation({
     mutationFn: ({ id }: { id: string }) => ReviewAPI.adminDelete(id),
     onSuccess: () => {
-      notificationStore.addSuccessNotification("Вы успешно удалили рецензию!");
+      notificationStore.addSuccessNotification('Вы успешно удалили рецензию!');
       invalidateRelatedQueries();
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, "Не удалось удалить рецензию");
+      handleApiError(error, 'Не удалось удалить рецензию');
       onError?.(error);
     },
     onSettled,

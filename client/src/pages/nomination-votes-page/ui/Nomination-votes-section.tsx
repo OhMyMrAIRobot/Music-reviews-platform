@@ -1,11 +1,11 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState } from 'react';
 import {
   NominationCandidate,
   NominationEntityKind,
   NominationType,
   NominationUserVote,
-} from "../../../types/nomination";
-import NominationVotesSectionItem from "./Nomination-votes-section-item";
+} from '../../../types/nomination';
+import NominationVotesSectionItem from './Nomination-votes-section-item';
 
 interface IProps {
   title: string;
@@ -16,7 +16,7 @@ interface IProps {
   postVote: (
     nominationTypeId: string,
     entityKind: NominationEntityKind,
-    entityId: string,
+    entityId: string
   ) => void;
 }
 
@@ -36,7 +36,7 @@ const NominationVotesSection: FC<IProps> = ({
       return;
     }
     const hasVoteForThisType = userVotes.some(
-      (v) => v.nominationType.type === nominationType.type,
+      (v) => v.nominationType.type === nominationType.type
     );
     setVoted(hasVoteForThisType);
   }, [nominationType, userVotes]);

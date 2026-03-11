@@ -1,6 +1,6 @@
-import { observer } from "mobx-react-lite";
-import { useStore } from "../../hooks/use-store";
-import Notification from "./Notification";
+import { observer } from 'mobx-react-lite';
+import { useStore } from '../../hooks/use-store';
+import Notification from './Notification';
 
 const NotificationsContainer = observer(() => {
   const { notificationStore } = useStore();

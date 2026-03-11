@@ -1,4 +1,4 @@
-import { ReleaseMediaStatus, ReleaseMediaType, UserFavMedia } from ".";
+import { ReleaseMediaStatus, ReleaseMediaType, UserFavMedia } from '.';
 
 /**
  * Represents a `ReleaseMedia` entity.

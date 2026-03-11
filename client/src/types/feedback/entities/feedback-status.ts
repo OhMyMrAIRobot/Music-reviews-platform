@@ -1,4 +1,4 @@
-import { FeedbackStatusesEnum } from "../enums";
+import { FeedbackStatusesEnum } from '../enums';
 
 /**
  * Represents a `FeedbackStatus` entity.

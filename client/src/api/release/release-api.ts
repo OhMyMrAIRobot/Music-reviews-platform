@@ -1,17 +1,17 @@
-import axios from "axios";
+import axios from 'axios';
 import {
   Release,
   ReleasesQuery,
   ReleasesResponse,
   ReleaseType,
-} from "../../types/release";
-import { api } from "../api-instance";
+} from '../../types/release';
+import { api } from '../api-instance';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 const _api = axios.create({
   baseURL: `${SERVER_URL}/releases/`,
   headers: {
-    "Content-type": "application/json",
+    'Content-type': 'application/json',
   },
 });
 
@@ -28,7 +28,7 @@ export const ReleaseAPI = {
    */
   async fetchReleaseTypes(): Promise<ReleaseType[]> {
     const { data } = await axios.get<ReleaseType[]>(
-      `${SERVER_URL}/release-types`,
+      `${SERVER_URL}/release-types`
     );
     return data;
   },
@@ -51,16 +51,16 @@ export const ReleaseAPI = {
    */
   async findAll(query: ReleasesQuery): Promise<ReleasesResponse> {
     const { data } = await _api.get<ReleasesResponse>(`?
-			${query.authorId ? `authorId=${query.authorId}&` : ""}
-			${query.typeId ? `typeId=${query.typeId}&` : ""}
-			${query.search ? `search=${query.search}&` : ""}
-			${query.sortField ? `sortField=${query.sortField}&` : ""}
-			${query.sortOrder ? `sortOrder=${query.sortOrder}&` : ""}
-			${query.last24h ? `last24h=${query.last24h}&` : ""}
-			${query.year ? `year=${query.year}&` : ""}
-			${query.month ? `month=${query.month}&` : ""}
-			${query.limit ? `limit=${query.limit}&` : ""}
-			${query.offset ? `offset=${query.offset}&` : ""}
+			${query.authorId ? `authorId=${query.authorId}&` : ''}
+			${query.typeId ? `typeId=${query.typeId}&` : ''}
+			${query.search ? `search=${query.search}&` : ''}
+			${query.sortField ? `sortField=${query.sortField}&` : ''}
+			${query.sortOrder ? `sortOrder=${query.sortOrder}&` : ''}
+			${query.last24h ? `last24h=${query.last24h}&` : ''}
+			${query.year ? `year=${query.year}&` : ''}
+			${query.month ? `month=${query.month}&` : ''}
+			${query.limit ? `limit=${query.limit}&` : ''}
+			${query.offset ? `offset=${query.offset}&` : ''}
 		`);
     return data;
   },
@@ -83,9 +83,9 @@ export const ReleaseAPI = {
    * @returns {Promise<Release>} A promise that resolves to the newly created release object.
    */
   async create(formData: FormData): Promise<Release> {
-    const { data } = await api.post<Release>("/releases", formData, {
+    const { data } = await api.post<Release>('/releases', formData, {
       headers: {
-        "Content-Type": "multipart/form-data",
+        'Content-Type': 'multipart/form-data',
       },
     });
     return data;
@@ -101,7 +101,7 @@ export const ReleaseAPI = {
   async update(id: string, formData: FormData): Promise<Release> {
     const { data } = await api.patch<Release>(`/releases/${id}`, formData, {
       headers: {
-        "Content-Type": "multipart/form-data",
+        'Content-Type': 'multipart/form-data',
       },
     });
     return data;

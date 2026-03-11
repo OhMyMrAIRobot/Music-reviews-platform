@@ -1,5 +1,5 @@
-import { NominationType } from ".";
-import { NominationEntityKind } from "../subtypes";
+import { NominationType } from '.';
+import { NominationEntityKind } from '../subtypes';
 
 /**
  * Data returned when a user's vote for a nomination is requested.

@@ -1,6 +1,6 @@
-import { FC, ReactNode } from "react";
-import { Link } from "react-router";
-import SkeletonLoader from "../../../../../components/utils/Skeleton-loader";
+import { FC, ReactNode } from 'react';
+import { Link } from 'react-router';
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader';
 
 interface IProps {
   isLoading: boolean;
@@ -18,20 +18,20 @@ const PlatformStatisticsRow: FC<IProps> = ({
   svg,
 }) => {
   return isLoading ? (
-    <SkeletonLoader className={"w-full rounded-lg h-8"} />
+    <SkeletonLoader className={'w-full rounded-lg h-8'} />
   ) : (
     <Link
-      to={link ?? "#"}
+      to={link ?? '#'}
       className={`flex items-center justify-between gap-3 ${
-        link ? "" : "pointer-events-none"
+        link ? '' : 'pointer-events-none'
       }`}
     >
       {svg}
       <div
         className={`text-sm lg:text-base ${
           link
-            ? "border-b border-b-white/30 hover:border-b-white/40 transition-colors duration-200"
-            : ""
+            ? 'border-b border-b-white/30 hover:border-b-white/40 transition-colors duration-200'
+            : ''
         }`}
       >
         {title}

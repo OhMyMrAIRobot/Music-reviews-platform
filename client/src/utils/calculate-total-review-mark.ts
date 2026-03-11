@@ -1,7 +1,7 @@
-import { ReviewValues } from "../types/review";
+import { ReviewValues } from '../types/review';
 
 export const calculateTotalReviewMark = (
-  reviewData: Omit<ReviewValues, "total">,
+  reviewData: Omit<ReviewValues, 'total'>
 ): number => {
   const baseScore =
     reviewData.rhymes +

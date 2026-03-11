@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from 'react';
 
 interface IProps {
   value: number;
@@ -23,7 +23,7 @@ const Slider: FC<IProps> = ({
   trackAfterColor,
   thumbImage = `${import.meta.env.VITE_SERVER_URL}/public/assets/rice.png`,
   showTicks = false,
-  tickClassName = "w-[1px] h-[10px] bg-white/30",
+  tickClassName = 'w-[1px] h-[10px] bg-white/30',
 }) => {
   const sliderRef = useRef<HTMLDivElement>(null);
   const [sliderWidth, setSliderWidth] = useState(0);
@@ -36,17 +36,17 @@ const Slider: FC<IProps> = ({
   const getDecimals = (n: number) => {
     if (!isFinite(n)) return 0;
     const s = n.toString();
-    if (s.includes("e-")) {
-      const [, exp] = s.split("e-");
-      return parseInt(exp || "0", 10);
+    if (s.includes('e-')) {
+      const [, exp] = s.split('e-');
+      return parseInt(exp || '0', 10);
     }
-    return s.split(".")[1]?.length ?? 0;
+    return s.split('.')[1]?.length ?? 0;
   };
 
   const decimals = Math.max(
     getDecimals(step),
     getDecimals(min),
-    getDecimals(max),
+    getDecimals(max)
   );
 
   const roundTo = (val: number, dec: number) => {
@@ -85,7 +85,7 @@ const Slider: FC<IProps> = ({
 
     const clamped = Math.min(
       Math.max(offsetX, thumbWidth / 2),
-      sliderWidth - thumbWidth / 2,
+      sliderWidth - thumbWidth / 2
     );
 
     const rawValue =
@@ -99,8 +99,8 @@ const Slider: FC<IProps> = ({
   const handleMouseDown = (e: React.MouseEvent) => {
     isDragging.current = true;
     updateValueFromPosition(e.clientX);
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
   };
 
   const handleMouseMove = (e: MouseEvent) => {
@@ -111,8 +111,8 @@ const Slider: FC<IProps> = ({
 
   const handleMouseUp = () => {
     isDragging.current = false;
-    document.removeEventListener("mousemove", handleMouseMove);
-    document.removeEventListener("mouseup", handleMouseUp);
+    document.removeEventListener('mousemove', handleMouseMove);
+    document.removeEventListener('mouseup', handleMouseUp);
   };
 
   const handleClick = (e: React.MouseEvent) => {
@@ -191,7 +191,7 @@ const Slider: FC<IProps> = ({
         style={{
           left: `${thumbLeft}px`,
           backgroundImage: `url(${thumbImage})`,
-          backgroundColor: "transparent",
+          backgroundColor: 'transparent',
           borderRadius: 4,
         }}
         onMouseDown={handleMouseDown}

@@ -1,4 +1,4 @@
-import { CreateReviewData } from "./create-review-data";
+import { CreateReviewData } from './create-review-data';
 
 /**
  * UpdateReviewData

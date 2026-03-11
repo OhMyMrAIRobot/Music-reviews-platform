@@ -1,9 +1,9 @@
-import { Route } from "react-router";
-import LoginForm from "../pages/auth-page/ui/forms/Login-form";
-import RegistrationForm from "../pages/auth-page/ui/forms/Registration-form";
-import ReqResetPasswordForm from "../pages/auth-page/ui/forms/Req-reset-password-form";
-import ResetPasswordForm from "../pages/auth-page/ui/forms/Reset-password-form";
-import { ROUTES } from "./routes-enum";
+import { Route } from 'react-router';
+import LoginForm from '../pages/auth-page/ui/forms/Login-form';
+import RegistrationForm from '../pages/auth-page/ui/forms/Registration-form';
+import ReqResetPasswordForm from '../pages/auth-page/ui/forms/Req-reset-password-form';
+import ResetPasswordForm from '../pages/auth-page/ui/forms/Reset-password-form';
+import { ROUTES } from './routes-enum';
 
 const NonAuthRouteList = () => {
   return (

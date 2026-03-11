@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 import {
   CreateFeedbackData,
   Feedback,
@@ -6,14 +6,14 @@ import {
   FeedbackResponse,
   FeedbackStatus,
   UpdateFeedbackData,
-} from "../../types/feedback";
-import { api } from "../api-instance";
+} from '../../types/feedback';
+import { api } from '../api-instance';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 const _api = axios.create({
   baseURL: `${SERVER_URL}/feedback`,
   headers: {
-    "Content-type": "application/json",
+    'Content-type': 'application/json',
   },
 });
 
@@ -30,7 +30,7 @@ export const FeedbackAPI = {
    */
   async fetchFeedbackStatuses(): Promise<FeedbackStatus[]> {
     const { data } = await axios.get<FeedbackStatus[]>(
-      `${SERVER_URL}/feedback-statuses`,
+      `${SERVER_URL}/feedback-statuses`
     );
     return data;
   },
@@ -50,11 +50,11 @@ export const FeedbackAPI = {
     const { statusId, search, order, limit, offset } = query;
 
     const { data } = await api.get<FeedbackResponse>(`/feedback?
-			${search ? `search=${search}&` : ""}
-			${statusId ? `statusId=${statusId}&` : ""}
-			${order ? `order=${order}&` : ""}
-			${limit ? `limit=${limit}&` : ""}
-			${offset ? `offset=${offset}` : ""}`);
+			${search ? `search=${search}&` : ''}
+			${statusId ? `statusId=${statusId}&` : ''}
+			${order ? `order=${order}&` : ''}
+			${limit ? `limit=${limit}&` : ''}
+			${offset ? `offset=${offset}` : ''}`);
 
     return data;
   },
@@ -66,7 +66,7 @@ export const FeedbackAPI = {
    * @returns {Promise<Feedback>} A promise that resolves to the newly created feedback object.
    */
   async create(formData: CreateFeedbackData): Promise<Feedback> {
-    const { data } = await _api.post("/", formData);
+    const { data } = await _api.post('/', formData);
 
     return data;
   },

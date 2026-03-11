@@ -1,23 +1,23 @@
-import { useQuery } from "@tanstack/react-query";
-import { observer } from "mobx-react-lite";
-import { FC, useEffect, useMemo, useState } from "react";
-import { ReviewAPI } from "../../../../../../api/review/review-api";
-import TickSvg from "../../../../../../components/svg/Tick-svg";
-import Loader from "../../../../../../components/utils/Loader";
+import { useQuery } from '@tanstack/react-query';
+import { observer } from 'mobx-react-lite';
+import { FC, useEffect, useMemo, useState } from 'react';
+import { ReviewAPI } from '../../../../../../api/review/review-api';
+import TickSvg from '../../../../../../components/svg/Tick-svg';
+import Loader from '../../../../../../components/utils/Loader';
 import {
   useCreateReviewMutation,
   useRemoveReviewMutation,
   useUpdateReviewMutation,
-} from "../../../../../../hooks/mutations";
-import { useAuth } from "../../../../../../hooks/use-auth";
-import { useStore } from "../../../../../../hooks/use-store";
-import { reviewsKeys } from "../../../../../../query-keys/reviews-keys";
-import { Review, ReviewsQuery } from "../../../../../../types/review";
-import { calculateTotalReviewMark } from "../../../../../../utils/calculate-total-review-mark";
-import { constraints } from "../../../../../../utils/constraints";
-import ReleaseDetailsEstimationDeleteButton from "../../buttons/Release-details-estimation-delete-button";
-import ReleaseDetailsReviewFormMarks from "./Release-details-review-form-marks";
-import ReleaseDetailsReviewFormText from "./Release-details-review-form-text";
+} from '../../../../../../hooks/mutations';
+import { useAuth } from '../../../../../../hooks/use-auth';
+import { useStore } from '../../../../../../hooks/use-store';
+import { reviewsKeys } from '../../../../../../query-keys/reviews-keys';
+import { Review, ReviewsQuery } from '../../../../../../types/review';
+import { calculateTotalReviewMark } from '../../../../../../utils/calculate-total-review-mark';
+import { constraints } from '../../../../../../utils/constraints';
+import ReleaseDetailsEstimationDeleteButton from '../../buttons/Release-details-estimation-delete-button';
+import ReleaseDetailsReviewFormMarks from './Release-details-review-form-marks';
+import ReleaseDetailsReviewFormText from './Release-details-review-form-text';
 
 /**
  * Props for ReleaseDetailsReviewForm component
@@ -35,8 +35,8 @@ const ReleaseDetailsReviewForm: FC<IProps> = observer(
     const { authStore } = useStore();
     const { checkAuth } = useAuth();
 
-    const [title, setTitle] = useState<string>("");
-    const [text, setText] = useState<string>("");
+    const [title, setTitle] = useState<string>('');
+    const [text, setText] = useState<string>('');
     const [rhymes, setRhymes] = useState<number>(5);
     const [structure, setStructure] = useState<number>(5);
     const [realization, setRealization] = useState<number>(5);
@@ -89,7 +89,7 @@ const ReleaseDetailsReviewForm: FC<IProps> = observer(
           realization,
           individuality,
           atmosphere,
-        }),
+        })
       );
     }, [rhymes, structure, realization, individuality, atmosphere]);
 
@@ -103,8 +103,8 @@ const ReleaseDetailsReviewForm: FC<IProps> = observer(
      * @param {Review | null} review - The review object or null
      */
     const setDefaultValues = (review: Review | null) => {
-      setTitle(review?.title ?? "");
-      setText(review?.text ?? "");
+      setTitle(review?.title ?? '');
+      setText(review?.text ?? '');
       setRhymes(review?.values.rhymes ?? 5);
       setStructure(review?.values.structure ?? 5);
       setRealization(review?.values.realization ?? 5);
@@ -171,7 +171,7 @@ const ReleaseDetailsReviewForm: FC<IProps> = observer(
      */
     const textAndTitleTogether = useMemo(() => {
       if (!isReview) return true;
-      return text.trim() !== "" && title.trim() !== "";
+      return text.trim() !== '' && title.trim() !== '';
     }, [isReview, text, title]);
 
     /**
@@ -181,7 +181,7 @@ const ReleaseDetailsReviewForm: FC<IProps> = observer(
      */
     const isSubmitting = useMemo(
       () => isCreating || isUpdating || isDeleting,
-      [isCreating, isUpdating, isDeleting],
+      [isCreating, isUpdating, isDeleting]
     );
 
     /**
@@ -224,7 +224,7 @@ const ReleaseDetailsReviewForm: FC<IProps> = observer(
         {userReview && (
           <div className="bg-gradient-to-br from-white/20 border border-white/5 rounded-lg text-sm lg:text-base text-center px-3 py-3 lg:py-5 font-medium">
             Вы уже оставляли
-            {userReview.title && userReview.text ? " рецензию " : " оценку "}к
+            {userReview.title && userReview.text ? ' рецензию ' : ' оценку '}к
             данной работе. Вы можете изменить ее, заполнив форму ниже!
           </div>
         )}
@@ -234,7 +234,7 @@ const ReleaseDetailsReviewForm: FC<IProps> = observer(
             <div className="ml-auto sm:max-w-50 max-sm:w-full justify-end">
               <ReleaseDetailsEstimationDeleteButton
                 title={`Удалить ${
-                  userReview.title && userReview.text ? " рецензию" : " оценку"
+                  userReview.title && userReview.text ? ' рецензию' : ' оценку'
                 }`}
                 disabled={!userReview || isSubmitting}
                 isLoading={isDeleting}
@@ -285,12 +285,12 @@ const ReleaseDetailsReviewForm: FC<IProps> = observer(
                 !isFormValid ||
                 !hasChanges ||
                 !textAndTitleTogether
-                  ? "bg-white/60 pointer-events-none"
-                  : "cursor-pointer hover:bg-white/70 bg-white"
+                  ? 'bg-white/60 pointer-events-none'
+                  : 'cursor-pointer hover:bg-white/70 bg-white'
               }`}
             >
               {isUpdating || isCreating ? (
-                <Loader className={"size-8"} />
+                <Loader className={'size-8'} />
               ) : (
                 <TickSvg className="size-8" />
               )}
@@ -299,7 +299,7 @@ const ReleaseDetailsReviewForm: FC<IProps> = observer(
         </div>
       </div>
     );
-  },
+  }
 );
 
 export default ReleaseDetailsReviewForm;

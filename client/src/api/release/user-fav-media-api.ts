@@ -1,5 +1,5 @@
-import { UserFavMedia } from "../../types/release";
-import { api } from "../api-instance";
+import { UserFavMedia } from '../../types/release';
+import { api } from '../api-instance';
 
 /**
  * API service for managing user favorite media.
@@ -26,7 +26,7 @@ export const UserFavMediaAPI = {
    */
   async deleteFromFav(mediaId: string): Promise<UserFavMedia> {
     const { data } = await api.delete<UserFavMedia>(
-      `/user-fav-media/${mediaId}`,
+      `/user-fav-media/${mediaId}`
     );
 
     return data;

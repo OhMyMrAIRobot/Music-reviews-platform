@@ -1,6 +1,6 @@
-import { FC, useEffect, useRef, useState } from "react";
-import CloseSvg from "../svg/Close-svg";
-import SkeletonLoader from "../utils/Skeleton-loader";
+import { FC, useEffect, useRef, useState } from 'react';
+import CloseSvg from '../svg/Close-svg';
+import SkeletonLoader from '../utils/Skeleton-loader';
 
 export interface IMultiSelectValue {
   id: string;
@@ -14,7 +14,7 @@ interface IProps {
   onChange: (value: IMultiSelectValue[]) => void;
   loadOptions: (
     search: string,
-    limit: number | null,
+    limit: number | null
   ) => Promise<IMultiSelectValue[]>;
 }
 
@@ -27,12 +27,12 @@ const FormMultiSelect: FC<IProps> = ({
   loadOptions,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [options, setOptions] = useState<IMultiSelectValue[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const prevSearchRef = useRef<string>("");
+  const prevSearchRef = useRef<string>('');
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -49,7 +49,7 @@ const FormMultiSelect: FC<IProps> = ({
       try {
         const data = await loadOptions(
           search,
-          search.trim() === "" ? 10 : null,
+          search.trim() === '' ? 10 : null
         );
         setOptions(data);
       } catch {
@@ -64,7 +64,7 @@ const FormMultiSelect: FC<IProps> = ({
     const loadInitialData = async () => {
       setIsLoading(true);
       try {
-        const initialData = await loadOptions("", 10);
+        const initialData = await loadOptions('', 10);
         setOptions(initialData);
       } catch {
         setOptions([]);
@@ -98,15 +98,15 @@ const FormMultiSelect: FC<IProps> = ({
       !containerRef.current.contains(event.target as Node)
     ) {
       setIsOpen(false);
-      setSearch("");
+      setSearch('');
     }
   };
 
   useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
       if (timerRef.current) clearTimeout(timerRef.current);
     };
   }, []);
@@ -114,7 +114,7 @@ const FormMultiSelect: FC<IProps> = ({
   const filteredOptions = options.filter(
     (option) =>
       !value.some((v) => v.id === option.id) &&
-      option.name.toLowerCase().includes(search.toLowerCase()),
+      option.name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -125,7 +125,7 @@ const FormMultiSelect: FC<IProps> = ({
           setTimeout(() => inputRef.current?.focus(), 0);
         }}
         className={`w-full min-h-10 rounded-md border px-3 py-2 text-sm outline-none border-white/15 focus:border-white transition-colors flex items-center flex-wrap gap-1 cursor-text ${
-          isOpen ? "border-white" : ""
+          isOpen ? 'border-white' : ''
         }`}
       >
         {value.map((option) => (
@@ -139,7 +139,7 @@ const FormMultiSelect: FC<IProps> = ({
               onClick={(e) => removeOption(option, e)}
               className="text-red-500 hover:text-red-400 focus:outline-none cursor-pointer"
             >
-              <CloseSvg className={"size-4"} />
+              <CloseSvg className={'size-4'} />
             </button>
           </div>
         ))}
@@ -152,7 +152,7 @@ const FormMultiSelect: FC<IProps> = ({
           onChange={(e) => setSearch(e.target.value)}
           onClick={() => setIsOpen(true)}
           className="flex-1 min-w-20 bg-transparent outline-none"
-          placeholder={value.length === 0 ? placeholder : ""}
+          placeholder={value.length === 0 ? placeholder : ''}
         />
       </div>
 
@@ -180,10 +180,10 @@ const FormMultiSelect: FC<IProps> = ({
           ) : (
             <div className="p-2 text-gray-400">
               {options.length === 0
-                ? search.trim() === ""
-                  ? "Нет доступных опций"
-                  : "Ничего не найдено"
-                : "Все опции выбраны"}
+                ? search.trim() === ''
+                  ? 'Нет доступных опций'
+                  : 'Ничего не найдено'
+                : 'Все опции выбраны'}
             </div>
           )}
         </div>

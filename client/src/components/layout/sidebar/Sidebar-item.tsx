@@ -1,5 +1,5 @@
-import { FC, ReactNode } from "react";
-import { Link } from "react-router";
+import { FC, ReactNode } from 'react';
+import { Link } from 'react-router';
 
 export interface ISidebarItemProps {
   href: string;
@@ -13,7 +13,7 @@ const SidebarItem: FC<ISidebarItemProps> = ({ href, icon, label, active }) => {
     <Link
       to={href}
       className={`flex h-9 md:h-8 items-center justify-start w-full rounded-lg hover:text-white group cursor-pointer ${
-        active ? "bg-white/10" : "hover:bg-white/10"
+        active ? 'bg-white/10' : 'hover:bg-white/10'
       }`}
     >
       <span className="flex items-center justify-center size-9">{icon}</span>

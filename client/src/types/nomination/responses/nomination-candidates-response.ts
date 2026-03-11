@@ -1,4 +1,4 @@
-import { NominationCandidate } from "..";
+import { NominationCandidate } from '..';
 
 /**
  * Response returned by the endpoint that lists nomination candidates

@@ -1,10 +1,10 @@
-import { FC } from "react";
-import ComboBox from "../../../components/buttons/Combo-box";
-import SkeletonLoader from "../../../components/utils/Skeleton-loader";
+import { FC } from 'react';
+import ComboBox from '../../../components/buttons/Combo-box';
+import SkeletonLoader from '../../../components/utils/Skeleton-loader';
 import {
   MonthEnumType,
   MonthsEnum,
-} from "../../../types/common/enums/months-enum";
+} from '../../../types/common/enums/months-enum';
 
 interface IProps {
   selectedMonth: number;
@@ -26,18 +26,18 @@ const ReleasesRatingPageHeader: FC<IProps> = ({
   isLoading,
 }) => {
   const handleMonthChange = (value: string) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const entry = Object.entries(MonthsEnum).find(
-      ([_, name]) => name === value,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      ([_, name]) => name === value
     );
     const month = entry ? parseInt(entry[0], 10) : selectedMonth;
     setSelectedMonth(month);
   };
 
   const yearOptions = [
-    "Все время",
+    'Все время',
     ...Array.from({ length: minYear ? maxYear - minYear + 1 : 0 }, (_, i) =>
-      (maxYear - i).toString(),
+      (maxYear - i).toString()
     ),
   ];
 
@@ -84,7 +84,7 @@ const ReleasesRatingPageHeader: FC<IProps> = ({
                   onChange={handleMonthChange}
                   className="border border-white/10"
                   value={
-                    MonthsEnum[selectedMonth as MonthEnumType] ?? "Неизвестно"
+                    MonthsEnum[selectedMonth as MonthEnumType] ?? 'Неизвестно'
                   }
                 />
               )}

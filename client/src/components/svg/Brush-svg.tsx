@@ -1,5 +1,5 @@
-import { FC } from "react";
-import { ISvgProps } from "../../types/common/types/svg-props";
+import { FC } from 'react';
+import { ISvgProps } from '../../types/common/types/svg-props';
 
 const BrushSvg: FC<ISvgProps> = ({ className }) => {
   return (

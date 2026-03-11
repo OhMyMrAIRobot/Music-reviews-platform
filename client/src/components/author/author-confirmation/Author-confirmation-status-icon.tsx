@@ -1,8 +1,8 @@
-import { FC } from "react";
-import { AuthorConfirmationStatusesEnum } from "../../../types/author";
-import HourglassSvg from "../../svg/Hourglass-svg";
-import RejectSvg from "../../svg/Reject-svg";
-import TickRoundedSvg from "../../svg/Tick-rounded-svg";
+import { FC } from 'react';
+import { AuthorConfirmationStatusesEnum } from '../../../types/author';
+import HourglassSvg from '../../svg/Hourglass-svg';
+import RejectSvg from '../../svg/Reject-svg';
+import TickRoundedSvg from '../../svg/Tick-rounded-svg';
 
 interface IProps {
   status: string;

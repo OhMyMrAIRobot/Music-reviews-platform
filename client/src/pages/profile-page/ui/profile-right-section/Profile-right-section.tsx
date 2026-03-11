@@ -1,18 +1,18 @@
-import { useQuery } from "@tanstack/react-query";
-import { FC, useState } from "react";
-import { useParams } from "react-router";
-import { ReviewAPI } from "../../../../api/review/review-api";
-import { reviewsKeys } from "../../../../query-keys/reviews-keys";
-import { SortOrdersEnum } from "../../../../types/common/enums/sort-orders-enum";
-import { Profile } from "../../../../types/profile";
-import { ReviewsQuery, ReviewsSortFieldsEnum } from "../../../../types/review";
-import { RolesEnum } from "../../../../types/user";
-import { ProfilePageSections } from "../../types/profile-page-sections";
-import ProfileAuthorCardsGrid from "./Profile-author-cards-grid";
-import ProfileMediaReviewsGrid from "./Profile-media-reviews-grid";
-import ProfilePreferencesGrid from "./profile-preferences/Profile-preferences-grid";
-import ProfileReviewsGrid from "./Profile-reviews-grid";
-import ProfileSectionButton from "./Profile-section-button";
+import { useQuery } from '@tanstack/react-query';
+import { FC, useState } from 'react';
+import { useParams } from 'react-router';
+import { ReviewAPI } from '../../../../api/review/review-api';
+import { reviewsKeys } from '../../../../query-keys/reviews-keys';
+import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum';
+import { Profile } from '../../../../types/profile';
+import { ReviewsQuery, ReviewsSortFieldsEnum } from '../../../../types/review';
+import { RolesEnum } from '../../../../types/user';
+import { ProfilePageSections } from '../../types/profile-page-sections';
+import ProfileAuthorCardsGrid from './Profile-author-cards-grid';
+import ProfileMediaReviewsGrid from './Profile-media-reviews-grid';
+import ProfilePreferencesGrid from './profile-preferences/Profile-preferences-grid';
+import ProfileReviewsGrid from './Profile-reviews-grid';
+import ProfileSectionButton from './Profile-section-button';
 
 interface IProps {
   profile: Profile;
@@ -26,7 +26,7 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
   const [selectedSection, setSelectedSection] = useState<string>(
     profile.user.isAuthor === true
       ? ProfilePageSections.AUTHOR_CARDS
-      : ProfilePageSections.PREFER,
+      : ProfilePageSections.PREFER
   );
   const [reviewsCurrentPage, setReviewsCurrentPage] = useState<number>(1);
   const [favCurrentPage, setFavCurrentPage] = useState<number>(1);
@@ -93,7 +93,7 @@ const ProfileRightSection: FC<IProps> = ({ profile }) => {
           loading="lazy"
           decoding="async"
           src={`${import.meta.env.VITE_SERVER_URL}/public/covers/${
-            profile.cover === ""
+            profile.cover === ''
               ? import.meta.env.VITE_DEFAULT_COVER
               : profile.cover
           }`}

@@ -1,4 +1,4 @@
-import { Review } from "../entities";
+import { Review } from '../entities';
 
 /**
  * ReviewsResponse

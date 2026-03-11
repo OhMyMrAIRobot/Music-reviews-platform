@@ -1,1 +1,1 @@
-export * from "./leaderboard-query";
+export * from './leaderboard-query';

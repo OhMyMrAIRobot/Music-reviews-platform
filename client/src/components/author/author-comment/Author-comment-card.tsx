@@ -1,7 +1,7 @@
-import { FC } from "react";
-import { AuthorComment } from "../../../types/author";
-import SkeletonLoader from "../../utils/Skeleton-loader";
-import AuthorCommentHeader from "./Author-comment-header";
+import { FC } from 'react';
+import { AuthorComment } from '../../../types/author';
+import SkeletonLoader from '../../utils/Skeleton-loader';
+import AuthorCommentHeader from './Author-comment-header';
 
 interface IProps {
   comment?: AuthorComment;
@@ -11,7 +11,7 @@ interface IProps {
 const AuthorCommentCard: FC<IProps> = ({ comment, isLoading }) => {
   return isLoading || !comment ? (
     <SkeletonLoader
-      className={"w-full rounded-[15px] lg:rounded-[20px] h-62"}
+      className={'w-full rounded-[15px] lg:rounded-[20px] h-62'}
     />
   ) : (
     <div className="bg-zinc-900/60 relative p-1.5 lg:p-2 flex flex-col mx-auto border border-zinc-800 rounded-[15px] lg:rounded-[20px] w-full">

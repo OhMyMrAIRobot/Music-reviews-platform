@@ -1,5 +1,5 @@
-import { CreateFeedbackReplyData, FeedbackReply } from "../../types/feedback";
-import { api } from "../api-instance";
+import { CreateFeedbackReplyData, FeedbackReply } from '../../types/feedback';
+import { api } from '../api-instance';
 
 /**
  * API service for managing feedback replies.
@@ -14,7 +14,7 @@ export const FeedbackReplyAPI = {
    */
   async findByFeedbackId(feedbackId: string): Promise<FeedbackReply> {
     const { data } = await api.get<FeedbackReply>(
-      `/feedback-replies/feedback/${feedbackId}`,
+      `/feedback-replies/feedback/${feedbackId}`
     );
 
     return data;
@@ -29,7 +29,7 @@ export const FeedbackReplyAPI = {
   async create(formData: CreateFeedbackReplyData): Promise<FeedbackReply> {
     const { data } = await api.post<FeedbackReply>(
       `/feedback-replies`,
-      formData,
+      formData
     );
 
     return data;

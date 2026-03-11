@@ -1,5 +1,5 @@
-import { FC } from "react";
-import ProfileSocialIcon from "./Profile-social-icon";
+import { FC } from 'react';
+import ProfileSocialIcon from './Profile-social-icon';
 
 interface IProps {
   href: string;

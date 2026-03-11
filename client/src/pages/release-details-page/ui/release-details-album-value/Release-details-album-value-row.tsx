@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC } from 'react';
 
 interface IProps {
   title: string;
@@ -16,14 +16,14 @@ const ReleaseDetailsAlbumValueRow: FC<IProps> = ({
   return (
     <div
       className={`flex items-baseline justify-between ${
-        !isSectionTitle ? "text-white/80" : ""
+        !isSectionTitle ? 'text-white/80' : ''
       }`}
     >
-      <div className={`${isSectionTitle ? "font-bold text-base" : ""}`}>
+      <div className={`${isSectionTitle ? 'font-bold text-base' : ''}`}>
         {title}
       </div>
       <div className="text-right">
-        <span className={`font-bold ${!isSectionTitle ? "text-xs" : ""}`}>
+        <span className={`font-bold ${!isSectionTitle ? 'text-xs' : ''}`}>
           {value}
         </span>
         {maxValue !== undefined && (

@@ -1,8 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
-import { FC } from "react";
-import { ProfileAPI } from "../../../../../api/user/profile-api.ts";
-import { profilesKeys } from "../../../../../query-keys/profiles-keys.ts";
-import ProfilePreferencesGridRow from "./Profile-preferences-grid-row.tsx";
+import { useQuery } from '@tanstack/react-query';
+import { FC } from 'react';
+import { ProfileAPI } from '../../../../../api/user/profile-api.ts';
+import { profilesKeys } from '../../../../../query-keys/profiles-keys.ts';
+import ProfilePreferencesGridRow from './Profile-preferences-grid-row.tsx';
 
 interface IProps {
   userId: string;
@@ -23,28 +23,28 @@ const ProfilePreferencesGrid: FC<IProps> = ({ userId }) => {
   return (
     <div className="grid lg:grid-cols-2 gap-y-4 lg:gap-y-8 gap-x-10">
       <ProfilePreferencesGridRow
-        title={"Артисты"}
+        title={'Артисты'}
         items={artists}
         isAuthor={true}
         isLoading={isPending}
       />
 
       <ProfilePreferencesGridRow
-        title={"Альбомы"}
+        title={'Альбомы'}
         items={albums}
         isAuthor={false}
         isLoading={isPending}
       />
 
       <ProfilePreferencesGridRow
-        title={"Треки"}
+        title={'Треки'}
         items={tracks}
         isAuthor={false}
         isLoading={isPending}
       />
 
       <ProfilePreferencesGridRow
-        title={"Продюсеры"}
+        title={'Продюсеры'}
         items={producers}
         isAuthor={true}
         isLoading={isPending}

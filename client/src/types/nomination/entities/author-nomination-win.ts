@@ -3,7 +3,7 @@ import {
   NominationEntityKind,
   NominationReleaseMeta,
   NominationTypesEnum,
-} from "..";
+} from '..';
 
 /**
  * Represents an author's nomination win, either for a release kind or for an author kind.

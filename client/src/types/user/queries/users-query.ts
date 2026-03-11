@@ -1,5 +1,5 @@
-import { SortOrder } from "../../common/types/sort-order";
-import { RolesEnum } from "../enums";
+import { SortOrder } from '../../common/types/sort-order';
+import { RolesEnum } from '../enums';
 
 /**
  * Query for listing users.

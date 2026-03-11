@@ -1,7 +1,7 @@
-import { FC } from "react";
-import ArrowBottomSvg from "../../../../components/layout/header/svg/Arrow-bottom-svg";
-import { SortOrdersEnum } from "../../../../types/common/enums/sort-orders-enum";
-import { SortOrder } from "../../../../types/common/types/sort-order";
+import { FC } from 'react';
+import ArrowBottomSvg from '../../../../components/layout/header/svg/Arrow-bottom-svg';
+import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum';
+import { SortOrder } from '../../../../types/common/types/sort-order';
 
 interface IProps {
   title: string;
@@ -24,7 +24,7 @@ const AdminToggleSortOrderButton: FC<IProps> = ({
         <span>{title}</span>
         <ArrowBottomSvg
           className={`size-3 ${
-            order === SortOrdersEnum.ASC ? "rotate-180" : ""
+            order === SortOrdersEnum.ASC ? 'rotate-180' : ''
           }`}
         />
       </button>

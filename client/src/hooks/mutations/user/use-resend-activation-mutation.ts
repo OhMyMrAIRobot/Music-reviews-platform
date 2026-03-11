@@ -1,8 +1,8 @@
-import { useMutation } from "@tanstack/react-query";
-import { AuthAPI } from "../../../api/auth-api";
-import { UseMutationParams } from "../../../types/common";
-import { useApiErrorHandler } from "../../use-api-error-handler";
-import { useStore } from "../../use-store";
+import { useMutation } from '@tanstack/react-query';
+import { AuthAPI } from '../../../api/auth-api';
+import { UseMutationParams } from '../../../types/common';
+import { useApiErrorHandler } from '../../use-api-error-handler';
+import { useStore } from '../../use-store';
 
 /**
  * Custom React hook returning a React Query mutation which requests the
@@ -29,7 +29,7 @@ export const useResendActivationMutation = ({
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, "Ошибка при отправке письма активации!");
+      handleApiError(error, 'Ошибка при отправке письма активации!');
       onError?.(error);
     },
     onSettled,

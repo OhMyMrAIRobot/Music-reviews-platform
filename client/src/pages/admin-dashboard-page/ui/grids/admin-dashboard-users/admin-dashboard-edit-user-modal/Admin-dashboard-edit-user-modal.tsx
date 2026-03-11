@@ -1,33 +1,33 @@
-import { observer } from "mobx-react-lite";
-import { FC, useCallback, useEffect, useState } from "react";
-import { Link } from "react-router";
-import ComboBox from "../../../../../../components/buttons/Combo-box.tsx";
-import FormButton from "../../../../../../components/form-elements/Form-button.tsx";
-import FormDelimiter from "../../../../../../components/form-elements/Form-delimiter.tsx";
-import FormInput from "../../../../../../components/form-elements/Form-input.tsx";
-import FormLabel from "../../../../../../components/form-elements/Form-label.tsx";
-import FormTextbox from "../../../../../../components/form-elements/Form-textbox.tsx";
-import ModalOverlay from "../../../../../../components/modals/Modal-overlay.tsx";
-import MoveToSvg from "../../../../../../components/svg/Move-to-svg.tsx";
-import TrashSvg from "../../../../../../components/svg/Trash-svg.tsx";
-import SkeletonLoader from "../../../../../../components/utils/Skeleton-loader.tsx";
-import { useRoleMeta, useSocialMeta } from "../../../../../../hooks/meta";
+import { observer } from 'mobx-react-lite';
+import { FC, useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router';
+import ComboBox from '../../../../../../components/buttons/Combo-box.tsx';
+import FormButton from '../../../../../../components/form-elements/Form-button.tsx';
+import FormDelimiter from '../../../../../../components/form-elements/Form-delimiter.tsx';
+import FormInput from '../../../../../../components/form-elements/Form-input.tsx';
+import FormLabel from '../../../../../../components/form-elements/Form-label.tsx';
+import FormTextbox from '../../../../../../components/form-elements/Form-textbox.tsx';
+import ModalOverlay from '../../../../../../components/modals/Modal-overlay.tsx';
+import MoveToSvg from '../../../../../../components/svg/Move-to-svg.tsx';
+import TrashSvg from '../../../../../../components/svg/Trash-svg.tsx';
+import SkeletonLoader from '../../../../../../components/utils/Skeleton-loader.tsx';
+import { useRoleMeta, useSocialMeta } from '../../../../../../hooks/meta';
 import {
   useAdminUpdateProfileMutation,
   useAdminUpdateUserMutation,
-} from "../../../../../../hooks/mutations/index.ts";
-import useNavigationPath from "../../../../../../hooks/use-navigation-path.ts";
-import { useStore } from "../../../../../../hooks/use-store.ts";
-import { UpdateProfileData } from "../../../../../../types/profile/index.ts";
+} from '../../../../../../hooks/mutations/index.ts';
+import useNavigationPath from '../../../../../../hooks/use-navigation-path.ts';
+import { useStore } from '../../../../../../hooks/use-store.ts';
+import { UpdateProfileData } from '../../../../../../types/profile/index.ts';
 import {
   AdminAvailableRolesEnum,
   RolesEnum,
   RootAdminAvalaibleRolesEnum,
   UserDetails,
   UserStatusesEnum,
-} from "../../../../../../types/user/index.ts";
-import { getRoleColor } from "../../../../../../utils/get-role-color.ts";
-import EditUserModalButton from "./Edit-user-modal-button.tsx";
+} from '../../../../../../types/user/index.ts';
+import { getRoleColor } from '../../../../../../utils/get-role-color.ts';
+import EditUserModalButton from './Edit-user-modal-button.tsx';
 
 interface IProps {
   isOpen: boolean;
@@ -44,16 +44,16 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
     const { socials, isLoading: isSocialsLoading } = useSocialMeta();
 
     /** STATES */
-    const [nickname, setNickname] = useState<string>("");
-    const [email, setEmail] = useState<string>("");
-    const [role, setRole] = useState<string>("");
+    const [nickname, setNickname] = useState<string>('');
+    const [email, setEmail] = useState<string>('');
+    const [role, setRole] = useState<string>('');
     const [availableRoles, setAvailableRoles] = useState<
       Record<string, string>
     >(AdminAvailableRolesEnum);
-    const [status, setStatus] = useState<string>("");
-    const [bio, setBio] = useState<string>(user.profile?.bio ?? "");
+    const [status, setStatus] = useState<string>('');
+    const [bio, setBio] = useState<string>(user.profile?.bio ?? '');
     const [socialValues, setSocialValues] = useState<Record<string, string>>(
-      {},
+      {}
     );
     const [initialSocialValues, setInitialSocialValues] = useState<
       Record<string, string>
@@ -77,9 +77,9 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
         const socialsArr = user?.profile?.socialMedia ?? [];
 
         const found = socialsArr.find((el) => el.id === socialId);
-        return found?.url ?? "";
+        return found?.url ?? '';
       },
-      [user],
+      [user]
     );
 
     /**
@@ -87,11 +87,11 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
      */
     useEffect(() => {
       if (isOpen && user) {
-        setNickname(user.nickname ?? "");
-        setEmail(user.email ?? "");
-        setRole(user.role.role ?? "");
+        setNickname(user.nickname ?? '');
+        setEmail(user.email ?? '');
+        setRole(user.role.role ?? '');
         setStatus(
-          user.isActive ? UserStatusesEnum.ACTIVE : UserStatusesEnum.NON_ACTIVE,
+          user.isActive ? UserStatusesEnum.ACTIVE : UserStatusesEnum.NON_ACTIVE
         );
         if (authStore.user?.role.role === RolesEnum.ADMIN)
           setAvailableRoles(AdminAvailableRolesEnum);
@@ -130,17 +130,17 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
         nicknameChanged || emailChanged || roleChanged || statusChanged;
 
       // Check if profile data changed
-      const bioChanged = (bio ?? "") !== (user?.profile?.bio ?? "");
+      const bioChanged = (bio ?? '') !== (user?.profile?.bio ?? '');
       const changedSocials = socials
         .map((s) => {
-          const url = (socialValues[s.id] ?? "").trim();
-          const initial = (initialSocialValues[s.id] ?? "").trim();
+          const url = (socialValues[s.id] ?? '').trim();
+          const initial = (initialSocialValues[s.id] ?? '').trim();
           if (url === initial) return null;
-          if (url === "") return { socialId: s.id };
+          if (url === '') return { socialId: s.id };
           return { socialId: s.id, url };
         })
         .filter(
-          (item): item is { socialId: string; url?: string } => item !== null,
+          (item): item is { socialId: string; url?: string } => item !== null
         );
 
       const hasProfileChanges = bioChanged || changedSocials.length > 0;
@@ -190,7 +190,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
                   loading="lazy"
                   decoding="async"
                   src={`${import.meta.env.VITE_SERVER_URL}/public/covers/${
-                    user.profile?.coverImage === ""
+                    user.profile?.coverImage === ''
                       ? import.meta.env.VITE_DEFAULT_COVER
                       : user.profile?.coverImage
                   }`}
@@ -204,7 +204,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
                     loading="lazy"
                     decoding="async"
                     src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-                      user.profile?.avatar === ""
+                      user.profile?.avatar === ''
                         ? import.meta.env.VITE_DEFAULT_AVATAR
                         : user.profile?.avatar
                     }`}
@@ -215,23 +215,23 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
                 <div className="lg:absolute right-3 top-3 grid lg:flex gap-3">
                   <Link to={navigatoToProfile(user.id)} className="md:w-45">
                     <EditUserModalButton
-                      title={"Профиль"}
-                      svg={<MoveToSvg className={"size-4"} />}
+                      title={'Профиль'}
+                      svg={<MoveToSvg className={'size-4'} />}
                       disabled={false}
                     />
                   </Link>
 
                   <div className="md:w-45">
                     <EditUserModalButton
-                      disabled={user.profile?.avatar === "" || isProfilePending}
-                      title={"Удалить аватар"}
+                      disabled={user.profile?.avatar === '' || isProfilePending}
+                      title={'Удалить аватар'}
                       onClick={() =>
                         updateProfileData({
                           id: user.id,
                           updateData: { clearAvatar: true },
                         })
                       }
-                      svg={<TrashSvg className={"size-4"} />}
+                      svg={<TrashSvg className={'size-4'} />}
                       isLoading={isProfilePending}
                     />
                   </div>
@@ -239,16 +239,16 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
                   <div className="md:w-45">
                     <EditUserModalButton
                       disabled={
-                        user.profile?.coverImage === "" || isProfilePending
+                        user.profile?.coverImage === '' || isProfilePending
                       }
-                      title={"Удалить обложку"}
+                      title={'Удалить обложку'}
                       onClick={() => {
                         updateProfileData({
                           id: user.id,
                           updateData: { clearCover: true },
                         });
                       }}
-                      svg={<TrashSvg className={"size-4"} />}
+                      svg={<TrashSvg className={'size-4'} />}
                       isLoading={isProfilePending}
                     />
                   </div>
@@ -259,7 +259,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
                   <h6 className="font-medium text-sm">{user.email}</h6>
                   <span
                     className={`${getRoleColor(
-                      user.role.role,
+                      user.role.role
                     )} font-medium text-sm`}
                   >
                     {user.role.role}
@@ -272,15 +272,15 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
                   <div className="w-full md:w-1/2 gap-y-3 h-full flex flex-col justify-between">
                     <div className={`grid gap-2 w-full`}>
                       <FormLabel
-                        name={"Никнейм"}
+                        name={'Никнейм'}
                         htmlFor={`admin-edit-user-nickname`}
                         isRequired={true}
                       />
 
                       <FormInput
                         id={`admin-edit-user-nickname`}
-                        placeholder={"Никнейм..."}
-                        type={"text"}
+                        placeholder={'Никнейм...'}
+                        type={'text'}
                         value={nickname}
                         setValue={setNickname}
                       />
@@ -288,15 +288,15 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 
                     <div className={`grid gap-2 w-full`}>
                       <FormLabel
-                        name={"Email"}
+                        name={'Email'}
                         htmlFor={`admin-edit-user-email`}
                         isRequired={true}
                       />
 
                       <FormInput
                         id={`admin-edit-user-email`}
-                        placeholder={"Email@exaple.com"}
-                        type={"text"}
+                        placeholder={'Email@exaple.com'}
+                        type={'text'}
                         value={email}
                         setValue={setEmail}
                       />
@@ -305,11 +305,11 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 
                   <div className={`w-full md:w-1/2`}>
                     <FormLabel
-                      name={"Описание"}
-                      htmlFor={"admin-edit-user-bio"}
+                      name={'Описание'}
+                      htmlFor={'admin-edit-user-bio'}
                     />
                     <FormTextbox
-                      id={"admin-edit-user-bio"}
+                      id={'admin-edit-user-bio'}
                       placeholder="Описание..."
                       value={bio}
                       setValue={setBio}
@@ -321,7 +321,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 
                 <div className="w-full grid md:flex items-start gap-x-5 gap-y-3">
                   <div className="grid gap-2 w-full md:w-1/2">
-                    <FormLabel name={"Роль"} htmlFor={""} isRequired={true} />
+                    <FormLabel name={'Роль'} htmlFor={''} isRequired={true} />
 
                     <ComboBox
                       options={Object.values(availableRoles)}
@@ -332,7 +332,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
                   </div>
 
                   <div className="grid gap-2 w-full md:w-1/2">
-                    <FormLabel name={"Статус"} htmlFor={""} isRequired={true} />
+                    <FormLabel name={'Статус'} htmlFor={''} isRequired={true} />
 
                     <ComboBox
                       options={Object.values(UserStatusesEnum)}
@@ -356,10 +356,10 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
                     : socials.map((social) => {
                         return (
                           <FormInput
-                            id={"admin-social-input-" + social.id}
+                            id={'admin-social-input-' + social.id}
                             placeholder={social.name}
-                            type={"url"}
-                            value={socialValues[social.id] ?? ""}
+                            type={'url'}
+                            value={socialValues[social.id] ?? ''}
                             setValue={(value: string) =>
                               setSocialValues((prev) => ({
                                 ...prev,
@@ -376,7 +376,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
                 <div className="grid w-full sm:flex gap-3 sm:justify-end sm:flex-row-reverse">
                   <div className="w-full sm:w-30">
                     <FormButton
-                      title={"Сохранить"}
+                      title={'Сохранить'}
                       isInvert={true}
                       onClick={handleSubmit}
                       disabled={
@@ -397,11 +397,11 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
                             user.isActive) ||
                             (status === UserStatusesEnum.NON_ACTIVE &&
                               !user.isActive)) &&
-                          bio === (user.profile?.bio || "") &&
+                          bio === (user.profile?.bio || '') &&
                           !socials.some(
                             (s) =>
-                              (socialValues[s.id] ?? "").trim() !==
-                              (getUserSocialUrl(s.id) ?? "").trim(),
+                              (socialValues[s.id] ?? '').trim() !==
+                              (getUserSocialUrl(s.id) ?? '').trim()
                           ))
                       }
                       isLoading={isUserPending}
@@ -410,7 +410,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 
                   <div className="w-full sm:w-25 sm:ml-auto">
                     <FormButton
-                      title={"Назад"}
+                      title={'Назад'}
                       isInvert={false}
                       onClick={onClose}
                       disabled={isUserPending}
@@ -423,7 +423,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
         )}
       </ModalOverlay>
     );
-  },
+  }
 );
 
 export default AdminDashboardEditUserModal;

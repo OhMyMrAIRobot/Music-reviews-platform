@@ -1,24 +1,24 @@
-import { FC, useEffect, useMemo, useState } from "react";
-import FormButton from "../../../../../components/form-elements/Form-button.tsx";
-import FormCheckbox from "../../../../../components/form-elements/Form-checkbox.tsx";
-import FormInput from "../../../../../components/form-elements/Form-input.tsx";
-import FormLabel from "../../../../../components/form-elements/Form-label.tsx";
+import { FC, useEffect, useMemo, useState } from 'react';
+import FormButton from '../../../../../components/form-elements/Form-button.tsx';
+import FormCheckbox from '../../../../../components/form-elements/Form-checkbox.tsx';
+import FormInput from '../../../../../components/form-elements/Form-input.tsx';
+import FormLabel from '../../../../../components/form-elements/Form-label.tsx';
 import FormMultiSelect, {
   IMultiSelectValue,
-} from "../../../../../components/form-elements/Form-multi-select.tsx";
-import ModalOverlay from "../../../../../components/modals/Modal-overlay.tsx";
-import SkeletonLoader from "../../../../../components/utils/Skeleton-loader.tsx";
-import { useAuthorMeta } from "../../../../../hooks/meta";
+} from '../../../../../components/form-elements/Form-multi-select.tsx';
+import ModalOverlay from '../../../../../components/modals/Modal-overlay.tsx';
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx';
+import { useAuthorMeta } from '../../../../../hooks/meta';
 import {
   useAdminCreateAuthorMutation,
   useAdminUpdateAuthorMutation,
-} from "../../../../../hooks/mutations/index.ts";
-import { Author } from "../../../../../types/author/index.ts";
-import { arraysEqual } from "../../../../../utils/arrays-equal.ts";
-import buildAuthorFormData from "../../../../../utils/build-author-form-data";
-import { constraints } from "../../../../../utils/constraints.ts";
-import SelectImageLabel from "../../../../edit-profile-page/ui/labels/Select-image-label.tsx";
-import SelectedImageLabel from "../../../../edit-profile-page/ui/labels/Selected-image-label.tsx";
+} from '../../../../../hooks/mutations/index.ts';
+import { Author } from '../../../../../types/author/index.ts';
+import { arraysEqual } from '../../../../../utils/arrays-equal.ts';
+import buildAuthorFormData from '../../../../../utils/build-author-form-data';
+import { constraints } from '../../../../../utils/constraints.ts';
+import SelectImageLabel from '../../../../edit-profile-page/ui/labels/Select-image-label.tsx';
+import SelectedImageLabel from '../../../../edit-profile-page/ui/labels/Selected-image-label.tsx';
 
 interface IProps {
   isOpen: boolean;
@@ -32,7 +32,7 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
   /** STATES */
   const [avatar, setAvatar] = useState<File | null>(null);
   const [cover, setCover] = useState<File | null>(null);
-  const [name, setName] = useState<string>("");
+  const [name, setName] = useState<string>('');
   const [selectedTypes, setSelectedTypes] = useState<IMultiSelectValue[]>([]);
   const [deleteAvatar, setDeleteAvatar] = useState<boolean>(false);
   const [deleteCover, setDeleteCover] = useState<boolean>(false);
@@ -46,14 +46,14 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
       setSelectedTypes(
         author.authorTypes.map((t) => {
           return { name: t.type, id: t.id };
-        }),
+        })
       );
 
       if (author.avatar) {
         setAvatarPreviewUrl(
           `${import.meta.env.VITE_SERVER_URL}/public/authors/avatars/${
             author.avatar
-          }`,
+          }`
         );
       }
 
@@ -61,7 +61,7 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
         setCoverPreviewUrl(
           `${import.meta.env.VITE_SERVER_URL}/public/authors/covers/${
             author.cover
-          }`,
+          }`
         );
       }
     } else {
@@ -156,7 +156,7 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
     if (
       !arraysEqual(
         author.authorTypes.map((t) => t.type).sort(),
-        selectedTypes.map((st) => st.name).sort(),
+        selectedTypes.map((st) => st.name).sort()
       )
     )
       return true;
@@ -173,14 +173,14 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
       name.trim().length >= constraints.author.minNameLength &&
       name.trim().length <= constraints.author.maxNameLength &&
       selectedTypes.length > 0,
-    [name, selectedTypes],
+    [name, selectedTypes]
   );
 
   /**
    * Resets the form fields to their initial state
    */
   const resetForm = () => {
-    setName("");
+    setName('');
     setSelectedTypes([]);
     setAvatar(null);
     setCover(null);
@@ -199,7 +199,7 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
    */
   const loadOptions = async (
     search: string,
-    limit: number | null,
+    limit: number | null
   ): Promise<IMultiSelectValue[]> => {
     return types.map((el) => {
       return { name: el.type ?? search, id: el.id ?? limit };
@@ -207,8 +207,8 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
   };
 
   /** CONSTANTS */
-  const title = author ? "Редактирование автора" : "Добавление автора";
-  const buttonText = author ? "Сохранить" : "Добавить";
+  const title = author ? 'Редактирование автора' : 'Добавление автора';
+  const buttonText = author ? 'Сохранить' : 'Добавить';
 
   if (!isOpen) return null;
 
@@ -268,19 +268,19 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
               {author && (
                 <div
                   className={`flex gap-2 items-center mt-2 ${
-                    author.avatar === "" || avatar
-                      ? "opacity-50 pointer-events-none"
-                      : ""
+                    author.avatar === '' || avatar
+                      ? 'opacity-50 pointer-events-none'
+                      : ''
                   }`}
                 >
                   <FormCheckbox
-                    id={"avatar-checkbox"}
+                    id={'avatar-checkbox'}
                     checked={deleteAvatar}
                     setChecked={setDeleteAvatar}
                   />
                   <FormLabel
-                    name={"Удалить аватар"}
-                    htmlFor={"avatar-checkbox"}
+                    name={'Удалить аватар'}
+                    htmlFor={'avatar-checkbox'}
                     isRequired={false}
                   />
                 </div>
@@ -323,19 +323,19 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
               {author && (
                 <div
                   className={`flex gap-2 items-center mt-2 ${
-                    author.cover === "" || cover
-                      ? "opacity-50 pointer-events-none"
-                      : ""
+                    author.cover === '' || cover
+                      ? 'opacity-50 pointer-events-none'
+                      : ''
                   }`}
                 >
                   <FormCheckbox
-                    id={"cover-checkbox"}
+                    id={'cover-checkbox'}
                     checked={deleteCover}
                     setChecked={setDeleteCover}
                   />
                   <FormLabel
-                    name={"Удалить обложку"}
-                    htmlFor={"cover-checkbox"}
+                    name={'Удалить обложку'}
+                    htmlFor={'cover-checkbox'}
                     isRequired={false}
                   />
                 </div>
@@ -346,14 +346,14 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
           <div className="w-full grid lg:flex p-6 border-b border-white/10 gap-6">
             <div className="grid gap-2 w-full lg:w-1/2">
               <FormLabel
-                name={"Имя автора"}
-                htmlFor={"author-name"}
+                name={'Имя автора'}
+                htmlFor={'author-name'}
                 isRequired={true}
               />
               <FormInput
-                id={"author-name"}
-                placeholder={"Имя автора..."}
-                type={"text"}
+                id={'author-name'}
+                placeholder={'Имя автора...'}
+                type={'text'}
                 value={name}
                 setValue={setName}
               />
@@ -361,13 +361,13 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 
             <div className="grid gap-2 w-full lg:w-1/2">
               <FormLabel
-                name={"Тип автора"}
-                htmlFor={"author-types"}
+                name={'Тип автора'}
+                htmlFor={'author-types'}
                 isRequired={true}
               />
               <FormMultiSelect
-                id={"author-types"}
-                placeholder={"Выберите тип автора"}
+                id={'author-types'}
+                placeholder={'Выберите тип автора'}
                 value={selectedTypes}
                 onChange={setSelectedTypes}
                 loadOptions={loadOptions}
@@ -390,7 +390,7 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 
             <div className="w-full sm:w-25">
               <FormButton
-                title={"Назад"}
+                title={'Назад'}
                 isInvert={false}
                 onClick={onClose}
                 disabled={isPending}

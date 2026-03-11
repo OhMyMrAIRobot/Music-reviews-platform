@@ -1,4 +1,4 @@
 export enum ReleaseTypesEnum {
-  ALBUM = "Альбом",
-  SINGLE = "Трек",
+  ALBUM = 'Альбом',
+  SINGLE = 'Трек',
 }

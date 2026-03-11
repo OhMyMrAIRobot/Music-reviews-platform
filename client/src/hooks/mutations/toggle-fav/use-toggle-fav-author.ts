@@ -2,16 +2,16 @@ import {
   InvalidateQueryFilters,
   useMutation,
   useQueryClient,
-} from "@tanstack/react-query";
-import { UserFavAuthorAPI } from "../../../api/author/user-fav-author-api";
-import { authorsKeys } from "../../../query-keys/authors-keys";
-import { leaderboardKeys } from "../../../query-keys/leaderboard-keys";
-import { profilesKeys } from "../../../query-keys/profiles-keys";
-import { Author } from "../../../types/author";
-import { UseToggleFavResult } from "../../../types/common";
-import { useApiErrorHandler } from "../../use-api-error-handler";
-import { useAuth } from "../../use-auth";
-import { useStore } from "../../use-store";
+} from '@tanstack/react-query';
+import { UserFavAuthorAPI } from '../../../api/author/user-fav-author-api';
+import { authorsKeys } from '../../../query-keys/authors-keys';
+import { leaderboardKeys } from '../../../query-keys/leaderboard-keys';
+import { profilesKeys } from '../../../query-keys/profiles-keys';
+import { Author } from '../../../types/author';
+import { UseToggleFavResult } from '../../../types/common';
+import { useApiErrorHandler } from '../../use-api-error-handler';
+import { useAuth } from '../../use-auth';
+import { useStore } from '../../use-store';
 
 /**
  * Custom hook to toggle favorite author
@@ -22,7 +22,7 @@ import { useStore } from "../../use-store";
  */
 export const useToggleFavAuthor = (
   author: Author | undefined,
-  isFav: boolean,
+  isFav: boolean
 ): UseToggleFavResult => {
   const { authStore, notificationStore } = useStore();
   const { checkAuth } = useAuth();
@@ -31,8 +31,8 @@ export const useToggleFavAuthor = (
 
   const invalidateRelatedQueries = () => {
     const keysToInvalidate: InvalidateQueryFilters[] = [
-      { queryKey: profilesKeys.profile(authStore.user?.id ?? "unknown") },
-      { queryKey: profilesKeys.preferences(authStore.user?.id ?? "unknown") },
+      { queryKey: profilesKeys.profile(authStore.user?.id ?? 'unknown') },
+      { queryKey: profilesKeys.preferences(authStore.user?.id ?? 'unknown') },
       { queryKey: authorsKeys.all },
       { queryKey: leaderboardKeys.all },
     ];
@@ -47,8 +47,8 @@ export const useToggleFavAuthor = (
     onSuccess: () => {
       notificationStore.addSuccessNotification(
         isFav
-          ? "Автор успешно удален из избранного!"
-          : "Автор успешно добавлен в избранное!",
+          ? 'Автор успешно удален из избранного!'
+          : 'Автор успешно добавлен в избранное!'
       );
 
       invalidateRelatedQueries();
@@ -57,8 +57,8 @@ export const useToggleFavAuthor = (
       handleApiError(
         error,
         isFav
-          ? "Не удалось убрать автора из избранного!"
-          : "Не удалось добавить автора в избранное!",
+          ? 'Не удалось убрать автора из избранного!'
+          : 'Не удалось добавить автора в избранное!'
       );
     },
   });

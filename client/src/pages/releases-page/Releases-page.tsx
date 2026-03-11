@@ -1,11 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
-import { ReleaseAPI } from "../../api/release/release-api";
-import ComboBox from "../../components/buttons/Combo-box";
-import ReleasesGrid from "../../components/release/Releases-grid";
-import SkeletonLoader from "../../components/utils/Skeleton-loader";
-import { useReleaseMeta } from "../../hooks/meta";
-import { releasesKeys } from "../../query-keys/releases-keys";
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useMemo, useState } from 'react';
+import { ReleaseAPI } from '../../api/release/release-api';
+import ComboBox from '../../components/buttons/Combo-box';
+import ReleasesGrid from '../../components/release/Releases-grid';
+import SkeletonLoader from '../../components/utils/Skeleton-loader';
+import { useReleaseMeta } from '../../hooks/meta';
+import { releasesKeys } from '../../query-keys/releases-keys';
 import {
   ReleaseSortFields,
   ReleaseSortKey,
@@ -14,29 +14,29 @@ import {
   getKeyByLabel,
   getSortParams,
   getTypeIdByOption,
-} from "../../types/release";
+} from '../../types/release';
 
 const limit = 12;
 
 const ReleasesPage = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [selectedSort, setSelectedSort] = useState<string>(
-    ReleaseSortFields.PUBLISHED_NEW,
+    ReleaseSortFields.PUBLISHED_NEW
   );
   const [selectedType, setSelectedType] = useState<string>(
-    ReleaseTypesFilterOptions.ALL,
+    ReleaseTypesFilterOptions.ALL
   );
 
   const { types: releaseTypes, isLoading: isTypesLoading } = useReleaseMeta();
 
   const selectedTypeId = useMemo(
     () => getTypeIdByOption(selectedType, releaseTypes),
-    [releaseTypes, selectedType],
+    [releaseTypes, selectedType]
   );
 
   const { sortField, sortOrder } = useMemo(() => {
     const key =
-      getKeyByLabel(selectedSort) ?? ("PUBLISHED_NEW" as ReleaseSortKey);
+      getKeyByLabel(selectedSort) ?? ('PUBLISHED_NEW' as ReleaseSortKey);
     const params = getSortParams(key);
     return { sortField: params.field, sortOrder: params.order };
   }, [selectedSort]);

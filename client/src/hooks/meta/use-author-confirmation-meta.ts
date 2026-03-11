@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
-import { AuthorConfirmationAPI } from "../../api/author/author-confirmation-api";
-import { authorConfirmationsKeys } from "../../query-keys/authors-confirmations-keys";
+import { useQuery } from '@tanstack/react-query';
+import { AuthorConfirmationAPI } from '../../api/author/author-confirmation-api';
+import { authorConfirmationsKeys } from '../../query-keys/authors-confirmations-keys';
 
 /**
  * Custom hook to fetch and manage author confirmation statuses metadata.

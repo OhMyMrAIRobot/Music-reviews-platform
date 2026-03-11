@@ -1,4 +1,4 @@
-import { ReleaseMediaStatusesEnum } from "..";
+import { ReleaseMediaStatusesEnum } from '..';
 
 /**
  * Represents an `ReleaseMediaStatus` entity.

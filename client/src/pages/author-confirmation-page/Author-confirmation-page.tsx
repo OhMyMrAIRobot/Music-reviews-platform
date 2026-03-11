@@ -1,8 +1,8 @@
-import { useState } from "react";
-import AuthLayout from "../auth-page/ui/Auth-layout";
-import AuthorConfirmationButton from "./ui/Author-confirmation-button";
-import AuthorConfirmationTickets from "./ui/Author-confirmation-tickets";
-import SendAuthorConfirmationForm from "./ui/Send-author-confirmation-form";
+import { useState } from 'react';
+import AuthLayout from '../auth-page/ui/Auth-layout';
+import AuthorConfirmationButton from './ui/Author-confirmation-button';
+import AuthorConfirmationTickets from './ui/Author-confirmation-tickets';
+import SendAuthorConfirmationForm from './ui/Send-author-confirmation-form';
 
 const AuthorConfirmationPage = () => {
   const [formShow, setFormShow] = useState<boolean>(true);
@@ -18,12 +18,12 @@ const AuthorConfirmationPage = () => {
           <AuthorConfirmationButton
             onClick={() => setFormShow(true)}
             isActive={formShow}
-            title={"Отправить заявку"}
+            title={'Отправить заявку'}
           />
           <AuthorConfirmationButton
             onClick={() => setFormShow(false)}
             isActive={!formShow}
-            title={"Мои заявки"}
+            title={'Мои заявки'}
           />
         </div>
 

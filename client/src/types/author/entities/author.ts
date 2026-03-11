@@ -1,5 +1,5 @@
-import { AuthorType, UserFavAuthor } from ".";
-import { AuthorNominations, AuthorReleaseTypeRating } from "../subtypes";
+import { AuthorType, UserFavAuthor } from '.';
+import { AuthorNominations, AuthorReleaseTypeRating } from '../subtypes';
 
 /**
  * Represents an author entity.

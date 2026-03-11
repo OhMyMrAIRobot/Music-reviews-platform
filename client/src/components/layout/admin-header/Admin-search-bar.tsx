@@ -1,5 +1,5 @@
-import { FC } from "react";
-import SearchSvg from "../header/svg/Search-svg";
+import { FC } from 'react';
+import SearchSvg from '../header/svg/Search-svg';
 
 interface IProps {
   searchText: string;
@@ -15,7 +15,7 @@ const AdminSearchBar: FC<IProps> = ({
   className,
 }) => {
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       handleSearchClick();
     }
   };
@@ -34,7 +34,7 @@ const AdminSearchBar: FC<IProps> = ({
         onClick={handleSearchClick}
         className="w-10 h-full px-3 text-sm rounded-md cursor-pointer font-medium text-gray-500 transition-colors hover:bg-white/15 hover:text-white duration-200"
       >
-        <SearchSvg className={"size-4"} />
+        <SearchSvg className={'size-4'} />
       </button>
 
       <input

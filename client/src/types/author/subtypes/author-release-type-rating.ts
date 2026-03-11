@@ -1,4 +1,4 @@
-import { ReleaseTypesEnum } from "../../release";
+import { ReleaseTypesEnum } from '../../release';
 
 /**
  * Rating summary for an author with a specific release type.

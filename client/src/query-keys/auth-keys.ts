@@ -1,3 +1,3 @@
 export const authKeys = {
-  auth: ["auth"] as const,
+  auth: ['auth'] as const,
 };

@@ -1,7 +1,7 @@
-import { observer } from "mobx-react-lite";
-import { FC } from "react";
-import ReleaseDetailsAlbumValueFormSlider from "./Release-details-album-value-form-slider";
-import ReleaseDetailsAlbumValueSection from "./Release-details-album-value-section";
+import { observer } from 'mobx-react-lite';
+import { FC } from 'react';
+import ReleaseDetailsAlbumValueFormSlider from './Release-details-album-value-form-slider';
+import ReleaseDetailsAlbumValueSection from './Release-details-album-value-section';
 
 interface IProps {
   rhymes: number;
@@ -28,8 +28,8 @@ const ReleaseDetailsAlbumValueFormQuality: FC<IProps> = observer(
     return (
       <ReleaseDetailsAlbumValueSection
         pos={4}
-        title={"Качество"}
-        minMaxText={"(в процентах)"}
+        title={'Качество'}
+        minMaxText={'(в процентах)'}
         description={
           <p>
             Процент реализации релиза по четырем базовым критериям
@@ -38,7 +38,7 @@ const ReleaseDetailsAlbumValueFormQuality: FC<IProps> = observer(
           </p>
         }
         value={`${(rhymes + structure + realization + individuality) * 2.5}%`}
-        maxValue={"100%"}
+        maxValue={'100%'}
       >
         <div className="bg-zinc-800 rounded-lg xl:ml-10 px-5 py-3 border border-zinc-700">
           <div className="font-bold text-center mb-5">
@@ -53,8 +53,8 @@ const ReleaseDetailsAlbumValueFormQuality: FC<IProps> = observer(
               min={1}
               max={10}
               step={1}
-              valueTitle={""}
-              valueDescription={""}
+              valueTitle={''}
+              valueDescription={''}
             />
 
             <ReleaseDetailsAlbumValueFormSlider
@@ -64,8 +64,8 @@ const ReleaseDetailsAlbumValueFormQuality: FC<IProps> = observer(
               min={1}
               max={10}
               step={1}
-              valueTitle={""}
-              valueDescription={""}
+              valueTitle={''}
+              valueDescription={''}
             />
 
             <ReleaseDetailsAlbumValueFormSlider
@@ -75,8 +75,8 @@ const ReleaseDetailsAlbumValueFormQuality: FC<IProps> = observer(
               min={1}
               max={10}
               step={1}
-              valueTitle={""}
-              valueDescription={""}
+              valueTitle={''}
+              valueDescription={''}
             />
 
             <ReleaseDetailsAlbumValueFormSlider
@@ -86,14 +86,14 @@ const ReleaseDetailsAlbumValueFormQuality: FC<IProps> = observer(
               min={1}
               max={10}
               step={1}
-              valueTitle={""}
-              valueDescription={""}
+              valueTitle={''}
+              valueDescription={''}
             />
           </div>
         </div>
       </ReleaseDetailsAlbumValueSection>
     );
-  },
+  }
 );
 
 export default ReleaseDetailsAlbumValueFormQuality;

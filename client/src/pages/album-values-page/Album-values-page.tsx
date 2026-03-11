@@ -1,29 +1,29 @@
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { AlbumValueAPI } from "../../api/album-value-api";
-import AlbumValueCard from "../../components/album-value/Album-value-card";
-import ComboBox from "../../components/buttons/Combo-box";
-import FormCheckbox from "../../components/form-elements/Form-checkbox";
-import FormLabel from "../../components/form-elements/Form-label";
-import Pagination from "../../components/pagination/Pagination";
-import { albumValuesKeys } from "../../query-keys/album-values-keys";
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { AlbumValueAPI } from '../../api/album-value-api';
+import AlbumValueCard from '../../components/album-value/Album-value-card';
+import ComboBox from '../../components/buttons/Combo-box';
+import FormCheckbox from '../../components/form-elements/Form-checkbox';
+import FormLabel from '../../components/form-elements/Form-label';
+import Pagination from '../../components/pagination/Pagination';
+import { albumValuesKeys } from '../../query-keys/album-values-keys';
 import {
   AlbumValueSortOptions,
   AlbumValuesQuery,
   AlbumValueTiersEnum,
-} from "../../types/album-value";
-import { SortOrdersEnum } from "../../types/common/enums/sort-orders-enum";
-import { ALBUM_VALUES } from "../../utils/album-value-config";
+} from '../../types/album-value';
+import { SortOrdersEnum } from '../../types/common/enums/sort-orders-enum';
+import { ALBUM_VALUES } from '../../utils/album-value-config';
 
 const limit = 12;
 
 const AlbumValuesPage = () => {
-  const [sortOrder, setSortOrder] = useState<string>("");
+  const [sortOrder, setSortOrder] = useState<string>('');
   const [selectedTiers, setSelectedTiers] = useState<AlbumValueTiersEnum[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const orderParam =
-    sortOrder !== ""
+    sortOrder !== ''
       ? sortOrder === AlbumValueSortOptions.ASC
         ? SortOrdersEnum.ASC
         : SortOrdersEnum.DESC
@@ -122,7 +122,7 @@ const AlbumValuesPage = () => {
               totalItems={totalCount}
               itemsPerPage={limit}
               setCurrentPage={setCurrentPage}
-              idToScroll={"album-values"}
+              idToScroll={'album-values'}
             />
           </div>
         </div>

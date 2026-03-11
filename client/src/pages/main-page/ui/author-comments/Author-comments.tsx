@@ -1,14 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
-import { useRef, useState } from "react";
-import { AuthorCommentAPI } from "../../../../api/author/author-comment-api";
-import AuthorCommentColorSvg from "../../../../components/author/author-comment/svg/Author-comment-color-svg";
-import CarouselContainer from "../../../../components/carousel/Carousel-container";
-import useNavigationPath from "../../../../hooks/use-navigation-path";
-import { authorCommentsKeys } from "../../../../query-keys/author-comments-keys";
-import { AuthorCommentsQuery } from "../../../../types/author";
-import { SortOrdersEnum } from "../../../../types/common/enums/sort-orders-enum";
-import { CarouselRef } from "../../../../types/common/types/carousel-ref";
-import AuthorCommentsCarousel from "./carousel/Author-comments-carousel";
+import { useQuery } from '@tanstack/react-query';
+import { useRef, useState } from 'react';
+import { AuthorCommentAPI } from '../../../../api/author/author-comment-api';
+import AuthorCommentColorSvg from '../../../../components/author/author-comment/svg/Author-comment-color-svg';
+import CarouselContainer from '../../../../components/carousel/Carousel-container';
+import useNavigationPath from '../../../../hooks/use-navigation-path';
+import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys';
+import { AuthorCommentsQuery } from '../../../../types/author';
+import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum';
+import { CarouselRef } from '../../../../types/common/types/carousel-ref';
+import AuthorCommentsCarousel from './carousel/Author-comments-carousel';
 
 const query: AuthorCommentsQuery = {
   limit: 15,
@@ -41,7 +41,7 @@ const AuthorComments = () => {
           Авторские комментарии
         </div>
       }
-      buttonTitle={"Все авторские комментарии"}
+      buttonTitle={'Все авторские комментарии'}
       showButton={true}
       href={navigateToAuthorComments}
       handlePrev={() => carouselRef.current?.scrollPrev()}

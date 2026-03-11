@@ -1,5 +1,5 @@
-import { FC } from "react";
-import { RolesEnum } from "../../types/user";
+import { FC } from 'react';
+import { RolesEnum } from '../../types/user';
 
 interface IProps {
   role: string;

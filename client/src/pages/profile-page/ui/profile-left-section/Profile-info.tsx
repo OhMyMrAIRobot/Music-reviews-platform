@@ -1,8 +1,8 @@
-import { FC } from "react";
-import RegisteredAuthorTypes from "../../../../components/author/registered-author/Registered-author-types";
-import UserRoleSpan from "../../../../components/user/User-role-span";
-import { Profile } from "../../../../types/profile";
-import ProfileSocialItem from "./profile-social-item/Profile-social-item";
+import { FC } from 'react';
+import RegisteredAuthorTypes from '../../../../components/author/registered-author/Registered-author-types';
+import UserRoleSpan from '../../../../components/user/User-role-span';
+import { Profile } from '../../../../types/profile';
+import ProfileSocialItem from './profile-social-item/Profile-social-item';
 
 interface IProps {
   profile: Profile;
@@ -16,7 +16,7 @@ const ProfileInfo: FC<IProps> = ({ profile }) => {
           loading="lazy"
           decoding="async"
           src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-            profile.avatar === ""
+            profile.avatar === ''
               ? import.meta.env.VITE_DEFAULT_AVATAR
               : profile.avatar
           }`}
@@ -30,7 +30,7 @@ const ProfileInfo: FC<IProps> = ({ profile }) => {
         <UserRoleSpan role={profile.user.role.role} />
         {profile.user.isAuthor && (
           <RegisteredAuthorTypes
-            className={"size-7"}
+            className={'size-7'}
             types={profile.user.authorTypes}
           />
         )}
@@ -56,7 +56,7 @@ const ProfileInfo: FC<IProps> = ({ profile }) => {
                 href={social.url}
                 key={social.name}
               />
-            ),
+            )
         )}
       </div>
     </div>

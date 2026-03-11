@@ -1,8 +1,8 @@
-import { FC } from "react";
-import { Link } from "react-router";
-import useNavigationPath from "../../../../hooks/use-navigation-path";
-import { AuthorTypesEnum } from "../../../../types/author";
-import { ReleaseAuthor } from "../../../../types/release";
+import { FC } from 'react';
+import { Link } from 'react-router';
+import useNavigationPath from '../../../../hooks/use-navigation-path';
+import { AuthorTypesEnum } from '../../../../types/author';
+import { ReleaseAuthor } from '../../../../types/release';
 
 interface IProps {
   author: ReleaseAuthor;
@@ -16,11 +16,11 @@ const ReleaseDetailsAuthorsItem: FC<IProps> = ({ author, type }) => {
     <Link
       to={navigateToAuthorDetails(author.id)}
       className={`flex items-center justify-center text-sm font-medium h-10 gap-x-1.5 lg:gap-x-2 hover:bg-white/10 transition-colors duration-200 px-1 py-2 
-				${type === AuthorTypesEnum.ARTIST ? "rounded-full lg:px-3" : ""}
+				${type === AuthorTypesEnum.ARTIST ? 'rounded-full lg:px-3' : ''}
 				${
           type === AuthorTypesEnum.PRODUCER
-            ? "rounded-md lg:px-2"
-            : "rounded-md lg:px-2"
+            ? 'rounded-md lg:px-2'
+            : 'rounded-md lg:px-2'
         }
 				`}
     >
@@ -30,7 +30,7 @@ const ReleaseDetailsAuthorsItem: FC<IProps> = ({ author, type }) => {
           decoding="async"
           alt={author.name}
           src={`${import.meta.env.VITE_SERVER_URL}/public/authors/avatars/${
-            author.img === "" ? import.meta.env.VITE_DEFAULT_AVATAR : author.img
+            author.img === '' ? import.meta.env.VITE_DEFAULT_AVATAR : author.img
           }`}
           className="size-full object-cover aspect-square"
         />

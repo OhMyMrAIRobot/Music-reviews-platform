@@ -1,25 +1,25 @@
-import { useQuery } from "@tanstack/react-query";
-import { observer } from "mobx-react-lite";
-import { useEffect, useLayoutEffect } from "react";
-import { Route, Routes, useLocation } from "react-router";
-import { AuthAPI } from "./api/auth-api";
-import { ProfileAPI } from "./api/user/profile-api";
-import Layout from "./components/layout/Layout";
-import NotificationsContainer from "./components/notifications/Notifications-container";
-import Loader from "./components/utils/Loader";
-import { useStore } from "./hooks/use-store";
-import AuthPage from "./pages/auth-page/Auth-page";
-import ActivationForm from "./pages/auth-page/ui/forms/Activation-form";
-import { authKeys } from "./query-keys/auth-keys";
-import { profilesKeys } from "./query-keys/profiles-keys";
-import AdminRoute from "./routes/Admin-route";
-import AdminRouteList from "./routes/Admin-route-list";
-import AuthRoute from "./routes/Auth-route";
-import AuthRouteList from "./routes/Auth-route-list";
-import GlobalRouteList from "./routes/Global-route-list";
-import NonAuthRoute from "./routes/Non-auth-route";
-import NonAuthRouteList from "./routes/Non-auth-route-list";
-import { ROUTES } from "./routes/routes-enum";
+import { useQuery } from '@tanstack/react-query';
+import { observer } from 'mobx-react-lite';
+import { useEffect, useLayoutEffect } from 'react';
+import { Route, Routes, useLocation } from 'react-router';
+import { AuthAPI } from './api/auth-api';
+import { ProfileAPI } from './api/user/profile-api';
+import Layout from './components/layout/Layout';
+import NotificationsContainer from './components/notifications/Notifications-container';
+import Loader from './components/utils/Loader';
+import { useStore } from './hooks/use-store';
+import AuthPage from './pages/auth-page/Auth-page';
+import ActivationForm from './pages/auth-page/ui/forms/Activation-form';
+import { authKeys } from './query-keys/auth-keys';
+import { profilesKeys } from './query-keys/profiles-keys';
+import AdminRoute from './routes/Admin-route';
+import AdminRouteList from './routes/Admin-route-list';
+import AuthRoute from './routes/Auth-route';
+import AuthRouteList from './routes/Auth-route-list';
+import GlobalRouteList from './routes/Global-route-list';
+import NonAuthRoute from './routes/Non-auth-route';
+import NonAuthRouteList from './routes/Non-auth-route-list';
+import { ROUTES } from './routes/routes-enum';
 
 export const App = observer(() => {
   const { authStore } = useStore();
@@ -27,14 +27,14 @@ export const App = observer(() => {
   const { data, error, isFetching } = useQuery({
     queryKey: authKeys.auth,
     queryFn: AuthAPI.refresh,
-    enabled: !!localStorage.getItem("token") && !authStore.isAuth,
+    enabled: !!localStorage.getItem('token') && !authStore.isAuth,
     staleTime: Infinity,
   });
 
   const userId = authStore.user?.id;
 
   const { data: profileData } = useQuery({
-    queryKey: userId ? profilesKeys.profile(userId) : ["profile", "null"],
+    queryKey: userId ? profilesKeys.profile(userId) : ['profile', 'null'],
     queryFn: userId
       ? () => ProfileAPI.findByUserId(userId)
       : () => Promise.resolve(null),
@@ -47,7 +47,7 @@ export const App = observer(() => {
       authStore.setAuthorization(data.user, data.accessToken);
     } else if (error) {
       authStore.setAuth(false);
-      localStorage.removeItem("token");
+      localStorage.removeItem('token');
     }
   }, [data, error, authStore]);
 
@@ -70,7 +70,7 @@ export const App = observer(() => {
 
   return isFetching ? (
     <div className="min-w-screen min-h-screen flex items-center justify-center">
-      <Loader className={"mx-auto size-20 border-white"} />
+      <Loader className={'mx-auto size-20 border-white'} />
     </div>
   ) : (
     <>

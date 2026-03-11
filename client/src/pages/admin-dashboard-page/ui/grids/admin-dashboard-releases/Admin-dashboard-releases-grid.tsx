@@ -1,30 +1,30 @@
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { ReleaseAPI } from "../../../../../api/release/release-api.ts";
-import AdminHeader from "../../../../../components/layout/admin-header/Admin-header.tsx";
-import Pagination from "../../../../../components/pagination/Pagination.tsx";
-import ReleaseTypeIcon from "../../../../../components/release/Release-type-icon.tsx";
-import SkeletonLoader from "../../../../../components/utils/Skeleton-loader.tsx";
-import { useReleaseMeta } from "../../../../../hooks/meta";
-import { releasesKeys } from "../../../../../query-keys/releases-keys.ts";
-import { SortOrdersEnum } from "../../../../../types/common/enums/sort-orders-enum.ts";
-import { SortOrder } from "../../../../../types/common/types/sort-order.ts";
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { ReleaseAPI } from '../../../../../api/release/release-api.ts';
+import AdminHeader from '../../../../../components/layout/admin-header/Admin-header.tsx';
+import Pagination from '../../../../../components/pagination/Pagination.tsx';
+import ReleaseTypeIcon from '../../../../../components/release/Release-type-icon.tsx';
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx';
+import { useReleaseMeta } from '../../../../../hooks/meta';
+import { releasesKeys } from '../../../../../query-keys/releases-keys.ts';
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum.ts';
+import { SortOrder } from '../../../../../types/common/types/sort-order.ts';
 import {
   ReleasesQuery,
   ReleaseTypesFilterOptions,
-} from "../../../../../types/release/index.ts";
-import AdminFilterButton from "../../buttons/Admin-filter-button.tsx";
-import AdminDashboardReleasesGridItem from "./Admin-dashboard-releases-grid-item.tsx";
-import ReleaseFormModal from "./Release-form-modal.tsx";
+} from '../../../../../types/release/index.ts';
+import AdminFilterButton from '../../buttons/Admin-filter-button.tsx';
+import AdminDashboardReleasesGridItem from './Admin-dashboard-releases-grid-item.tsx';
+import ReleaseFormModal from './Release-form-modal.tsx';
 
 const limit = 10;
 
 const AdminDashboardReleasesGrid = () => {
   const [addModalOpen, setAddModalOpen] = useState<boolean>(false);
-  const [searchText, setSearchText] = useState<string>("");
+  const [searchText, setSearchText] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [activeType, setActiveType] = useState<string>(
-    ReleaseTypesFilterOptions.ALL,
+    ReleaseTypesFilterOptions.ALL
   );
   const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC);
 
@@ -59,7 +59,7 @@ const AdminDashboardReleasesGrid = () => {
 
   return (
     <div className="flex flex-col h-screen" id="admin-authors">
-      <AdminHeader title={"Релизы"} setText={setSearchText} />
+      <AdminHeader title={'Релизы'} setText={setSearchText} />
 
       {!isTypesLoading && (
         <ReleaseFormModal
@@ -82,7 +82,7 @@ const AdminDashboardReleasesGrid = () => {
                   key={type}
                   title={
                     <span className={`flex items-center px-2`}>
-                      <ReleaseTypeIcon type={type} className={"size-5 mr-1"} />
+                      <ReleaseTypeIcon type={type} className={'size-5 mr-1'} />
                       {type}
                     </span>
                   }
@@ -93,7 +93,7 @@ const AdminDashboardReleasesGrid = () => {
 
           <div className="ml-auto max-sm:hidden">
             <AdminFilterButton
-              title={"Добавить релиз"}
+              title={'Добавить релиз'}
               isActive={false}
               onClick={() => setAddModalOpen(true)}
             />
@@ -102,7 +102,7 @@ const AdminDashboardReleasesGrid = () => {
 
         <div className="sm:hidden mt-2 text-white/80 border-b border-white/10">
           <AdminFilterButton
-            title={"Добавить релиз"}
+            title={'Добавить релиз'}
             isActive={false}
             onClick={() => setAddModalOpen(true)}
           />
@@ -116,7 +116,7 @@ const AdminDashboardReleasesGrid = () => {
             setOrder(
               order === SortOrdersEnum.DESC
                 ? SortOrdersEnum.ASC
-                : SortOrdersEnum.DESC,
+                : SortOrdersEnum.DESC
             )
           }
         />
@@ -154,7 +154,7 @@ const AdminDashboardReleasesGrid = () => {
               totalItems={count}
               itemsPerPage={limit}
               setCurrentPage={setCurrentPage}
-              idToScroll={"admin-authors-grid"}
+              idToScroll={'admin-authors-grid'}
             />
           </div>
         )}
