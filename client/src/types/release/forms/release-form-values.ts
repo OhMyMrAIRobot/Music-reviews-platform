@@ -1,4 +1,4 @@
-import { IMultiSelectValue } from "../../../components/form-elements/Form-multi-select";
+import { IMultiSelectValue } from '../../../components/form-elements/Form-multi-select';
 
 export interface IReleaseFormValues {
   cover: File | null;
@@ -10,6 +10,7 @@ export interface IReleaseFormValues {
   selectedProducers: IMultiSelectValue[];
   selectedDesigners: IMultiSelectValue[];
   deleteCover: boolean;
+  youtubeId: string | null;
 }
 
 export type { IMultiSelectValue as ReleaseFormMultiSelectValue };
