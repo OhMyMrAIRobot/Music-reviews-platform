@@ -1,4 +1,4 @@
-import { SortOrder } from "../../common/types/sort-order";
+import { SortOrder } from '../../common/types/sort-order';
 
 /**
  * Query for listing author confirmations.

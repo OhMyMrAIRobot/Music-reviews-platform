@@ -2,14 +2,14 @@ import {
   InvalidateQueryFilters,
   useMutation,
   useQueryClient,
-} from "@tanstack/react-query";
-import { ReviewAPI } from "../../../../api/review/review-api";
-import { releasesKeys } from "../../../../query-keys/releases-keys";
-import { reviewsKeys } from "../../../../query-keys/reviews-keys";
-import { UseMutationParams } from "../../../../types/common";
-import { UpdateReviewData } from "../../../../types/review";
-import { useApiErrorHandler } from "../../../use-api-error-handler";
-import { useStore } from "../../../use-store";
+} from '@tanstack/react-query';
+import { ReviewAPI } from '../../../../api/review/review-api';
+import { releasesKeys } from '../../../../query-keys/releases-keys';
+import { reviewsKeys } from '../../../../query-keys/reviews-keys';
+import { UseMutationParams } from '../../../../types/common';
+import { UpdateReviewData } from '../../../../types/review';
+import { useApiErrorHandler } from '../../../use-api-error-handler';
+import { useStore } from '../../../use-store';
 
 /**
  * Custom React hook returning a React Query mutation for updating a review.
@@ -47,12 +47,12 @@ export const useAdminUpdateReviewMutation = ({
       reviewData: UpdateReviewData;
     }) => ReviewAPI.adminUpdate(reviewId, reviewData),
     onSuccess: (data) => {
-      notificationStore.addSuccessNotification("Рецензия успешно обновлена!");
+      notificationStore.addSuccessNotification('Рецензия успешно обновлена!');
       invalidateRelatedQueries(data.release.id);
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, "Не удалось обновить рецензию");
+      handleApiError(error, 'Не удалось обновить рецензию');
       onError?.(error);
     },
     onSettled,

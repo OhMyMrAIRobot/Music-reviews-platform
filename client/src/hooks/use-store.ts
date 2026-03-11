@@ -1,5 +1,5 @@
-import { useContext } from "react";
-import { StoreContext } from "../contexts/store-context";
+import { useContext } from 'react';
+import { StoreContext } from '../contexts/store-context';
 
 /**
  * Custom hook to access the application store.
@@ -10,7 +10,7 @@ export const useStore = () => {
   const context = useContext(StoreContext);
 
   if (!context) {
-    throw new Error("Context provider missing!");
+    throw new Error('Context provider missing!');
   }
 
   return context;

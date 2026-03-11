@@ -1,5 +1,5 @@
-import { FC, MouseEvent } from "react";
-import { Link, LinkProps } from "react-router";
+import { FC, MouseEvent } from 'react';
+import { Link, LinkProps } from 'react-router';
 
 interface IProps extends LinkProps {
   prevent?: boolean;
@@ -21,7 +21,7 @@ const PreventableLink: FC<IProps> = ({
 
   return (
     <Link
-      to={prevent ? "#" : to}
+      to={prevent ? '#' : to}
       onClick={handleClick}
       aria-disabled={prevent}
       {...props}

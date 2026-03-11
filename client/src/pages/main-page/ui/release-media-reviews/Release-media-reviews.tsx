@@ -1,18 +1,18 @@
-import { useQuery } from "@tanstack/react-query";
-import { useRef, useState } from "react";
-import { ReleaseMediaAPI } from "../../../../api/release/release-media-api";
-import CarouselContainer from "../../../../components/carousel/Carousel-container";
-import { useReleaseMediaMeta } from "../../../../hooks/meta";
-import useNavigationPath from "../../../../hooks/use-navigation-path";
-import { releaseMediaKeys } from "../../../../query-keys/release-media-keys";
-import { SortOrdersEnum } from "../../../../types/common/enums/sort-orders-enum";
-import { CarouselRef } from "../../../../types/common/types/carousel-ref";
+import { useQuery } from '@tanstack/react-query';
+import { useRef, useState } from 'react';
+import { ReleaseMediaAPI } from '../../../../api/release/release-media-api';
+import CarouselContainer from '../../../../components/carousel/Carousel-container';
+import { useReleaseMediaMeta } from '../../../../hooks/meta';
+import useNavigationPath from '../../../../hooks/use-navigation-path';
+import { releaseMediaKeys } from '../../../../query-keys/release-media-keys';
+import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum';
+import { CarouselRef } from '../../../../types/common/types/carousel-ref';
 import {
   ReleaseMediaQuery,
   ReleaseMediaStatusesEnum,
   ReleaseMediaTypesEnum,
-} from "../../../../types/release";
-import ReleaseMediaReviewsCarousel from "./carousel/Release-media-reviews-carousel";
+} from '../../../../types/release';
+import ReleaseMediaReviewsCarousel from './carousel/Release-media-reviews-carousel';
 
 const limit = 15;
 const offset = 0;
@@ -23,10 +23,10 @@ const ReleaseMediaReviews = () => {
   const { statuses, types, isLoading: isMetaLoading } = useReleaseMediaMeta();
 
   const typeId = types.find(
-    (t) => t.type === ReleaseMediaTypesEnum.MEDIA_REVIEW,
+    (t) => t.type === ReleaseMediaTypesEnum.MEDIA_REVIEW
   )?.id;
   const statusId = statuses.find(
-    (s) => s.status === ReleaseMediaStatusesEnum.APPROVED,
+    (s) => s.status === ReleaseMediaStatusesEnum.APPROVED
   )?.id;
 
   const query: ReleaseMediaQuery = {
@@ -52,8 +52,8 @@ const ReleaseMediaReviews = () => {
 
   return (
     <CarouselContainer
-      title={"Рецензии Медиа"}
-      buttonTitle={"Все рецензии Медиа"}
+      title={'Рецензии Медиа'}
+      buttonTitle={'Все рецензии Медиа'}
       showButton={true}
       href={navigateToMediaReviews}
       handlePrev={() => carouselRef.current?.scrollPrev()}

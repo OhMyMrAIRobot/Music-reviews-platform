@@ -1,15 +1,15 @@
-import { observer } from "mobx-react-lite";
-import { FC, useState } from "react";
-import HourglassSvg from "../../../../components/svg/Hourglass-svg";
-import RejectSvg from "../../../../components/svg/Reject-svg";
-import { useToggleFavMedia } from "../../../../hooks/mutations/toggle-fav/use-toggle-fav-media";
-import { useStore } from "../../../../hooks/use-store";
+import { observer } from 'mobx-react-lite';
+import { FC, useState } from 'react';
+import HourglassSvg from '../../../../components/svg/Hourglass-svg';
+import RejectSvg from '../../../../components/svg/Reject-svg';
+import { useToggleFavMedia } from '../../../../hooks/mutations/toggle-fav/use-toggle-fav-media';
+import { useStore } from '../../../../hooks/use-store';
 import {
   ReleaseMedia,
   ReleaseMediaStatusesEnum,
   ReleaseMediaTypesEnum,
-} from "../../../../types/release";
-import { parseYoutubeId } from "../../../../utils/parse-youtube-id";
+} from '../../../../types/release';
+import { parseYoutubeId } from '../../../../utils/parse-youtube-id';
 
 interface IProps {
   releaseMedia: ReleaseMedia;
@@ -19,7 +19,7 @@ const ReleaseDetailsMediaItem: FC<IProps> = observer(({ releaseMedia }) => {
   const { authStore } = useStore();
   const isFav =
     releaseMedia.userFavMedia.some(
-      (item) => item.userId === authStore.user?.id,
+      (item) => item.userId === authStore.user?.id
     ) ?? false;
 
   const { toggleFav, toggling } = useToggleFavMedia(releaseMedia, isFav);
@@ -40,7 +40,7 @@ const ReleaseDetailsMediaItem: FC<IProps> = observer(({ releaseMedia }) => {
         href={releaseMedia.url}
         target="_blank"
         className={`block p-1.5 rounded-lg bg-zinc-900 border  relative ${
-          isApproved ? "border-white/10" : "border-white/1"
+          isApproved ? 'border-white/10' : 'border-white/1'
         }`}
         onMouseEnter={() => setShow(true)}
         onMouseLeave={() => setShow(false)}
@@ -51,22 +51,22 @@ const ReleaseDetailsMediaItem: FC<IProps> = observer(({ releaseMedia }) => {
               onClick={handleClickFav}
               disabled={toggling}
               className={`${
-                show ? "opacity-100" : "xl:pointer-events-none xl:opacity-0"
+                show ? 'opacity-100' : 'xl:pointer-events-none xl:opacity-0'
               } ${
-                toggling ? "pointer-events-none opacity-50" : ""
+                toggling ? 'pointer-events-none opacity-50' : ''
               } absolute right-2 top-2 rounded-full bg-gray-600/50 px-2 py-1 cursor-pointer z-10 transition-all duration-200 flex gap-x-0.5 items-center group`}
             >
               <img
                 loading="lazy"
                 decoding="async"
-                alt={"heart"}
+                alt={'heart'}
                 src={`${
                   import.meta.env.VITE_SERVER_URL
                 }/public/assets/heart.png`}
                 className={`w-5 lg:w-7 transition-opacity duration-300 ${
-                  isFav ? "opacity-100" : "opacity-50"
+                  isFav ? 'opacity-100' : 'opacity-50'
                 } ${
-                  toggling ? "" : "hover:opacity-100 group-hover:opacity-100"
+                  toggling ? '' : 'hover:opacity-100 group-hover:opacity-100'
                 }`}
               />
 
@@ -83,23 +83,23 @@ const ReleaseDetailsMediaItem: FC<IProps> = observer(({ releaseMedia }) => {
           loading="lazy"
           decoding="async"
           className={`block aspect-video w-full rounded-md overflow-hidden select-none ${
-            isApproved ? "" : "opacity-35"
+            isApproved ? '' : 'opacity-35'
           }`}
           src={`https://img.youtube.com/vi/${parseYoutubeId(
-            releaseMedia.url,
+            releaseMedia.url
           )}/mqdefault.jpg`}
         />
 
         {releaseMedia.status.status === ReleaseMediaStatusesEnum.PENDING && (
           <div className="absolute inset-0 flex flex-col gap-y-1.5 items-center justify-center text-sm font-medium text-yellow-700 bg-black/60 rounded-lg text-center">
-            <HourglassSvg className={"size-6 "} />
+            <HourglassSvg className={'size-6 '} />
             <span>{ReleaseMediaStatusesEnum.PENDING}</span>
           </div>
         )}
 
         {releaseMedia.status.status === ReleaseMediaStatusesEnum.REJECTED && (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-sm font-medium text-red-800 bg-black/60 rounded-lg text-center">
-            <RejectSvg className={"size-6 "} />
+            <RejectSvg className={'size-6 '} />
             <span>{ReleaseMediaStatusesEnum.REJECTED}</span>
           </div>
         )}
@@ -108,7 +108,7 @@ const ReleaseDetailsMediaItem: FC<IProps> = observer(({ releaseMedia }) => {
       <a
         target="_blank"
         href={releaseMedia.url}
-        className={`${isApproved ? "" : "opacity-35"}`}
+        className={`${isApproved ? '' : 'opacity-35'}`}
       >
         <span className="line-clamp-1 mt-2 text-sm font-bold whitespace-nowrap overflow-hidden max-w-full hover:underline underline-offset-4 text-ellipsis">
           {releaseMedia.title}

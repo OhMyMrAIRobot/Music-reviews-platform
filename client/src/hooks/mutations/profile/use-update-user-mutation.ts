@@ -2,19 +2,19 @@ import {
   InvalidateQueryFilters,
   useMutation,
   useQueryClient,
-} from "@tanstack/react-query";
-import { UserAPI } from "../../../api/user/user-api";
-import { authorCommentsKeys } from "../../../query-keys/author-comments-keys";
-import { authorLikesKeys } from "../../../query-keys/author-likes-keys";
-import { leaderboardKeys } from "../../../query-keys/leaderboard-keys";
-import { profilesKeys } from "../../../query-keys/profiles-keys";
-import { releaseMediaKeys } from "../../../query-keys/release-media-keys";
-import { reviewsKeys } from "../../../query-keys/reviews-keys";
-import { usersKeys } from "../../../query-keys/users-keys";
-import { UseMutationParams } from "../../../types/common";
-import { UpdateUserData } from "../../../types/user";
-import { useApiErrorHandler } from "../../use-api-error-handler";
-import { useStore } from "../../use-store";
+} from '@tanstack/react-query';
+import { UserAPI } from '../../../api/user/user-api';
+import { authorCommentsKeys } from '../../../query-keys/author-comments-keys';
+import { authorLikesKeys } from '../../../query-keys/author-likes-keys';
+import { leaderboardKeys } from '../../../query-keys/leaderboard-keys';
+import { profilesKeys } from '../../../query-keys/profiles-keys';
+import { releaseMediaKeys } from '../../../query-keys/release-media-keys';
+import { reviewsKeys } from '../../../query-keys/reviews-keys';
+import { usersKeys } from '../../../query-keys/users-keys';
+import { UseMutationParams } from '../../../types/common';
+import { UpdateUserData } from '../../../types/user';
+import { useApiErrorHandler } from '../../use-api-error-handler';
+import { useStore } from '../../use-store';
 
 /**
  * Custom React hook returning a React Query mutation to update a user's account data.
@@ -53,7 +53,7 @@ export const useUpdateUserMutation = ({
 
       authStore.setAuthorization(user, accessToken);
       notificationStore.addSuccessNotification(
-        "Вы успешно обновили данные об аккаунте!",
+        'Вы успешно обновили данные об аккаунте!'
       );
       if (emailSent) {
         notificationStore.addEmailSentNotification(emailSent);
@@ -62,7 +62,7 @@ export const useUpdateUserMutation = ({
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, "Ошибка при обновлении данных аккаунта!");
+      handleApiError(error, 'Ошибка при обновлении данных аккаунта!');
       onError?.(error);
     },
     onSettled,

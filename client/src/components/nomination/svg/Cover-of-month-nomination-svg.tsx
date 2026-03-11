@@ -1,5 +1,5 @@
-import { FC } from "react";
-import { ISvgProps } from "../../../types/common/types/svg-props";
+import { FC } from 'react';
+import { ISvgProps } from '../../../types/common/types/svg-props';
 
 const CoverOfMonthNominationSvg: FC<ISvgProps> = ({ className }) => {
   return (
@@ -13,7 +13,7 @@ const CoverOfMonthNominationSvg: FC<ISvgProps> = ({ className }) => {
     >
       <mask
         id="mask0_1332_1972"
-        style={{ maskType: "luminance" }}
+        style={{ maskType: 'luminance' }}
         maskUnits="userSpaceOnUse"
         x="0"
         y="0"

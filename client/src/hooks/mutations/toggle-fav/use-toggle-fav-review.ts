@@ -2,17 +2,17 @@ import {
   InvalidateQueryFilters,
   useMutation,
   useQueryClient,
-} from "@tanstack/react-query";
-import { UserFavReviewAPI } from "../../../api/review/user-fav-review-api";
-import { authorLikesKeys } from "../../../query-keys/author-likes-keys";
-import { leaderboardKeys } from "../../../query-keys/leaderboard-keys";
-import { profilesKeys } from "../../../query-keys/profiles-keys";
-import { reviewsKeys } from "../../../query-keys/reviews-keys";
-import { UseToggleFavResult } from "../../../types/common";
-import { Review } from "../../../types/review";
-import { useApiErrorHandler } from "../../use-api-error-handler";
-import { useAuth } from "../../use-auth";
-import { useStore } from "../../use-store";
+} from '@tanstack/react-query';
+import { UserFavReviewAPI } from '../../../api/review/user-fav-review-api';
+import { authorLikesKeys } from '../../../query-keys/author-likes-keys';
+import { leaderboardKeys } from '../../../query-keys/leaderboard-keys';
+import { profilesKeys } from '../../../query-keys/profiles-keys';
+import { reviewsKeys } from '../../../query-keys/reviews-keys';
+import { UseToggleFavResult } from '../../../types/common';
+import { Review } from '../../../types/review';
+import { useApiErrorHandler } from '../../use-api-error-handler';
+import { useAuth } from '../../use-auth';
+import { useStore } from '../../use-store';
 
 /**
  * Custom hook to toggle favorite review
@@ -23,7 +23,7 @@ import { useStore } from "../../use-store";
  */
 export const useToggleFavReview = (
   review: Review | undefined,
-  isFav: boolean,
+  isFav: boolean
 ): UseToggleFavResult => {
   /** HOOKS */
   const { authStore, notificationStore } = useStore();
@@ -37,8 +37,8 @@ export const useToggleFavReview = (
   const invalidateRelatedQueries = (review: Review) => {
     const keysToInvalidate: InvalidateQueryFilters[] = [
       { queryKey: reviewsKeys.all },
-      { queryKey: profilesKeys.profile(authStore.user?.id ?? "unknown") },
-      { queryKey: profilesKeys.preferences(authStore.user?.id ?? "unknown") },
+      { queryKey: profilesKeys.profile(authStore.user?.id ?? 'unknown') },
+      { queryKey: profilesKeys.preferences(authStore.user?.id ?? 'unknown') },
       { queryKey: profilesKeys.profile(review.user.id) },
       { queryKey: leaderboardKeys.all },
       { queryKey: authorLikesKeys.all },
@@ -58,8 +58,8 @@ export const useToggleFavReview = (
     onSuccess: (_, review) => {
       notificationStore.addSuccessNotification(
         isFav
-          ? "Рецензия успешно удалена из понравившихся!"
-          : "Рецензия успешно добавлена в понравившиеся!",
+          ? 'Рецензия успешно удалена из понравившихся!'
+          : 'Рецензия успешно добавлена в понравившиеся!'
       );
       invalidateRelatedQueries(review);
     },
@@ -67,8 +67,8 @@ export const useToggleFavReview = (
       handleApiError(
         error,
         isFav
-          ? "Не удалось убрать рецензию из понравившихся!"
-          : "Не удалось добавить рецензию в понравившиеся!",
+          ? 'Не удалось убрать рецензию из понравившихся!'
+          : 'Не удалось добавить рецензию в понравившиеся!'
       );
     },
   });

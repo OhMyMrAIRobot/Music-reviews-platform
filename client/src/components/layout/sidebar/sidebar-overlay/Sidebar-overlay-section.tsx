@@ -1,6 +1,6 @@
-import { FC } from "react";
-import { ISidebarItemProps } from "../Sidebar-item";
-import SidebarOverlayItem from "./Sidebar-overlay-item";
+import { FC } from 'react';
+import { ISidebarItemProps } from '../Sidebar-item';
+import SidebarOverlayItem from './Sidebar-overlay-item';
 
 interface IProps {
   items: ISidebarItemProps[];

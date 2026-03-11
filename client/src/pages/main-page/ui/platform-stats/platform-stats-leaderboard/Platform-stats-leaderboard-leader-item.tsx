@@ -1,12 +1,12 @@
-import { FC } from "react";
-import { Link } from "react-router";
-import AuthorLikeColorSvg from "../../../../../components/author/author-like/svg/Author-like-color-svg";
-import LogoSmallSvg from "../../../../../components/svg/Logo-small-svg";
-import SkeletonLoader from "../../../../../components/utils/Skeleton-loader";
-import useNavigationPath from "../../../../../hooks/use-navigation-path";
-import { LeaderboardItem } from "../../../../../types/leaderboard";
-import { formatNumber } from "../../../../../utils/format-number";
-import { getLevelConfig, getUserLevel } from "../../../../../utils/user-level";
+import { FC } from 'react';
+import { Link } from 'react-router';
+import AuthorLikeColorSvg from '../../../../../components/author/author-like/svg/Author-like-color-svg';
+import LogoSmallSvg from '../../../../../components/svg/Logo-small-svg';
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader';
+import useNavigationPath from '../../../../../hooks/use-navigation-path';
+import { LeaderboardItem } from '../../../../../types/leaderboard';
+import { formatNumber } from '../../../../../utils/format-number';
+import { getLevelConfig, getUserLevel } from '../../../../../utils/user-level';
 
 interface IProps {
   isLoading: boolean;
@@ -18,7 +18,7 @@ interface IProps {
 const PlatformStatsLeaderboardLeaderItem: FC<IProps> = ({
   isLoading,
   item,
-  className = "",
+  className = '',
   position,
 }) => {
   const { navigatoToProfile } = useNavigationPath();
@@ -50,7 +50,7 @@ const PlatformStatsLeaderboardLeaderItem: FC<IProps> = ({
             alt={item.user.nickname}
             className="shrink-0 size-[70px] border border-white/10 rounded-full object-cover"
             src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-              item.user.avatar === ""
+              item.user.avatar === ''
                 ? import.meta.env.VITE_DEFAULT_AVATAR
                 : item.user.avatar
             }`}

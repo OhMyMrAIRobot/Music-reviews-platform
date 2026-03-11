@@ -2,15 +2,15 @@ import {
   InvalidateQueryFilters,
   useMutation,
   useQueryClient,
-} from "@tanstack/react-query";
-import { AlbumValueAPI } from "../../../api/album-value-api";
-import { albumValuesKeys } from "../../../query-keys/album-values-keys";
-import { leaderboardKeys } from "../../../query-keys/leaderboard-keys";
-import { profilesKeys } from "../../../query-keys/profiles-keys";
-import { CreateAlbumValueVoteData } from "../../../types/album-value";
-import { UseMutationParams } from "../../../types/common";
-import { useApiErrorHandler } from "../../use-api-error-handler";
-import { useStore } from "../../use-store";
+} from '@tanstack/react-query';
+import { AlbumValueAPI } from '../../../api/album-value-api';
+import { albumValuesKeys } from '../../../query-keys/album-values-keys';
+import { leaderboardKeys } from '../../../query-keys/leaderboard-keys';
+import { profilesKeys } from '../../../query-keys/profiles-keys';
+import { CreateAlbumValueVoteData } from '../../../types/album-value';
+import { UseMutationParams } from '../../../types/common';
+import { useApiErrorHandler } from '../../use-api-error-handler';
+import { useStore } from '../../use-store';
 
 /**
  * Custom React hook returning a React Query mutation to create an album value vote.
@@ -32,7 +32,7 @@ export const useCreateAlbumValueMutation = ({
   const invalidateRelatedQueries = () => {
     const keysToInvalidate: InvalidateQueryFilters[] = [
       { queryKey: albumValuesKeys.all },
-      { queryKey: profilesKeys.profile(authStore.user?.id || "unknown") },
+      { queryKey: profilesKeys.profile(authStore.user?.id || 'unknown') },
       { queryKey: leaderboardKeys.all },
     ];
 
@@ -43,13 +43,13 @@ export const useCreateAlbumValueMutation = ({
       AlbumValueAPI.postAlbumValueVote(data),
     onSuccess: () => {
       notificationStore.addSuccessNotification(
-        "Вы успешно оставили голос за ценность альбома!",
+        'Вы успешно оставили голос за ценность альбома!'
       );
       invalidateRelatedQueries();
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, "Не удалось добавить голос за ценность альбома.");
+      handleApiError(error, 'Не удалось добавить голос за ценность альбома.');
       onError?.(error);
     },
     onSettled,

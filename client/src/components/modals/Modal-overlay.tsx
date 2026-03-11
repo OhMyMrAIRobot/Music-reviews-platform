@@ -1,5 +1,5 @@
-import { FC, ReactNode, useEffect, useState } from "react";
-import { createPortal } from "react-dom";
+import { FC, ReactNode, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 interface IProps {
   isOpen: boolean;
@@ -14,7 +14,7 @@ const ModalOverlay: FC<IProps> = ({
   onCancel,
   children,
   isLoading = false,
-  className = "",
+  className = '',
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
@@ -27,25 +27,25 @@ const ModalOverlay: FC<IProps> = ({
 
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
       setShouldRender(true);
       setTimeout(() => setIsVisible(true), 20);
     } else {
       setIsVisible(false);
       const timer = setTimeout(() => {
         setShouldRender(false);
-        document.body.style.overflow = "";
+        document.body.style.overflow = '';
       }, 300);
       return () => {
         clearTimeout(timer);
-        document.body.style.overflow = "";
+        document.body.style.overflow = '';
       };
     }
   }, [isOpen]);
 
   useEffect(() => {
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = '';
     };
   }, []);
 
@@ -55,7 +55,7 @@ const ModalOverlay: FC<IProps> = ({
     <div
       onClick={handleOverlayClick}
       className={`fixed inset-0 w-screen h-screen bg-black/40 flex items-center justify-center transition-opacity duration-300 z-1000 backdrop-blur-sm ${
-        isVisible ? "opacity-100" : "opacity-0"
+        isVisible ? 'opacity-100' : 'opacity-0'
       }`}
     >
       <div
@@ -65,7 +65,7 @@ const ModalOverlay: FC<IProps> = ({
         {children}
       </div>
     </div>,
-    document.body,
+    document.body
   );
 };
 

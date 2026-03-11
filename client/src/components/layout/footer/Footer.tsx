@@ -1,29 +1,29 @@
-import useNavigationPath from "../../../hooks/use-navigation-path";
-import TelegramSvg from "../../svg/Telegram-svg";
-import TwitchSvg from "../../svg/Twitch-svg";
-import VkSvg from "../../svg/Vk-svg";
-import YouTubeSvg from "../../svg/YouTube-svg";
-import FooterContactLink from "./Footer-contact-link";
-import FooterLink from "./Footer-link";
-import FooterSocialContainer from "./Footer-social-container";
-import { IFooterSocialItemProps } from "./Footer-social-item";
+import useNavigationPath from '../../../hooks/use-navigation-path';
+import TelegramSvg from '../../svg/Telegram-svg';
+import TwitchSvg from '../../svg/Twitch-svg';
+import VkSvg from '../../svg/Vk-svg';
+import YouTubeSvg from '../../svg/YouTube-svg';
+import FooterContactLink from './Footer-contact-link';
+import FooterLink from './Footer-link';
+import FooterSocialContainer from './Footer-social-container';
+import { IFooterSocialItemProps } from './Footer-social-item';
 
 const footerSocials: IFooterSocialItemProps[] = [
   {
-    href: "/",
-    icon: <TelegramSvg className={"size-4"} />,
+    href: '/',
+    icon: <TelegramSvg className={'size-4'} />,
   },
   {
-    href: "/",
-    icon: <YouTubeSvg className={"size-4"} />,
+    href: '/',
+    icon: <YouTubeSvg className={'size-4'} />,
   },
   {
-    href: "/",
-    icon: <TwitchSvg className={"size-4"} />,
+    href: '/',
+    icon: <TwitchSvg className={'size-4'} />,
   },
   {
-    href: "/",
-    icon: <VkSvg className={"size-4"} />,
+    href: '/',
+    icon: <VkSvg className={'size-4'} />,
   },
 ];
 
@@ -42,9 +42,9 @@ const Footer = () => {
             <FooterLink text="Обратная связь" href={navigateToFeedback} />
             <FooterLink
               text="Политика обработки персональных данных"
-              href={"#"}
+              href={'#'}
             />
-            <FooterLink text="Пользовательское соглашение" href={"#"} />
+            <FooterLink text="Пользовательское соглашение" href={'#'} />
           </div>
 
           <div className="flex flex-col gap-y-0.5 opacity-80 mt-2">

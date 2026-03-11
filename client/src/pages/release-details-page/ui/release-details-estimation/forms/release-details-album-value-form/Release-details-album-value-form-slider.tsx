@@ -1,6 +1,6 @@
-import { observer } from "mobx-react-lite";
-import { FC } from "react";
-import Slider from "../../../../../../components/utils/Slider";
+import { observer } from 'mobx-react-lite';
+import { FC } from 'react';
+import Slider from '../../../../../../components/utils/Slider';
 
 interface IProps {
   value: number;
@@ -55,7 +55,7 @@ const ReleaseDetailsAlbumValueFormSlider: FC<IProps> = observer(
           {valueTitle && (
             <div className="font-bold text-white">«{valueTitle}»</div>
           )}
-          {typeof valueDescription === "string" ? (
+          {typeof valueDescription === 'string' ? (
             <div>{valueDescription}</div>
           ) : (
             <ul className="space-y-0.5 text-left">
@@ -70,7 +70,7 @@ const ReleaseDetailsAlbumValueFormSlider: FC<IProps> = observer(
         </div>
       </div>
     );
-  },
+  }
 );
 
 export default ReleaseDetailsAlbumValueFormSlider;

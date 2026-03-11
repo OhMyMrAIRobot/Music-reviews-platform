@@ -1,12 +1,12 @@
-import { FC, useRef, useState } from "react";
-import CarouselContainer from "../../../../components/carousel/Carousel-container";
+import { FC, useRef, useState } from 'react';
+import CarouselContainer from '../../../../components/carousel/Carousel-container';
 import {
   MonthEnumType,
   MonthsEnum,
-} from "../../../../types/common/enums/months-enum";
-import { CarouselRef } from "../../../../types/common/types/carousel-ref";
-import { NominationMonthWinners } from "../../../../types/nomination";
-import NominationCarousel from "./Nomination-carousel";
+} from '../../../../types/common/enums/months-enum';
+import { CarouselRef } from '../../../../types/common/types/carousel-ref';
+import { NominationMonthWinners } from '../../../../types/nomination';
+import NominationCarousel from './Nomination-carousel';
 
 interface IProps {
   item?: NominationMonthWinners;
@@ -23,9 +23,9 @@ const NominationCarouselContainer: FC<IProps> = ({ item, isLoading, idx }) => {
   return (
     <CarouselContainer
       title={MonthsEnum[(item?.month ?? idx + 1) as MonthEnumType]}
-      buttonTitle={"#"}
+      buttonTitle={'#'}
       showButton={false}
-      href={"#"}
+      href={'#'}
       handlePrev={() => carouselRef.current?.scrollPrev()}
       handleNext={() => carouselRef.current?.scrollNext()}
       canScrollNext={canScrollNext}

@@ -1,11 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { UserFavReviewAPI } from "../../api/review/user-fav-review-api";
-import AuthorLikeCard from "../../components/author/author-like/Author-like-card";
-import AuthorLikeColorSvg from "../../components/author/author-like/svg/Author-like-color-svg";
-import Pagination from "../../components/pagination/Pagination";
-import { authorLikesKeys } from "../../query-keys/author-likes-keys";
-import { AuthorLikesQuery } from "../../types/review";
+import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
+import { UserFavReviewAPI } from '../../api/review/user-fav-review-api';
+import AuthorLikeCard from '../../components/author/author-like/Author-like-card';
+import AuthorLikeColorSvg from '../../components/author/author-like/svg/Author-like-color-svg';
+import Pagination from '../../components/pagination/Pagination';
+import { authorLikesKeys } from '../../query-keys/author-likes-keys';
+import { AuthorLikesQuery } from '../../types/review';
 
 const limit = 9;
 
@@ -68,7 +68,7 @@ const AuthorLikesPage = () => {
             totalItems={totalCount}
             itemsPerPage={limit}
             setCurrentPage={setCurrentPage}
-            idToScroll={"author-likes"}
+            idToScroll={'author-likes'}
           />
         </div>
       )}

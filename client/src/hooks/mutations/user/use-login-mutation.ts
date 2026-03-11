@@ -1,9 +1,9 @@
-import { useMutation } from "@tanstack/react-query";
-import { AuthAPI } from "../../../api/auth-api";
-import { LoginData } from "../../../types/auth";
-import { UseMutationParams } from "../../../types/common";
-import { useApiErrorHandler } from "../../use-api-error-handler";
-import { useStore } from "../../use-store";
+import { useMutation } from '@tanstack/react-query';
+import { AuthAPI } from '../../../api/auth-api';
+import { LoginData } from '../../../types/auth';
+import { UseMutationParams } from '../../../types/common';
+import { useApiErrorHandler } from '../../use-api-error-handler';
+import { useStore } from '../../use-store';
 
 /**
  * Custom React hook returning a React Query mutation that performs user login.
@@ -30,11 +30,11 @@ export const useLoginMutation = ({
     onSuccess: (data) => {
       const { user, accessToken } = data;
       authStore.setAuthorization(user, accessToken);
-      notificationStore.addSuccessNotification("Вы успешно вошли!");
+      notificationStore.addSuccessNotification('Вы успешно вошли!');
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, "Ошибка при выполнении входа!");
+      handleApiError(error, 'Ошибка при выполнении входа!');
       onError?.(error);
     },
     onSettled,

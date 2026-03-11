@@ -1,9 +1,9 @@
-import { FC } from "react";
+import { FC } from 'react';
 import {
   ReleaseRatingDetails,
   ReleaseRatingTotal,
   ReleaseRatingTypesEnum,
-} from "../../../../types/release";
+} from '../../../../types/release';
 
 const DetailRow: FC<{ title: string; total: string; color: string }> = ({
   title,
@@ -26,11 +26,11 @@ interface IProps {
 const getTitle = (type: string) => {
   switch (type) {
     case ReleaseRatingTypesEnum.MEDIA:
-      return "Средняя оценка Медиа";
+      return 'Средняя оценка Медиа';
     case ReleaseRatingTypesEnum.WITH_TEXT:
-      return "Средняя оценка рецензий пользователей";
+      return 'Средняя оценка рецензий пользователей';
     case ReleaseRatingTypesEnum.WITHOUT_TEXT:
-      return "Средняя оценка без рецензий пользователей";
+      return 'Средняя оценка без рецензий пользователей';
   }
 };
 
@@ -45,29 +45,29 @@ const ReleaseDetailsRatingsTooltip: FC<IProps> = ({
           {getTitle(rating.type)}
         </p>
         <DetailRow
-          title={"Рифмы / Образы"}
+          title={'Рифмы / Образы'}
           total={`${ratingDetails.details.rhymes}`}
-          color={"text-[rgba(35,101,199)]"}
+          color={'text-[rgba(35,101,199)]'}
         />
         <DetailRow
-          title={"Структура / Ритмика"}
+          title={'Структура / Ритмика'}
           total={`${ratingDetails.details.structure}`}
-          color={"text-[rgba(35,101,199)]"}
+          color={'text-[rgba(35,101,199)]'}
         />
         <DetailRow
-          title={"Реализация стиля"}
+          title={'Реализация стиля'}
           total={`${ratingDetails.details.realization}`}
-          color={"text-[rgba(35,101,199)]"}
+          color={'text-[rgba(35,101,199)]'}
         />
         <DetailRow
-          title={"Индивидуальность / Харизма"}
+          title={'Индивидуальность / Харизма'}
           total={`${ratingDetails.details.individuality}`}
-          color={"text-[rgba(35,101,199)]"}
+          color={'text-[rgba(35,101,199)]'}
         />
         <DetailRow
-          title={"Атмосфера / Вайб"}
+          title={'Атмосфера / Вайб'}
           total={`${ratingDetails.details.atmosphere}`}
-          color={"text-[rgba(160,80,222)]"}
+          color={'text-[rgba(160,80,222)]'}
         />
       </div>
     )

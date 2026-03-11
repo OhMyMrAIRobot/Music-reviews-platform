@@ -1,4 +1,4 @@
-import { ISvgProps } from "../../types/common";
+import { ISvgProps } from '../../types/common';
 
 const SongLyricsSvg = ({ className }: ISvgProps) => {
   return (

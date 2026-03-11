@@ -1,4 +1,4 @@
-import WarningSvg from "../../../../components/svg/Warning-svg";
+import WarningSvg from '../../../../components/svg/Warning-svg';
 
 const ReleaseDetailsEstimationWarning = () => {
   return (

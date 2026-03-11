@@ -1,5 +1,5 @@
-import { ROUTES } from "../routes/routes-enum";
-import { SearchTypesEnum } from "../types/common/enums/search-types-enum";
+import { ROUTES } from '../routes/routes-enum';
+import { SearchTypesEnum } from '../types/common/enums/search-types-enum';
 
 /**
  * Custom hook providing navigation path generators for the application.

@@ -2,17 +2,17 @@ import {
   InvalidateQueryFilters,
   useMutation,
   useQueryClient,
-} from "@tanstack/react-query";
-import { ReviewAPI } from "../../../api/review/review-api";
-import { leaderboardKeys } from "../../../query-keys/leaderboard-keys";
-import { platformStatsKeys } from "../../../query-keys/platform-stats-keys";
-import { profilesKeys } from "../../../query-keys/profiles-keys";
-import { releasesKeys } from "../../../query-keys/releases-keys";
-import { reviewsKeys } from "../../../query-keys/reviews-keys";
-import { UseMutationParams } from "../../../types/common";
-import { UpdateReviewData } from "../../../types/review";
-import { useApiErrorHandler } from "../../use-api-error-handler";
-import { useStore } from "../../use-store";
+} from '@tanstack/react-query';
+import { ReviewAPI } from '../../../api/review/review-api';
+import { leaderboardKeys } from '../../../query-keys/leaderboard-keys';
+import { platformStatsKeys } from '../../../query-keys/platform-stats-keys';
+import { profilesKeys } from '../../../query-keys/profiles-keys';
+import { releasesKeys } from '../../../query-keys/releases-keys';
+import { reviewsKeys } from '../../../query-keys/reviews-keys';
+import { UseMutationParams } from '../../../types/common';
+import { UpdateReviewData } from '../../../types/review';
+import { useApiErrorHandler } from '../../use-api-error-handler';
+import { useStore } from '../../use-store';
 
 /**
  * Custom React hook returning a React Query mutation to remove an existing review.
@@ -34,7 +34,7 @@ export const useUpdateReviewMutation = ({
   const invalidateRelatedQueries = (releaseId: string) => {
     const keysToInvalidate: InvalidateQueryFilters[] = [
       { queryKey: releasesKeys.details(releaseId) },
-      { queryKey: profilesKeys.profile(authStore.user?.id || "unknown") },
+      { queryKey: profilesKeys.profile(authStore.user?.id || 'unknown') },
       { queryKey: leaderboardKeys.all },
       { queryKey: platformStatsKeys.all },
       { queryKey: reviewsKeys.all },
@@ -48,7 +48,7 @@ export const useUpdateReviewMutation = ({
       ReviewAPI.update(id, data),
     onSuccess: (data) => {
       notificationStore.addSuccessNotification(
-        `Вы успешно обновили ${data.text ? "рецензию" : "оценку"}!`,
+        `Вы успешно обновили ${data.text ? 'рецензию' : 'оценку'}!`
       );
       invalidateRelatedQueries(data.release.id);
       onSuccess?.();
@@ -56,7 +56,7 @@ export const useUpdateReviewMutation = ({
     onError: (error: unknown, data) => {
       handleApiError(
         error,
-        `Не удалось обновить ${data.data.text ? "рецензию" : "оценку"}.`,
+        `Не удалось обновить ${data.data.text ? 'рецензию' : 'оценку'}.`
       );
       onError?.(error);
     },

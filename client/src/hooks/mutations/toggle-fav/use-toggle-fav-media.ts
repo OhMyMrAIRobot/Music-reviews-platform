@@ -2,16 +2,16 @@ import {
   InvalidateQueryFilters,
   useMutation,
   useQueryClient,
-} from "@tanstack/react-query";
-import { UserFavMediaAPI } from "../../../api/release/user-fav-media-api";
-import { leaderboardKeys } from "../../../query-keys/leaderboard-keys";
-import { profilesKeys } from "../../../query-keys/profiles-keys";
-import { releaseMediaKeys } from "../../../query-keys/release-media-keys";
-import { UseToggleFavResult } from "../../../types/common";
-import { ReleaseMedia } from "../../../types/release";
-import { useApiErrorHandler } from "../../use-api-error-handler";
-import { useAuth } from "../../use-auth";
-import { useStore } from "../../use-store";
+} from '@tanstack/react-query';
+import { UserFavMediaAPI } from '../../../api/release/user-fav-media-api';
+import { leaderboardKeys } from '../../../query-keys/leaderboard-keys';
+import { profilesKeys } from '../../../query-keys/profiles-keys';
+import { releaseMediaKeys } from '../../../query-keys/release-media-keys';
+import { UseToggleFavResult } from '../../../types/common';
+import { ReleaseMedia } from '../../../types/release';
+import { useApiErrorHandler } from '../../use-api-error-handler';
+import { useAuth } from '../../use-auth';
+import { useStore } from '../../use-store';
 
 /**
  * Custom hook to toggle favorite media
@@ -22,7 +22,7 @@ import { useStore } from "../../use-store";
  */
 export const useToggleFavMedia = (
   media: ReleaseMedia | undefined,
-  isFav: boolean,
+  isFav: boolean
 ): UseToggleFavResult => {
   /** HOOKS */
   const { authStore, notificationStore } = useStore();
@@ -36,8 +36,8 @@ export const useToggleFavMedia = (
   const invalidateRelatedQueries = (media: ReleaseMedia) => {
     const keysToInvalidate: InvalidateQueryFilters[] = [
       { queryKey: releaseMediaKeys.all },
-      { queryKey: profilesKeys.profile(authStore.user?.id ?? "unknown") },
-      { queryKey: profilesKeys.profile(media.user?.id ?? "unknown") },
+      { queryKey: profilesKeys.profile(authStore.user?.id ?? 'unknown') },
+      { queryKey: profilesKeys.profile(media.user?.id ?? 'unknown') },
       { queryKey: leaderboardKeys.all },
     ];
 
@@ -55,8 +55,8 @@ export const useToggleFavMedia = (
     onSuccess: (_, media) => {
       notificationStore.addSuccessNotification(
         isFav
-          ? "Медиа успешно удалено из понравившихся!"
-          : "Медиа успешно добавлено в понравившиеся!",
+          ? 'Медиа успешно удалено из понравившихся!'
+          : 'Медиа успешно добавлено в понравившиеся!'
       );
       invalidateRelatedQueries(media);
     },
@@ -64,8 +64,8 @@ export const useToggleFavMedia = (
       handleApiError(
         error,
         isFav
-          ? "Не удалось убрать медиа из понравившихся!"
-          : "Не удалось добавить медиа в понравившиеся!",
+          ? 'Не удалось убрать медиа из понравившихся!'
+          : 'Не удалось добавить медиа в понравившиеся!'
       );
     },
   });

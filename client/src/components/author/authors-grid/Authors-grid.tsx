@@ -1,7 +1,7 @@
-import { FC } from "react";
-import { Author } from "../../../types/author";
-import Pagination from "../../pagination/Pagination";
-import AuthorCard from "./Author-card";
+import { FC } from 'react';
+import { Author } from '../../../types/author';
+import Pagination from '../../pagination/Pagination';
+import AuthorCard from './Author-card';
 
 interface IProps {
   items: Author[];
@@ -54,7 +54,7 @@ const AuthorsGrid: FC<IProps> = ({
             totalItems={total}
             itemsPerPage={perPage}
             setCurrentPage={setCurrentPage}
-            idToScroll={"authors"}
+            idToScroll={'authors'}
           />
         </div>
       )}

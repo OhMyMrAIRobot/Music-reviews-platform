@@ -1,16 +1,16 @@
-import { EmblaOptionsType } from "embla-carousel";
-import useEmblaCarousel from "embla-carousel-react";
+import { EmblaOptionsType } from 'embla-carousel';
+import useEmblaCarousel from 'embla-carousel-react';
 import {
   forwardRef,
   useCallback,
   useEffect,
   useImperativeHandle,
   useState,
-} from "react";
-import { CarouselRef } from "../../../../types/common/types/carousel-ref";
-import { CarouselStateCallbacks } from "../../../../types/common/types/carousel-state-callbacks";
-import { NominationWinner } from "../../../../types/nomination";
-import NominationWinnerCard from "./Nomination-winner";
+} from 'react';
+import { CarouselRef } from '../../../../types/common/types/carousel-ref';
+import { CarouselStateCallbacks } from '../../../../types/common/types/carousel-state-callbacks';
+import { NominationWinner } from '../../../../types/nomination';
+import NominationWinnerCard from './Nomination-winner';
 
 interface IProps extends CarouselStateCallbacks {
   items?: NominationWinner[];
@@ -20,8 +20,8 @@ interface IProps extends CarouselStateCallbacks {
 const NominationCarousel = forwardRef<CarouselRef, IProps>(
   ({ items, isLoading, onCanScrollPrevChange, onCanScrollNextChange }, ref) => {
     const options: EmblaOptionsType = {
-      align: "start",
-      slidesToScroll: "auto",
+      align: 'start',
+      slidesToScroll: 'auto',
     };
     const [emblaRef, emblaApi] = useEmblaCarousel(options);
     const [, setCanScrollPrev] = useState(false);
@@ -45,14 +45,14 @@ const NominationCarousel = forwardRef<CarouselRef, IProps>(
 
       updateScrollState();
 
-      emblaApi.on("select", updateScrollState);
-      emblaApi.on("reInit", updateScrollState);
-      emblaApi.on("resize", updateScrollState);
+      emblaApi.on('select', updateScrollState);
+      emblaApi.on('reInit', updateScrollState);
+      emblaApi.on('resize', updateScrollState);
 
       return () => {
-        emblaApi.off("select", updateScrollState);
-        emblaApi.off("reInit", updateScrollState);
-        emblaApi.off("resize", updateScrollState);
+        emblaApi.off('select', updateScrollState);
+        emblaApi.off('reInit', updateScrollState);
+        emblaApi.off('resize', updateScrollState);
       };
     }, [emblaApi, updateScrollState]);
 
@@ -62,7 +62,7 @@ const NominationCarousel = forwardRef<CarouselRef, IProps>(
         scrollPrev: () => emblaApi?.scrollPrev(),
         scrollNext: () => emblaApi?.scrollNext(),
       }),
-      [emblaApi],
+      [emblaApi]
     );
 
     return (
@@ -90,7 +90,7 @@ const NominationCarousel = forwardRef<CarouselRef, IProps>(
         </div>
       </div>
     );
-  },
+  }
 );
 
 export default NominationCarousel;

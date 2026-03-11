@@ -1,4 +1,4 @@
-import { Feedback } from "./feedback";
+import { Feedback } from './feedback';
 
 /**
  * Represents a reply to a feedback message.

@@ -1,16 +1,16 @@
-import { EmblaOptionsType } from "embla-carousel";
-import useEmblaCarousel from "embla-carousel-react";
+import { EmblaOptionsType } from 'embla-carousel';
+import useEmblaCarousel from 'embla-carousel-react';
 import {
   forwardRef,
   useCallback,
   useEffect,
   useImperativeHandle,
   useState,
-} from "react";
-import AlbumValueCard from "../../../../components/album-value/Album-value-card";
-import { AlbumValue } from "../../../../types/album-value";
-import { CarouselRef } from "../../../../types/common/types/carousel-ref";
-import { CarouselStateCallbacks } from "../../../../types/common/types/carousel-state-callbacks";
+} from 'react';
+import AlbumValueCard from '../../../../components/album-value/Album-value-card';
+import { AlbumValue } from '../../../../types/album-value';
+import { CarouselRef } from '../../../../types/common/types/carousel-ref';
+import { CarouselStateCallbacks } from '../../../../types/common/types/carousel-state-callbacks';
 
 interface IProps extends CarouselStateCallbacks {
   isLoading: boolean;
@@ -20,7 +20,7 @@ interface IProps extends CarouselStateCallbacks {
 const MainPageAlbumValuesCarousel = forwardRef<CarouselRef, IProps>(
   ({ items, isLoading, onCanScrollPrevChange, onCanScrollNextChange }, ref) => {
     const options: EmblaOptionsType = {
-      align: "start",
+      align: 'start',
       slidesToScroll: 1,
     };
     const [emblaRef, emblaApi] = useEmblaCarousel(options);
@@ -45,14 +45,14 @@ const MainPageAlbumValuesCarousel = forwardRef<CarouselRef, IProps>(
 
       updateScrollState();
 
-      emblaApi.on("select", updateScrollState);
-      emblaApi.on("reInit", updateScrollState);
-      emblaApi.on("resize", updateScrollState);
+      emblaApi.on('select', updateScrollState);
+      emblaApi.on('reInit', updateScrollState);
+      emblaApi.on('resize', updateScrollState);
 
       return () => {
-        emblaApi.off("select", updateScrollState);
-        emblaApi.off("reInit", updateScrollState);
-        emblaApi.off("resize", updateScrollState);
+        emblaApi.off('select', updateScrollState);
+        emblaApi.off('reInit', updateScrollState);
+        emblaApi.off('resize', updateScrollState);
       };
     }, [emblaApi, updateScrollState]);
 
@@ -62,7 +62,7 @@ const MainPageAlbumValuesCarousel = forwardRef<CarouselRef, IProps>(
         scrollPrev: () => emblaApi?.scrollPrev(),
         scrollNext: () => emblaApi?.scrollNext(),
       }),
-      [emblaApi],
+      [emblaApi]
     );
 
     return (
@@ -91,7 +91,7 @@ const MainPageAlbumValuesCarousel = forwardRef<CarouselRef, IProps>(
         </div>
       </div>
     );
-  },
+  }
 );
 
 export default MainPageAlbumValuesCarousel;

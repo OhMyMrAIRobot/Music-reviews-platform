@@ -1,20 +1,20 @@
-import { useQuery } from "@tanstack/react-query";
-import { observer } from "mobx-react-lite";
-import { FC, useEffect, useMemo, useState } from "react";
-import { ReleaseMediaAPI } from "../../../../../../api/release/release-media-api";
-import FormButton from "../../../../../../components/form-elements/Form-button";
-import FormInput from "../../../../../../components/form-elements/Form-input";
-import FormLabel from "../../../../../../components/form-elements/Form-label";
+import { useQuery } from '@tanstack/react-query';
+import { observer } from 'mobx-react-lite';
+import { FC, useEffect, useMemo, useState } from 'react';
+import { ReleaseMediaAPI } from '../../../../../../api/release/release-media-api';
+import FormButton from '../../../../../../components/form-elements/Form-button';
+import FormInput from '../../../../../../components/form-elements/Form-input';
+import FormLabel from '../../../../../../components/form-elements/Form-label';
 import {
   useCreateMediaMutation,
   useRemoveMediaMutation,
   useUpdateMediaMutation,
-} from "../../../../../../hooks/mutations";
-import { useAuth } from "../../../../../../hooks/use-auth";
-import { useStore } from "../../../../../../hooks/use-store";
-import { releaseMediaKeys } from "../../../../../../query-keys/release-media-keys";
-import { ReleaseMediaQuery } from "../../../../../../types/release";
-import { constraints } from "../../../../../../utils/constraints";
+} from '../../../../../../hooks/mutations';
+import { useAuth } from '../../../../../../hooks/use-auth';
+import { useStore } from '../../../../../../hooks/use-store';
+import { releaseMediaKeys } from '../../../../../../query-keys/release-media-keys';
+import { ReleaseMediaQuery } from '../../../../../../types/release';
+import { constraints } from '../../../../../../utils/constraints';
 
 interface IProps {
   releaseId: string;
@@ -24,8 +24,8 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
   const { authStore } = useStore();
   const { checkAuth } = useAuth();
 
-  const [title, setTitle] = useState<string>("");
-  const [url, setUrl] = useState<string>("");
+  const [title, setTitle] = useState<string>('');
+  const [url, setUrl] = useState<string>('');
 
   /**
    * Query to get user's media review for the release
@@ -53,8 +53,8 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
 
   /** EFFECTS */
   useEffect(() => {
-    setTitle(userReleaseMedia?.title ?? "");
-    setUrl(userReleaseMedia?.url ?? "");
+    setTitle(userReleaseMedia?.title ?? '');
+    setUrl(userReleaseMedia?.url ?? '');
   }, [userReleaseMedia]);
 
   const { mutateAsync: createAsync, isPending: isCreating } =
@@ -73,7 +73,7 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
    */
   const isSubmitting = useMemo(
     () => isCreating || isUpdating || isDeleting,
-    [isCreating, isUpdating, isDeleting],
+    [isCreating, isUpdating, isDeleting]
   );
 
   /**
@@ -147,14 +147,14 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
       <div className="grid md:grid-cols-2 gap-y-3 gap-5">
         <div className="grid gap-2">
           <FormLabel
-            name={"Заголовок"}
-            htmlFor={"media-title-input"}
+            name={'Заголовок'}
+            htmlFor={'media-title-input'}
             isRequired={true}
           />
           <FormInput
-            id={"media-title-input"}
-            placeholder={"Заголовок..."}
-            type={"text"}
+            id={'media-title-input'}
+            placeholder={'Заголовок...'}
+            type={'text'}
             value={title}
             setValue={setTitle}
           />
@@ -162,14 +162,14 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
 
         <div className="grid gap-2">
           <FormLabel
-            name={"Ссылка на медиарецензию"}
-            htmlFor={"media-url-input"}
+            name={'Ссылка на медиарецензию'}
+            htmlFor={'media-url-input'}
             isRequired={true}
           />
           <FormInput
-            id={"media-url-input"}
-            placeholder={"https://www.youtube.com/..."}
-            type={"text"}
+            id={'media-url-input'}
+            placeholder={'https://www.youtube.com/...'}
+            type={'text'}
             value={url}
             setValue={setUrl}
           />
@@ -179,7 +179,7 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
       <div className="grid sm:flex items-center gap-y-3 sm:justify-between mt-6">
         <div className="w-full sm:w-40">
           <FormButton
-            title={userReleaseMedia ? "Обновить" : "Отправить"}
+            title={userReleaseMedia ? 'Обновить' : 'Отправить'}
             isInvert={true}
             onClick={handleSubmit}
             disabled={!isValid || !hasChanges || isSubmitting}
@@ -190,7 +190,7 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
         {userReleaseMedia && (
           <div className="w-full sm:w-40">
             <FormButton
-              title={"Удалить"}
+              title={'Удалить'}
               isInvert={false}
               onClick={handleDelete}
               disabled={!userReleaseMedia || isSubmitting}

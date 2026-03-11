@@ -2,17 +2,17 @@ import {
   InvalidateQueryFilters,
   useMutation,
   useQueryClient,
-} from "@tanstack/react-query";
-import { AuthorCommentAPI } from "../../../api/author/author-comment-api";
-import { authorCommentsKeys } from "../../../query-keys/author-comments-keys";
-import { leaderboardKeys } from "../../../query-keys/leaderboard-keys";
-import { platformStatsKeys } from "../../../query-keys/platform-stats-keys";
-import { profilesKeys } from "../../../query-keys/profiles-keys";
-import { releasesKeys } from "../../../query-keys/releases-keys";
-import { UpdateAuthorCommentData } from "../../../types/author";
-import { UseMutationParams } from "../../../types/common";
-import { useApiErrorHandler } from "../../use-api-error-handler";
-import { useStore } from "../../use-store";
+} from '@tanstack/react-query';
+import { AuthorCommentAPI } from '../../../api/author/author-comment-api';
+import { authorCommentsKeys } from '../../../query-keys/author-comments-keys';
+import { leaderboardKeys } from '../../../query-keys/leaderboard-keys';
+import { platformStatsKeys } from '../../../query-keys/platform-stats-keys';
+import { profilesKeys } from '../../../query-keys/profiles-keys';
+import { releasesKeys } from '../../../query-keys/releases-keys';
+import { UpdateAuthorCommentData } from '../../../types/author';
+import { UseMutationParams } from '../../../types/common';
+import { useApiErrorHandler } from '../../use-api-error-handler';
+import { useStore } from '../../use-store';
 
 /**
  * Custom React hook returning a React Query mutation to update an existing author comment.
@@ -36,7 +36,7 @@ export const useUpdateAuthorCommentMutation = ({
       { queryKey: authorCommentsKeys.all },
       { queryKey: leaderboardKeys.all },
       { queryKey: platformStatsKeys.all },
-      { queryKey: profilesKeys.profile(authStore.user?.id || "unknown") },
+      { queryKey: profilesKeys.profile(authStore.user?.id || 'unknown') },
       { queryKey: releasesKeys.all },
     ];
 
@@ -48,13 +48,13 @@ export const useUpdateAuthorCommentMutation = ({
       AuthorCommentAPI.update(id, data),
     onSuccess: () => {
       notificationStore.addSuccessNotification(
-        "Вы успешно изменили авторский комментарий!",
+        'Вы успешно изменили авторский комментарий!'
       );
       invalidateRelatedQueries();
       onSuccess?.();
     },
     onError(error: unknown) {
-      handleApiError(error, "Не удалось изменить авторский комментарий.");
+      handleApiError(error, 'Не удалось изменить авторский комментарий.');
       onError?.(error);
     },
     onSettled,

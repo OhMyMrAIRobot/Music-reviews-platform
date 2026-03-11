@@ -1,16 +1,16 @@
-import { FC } from "react";
-import { AlbumValue } from "../../types/album-value";
+import { FC } from 'react';
+import { AlbumValue } from '../../types/album-value';
 import {
   getAlbumValueTier,
   getAlbumValueTierConfig,
-} from "../../utils/album-value-config";
+} from '../../utils/album-value-config';
 
 interface IProps {
   value: AlbumValue;
   className?: string;
 }
 
-const AlbumValueTooltip: FC<IProps> = ({ value, className = "" }) => {
+const AlbumValueTooltip: FC<IProps> = ({ value, className = '' }) => {
   const level = getAlbumValueTier(value.totalValue);
 
   if (!level) return null;

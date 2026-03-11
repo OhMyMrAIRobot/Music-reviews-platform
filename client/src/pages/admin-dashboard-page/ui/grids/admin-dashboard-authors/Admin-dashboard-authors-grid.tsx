@@ -1,27 +1,27 @@
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { AuthorAPI } from "../../../../../api/author/author-api.ts";
-import AuthorTypeSvg from "../../../../../components/author/author-types/Author-type-svg.tsx";
-import AdminHeader from "../../../../../components/layout/admin-header/Admin-header.tsx";
-import Pagination from "../../../../../components/pagination/Pagination.tsx";
-import SkeletonLoader from "../../../../../components/utils/Skeleton-loader.tsx";
-import { useAuthorMeta } from "../../../../../hooks/meta";
-import { authorsKeys } from "../../../../../query-keys/authors-keys.ts";
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { AuthorAPI } from '../../../../../api/author/author-api.ts';
+import AuthorTypeSvg from '../../../../../components/author/author-types/Author-type-svg.tsx';
+import AdminHeader from '../../../../../components/layout/admin-header/Admin-header.tsx';
+import Pagination from '../../../../../components/pagination/Pagination.tsx';
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx';
+import { useAuthorMeta } from '../../../../../hooks/meta';
+import { authorsKeys } from '../../../../../query-keys/authors-keys.ts';
 import {
   AuthorsQuery,
   AuthorTypesFilterOptions,
-} from "../../../../../types/author/index.ts";
-import AdminFilterButton from "../../buttons/Admin-filter-button.tsx";
-import AdminDashboardAuthorsGridItem from "./Admin-dashboard-authors-grid-item.tsx";
-import AuthorFormModal from "./Author-form-modal.tsx";
+} from '../../../../../types/author/index.ts';
+import AdminFilterButton from '../../buttons/Admin-filter-button.tsx';
+import AdminDashboardAuthorsGridItem from './Admin-dashboard-authors-grid-item.tsx';
+import AuthorFormModal from './Author-form-modal.tsx';
 
 const limit = 10;
 
 const AdminDashboardAuthorsGrid = () => {
-  const [searchText, setSearchText] = useState<string>("");
+  const [searchText, setSearchText] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [activeType, setActiveType] = useState<string>(
-    AuthorTypesFilterOptions.ALL,
+    AuthorTypesFilterOptions.ALL
   );
   const [addModalOpen, setAddModalOpen] = useState<boolean>(false);
 
@@ -55,7 +55,7 @@ const AdminDashboardAuthorsGrid = () => {
 
   return (
     <div className="flex flex-col h-screen" id="admin-authors">
-      <AdminHeader title={"Авторы"} setText={setSearchText} />
+      <AdminHeader title={'Авторы'} setText={setSearchText} />
 
       {!isTypesLoading && (
         <AuthorFormModal
@@ -79,8 +79,8 @@ const AdminDashboardAuthorsGrid = () => {
                   title={
                     <span className={`flex items-center px-2`}>
                       <AuthorTypeSvg
-                        type={{ id: "0", type: option }}
-                        className={"size-5 mr-1"}
+                        type={{ id: '0', type: option }}
+                        className={'size-5 mr-1'}
                       />
                       {option}
                     </span>
@@ -91,7 +91,7 @@ const AdminDashboardAuthorsGrid = () => {
               ))}
           <div className="max-sm:hidden ml-auto">
             <AdminFilterButton
-              title={"Добавить автора"}
+              title={'Добавить автора'}
               isActive={false}
               onClick={() => setAddModalOpen(true)}
             />
@@ -100,7 +100,7 @@ const AdminDashboardAuthorsGrid = () => {
 
         <div className="sm:hidden mt-2 text-white/80 border-b border-white/10">
           <AdminFilterButton
-            title={"Добавить автора"}
+            title={'Добавить автора'}
             isActive={false}
             onClick={() => setAddModalOpen(true)}
           />
@@ -144,7 +144,7 @@ const AdminDashboardAuthorsGrid = () => {
               totalItems={count}
               itemsPerPage={limit}
               setCurrentPage={setCurrentPage}
-              idToScroll={"admin-authors-grid"}
+              idToScroll={'admin-authors-grid'}
             />
           </div>
         )}

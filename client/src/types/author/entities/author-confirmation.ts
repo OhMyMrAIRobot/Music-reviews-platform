@@ -1,4 +1,4 @@
-import { AuthorConfirmationStatus } from ".";
+import { AuthorConfirmationStatus } from '.';
 
 /**
  * Represents a single author confirmation entity.

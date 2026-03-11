@@ -1,6 +1,6 @@
-import { makeAutoObservable, runInAction } from "mobx";
-import { Profile } from "../types/profile";
-import { User } from "../types/user";
+import { makeAutoObservable, runInAction } from 'mobx';
+import { Profile } from '../types/profile';
+import { User } from '../types/user';
 
 class AuthStore {
   isAuth: boolean = false;
@@ -37,7 +37,7 @@ class AuthStore {
     runInAction(() => {
       this.isAuth = true;
       this.user = user;
-      localStorage.setItem("token", token);
+      localStorage.setItem('token', token);
     });
   }
 
@@ -47,7 +47,7 @@ class AuthStore {
       this.user = null;
       this.profile = null;
       this.isProfileLoading = true;
-      localStorage.removeItem("token");
+      localStorage.removeItem('token');
     });
   }
 }

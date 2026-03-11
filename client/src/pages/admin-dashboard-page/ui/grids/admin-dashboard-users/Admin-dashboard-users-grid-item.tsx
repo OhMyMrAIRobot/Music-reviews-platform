@@ -1,21 +1,21 @@
-import { FC, useState } from "react";
-import { Link } from "react-router";
-import ArrowBottomSvg from "../../../../../components/layout/header/svg/Arrow-bottom-svg.tsx";
-import ConfirmationModal from "../../../../../components/modals/Confirmation-modal.tsx";
-import UserRoleSvg from "../../../../../components/user/User-role-svg.tsx";
-import SkeletonLoader from "../../../../../components/utils/Skeleton-loader.tsx";
-import { useAdminRemoveUserMutation } from "../../../../../hooks/mutations/index.ts";
-import useNavigationPath from "../../../../../hooks/use-navigation-path.ts";
-import { SortOrdersEnum } from "../../../../../types/common/enums/sort-orders-enum.ts";
-import { SortOrder } from "../../../../../types/common/types/sort-order.ts";
+import { FC, useState } from 'react';
+import { Link } from 'react-router';
+import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg.tsx';
+import ConfirmationModal from '../../../../../components/modals/Confirmation-modal.tsx';
+import UserRoleSvg from '../../../../../components/user/User-role-svg.tsx';
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx';
+import { useAdminRemoveUserMutation } from '../../../../../hooks/mutations/index.ts';
+import useNavigationPath from '../../../../../hooks/use-navigation-path.ts';
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum.ts';
+import { SortOrder } from '../../../../../types/common/types/sort-order.ts';
 import {
   UserDetails,
   UserStatusesEnum,
-} from "../../../../../types/user/index.ts";
-import { getRoleColor } from "../../../../../utils/get-role-color.ts";
-import AdminDeleteButton from "../../buttons/Admin-delete-button.tsx";
-import AdminEditButton from "../../buttons/Admin-edit-button.tsx";
-import AdminDashboardEditUserModal from "./admin-dashboard-edit-user-modal/Admin-dashboard-edit-user-modal.tsx";
+} from '../../../../../types/user/index.ts';
+import { getRoleColor } from '../../../../../utils/get-role-color.ts';
+import AdminDeleteButton from '../../buttons/Admin-delete-button.tsx';
+import AdminEditButton from '../../buttons/Admin-edit-button.tsx';
+import AdminDashboardEditUserModal from './admin-dashboard-edit-user-modal/Admin-dashboard-edit-user-modal.tsx';
 
 interface IProps {
   className?: string;
@@ -27,7 +27,7 @@ interface IProps {
 }
 
 const AdminDashboardUsersGridItem: FC<IProps> = ({
-  className = "",
+  className = '',
   user,
   isLoading,
   position,
@@ -50,7 +50,7 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
       {user && (
         <>
           <ConfirmationModal
-            title={"Вы действительно хотите удалить пользователя?"}
+            title={'Вы действительно хотите удалить пользователя?'}
             isOpen={confModalOpen}
             onConfirm={() => mutateAsync(user.id)}
             onCancel={() => setConfModalOpen(false)}
@@ -70,7 +70,7 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
       >
         <div className="xl:col-span-1 text-ellipsis line-clamp-1">
           <span className="xl:hidden"># </span>
-          {position ?? "#"}
+          {position ?? '#'}
         </div>
 
         {user && (
@@ -78,7 +78,7 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
             loading="lazy"
             decoding="async"
             src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-              user.profile?.avatar === ""
+              user.profile?.avatar === ''
                 ? import.meta.env.VITE_DEFAULT_AVATAR
                 : user.profile?.avatar
             }`}
@@ -96,7 +96,7 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
                 loading="lazy"
                 decoding="async"
                 src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-                  user.profile?.avatar === ""
+                  user.profile?.avatar === ''
                     ? import.meta.env.VITE_DEFAULT_AVATAR
                     : user.profile?.avatar
                 }`}
@@ -116,7 +116,7 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
 
         <div className="xl:col-span-2 text-ellipsis line-clamp-1">
           <span className="xl:hidden">Email: </span>
-          {user?.email ?? "Email"}
+          {user?.email ?? 'Email'}
         </div>
 
         <div className="xl:col-span-2 text-ellipsis line-clamp-1 flex items-center h-full">
@@ -133,7 +133,7 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
               <span>Дата создания</span>
               <ArrowBottomSvg
                 className={`size-3 ${
-                  order === SortOrdersEnum.ASC ? "rotate-180" : ""
+                  order === SortOrdersEnum.ASC ? 'rotate-180' : ''
                 }`}
               />
             </button>
@@ -146,10 +146,10 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
               <span className="xl:hidden">Роль: </span>
               <div
                 className={`flex max-xl:ml-0.5 gap-x-1 items-center ${getRoleColor(
-                  user.role.role,
+                  user.role.role
                 )}`}
               >
-                <UserRoleSvg role={user.role} className={"size-5"} />
+                <UserRoleSvg role={user.role} className={'size-5'} />
                 <span>{user.role.role}</span>
               </div>
             </>
@@ -165,8 +165,8 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
               <span
                 className={`max-xl:ml-0.5 px-2 py-0.5 rounded-full select-none text-[13px] ${
                   user.isActive
-                    ? "text-green-500 bg-green-500/15"
-                    : "text-red-500 bg-red-500/15"
+                    ? 'text-green-500 bg-green-500/15'
+                    : 'text-red-500 bg-red-500/15'
                 }`}
               >
                 {user.isActive
@@ -175,7 +175,7 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
               </span>
             </>
           ) : (
-            "Статус аккаунта"
+            'Статус аккаунта'
           )}
         </div>
 
@@ -186,7 +186,7 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
               <AdminDeleteButton onClick={() => setConfModalOpen(true)} />
             </div>
           ) : (
-            "Действие"
+            'Действие'
           )}
         </div>
       </div>

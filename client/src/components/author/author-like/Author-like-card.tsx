@@ -1,9 +1,9 @@
-import { FC } from "react";
-import { Link } from "react-router";
-import useNavigationPath from "../../../hooks/use-navigation-path";
-import { AuthorLike } from "../../../types/review";
-import SkeletonLoader from "../../utils/Skeleton-loader";
-import AuthorLikeCardHeader from "./Author-like-card-header";
+import { FC } from 'react';
+import { Link } from 'react-router';
+import useNavigationPath from '../../../hooks/use-navigation-path';
+import { AuthorLike } from '../../../types/review';
+import SkeletonLoader from '../../utils/Skeleton-loader';
+import AuthorLikeCardHeader from './Author-like-card-header';
 
 interface IProps {
   isLoading: boolean;
@@ -14,7 +14,7 @@ const AuthorLikeCard: FC<IProps> = ({ isLoading, authorLike }) => {
   const { navigateToReleaseDetails, navigatoToProfile } = useNavigationPath();
 
   return isLoading || !authorLike ? (
-    <SkeletonLoader className={"w-full rounded-2xl h-40"} />
+    <SkeletonLoader className={'w-full rounded-2xl h-40'} />
   ) : (
     <div className="w-full bg-zinc-900/60 select-none hover:bg-zinc-800/60 transition-all duration-500 p-[5px] border border-white/10 rounded-2xl group relative">
       <div className="h-[1px] w-[93px] top-0 right-3 absolute bg-gradient-to-r from-white/0 via-white/35 to-white/0" />
@@ -41,7 +41,7 @@ const AuthorLikeCard: FC<IProps> = ({ isLoading, authorLike }) => {
               decoding="async"
               alt={authorLike.author.nickname}
               src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-                authorLike.author.avatar === ""
+                authorLike.author.avatar === ''
                   ? import.meta.env.VITE_DEFAULT_AVATAR
                   : authorLike.author.avatar
               }`}
@@ -55,7 +55,7 @@ const AuthorLikeCard: FC<IProps> = ({ isLoading, authorLike }) => {
         </div>
 
         <img
-          alt={"author-like"}
+          alt={'author-like'}
           src={`${
             import.meta.env.VITE_SERVER_URL
           }/public/assets/author-like.png`}

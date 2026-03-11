@@ -1,10 +1,10 @@
-import { FC } from "react";
-import { Link } from "react-router";
-import useNavigationPath from "../../../hooks/use-navigation-path.ts";
-import { Review } from "../../../types/review";
-import ReviewAuthor from "./Review-author";
-import ReviewMarks from "./Review-marks";
-import ReviewUserImage from "./Review-user-image";
+import { FC } from 'react';
+import { Link } from 'react-router';
+import useNavigationPath from '../../../hooks/use-navigation-path.ts';
+import { Review } from '../../../types/review';
+import ReviewAuthor from './Review-author';
+import ReviewMarks from './Review-marks';
+import ReviewUserImage from './Review-user-image';
 
 interface IProps {
   review: Review;
@@ -36,7 +36,7 @@ const ReviewHeader: FC<IProps> = ({ review }) => {
             decoding="async"
             alt={review.release.title}
             src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
-              review.release.img === ""
+              review.release.img === ''
                 ? import.meta.env.VITE_DEFAULT_COVER
                 : review.release.img
             }`}

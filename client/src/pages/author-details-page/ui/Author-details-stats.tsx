@@ -1,8 +1,8 @@
-import { FC } from "react";
-import AuthorReleaseTypesRatings from "../../../components/author/author-ratings/Author-release-types-ratings";
-import SkeletonLoader from "../../../components/utils/Skeleton-loader";
-import { Author } from "../../../types/author";
-import { ReleaseTypesEnum } from "../../../types/release";
+import { FC } from 'react';
+import AuthorReleaseTypesRatings from '../../../components/author/author-ratings/Author-release-types-ratings';
+import SkeletonLoader from '../../../components/utils/Skeleton-loader';
+import { Author } from '../../../types/author';
+import { ReleaseTypesEnum } from '../../../types/release';
 
 interface IProps {
   author?: Author;

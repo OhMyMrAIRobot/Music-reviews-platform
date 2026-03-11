@@ -1,18 +1,18 @@
-import { useQueryClient } from "@tanstack/react-query";
-import { FC, useMemo, useState } from "react";
-import { AuthorAPI } from "../../../api/author/author-api";
-import FormButton from "../../../components/form-elements/Form-button";
-import FormCheckbox from "../../../components/form-elements/Form-checkbox";
-import FormInput from "../../../components/form-elements/Form-input";
-import FormLabel from "../../../components/form-elements/Form-label";
+import { useQueryClient } from '@tanstack/react-query';
+import { FC, useMemo, useState } from 'react';
+import { AuthorAPI } from '../../../api/author/author-api';
+import FormButton from '../../../components/form-elements/Form-button';
+import FormCheckbox from '../../../components/form-elements/Form-checkbox';
+import FormInput from '../../../components/form-elements/Form-input';
+import FormLabel from '../../../components/form-elements/Form-label';
 import FormMultiSelect, {
   IMultiSelectValue,
-} from "../../../components/form-elements/Form-multi-select";
-import { useSendAuthorConfirmation } from "../../../hooks/mutations";
-import { useAuth } from "../../../hooks/use-auth";
-import { authorsKeys } from "../../../query-keys/authors-keys";
-import { AuthorsQuery } from "../../../types/author";
-import { constraints } from "../../../utils/constraints";
+} from '../../../components/form-elements/Form-multi-select';
+import { useSendAuthorConfirmation } from '../../../hooks/mutations';
+import { useAuth } from '../../../hooks/use-auth';
+import { authorsKeys } from '../../../query-keys/authors-keys';
+import { AuthorsQuery } from '../../../types/author';
+import { constraints } from '../../../utils/constraints';
 
 interface IProps {
   show: boolean;
@@ -22,7 +22,7 @@ const SendAuthorConfirmationForm: FC<IProps> = ({ show }) => {
   const { checkAuth } = useAuth();
   const queryClient = useQueryClient();
 
-  const [confirmation, setConfirmation] = useState<string>("");
+  const [confirmation, setConfirmation] = useState<string>('');
   const [checked, setChecked] = useState<boolean>(false);
   const [authors, setAuthors] = useState<IMultiSelectValue[]>([]);
 
@@ -35,7 +35,7 @@ const SendAuthorConfirmationForm: FC<IProps> = ({ show }) => {
    */
   const loadAuthors = async (
     search: string,
-    limit: number | null,
+    limit: number | null
   ): Promise<IMultiSelectValue[]> => {
     const query: AuthorsQuery = {
       search: search.trim() || undefined,
@@ -59,7 +59,7 @@ const SendAuthorConfirmationForm: FC<IProps> = ({ show }) => {
   const { mutateAsync: createConfirmation, isPending: isCreating } =
     useSendAuthorConfirmation({
       onSuccess: () => {
-        setConfirmation("");
+        setConfirmation('');
         setChecked(false);
         setAuthors([]);
       },
@@ -95,18 +95,18 @@ const SendAuthorConfirmationForm: FC<IProps> = ({ show }) => {
   return (
     <div
       className={`grid gap-4 ${
-        show ? "" : "opacity-0 pointer-events-none duration-200 transition-all"
+        show ? '' : 'opacity-0 pointer-events-none duration-200 transition-all'
       }`}
     >
       <div className="grid gap-2">
         <FormLabel
-          name={"Укажите имена авторов"}
-          htmlFor={"authors-select"}
+          name={'Укажите имена авторов'}
+          htmlFor={'authors-select'}
           isRequired={true}
         />
         <FormMultiSelect
-          id={"authors-select"}
-          placeholder={"Введите имя автора"}
+          id={'authors-select'}
+          placeholder={'Введите имя автора'}
           value={authors}
           onChange={setAuthors}
           loadOptions={loadAuthors}
@@ -116,15 +116,15 @@ const SendAuthorConfirmationForm: FC<IProps> = ({ show }) => {
       <div className="grid gap-2">
         <FormLabel
           name={
-            "Укажите адрес вашей соц.сети или электронной почты, откуда нам придет подтверждение"
+            'Укажите адрес вашей соц.сети или электронной почты, откуда нам придет подтверждение'
           }
-          htmlFor={"input-fonfirmation"}
+          htmlFor={'input-fonfirmation'}
           isRequired={true}
         />
         <FormInput
-          id={"input-fonfirmation"}
-          placeholder={""}
-          type={"text"}
+          id={'input-fonfirmation'}
+          placeholder={''}
+          type={'text'}
           value={confirmation}
           setValue={setConfirmation}
         />
@@ -132,21 +132,21 @@ const SendAuthorConfirmationForm: FC<IProps> = ({ show }) => {
 
       <div className="flex items-center w-full gap-2">
         <FormCheckbox
-          id={"confirmation-checkbox"}
+          id={'confirmation-checkbox'}
           checked={checked}
           setChecked={setChecked}
         />
         <FormLabel
           name={
-            "Я отправил подтверждение в соц.сети сайта со своих верифицированных соц.сетей"
+            'Я отправил подтверждение в соц.сети сайта со своих верифицированных соц.сетей'
           }
-          htmlFor={"confirmation-checkbox"}
+          htmlFor={'confirmation-checkbox'}
           isRequired={true}
         />
       </div>
 
       <FormButton
-        title={"Отправить"}
+        title={'Отправить'}
         onClick={handlePostConfirmation}
         isInvert={true}
         disabled={!isFormValid || isCreating}

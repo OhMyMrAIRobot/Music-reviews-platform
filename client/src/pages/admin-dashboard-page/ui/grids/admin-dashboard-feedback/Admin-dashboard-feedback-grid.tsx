@@ -1,30 +1,30 @@
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { FeedbackAPI } from "../../../../../api/feedback/feedback-api";
-import FeedbackStatusIcon from "../../../../../components/feedback/Feedback-status-icon";
-import AdminHeader from "../../../../../components/layout/admin-header/Admin-header";
-import Pagination from "../../../../../components/pagination/Pagination";
-import SkeletonLoader from "../../../../../components/utils/Skeleton-loader";
-import { useFeedbackMeta } from "../../../../../hooks/meta";
-import { feedbackKeys } from "../../../../../query-keys/feedback-keys";
-import { SortOrdersEnum } from "../../../../../types/common/enums/sort-orders-enum";
-import { SortOrder } from "../../../../../types/common/types/sort-order";
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { FeedbackAPI } from '../../../../../api/feedback/feedback-api';
+import FeedbackStatusIcon from '../../../../../components/feedback/Feedback-status-icon';
+import AdminHeader from '../../../../../components/layout/admin-header/Admin-header';
+import Pagination from '../../../../../components/pagination/Pagination';
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader';
+import { useFeedbackMeta } from '../../../../../hooks/meta';
+import { feedbackKeys } from '../../../../../query-keys/feedback-keys';
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum';
+import { SortOrder } from '../../../../../types/common/types/sort-order';
 import {
   FeedbackQuery,
   FeedbackStatusesFilterEnum,
-} from "../../../../../types/feedback";
-import AdminFilterButton from "../../buttons/Admin-filter-button";
-import AdminDashboardFeedbackGridItem from "./Admin-dashboard-feedback-grid-item";
+} from '../../../../../types/feedback';
+import AdminFilterButton from '../../buttons/Admin-filter-button';
+import AdminDashboardFeedbackGridItem from './Admin-dashboard-feedback-grid-item';
 
 const limit = 10;
 
 const AdminDashboardFeedbackGrid = () => {
   const { statuses, isLoading: isMetaLoading } = useFeedbackMeta();
 
-  const [searchText, setSearchText] = useState<string>("");
+  const [searchText, setSearchText] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [activeStatus, setActiveStatus] = useState<string>(
-    FeedbackStatusesFilterEnum.ALL,
+    FeedbackStatusesFilterEnum.ALL
   );
   const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC);
 
@@ -59,7 +59,7 @@ const AdminDashboardFeedbackGrid = () => {
 
   return (
     <div className="flex flex-col h-screen" id="admin-feedback">
-      <AdminHeader title={"Сообщения"} setText={setSearchText} />
+      <AdminHeader title={'Сообщения'} setText={setSearchText} />
 
       <div
         id="admin-feedback-grid"
@@ -95,7 +95,7 @@ const AdminDashboardFeedbackGrid = () => {
             setOrder(
               order === SortOrdersEnum.DESC
                 ? SortOrdersEnum.ASC
-                : SortOrdersEnum.DESC,
+                : SortOrdersEnum.DESC
             )
           }
           isLoading={isLoading}
@@ -134,7 +134,7 @@ const AdminDashboardFeedbackGrid = () => {
               totalItems={count}
               itemsPerPage={limit}
               setCurrentPage={setCurrentPage}
-              idToScroll={"admin-feedback-grid"}
+              idToScroll={'admin-feedback-grid'}
             />
           </div>
         )}

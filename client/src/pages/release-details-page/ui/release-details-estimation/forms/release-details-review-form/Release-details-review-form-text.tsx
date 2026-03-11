@@ -1,6 +1,6 @@
-import { FC } from "react";
-import BrushSvg from "../../../../../../components/svg/Brush-svg";
-import { constraints } from "../../../../../../utils/constraints";
+import { FC } from 'react';
+import BrushSvg from '../../../../../../components/svg/Brush-svg';
+import { constraints } from '../../../../../../utils/constraints';
 
 interface IProps {
   isReview: boolean;
@@ -21,8 +21,8 @@ const ReleaseDetailsReviewFormText: FC<IProps> = ({
     <div
       className={`flex flex-col gap-2 transition-all duration-350 ease-in-out overflow-hidden ${
         isReview
-          ? "opacity-100 translate-y-0"
-          : "opacity-0 max-h-0 -translate-y-5"
+          ? 'opacity-100 translate-y-0'
+          : 'opacity-0 max-h-0 -translate-y-5'
       }
 		`}
     >
@@ -45,12 +45,12 @@ const ReleaseDetailsReviewFormText: FC<IProps> = ({
       <div className="flex sm:flex-row gap-y-2 flex-col-reverse w-full sm:justify-between">
         <button
           onClick={() => {
-            setTitle("");
-            setText("");
+            setTitle('');
+            setText('');
           }}
           className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium bg-white/5 text-white h-10 px-6 py-2 space-x-2 text-xs lg:text-sm cursor-pointer transition-colors duration-200 hover:bg-white/10"
         >
-          <BrushSvg className={"size-4"} />
+          <BrushSvg className={'size-4'} />
           <span>Очистить черновик</span>
         </button>
 

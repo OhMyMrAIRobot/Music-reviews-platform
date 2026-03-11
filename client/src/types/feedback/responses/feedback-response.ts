@@ -1,4 +1,4 @@
-import { Feedback } from "../entities";
+import { Feedback } from '../entities';
 
 /**
  * Paginated response envelope for feedback list endpoints.

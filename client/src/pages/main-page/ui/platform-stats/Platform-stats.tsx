@@ -1,5 +1,5 @@
-import PlatformStatistics from "./platform-statistics/Platform-statistics";
-import PlatformStatsLeaderboard from "./platform-stats-leaderboard/Platform-stats-leaderboard";
+import PlatformStatistics from './platform-statistics/Platform-statistics';
+import PlatformStatsLeaderboard from './platform-stats-leaderboard/Platform-stats-leaderboard';
 
 const PlatformStats = () => {
   return (

@@ -1,5 +1,5 @@
-import { FC } from "react";
-import Slider from "../../../../../../components/utils/Slider";
+import { FC } from 'react';
+import Slider from '../../../../../../components/utils/Slider';
 
 interface IProps {
   title: string;

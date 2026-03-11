@@ -1,9 +1,9 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { FeedbackAPI } from "../../../../api/feedback/feedback-api";
-import { feedbackKeys } from "../../../../query-keys/feedback-keys";
-import { UseMutationParams } from "../../../../types/common";
-import { useApiErrorHandler } from "../../../use-api-error-handler";
-import { useStore } from "../../../use-store";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { FeedbackAPI } from '../../../../api/feedback/feedback-api';
+import { feedbackKeys } from '../../../../query-keys/feedback-keys';
+import { UseMutationParams } from '../../../../types/common';
+import { useApiErrorHandler } from '../../../use-api-error-handler';
+import { useStore } from '../../../use-store';
 /**
  * Custom React hook returning a React Query mutation for deleting a feedback
  * message. On success the hook shows a success notification
@@ -24,12 +24,12 @@ export const useAdminRemoveFeedbackMutation = ({
   const mutation = useMutation({
     mutationFn: (id: string) => FeedbackAPI.delete(id),
     onSuccess: () => {
-      notificationStore.addSuccessNotification("Сообщение успешно удалено!");
+      notificationStore.addSuccessNotification('Сообщение успешно удалено!');
       queryClient.invalidateQueries({ queryKey: feedbackKeys.all });
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, "Не удалось удалить сообщение!");
+      handleApiError(error, 'Не удалось удалить сообщение!');
       onError?.(error);
     },
     onSettled,

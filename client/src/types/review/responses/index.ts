@@ -1,2 +1,2 @@
-export * from "./author-likes-response";
-export * from "./reviews-response";
+export * from './author-likes-response';
+export * from './reviews-response';

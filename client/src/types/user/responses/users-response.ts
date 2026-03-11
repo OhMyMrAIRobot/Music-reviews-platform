@@ -1,4 +1,4 @@
-import { UserDetails } from "../entities";
+import { UserDetails } from '../entities';
 
 /**
  * Response wrapper for the users listing endpoint.

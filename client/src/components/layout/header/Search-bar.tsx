@@ -1,10 +1,10 @@
-import { FC, useState } from "react";
-import { useNavigate } from "react-router";
-import useNavigationPath from "../../../hooks/use-navigation-path";
-import { SearchBarOptionsEnum } from "../../../types/common";
-import { SearchTypesEnum } from "../../../types/common/enums/search-types-enum";
-import ComboBox from "../../buttons/Combo-box";
-import SearchSvg from "./svg/Search-svg";
+import { FC, useState } from 'react';
+import { useNavigate } from 'react-router';
+import useNavigationPath from '../../../hooks/use-navigation-path';
+import { SearchBarOptionsEnum } from '../../../types/common';
+import { SearchTypesEnum } from '../../../types/common/enums/search-types-enum';
+import ComboBox from '../../buttons/Combo-box';
+import SearchSvg from './svg/Search-svg';
 
 interface IProps {
   className: string;
@@ -17,13 +17,13 @@ const SearchBar: FC<IProps> = ({ className, comboboxClassname, onSubmit }) => {
 
   const { navigateToSearch } = useNavigationPath();
 
-  const [searchText, setSearchText] = useState<string>("");
+  const [searchText, setSearchText] = useState<string>('');
   const [selectedType, setSelectedType] = useState<string>(
-    SearchBarOptionsEnum.AUTHORS,
+    SearchBarOptionsEnum.AUTHORS
   );
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       handleNavigate();
     }
   };
@@ -58,7 +58,7 @@ const SearchBar: FC<IProps> = ({ className, comboboxClassname, onSubmit }) => {
         onClick={handleNavigate}
         className="w-10 h-full px-3 text-sm rounded-md cursor-pointer font-medium text-gray-500 transition-colors hover:bg-white/15 hover:text-white duration-200"
       >
-        <SearchSvg className={"size-4"} />
+        <SearchSvg className={'size-4'} />
       </button>
 
       <input

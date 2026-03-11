@@ -1,7 +1,7 @@
-import { FC } from "react";
-import Tooltip from "../../tooltip/Tooltip";
-import TooltipSpan from "../../tooltip/Tooltip-span";
-import AuthorCommentColorSvg from "../author-comment/svg/Author-comment-color-svg";
+import { FC } from 'react';
+import Tooltip from '../../tooltip/Tooltip';
+import TooltipSpan from '../../tooltip/Tooltip-span';
+import AuthorCommentColorSvg from '../author-comment/svg/Author-comment-color-svg';
 
 interface IProps {
   count: number;
@@ -10,7 +10,7 @@ interface IProps {
 
 const RegisteredAuthorWrittenComments: FC<IProps> = ({
   count,
-  iconClassname = "",
+  iconClassname = '',
 }) => {
   return (
     count > 0 && (

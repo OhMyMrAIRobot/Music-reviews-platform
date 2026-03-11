@@ -1,6 +1,6 @@
-import { FC } from "react";
-import NextSvg from "../svg/Next-svg";
-import PrevSvg from "../svg/Prev-svg";
+import { FC } from 'react';
+import NextSvg from '../svg/Next-svg';
+import PrevSvg from '../svg/Prev-svg';
 
 interface IProps {
   currentPage: number;
@@ -21,7 +21,7 @@ const Pagination: FC<IProps> = ({
 
   const scrollToUp = () => {
     const element = document.getElementById(idToScroll) || document.body;
-    element.scrollIntoView({ behavior: "smooth" });
+    element.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handlePrev = () => {
@@ -52,7 +52,7 @@ const Pagination: FC<IProps> = ({
     const end = Math.min(totalPages - 1, currentPage + 2);
 
     if (start > 2) {
-      pages.push("...");
+      pages.push('...');
     }
 
     for (let i = start; i <= end; i++) {
@@ -60,7 +60,7 @@ const Pagination: FC<IProps> = ({
     }
 
     if (end < totalPages - 1) {
-      pages.push("...");
+      pages.push('...');
     }
 
     if (totalPages > 1) {
@@ -79,12 +79,12 @@ const Pagination: FC<IProps> = ({
         hidden={currentPage === 1}
         className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium h-7 md:h-10  px-4 py-2 gap-1 hover:bg-white/10 transition-colors duration-300 cursor-pointer"
       >
-        <PrevSvg className={"size-4"} />
+        <PrevSvg className={'size-4'} />
         <span className="hidden md:block">Предыдущая</span>
       </button>
 
       {pageNumbers.map((page, idx) =>
-        page === "..." ? (
+        page === '...' ? (
           <span
             key={`dots-${idx}`}
             className="px-3 py-1 text-zinc-400 select-none"
@@ -102,13 +102,13 @@ const Pagination: FC<IProps> = ({
             }}
             className={`inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium transition-colors duration-300 cursor-pointer size-7 lg:size-10 text-[12px] lg:text-sm  ${
               currentPage === page
-                ? "border border-white/20"
-                : "hover:bg-white/10"
+                ? 'border border-white/20'
+                : 'hover:bg-white/10'
             }`}
           >
             {page}
           </button>
-        ),
+        )
       )}
 
       <button
@@ -117,7 +117,7 @@ const Pagination: FC<IProps> = ({
         className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium h-7 md:h-10  px-4 py-2 gap-1 hover:bg-white/10 transition-colors duration-300 cursor-pointer"
       >
         <span className="hidden md:block"> Следующая</span>
-        <NextSvg className={"size-4"} />
+        <NextSvg className={'size-4'} />
       </button>
     </div>
   );

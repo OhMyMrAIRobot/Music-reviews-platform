@@ -1,14 +1,14 @@
-import { observer } from "mobx-react-lite";
-import { FC } from "react";
-import AuthorNominations from "../../../components/author/author-nomination/Author-nominations";
-import AuthorTypes from "../../../components/author/author-types/Author-types";
-import RegisteredAuthorTypes from "../../../components/author/registered-author/Registered-author-types";
-import ToggleFavButton from "../../../components/buttons/Toggle-fav-button";
-import LikesCount from "../../../components/utils/Likes-count";
-import SkeletonLoader from "../../../components/utils/Skeleton-loader";
-import { useToggleFavAuthor } from "../../../hooks/mutations";
-import { useStore } from "../../../hooks/use-store";
-import { Author } from "../../../types/author";
+import { observer } from 'mobx-react-lite';
+import { FC } from 'react';
+import AuthorNominations from '../../../components/author/author-nomination/Author-nominations';
+import AuthorTypes from '../../../components/author/author-types/Author-types';
+import RegisteredAuthorTypes from '../../../components/author/registered-author/Registered-author-types';
+import ToggleFavButton from '../../../components/buttons/Toggle-fav-button';
+import LikesCount from '../../../components/utils/Likes-count';
+import SkeletonLoader from '../../../components/utils/Skeleton-loader';
+import { useToggleFavAuthor } from '../../../hooks/mutations';
+import { useStore } from '../../../hooks/use-store';
+import { Author } from '../../../types/author';
 
 interface IProps {
   author?: Author;
@@ -36,7 +36,7 @@ const AuthorDetailsHeader: FC<IProps> = observer(({ author, isLoading }) => {
               loading="lazy"
               decoding="async"
               src={`${import.meta.env.VITE_SERVER_URL}/public/authors/covers/${
-                author.cover === ""
+                author.cover === ''
                   ? import.meta.env.VITE_DEFAULT_COVER
                   : author.cover
               }`}
@@ -44,7 +44,7 @@ const AuthorDetailsHeader: FC<IProps> = observer(({ author, isLoading }) => {
             />
             <div className="absolute inset-2 bg-black/20 rounded-md z-200 pointer-events-none" />
 
-            {author.cover === "" && (
+            {author.cover === '' && (
               <div className="size-25 lg:size-50 overflow-hidden absolute left-3 top-3 lg:left-5 lg:top-5 rounded-full border border-zinc-700 z-100">
                 <img
                   loading="lazy"
@@ -52,7 +52,7 @@ const AuthorDetailsHeader: FC<IProps> = observer(({ author, isLoading }) => {
                   src={`${
                     import.meta.env.VITE_SERVER_URL
                   }/public/authors/avatars/${
-                    author.avatar === ""
+                    author.avatar === ''
                       ? import.meta.env.VITE_DEFAULT_AVATAR
                       : author.avatar
                   }`}

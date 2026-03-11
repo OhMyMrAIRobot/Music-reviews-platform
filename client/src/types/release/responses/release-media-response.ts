@@ -1,4 +1,4 @@
-import { ReleaseMedia } from "..";
+import { ReleaseMedia } from '..';
 
 /**
  * Standard response wrapper returned by listing endpoints for release media.

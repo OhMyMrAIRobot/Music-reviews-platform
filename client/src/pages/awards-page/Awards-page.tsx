@@ -1,17 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
-import { Link } from "react-router";
-import { NominationAPI } from "../../api/nomination-api";
-import ComboBox from "../../components/buttons/Combo-box";
-import SkeletonLoader from "../../components/utils/Skeleton-loader";
-import useNavigationPath from "../../hooks/use-navigation-path";
-import { nominationsKeys } from "../../query-keys/nominations-keys";
+import { useQuery } from '@tanstack/react-query';
+import { useMemo, useState } from 'react';
+import { Link } from 'react-router';
+import { NominationAPI } from '../../api/nomination-api';
+import ComboBox from '../../components/buttons/Combo-box';
+import SkeletonLoader from '../../components/utils/Skeleton-loader';
+import useNavigationPath from '../../hooks/use-navigation-path';
+import { nominationsKeys } from '../../query-keys/nominations-keys';
 import {
   MonthEnumType,
   MonthsEnum,
-} from "../../types/common/enums/months-enum";
-import { NominationWinnersQuery } from "../../types/nomination";
-import NominationCarouselContainer from "./ui/carousel/Nomination-carousel-container";
+} from '../../types/common/enums/months-enum';
+import { NominationWinnersQuery } from '../../types/nomination';
+import NominationCarouselContainer from './ui/carousel/Nomination-carousel-container';
 
 const AwardsPage = () => {
   const { navigateToVotes } = useNavigationPath();
@@ -41,7 +41,7 @@ const AwardsPage = () => {
   const yearOptions =
     minYear && maxYear
       ? Array.from({ length: maxYear - minYear + 1 }, (_, i) =>
-          (maxYear - i).toString(),
+          (maxYear - i).toString()
         )
       : [];
 
@@ -63,7 +63,7 @@ const AwardsPage = () => {
           <span className="hidden sm:block text-white/70 font-bold ">Год:</span>
           <div className="w-full sm:w-55">
             {!minYear || !maxYear ? (
-              <SkeletonLoader className={"w-full h-10 rounded-md"} />
+              <SkeletonLoader className={'w-full h-10 rounded-md'} />
             ) : (
               <ComboBox
                 options={yearOptions}

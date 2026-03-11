@@ -1,26 +1,26 @@
-import { useQuery } from "@tanstack/react-query";
-import { FC, useEffect, useState } from "react";
-import { FeedbackReplyAPI } from "../../../../../api/feedback/feedback-reply-api";
-import FormButton from "../../../../../components/form-elements/Form-button";
-import FormLabel from "../../../../../components/form-elements/Form-label";
-import FormTextbox from "../../../../../components/form-elements/Form-textbox";
-import ModalOverlay from "../../../../../components/modals/Modal-overlay";
-import SkeletonLoader from "../../../../../components/utils/Skeleton-loader";
-import { useFeedbackMeta } from "../../../../../hooks/meta";
+import { useQuery } from '@tanstack/react-query';
+import { FC, useEffect, useState } from 'react';
+import { FeedbackReplyAPI } from '../../../../../api/feedback/feedback-reply-api';
+import FormButton from '../../../../../components/form-elements/Form-button';
+import FormLabel from '../../../../../components/form-elements/Form-label';
+import FormTextbox from '../../../../../components/form-elements/Form-textbox';
+import ModalOverlay from '../../../../../components/modals/Modal-overlay';
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader';
+import { useFeedbackMeta } from '../../../../../hooks/meta';
 import {
   useAdminCreateFeedbackReplyMutation,
   useAdminUpdateFeedbackMutation,
-} from "../../../../../hooks/mutations";
-import { useStore } from "../../../../../hooks/use-store";
-import { feedbackKeys } from "../../../../../query-keys/feedback-keys";
+} from '../../../../../hooks/mutations';
+import { useStore } from '../../../../../hooks/use-store';
+import { feedbackKeys } from '../../../../../query-keys/feedback-keys';
 import {
   CreateFeedbackReplyData,
   Feedback,
   FeedbackReply,
   FeedbackStatusesEnum,
-} from "../../../../../types/feedback";
-import { constraints } from "../../../../../utils/constraints";
-import { getFeedbackStatusColor } from "../../../../../utils/get-feedback-status-color";
+} from '../../../../../types/feedback';
+import { constraints } from '../../../../../utils/constraints';
+import { getFeedbackStatusColor } from '../../../../../utils/get-feedback-status-color';
 
 interface IProps {
   isOpen: boolean;
@@ -34,7 +34,7 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
 
   const [reply, setReply] = useState<FeedbackReply | null>(null);
   const [showReply, setShowReply] = useState<boolean>(false);
-  const [replyText, setReplyText] = useState<string>("");
+  const [replyText, setReplyText] = useState<string>('');
 
   /**
    * Query to get the reply for the feedback
@@ -65,7 +65,7 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
       onSuccess(data) {
         setReply(data);
         setShowReply(false);
-        setReplyText("");
+        setReplyText('');
         onClose();
       },
     });
@@ -77,13 +77,13 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
   const updateReadStatus = () => {
     if (feedback.feedbackStatus.status !== FeedbackStatusesEnum.NEW) {
       notificationStore.addErrorNotification(
-        "Вы не можете отметить данное сообщение как прочитанное!",
+        'Вы не можете отметить данное сообщение как прочитанное!'
       );
       return;
     }
 
     const newStatus = statuses.find(
-      (entry) => entry.status === FeedbackStatusesEnum.READ,
+      (entry) => entry.status === FeedbackStatusesEnum.READ
     );
 
     if (newStatus) {
@@ -114,7 +114,7 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
   /** EFFECTS */
   useEffect(() => {
     setReply(null);
-    setReplyText("");
+    setReplyText('');
     if (feedback.feedbackStatus.status === FeedbackStatusesEnum.ANSWERED) {
       setReply(replyData || null);
     }
@@ -135,8 +135,8 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
           className={`relative rounded-xl w-full lg:w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6 max-h-full overflow-y-scroll`}
         >
           <h1 className="border-b border-white/10 text-3xl font-bold py-4 text-center">
-            {`${!reply && showReply ? "Написание" : "Просмотр"} ${
-              showReply ? "ответа" : "сообщения"
+            {`${!reply && showReply ? 'Написание' : 'Просмотр'} ${
+              showReply ? 'ответа' : 'сообщения'
             }`}
           </h1>
           {!(showReply && !reply) && (
@@ -149,14 +149,14 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
               )}
               {showReply ? (
                 reply && (
-                  <h6>{`Ответил: ${reply.user?.nickname ?? "Неизвестно"}`}</h6>
+                  <h6>{`Ответил: ${reply.user?.nickname ?? 'Неизвестно'}`}</h6>
                 )
               ) : (
                 <h6>
                   {`Статус: `}
                   <span
                     className={`${getFeedbackStatusColor(
-                      feedback.feedbackStatus.status,
+                      feedback.feedbackStatus.status
                     )}`}
                   >
                     {feedback.feedbackStatus.status}
@@ -176,13 +176,13 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
           {showReply && !reply ? (
             <div className="flex flex-col gap-3 px-6 py-4 h-70 max-h-70">
               <FormLabel
-                name={"Текст ответа"}
-                htmlFor={"feedback-reply-textbox"}
+                name={'Текст ответа'}
+                htmlFor={'feedback-reply-textbox'}
                 isRequired={true}
               />
               <FormTextbox
-                id={"feedback-reply-textbox"}
-                placeholder={"Текст ответа..."}
+                id={'feedback-reply-textbox'}
+                placeholder={'Текст ответа...'}
                 value={replyText}
                 setValue={setReplyText}
                 className="h-full"
@@ -192,7 +192,7 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
             <div className="px-6 py-4 flex gap-10 w-full h-70 max-h-70 overflow-y-scroll font-light">
               <h6 className="break-words w-full">
                 <span className="font-bold">
-                  {`Текст ${showReply ? "ответа" : "сообщения"}: `}
+                  {`Текст ${showReply ? 'ответа' : 'сообщения'}: `}
                 </span>
                 {showReply && reply ? reply.message : feedback.message}
               </h6>
@@ -207,7 +207,7 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
                   <>
                     <div className="w-full sm:w-35">
                       <FormButton
-                        title={"Отправить"}
+                        title={'Отправить'}
                         isInvert={true}
                         onClick={postReply}
                         disabled={!replyText.trim() || isReplyCreating}
@@ -216,11 +216,11 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
                     </div>
                     <div className="w-full sm:w-25">
                       <FormButton
-                        title={"Назад"}
+                        title={'Назад'}
                         isInvert={false}
                         onClick={() => {
                           setShowReply(false);
-                          setReplyText("");
+                          setReplyText('');
                         }}
                         disabled={isReplyCreating}
                       />
@@ -230,7 +230,7 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
                   FeedbackStatusesEnum.NEW ? (
                   <div className="w-full sm:w-35">
                     <FormButton
-                      title={"Прочитано"}
+                      title={'Прочитано'}
                       isInvert={true}
                       onClick={updateReadStatus}
                       disabled={
@@ -245,8 +245,8 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
                     <FormButton
                       title={
                         reply
-                          ? `Посмотреть ${showReply ? "сообщение" : "ответ"}`
-                          : "Написать ответ"
+                          ? `Посмотреть ${showReply ? 'сообщение' : 'ответ'}`
+                          : 'Написать ответ'
                       }
                       isInvert={true}
                       onClick={() => setShowReply(!showReply)}
@@ -259,7 +259,7 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
 
             <div className="w-full sm:w-25 sm:ml-auto">
               <FormButton
-                title={"Закрыть"}
+                title={'Закрыть'}
                 isInvert={false}
                 onClick={onClose}
                 disabled={isReplyCreating || isStatusUpdating}

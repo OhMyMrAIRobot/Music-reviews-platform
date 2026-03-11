@@ -1,17 +1,17 @@
-import { observer } from "mobx-react-lite";
-import { Link } from "react-router";
-import useNavigationPath from "../../../hooks/use-navigation-path";
-import { useSidebarOverlay } from "../../../hooks/use-sidebar-overlay";
-import { useStore } from "../../../hooks/use-store";
-import ActivationSvg from "../../svg/Activation-svg";
-import LogoFullSvg from "../../svg/Logo-full-svg";
-import PencilSvg from "../../svg/Pencil-svg";
-import BurgerMenuButton from "./buttons/Burger-menu-button";
-import HeaderButton from "./buttons/Header-button";
-import HeaderSvgButton from "./buttons/Header-svg-button";
-import LoginIconButton from "./buttons/Login-icon-button";
-import ProfileButton from "./buttons/Profile-button";
-import SearchBar from "./Search-bar";
+import { observer } from 'mobx-react-lite';
+import { Link } from 'react-router';
+import useNavigationPath from '../../../hooks/use-navigation-path';
+import { useSidebarOverlay } from '../../../hooks/use-sidebar-overlay';
+import { useStore } from '../../../hooks/use-store';
+import ActivationSvg from '../../svg/Activation-svg';
+import LogoFullSvg from '../../svg/Logo-full-svg';
+import PencilSvg from '../../svg/Pencil-svg';
+import BurgerMenuButton from './buttons/Burger-menu-button';
+import HeaderButton from './buttons/Header-button';
+import HeaderSvgButton from './buttons/Header-svg-button';
+import LoginIconButton from './buttons/Login-icon-button';
+import ProfileButton from './buttons/Profile-button';
+import SearchBar from './Search-bar';
 
 const Header = observer(() => {
   const { authStore } = useStore();
@@ -36,19 +36,19 @@ const Header = observer(() => {
           <LogoFullSvg />
         </Link>
 
-        <SearchBar className={"hidden lg:flex lg:w-[400px]"} />
+        <SearchBar className={'hidden lg:flex lg:w-[400px]'} />
 
         <div className="ml-auto hidden lg:flex items-center gap-8">
           {authStore.user?.isActive === false && (
             <Link to={navigateToActivation}>
-              <HeaderSvgButton title={"Активация аккаунта"}>
-                <ActivationSvg className={"size-5"} />
+              <HeaderSvgButton title={'Активация аккаунта'}>
+                <ActivationSvg className={'size-5'} />
               </HeaderSvgButton>
             </Link>
           )}
 
           <Link to={navigateToFeedback}>
-            <HeaderSvgButton title={"Обратная связь"}>
+            <HeaderSvgButton title={'Обратная связь'}>
               <PencilSvg className="size-3" />
             </HeaderSvgButton>
           </Link>
@@ -56,10 +56,10 @@ const Header = observer(() => {
           {!authStore.isAuth && (
             <div className="flex gap-3">
               <Link to={navigateToLogin}>
-                <HeaderButton isInvert={false} title={"Войти"} />
+                <HeaderButton isInvert={false} title={'Войти'} />
               </Link>
               <Link to={navigateToRegistration}>
-                <HeaderButton isInvert={true} title={"Регистрация"} />
+                <HeaderButton isInvert={true} title={'Регистрация'} />
               </Link>
             </div>
           )}

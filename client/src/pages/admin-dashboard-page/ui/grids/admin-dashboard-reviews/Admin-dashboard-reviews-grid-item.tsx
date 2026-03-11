@@ -1,16 +1,16 @@
-import { FC, useState } from "react";
-import { Link } from "react-router";
-import ArrowBottomSvg from "../../../../../components/layout/header/svg/Arrow-bottom-svg.tsx";
-import ConfirmationModal from "../../../../../components/modals/Confirmation-modal.tsx";
-import SkeletonLoader from "../../../../../components/utils/Skeleton-loader.tsx";
-import { useAdminRemoveReviewMutation } from "../../../../../hooks/mutations/index.ts";
-import useNavigationPath from "../../../../../hooks/use-navigation-path.ts";
-import { SortOrdersEnum } from "../../../../../types/common/enums/sort-orders-enum.ts";
-import { SortOrder } from "../../../../../types/common/types/sort-order.ts";
-import { Review } from "../../../../../types/review/index.ts";
-import AdminDeleteButton from "../../buttons/Admin-delete-button.tsx";
-import AdminOpenButton from "../../buttons/Admin-open-button.tsx";
-import ReviewFormModal from "./Review-form-modal.tsx";
+import { FC, useState } from 'react';
+import { Link } from 'react-router';
+import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg.tsx';
+import ConfirmationModal from '../../../../../components/modals/Confirmation-modal.tsx';
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx';
+import { useAdminRemoveReviewMutation } from '../../../../../hooks/mutations/index.ts';
+import useNavigationPath from '../../../../../hooks/use-navigation-path.ts';
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum.ts';
+import { SortOrder } from '../../../../../types/common/types/sort-order.ts';
+import { Review } from '../../../../../types/review/index.ts';
+import AdminDeleteButton from '../../buttons/Admin-delete-button.tsx';
+import AdminOpenButton from '../../buttons/Admin-open-button.tsx';
+import ReviewFormModal from './Review-form-modal.tsx';
 
 interface IProps {
   className?: string;
@@ -22,7 +22,7 @@ interface IProps {
 }
 
 const AdminDashboardReviewsGridItem: FC<IProps> = ({
-  className = "",
+  className = '',
   review,
   isLoading,
   position,
@@ -48,7 +48,7 @@ const AdminDashboardReviewsGridItem: FC<IProps> = ({
         <>
           {confModalOpen && (
             <ConfirmationModal
-              title={"Вы действительно хотите удалить рецензию?"}
+              title={'Вы действительно хотите удалить рецензию?'}
               isOpen={confModalOpen}
               onConfirm={() => mutateAsync({ id: review.id })}
               onCancel={() => setConfModalOpen(false)}
@@ -70,7 +70,7 @@ const AdminDashboardReviewsGridItem: FC<IProps> = ({
       >
         <div className="xl:col-span-1 text-ellipsis line-clamp-1">
           <span className="xl:hidden"># </span>
-          {position ?? "#"}
+          {position ?? '#'}
         </div>
 
         <div className="xl:col-span-2 h-full flex items-center mr-2">
@@ -85,7 +85,7 @@ const AdminDashboardReviewsGridItem: FC<IProps> = ({
                   loading="lazy"
                   decoding="async"
                   src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-                    review.user.avatar === ""
+                    review.user.avatar === ''
                       ? import.meta.env.VITE_DEFAULT_AVATAR
                       : review.user.avatar
                   }`}
@@ -114,7 +114,7 @@ const AdminDashboardReviewsGridItem: FC<IProps> = ({
                   loading="lazy"
                   decoding="async"
                   src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
-                    review.release.img === ""
+                    review.release.img === ''
                       ? import.meta.env.VITE_DEFAULT_COVER
                       : review.release.img
                   }`}
@@ -145,7 +145,7 @@ const AdminDashboardReviewsGridItem: FC<IProps> = ({
               <span>Дата публикации</span>
               <ArrowBottomSvg
                 className={`size-3 ${
-                  order === SortOrdersEnum.ASC ? "rotate-180" : ""
+                  order === SortOrdersEnum.ASC ? 'rotate-180' : ''
                 }`}
               />
             </button>
@@ -185,7 +185,7 @@ const AdminDashboardReviewsGridItem: FC<IProps> = ({
               <AdminDeleteButton onClick={() => setConfModalOpen(true)} />
             </div>
           ) : (
-            "Действие"
+            'Действие'
           )}
         </div>
       </div>

@@ -1,7 +1,7 @@
-import { FC } from "react";
-import SkeletonLoader from "../../../components/utils/Skeleton-loader";
-import { AuthorConfirmation } from "../../../types/author";
-import { getAuthorConfirmationStatusColor } from "../../../utils/get-author-confirmation-status-color";
+import { FC } from 'react';
+import SkeletonLoader from '../../../components/utils/Skeleton-loader';
+import { AuthorConfirmation } from '../../../types/author';
+import { getAuthorConfirmationStatusColor } from '../../../utils/get-author-confirmation-status-color';
 
 interface IProps {
   isLoading: boolean;
@@ -10,16 +10,16 @@ interface IProps {
 
 const AuthorConfirmationItem: FC<IProps> = ({ isLoading, item }) => {
   return isLoading || !item ? (
-    <SkeletonLoader className={"rounded-lg w-full h-30 lg:h-35"} />
+    <SkeletonLoader className={'rounded-lg w-full h-30 lg:h-35'} />
   ) : (
     <div className="w-full rounded-lg border border-white/15 flex flex-col gap-1 p-2  text-sm lg:text-base ">
       <span>Пользователь: {item.user.nickname}</span>
       <span>Автор: {item.author.name}</span>
       <span>
-        Статус:{" "}
+        Статус:{' '}
         <span
           className={`font-medium ${getAuthorConfirmationStatusColor(
-            item.status.status,
+            item.status.status
           )}`}
         >
           {item.status.status}

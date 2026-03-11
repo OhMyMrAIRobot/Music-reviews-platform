@@ -1,4 +1,4 @@
-import { CreateAuthorData } from "./create-author-data";
+import { CreateAuthorData } from './create-author-data';
 
 /**
  * Describes form data for updating an existing author.

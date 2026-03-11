@@ -1,4 +1,4 @@
-import { AuthorComment } from "../entities";
+import { AuthorComment } from '../entities';
 
 /**
  * AuthorCommentsResponse — standard paginated response shape returned by

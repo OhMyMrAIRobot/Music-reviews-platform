@@ -1,13 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
-import { useRef, useState } from "react";
-import { ReviewAPI } from "../../../../api/review/review-api";
-import CarouselContainer from "../../../../components/carousel/Carousel-container";
-import LastReviewsCarousel from "../../../../components/carousel/Last-reviews-carousel";
-import useNavigationPath from "../../../../hooks/use-navigation-path";
-import { reviewsKeys } from "../../../../query-keys/reviews-keys";
-import { SortOrdersEnum } from "../../../../types/common/enums/sort-orders-enum";
-import { CarouselRef } from "../../../../types/common/types/carousel-ref";
-import { ReviewsQuery, ReviewsSortFieldsEnum } from "../../../../types/review";
+import { useQuery } from '@tanstack/react-query';
+import { useRef, useState } from 'react';
+import { ReviewAPI } from '../../../../api/review/review-api';
+import CarouselContainer from '../../../../components/carousel/Carousel-container';
+import LastReviewsCarousel from '../../../../components/carousel/Last-reviews-carousel';
+import useNavigationPath from '../../../../hooks/use-navigation-path';
+import { reviewsKeys } from '../../../../query-keys/reviews-keys';
+import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum';
+import { CarouselRef } from '../../../../types/common/types/carousel-ref';
+import { ReviewsQuery, ReviewsSortFieldsEnum } from '../../../../types/review';
 
 const query: ReviewsQuery = {
   limit: 45,
@@ -34,8 +34,8 @@ const LastReviews = () => {
 
   return (
     <CarouselContainer
-      title={"Новые рецензии"}
-      buttonTitle={"Все рецензии"}
+      title={'Новые рецензии'}
+      buttonTitle={'Все рецензии'}
       showButton={true}
       href={navigateToReviews}
       handlePrev={() => carouselRef.current?.scrollPrev()}

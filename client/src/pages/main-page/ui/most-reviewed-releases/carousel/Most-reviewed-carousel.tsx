@@ -1,9 +1,9 @@
-import { EmblaOptionsType } from "embla-carousel";
-import useEmblaCarousel from "embla-carousel-react";
-import { FC } from "react";
-import SkeletonLoader from "../../../../../components/utils/Skeleton-loader";
-import { Release } from "../../../../../types/release";
-import MostReviewedCarouselItem from "./Most-reviewed-carousel-item";
+import { EmblaOptionsType } from 'embla-carousel';
+import useEmblaCarousel from 'embla-carousel-react';
+import { FC } from 'react';
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader';
+import { Release } from '../../../../../types/release';
+import MostReviewedCarouselItem from './Most-reviewed-carousel-item';
 
 interface IProps {
   items: Release[];
@@ -18,7 +18,7 @@ const MostReviewedCarousel: FC<IProps> = ({
   items,
   isLoading,
 }) => {
-  const options: EmblaOptionsType = { dragFree: true, align: "start" };
+  const options: EmblaOptionsType = { dragFree: true, align: 'start' };
   const [emblaRef] = useEmblaCarousel(options);
 
   return (

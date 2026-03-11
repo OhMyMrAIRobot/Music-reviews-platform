@@ -1,4 +1,4 @@
-import { AlbumValue } from "../entities";
+import { AlbumValue } from '../entities';
 
 /**
  * Standard paginated response shape for album values endpoints.

@@ -1,9 +1,9 @@
-import { User } from ".";
+import { User } from '.';
 
 /**
  * Represents an `UserDetails` entity.
  */
-export type UserDetails = Omit<User, "registeredAuthor"> & {
+export type UserDetails = Omit<User, 'registeredAuthor'> & {
   /** User's profile information */
   profile: Profile | null;
 };

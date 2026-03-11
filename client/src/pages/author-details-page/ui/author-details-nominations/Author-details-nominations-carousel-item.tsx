@@ -1,15 +1,15 @@
-import { FC, useRef } from "react";
-import { Link } from "react-router";
-import SkeletonLoader from "../../../../components/utils/Skeleton-loader";
-import useNavigationPath from "../../../../hooks/use-navigation-path";
+import { FC, useRef } from 'react';
+import { Link } from 'react-router';
+import SkeletonLoader from '../../../../components/utils/Skeleton-loader';
+import useNavigationPath from '../../../../hooks/use-navigation-path';
 import {
   MonthEnumType,
   MonthsEnum,
-} from "../../../../types/common/enums/months-enum";
+} from '../../../../types/common/enums/months-enum';
 import {
   AuthorNominationWin,
   NominationTypesEnum,
-} from "../../../../types/nomination";
+} from '../../../../types/nomination';
 
 interface IProps {
   item?: AuthorNominationWin;
@@ -29,11 +29,11 @@ const AuthorDetailsNominationsCarouselItem: FC<IProps> = ({
 
   const imgPath = item
     ? `${VITE_SERVER_URL}/public/${
-        item.entityKind === "author"
+        item.entityKind === 'author'
           ? `authors/avatars/${item.author?.avatarImg || VITE_DEFAULT_AVATAR}`
           : `releases/${item.release?.img || VITE_DEFAULT_COVER}`
       }`
-    : "";
+    : '';
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!cardRef.current || !glareRef.current) return;
@@ -54,7 +54,7 @@ const AuthorDetailsNominationsCarouselItem: FC<IProps> = ({
 
     const angle = Math.atan2(y - centerY, x - centerX) * (180 / Math.PI);
 
-    glare.style.opacity = "0.13";
+    glare.style.opacity = '0.13';
     glare.style.transform = `rotate(${angle}deg) translate(-50%, -50%)`;
   };
 
@@ -62,20 +62,20 @@ const AuthorDetailsNominationsCarouselItem: FC<IProps> = ({
     if (!cardRef.current || !glareRef.current) return;
 
     cardRef.current.style.transform =
-      "perspective(500px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)";
+      'perspective(500px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
 
-    glareRef.current.style.opacity = "0";
-    glareRef.current.style.transform = "rotate(0deg) translate(-50%, -50%)";
+    glareRef.current.style.opacity = '0';
+    glareRef.current.style.transform = 'rotate(0deg) translate(-50%, -50%)';
   };
 
   return isLoading || !item ? (
-    <SkeletonLoader className={"w-full h-140 rounded-[26px]"} />
+    <SkeletonLoader className={'w-full h-140 rounded-[26px]'} />
   ) : (
     <Link
       to={
-        item.entityKind === "release" && item.release
+        item.entityKind === 'release' && item.release
           ? navigateToReleaseDetails(item.release?.id)
-          : "#"
+          : '#'
       }
       className="group relative block size-full rounded-[26px]"
     >
@@ -90,10 +90,10 @@ const AuthorDetailsNominationsCarouselItem: FC<IProps> = ({
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         style={{
-          willChange: "transform",
-          transition: "transform 1900ms cubic-bezier(0.03, 0.98, 0.52, 0.99)",
+          willChange: 'transform',
+          transition: 'transform 1900ms cubic-bezier(0.03, 0.98, 0.52, 0.99)',
           transform:
-            "perspective(500px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)",
+            'perspective(500px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
         }}
         className="bg-white/5 rounded-[26px] h-full relative flex flex-col justify-start border-2 border-[rgba(255,255,255,0.06)] max-lg:transform-none max-lg:rotate-none max-lg:scale-100 overflow-hidden"
       >
@@ -111,15 +111,15 @@ const AuthorDetailsNominationsCarouselItem: FC<IProps> = ({
         <div className="px-[13px] lg:px-[25px] pt-3 pb-2.5 lg:pt-5 lg:pb-5">
           <div className="flex flex-col items-start justify-center min-h-[36px] lg:min-h-[55px]">
             <span className="text-sm lg:text-[20px] font-semibold tracking-tighter leading-[100%] gap-y-1">
-              {item.entityKind === "author"
+              {item.entityKind === 'author'
                 ? item.author?.name
                 : item.release?.title}
             </span>
-            {item.entityKind === "release" && (
+            {item.entityKind === 'release' && (
               <span className="text-xs lg:text-base text-white opacity-40 font-medium">
                 {item.nominationType === NominationTypesEnum.COVER_OF_MONTH
-                  ? item.release?.designers.join(", ")
-                  : item.release?.artists.join(", ")}
+                  ? item.release?.designers.join(', ')
+                  : item.release?.artists.join(', ')}
               </span>
             )}
           </div>
@@ -143,33 +143,33 @@ const AuthorDetailsNominationsCarouselItem: FC<IProps> = ({
         <div
           className="glare-wrapper"
           style={{
-            position: "absolute",
-            top: "0px",
-            left: "0px",
-            width: "100%",
-            height: "100%",
-            overflow: "hidden",
-            borderRadius: "0px",
-            maskImage: "-webkit-radial-gradient(center, white, black)",
-            pointerEvents: "none",
+            position: 'absolute',
+            top: '0px',
+            left: '0px',
+            width: '100%',
+            height: '100%',
+            overflow: 'hidden',
+            borderRadius: '0px',
+            maskImage: '-webkit-radial-gradient(center, white, black)',
+            pointerEvents: 'none',
           }}
         >
           <div
             ref={glareRef}
             className="glare"
             style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transformOrigin: "0% 0%",
-              pointerEvents: "none",
-              width: "676.036px",
-              height: "676.036px",
-              transform: "rotate(0deg) translate(-50%, -50%)",
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transformOrigin: '0% 0%',
+              pointerEvents: 'none',
+              width: '676.036px',
+              height: '676.036px',
+              transform: 'rotate(0deg) translate(-50%, -50%)',
               opacity: 0,
               background:
-                "linear-gradient(0deg, rgba(255, 255, 255, 0) 0%, rgb(255, 255, 255) 100%)",
-              transition: "opacity 1900ms cubic-bezier(0.03, 0.98, 0.52, 0.99)",
+                'linear-gradient(0deg, rgba(255, 255, 255, 0) 0%, rgb(255, 255, 255) 100%)',
+              transition: 'opacity 1900ms cubic-bezier(0.03, 0.98, 0.52, 0.99)',
             }}
           />
         </div>

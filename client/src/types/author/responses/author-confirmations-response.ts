@@ -1,4 +1,4 @@
-import { AuthorConfirmation } from "../entities";
+import { AuthorConfirmation } from '../entities';
 
 /**
  * Paginated response envelope for author confirmations listing endpoints.

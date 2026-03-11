@@ -1,21 +1,21 @@
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { AuthorCommentAPI } from "../../api/author/author-comment-api";
-import AuthorCommentCard from "../../components/author/author-comment/Author-comment-card";
-import AuthorCommentColorSvg from "../../components/author/author-comment/svg/Author-comment-color-svg";
-import ComboBox from "../../components/buttons/Combo-box";
-import Pagination from "../../components/pagination/Pagination";
-import { authorCommentsKeys } from "../../query-keys/author-comments-keys";
-import { AuthorCommentsQuery } from "../../types/author";
-import { SortOrdersEnum } from "../../types/common/enums/sort-orders-enum";
-import { ReviewSortFields } from "../../types/review";
+import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
+import { AuthorCommentAPI } from '../../api/author/author-comment-api';
+import AuthorCommentCard from '../../components/author/author-comment/Author-comment-card';
+import AuthorCommentColorSvg from '../../components/author/author-comment/svg/Author-comment-color-svg';
+import ComboBox from '../../components/buttons/Combo-box';
+import Pagination from '../../components/pagination/Pagination';
+import { authorCommentsKeys } from '../../query-keys/author-comments-keys';
+import { AuthorCommentsQuery } from '../../types/author';
+import { SortOrdersEnum } from '../../types/common/enums/sort-orders-enum';
+import { ReviewSortFields } from '../../types/review';
 
 const limit = 12;
 
 const AuthorCommentsPage = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [selectedOrder, setSelectedOrder] = useState<string>(
-    ReviewSortFields.NEW,
+    ReviewSortFields.NEW
   );
 
   const sortOrder =
@@ -93,7 +93,7 @@ const AuthorCommentsPage = () => {
             totalItems={totalCount}
             itemsPerPage={limit}
             setCurrentPage={setCurrentPage}
-            idToScroll={"author-comments"}
+            idToScroll={'author-comments'}
           />
         </div>
       )}

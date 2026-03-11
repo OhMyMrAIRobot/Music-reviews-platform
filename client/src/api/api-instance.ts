@@ -1,5 +1,5 @@
-import axios from "axios";
-import { AuthResponse } from "../types/auth";
+import axios from 'axios';
+import { AuthResponse } from '../types/auth';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
@@ -13,7 +13,7 @@ export const api = axios.create({
   baseURL: SERVER_URL,
   withCredentials: true,
   headers: {
-    "Content-type": "application/json",
+    'Content-type': 'application/json',
   },
 });
 
@@ -22,7 +22,7 @@ export const api = axios.create({
  * Automatically attaches the access token to every outgoing request.
  */
 api.interceptors.request.use((config) => {
-  config.headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
+  config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`;
   return config;
 });
 
@@ -44,12 +44,12 @@ api.interceptors.response.use(
       const { data } = await axios.post<AuthResponse>(
         `${SERVER_URL}/auth/refresh`,
         {},
-        { withCredentials: true },
+        { withCredentials: true }
       );
-      localStorage.setItem("token", data.accessToken);
+      localStorage.setItem('token', data.accessToken);
       return api.request(originalRequest);
     }
 
     return Promise.reject(error);
-  },
+  }
 );

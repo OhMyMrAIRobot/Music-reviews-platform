@@ -1,8 +1,8 @@
-import { observer } from "mobx-react-lite";
-import { FC } from "react";
-import TooltipSpan from "../../../../components/tooltip/Tooltip-span";
-import { Release, ReleaseRatingTypesEnum } from "../../../../types/release";
-import ReleaseDetailsRatingsTooltip from "./Release-details-ratings-tooltip";
+import { observer } from 'mobx-react-lite';
+import { FC } from 'react';
+import TooltipSpan from '../../../../components/tooltip/Tooltip-span';
+import { Release, ReleaseRatingTypesEnum } from '../../../../types/release';
+import ReleaseDetailsRatingsTooltip from './Release-details-ratings-tooltip';
 
 interface IProps {
   release: Release;
@@ -27,18 +27,18 @@ const ReleaseDetailsRatings: FC<IProps> = observer(({ release }) => {
     <div className="flex justify-center lg:justify-start gap-x-3 select-none">
       {ratings.map((rating) => {
         let className =
-          "w-20 h-8 lg:w-22 lg:h-10 rounded-3xl flex items-center justify-center text-xl lg:text-2xl font-bold relative ";
+          'w-20 h-8 lg:w-22 lg:h-10 rounded-3xl flex items-center justify-center text-xl lg:text-2xl font-bold relative ';
 
         if (rating?.type === ReleaseRatingTypesEnum.MEDIA) {
-          className += "bg-[rgba(255,255,255,.1)]";
+          className += 'bg-[rgba(255,255,255,.1)]';
         } else if (rating?.type === ReleaseRatingTypesEnum.WITH_TEXT) {
-          className += "bg-[rgba(35,101,199)]";
+          className += 'bg-[rgba(35,101,199)]';
         } else if (rating?.type === ReleaseRatingTypesEnum.WITHOUT_TEXT) {
-          className += "border-2 border-[rgba(35,101,199)]";
+          className += 'border-2 border-[rgba(35,101,199)]';
         }
 
         const ratingDetails = release.ratings.details.find(
-          (rd) => rd.type === rating?.type,
+          (rd) => rd.type === rating?.type
         );
 
         return (

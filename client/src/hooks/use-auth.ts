@@ -1,5 +1,5 @@
-import { useCallback } from "react";
-import { useStore } from "./use-store";
+import { useCallback } from 'react';
+import { useStore } from './use-store';
 
 /**
  * Custom hook providing authentication utilities.
@@ -22,14 +22,14 @@ export const useAuth = () => {
   const checkAuth = useCallback(() => {
     if (!authStore.isAuth) {
       notificationStore.addErrorNotification(
-        "Для выполнения этого действия требуется авторизация!",
+        'Для выполнения этого действия требуется авторизация!'
       );
       return false;
     }
 
     if (!authStore.user?.isActive) {
       notificationStore.addErrorNotification(
-        "Для выполнения этого действия требуется активировать аккаунт!",
+        'Для выполнения этого действия требуется активировать аккаунт!'
       );
       return false;
     }

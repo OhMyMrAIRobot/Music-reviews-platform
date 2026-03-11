@@ -1,5 +1,5 @@
-import { SortOrder } from "../../common/types/sort-order";
-import { ReviewsSortFieldsEnum } from "../enums";
+import { SortOrder } from '../../common/types/sort-order';
+import { ReviewsSortFieldsEnum } from '../enums';
 
 /**
  * ReviewsQuery

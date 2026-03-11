@@ -1,9 +1,9 @@
-import { useMutation } from "@tanstack/react-query";
-import { AuthAPI } from "../../../api/auth-api";
-import { RegisterData } from "../../../types/auth";
-import { UseMutationParams } from "../../../types/common";
-import { useApiErrorHandler } from "../../use-api-error-handler";
-import { useStore } from "../../use-store";
+import { useMutation } from '@tanstack/react-query';
+import { AuthAPI } from '../../../api/auth-api';
+import { RegisterData } from '../../../types/auth';
+import { UseMutationParams } from '../../../types/common';
+import { useApiErrorHandler } from '../../use-api-error-handler';
+import { useStore } from '../../use-store';
 
 /**
  * Custom React hook returning a React Query mutation that registers a new
@@ -32,7 +32,7 @@ export const useRegistrationMutation = ({
       const { user, accessToken, emailSent } = data;
       authStore.setAuthorization(user, accessToken);
       notificationStore.addSuccessNotification(
-        "Вы успешно зарегистрировались!",
+        'Вы успешно зарегистрировались!'
       );
       if (emailSent) {
         notificationStore.addEmailSentNotification(emailSent);
@@ -40,7 +40,7 @@ export const useRegistrationMutation = ({
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, "Ошибка при регистрации!");
+      handleApiError(error, 'Ошибка при регистрации!');
       onError?.(error);
     },
     onSettled,

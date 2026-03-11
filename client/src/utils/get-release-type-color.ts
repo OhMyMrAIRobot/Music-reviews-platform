@@ -1,12 +1,12 @@
-import { ReleaseTypesEnum } from "../types/release";
+import { ReleaseTypesEnum } from '../types/release';
 
 export const getReleaseTypeColor = (type: string): string => {
   switch (type) {
     case ReleaseTypesEnum.ALBUM:
-      return "text-purple-300";
+      return 'text-purple-300';
     case ReleaseTypesEnum.SINGLE:
-      return "text-green-200";
+      return 'text-green-200';
     default:
-      return "";
+      return '';
   }
 };

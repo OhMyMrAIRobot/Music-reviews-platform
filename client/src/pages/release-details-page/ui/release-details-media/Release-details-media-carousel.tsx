@@ -1,17 +1,17 @@
-import { EmblaOptionsType } from "embla-carousel";
-import useEmblaCarousel from "embla-carousel-react";
+import { EmblaOptionsType } from 'embla-carousel';
+import useEmblaCarousel from 'embla-carousel-react';
 import {
   forwardRef,
   useCallback,
   useEffect,
   useImperativeHandle,
   useState,
-} from "react";
-import SkeletonLoader from "../../../../components/utils/Skeleton-loader";
-import { CarouselRef } from "../../../../types/common/types/carousel-ref";
-import { CarouselStateCallbacks } from "../../../../types/common/types/carousel-state-callbacks";
-import { ReleaseMedia } from "../../../../types/release";
-import ReleaseDetailsMediaItem from "./Release-details-media-item";
+} from 'react';
+import SkeletonLoader from '../../../../components/utils/Skeleton-loader';
+import { CarouselRef } from '../../../../types/common/types/carousel-ref';
+import { CarouselStateCallbacks } from '../../../../types/common/types/carousel-state-callbacks';
+import { ReleaseMedia } from '../../../../types/release';
+import ReleaseDetailsMediaItem from './Release-details-media-item';
 
 interface IProps extends CarouselStateCallbacks {
   items: ReleaseMedia[];
@@ -21,7 +21,7 @@ interface IProps extends CarouselStateCallbacks {
 const ReleaseDetailsMediaCarousel = forwardRef<CarouselRef, IProps>(
   ({ items, isLoading, onCanScrollPrevChange, onCanScrollNextChange }, ref) => {
     const options: EmblaOptionsType = {
-      align: "start",
+      align: 'start',
       slidesToScroll: 1,
       dragFree: true,
     };
@@ -47,14 +47,14 @@ const ReleaseDetailsMediaCarousel = forwardRef<CarouselRef, IProps>(
 
       updateScrollState();
 
-      emblaApi.on("select", updateScrollState);
-      emblaApi.on("reInit", updateScrollState);
-      emblaApi.on("resize", updateScrollState);
+      emblaApi.on('select', updateScrollState);
+      emblaApi.on('reInit', updateScrollState);
+      emblaApi.on('resize', updateScrollState);
 
       return () => {
-        emblaApi.off("select", updateScrollState);
-        emblaApi.off("reInit", updateScrollState);
-        emblaApi.off("resize", updateScrollState);
+        emblaApi.off('select', updateScrollState);
+        emblaApi.off('reInit', updateScrollState);
+        emblaApi.off('resize', updateScrollState);
       };
     }, [emblaApi, updateScrollState]);
 
@@ -64,7 +64,7 @@ const ReleaseDetailsMediaCarousel = forwardRef<CarouselRef, IProps>(
         scrollPrev: () => emblaApi?.scrollPrev(),
         scrollNext: () => emblaApi?.scrollNext(),
       }),
-      [emblaApi],
+      [emblaApi]
     );
 
     return (
@@ -75,7 +75,7 @@ const ReleaseDetailsMediaCarousel = forwardRef<CarouselRef, IProps>(
               ? Array.from({ length: 10 }).map((_, idx) => (
                   <SkeletonLoader
                     key={`skeleton-release-media-${idx}`}
-                    className={"w-[230px] h-[135px] rounded-lg aspect-video"}
+                    className={'w-[230px] h-[135px] rounded-lg aspect-video'}
                   />
                 ))
               : items.map((item) => (
@@ -85,7 +85,7 @@ const ReleaseDetailsMediaCarousel = forwardRef<CarouselRef, IProps>(
         </div>
       </div>
     );
-  },
+  }
 );
 
 export default ReleaseDetailsMediaCarousel;

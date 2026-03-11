@@ -1,11 +1,11 @@
-import { observer } from "mobx-react-lite";
-import { FC } from "react";
-import ReleaseDetailsAlbumValueRow from "../../pages/release-details-page/ui/release-details-album-value/Release-details-album-value-row";
-import ReleaseDetailsAlbumValueSection from "../../pages/release-details-page/ui/release-details-album-value/Release-details-album-value-section";
+import { observer } from 'mobx-react-lite';
+import { FC } from 'react';
+import ReleaseDetailsAlbumValueRow from '../../pages/release-details-page/ui/release-details-album-value/Release-details-album-value-row';
+import ReleaseDetailsAlbumValueSection from '../../pages/release-details-page/ui/release-details-album-value/Release-details-album-value-section';
 import {
   getAlbumValueTier,
   getAlbumValueTierConfig,
-} from "../../utils/album-value-config";
+} from '../../utils/album-value-config';
 
 interface IProps {
   rarity: {
@@ -78,48 +78,48 @@ const AlbumValue: FC<IProps> = observer(
           <div className="w-full text-left text-sm grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-x-2 gap-y-2 shrink-1 justify-center">
             <ReleaseDetailsAlbumValueSection>
               <ReleaseDetailsAlbumValueRow
-                title={"Редкость"}
+                title={'Редкость'}
                 value={rarity.total.toString()}
-                maxValue={"5"}
+                maxValue={'5'}
                 isSectionTitle={true}
               />
               <ReleaseDetailsAlbumValueRow
-                title={"Редкость жанра"}
+                title={'Редкость жанра'}
                 value={rarity.rarityGenre.toString()}
-                maxValue={"2.5"}
+                maxValue={'2.5'}
                 isSectionTitle={false}
               />
               <ReleaseDetailsAlbumValueRow
-                title={"Редкость формата исполнения"}
+                title={'Редкость формата исполнения'}
                 value={rarity.rarityPerformance.toString()}
-                maxValue={"2.5"}
+                maxValue={'2.5'}
                 isSectionTitle={false}
               />
             </ReleaseDetailsAlbumValueSection>
 
             <ReleaseDetailsAlbumValueSection>
               <ReleaseDetailsAlbumValueRow
-                title={"Целостность"}
+                title={'Целостность'}
                 value={integrity.total.toString()}
-                maxValue={"5"}
+                maxValue={'5'}
                 isSectionTitle={true}
               />
               <ReleaseDetailsAlbumValueRow
-                title={"Формат релиза"}
+                title={'Формат релиза'}
                 value={integrity.formatRelease.toString()}
-                maxValue={"1"}
+                maxValue={'1'}
                 isSectionTitle={false}
               />
               <ReleaseDetailsAlbumValueRow
-                title={"Жанровая целостность"}
+                title={'Жанровая целостность'}
                 value={integrity.integrityGenre.toString()}
-                maxValue={"2.5"}
+                maxValue={'2.5'}
                 isSectionTitle={false}
               />
               <ReleaseDetailsAlbumValueRow
-                title={"Смысловая целостность"}
+                title={'Смысловая целостность'}
                 value={integrity.integritySemantic.toString()}
-                maxValue={"1.5"}
+                maxValue={'1.5'}
                 isSectionTitle={false}
               />
             </ReleaseDetailsAlbumValueSection>
@@ -127,23 +127,23 @@ const AlbumValue: FC<IProps> = observer(
             <div className="flex flex-col gap-2 items-stretch justify-stretch">
               <ReleaseDetailsAlbumValueSection>
                 <ReleaseDetailsAlbumValueRow
-                  title={"Глубина"}
+                  title={'Глубина'}
                   value={depth.toString()}
-                  maxValue={"5"}
+                  maxValue={'5'}
                   isSectionTitle={true}
                 />
               </ReleaseDetailsAlbumValueSection>
 
               <ReleaseDetailsAlbumValueSection>
                 <ReleaseDetailsAlbumValueRow
-                  title={"Качество"}
+                  title={'Качество'}
                   value={`${quality.factor * 100} %`}
                   isSectionTitle={true}
                 />
                 <ReleaseDetailsAlbumValueRow
-                  title={"Баллы в базе"}
+                  title={'Баллы в базе'}
                   value={quality.total.toString()}
-                  maxValue={"40"}
+                  maxValue={'40'}
                   isSectionTitle={false}
                 />
               </ReleaseDetailsAlbumValueSection>
@@ -151,21 +151,21 @@ const AlbumValue: FC<IProps> = observer(
 
             <ReleaseDetailsAlbumValueSection>
               <ReleaseDetailsAlbumValueRow
-                title={"Влияние"}
+                title={'Влияние'}
                 value={influence.total.toString()}
-                maxValue={"9"}
+                maxValue={'9'}
                 isSectionTitle={true}
               />
               <ReleaseDetailsAlbumValueRow
-                title={"Известность автора"}
+                title={'Известность автора'}
                 value={influence.authorPopularity.toString()}
-                maxValue={"4.5"}
+                maxValue={'4.5'}
                 isSectionTitle={false}
               />
               <ReleaseDetailsAlbumValueRow
-                title={"Ожидание релиза"}
+                title={'Ожидание релиза'}
                 value={influence.releaseAnticip.toString()}
-                maxValue={"4.5"}
+                maxValue={'4.5'}
                 isSectionTitle={false}
               />
             </ReleaseDetailsAlbumValueSection>
@@ -173,7 +173,7 @@ const AlbumValue: FC<IProps> = observer(
         </div>
       </div>
     );
-  },
+  }
 );
 
 export default AlbumValue;

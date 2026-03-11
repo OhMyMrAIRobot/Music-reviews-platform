@@ -2,18 +2,18 @@ import {
   InvalidateQueryFilters,
   useMutation,
   useQueryClient,
-} from "@tanstack/react-query";
-import { ProfileAPI } from "../../../api/user/profile-api";
-import { authorCommentsKeys } from "../../../query-keys/author-comments-keys";
-import { authorLikesKeys } from "../../../query-keys/author-likes-keys";
-import { leaderboardKeys } from "../../../query-keys/leaderboard-keys";
-import { profilesKeys } from "../../../query-keys/profiles-keys";
-import { releaseMediaKeys } from "../../../query-keys/release-media-keys";
-import { reviewsKeys } from "../../../query-keys/reviews-keys";
-import { usersKeys } from "../../../query-keys/users-keys";
-import { UseMutationParams } from "../../../types/common";
-import { useApiErrorHandler } from "../../use-api-error-handler";
-import { useStore } from "../../use-store";
+} from '@tanstack/react-query';
+import { ProfileAPI } from '../../../api/user/profile-api';
+import { authorCommentsKeys } from '../../../query-keys/author-comments-keys';
+import { authorLikesKeys } from '../../../query-keys/author-likes-keys';
+import { leaderboardKeys } from '../../../query-keys/leaderboard-keys';
+import { profilesKeys } from '../../../query-keys/profiles-keys';
+import { releaseMediaKeys } from '../../../query-keys/release-media-keys';
+import { reviewsKeys } from '../../../query-keys/reviews-keys';
+import { usersKeys } from '../../../query-keys/users-keys';
+import { UseMutationParams } from '../../../types/common';
+import { useApiErrorHandler } from '../../use-api-error-handler';
+import { useStore } from '../../use-store';
 
 /**
  * Custom React hook returning a React Query mutation to update the user's profile information.
@@ -53,11 +53,11 @@ export const useUpdateProfileMutation = ({
         invalidateRelatedQueries(authStore.user.id);
       }
       authStore.setProfile(data);
-      notificationStore.addSuccessNotification("Профиль успешно обновлен!");
+      notificationStore.addSuccessNotification('Профиль успешно обновлен!');
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, "Ошибка при обновлении профиля!");
+      handleApiError(error, 'Ошибка при обновлении профиля!');
       onError?.(error);
     },
     onSettled,

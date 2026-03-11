@@ -1,18 +1,18 @@
-import { observer } from "mobx-react-lite";
-import { FC } from "react";
-import { Link } from "react-router";
-import { useToggleFavMedia } from "../../../hooks/mutations/toggle-fav/use-toggle-fav-media";
-import useNavigationPath from "../../../hooks/use-navigation-path";
-import { useStore } from "../../../hooks/use-store";
-import { ReleaseMedia } from "../../../types/release";
-import { parseYoutubeId } from "../../../utils/parse-youtube-id";
-import ReviewAuthor from "../../review/review-card/Review-author";
-import ReviewLikes from "../../review/review-card/Review-likes";
-import ReviewMarks from "../../review/review-card/Review-marks";
-import ReviewUserImage from "../../review/review-card/Review-user-image";
-import EyeSvg from "../../svg/Eye-svg";
-import MoveToSvg from "../../svg/Move-to-svg";
-import SkeletonLoader from "../../utils/Skeleton-loader";
+import { observer } from 'mobx-react-lite';
+import { FC } from 'react';
+import { Link } from 'react-router';
+import { useToggleFavMedia } from '../../../hooks/mutations/toggle-fav/use-toggle-fav-media';
+import useNavigationPath from '../../../hooks/use-navigation-path';
+import { useStore } from '../../../hooks/use-store';
+import { ReleaseMedia } from '../../../types/release';
+import { parseYoutubeId } from '../../../utils/parse-youtube-id';
+import ReviewAuthor from '../../review/review-card/Review-author';
+import ReviewLikes from '../../review/review-card/Review-likes';
+import ReviewMarks from '../../review/review-card/Review-marks';
+import ReviewUserImage from '../../review/review-card/Review-user-image';
+import EyeSvg from '../../svg/Eye-svg';
+import MoveToSvg from '../../svg/Move-to-svg';
+import SkeletonLoader from '../../utils/Skeleton-loader';
 
 interface IProps {
   media?: ReleaseMedia;
@@ -30,7 +30,7 @@ const ReleaseMediaReview: FC<IProps> = observer(({ media, isLoading }) => {
   const { navigatoToProfile, navigateToReleaseDetails } = useNavigationPath();
 
   return isLoading || !media || !media.user ? (
-    <SkeletonLoader className={"w-full rounded-2xl lg:rounded-[20px] h-63"} />
+    <SkeletonLoader className={'w-full rounded-2xl lg:rounded-[20px] h-63'} />
   ) : (
     <div className="w-full bg-zinc-900 p-1.5 flex flex-col border border-zinc-800 rounded-2xl lg:rounded-[20px]">
       <div className="bg-zinc-950/70 p-2 rounded-xl flex gap-3">
@@ -55,7 +55,7 @@ const ReleaseMediaReview: FC<IProps> = observer(({ media, isLoading }) => {
               decoding="async"
               alt={media.release.title}
               src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
-                media.release.img === ""
+                media.release.img === ''
                   ? import.meta.env.VITE_DEFAULT_COVER
                   : media.release.img
               }`}
@@ -75,9 +75,9 @@ const ReleaseMediaReview: FC<IProps> = observer(({ media, isLoading }) => {
             alt={media.title}
             loading="lazy"
             decoding="async"
-            className={"rounded-md object-cover object-center "}
+            className={'rounded-md object-cover object-center '}
             src={`https://img.youtube.com/vi/${parseYoutubeId(
-              media.url,
+              media.url
             )}/mqdefault.jpg`}
           />
         </div>

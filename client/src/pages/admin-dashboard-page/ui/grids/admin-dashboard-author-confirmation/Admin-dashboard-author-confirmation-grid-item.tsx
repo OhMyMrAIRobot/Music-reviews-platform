@@ -1,26 +1,26 @@
-import { FC, useMemo, useState } from "react";
-import { Link } from "react-router";
-import AuthorConfirmationStatusIcon from "../../../../../components/author/author-confirmation/Author-confirmation-status-icon";
-import ArrowBottomSvg from "../../../../../components/layout/header/svg/Arrow-bottom-svg";
-import ConfirmationModal from "../../../../../components/modals/Confirmation-modal";
-import RejectSvg from "../../../../../components/svg/Reject-svg";
-import TickRoundedSvg from "../../../../../components/svg/Tick-rounded-svg";
-import SkeletonLoader from "../../../../../components/utils/Skeleton-loader";
-import { useAuthorConfirmationMeta } from "../../../../../hooks/meta";
+import { FC, useMemo, useState } from 'react';
+import { Link } from 'react-router';
+import AuthorConfirmationStatusIcon from '../../../../../components/author/author-confirmation/Author-confirmation-status-icon';
+import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg';
+import ConfirmationModal from '../../../../../components/modals/Confirmation-modal';
+import RejectSvg from '../../../../../components/svg/Reject-svg';
+import TickRoundedSvg from '../../../../../components/svg/Tick-rounded-svg';
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader';
+import { useAuthorConfirmationMeta } from '../../../../../hooks/meta';
 import {
   useAdminRemoveAuthorConfirmationMutation,
   useAdminUpdateAuthorConfirmationMutation,
-} from "../../../../../hooks/mutations";
-import useNavigationPath from "../../../../../hooks/use-navigation-path";
+} from '../../../../../hooks/mutations';
+import useNavigationPath from '../../../../../hooks/use-navigation-path';
 import {
   AuthorConfirmation,
   AuthorConfirmationStatusesEnum,
-} from "../../../../../types/author";
-import { SortOrdersEnum } from "../../../../../types/common/enums/sort-orders-enum";
-import { SortOrder } from "../../../../../types/common/types/sort-order";
-import { getReleaseMediaStatusColor } from "../../../../../utils/get-release-media-status-color";
-import AdminDeleteButton from "../../buttons/Admin-delete-button";
-import AdminSvgButton from "../../buttons/Admin-svg-button";
+} from '../../../../../types/author';
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum';
+import { SortOrder } from '../../../../../types/common/types/sort-order';
+import { getReleaseMediaStatusColor } from '../../../../../utils/get-release-media-status-color';
+import AdminDeleteButton from '../../buttons/Admin-delete-button';
+import AdminSvgButton from '../../buttons/Admin-svg-button';
 
 interface IProps {
   className?: string;
@@ -33,7 +33,7 @@ interface IProps {
 
 const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
   isLoading,
-  className = "",
+  className = '',
   position,
   item,
   order,
@@ -69,7 +69,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
    */
   const isPending = useMemo(
     () => isDeleting || isUpdating,
-    [isDeleting, isUpdating],
+    [isDeleting, isUpdating]
   );
 
   /**
@@ -86,7 +86,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
    */
   const handleUpdate = async (
     id: string,
-    status: AuthorConfirmationStatusesEnum,
+    status: AuthorConfirmationStatusesEnum
   ) => {
     if (isPending) return;
 
@@ -104,7 +104,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
         <>
           {deleteConfModalOpen && (
             <ConfirmationModal
-              title={"Вы действительно хотите удалить заявку на верификацию?"}
+              title={'Вы действительно хотите удалить заявку на верификацию?'}
               isOpen={deleteConfModalOpen}
               onConfirm={() => handleDelete(item.id)}
               onCancel={() => setDeleteConfModalOpen(false)}
@@ -124,7 +124,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
                   item.id,
                   approveModalOpen
                     ? AuthorConfirmationStatusesEnum.APPROVED
-                    : AuthorConfirmationStatusesEnum.REJECTED,
+                    : AuthorConfirmationStatusesEnum.REJECTED
                 );
               }}
               onCancel={() => {
@@ -142,7 +142,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
       >
         <div className="xl:col-span-1 text-ellipsis line-clamp-1">
           <span className="xl:hidden"># </span>
-          {position ?? "#"}
+          {position ?? '#'}
         </div>
 
         <div className="xl:col-span-2 h-full flex items-center mr-2">
@@ -155,7 +155,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
                 loading="lazy"
                 decoding="async"
                 src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-                  item.user.avatar === ""
+                  item.user.avatar === ''
                     ? import.meta.env.VITE_DEFAULT_AVATAR
                     : item.user.avatar
                 }`}
@@ -184,7 +184,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
                 src={`${
                   import.meta.env.VITE_SERVER_URL
                 }/public/authors/avatars/${
-                  item.author.img === ""
+                  item.author.img === ''
                     ? import.meta.env.VITE_DEFAULT_AVATAR
                     : item.author.img
                 }`}
@@ -207,12 +207,12 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
               <span className="xl:hidden">Статус: </span>
               <div
                 className={`flex gap-x-1 items-center ${getReleaseMediaStatusColor(
-                  item.status.status,
+                  item.status.status
                 )}`}
               >
                 <AuthorConfirmationStatusIcon
                   status={item.status.status}
-                  className={"size-5"}
+                  className={'size-5'}
                 />
                 <span>{item.status.status}</span>
               </div>
@@ -236,7 +236,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
               <span>Дата подачи заявки</span>
               <ArrowBottomSvg
                 className={`size-3 ${
-                  order === SortOrdersEnum.ASC ? "rotate-180" : ""
+                  order === SortOrdersEnum.ASC ? 'rotate-180' : ''
                 }`}
               />
             </button>
@@ -267,7 +267,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
                   setRejectModalOpen(false);
                 }}
               >
-                <TickRoundedSvg className={"size-5"} />
+                <TickRoundedSvg className={'size-5'} />
               </AdminSvgButton>
 
               <AdminSvgButton
@@ -280,13 +280,13 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
                   setApproveModalOpen(false);
                 }}
               >
-                <RejectSvg className={"size-5"} />
+                <RejectSvg className={'size-5'} />
               </AdminSvgButton>
 
               <AdminDeleteButton onClick={() => setDeleteConfModalOpen(true)} />
             </div>
           ) : (
-            "Действие"
+            'Действие'
           )}
         </div>
       </div>

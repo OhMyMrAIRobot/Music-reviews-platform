@@ -1,5 +1,5 @@
-import { UserFavReview } from ".";
-import { AuthorFavReview, ReviewUser, ReviewValues } from "../subtypes";
+import { UserFavReview } from '.';
+import { AuthorFavReview, ReviewUser, ReviewValues } from '../subtypes';
 
 /**
  * Represents a Review entity.

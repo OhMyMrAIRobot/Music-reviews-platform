@@ -2,20 +2,20 @@ import {
   InvalidateQueryFilters,
   useMutation,
   useQueryClient,
-} from "@tanstack/react-query";
-import { AuthorConfirmationAPI } from "../../../../api/author/author-confirmation-api";
-import { authorCommentsKeys } from "../../../../query-keys/author-comments-keys";
-import { authorLikesKeys } from "../../../../query-keys/author-likes-keys";
-import { authorConfirmationsKeys } from "../../../../query-keys/authors-confirmations-keys";
-import { authorsKeys } from "../../../../query-keys/authors-keys";
-import { leaderboardKeys } from "../../../../query-keys/leaderboard-keys";
-import { platformStatsKeys } from "../../../../query-keys/platform-stats-keys";
-import { profilesKeys } from "../../../../query-keys/profiles-keys";
-import { releasesKeys } from "../../../../query-keys/releases-keys";
-import { reviewsKeys } from "../../../../query-keys/reviews-keys";
-import { UseMutationParams } from "../../../../types/common";
-import { useApiErrorHandler } from "../../../use-api-error-handler";
-import { useStore } from "../../../use-store";
+} from '@tanstack/react-query';
+import { AuthorConfirmationAPI } from '../../../../api/author/author-confirmation-api';
+import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys';
+import { authorLikesKeys } from '../../../../query-keys/author-likes-keys';
+import { authorConfirmationsKeys } from '../../../../query-keys/authors-confirmations-keys';
+import { authorsKeys } from '../../../../query-keys/authors-keys';
+import { leaderboardKeys } from '../../../../query-keys/leaderboard-keys';
+import { platformStatsKeys } from '../../../../query-keys/platform-stats-keys';
+import { profilesKeys } from '../../../../query-keys/profiles-keys';
+import { releasesKeys } from '../../../../query-keys/releases-keys';
+import { reviewsKeys } from '../../../../query-keys/reviews-keys';
+import { UseMutationParams } from '../../../../types/common';
+import { useApiErrorHandler } from '../../../use-api-error-handler';
+import { useStore } from '../../../use-store';
 
 /**
  * Custom React hook returning a React Query mutation for deleting an author
@@ -55,13 +55,13 @@ export const useAdminRemoveAuthorConfirmationMutation = ({
     mutationFn: (id: string) => AuthorConfirmationAPI.delete(id),
     onSuccess: () => {
       notificationStore.addSuccessNotification(
-        "Вы успешно удалили заявку на верификацию!",
+        'Вы успешно удалили заявку на верификацию!'
       );
       invalidateRelatedQueries();
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, "Не удалось удалить заявку на верификацию!");
+      handleApiError(error, 'Не удалось удалить заявку на верификацию!');
       onError?.(error);
     },
     onSettled,

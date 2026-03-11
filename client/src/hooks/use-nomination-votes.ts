@@ -1,9 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { NominationAPI } from "../api/nomination-api";
-import { nominationsKeys } from "../query-keys/nominations-keys";
-import { NominationEntityKind, NominationUserVote } from "../types/nomination";
-import { useApiErrorHandler } from "./use-api-error-handler";
-import { useStore } from "./use-store";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { NominationAPI } from '../api/nomination-api';
+import { nominationsKeys } from '../query-keys/nominations-keys';
+import { NominationEntityKind, NominationUserVote } from '../types/nomination';
+import { useApiErrorHandler } from './use-api-error-handler';
+import { useStore } from './use-store';
 
 /**
  * Custom hook for managing nomination votes, including fetching nomination types, candidates, user votes,
@@ -38,7 +38,7 @@ export const useNominationVotes = () => {
   });
 
   const { data: userVotes = [], isLoading: isVotesLoading } = useQuery({
-    queryKey: nominationsKeys.userVotes(authStore.user?.id ?? "unknown"),
+    queryKey: nominationsKeys.userVotes(authStore.user?.id ?? 'unknown'),
     queryFn: () => NominationAPI.findUserVotes(),
     enabled: authStore.isAuth && !!authStore.user,
     staleTime: 1000 * 60,
@@ -56,8 +56,8 @@ export const useNominationVotes = () => {
     mutationFn: (vars) => NominationAPI.postVote(vars),
     onSuccess: (newVote) => {
       queryClient.setQueryData<NominationUserVote[] | undefined>(
-        nominationsKeys.userVotes(authStore.user?.id ?? "unknown"),
-        (prev) => (prev ? [...prev, newVote] : [newVote]),
+        nominationsKeys.userVotes(authStore.user?.id ?? 'unknown'),
+        (prev) => (prev ? [...prev, newVote] : [newVote])
       );
     },
   });
@@ -73,7 +73,7 @@ export const useNominationVotes = () => {
   const postVote = async (
     nominationTypeId: string,
     entityKind: NominationEntityKind,
-    entityId: string,
+    entityId: string
   ) => {
     try {
       await voteMutation.mutateAsync({
@@ -82,7 +82,7 @@ export const useNominationVotes = () => {
         entityId,
       });
     } catch (error: unknown) {
-      handleApiError(error, "Не удалось отправить голос!");
+      handleApiError(error, 'Не удалось отправить голос!');
     }
   };
 

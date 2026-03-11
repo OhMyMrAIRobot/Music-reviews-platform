@@ -1,18 +1,18 @@
-import { FC } from "react";
-import { Link } from "react-router";
-import AuthorLikeColorSvg from "../../../components/author/author-like/svg/Author-like-color-svg";
-import NoTextReviewSvg from "../../../components/review/svg/No-text-review-svg";
-import TextReviewSvg from "../../../components/review/svg/Text-review-svg";
-import LogoSmallSvg from "../../../components/svg/Logo-small-svg";
-import PixelHeartFillSvg from "../../../components/svg/Pixel-heart-fill-svg";
-import PixelHeartSvg from "../../../components/svg/Pixel-heart-svg";
-import Tooltip from "../../../components/tooltip/Tooltip";
-import TooltipSpan from "../../../components/tooltip/Tooltip-span";
-import SkeletonLoader from "../../../components/utils/Skeleton-loader";
-import useNavigationPath from "../../../hooks/use-navigation-path";
-import { LeaderboardItem as LeaderboardItemType } from "../../../types/leaderboard";
-import { formatNumber } from "../../../utils/format-number";
-import { getLevelConfig, getUserLevel } from "../../../utils/user-level";
+import { FC } from 'react';
+import { Link } from 'react-router';
+import AuthorLikeColorSvg from '../../../components/author/author-like/svg/Author-like-color-svg';
+import NoTextReviewSvg from '../../../components/review/svg/No-text-review-svg';
+import TextReviewSvg from '../../../components/review/svg/Text-review-svg';
+import LogoSmallSvg from '../../../components/svg/Logo-small-svg';
+import PixelHeartFillSvg from '../../../components/svg/Pixel-heart-fill-svg';
+import PixelHeartSvg from '../../../components/svg/Pixel-heart-svg';
+import Tooltip from '../../../components/tooltip/Tooltip';
+import TooltipSpan from '../../../components/tooltip/Tooltip-span';
+import SkeletonLoader from '../../../components/utils/Skeleton-loader';
+import useNavigationPath from '../../../hooks/use-navigation-path';
+import { LeaderboardItem as LeaderboardItemType } from '../../../types/leaderboard';
+import { formatNumber } from '../../../utils/format-number';
+import { getLevelConfig, getUserLevel } from '../../../utils/user-level';
 
 interface IProps {
   item?: LeaderboardItemType;
@@ -35,7 +35,7 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
 
         <div className="h-full relative max-xl:order-3">
           <div className="flex items-center text-[10px] sm:text-sm h-7 xl:h-full justify-center gap-1.5 xl:flex-col xl:ml-auto min-w-[75px] lg:min-w-[80px] px-2 font-semibold bg-zinc-950 border border-white/10 rounded-lg">
-            <LogoSmallSvg className={"w-[30px] h-[20px] size-5"} />
+            <LogoSmallSvg className={'w-[30px] h-[20px] size-5'} />
 
             <span className="leading-3 font-bold xl:text-lg">
               {formatNumber(item.user.points)}
@@ -55,7 +55,7 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
                 alt={item.user.nickname}
                 className="aspect-square h-full w-full object-cover"
                 src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-                  item.user.avatar === ""
+                  item.user.avatar === ''
                     ? import.meta.env.VITE_DEFAULT_AVATAR
                     : item.user.avatar
                 }`}
@@ -95,7 +95,7 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
             className="object-cover"
             sizes="100vw"
             src={`${import.meta.env.VITE_SERVER_URL}/public/covers/${
-              item.user.cover === ""
+              item.user.cover === ''
                 ? import.meta.env.VITE_DEFAULT_COVER
                 : item.user.cover
             }`}
@@ -105,7 +105,7 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
         <TooltipSpan
           tooltip={<Tooltip>Получено авторских лайков</Tooltip>}
           spanClassName={
-            "bg-zinc-950 border border-white/10 max-xl:order-5 flex xl:flex-col text-[10px] sm:text-sm justify-center items-center px-1 xl:px-4 rounded-lg relative mr-1 xl:mr-2 min-w-[80px] ml-1"
+            'bg-zinc-950 border border-white/10 max-xl:order-5 flex xl:flex-col text-[10px] sm:text-sm justify-center items-center px-1 xl:px-4 rounded-lg relative mr-1 xl:mr-2 min-w-[80px] ml-1'
           }
           centered={true}
         >
@@ -138,7 +138,7 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
             </Tooltip>
           }
           spanClassName={
-            "bg-zinc-950 border border-white/10 max-xl:order-6 flex xl:flex-col text-[10px] sm:text-sm justify-center items-center gap-1 lg:gap-2 px-1 xl:px-4 rounded-lg relative mr-1 xl:mr-2 min-w-[100px]"
+            'bg-zinc-950 border border-white/10 max-xl:order-6 flex xl:flex-col text-[10px] sm:text-sm justify-center items-center gap-1 lg:gap-2 px-1 xl:px-4 rounded-lg relative mr-1 xl:mr-2 min-w-[100px]'
           }
           centered={true}
         >
@@ -158,13 +158,13 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
               <div className="font-medium space-y-1">
                 <div className="flex gap-x-2">
                   <div className="w-5 h-4.5">
-                    <PixelHeartFillSvg className={"w-5 h-4.5"} />
+                    <PixelHeartFillSvg className={'w-5 h-4.5'} />
                   </div>
                   Получено лайков на свои рецензии от пользователей
                 </div>
                 <div className="flex gap-x-2">
                   <div className="w-5 h-4.5">
-                    <PixelHeartSvg className={"w-5 h-4.5"} />
+                    <PixelHeartSvg className={'w-5 h-4.5'} />
                   </div>
                   Поставлено лайков на рецензии пользователей
                 </div>
@@ -172,19 +172,19 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
             </Tooltip>
           }
           spanClassName={
-            "bg-zinc-950 border border-white/10 flex xl:flex-col max-xl:order-7 h-7 xl:h-full text-[10px] sm:text-sm items-center justify-center gap-1 lg:gap-2 px-1 xl:px-4 rounded-lg relative min-w-[100px]"
+            'bg-zinc-950 border border-white/10 flex xl:flex-col max-xl:order-7 h-7 xl:h-full text-[10px] sm:text-sm items-center justify-center gap-1 lg:gap-2 px-1 xl:px-4 rounded-lg relative min-w-[100px]'
           }
           centered={true}
         >
           <div className="flex items-center gap-1.5">
-            <PixelHeartFillSvg className={"w-4 h-3.5 lg:w-5 lg:h-4.5]"} />
+            <PixelHeartFillSvg className={'w-4 h-3.5 lg:w-5 lg:h-4.5]'} />
 
             <span className="font-semibold">
               {formatNumber(item.stats.receivedLikes)}
             </span>
           </div>
           <div className="flex items-center gap-1.5">
-            <PixelHeartSvg className={"w-4 h-3.5 lg:w-5 lg:h-4.5]"} />
+            <PixelHeartSvg className={'w-4 h-3.5 lg:w-5 lg:h-4.5]'} />
 
             <span className="font-semibold">
               {formatNumber(item.stats.givenLikes)}
@@ -208,7 +208,7 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
                     loading="lazy"
                     decoding="async"
                     src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-                      author.user.avatar === ""
+                      author.user.avatar === ''
                         ? import.meta.env.VITE_DEFAULT_AVATAR
                         : author.user.avatar
                     }`}

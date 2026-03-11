@@ -1,12 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
-import { FC, useRef, useState } from "react";
-import { ReleaseAPI } from "../../../api/release/release-api";
-import CarouselContainer from "../../../components/carousel/Carousel-container";
-import { releasesKeys } from "../../../query-keys/releases-keys";
-import { SortOrdersEnum } from "../../../types/common/enums/sort-orders-enum";
-import { CarouselRef } from "../../../types/common/types/carousel-ref";
-import { ReleasesQuery, ReleasesSortFieldsEnum } from "../../../types/release";
-import LastReleasesCarousel from "../../main-page/ui/last-releases/carousel/Last-releases-carousel";
+import { useQuery } from '@tanstack/react-query';
+import { FC, useRef, useState } from 'react';
+import { ReleaseAPI } from '../../../api/release/release-api';
+import CarouselContainer from '../../../components/carousel/Carousel-container';
+import { releasesKeys } from '../../../query-keys/releases-keys';
+import { SortOrdersEnum } from '../../../types/common/enums/sort-orders-enum';
+import { CarouselRef } from '../../../types/common/types/carousel-ref';
+import { ReleasesQuery, ReleasesSortFieldsEnum } from '../../../types/release';
+import LastReleasesCarousel from '../../main-page/ui/last-releases/carousel/Last-releases-carousel';
 
 interface IProps {
   id: string;
@@ -39,8 +39,8 @@ const AuthorDetailsReleasesCarousel: FC<IProps> = ({ id }) => {
   return (
     (isPending || (topReleases && topReleases.length > 0)) && (
       <CarouselContainer
-        title={"Лучшие работы"}
-        buttonTitle={""}
+        title={'Лучшие работы'}
+        buttonTitle={''}
         showButton={false}
         handlePrev={() => carouselRef.current?.scrollPrev()}
         handleNext={() => carouselRef.current?.scrollNext()}

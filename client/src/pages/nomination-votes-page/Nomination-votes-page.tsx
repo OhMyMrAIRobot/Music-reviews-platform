@@ -1,11 +1,11 @@
-import { useMemo } from "react";
-import { useNominationVotes } from "../../hooks/use-nomination-votes";
+import { useMemo } from 'react';
+import { useNominationVotes } from '../../hooks/use-nomination-votes';
 import {
   MonthEnumType,
   MonthsEnum,
-} from "../../types/common/enums/months-enum";
-import { NominationTypesEnum } from "../../types/nomination";
-import NominationVotesSection from "./ui/Nomination-votes-section";
+} from '../../types/common/enums/months-enum';
+import { NominationTypesEnum } from '../../types/nomination';
+import NominationVotesSection from './ui/Nomination-votes-section';
 
 const NominationVotesPage = () => {
   const { nominationTypes, candidates, userVotes, postVote, isLoading } =
@@ -14,35 +14,35 @@ const NominationVotesPage = () => {
   const hitType = useMemo(
     () =>
       nominationTypes.find((t) => t.type === NominationTypesEnum.HIT_OF_MONTH),
-    [nominationTypes],
+    [nominationTypes]
   );
   const albumType = useMemo(
     () =>
       nominationTypes.find(
-        (t) => t.type === NominationTypesEnum.ALBUM_OF_MONTH,
+        (t) => t.type === NominationTypesEnum.ALBUM_OF_MONTH
       ),
-    [nominationTypes],
+    [nominationTypes]
   );
   const coverType = useMemo(
     () =>
       nominationTypes.find(
-        (t) => t.type === NominationTypesEnum.COVER_OF_MONTH,
+        (t) => t.type === NominationTypesEnum.COVER_OF_MONTH
       ),
-    [nominationTypes],
+    [nominationTypes]
   );
   const artistType = useMemo(
     () =>
       nominationTypes.find(
-        (t) => t.type === NominationTypesEnum.ARTIST_OF_MONTH,
+        (t) => t.type === NominationTypesEnum.ARTIST_OF_MONTH
       ),
-    [nominationTypes],
+    [nominationTypes]
   );
   const producerType = useMemo(
     () =>
       nominationTypes.find(
-        (t) => t.type === NominationTypesEnum.PRODUCER_OF_MONTH,
+        (t) => t.type === NominationTypesEnum.PRODUCER_OF_MONTH
       ),
-    [nominationTypes],
+    [nominationTypes]
   );
 
   return (

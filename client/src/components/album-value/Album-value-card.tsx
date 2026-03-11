@@ -1,15 +1,15 @@
-import { FC } from "react";
-import { Link } from "react-router";
-import useNavigationPath from "../../hooks/use-navigation-path";
-import { AlbumValue } from "../../types/album-value";
+import { FC } from 'react';
+import { Link } from 'react-router';
+import useNavigationPath from '../../hooks/use-navigation-path';
+import { AlbumValue } from '../../types/album-value';
 import {
   getAlbumValueTier,
   getAlbumValueTierConfig,
-} from "../../utils/album-value-config";
-import ReleaseAuthors from "../release/Release-authors";
-import TooltipSpan from "../tooltip/Tooltip-span";
-import SkeletonLoader from "../utils/Skeleton-loader";
-import AlbumValueTooltip from "./Album-value-tooltip";
+} from '../../utils/album-value-config';
+import ReleaseAuthors from '../release/Release-authors';
+import TooltipSpan from '../tooltip/Tooltip-span';
+import SkeletonLoader from '../utils/Skeleton-loader';
+import AlbumValueTooltip from './Album-value-tooltip';
 
 interface IProps {
   isLoading: boolean;
@@ -27,7 +27,7 @@ const AlbumValueCard: FC<IProps> = ({
   if (isLoading || !value) {
     return (
       <SkeletonLoader
-        className={`rounded-[25px] w-full ${smallSize ? "h-85" : "h-100"}`}
+        className={`rounded-[25px] w-full ${smallSize ? 'h-85' : 'h-100'}`}
       />
     );
   }
@@ -55,7 +55,7 @@ const AlbumValueCard: FC<IProps> = ({
           decoding="async"
           className="w-full rounded-[15px] lg:rounded-[20px]"
           src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
-            value.release.img === ""
+            value.release.img === ''
               ? import.meta.env.VITE_DEFAULT_COVER
               : value.release.img
           }`}
@@ -65,7 +65,7 @@ const AlbumValueCard: FC<IProps> = ({
       <div className="my-2 lg:mt-[15px] mb-2 relative z-10">
         <span
           className={`text-center w-full text-white font-semibold block ${
-            smallSize ? "text-sm" : "text-base !leading-[22px]"
+            smallSize ? 'text-sm' : 'text-base !leading-[22px]'
           }`}
         >
           <Link
@@ -78,7 +78,7 @@ const AlbumValueCard: FC<IProps> = ({
           <ReleaseAuthors
             authors={value.release.authors}
             className={`justify-center font-normal ${
-              smallSize ? "text-sm" : "text-lg"
+              smallSize ? 'text-sm' : 'text-lg'
             }`}
           />
         </span>
@@ -88,7 +88,7 @@ const AlbumValueCard: FC<IProps> = ({
         tooltip={
           <AlbumValueTooltip
             value={value}
-            className={`${smallSize ? "lg:min-w-42" : "lg:min-w-50"}`}
+            className={`${smallSize ? 'lg:min-w-42' : 'lg:min-w-50'}`}
           />
         }
         centered={true}
@@ -103,11 +103,11 @@ const AlbumValueCard: FC<IProps> = ({
           src={`${import.meta.env.VITE_SERVER_URL}/public/assets/${
             config.image
           }`}
-          className={`${smallSize ? "w-12" : "w-10 lg:w-[75px]"}`}
+          className={`${smallSize ? 'w-12' : 'w-10 lg:w-[75px]'}`}
         />
         <span
           className={`cursor-default font-bold ${
-            smallSize ? "text-xl" : "text-[24px] 2xl:text-[32px]"
+            smallSize ? 'text-xl' : 'text-[24px] 2xl:text-[32px]'
           }`}
         >
           {value.totalValue}

@@ -1,1 +1,1 @@
-export * from "./feedback-response";
+export * from './feedback-response';

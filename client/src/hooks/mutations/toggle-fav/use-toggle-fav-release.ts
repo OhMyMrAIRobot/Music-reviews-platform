@@ -2,16 +2,16 @@ import {
   InvalidateQueryFilters,
   useMutation,
   useQueryClient,
-} from "@tanstack/react-query";
-import { UserFavReleaseAPI } from "../../../api/release/user-fav-release-api";
-import { leaderboardKeys } from "../../../query-keys/leaderboard-keys";
-import { profilesKeys } from "../../../query-keys/profiles-keys";
-import { releasesKeys } from "../../../query-keys/releases-keys";
-import { UseToggleFavResult } from "../../../types/common";
-import { Release } from "../../../types/release";
-import { useApiErrorHandler } from "../../use-api-error-handler";
-import { useAuth } from "../../use-auth";
-import { useStore } from "../../use-store";
+} from '@tanstack/react-query';
+import { UserFavReleaseAPI } from '../../../api/release/user-fav-release-api';
+import { leaderboardKeys } from '../../../query-keys/leaderboard-keys';
+import { profilesKeys } from '../../../query-keys/profiles-keys';
+import { releasesKeys } from '../../../query-keys/releases-keys';
+import { UseToggleFavResult } from '../../../types/common';
+import { Release } from '../../../types/release';
+import { useApiErrorHandler } from '../../use-api-error-handler';
+import { useAuth } from '../../use-auth';
+import { useStore } from '../../use-store';
 
 /**
  * Custom hook to toggle favorite release
@@ -22,7 +22,7 @@ import { useStore } from "../../use-store";
  */
 export const useToogleFavRelease = (
   release: Release | undefined,
-  isFav: boolean,
+  isFav: boolean
 ): UseToggleFavResult => {
   const { authStore, notificationStore } = useStore();
   const { checkAuth } = useAuth();
@@ -35,8 +35,8 @@ export const useToogleFavRelease = (
   const invalidateRelatedQueries = () => {
     const keysToInvalidate: InvalidateQueryFilters[] = [
       { queryKey: releasesKeys.all },
-      { queryKey: profilesKeys.profile(authStore.user?.id ?? "unknown") },
-      { queryKey: profilesKeys.preferences(authStore.user?.id ?? "unknown") },
+      { queryKey: profilesKeys.profile(authStore.user?.id ?? 'unknown') },
+      { queryKey: profilesKeys.preferences(authStore.user?.id ?? 'unknown') },
       { queryKey: leaderboardKeys.all },
     ];
 
@@ -54,8 +54,8 @@ export const useToogleFavRelease = (
     onSuccess: () => {
       notificationStore.addSuccessNotification(
         isFav
-          ? "Релиз успешно удален из понравившихся!"
-          : "Релиз успешно добавлен в понравившиеся!",
+          ? 'Релиз успешно удален из понравившихся!'
+          : 'Релиз успешно добавлен в понравившиеся!'
       );
       invalidateRelatedQueries();
     },
@@ -63,8 +63,8 @@ export const useToogleFavRelease = (
       handleApiError(
         error,
         isFav
-          ? "Не удалось убрать релиз из понравившихся!"
-          : "Не удалось добавить релиз в понравившиеся!",
+          ? 'Не удалось убрать релиз из понравившихся!'
+          : 'Не удалось добавить релиз в понравившиеся!'
       );
     },
   });

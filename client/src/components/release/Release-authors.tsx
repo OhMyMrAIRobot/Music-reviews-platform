@@ -1,7 +1,7 @@
-import { FC } from "react";
-import { Link } from "react-router";
-import useNavigationPath from "../../hooks/use-navigation-path";
-import { ReleaseAuthor } from "../../types/release";
+import { FC } from 'react';
+import { Link } from 'react-router';
+import useNavigationPath from '../../hooks/use-navigation-path';
+import { ReleaseAuthor } from '../../types/release';
 
 interface IProps {
   authors: ReleaseAuthor[];
@@ -24,7 +24,7 @@ const ReleaseAuthors: FC<IProps> = ({ authors, className }) => {
           </div>
 
           <span className="opacity-50">
-            {index < authors.length - 1 && ", "}
+            {index < authors.length - 1 && ', '}
           </span>
         </Link>
       ))}

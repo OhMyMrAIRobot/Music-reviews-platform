@@ -1,5 +1,5 @@
-import { FC, ReactNode, useState } from "react";
-import { SidebarOverlayContext } from "../contexts/sidebar-overlay-context";
+import { FC, ReactNode, useState } from 'react';
+import { SidebarOverlayContext } from '../contexts/sidebar-overlay-context';
 
 interface IProps {
   children: ReactNode;

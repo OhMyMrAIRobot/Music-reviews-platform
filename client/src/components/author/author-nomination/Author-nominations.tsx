@@ -1,7 +1,7 @@
-import { FC } from "react";
-import AwardSvg from "../../svg/Award-svg";
-import Tooltip from "../../tooltip/Tooltip";
-import TooltipSpan from "../../tooltip/Tooltip-span";
+import { FC } from 'react';
+import AwardSvg from '../../svg/Award-svg';
+import Tooltip from '../../tooltip/Tooltip';
+import TooltipSpan from '../../tooltip/Tooltip-span';
 
 interface IProps {
   winsCount: number;
@@ -21,7 +21,7 @@ const AuthorNominations: FC<IProps> = ({ winsCount, totalCount }) => {
             <img
               loading="lazy"
               decoding="async"
-              alt={"rice"}
+              alt={'rice'}
               src={`${import.meta.env.VITE_SERVER_URL}/public/assets/rice.png`}
               className="w-4"
             />

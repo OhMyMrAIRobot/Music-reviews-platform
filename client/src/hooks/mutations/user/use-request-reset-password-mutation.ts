@@ -1,13 +1,13 @@
-import { useMutation } from "@tanstack/react-query";
-import { AuthAPI } from "../../../api/auth-api";
+import { useMutation } from '@tanstack/react-query';
+import { AuthAPI } from '../../../api/auth-api';
 import {
   AuthEmailSentStatusResponse,
   SendResetPasswordData,
-} from "../../../types/auth";
-import { UseMutationParams } from "../../../types/common";
-import { generateUUID } from "../../../utils/generate-uuid";
-import { useApiErrorHandler } from "../../use-api-error-handler";
-import { useStore } from "../../use-store";
+} from '../../../types/auth';
+import { UseMutationParams } from '../../../types/common';
+import { generateUUID } from '../../../utils/generate-uuid';
+import { useApiErrorHandler } from '../../use-api-error-handler';
+import { useStore } from '../../use-store';
 
 /**
  * Custom React hook returning a React Query mutation that requests a password
@@ -38,7 +38,7 @@ export const useRequestResetPasswordMutation = ({
     onError: (error: unknown) => {
       handleApiError(
         error,
-        "Ошибка при отправке письма для восстановления пароля!",
+        'Ошибка при отправке письма для восстановления пароля!'
       );
       onError?.(error);
     },
@@ -49,13 +49,13 @@ export const useRequestResetPasswordMutation = ({
     if (data.emailSent) {
       notificationStore.addNotification({
         id: generateUUID(),
-        text: "Письмо с инструкциями по восстановлению пароля отправлено на вашу почту!",
+        text: 'Письмо с инструкциями по восстановлению пароля отправлено на вашу почту!',
         isError: false,
       });
     } else {
       notificationStore.addNotification({
         id: generateUUID(),
-        text: "Ошибка при отправке письма для восстановления пароля. Повторите попытку позже!",
+        text: 'Ошибка при отправке письма для восстановления пароля. Повторите попытку позже!',
         isError: true,
       });
     }

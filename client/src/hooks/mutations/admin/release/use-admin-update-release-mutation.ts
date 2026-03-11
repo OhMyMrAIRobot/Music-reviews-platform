@@ -2,19 +2,19 @@ import {
   InvalidateQueryFilters,
   useMutation,
   useQueryClient,
-} from "@tanstack/react-query";
-import { ReleaseAPI } from "../../../../api/release/release-api";
-import { albumValuesKeys } from "../../../../query-keys/album-values-keys";
-import { authorCommentsKeys } from "../../../../query-keys/author-comments-keys";
-import { authorLikesKeys } from "../../../../query-keys/author-likes-keys";
-import { authorsKeys } from "../../../../query-keys/authors-keys";
-import { nominationsKeys } from "../../../../query-keys/nominations-keys";
-import { releaseMediaKeys } from "../../../../query-keys/release-media-keys";
-import { releasesKeys } from "../../../../query-keys/releases-keys";
-import { reviewsKeys } from "../../../../query-keys/reviews-keys";
-import { UseMutationParams } from "../../../../types/common";
-import { useApiErrorHandler } from "../../../use-api-error-handler";
-import { useStore } from "../../../use-store";
+} from '@tanstack/react-query';
+import { ReleaseAPI } from '../../../../api/release/release-api';
+import { albumValuesKeys } from '../../../../query-keys/album-values-keys';
+import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys';
+import { authorLikesKeys } from '../../../../query-keys/author-likes-keys';
+import { authorsKeys } from '../../../../query-keys/authors-keys';
+import { nominationsKeys } from '../../../../query-keys/nominations-keys';
+import { releaseMediaKeys } from '../../../../query-keys/release-media-keys';
+import { releasesKeys } from '../../../../query-keys/releases-keys';
+import { reviewsKeys } from '../../../../query-keys/reviews-keys';
+import { UseMutationParams } from '../../../../types/common';
+import { useApiErrorHandler } from '../../../use-api-error-handler';
+import { useStore } from '../../../use-store';
 
 /**
  * Custom React hook that returns a React Query mutation for updating a release.
@@ -53,12 +53,12 @@ export const useAdminUpdateReleaseMutation = ({
     mutationFn: ({ id, formData }: { id: string; formData: FormData }) =>
       ReleaseAPI.update(id, formData),
     onSuccess: () => {
-      notificationStore.addSuccessNotification("Релиз успешно обновлен");
+      notificationStore.addSuccessNotification('Релиз успешно обновлен');
       invalidateRelatedQueriesUpdate();
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, "Не удалось обновить релиз");
+      handleApiError(error, 'Не удалось обновить релиз');
       onError?.(error);
     },
     onSettled,

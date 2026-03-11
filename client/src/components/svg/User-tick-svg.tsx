@@ -1,5 +1,5 @@
-import { FC } from "react";
-import { ISvgProps } from "../../types/common/types/svg-props";
+import { FC } from 'react';
+import { ISvgProps } from '../../types/common/types/svg-props';
 
 const UserTickSvg: FC<ISvgProps> = ({ className }) => {
   return (

@@ -1,13 +1,13 @@
-import { useMemo, useState } from "react";
-import { useParams } from "react-router";
-import FormButton from "../../../../components/form-elements/Form-button";
-import FormInput from "../../../../components/form-elements/Form-input";
-import FormLabel from "../../../../components/form-elements/Form-label";
-import FormSubTitle from "../../../../components/form-elements/Form-subtitle";
-import FormTitle from "../../../../components/form-elements/Form-title";
-import { useResetPasswordMutation } from "../../../../hooks/mutations";
-import { useStore } from "../../../../hooks/use-store";
-import { constraints } from "../../../../utils/constraints";
+import { useMemo, useState } from 'react';
+import { useParams } from 'react-router';
+import FormButton from '../../../../components/form-elements/Form-button';
+import FormInput from '../../../../components/form-elements/Form-input';
+import FormLabel from '../../../../components/form-elements/Form-label';
+import FormSubTitle from '../../../../components/form-elements/Form-subtitle';
+import FormTitle from '../../../../components/form-elements/Form-title';
+import { useResetPasswordMutation } from '../../../../hooks/mutations';
+import { useStore } from '../../../../hooks/use-store';
+import { constraints } from '../../../../utils/constraints';
 
 /**
  * Form for resetting the password.
@@ -22,8 +22,8 @@ const ResetPasswordForm = () => {
   const { notificationStore } = useStore();
 
   const [formData, setFormData] = useState<ResetPasswordFormState>({
-    password: "",
-    passwordConfirm: "",
+    password: '',
+    passwordConfirm: '',
   });
 
   const { mutateAsync: reset, isPending: isLoading } =
@@ -49,7 +49,7 @@ const ResetPasswordForm = () => {
     if (!isFormValid || isLoading) return;
 
     if (formData.password !== formData.passwordConfirm) {
-      notificationStore.addErrorNotification("Пароли не совпадают!");
+      notificationStore.addErrorNotification('Пароли не совпадают!');
       return;
     }
 
@@ -64,7 +64,7 @@ const ResetPasswordForm = () => {
    */
   const handleChange = (
     field: keyof typeof formData,
-    value: string | boolean,
+    value: string | boolean
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -85,7 +85,7 @@ const ResetPasswordForm = () => {
     label: string,
     type: string,
     placeholder?: string,
-    description?: string,
+    description?: string
   ) => (
     <div className="grid gap-1">
       <FormLabel name={label} htmlFor={id} />
@@ -96,7 +96,7 @@ const ResetPasswordForm = () => {
       )}
       <FormInput
         id={id}
-        placeholder={placeholder || ""}
+        placeholder={placeholder || ''}
         type={type}
         value={formData[id] as string}
         setValue={(value) => handleChange(id, value)}
@@ -107,15 +107,15 @@ const ResetPasswordForm = () => {
   return (
     <div className="grid gap-4 w-full sm:w-[330px]">
       <div className="grid gap-1">
-        <FormTitle title={"Сброс пароля"} />
-        <FormSubTitle title={"Введите новый пароль для аккаунта"} />
+        <FormTitle title={'Сброс пароля'} />
+        <FormSubTitle title={'Введите новый пароль для аккаунта'} />
       </div>
 
-      {renderInput("password", "Новый пароль", "password")}
-      {renderInput("passwordConfirm", "Подтвердите пароль", "password")}
+      {renderInput('password', 'Новый пароль', 'password')}
+      {renderInput('passwordConfirm', 'Подтвердите пароль', 'password')}
 
       <FormButton
-        title={isLoading ? "Сброс пароля..." : "Сбросить пароль"}
+        title={isLoading ? 'Сброс пароля...' : 'Сбросить пароль'}
         onClick={onSubmit}
         isInvert={true}
         disabled={isLoading || !isFormValid}

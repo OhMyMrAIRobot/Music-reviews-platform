@@ -1,4 +1,4 @@
-import { NominationEntityKind } from "..";
+import { NominationEntityKind } from '..';
 
 /**
  * Represents the union type for a nomination candidate
@@ -10,7 +10,7 @@ export type NominationCandidate = IReleaseCandidate | IAuthorCandidate;
  * Release candidate payload returned in nomination candidate lists.
  */
 interface IReleaseCandidate extends Candidate {
-  entityKind: "release";
+  entityKind: 'release';
 
   /** Release title */
   title: string;
@@ -23,7 +23,7 @@ interface IReleaseCandidate extends Candidate {
  * Author candidate payload returned in nomination candidate lists.
  */
 interface IAuthorCandidate extends Candidate {
-  entityKind: "author";
+  entityKind: 'author';
 
   /** Author display name */
   name: string;

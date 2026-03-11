@@ -1,15 +1,15 @@
-import { useQuery } from "@tanstack/react-query";
-import { FC, useState } from "react";
-import { ReleaseMediaAPI } from "../../../../api/release/release-media-api";
-import Pagination from "../../../../components/pagination/Pagination";
-import ReleaseMediaReview from "../../../../components/release/release-media/Release-media-review";
-import { useReleaseMediaMeta } from "../../../../hooks/meta";
-import { releaseMediaKeys } from "../../../../query-keys/release-media-keys";
+import { useQuery } from '@tanstack/react-query';
+import { FC, useState } from 'react';
+import { ReleaseMediaAPI } from '../../../../api/release/release-media-api';
+import Pagination from '../../../../components/pagination/Pagination';
+import ReleaseMediaReview from '../../../../components/release/release-media/Release-media-review';
+import { useReleaseMediaMeta } from '../../../../hooks/meta';
+import { releaseMediaKeys } from '../../../../query-keys/release-media-keys';
 import {
   ReleaseMediaQuery,
   ReleaseMediaStatusesEnum,
   ReleaseMediaTypesEnum,
-} from "../../../../types/release";
+} from '../../../../types/release';
 
 interface IProps {
   userId: string;
@@ -23,10 +23,10 @@ const ProfileMediaReviewsGrid: FC<IProps> = ({ userId }) => {
   const { statuses, types, isLoading: isMetaLoading } = useReleaseMediaMeta();
 
   const typeId = types.find(
-    (t) => t.type === ReleaseMediaTypesEnum.MEDIA_REVIEW,
+    (t) => t.type === ReleaseMediaTypesEnum.MEDIA_REVIEW
   )?.id;
   const statusId = statuses.find(
-    (s) => s.status === ReleaseMediaStatusesEnum.APPROVED,
+    (s) => s.status === ReleaseMediaStatusesEnum.APPROVED
   )?.id;
 
   const query: ReleaseMediaQuery = {
@@ -78,7 +78,7 @@ const ProfileMediaReviewsGrid: FC<IProps> = ({ userId }) => {
             totalItems={mediaData.meta.count ?? 0}
             itemsPerPage={limit}
             setCurrentPage={setCurrentPage}
-            idToScroll={"profile-sections"}
+            idToScroll={'profile-sections'}
           />
         </div>
       )}

@@ -1,14 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
-import { FC } from "react";
-import { ReleaseAPI } from "../../../api/release/release-api";
-import ReleasesColumn from "../../../components/release/releases-column/Releases-column";
-import { releasesKeys } from "../../../query-keys/releases-keys";
-import { SortOrdersEnum } from "../../../types/common/enums/sort-orders-enum";
+import { useQuery } from '@tanstack/react-query';
+import { FC } from 'react';
+import { ReleaseAPI } from '../../../api/release/release-api';
+import ReleasesColumn from '../../../components/release/releases-column/Releases-column';
+import { releasesKeys } from '../../../query-keys/releases-keys';
+import { SortOrdersEnum } from '../../../types/common/enums/sort-orders-enum';
 import {
   ReleasesQuery,
   ReleasesSortFieldsEnum,
   ReleaseTypesEnum,
-} from "../../../types/release";
+} from '../../../types/release';
 
 interface IProps {
   id: string;
@@ -30,11 +30,11 @@ const AuthorDetailsReleases: FC<IProps> = ({ id }) => {
   const releases = data?.items || [];
 
   const tracks = releases.filter(
-    (val) => val.releaseType.type === ReleaseTypesEnum.SINGLE,
+    (val) => val.releaseType.type === ReleaseTypesEnum.SINGLE
   );
 
   const albums = releases.filter(
-    (val) => val.releaseType.type === ReleaseTypesEnum.ALBUM,
+    (val) => val.releaseType.type === ReleaseTypesEnum.ALBUM
   );
 
   return (
@@ -42,13 +42,13 @@ const AuthorDetailsReleases: FC<IProps> = ({ id }) => {
       <h2 className="text-lg lg:text-2xl font-semibold">Релизы автора</h2>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <ReleasesColumn
-          title={"Треки"}
+          title={'Треки'}
           releases={tracks}
           isLoading={isPending}
         />
 
         <ReleasesColumn
-          title={"Альбомы"}
+          title={'Альбомы'}
           releases={albums}
           isLoading={isPending}
         />

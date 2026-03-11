@@ -1,17 +1,17 @@
-import { EmblaOptionsType } from "embla-carousel";
-import useEmblaCarousel from "embla-carousel-react";
-import { observer } from "mobx-react-lite";
+import { EmblaOptionsType } from 'embla-carousel';
+import useEmblaCarousel from 'embla-carousel-react';
+import { observer } from 'mobx-react-lite';
 import {
   forwardRef,
   useCallback,
   useEffect,
   useImperativeHandle,
   useState,
-} from "react";
-import { CarouselRef } from "../../../../types/common/types/carousel-ref";
-import { CarouselStateCallbacks } from "../../../../types/common/types/carousel-state-callbacks";
-import { AuthorNominationWin } from "../../../../types/nomination";
-import AuthorDetailsNominationsCarouselItem from "./Author-details-nominations-carousel-item";
+} from 'react';
+import { CarouselRef } from '../../../../types/common/types/carousel-ref';
+import { CarouselStateCallbacks } from '../../../../types/common/types/carousel-state-callbacks';
+import { AuthorNominationWin } from '../../../../types/nomination';
+import AuthorDetailsNominationsCarouselItem from './Author-details-nominations-carousel-item';
 
 interface IProps extends CarouselStateCallbacks {
   items?: AuthorNominationWin[];
@@ -22,11 +22,11 @@ const AuthorDetailsNominationsCarousel = observer(
   forwardRef<CarouselRef, IProps>(
     (
       { items, isLoading, onCanScrollPrevChange, onCanScrollNextChange },
-      ref,
+      ref
     ) => {
       const options: EmblaOptionsType = {
-        align: "start",
-        slidesToScroll: "auto",
+        align: 'start',
+        slidesToScroll: 'auto',
       };
       const [emblaRef, emblaApi] = useEmblaCarousel(options);
       const [, setCanScrollPrev] = useState(false);
@@ -50,14 +50,14 @@ const AuthorDetailsNominationsCarousel = observer(
 
         updateScrollState();
 
-        emblaApi.on("select", updateScrollState);
-        emblaApi.on("reInit", updateScrollState);
-        emblaApi.on("resize", updateScrollState);
+        emblaApi.on('select', updateScrollState);
+        emblaApi.on('reInit', updateScrollState);
+        emblaApi.on('resize', updateScrollState);
 
         return () => {
-          emblaApi.off("select", updateScrollState);
-          emblaApi.off("reInit", updateScrollState);
-          emblaApi.off("resize", updateScrollState);
+          emblaApi.off('select', updateScrollState);
+          emblaApi.off('reInit', updateScrollState);
+          emblaApi.off('resize', updateScrollState);
         };
       }, [emblaApi, updateScrollState]);
 
@@ -67,7 +67,7 @@ const AuthorDetailsNominationsCarousel = observer(
           scrollPrev: () => emblaApi?.scrollPrev(),
           scrollNext: () => emblaApi?.scrollNext(),
         }),
-        [emblaApi],
+        [emblaApi]
       );
 
       return (
@@ -98,8 +98,8 @@ const AuthorDetailsNominationsCarousel = observer(
           </div>
         </div>
       );
-    },
-  ),
+    }
+  )
 );
 
 export default AuthorDetailsNominationsCarousel;

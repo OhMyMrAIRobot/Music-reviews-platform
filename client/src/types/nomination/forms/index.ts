@@ -1,1 +1,1 @@
-export * from "./create-nomination-vote-data";
+export * from './create-nomination-vote-data';

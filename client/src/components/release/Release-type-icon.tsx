@@ -1,7 +1,7 @@
-import { FC } from "react";
-import { ReleaseTypesEnum } from "../../types/release";
-import AlbumSvg from "./svg/Album-svg";
-import SingleSvg from "./svg/Single-svg";
+import { FC } from 'react';
+import { ReleaseTypesEnum } from '../../types/release';
+import AlbumSvg from './svg/Album-svg';
+import SingleSvg from './svg/Single-svg';
 
 interface IProps {
   type: string;

@@ -1,11 +1,11 @@
-import axios from "axios";
-import { Role } from "../types/user";
+import axios from 'axios';
+import { Role } from '../types/user';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 const _api = axios.create({
   baseURL: `${SERVER_URL}/roles/`,
   headers: {
-    "Content-type": "application/json",
+    'Content-type': 'application/json',
   },
 });
 
@@ -20,7 +20,7 @@ export const RolesAPI = {
    * @returns {Promise<Role[]>} A promise that resolves to an array of role objects.
    */
   async fetchRoles(): Promise<Role[]> {
-    const { data } = await _api.get<Role[]>("/");
+    const { data } = await _api.get<Role[]>('/');
     return data;
   },
 };

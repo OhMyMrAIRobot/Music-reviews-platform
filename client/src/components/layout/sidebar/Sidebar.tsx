@@ -1,7 +1,7 @@
-import { useSidebarGroups } from "../../../hooks/use-sidebar-groups";
-import SidebarDelimiter from "./Sidebar-delimiter";
-import SidebarOverlay from "./sidebar-overlay/Sidebar-overlay";
-import SidebarSection from "./Sidebar-section";
+import { useSidebarGroups } from '../../../hooks/use-sidebar-groups';
+import SidebarDelimiter from './Sidebar-delimiter';
+import SidebarOverlay from './sidebar-overlay/Sidebar-overlay';
+import SidebarSection from './Sidebar-section';
 
 const Sidebar = () => {
   const {

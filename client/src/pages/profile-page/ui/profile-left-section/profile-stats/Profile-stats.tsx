@@ -1,15 +1,15 @@
-import { FC } from "react";
-import { Link } from "react-router";
-import AuthorCommentColorSvg from "../../../../../components/author/author-comment/svg/Author-comment-color-svg";
-import AuthorLikeColorSvg from "../../../../../components/author/author-like/svg/Author-like-color-svg";
-import NoTextReviewSvg from "../../../../../components/review/svg/No-text-review-svg";
-import TextReviewSvg from "../../../../../components/review/svg/Text-review-svg";
-import PixelHeartFillSvg from "../../../../../components/svg/Pixel-heart-fill-svg";
-import PixelHeartSvg from "../../../../../components/svg/Pixel-heart-svg";
-import useNavigationPath from "../../../../../hooks/use-navigation-path";
-import { Profile } from "../../../../../types/profile";
-import { getLevelConfig, getUserLevel } from "../../../../../utils/user-level";
-import ProfileStatsRow from "./Profile-stats-row";
+import { FC } from 'react';
+import { Link } from 'react-router';
+import AuthorCommentColorSvg from '../../../../../components/author/author-comment/svg/Author-comment-color-svg';
+import AuthorLikeColorSvg from '../../../../../components/author/author-like/svg/Author-like-color-svg';
+import NoTextReviewSvg from '../../../../../components/review/svg/No-text-review-svg';
+import TextReviewSvg from '../../../../../components/review/svg/Text-review-svg';
+import PixelHeartFillSvg from '../../../../../components/svg/Pixel-heart-fill-svg';
+import PixelHeartSvg from '../../../../../components/svg/Pixel-heart-svg';
+import useNavigationPath from '../../../../../hooks/use-navigation-path';
+import { Profile } from '../../../../../types/profile';
+import { getLevelConfig, getUserLevel } from '../../../../../utils/user-level';
+import ProfileStatsRow from './Profile-stats-row';
 
 interface IProps {
   profile: Profile;
@@ -24,14 +24,14 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
     <div className="border border-white/10 shadow-sm p-5 bg-zinc-900 flex flex-col rounded-2xl gap-2">
       <div
         className={`border border-white/10 p-2.5 w-full rounded-lg flex space-x-2.5 ${
-          level ? "" : "justify-center"
+          level ? '' : 'justify-center'
         }`}
       >
         {level && (
           <img
             loading="lazy"
             decoding="async"
-            alt={"level"}
+            alt={'level'}
             src={`${import.meta.env.VITE_SERVER_URL}/public/assets/${
               getLevelConfig(level).image
             }`}
@@ -40,7 +40,7 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
         )}
 
         <div
-          className={`flex flex-col gap-y-1.5 ${level ? "" : "items-center"}`}
+          className={`flex flex-col gap-y-1.5 ${level ? '' : 'items-center'}`}
         >
           {level && (
             <div className="text-base font-bold flex items-center space-x-1.5">
@@ -53,7 +53,7 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
               className={`px-2 h-[21px] flex items-center leading-3 font-semibold rounded-full text-[13px] ${
                 level
                   ? getLevelConfig(level).color
-                  : "bg-white/10 border-white/20"
+                  : 'bg-white/10 border-white/20'
               }`}
             >
               {profile.points}
@@ -84,14 +84,14 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
       {profile.user.isAuthor && (
         <div>
           <ProfileStatsRow
-            title={"Написано авторских комментариев"}
+            title={'Написано авторских комментариев'}
             value={profile.stats.authorCommentsCount}
-            icon={<AuthorCommentColorSvg className={"size-5"} />}
+            icon={<AuthorCommentColorSvg className={'size-5'} />}
           />
           <ProfileStatsRow
-            title={"Поставлено авторских лайков"}
+            title={'Поставлено авторских лайков'}
             value={profile.stats.givenAuthorLikes}
-            icon={<AuthorLikeColorSvg className={"size-5"} />}
+            icon={<AuthorLikeColorSvg className={'size-5'} />}
           />
         </div>
       )}
@@ -103,14 +103,14 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
 
       <div>
         <ProfileStatsRow
-          title={"Рецензий"}
+          title={'Рецензий'}
           value={profile.stats.textCount}
-          icon={<TextReviewSvg className={"size-5"} />}
+          icon={<TextReviewSvg className={'size-5'} />}
         />
         <ProfileStatsRow
-          title={"Оценок без рецензий"}
+          title={'Оценок без рецензий'}
           value={profile.stats.withoutTextCount}
-          icon={<NoTextReviewSvg className={"size-5"} />}
+          icon={<NoTextReviewSvg className={'size-5'} />}
         />
       </div>
 
@@ -121,19 +121,19 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
 
       <div>
         <ProfileStatsRow
-          title={"Получено авторских лайков"}
+          title={'Получено авторских лайков'}
           value={profile.stats.receivedAuthorLikes}
-          icon={<AuthorLikeColorSvg className={"size-5"} />}
+          icon={<AuthorLikeColorSvg className={'size-5'} />}
         />
         <ProfileStatsRow
-          title={"Получено лайков"}
+          title={'Получено лайков'}
           value={profile.stats.receivedLikes}
-          icon={<PixelHeartSvg className={"w-5 h-4.5"} />}
+          icon={<PixelHeartSvg className={'w-5 h-4.5'} />}
         />
         <ProfileStatsRow
-          title={"Поставлено лайков"}
+          title={'Поставлено лайков'}
           value={profile.stats.givenLikes}
-          icon={<PixelHeartFillSvg className={"w-5 h-4.5"} />}
+          icon={<PixelHeartFillSvg className={'w-5 h-4.5'} />}
         />
       </div>
     </div>

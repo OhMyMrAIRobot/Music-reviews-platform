@@ -1,26 +1,26 @@
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { AuthorConfirmationAPI } from "../../../../../api/author/author-confirmation-api";
-import AuthorConfirmationStatusIcon from "../../../../../components/author/author-confirmation/Author-confirmation-status-icon";
-import AdminHeader from "../../../../../components/layout/admin-header/Admin-header";
-import Pagination from "../../../../../components/pagination/Pagination";
-import SkeletonLoader from "../../../../../components/utils/Skeleton-loader";
-import { useAuthorConfirmationMeta } from "../../../../../hooks/meta";
-import { authorConfirmationsKeys } from "../../../../../query-keys/authors-confirmations-keys";
-import { AuthorConfirmationStatusesFilterOptions } from "../../../../../types/author";
-import { AuthorConfirmationsQuery } from "../../../../../types/author/queries/author-confirmations-query";
-import { SortOrdersEnum } from "../../../../../types/common/enums/sort-orders-enum";
-import { SortOrder } from "../../../../../types/common/types/sort-order";
-import AdminFilterButton from "../../buttons/Admin-filter-button";
-import AdminDashboardAuthorConfirmationGridItem from "./Admin-dashboard-author-confirmation-grid-item";
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { AuthorConfirmationAPI } from '../../../../../api/author/author-confirmation-api';
+import AuthorConfirmationStatusIcon from '../../../../../components/author/author-confirmation/Author-confirmation-status-icon';
+import AdminHeader from '../../../../../components/layout/admin-header/Admin-header';
+import Pagination from '../../../../../components/pagination/Pagination';
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader';
+import { useAuthorConfirmationMeta } from '../../../../../hooks/meta';
+import { authorConfirmationsKeys } from '../../../../../query-keys/authors-confirmations-keys';
+import { AuthorConfirmationStatusesFilterOptions } from '../../../../../types/author';
+import { AuthorConfirmationsQuery } from '../../../../../types/author/queries/author-confirmations-query';
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum';
+import { SortOrder } from '../../../../../types/common/types/sort-order';
+import AdminFilterButton from '../../buttons/Admin-filter-button';
+import AdminDashboardAuthorConfirmationGridItem from './Admin-dashboard-author-confirmation-grid-item';
 
 const limit = 10;
 
 const AdminDashboardAuthorConfirmationGrid = () => {
-  const [searchText, setSearchText] = useState<string>("");
+  const [searchText, setSearchText] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [status, setStatus] = useState<AuthorConfirmationStatusesFilterOptions>(
-    AuthorConfirmationStatusesFilterOptions.ALL,
+    AuthorConfirmationStatusesFilterOptions.ALL
   );
   const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC);
 
@@ -56,7 +56,7 @@ const AdminDashboardAuthorConfirmationGrid = () => {
 
   return (
     <div className="flex flex-col h-screen" id="admin-author-confirmations">
-      <AdminHeader title={"Верификация авторов"} setText={setSearchText} />
+      <AdminHeader title={'Верификация авторов'} setText={setSearchText} />
 
       <div
         id="admin-author-confirmations-grid"
@@ -78,7 +78,7 @@ const AdminDashboardAuthorConfirmationGrid = () => {
                       <span className={`flex items-center px-2`}>
                         <AuthorConfirmationStatusIcon
                           status={option}
-                          className={"size-5 mr-1"}
+                          className={'size-5 mr-1'}
                         />
                         {option}
                       </span>
@@ -86,7 +86,7 @@ const AdminDashboardAuthorConfirmationGrid = () => {
                     isActive={status === option}
                     onClick={() => setStatus(option)}
                   />
-                ),
+                )
               )}
         </div>
 
@@ -98,7 +98,7 @@ const AdminDashboardAuthorConfirmationGrid = () => {
             setOrder(
               order === SortOrdersEnum.DESC
                 ? SortOrdersEnum.ASC
-                : SortOrdersEnum.DESC,
+                : SortOrdersEnum.DESC
             )
           }
         />
@@ -136,7 +136,7 @@ const AdminDashboardAuthorConfirmationGrid = () => {
               totalItems={count}
               itemsPerPage={limit}
               setCurrentPage={setCurrentPage}
-              idToScroll={"admin-author-confirmations-grid"}
+              idToScroll={'admin-author-confirmations-grid'}
             />
           </div>
         )}

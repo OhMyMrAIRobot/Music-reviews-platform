@@ -1,4 +1,4 @@
-import { NominationMonthWinners } from "..";
+import { NominationMonthWinners } from '..';
 
 /**
  * Response shape for nomination winners across available years/months.

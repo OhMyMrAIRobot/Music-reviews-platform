@@ -1,19 +1,19 @@
-import { useQuery } from "@tanstack/react-query";
-import { FC, useRef, useState } from "react";
-import { ReleaseMediaAPI } from "../../../../api/release/release-media-api";
-import CarouselNavButton from "../../../../components/carousel/Carousel-nav-button";
-import SkeletonLoader from "../../../../components/utils/Skeleton-loader";
-import { useReleaseMediaMeta } from "../../../../hooks/meta";
-import { useStore } from "../../../../hooks/use-store";
-import { releaseMediaKeys } from "../../../../query-keys/release-media-keys";
-import { SortOrdersEnum } from "../../../../types/common/enums/sort-orders-enum";
-import { CarouselRef } from "../../../../types/common/types/carousel-ref";
+import { useQuery } from '@tanstack/react-query';
+import { FC, useRef, useState } from 'react';
+import { ReleaseMediaAPI } from '../../../../api/release/release-media-api';
+import CarouselNavButton from '../../../../components/carousel/Carousel-nav-button';
+import SkeletonLoader from '../../../../components/utils/Skeleton-loader';
+import { useReleaseMediaMeta } from '../../../../hooks/meta';
+import { useStore } from '../../../../hooks/use-store';
+import { releaseMediaKeys } from '../../../../query-keys/release-media-keys';
+import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum';
+import { CarouselRef } from '../../../../types/common/types/carousel-ref';
 import {
   ReleaseMediaQuery,
   ReleaseMediaStatusesEnum,
-} from "../../../../types/release";
-import { RolesEnum } from "../../../../types/user";
-import ReleaseDetailsMediaCarousel from "./Release-details-media-carousel";
+} from '../../../../types/release';
+import { RolesEnum } from '../../../../types/user';
+import ReleaseDetailsMediaCarousel from './Release-details-media-carousel';
 
 interface IProps {
   releaseId: string;
@@ -31,7 +31,7 @@ const ReleaseDetailsMedia: FC<IProps> = ({ releaseId }) => {
     useReleaseMediaMeta();
 
   const statusId = statuses.find(
-    (el) => el.status === ReleaseMediaStatusesEnum.APPROVED,
+    (el) => el.status === ReleaseMediaStatusesEnum.APPROVED
   )?.id;
 
   const mediaQuery: ReleaseMediaQuery = {
@@ -46,7 +46,7 @@ const ReleaseDetailsMedia: FC<IProps> = ({ releaseId }) => {
       queryFn: () => ReleaseMediaAPI.findAll(mediaQuery),
       enabled: statuses.length > 0 && !isReleaseMediaMetaLoading,
       staleTime: 1000 * 60 * 5,
-    },
+    }
   );
 
   const userMediaQuery: ReleaseMediaQuery = {
@@ -85,7 +85,7 @@ const ReleaseDetailsMedia: FC<IProps> = ({ releaseId }) => {
   return (
     <section
       className={`gap-3 grid mt-5 w-full ${
-        !isLoading && !userMedia && releaseMedia.length === 0 ? "hidden" : ""
+        !isLoading && !userMedia && releaseMedia.length === 0 ? 'hidden' : ''
       }`}
     >
       <div className="flex">
@@ -99,7 +99,7 @@ const ReleaseDetailsMedia: FC<IProps> = ({ releaseId }) => {
               {releaseMediaCount + (userMedia ? 1 : 0)}
             </div>
           ) : (
-            <SkeletonLoader className={"rounded-full size-10 lg:size-12"} />
+            <SkeletonLoader className={'rounded-full size-10 lg:size-12'} />
           )}
         </div>
 

@@ -1,4 +1,4 @@
-import { FeedbackStatus } from ".";
+import { FeedbackStatus } from '.';
 
 /**
  * Respresents an `Feedback` entity.

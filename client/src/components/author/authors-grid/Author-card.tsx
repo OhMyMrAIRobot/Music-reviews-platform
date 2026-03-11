@@ -1,14 +1,14 @@
-import { FC } from "react";
-import { Link } from "react-router";
-import useNavigationPath from "../../../hooks/use-navigation-path";
-import { Author } from "../../../types/author";
-import { ReleaseTypesEnum } from "../../../types/release";
-import LikesCount from "../../utils/Likes-count";
-import SkeletonLoader from "../../utils/Skeleton-loader";
-import AuthorNominations from "../author-nomination/Author-nominations";
-import AuthorReleaseTypesRatings from "../author-ratings/Author-release-types-ratings";
-import AuthorTypes from "../author-types/Author-types";
-import RegisteredAuthorTypes from "../registered-author/Registered-author-types";
+import { FC } from 'react';
+import { Link } from 'react-router';
+import useNavigationPath from '../../../hooks/use-navigation-path';
+import { Author } from '../../../types/author';
+import { ReleaseTypesEnum } from '../../../types/release';
+import LikesCount from '../../utils/Likes-count';
+import SkeletonLoader from '../../utils/Skeleton-loader';
+import AuthorNominations from '../author-nomination/Author-nominations';
+import AuthorReleaseTypesRatings from '../author-ratings/Author-release-types-ratings';
+import AuthorTypes from '../author-types/Author-types';
+import RegisteredAuthorTypes from '../registered-author/Registered-author-types';
 
 interface IProps {
   author?: Author;
@@ -19,7 +19,7 @@ const AuthorCard: FC<IProps> = ({ author, isLoading }) => {
   const { navigateToAuthorDetails } = useNavigationPath();
 
   return isLoading ? (
-    <SkeletonLoader className={"w-full h-76 md:h-91 rounded-2xl"} />
+    <SkeletonLoader className={'w-full h-76 md:h-91 rounded-2xl'} />
   ) : (
     author && (
       <Link
@@ -32,7 +32,7 @@ const AuthorCard: FC<IProps> = ({ author, isLoading }) => {
             decoding="async"
             loading="lazy"
             src={`${import.meta.env.VITE_SERVER_URL}/public/authors/avatars/${
-              author.avatar === ""
+              author.avatar === ''
                 ? import.meta.env.VITE_DEFAULT_AVATAR
                 : author.avatar
             }`}

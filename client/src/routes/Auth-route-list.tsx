@@ -1,7 +1,7 @@
-import { Route } from "react-router";
-import AuthorConfirmationPage from "../pages/author-confirmation-page/Author-confirmation-page";
-import EditProfilePage from "../pages/edit-profile-page/Edit-profile-page";
-import { ROUTES } from "./routes-enum";
+import { Route } from 'react-router';
+import AuthorConfirmationPage from '../pages/author-confirmation-page/Author-confirmation-page';
+import EditProfilePage from '../pages/edit-profile-page/Edit-profile-page';
+import { ROUTES } from './routes-enum';
 
 const AuthRouteList = () => {
   return (

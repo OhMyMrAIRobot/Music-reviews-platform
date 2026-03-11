@@ -1,6 +1,6 @@
-import { FC, ReactNode } from "react";
-import { Link } from "react-router";
-import CarouselNavButton from "./Carousel-nav-button";
+import { FC, ReactNode } from 'react';
+import { Link } from 'react-router';
+import CarouselNavButton from './Carousel-nav-button';
 
 interface IProps {
   title: ReactNode;

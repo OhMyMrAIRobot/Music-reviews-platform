@@ -1,4 +1,4 @@
-import { AuthorNominationWin } from "..";
+import { AuthorNominationWin } from '..';
 
 /**
  * Response returned when requesting nomination wins for a specific author.

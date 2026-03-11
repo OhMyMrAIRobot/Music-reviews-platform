@@ -5,8 +5,8 @@
  */
 export enum ReviewsSortFieldsEnum {
   /** Sort by review creation timestamp. */
-  CREATED = "created",
+  CREATED = 'created',
 
   /** Sort by number of likes/favorites the review has received. */
-  LIKES = "likes",
+  LIKES = 'likes',
 }

@@ -1,16 +1,16 @@
-import { FC, useState } from "react";
-import { Link } from "react-router";
-import ArrowBottomSvg from "../../../../../components/layout/header/svg/Arrow-bottom-svg";
-import ConfirmationModal from "../../../../../components/modals/Confirmation-modal";
-import SkeletonLoader from "../../../../../components/utils/Skeleton-loader";
-import { useAdminRemoveAuthorCommentMutation } from "../../../../../hooks/mutations";
-import useNavigationPath from "../../../../../hooks/use-navigation-path";
-import { AuthorComment } from "../../../../../types/author";
-import { SortOrdersEnum } from "../../../../../types/common/enums/sort-orders-enum";
-import { SortOrder } from "../../../../../types/common/types/sort-order";
-import AdminDeleteButton from "../../buttons/Admin-delete-button";
-import AdminOpenButton from "../../buttons/Admin-open-button";
-import AuthorCommentFormModal from "./Author-comment-form-modal";
+import { FC, useState } from 'react';
+import { Link } from 'react-router';
+import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg';
+import ConfirmationModal from '../../../../../components/modals/Confirmation-modal';
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader';
+import { useAdminRemoveAuthorCommentMutation } from '../../../../../hooks/mutations';
+import useNavigationPath from '../../../../../hooks/use-navigation-path';
+import { AuthorComment } from '../../../../../types/author';
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum';
+import { SortOrder } from '../../../../../types/common/types/sort-order';
+import AdminDeleteButton from '../../buttons/Admin-delete-button';
+import AdminOpenButton from '../../buttons/Admin-open-button';
+import AuthorCommentFormModal from './Author-comment-form-modal';
 
 interface IProps {
   className?: string;
@@ -22,7 +22,7 @@ interface IProps {
 }
 
 const AdminDashboardAuthorCommentsGridItem: FC<IProps> = ({
-  className = "",
+  className = '',
   comment,
   isLoading,
   position,
@@ -48,7 +48,7 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = ({
         <>
           {confModalOpen && (
             <ConfirmationModal
-              title={"Вы действительно хотите удалить авторский комментарий?"}
+              title={'Вы действительно хотите удалить авторский комментарий?'}
               isOpen={confModalOpen}
               onConfirm={() => mutateAsync(comment.id)}
               onCancel={() => setConfModalOpen(false)}
@@ -71,7 +71,7 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = ({
       >
         <div className="xl:col-span-1 text-ellipsis line-clamp-1">
           <span className="xl:hidden"># </span>
-          {position ?? "#"}
+          {position ?? '#'}
         </div>
 
         <div className="xl:col-span-2 h-full flex items-center mr-2">
@@ -84,7 +84,7 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = ({
                 loading="lazy"
                 decoding="async"
                 src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-                  comment.user.avatar === ""
+                  comment.user.avatar === ''
                     ? import.meta.env.VITE_DEFAULT_AVATAR
                     : comment.user.avatar
                 }`}
@@ -111,7 +111,7 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = ({
                 loading="lazy"
                 decoding="async"
                 src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
-                  comment.release.img === ""
+                  comment.release.img === ''
                     ? import.meta.env.VITE_DEFAULT_COVER
                     : comment.release.img
                 }`}
@@ -142,7 +142,7 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = ({
               <span>Дата публикации</span>
               <ArrowBottomSvg
                 className={`size-3 ${
-                  order === SortOrdersEnum.ASC ? "rotate-180" : ""
+                  order === SortOrdersEnum.ASC ? 'rotate-180' : ''
                 }`}
               />
             </button>
@@ -182,7 +182,7 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = ({
               <AdminDeleteButton onClick={() => setConfModalOpen(true)} />
             </div>
           ) : (
-            "Действие"
+            'Действие'
           )}
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { FC, ReactNode } from "react";
+import { FC, ReactNode } from 'react';
 
 interface IProps {
   onClick: () => void;
@@ -17,8 +17,8 @@ const AdminSvgButton: FC<IProps> = ({
       disabled={disabled}
       className={`border border-white/15 size-8 flex items-center justify-center rounded-lg text-white/70 transition-colors duration-200 ${
         disabled
-          ? "cursor-not-allowed opacity-45"
-          : "hover:text-white hover:border-white/70 cursor-pointer"
+          ? 'cursor-not-allowed opacity-45'
+          : 'hover:text-white hover:border-white/70 cursor-pointer'
       }`}
     >
       {children}

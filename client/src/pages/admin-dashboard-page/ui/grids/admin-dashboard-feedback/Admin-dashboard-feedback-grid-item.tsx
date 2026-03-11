@@ -1,16 +1,16 @@
-import { FC, useState } from "react";
-import FeedbackStatusIcon from "../../../../../components/feedback/Feedback-status-icon";
-import ArrowBottomSvg from "../../../../../components/layout/header/svg/Arrow-bottom-svg";
-import ConfirmationModal from "../../../../../components/modals/Confirmation-modal";
-import SkeletonLoader from "../../../../../components/utils/Skeleton-loader";
-import { useAdminRemoveFeedbackMutation } from "../../../../../hooks/mutations";
-import { SortOrdersEnum } from "../../../../../types/common/enums/sort-orders-enum";
-import { SortOrder } from "../../../../../types/common/types/sort-order";
-import { Feedback } from "../../../../../types/feedback";
-import { getFeedbackStatusColor } from "../../../../../utils/get-feedback-status-color";
-import AdminDeleteButton from "../../buttons/Admin-delete-button";
-import AdminOpenButton from "../../buttons/Admin-open-button";
-import FeedbackFormModal from "./Feedback-form-modal";
+import { FC, useState } from 'react';
+import FeedbackStatusIcon from '../../../../../components/feedback/Feedback-status-icon';
+import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg';
+import ConfirmationModal from '../../../../../components/modals/Confirmation-modal';
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader';
+import { useAdminRemoveFeedbackMutation } from '../../../../../hooks/mutations';
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum';
+import { SortOrder } from '../../../../../types/common/types/sort-order';
+import { Feedback } from '../../../../../types/feedback';
+import { getFeedbackStatusColor } from '../../../../../utils/get-feedback-status-color';
+import AdminDeleteButton from '../../buttons/Admin-delete-button';
+import AdminOpenButton from '../../buttons/Admin-open-button';
+import FeedbackFormModal from './Feedback-form-modal';
 
 interface IProps {
   className?: string;
@@ -23,7 +23,7 @@ interface IProps {
 }
 
 const AdminDashboardFeedbackGridItem: FC<IProps> = ({
-  className = "",
+  className = '',
   feedback,
   position,
   isLoading,
@@ -47,7 +47,7 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
         <>
           {confModalOpen && (
             <ConfirmationModal
-              title={"Вы действительно хотите удалить сообщение?"}
+              title={'Вы действительно хотите удалить сообщение?'}
               isOpen={confModalOpen}
               onConfirm={() => mutateAsync(feedback.id)}
               onCancel={() => setConfModalOpen(false)}
@@ -70,12 +70,12 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
       >
         <div className="xl:col-span-1 text-ellipsis line-clamp-1">
           <span className="xl:hidden"># </span>
-          {position ?? "#"}
+          {position ?? '#'}
         </div>
 
         <div className="xl:col-span-2 text-ellipsis line-clamp-1 mr-2">
           <span className="xl:hidden">Email: </span>
-          {feedback?.email ?? "Email"}
+          {feedback?.email ?? 'Email'}
         </div>
 
         <div className="xl:col-span-2 text-ellipsis text-wrap ">
@@ -92,7 +92,7 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
               <span>Дата отправки</span>
               <ArrowBottomSvg
                 className={`size-3 ${
-                  order === SortOrdersEnum.ASC ? "rotate-180" : ""
+                  order === SortOrdersEnum.ASC ? 'rotate-180' : ''
                 }`}
               />
             </button>
@@ -105,7 +105,7 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
               <span className="xl:hidden">Статус: </span>
               <div
                 className={`flex gap-x-1 items-center ${getFeedbackStatusColor(
-                  feedback.feedbackStatus.status,
+                  feedback.feedbackStatus.status
                 )}`}
               >
                 <FeedbackStatusIcon
@@ -149,7 +149,7 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
               <AdminDeleteButton onClick={() => setConfModalOpen(true)} />
             </div>
           ) : (
-            "Действие"
+            'Действие'
           )}
         </div>
       </div>

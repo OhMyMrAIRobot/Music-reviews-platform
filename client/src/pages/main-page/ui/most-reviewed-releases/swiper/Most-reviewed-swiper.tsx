@@ -1,12 +1,12 @@
-import { FC, useEffect, useLayoutEffect, useRef } from "react";
-import { createPortal } from "react-dom";
-import { Keyboard } from "swiper/modules";
-import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
-import CloseSvg from "../../../../../components/svg/Close-svg";
-import NextSvg from "../../../../../components/svg/Next-svg";
-import PrevSvg from "../../../../../components/svg/Prev-svg";
-import { Release } from "../../../../../types/release";
-import MostReviewedSwiperCard from "./Most-reviewed-swiper-card";
+import { FC, useEffect, useLayoutEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
+import { Keyboard } from 'swiper/modules';
+import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react';
+import CloseSvg from '../../../../../components/svg/Close-svg';
+import NextSvg from '../../../../../components/svg/Next-svg';
+import PrevSvg from '../../../../../components/svg/Prev-svg';
+import { Release } from '../../../../../types/release';
+import MostReviewedSwiperCard from './Most-reviewed-swiper-card';
 
 interface IProps {
   items: Release[];
@@ -45,16 +45,16 @@ const MostReviewedSwiper: FC<IProps> = ({
 
   useEffect(() => {
     if (show) {
-      document.body.style.overflow = "hidden";
-      document.body.style.height = "100vh";
+      document.body.style.overflow = 'hidden';
+      document.body.style.height = '100vh';
     } else {
-      document.body.style.overflow = "unset";
-      document.body.style.height = "unset";
+      document.body.style.overflow = 'unset';
+      document.body.style.height = 'unset';
     }
 
     return () => {
-      document.body.style.overflow = "unset";
-      document.body.style.height = "unset";
+      document.body.style.overflow = 'unset';
+      document.body.style.height = 'unset';
     };
   }, [show]);
 
@@ -62,8 +62,8 @@ const MostReviewedSwiper: FC<IProps> = ({
     <div
       className={`fixed inset-0 z-[1000000] backdrop-blur-3xl overflow-hidden h-[100vh] flex items-center justify-center transition-all duration-200 ${
         show
-          ? "opacity-100 pointer-events-auto"
-          : "opacity-0 pointer-events-none"
+          ? 'opacity-100 pointer-events-auto'
+          : 'opacity-0 pointer-events-none'
       }`}
     >
       <span
@@ -74,7 +74,7 @@ const MostReviewedSwiper: FC<IProps> = ({
       >
         <CloseSvg
           className={
-            "absolute right-1 top-2.5 lg:right-5 lg:top-5 size-8 lg:size-10 bg-zinc-950 rounded-full flex items-center justify-center border border-white/10 cursor-pointer p-2 z-50"
+            'absolute right-1 top-2.5 lg:right-5 lg:top-5 size-8 lg:size-10 bg-zinc-950 rounded-full flex items-center justify-center border border-white/10 cursor-pointer p-2 z-50'
           }
         />
       </span>
@@ -114,7 +114,7 @@ const MostReviewedSwiper: FC<IProps> = ({
             >
               <div
                 className={`h-full transition-all duration-500 xl:w-full w-full max-w-[350px] xl:max-w-full mx-auto ${
-                  i === index ? "scale-100" : "scale-90 blur-xs"
+                  i === index ? 'scale-100' : 'scale-90 blur-xs'
                 }
               `}
               >
@@ -133,7 +133,7 @@ const MostReviewedSwiper: FC<IProps> = ({
         <NextSvg className="size-6" />
       </button>
     </div>,
-    document.body,
+    document.body
   );
 };
 

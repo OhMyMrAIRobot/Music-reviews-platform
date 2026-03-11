@@ -1,7 +1,7 @@
-import { FC } from "react";
-import { AuthorTypesEnum } from "../../../../types/author";
-import { Release } from "../../../../types/release";
-import ReleaseDetailsAuthorsItem from "./Release-details-authors-item";
+import { FC } from 'react';
+import { AuthorTypesEnum } from '../../../../types/author';
+import { Release } from '../../../../types/release';
+import ReleaseDetailsAuthorsItem from './Release-details-authors-item';
 
 interface IProps {
   release: Release;

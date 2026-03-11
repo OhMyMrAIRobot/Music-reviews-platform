@@ -1,7 +1,7 @@
-import { observer } from "mobx-react-lite";
-import { Navigate, Outlet } from "react-router";
-import { useStore } from "../hooks/use-store";
-import { ROUTES } from "./routes-enum";
+import { observer } from 'mobx-react-lite';
+import { Navigate, Outlet } from 'react-router';
+import { useStore } from '../hooks/use-store';
+import { ROUTES } from './routes-enum';
 
 const AuthRoute = observer(() => {
   const { authStore } = useStore();

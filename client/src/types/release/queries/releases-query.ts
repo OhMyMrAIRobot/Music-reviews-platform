@@ -1,5 +1,5 @@
-import { SortOrder } from "../../common/types/sort-order";
-import { ReleasesSortFieldsEnum } from "../enums/releases-sort-fields-enum";
+import { SortOrder } from '../../common/types/sort-order';
+import { ReleasesSortFieldsEnum } from '../enums/releases-sort-fields-enum';
 
 /**
  * ReleasesQuery

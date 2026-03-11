@@ -1,27 +1,27 @@
-import { useQuery } from "@tanstack/react-query";
-import { observer } from "mobx-react-lite";
-import { FC, useEffect, useMemo, useState } from "react";
-import { AlbumValueAPI } from "../../../../../../api/album-value-api";
-import AlbumValue from "../../../../../../components/album-value/Album-value";
-import TickSvg from "../../../../../../components/svg/Tick-svg";
-import Loader from "../../../../../../components/utils/Loader";
+import { useQuery } from '@tanstack/react-query';
+import { observer } from 'mobx-react-lite';
+import { FC, useEffect, useMemo, useState } from 'react';
+import { AlbumValueAPI } from '../../../../../../api/album-value-api';
+import AlbumValue from '../../../../../../components/album-value/Album-value';
+import TickSvg from '../../../../../../components/svg/Tick-svg';
+import Loader from '../../../../../../components/utils/Loader';
 import {
   useCreateAlbumValueMutation,
   useRemoveAlbumValueMutation,
   useUpdateAlbumValueMutation,
-} from "../../../../../../hooks/mutations";
-import { useAuth } from "../../../../../../hooks/use-auth";
-import { useStore } from "../../../../../../hooks/use-store";
-import { albumValuesKeys } from "../../../../../../query-keys/album-values-keys";
-import { Release, ReleaseTypesEnum } from "../../../../../../types/release";
-import { getAlbumValueInfluenceMultiplier } from "../../../../../../utils/get-album-value-influence-multiplier";
-import { round2 } from "../../../../../../utils/round2";
-import ReleaseDetailsEstimationDeleteButton from "../../buttons/Release-details-estimation-delete-button";
-import ReleaseDetailsAlbumValueFormDepth from "./Release-details-album-value-form-depth";
-import ReleaseDetailsAlbumValueFormInfluence from "./Release-details-album-value-form-influence";
-import ReleaseDetailsAlbumValueFormIntegrity from "./Release-details-album-value-form-integrity";
-import ReleaseDetailsAlbumValueFormQuality from "./Release-details-album-value-form-quality";
-import ReleaseDetailsAlbumValueFormRarity from "./Release-details-album-value-form-rarity";
+} from '../../../../../../hooks/mutations';
+import { useAuth } from '../../../../../../hooks/use-auth';
+import { useStore } from '../../../../../../hooks/use-store';
+import { albumValuesKeys } from '../../../../../../query-keys/album-values-keys';
+import { Release, ReleaseTypesEnum } from '../../../../../../types/release';
+import { getAlbumValueInfluenceMultiplier } from '../../../../../../utils/get-album-value-influence-multiplier';
+import { round2 } from '../../../../../../utils/round2';
+import ReleaseDetailsEstimationDeleteButton from '../../buttons/Release-details-estimation-delete-button';
+import ReleaseDetailsAlbumValueFormDepth from './Release-details-album-value-form-depth';
+import ReleaseDetailsAlbumValueFormInfluence from './Release-details-album-value-form-influence';
+import ReleaseDetailsAlbumValueFormIntegrity from './Release-details-album-value-form-integrity';
+import ReleaseDetailsAlbumValueFormQuality from './Release-details-album-value-form-quality';
+import ReleaseDetailsAlbumValueFormRarity from './Release-details-album-value-form-rarity';
 
 interface IProps {
   release: Release;
@@ -52,7 +52,7 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ release }) => {
   const { data: userAlbumValueVote } = useQuery({
     queryKey: albumValuesKeys.user({
       releaseId: release.id,
-      userId: authStore.user?.id ?? "unknown",
+      userId: authStore.user?.id ?? 'unknown',
     }),
     queryFn: () => AlbumValueAPI.findUserAlbumValueVote(release.id),
     enabled:
@@ -95,7 +95,7 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ release }) => {
    */
   const isPending = useMemo(
     () => isCreating || isUpdating || isDeleting,
-    [isCreating, isUpdating, isDeleting],
+    [isCreating, isUpdating, isDeleting]
   );
 
   /**
@@ -297,7 +297,7 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ release }) => {
             influence={{
               total: releaseAnticip + authorPopularity,
               multiplier: getAlbumValueInfluenceMultiplier(
-                releaseAnticip + authorPopularity,
+                releaseAnticip + authorPopularity
               ),
               releaseAnticip: releaseAnticip,
               authorPopularity: authorPopularity,
@@ -312,8 +312,8 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ release }) => {
                 (rhymes + structure + individuality + styleImplementation) *
                 0.025 *
                 getAlbumValueInfluenceMultiplier(
-                  releaseAnticip + authorPopularity,
-                ),
+                  releaseAnticip + authorPopularity
+                )
             )}
           />
         </div>
@@ -321,7 +321,7 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ release }) => {
         <div className="grid sm:flex items-center space-y-3 space-x-10 sm:justify-between mt-3">
           <div className="w-full sm:w-45">
             <ReleaseDetailsEstimationDeleteButton
-              title={"Удалить"}
+              title={'Удалить'}
               disabled={!userVote || isPending}
               isLoading={isDeleting}
               onClick={handleDelete}
@@ -333,12 +333,12 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ release }) => {
             onClick={() => (userVote ? handleUpdate() : handlePost())}
             className={`inline-flex items-center justify-center whitespace-nowrap text-sm font-medium rounded-full size-16 text-black transition-colors duration-200 ${
               isPending || !hasChanges
-                ? "bg-white/60 pointer-events-none"
-                : "cursor-pointer hover:bg-white/70 bg-white"
+                ? 'bg-white/60 pointer-events-none'
+                : 'cursor-pointer hover:bg-white/70 bg-white'
             }`}
           >
             {isUpdating || isCreating ? (
-              <Loader className={"size-8"} />
+              <Loader className={'size-8'} />
             ) : (
               <TickSvg className="size-8" />
             )}

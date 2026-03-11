@@ -1,4 +1,4 @@
-import { User } from "../../user";
+import { User } from '../../user';
 
 /**
  * Response returned after a successful authentication requests.

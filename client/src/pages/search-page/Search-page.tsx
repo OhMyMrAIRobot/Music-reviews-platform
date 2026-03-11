@@ -1,16 +1,16 @@
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router";
-import { AuthorAPI } from "../../api/author/author-api";
-import { ReleaseAPI } from "../../api/release/release-api";
-import AuthorsGrid from "../../components/author/authors-grid/Authors-grid";
-import ReleasesGrid from "../../components/release/Releases-grid";
-import useNavigationPath from "../../hooks/use-navigation-path";
-import { authorsKeys } from "../../query-keys/authors-keys";
-import { releasesKeys } from "../../query-keys/releases-keys";
-import { AuthorsQuery } from "../../types/author";
-import { SearchTypesEnum } from "../../types/common/enums/search-types-enum";
-import { ReleasesQuery } from "../../types/release";
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router';
+import { AuthorAPI } from '../../api/author/author-api';
+import { ReleaseAPI } from '../../api/release/release-api';
+import AuthorsGrid from '../../components/author/authors-grid/Authors-grid';
+import ReleasesGrid from '../../components/release/Releases-grid';
+import useNavigationPath from '../../hooks/use-navigation-path';
+import { authorsKeys } from '../../query-keys/authors-keys';
+import { releasesKeys } from '../../query-keys/releases-keys';
+import { AuthorsQuery } from '../../types/author';
+import { SearchTypesEnum } from '../../types/common/enums/search-types-enum';
+import { ReleasesQuery } from '../../types/release';
 
 const perPage = 10;
 
@@ -25,7 +25,7 @@ const SearchPage = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const [searchParams] = useSearchParams();
-  const query = searchParams.get("query") || "";
+  const query = searchParams.get('query') || '';
 
   const authorsQuery: AuthorsQuery = {
     search: query.trim() || undefined,

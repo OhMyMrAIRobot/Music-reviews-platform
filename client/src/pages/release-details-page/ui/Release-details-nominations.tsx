@@ -1,7 +1,7 @@
-import { FC } from "react";
-import NominationIconSvg from "../../../components/nomination/Nomination-icon-svg";
-import Tooltip from "../../../components/tooltip/Tooltip";
-import TooltipSpan from "../../../components/tooltip/Tooltip-span";
+import { FC } from 'react';
+import NominationIconSvg from '../../../components/nomination/Nomination-icon-svg';
+import Tooltip from '../../../components/tooltip/Tooltip';
+import TooltipSpan from '../../../components/tooltip/Tooltip-span';
 
 interface IProps {
   nominations: string[];

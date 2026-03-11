@@ -1,4 +1,4 @@
-import { NominationTypesEnum } from "../enums";
+import { NominationTypesEnum } from '../enums';
 
 /**
  * Represents a nomination type entity.

@@ -1,16 +1,16 @@
-import axios from "axios";
+import axios from 'axios';
 import {
   Profile,
   ProfilePreferencesResponse,
   UpdateProfileData,
-} from "../../types/profile";
-import { api } from "../api-instance";
+} from '../../types/profile';
+import { api } from '../api-instance';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 const _api = axios.create({
   baseURL: `${SERVER_URL}/profiles/`,
   headers: {
-    "Content-type": "application/json",
+    'Content-type': 'application/json',
   },
 });
 
@@ -40,7 +40,7 @@ export const ProfileAPI = {
    */
   async findPreferences(userId: string): Promise<ProfilePreferencesResponse> {
     const { data } = await _api.get<ProfilePreferencesResponse>(
-      `/user/${userId}/preferences`,
+      `/user/${userId}/preferences`
     );
 
     return data;
@@ -53,9 +53,9 @@ export const ProfileAPI = {
    * @returns {Promise<Profile>} A promise that resolves to the updated profile object.
    */
   async update(formData: FormData): Promise<Profile> {
-    const { data } = await api.patch<Profile>("/profiles", formData, {
+    const { data } = await api.patch<Profile>('/profiles', formData, {
       headers: {
-        "Content-Type": "multipart/form-data",
+        'Content-Type': 'multipart/form-data',
       },
     });
 
@@ -71,11 +71,11 @@ export const ProfileAPI = {
    */
   async adminUpdate(
     userId: string,
-    profileData: UpdateProfileData,
+    profileData: UpdateProfileData
   ): Promise<UpdateProfileData> {
     const { data } = await api.patch<UpdateProfileData>(
       `/profiles/user/${userId}`,
-      profileData,
+      profileData
     );
 
     return data;

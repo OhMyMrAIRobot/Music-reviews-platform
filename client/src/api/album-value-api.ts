@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 import {
   AlbumValue,
   AlbumValuesQuery,
@@ -6,8 +6,8 @@ import {
   AlbumValueVote,
   CreateAlbumValueVoteData,
   UpdateAlbumValueVoteData,
-} from "../types/album-value";
-import { api } from "./api-instance";
+} from '../types/album-value';
+import { api } from './api-instance';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
@@ -15,7 +15,7 @@ const _api = axios.create({
   baseURL: `${SERVER_URL}/album-values`,
   withCredentials: true,
   headers: {
-    "Content-type": "application/json",
+    'Content-type': 'application/json',
   },
 });
 
@@ -39,10 +39,10 @@ export const AlbumValueAPI = {
     const { sortOrder, tiers, limit, offset } = query;
 
     const { data } = await _api.get<AlbumValuesResponse>(`/?
-			${sortOrder ? `sortOrder=${sortOrder}&` : ""}
-			${tiers ? `tiers=${tiers.join(",")}&` : ""}
-			${limit ? `limit=${limit}&` : ""}
-			${offset ? `offset=${offset}&` : ""}
+			${sortOrder ? `sortOrder=${sortOrder}&` : ''}
+			${tiers ? `tiers=${tiers.join(',')}&` : ''}
+			${limit ? `limit=${limit}&` : ''}
+			${offset ? `offset=${offset}&` : ''}
 			`);
     return data;
   },
@@ -67,7 +67,7 @@ export const AlbumValueAPI = {
    */
   async findUserAlbumValueVote(releaseId: string): Promise<AlbumValueVote> {
     const { data } = await api.get<AlbumValueVote>(
-      `/album-value-votes/release/${releaseId}`,
+      `/album-value-votes/release/${releaseId}`
     );
 
     return data;
@@ -80,11 +80,11 @@ export const AlbumValueAPI = {
    * @returns {Promise<AlbumValueVote>} A promise that resolves to the newly created album value vote object.
    */
   async postAlbumValueVote(
-    formData: CreateAlbumValueVoteData,
+    formData: CreateAlbumValueVoteData
   ): Promise<AlbumValueVote> {
     const { data } = await api.post<AlbumValueVote>(
-      "/album-value-votes",
-      formData,
+      '/album-value-votes',
+      formData
     );
 
     return data;
@@ -99,11 +99,11 @@ export const AlbumValueAPI = {
    */
   async updateAlbumValueVote(
     id: string,
-    formData: UpdateAlbumValueVoteData,
+    formData: UpdateAlbumValueVoteData
   ): Promise<AlbumValueVote> {
     const { data } = await api.patch<AlbumValueVote>(
       `/album-value-votes/${id}`,
-      formData,
+      formData
     );
 
     return data;

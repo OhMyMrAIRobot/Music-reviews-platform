@@ -1,4 +1,4 @@
-import { Author } from "..";
+import { Author } from '..';
 
 /**
  * Standard paginated response for authors list endpoints.

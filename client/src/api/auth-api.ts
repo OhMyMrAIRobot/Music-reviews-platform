@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 import {
   AuthEmailSentStatusResponse,
   AuthResponse,
@@ -7,8 +7,8 @@ import {
   RegisterData,
   ResetPasswordData,
   SendResetPasswordData,
-} from "../types/auth";
-import { api } from "./api-instance";
+} from '../types/auth';
+import { api } from './api-instance';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
@@ -16,7 +16,7 @@ const _api = axios.create({
   baseURL: `${SERVER_URL}/auth/`,
   withCredentials: true,
   headers: {
-    "Content-type": "application/json",
+    'Content-type': 'application/json',
   },
 });
 
@@ -32,7 +32,7 @@ export const AuthAPI = {
    * @returns {Promise<AuthResponse>} A promise that resolves to the authentication response containing new tokens.
    */
   async refresh(): Promise<AuthResponse> {
-    const { data } = await _api.post<AuthResponse>("refresh");
+    const { data } = await _api.post<AuthResponse>('refresh');
     return data;
   },
 
@@ -43,7 +43,7 @@ export const AuthAPI = {
    * @returns {Promise<AuthResponse>} A promise that resolves to the authentication response with tokens.
    */
   async login(formData: LoginData): Promise<AuthResponse> {
-    const { data } = await _api.post<AuthResponse>("login", formData);
+    const { data } = await _api.post<AuthResponse>('login', formData);
     return data;
   },
 
@@ -51,7 +51,7 @@ export const AuthAPI = {
    * Logs out the current user by invalidating the session.
    */
   async logout() {
-    return _api.post("logout");
+    return _api.post('logout');
   },
 
   /**
@@ -62,8 +62,8 @@ export const AuthAPI = {
    */
   async register(formData: RegisterData): Promise<AuthResponseWithEmailStatus> {
     const { data } = await _api.post<AuthResponseWithEmailStatus>(
-      "register",
-      formData,
+      'register',
+      formData
     );
     return data;
   },
@@ -75,11 +75,11 @@ export const AuthAPI = {
    * @returns {Promise<AuthEmailSentStatusResponse>} A promise that resolves to the response indicating if the email was sent successfully.
    */
   async sendResetPassword(
-    formData: SendResetPasswordData,
+    formData: SendResetPasswordData
   ): Promise<AuthEmailSentStatusResponse> {
     const { data } = await _api.post<AuthEmailSentStatusResponse>(
-      "send-reset-password",
-      formData,
+      'send-reset-password',
+      formData
     );
     return data;
   },
@@ -106,7 +106,7 @@ export const AuthAPI = {
       `reset-password?token=${formData.token}`,
       {
         password: formData.password,
-      },
+      }
     );
     return data;
   },
@@ -118,7 +118,7 @@ export const AuthAPI = {
    */
   async resendActivation(): Promise<AuthEmailSentStatusResponse> {
     const { data } = await api.post<AuthEmailSentStatusResponse>(
-      "auth/resend-activation",
+      'auth/resend-activation'
     );
     return data;
   },

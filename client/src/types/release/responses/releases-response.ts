@@ -1,4 +1,4 @@
-import { Release } from "../entities/release";
+import { Release } from '../entities/release';
 
 /**
  * ReleasesResponse — response structure for a releases query.

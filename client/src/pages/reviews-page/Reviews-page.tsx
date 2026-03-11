@@ -1,22 +1,22 @@
-import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
-import { ReviewAPI } from "../../api/review/review-api";
-import ComboBox from "../../components/buttons/Combo-box";
-import Pagination from "../../components/pagination/Pagination";
-import ReviewCard from "../../components/review/review-card/Review-card";
-import { reviewsKeys } from "../../query-keys/reviews-keys";
-import { SortOrdersEnum } from "../../types/common/enums/sort-orders-enum";
+import { useQuery } from '@tanstack/react-query';
+import { useMemo, useState } from 'react';
+import { ReviewAPI } from '../../api/review/review-api';
+import ComboBox from '../../components/buttons/Combo-box';
+import Pagination from '../../components/pagination/Pagination';
+import ReviewCard from '../../components/review/review-card/Review-card';
+import { reviewsKeys } from '../../query-keys/reviews-keys';
+import { SortOrdersEnum } from '../../types/common/enums/sort-orders-enum';
 import {
   ReviewSortFields,
   ReviewsQuery,
   ReviewsSortFieldsEnum,
-} from "../../types/review";
+} from '../../types/review';
 
 const limit = 12;
 
 const ReviewsPage = () => {
   const [selectedOrder, setSelectedOrder] = useState<string>(
-    ReviewSortFields.NEW,
+    ReviewSortFields.NEW
   );
   const [currentPage, setCurrentPage] = useState<number>(1);
 
@@ -25,7 +25,7 @@ const ReviewsPage = () => {
       selectedOrder === ReviewSortFields.NEW
         ? SortOrdersEnum.DESC
         : SortOrdersEnum.ASC,
-    [selectedOrder],
+    [selectedOrder]
   );
 
   const query: ReviewsQuery = {
@@ -97,7 +97,7 @@ const ReviewsPage = () => {
             totalItems={total}
             itemsPerPage={limit}
             setCurrentPage={setCurrentPage}
-            idToScroll={"reviews"}
+            idToScroll={'reviews'}
           />
         </div>
       )}

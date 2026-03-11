@@ -1,15 +1,15 @@
-import { observer } from "mobx-react-lite";
-import { FC } from "react";
-import { Link } from "react-router";
-import ReviewAuthor from "../../../../components/review/review-card/Review-author";
-import ReviewLikes from "../../../../components/review/review-card/Review-likes";
-import ReviewMarks from "../../../../components/review/review-card/Review-marks";
-import ReviewUserImage from "../../../../components/review/review-card/Review-user-image";
-import SkeletonLoader from "../../../../components/utils/Skeleton-loader";
-import { useToggleFavReview } from "../../../../hooks/mutations/toggle-fav/use-toggle-fav-review";
-import useNavigationPath from "../../../../hooks/use-navigation-path";
-import { useStore } from "../../../../hooks/use-store";
-import { Review } from "../../../../types/review";
+import { observer } from 'mobx-react-lite';
+import { FC } from 'react';
+import { Link } from 'react-router';
+import ReviewAuthor from '../../../../components/review/review-card/Review-author';
+import ReviewLikes from '../../../../components/review/review-card/Review-likes';
+import ReviewMarks from '../../../../components/review/review-card/Review-marks';
+import ReviewUserImage from '../../../../components/review/review-card/Review-user-image';
+import SkeletonLoader from '../../../../components/utils/Skeleton-loader';
+import { useToggleFavReview } from '../../../../hooks/mutations/toggle-fav/use-toggle-fav-review';
+import useNavigationPath from '../../../../hooks/use-navigation-path';
+import { useStore } from '../../../../hooks/use-store';
+import { Review } from '../../../../types/review';
 
 interface IProps {
   review?: Review;
@@ -21,7 +21,7 @@ const ReleaseDetailsReviewsItem: FC<IProps> = observer(
     const { authStore } = useStore();
     const isFav =
       review?.userFavReview?.some(
-        (item) => item.userId === authStore.user?.id,
+        (item) => item.userId === authStore.user?.id
       ) ?? false;
 
     /** HOOKS */
@@ -64,7 +64,7 @@ const ReleaseDetailsReviewsItem: FC<IProps> = observer(
         </div>
       )
     );
-  },
+  }
 );
 
 export default ReleaseDetailsReviewsItem;

@@ -2,14 +2,14 @@ import {
   InvalidateQueryFilters,
   useMutation,
   useQueryClient,
-} from "@tanstack/react-query";
-import { ReleaseMediaAPI } from "../../../../api/release/release-media-api";
-import { platformStatsKeys } from "../../../../query-keys/platform-stats-keys";
-import { releaseMediaKeys } from "../../../../query-keys/release-media-keys";
-import { UseMutationParams } from "../../../../types/common";
-import { AdminCreateReleaseMediaData } from "../../../../types/release";
-import { useApiErrorHandler } from "../../../use-api-error-handler";
-import { useStore } from "../../../use-store";
+} from '@tanstack/react-query';
+import { ReleaseMediaAPI } from '../../../../api/release/release-media-api';
+import { platformStatsKeys } from '../../../../query-keys/platform-stats-keys';
+import { releaseMediaKeys } from '../../../../query-keys/release-media-keys';
+import { UseMutationParams } from '../../../../types/common';
+import { AdminCreateReleaseMediaData } from '../../../../types/release';
+import { useApiErrorHandler } from '../../../use-api-error-handler';
+import { useStore } from '../../../use-store';
 /**
  * Custom React hook that returns a React Query mutation for creating a new
  * release media item. On success the hook:
@@ -41,12 +41,12 @@ export const useAdminCreateMediaMutation = ({
     mutationFn: (data: AdminCreateReleaseMediaData) =>
       ReleaseMediaAPI.adminCreate(data),
     onSuccess: () => {
-      notificationStore.addSuccessNotification("Медиа успешно добавлено!");
+      notificationStore.addSuccessNotification('Медиа успешно добавлено!');
       invalidateRelatedQueries();
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, "Не удалось добавить медиа!");
+      handleApiError(error, 'Не удалось добавить медиа!');
       onError?.(error);
     },
     onSettled,

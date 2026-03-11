@@ -1,17 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
-import { GlobalAppAPI } from "../../../../../api/global-app-api.ts";
-import AuthorCommentSvg from "../../../../../components/author/author-comment/svg/Author-comment-svg";
-import AuthorLikeSvg from "../../../../../components/author/author-like/svg/Author-like-svg";
-import RegisteredAuthorSvg from "../../../../../components/author/registered-author/svg/Registered-author-svg";
-import AlbumSvg from "../../../../../components/release/svg/Album-svg";
-import SingleSvg from "../../../../../components/release/svg/Single-svg";
-import NoTextReviewSvg from "../../../../../components/review/svg/No-text-review-svg";
-import TextReviewSvg from "../../../../../components/review/svg/Text-review-svg";
-import MediaPlayerSvg from "../../../../../components/svg/Media-player-svg";
-import UserSvg from "../../../../../components/svg/User-svg";
-import useNavigationPath from "../../../../../hooks/use-navigation-path";
-import { platformStatsKeys } from "../../../../../query-keys/platform-stats-keys.ts";
-import PlatformStatisticsRow from "./Platform-statistics-row";
+import { useQuery } from '@tanstack/react-query';
+import { GlobalAppAPI } from '../../../../../api/global-app-api.ts';
+import AuthorCommentSvg from '../../../../../components/author/author-comment/svg/Author-comment-svg';
+import AuthorLikeSvg from '../../../../../components/author/author-like/svg/Author-like-svg';
+import RegisteredAuthorSvg from '../../../../../components/author/registered-author/svg/Registered-author-svg';
+import AlbumSvg from '../../../../../components/release/svg/Album-svg';
+import SingleSvg from '../../../../../components/release/svg/Single-svg';
+import NoTextReviewSvg from '../../../../../components/review/svg/No-text-review-svg';
+import TextReviewSvg from '../../../../../components/review/svg/Text-review-svg';
+import MediaPlayerSvg from '../../../../../components/svg/Media-player-svg';
+import UserSvg from '../../../../../components/svg/User-svg';
+import useNavigationPath from '../../../../../hooks/use-navigation-path';
+import { platformStatsKeys } from '../../../../../query-keys/platform-stats-keys.ts';
+import PlatformStatisticsRow from './Platform-statistics-row';
 
 const PlatformStatistics = () => {
   const {
@@ -41,14 +41,14 @@ const PlatformStatistics = () => {
       <div className="grid gap-0.5 lg:gap-1.5 grid-cols-1">
         <PlatformStatisticsRow
           isLoading={isPending}
-          title={"Всего пользователей"}
+          title={'Всего пользователей'}
           value={stats?.totalUsers ?? 0}
           svg={<UserSvg className="size-5" />}
         />
 
         <PlatformStatisticsRow
           isLoading={isPending}
-          title={"Зарегистрированных авторов"}
+          title={'Зарегистрированных авторов'}
           value={stats?.registeredAuthors ?? 0}
           svg={<RegisteredAuthorSvg className="size-5" />}
           link={navigateToRegisteredAuthors}
@@ -56,7 +56,7 @@ const PlatformStatistics = () => {
 
         <PlatformStatisticsRow
           isLoading={isPending}
-          title={"Авторских лайков"}
+          title={'Авторских лайков'}
           value={stats?.authorLikes ?? 0}
           svg={<AuthorLikeSvg className="size-5" />}
           link={navigateToAuthorLikes}
@@ -64,7 +64,7 @@ const PlatformStatistics = () => {
 
         <PlatformStatisticsRow
           isLoading={isPending}
-          title={"Авторских комментариев"}
+          title={'Авторских комментариев'}
           value={stats?.authorComments ?? 0}
           svg={<AuthorCommentSvg className="size-5" />}
           link={navigateToAuthorComments}
@@ -80,7 +80,7 @@ const PlatformStatistics = () => {
       <div className="grid gap-0.5 lg:gap-1.5 grid-cols-1">
         <PlatformStatisticsRow
           isLoading={isPending}
-          title={"Всего треков"}
+          title={'Всего треков'}
           value={stats?.totalTracks ?? 0}
           svg={<SingleSvg className="size-5" />}
           link={navigateToReleases}
@@ -88,7 +88,7 @@ const PlatformStatistics = () => {
 
         <PlatformStatisticsRow
           isLoading={isPending}
-          title={"Всего альбомов"}
+          title={'Всего альбомов'}
           value={stats?.totalAlbums ?? 0}
           svg={<AlbumSvg className="size-5" />}
           link={navigateToReleases}
@@ -104,7 +104,7 @@ const PlatformStatistics = () => {
       <div className="grid gap-0.5 lg:gap-1.5 grid-cols-1">
         <PlatformStatisticsRow
           isLoading={isPending}
-          title={"Рецензий"}
+          title={'Рецензий'}
           value={stats?.reviews ?? 0}
           svg={<TextReviewSvg className="size-5" />}
           link={navigateToReviews}
@@ -112,14 +112,14 @@ const PlatformStatistics = () => {
 
         <PlatformStatisticsRow
           isLoading={isPending}
-          title={"Оценок без рецензий"}
+          title={'Оценок без рецензий'}
           value={stats?.withoutTextRatings ?? 0}
           svg={<NoTextReviewSvg className="size-5" />}
         />
 
         <PlatformStatisticsRow
           isLoading={isPending}
-          title={"Медиарецензий"}
+          title={'Медиарецензий'}
           value={stats?.mediaReviews ?? 0}
           svg={<MediaPlayerSvg className="size-5" />}
           link={navigateToMediaReviews}

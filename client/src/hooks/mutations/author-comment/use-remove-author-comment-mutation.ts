@@ -2,16 +2,16 @@ import {
   InvalidateQueryFilters,
   useMutation,
   useQueryClient,
-} from "@tanstack/react-query";
-import { AuthorCommentAPI } from "../../../api/author/author-comment-api";
-import { authorCommentsKeys } from "../../../query-keys/author-comments-keys";
-import { leaderboardKeys } from "../../../query-keys/leaderboard-keys";
-import { platformStatsKeys } from "../../../query-keys/platform-stats-keys";
-import { profilesKeys } from "../../../query-keys/profiles-keys";
-import { releasesKeys } from "../../../query-keys/releases-keys";
-import { UseMutationParams } from "../../../types/common";
-import { useApiErrorHandler } from "../../use-api-error-handler";
-import { useStore } from "../../use-store";
+} from '@tanstack/react-query';
+import { AuthorCommentAPI } from '../../../api/author/author-comment-api';
+import { authorCommentsKeys } from '../../../query-keys/author-comments-keys';
+import { leaderboardKeys } from '../../../query-keys/leaderboard-keys';
+import { platformStatsKeys } from '../../../query-keys/platform-stats-keys';
+import { profilesKeys } from '../../../query-keys/profiles-keys';
+import { releasesKeys } from '../../../query-keys/releases-keys';
+import { UseMutationParams } from '../../../types/common';
+import { useApiErrorHandler } from '../../use-api-error-handler';
+import { useStore } from '../../use-store';
 
 /**
  * Custom React hook returning a React Query mutation to remove an author comment.
@@ -35,7 +35,7 @@ export const useRemoveAuthorCommentMutation = ({
       { queryKey: authorCommentsKeys.all },
       { queryKey: leaderboardKeys.all },
       { queryKey: platformStatsKeys.all },
-      { queryKey: profilesKeys.profile(authStore.user?.id || "unknown") },
+      { queryKey: profilesKeys.profile(authStore.user?.id || 'unknown') },
       { queryKey: releasesKeys.all },
     ];
 
@@ -45,13 +45,13 @@ export const useRemoveAuthorCommentMutation = ({
     mutationFn: (id: string) => AuthorCommentAPI.delete(id),
     onSuccess: () => {
       notificationStore.addSuccessNotification(
-        "Вы успешно удалили авторский комментарий!",
+        'Вы успешно удалили авторский комментарий!'
       );
       invalidateRelatedQueries();
       onSuccess?.();
     },
     onError(error: unknown) {
-      handleApiError(error, "Не удалось удалить авторский комментарий.");
+      handleApiError(error, 'Не удалось удалить авторский комментарий.');
       onError?.(error);
     },
     onSettled,

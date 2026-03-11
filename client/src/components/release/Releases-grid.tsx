@@ -1,7 +1,7 @@
-import { FC } from "react";
-import { Release } from "../../types/release";
-import Pagination from "../pagination/Pagination";
-import ReleaseCard from "./Release-card";
+import { FC } from 'react';
+import { Release } from '../../types/release';
+import Pagination from '../pagination/Pagination';
+import ReleaseCard from './Release-card';
 
 interface IProps {
   items: Release[];
@@ -56,7 +56,7 @@ const ReleasesGrid: FC<IProps> = ({
             totalItems={total}
             itemsPerPage={perPage}
             setCurrentPage={setCurrentPage}
-            idToScroll={"releases"}
+            idToScroll={'releases'}
           />
         </div>
       )}

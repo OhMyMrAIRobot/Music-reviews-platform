@@ -1,8 +1,8 @@
-import { observer } from "mobx-react-lite";
-import { FC, useState } from "react";
-import { useStore } from "../../../hooks/use-store";
-import SkeletonLoader from "../../utils/Skeleton-loader";
-import AdminSearchBar from "./Admin-search-bar";
+import { observer } from 'mobx-react-lite';
+import { FC, useState } from 'react';
+import { useStore } from '../../../hooks/use-store';
+import SkeletonLoader from '../../utils/Skeleton-loader';
+import AdminSearchBar from './Admin-search-bar';
 
 interface IProps {
   title: string;
@@ -12,7 +12,7 @@ interface IProps {
 const AdminHeader: FC<IProps> = observer(({ title, setText }) => {
   const { authStore } = useStore();
 
-  const [searchText, setSearchText] = useState<string>("");
+  const [searchText, setSearchText] = useState<string>('');
 
   return (
     <div className="sticky top-0 w-full bg-zinc-950 border-b border-white/10 backdrop-blur-3xl md:flex items-center pt-1.5 pb-3 px-3 lg:px-5 z-100 grid">
@@ -31,8 +31,8 @@ const AdminHeader: FC<IProps> = observer(({ title, setText }) => {
 
           {authStore.isProfileLoading ? (
             <>
-              <SkeletonLoader className={"size-10 rounded-full"} />
-              <SkeletonLoader className={"w-25 h-6 rounded-lg"} />
+              <SkeletonLoader className={'size-10 rounded-full'} />
+              <SkeletonLoader className={'w-25 h-6 rounded-lg'} />
             </>
           ) : (
             <>
@@ -40,7 +40,7 @@ const AdminHeader: FC<IProps> = observer(({ title, setText }) => {
                 loading="lazy"
                 decoding="async"
                 src={`${import.meta.env.VITE_SERVER_URL}/public/avatars/${
-                  authStore.profile?.avatar === ""
+                  authStore.profile?.avatar === ''
                     ? import.meta.env.VITE_DEFAULT_AVATAR
                     : authStore.profile?.avatar
                 }`}

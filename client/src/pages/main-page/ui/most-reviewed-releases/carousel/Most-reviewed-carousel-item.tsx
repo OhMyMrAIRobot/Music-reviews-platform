@@ -1,5 +1,5 @@
-import { FC } from "react";
-import { Release } from "../../../../../types/release";
+import { FC } from 'react';
+import { Release } from '../../../../../types/release';
 
 interface IProps {
   release: Release;
@@ -16,8 +16,8 @@ const MostReviewedCarouselItem: FC<IProps> = ({ release, onClick }) => {
         <div
           className={`rounded-full size-13 lg:size-17 border-2 flex items-center justify-center overflow-hidden ${
             release.hasAuthorComments || release.hasAuthorLikes
-              ? "border-red-500"
-              : "border-blue-250"
+              ? 'border-red-500'
+              : 'border-blue-250'
           }`}
         >
           <img
@@ -25,7 +25,7 @@ const MostReviewedCarouselItem: FC<IProps> = ({ release, onClick }) => {
             loading="lazy"
             decoding="async"
             src={`${import.meta.env.VITE_SERVER_URL}/public/releases/${
-              release.img === ""
+              release.img === ''
                 ? import.meta.env.VITE_DEFAULT_COVER
                 : release.img
             }`}

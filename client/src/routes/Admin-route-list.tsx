@@ -1,13 +1,13 @@
-import { Route } from "react-router";
-import AdminDashboardAuthorCommentsGrid from "../pages/admin-dashboard-page/ui/grids/admin-dashboard-author-comments/Admin-dashboard-author-comments-grid.tsx";
-import AdminDashboardAuthorConfirmationGrid from "../pages/admin-dashboard-page/ui/grids/admin-dashboard-author-confirmation/Admin-dashboard-author-confirmation-grid.tsx";
-import AdminDashboardAuthorsGrid from "../pages/admin-dashboard-page/ui/grids/admin-dashboard-authors/Admin-dashboard-authors-grid";
-import AdminDashboardFeedbackGrid from "../pages/admin-dashboard-page/ui/grids/admin-dashboard-feedback/Admin-dashboard-feedback-grid";
-import AdminDashboardMediaGrid from "../pages/admin-dashboard-page/ui/grids/admin-dashboard-release-media/Admin-dashboard-media-grid.tsx";
-import AdminDashboardReleasesGrid from "../pages/admin-dashboard-page/ui/grids/admin-dashboard-releases/Admin-dashboard-releases-grid";
-import AdminDashboardReviewsGrid from "../pages/admin-dashboard-page/ui/grids/admin-dashboard-reviews/Admin-dashboard-reviews-grid";
-import AdminDashboardUsersGrid from "../pages/admin-dashboard-page/ui/grids/admin-dashboard-users/Admin-dashboard-users-grid";
-import { ROUTES } from "./routes-enum";
+import { Route } from 'react-router';
+import AdminDashboardAuthorCommentsGrid from '../pages/admin-dashboard-page/ui/grids/admin-dashboard-author-comments/Admin-dashboard-author-comments-grid.tsx';
+import AdminDashboardAuthorConfirmationGrid from '../pages/admin-dashboard-page/ui/grids/admin-dashboard-author-confirmation/Admin-dashboard-author-confirmation-grid.tsx';
+import AdminDashboardAuthorsGrid from '../pages/admin-dashboard-page/ui/grids/admin-dashboard-authors/Admin-dashboard-authors-grid';
+import AdminDashboardFeedbackGrid from '../pages/admin-dashboard-page/ui/grids/admin-dashboard-feedback/Admin-dashboard-feedback-grid';
+import AdminDashboardMediaGrid from '../pages/admin-dashboard-page/ui/grids/admin-dashboard-release-media/Admin-dashboard-media-grid.tsx';
+import AdminDashboardReleasesGrid from '../pages/admin-dashboard-page/ui/grids/admin-dashboard-releases/Admin-dashboard-releases-grid';
+import AdminDashboardReviewsGrid from '../pages/admin-dashboard-page/ui/grids/admin-dashboard-reviews/Admin-dashboard-reviews-grid';
+import AdminDashboardUsersGrid from '../pages/admin-dashboard-page/ui/grids/admin-dashboard-users/Admin-dashboard-users-grid';
+import { ROUTES } from './routes-enum';
 
 const AdminRouteList = () => {
   return (

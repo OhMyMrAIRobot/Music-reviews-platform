@@ -1,16 +1,16 @@
-import { useQuery } from "@tanstack/react-query";
-import { useRef, useState } from "react";
-import { ReleaseAPI } from "../../../../api/release/release-api";
-import CarouselContainer from "../../../../components/carousel/Carousel-container";
-import useNavigationPath from "../../../../hooks/use-navigation-path";
-import { releasesKeys } from "../../../../query-keys/releases-keys";
-import { SortOrdersEnum } from "../../../../types/common/enums/sort-orders-enum";
-import { CarouselRef } from "../../../../types/common/types/carousel-ref";
+import { useQuery } from '@tanstack/react-query';
+import { useRef, useState } from 'react';
+import { ReleaseAPI } from '../../../../api/release/release-api';
+import CarouselContainer from '../../../../components/carousel/Carousel-container';
+import useNavigationPath from '../../../../hooks/use-navigation-path';
+import { releasesKeys } from '../../../../query-keys/releases-keys';
+import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum';
+import { CarouselRef } from '../../../../types/common/types/carousel-ref';
 import {
   ReleasesQuery,
   ReleasesSortFieldsEnum,
-} from "../../../../types/release";
-import LastReleasesCarousel from "./carousel/Last-releases-carousel";
+} from '../../../../types/release';
+import LastReleasesCarousel from './carousel/Last-releases-carousel';
 
 const query: ReleasesQuery = {
   limit: 20,
@@ -36,8 +36,8 @@ const LastReleases = () => {
 
   return (
     <CarouselContainer
-      title={"Добавленные релизы"}
-      buttonTitle={"Все релизы"}
+      title={'Добавленные релизы'}
+      buttonTitle={'Все релизы'}
       href={navigateToReleases}
       showButton={true}
       handlePrev={() => carouselRef.current?.scrollPrev()}

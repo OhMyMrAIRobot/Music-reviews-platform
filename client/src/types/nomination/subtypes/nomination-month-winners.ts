@@ -1,4 +1,4 @@
-import { NominationWinner } from "..";
+import { NominationWinner } from '..';
 
 /**
  * Represents the list of winners for a specific month.

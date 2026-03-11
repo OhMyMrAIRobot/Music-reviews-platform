@@ -1,5 +1,5 @@
-import { FC } from "react";
-import SidebarItem, { ISidebarItemProps } from "./Sidebar-item";
+import { FC } from 'react';
+import SidebarItem, { ISidebarItemProps } from './Sidebar-item';
 
 interface IProps {
   items: ISidebarItemProps[];

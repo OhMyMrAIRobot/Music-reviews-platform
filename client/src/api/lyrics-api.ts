@@ -1,5 +1,5 @@
-import axios from "axios";
-import { Lyrics } from "../types/release";
+import axios from 'axios';
+import { Lyrics } from '../types/release';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
@@ -7,7 +7,7 @@ const _api = axios.create({
   baseURL: `${SERVER_URL}/lyrics/`,
   withCredentials: true,
   headers: {
-    "Content-type": "application/json",
+    'Content-type': 'application/json',
   },
 });
 

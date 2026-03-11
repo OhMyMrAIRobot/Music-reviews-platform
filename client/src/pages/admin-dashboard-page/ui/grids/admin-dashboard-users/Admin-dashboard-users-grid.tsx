@@ -1,26 +1,26 @@
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { UserAPI } from "../../../../../api/user/user-api.ts";
-import AdminHeader from "../../../../../components/layout/admin-header/Admin-header.tsx";
-import Pagination from "../../../../../components/pagination/Pagination.tsx";
-import UserRoleSvg from "../../../../../components/user/User-role-svg.tsx";
-import { usersKeys } from "../../../../../query-keys/users-keys.ts";
-import { SortOrdersEnum } from "../../../../../types/common/enums/sort-orders-enum.ts";
-import { SortOrder } from "../../../../../types/common/types/sort-order.ts";
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { UserAPI } from '../../../../../api/user/user-api.ts';
+import AdminHeader from '../../../../../components/layout/admin-header/Admin-header.tsx';
+import Pagination from '../../../../../components/pagination/Pagination.tsx';
+import UserRoleSvg from '../../../../../components/user/User-role-svg.tsx';
+import { usersKeys } from '../../../../../query-keys/users-keys.ts';
+import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum.ts';
+import { SortOrder } from '../../../../../types/common/types/sort-order.ts';
 import {
   RolesEnum,
   RolesFilterOptions,
   UsersQuery,
-} from "../../../../../types/user/index.ts";
-import AdminFilterButton from "../../buttons/Admin-filter-button.tsx";
-import AdminDashboardUsersGridItem from "./Admin-dashboard-users-grid-item.tsx";
+} from '../../../../../types/user/index.ts';
+import AdminFilterButton from '../../buttons/Admin-filter-button.tsx';
+import AdminDashboardUsersGridItem from './Admin-dashboard-users-grid-item.tsx';
 
 const limit = 10;
 
 const AdminDashboardUsersGrid = () => {
-  const [searchText, setSearchText] = useState<string>("");
+  const [searchText, setSearchText] = useState<string>('');
   const [activeOption, setActiveOption] = useState<RolesFilterOptions>(
-    RolesFilterOptions.ALL,
+    RolesFilterOptions.ALL
   );
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC);
@@ -51,7 +51,7 @@ const AdminDashboardUsersGrid = () => {
 
   return (
     <div className="flex flex-col h-screen" id="admin-users">
-      <AdminHeader title={"Пользователи"} setText={setSearchText} />
+      <AdminHeader title={'Пользователи'} setText={setSearchText} />
 
       <div id="admin-users-grid" className="flex flex-col overflow-hidden p-5">
         <div className="flex flex-wrap xl:mb-5 gap-y-2 text-white/80 border-b border-white/10">
@@ -61,8 +61,8 @@ const AdminDashboardUsersGrid = () => {
               title={
                 <span className={`flex items-center px-2`}>
                   <UserRoleSvg
-                    role={{ id: "0", role: option }}
-                    className={"size-5 mr-1"}
+                    role={{ id: '0', role: option }}
+                    className={'size-5 mr-1'}
                   />
                   {option}
                 </span>
@@ -81,7 +81,7 @@ const AdminDashboardUsersGrid = () => {
             setOrder(
               order === SortOrdersEnum.DESC
                 ? SortOrdersEnum.ASC
-                : SortOrdersEnum.DESC,
+                : SortOrdersEnum.DESC
             )
           }
         />
@@ -119,7 +119,7 @@ const AdminDashboardUsersGrid = () => {
               totalItems={count}
               itemsPerPage={limit}
               setCurrentPage={setCurrentPage}
-              idToScroll={"admin-users-grid"}
+              idToScroll={'admin-users-grid'}
             />
           </div>
         )}

@@ -1,8 +1,8 @@
-import { FC } from "react";
-import { AuthorType, AuthorTypesEnum } from "../../../types/author";
-import ArtistSvg from "../svg/Artist-svg";
-import DesignerSvg from "../svg/Designer-svg";
-import ProducerSvg from "../svg/Producer-svg";
+import { FC } from 'react';
+import { AuthorType, AuthorTypesEnum } from '../../../types/author';
+import ArtistSvg from '../svg/Artist-svg';
+import DesignerSvg from '../svg/Designer-svg';
+import ProducerSvg from '../svg/Producer-svg';
 
 interface IProps {
   type: AuthorType;
