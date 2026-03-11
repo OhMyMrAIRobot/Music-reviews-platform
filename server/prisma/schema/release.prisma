@@ -5,6 +5,7 @@ model Release {
   img           String   @default("") @db.VarChar(255)
   releaseTypeId String   @map("release_type_id")
   createdAt     DateTime @default(now()) @map("created_at")
+  youtubeId     String?  @map("youtube_id")
 
   releaseType ReleaseType @relation(fields: [releaseTypeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 

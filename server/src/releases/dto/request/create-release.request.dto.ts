@@ -68,4 +68,9 @@ export class CreateReleaseRequestDto {
     message: 'Каждый элемент должен быть строкой (идентификатором)',
   })
   releaseDesigners?: string[];
+
+  @IsOptional()
+  @IsString({ message: 'Поле youtubeId должно быть строкой' })
+  @Length(1, 50, { message: 'Длина youtubeId должна быть от 1 до 50 символов' })
+  youtubeId?: string;
 }
