@@ -1,29 +1,30 @@
-import { useQueryClient } from "@tanstack/react-query";
-import { FC, useEffect, useMemo, useState } from "react";
-import { AuthorAPI } from "../../../../../api/author/author-api.ts";
-import ComboBox from "../../../../../components/buttons/Combo-box.tsx";
-import FormButton from "../../../../../components/form-elements/Form-button.tsx";
-import FormCheckbox from "../../../../../components/form-elements/Form-checkbox.tsx";
-import FormInput from "../../../../../components/form-elements/Form-input.tsx";
-import FormLabel from "../../../../../components/form-elements/Form-label.tsx";
+import { useQueryClient } from '@tanstack/react-query';
+import { FC, useEffect, useMemo, useState } from 'react';
+import { AuthorAPI } from '../../../../../api/author/author-api.ts';
+import ComboBox from '../../../../../components/buttons/Combo-box.tsx';
+import FormButton from '../../../../../components/form-elements/Form-button.tsx';
+import FormCheckbox from '../../../../../components/form-elements/Form-checkbox.tsx';
+import FormInput from '../../../../../components/form-elements/Form-input.tsx';
+import FormLabel from '../../../../../components/form-elements/Form-label.tsx';
 import FormMultiSelect, {
   IMultiSelectValue,
-} from "../../../../../components/form-elements/Form-multi-select.tsx";
-import ModalOverlay from "../../../../../components/modals/Modal-overlay.tsx";
-import SkeletonLoader from "../../../../../components/utils/Skeleton-loader.tsx";
-import { useReleaseMeta } from "../../../../../hooks/meta";
+} from '../../../../../components/form-elements/Form-multi-select.tsx';
+import ModalOverlay from '../../../../../components/modals/Modal-overlay.tsx';
+import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx';
+import { useReleaseMeta } from '../../../../../hooks/meta';
 import {
   useAdminCreateReleaseMutation,
   useAdminUpdateReleaseMutation,
-} from "../../../../../hooks/mutations/index.ts";
-import { authorsKeys } from "../../../../../query-keys/authors-keys.ts";
-import { AuthorsQuery } from "../../../../../types/author/index.ts";
-import { IReleaseFormValues, Release } from "../../../../../types/release";
-import { arraysEqual } from "../../../../../utils/arrays-equal.ts";
-import buildReleaseFormData from "../../../../../utils/build-release-form-data";
-import { constraints } from "../../../../../utils/constraints.ts";
-import SelectImageLabel from "../../../../edit-profile-page/ui/labels/Select-image-label.tsx";
-import SelectedImageLabel from "../../../../edit-profile-page/ui/labels/Selected-image-label.tsx";
+} from '../../../../../hooks/mutations/index.ts';
+import { authorsKeys } from '../../../../../query-keys/authors-keys.ts';
+import { AuthorsQuery } from '../../../../../types/author/index.ts';
+import { IReleaseFormValues, Release } from '../../../../../types/release';
+import { arraysEqual } from '../../../../../utils/arrays-equal.ts';
+import buildReleaseFormData from '../../../../../utils/build-release-form-data';
+import { constraints } from '../../../../../utils/constraints.ts';
+import { parseYoutubeId } from '../../../../../utils/parse-youtube-id.ts';
+import SelectImageLabel from '../../../../edit-profile-page/ui/labels/Select-image-label.tsx';
+import SelectedImageLabel from '../../../../edit-profile-page/ui/labels/Selected-image-label.tsx';
 
 interface IProps {
   isOpen: boolean;
@@ -38,11 +39,11 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
   /** STATES */
   const [cover, setCover] = useState<File | null>(null);
   const [coverPreviewUrl, setCoverPreviewUrl] = useState<string | null>(null);
-  const [title, setTitle] = useState<string>("");
-  const [type, setType] = useState<string>("");
-  const [date, setDate] = useState<string>("");
+  const [title, setTitle] = useState<string>('');
+  const [type, setType] = useState<string>('');
+  const [date, setDate] = useState<string>('');
   const [selectedArtists, setSelectedArtists] = useState<IMultiSelectValue[]>(
-    [],
+    []
   );
   const [selectedProducers, setSelectedProducers] = useState<
     IMultiSelectValue[]
@@ -52,20 +53,23 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
   >([]);
   const [deleteCover, setDeleteCover] = useState<boolean>(false);
 
+  const [ytId, setYtId] = useState<string | null>(null);
+
   /** EFFECTS */
   useEffect(() => {
     if (release && isOpen) {
       setTitle(release.title);
-      setDate(release.publishDate.split("T")[0]);
+      setDate(release.publishDate.split('T')[0]);
       setType(release.releaseType.type);
       if (release.img) {
         setCoverPreviewUrl(
-          `${import.meta.env.VITE_SERVER_URL}/public/releases/${release.img}`,
+          `${import.meta.env.VITE_SERVER_URL}/public/releases/${release.img}`
         );
       }
       setSelectedArtists(release.authors.artists);
       setSelectedProducers(release.authors.producers);
       setSelectedDesigners(release.authors.designers);
+      setYtId(release.youtubeId);
     } else {
       resetForm();
     }
@@ -89,7 +93,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
    */
   const isPending = useMemo(
     () => isCreating || isUpdating,
-    [isCreating, isUpdating],
+    [isCreating, isUpdating]
   );
 
   /**
@@ -108,6 +112,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
       selectedProducers,
       selectedDesigners,
       deleteCover,
+      youtubeId: ytId ? parseYoutubeId(ytId) : null,
     };
 
     const formData = buildReleaseFormData(values, types, release);
@@ -125,12 +130,13 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
   const resetForm = () => {
     setCover(null);
     setCoverPreviewUrl(null);
-    setTitle("");
-    setType("");
-    setDate("");
+    setTitle('');
+    setType('');
+    setDate('');
     setSelectedArtists([]);
     setSelectedDesigners([]);
     setSelectedProducers([]);
+    setYtId(null);
   };
 
   /**
@@ -142,12 +148,13 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
     if (release.title !== title) return true;
     if (release.releaseType.type !== type) return true;
     if (release.publishDate !== date) return true;
+    if (release.youtubeId !== ytId) return true;
     if (deleteCover) return true;
 
     if (
       !arraysEqual(
         release.authors.artists.map((entry) => entry.name).sort(),
-        selectedArtists.map((sa) => sa.name).sort(),
+        selectedArtists.map((sa) => sa.name).sort()
       )
     )
       return true;
@@ -155,7 +162,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
     if (
       !arraysEqual(
         release.authors.producers.map((entry) => entry.name).sort(),
-        selectedProducers.map((sp) => sp.name).sort(),
+        selectedProducers.map((sp) => sp.name).sort()
       )
     )
       return true;
@@ -163,7 +170,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
     if (
       !arraysEqual(
         release.authors.designers.map((entry) => entry.name).sort(),
-        selectedDesigners.map((sd) => sd.name).sort(),
+        selectedDesigners.map((sd) => sd.name).sort()
       )
     )
       return true;
@@ -179,6 +186,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
     selectedProducers,
     title,
     type,
+    ytId,
   ]);
 
   /**
@@ -205,7 +213,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
    */
   const loadAuthors = async (
     search: string,
-    limit: number | null,
+    limit: number | null
   ): Promise<IMultiSelectValue[]> => {
     const query: AuthorsQuery = {
       search: search.trim() || undefined,
@@ -234,14 +242,14 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
     () =>
       title.trim().length >= constraints.release.minTitleLength &&
       title.trim().length <= constraints.release.maxTitleLength &&
-      type !== "" &&
-      date !== "",
-    [title, type, date],
+      type !== '' &&
+      date !== '',
+    [title, type, date]
   );
 
   /** CONSTANTS */
-  const formTitle = release ? "Редактирование релиза" : "Добавление релиза";
-  const buttonText = release ? "Сохранить" : "Добавить";
+  const formTitle = release ? 'Редактирование релиза' : 'Добавление релиза';
+  const buttonText = release ? 'Сохранить' : 'Добавить';
 
   if (!isOpen) return null;
 
@@ -256,7 +264,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
         <SkeletonLoader className="w-full lg:w-240 h-140 size-full rounded-xl" />
       ) : (
         <div
-          className={`relative rounded-xl w-full lg:w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6 overflow-y-scroll max-h-full`}
+          className={`relative rounded-xl w-full max-w-[90vw] max-h-[90vh] lg:w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6 overflow-y-scroll`}
         >
           <h1 className="border-b border-white/10 text-3xl font-bold py-4 text-center">
             {formTitle}
@@ -299,19 +307,19 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
               {release && (
                 <div
                   className={`flex gap-2 items-center mt-2 ${
-                    release.img === "" || cover
-                      ? "opacity-50 pointer-events-none"
-                      : ""
+                    release.img === '' || cover
+                      ? 'opacity-50 pointer-events-none'
+                      : ''
                   }`}
                 >
                   <FormCheckbox
-                    id={"cover-checkbox"}
+                    id={'cover-checkbox'}
                     checked={deleteCover}
                     setChecked={setDeleteCover}
                   />
                   <FormLabel
-                    name={"Удалить обложку"}
-                    htmlFor={"cover-checkbox"}
+                    name={'Удалить обложку'}
+                    htmlFor={'cover-checkbox'}
                     isRequired={false}
                   />
                 </div>
@@ -320,17 +328,17 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 p-6 border-b border-white/10 gap-3 lg:gap-6">
-            <div className="grid grid-rows-3 gap-y-3">
+            <div className="grid grid-rows-4 gap-y-3">
               <div className="grid gap-2 w-full">
                 <FormLabel
-                  name={"Название релиза"}
-                  htmlFor={"release-title"}
+                  name={'Название релиза'}
+                  htmlFor={'release-title'}
                   isRequired={true}
                 />
                 <FormInput
-                  id={"release-title"}
-                  placeholder={"Название релиза..."}
-                  type={"text"}
+                  id={'release-title'}
+                  placeholder={'Название релиза...'}
+                  type={'text'}
                   value={title}
                   setValue={setTitle}
                 />
@@ -338,8 +346,8 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 
               <div className="grid gap-2 w-full">
                 <FormLabel
-                  name={"Тип релиза"}
-                  htmlFor={"release-type"}
+                  name={'Тип релиза'}
+                  htmlFor={'release-type'}
                   isRequired={true}
                 />
 
@@ -354,30 +362,45 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 
               <div className="grid gap-2 w-full">
                 <FormLabel
-                  name={"Дата публикации"}
-                  htmlFor={"release-date"}
+                  name={'Дата публикации'}
+                  htmlFor={'release-date'}
                   isRequired={true}
                 />
                 <FormInput
-                  id={"release-date"}
-                  placeholder={""}
-                  type={"date"}
+                  id={'release-date'}
+                  placeholder={''}
+                  type={'date'}
                   value={date}
                   setValue={setDate}
                 />
               </div>
-            </div>
 
-            <div className="grid grid-rows-3 gap-3">
               <div className="grid gap-2 w-full">
                 <FormLabel
-                  name={"Артисты"}
-                  htmlFor={"release-artists"}
+                  name={'Ссылка / идентификатор музыкальной композиции'}
+                  htmlFor={'yt-id-input'}
+                  isRequired={false}
+                />
+                <FormInput
+                  id={'yt-id-input'}
+                  placeholder={'https://youtube.com'}
+                  type={'string'}
+                  value={ytId ?? ''}
+                  setValue={setYtId}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-rows-4 gap-3">
+              <div className="grid gap-2 w-full">
+                <FormLabel
+                  name={'Артисты'}
+                  htmlFor={'release-artists'}
                   isRequired={false}
                 />
                 <FormMultiSelect
-                  id={"release-artists"}
-                  placeholder={"Артисты"}
+                  id={'release-artists'}
+                  placeholder={'Артисты'}
                   value={selectedArtists}
                   onChange={setSelectedArtists}
                   loadOptions={loadAuthors}
@@ -386,13 +409,13 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 
               <div className="grid gap-2 w-full">
                 <FormLabel
-                  name={"Продюсеры"}
-                  htmlFor={"release-producers"}
+                  name={'Продюсеры'}
+                  htmlFor={'release-producers'}
                   isRequired={false}
                 />
                 <FormMultiSelect
-                  id={"release-producers"}
-                  placeholder={"Продюсеры"}
+                  id={'release-producers'}
+                  placeholder={'Продюсеры'}
                   value={selectedProducers}
                   onChange={setSelectedProducers}
                   loadOptions={loadAuthors}
@@ -401,13 +424,13 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 
               <div className="grid gap-2 w-full">
                 <FormLabel
-                  name={"Дизайнеры"}
-                  htmlFor={"release-designers"}
+                  name={'Дизайнеры'}
+                  htmlFor={'release-designers'}
                   isRequired={false}
                 />
                 <FormMultiSelect
-                  id={"release-designers"}
-                  placeholder={"Дизайнеры"}
+                  id={'release-designers'}
+                  placeholder={'Дизайнеры'}
                   value={selectedDesigners}
                   onChange={setSelectedDesigners}
                   loadOptions={loadAuthors}
@@ -431,7 +454,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 
             <div className="w-full sm:w-25">
               <FormButton
-                title={"Назад"}
+                title={'Назад'}
                 isInvert={false}
                 onClick={onClose}
                 disabled={isPending}

@@ -1,11 +1,11 @@
-import { NominationTypesEnum } from "../../nomination/enums/nomination-types-enum";
-import { ReleaseAuthor } from "../subtypes/release-author";
+import { NominationTypesEnum } from '../../nomination/enums/nomination-types-enum';
+import { ReleaseAuthor } from '../subtypes/release-author';
 import {
   ReleaseRatingDetails,
   ReleaseRatingTotal,
-} from "../subtypes/release-rating";
-import { ReleaseType } from "./release-type";
-import { UserFavRelease } from "./user-fav-release";
+} from '../subtypes/release-rating';
+import { ReleaseType } from './release-type';
+import { UserFavRelease } from './user-fav-release';
 
 /**
  * Represents a release entity.
@@ -62,4 +62,6 @@ export type Release = {
   /** Array of nomination types associated with the release */
   nominationTypes: NominationTypesEnum[];
   hasLyrics: boolean;
+
+  youtubeId: string | null;
 };

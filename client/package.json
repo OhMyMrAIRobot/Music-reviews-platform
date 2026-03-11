@@ -16,6 +16,7 @@
     "@types/axios": "^0.14.4",
     "axios": "^1.8.4",
     "embla-carousel-react": "^8.6.0",
+    "lucide-react": "^0.577.0",
     "mobx": "^6.13.7",
     "mobx-react-lite": "^4.1.0",
     "prettier": "^3.8.1",
