@@ -107,6 +107,7 @@ export class ReleasesService {
           releaseDesigner: {
             create: designerConnections,
           },
+          youtubeId: dto.youtubeId,
         },
       });
 
@@ -217,6 +218,7 @@ export class ReleasesService {
 
       const updatedRelease = await this.prisma.$transaction(async (prisma) => {
         const data: Prisma.ReleaseUpdateInput = {
+          ...(dto.youtubeId && { youtubeId: dto.youtubeId }),
           ...(dto.title && { title: dto.title }),
           ...(dto.publishDate && {
             publishDate: dto.publishDate,
@@ -448,6 +450,7 @@ export class ReleasesService {
                           'id', r.id,
                           'title', r.title,
                           'img', r.img,
+                          'youtubeId', r.youtube_id,
                           'publishDate', r.publish_date,
                           'createdAt', r.created_at,
                           'releaseType', jsonb_build_object('id', rt.id, 'type', rt.type),

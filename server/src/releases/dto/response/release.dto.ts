@@ -80,4 +80,6 @@ export type ReleaseDto = {
   /** Record creation timestamp (ISO) */
   createdAt: string;
   hasLyrics: boolean;
+
+  youtubeId: string | null;
 };
