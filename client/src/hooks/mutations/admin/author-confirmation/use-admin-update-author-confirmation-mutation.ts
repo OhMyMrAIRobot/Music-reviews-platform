@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { AuthorConfirmationAPI } from '../../../../api/author/author-confirmation-api';
 import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys';
 import { authorLikesKeys } from '../../../../query-keys/author-likes-keys';
@@ -31,6 +32,7 @@ export const useAdminUpdateAuthorConfirmationMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore } = useStore();
   const handleApiError = useApiErrorHandler();
   const queryClient = useQueryClient();
@@ -56,16 +58,13 @@ export const useAdminUpdateAuthorConfirmationMutation = ({
       AuthorConfirmationAPI.update(id, { statusId }),
     onSuccess: () => {
       notificationStore.addSuccessNotification(
-        'Вы успешно обновили статус заявки на верификацию!'
+        t('admin.authorConfirmation.updateSuccess')
       );
       invalidateRelatedQueries();
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(
-        error,
-        'Не удалось обновить статус заявки на верификацию!'
-      );
+      handleApiError(error, t('admin.authorConfirmation.updateError'));
       onError?.(error);
     },
     onSettled,

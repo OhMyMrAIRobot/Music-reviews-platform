@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { ReviewAPI } from '../../../api/review/review-api';
 import { leaderboardKeys } from '../../../query-keys/leaderboard-keys';
 import { platformStatsKeys } from '../../../query-keys/platform-stats-keys';
@@ -27,6 +28,7 @@ export const useCreateReviewMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { authStore, notificationStore } = useStore();
   const queryClient = useQueryClient();
   const handleApiError = useApiErrorHandler();
@@ -47,7 +49,9 @@ export const useCreateReviewMutation = ({
     mutationFn: (data: CreateReviewData) => ReviewAPI.create(data),
     onSuccess: (data) => {
       notificationStore.addSuccessNotification(
-        `Вы успешно добавили ${data.text ? 'рецензию' : 'оценку'}!`
+        data.text
+          ? t('mutations.userReview.createSuccessReview')
+          : t('mutations.userReview.createSuccessRating')
       );
       invalidateRelatedQueries(data.release.id);
       onSuccess?.();
@@ -55,7 +59,9 @@ export const useCreateReviewMutation = ({
     onError: (error: unknown, data) => {
       handleApiError(
         error,
-        `Не удалось добавить ${data.text ? 'рецензию' : 'оценку'}.`
+        data.text
+          ? t('mutations.userReview.createErrorReview')
+          : t('mutations.userReview.createErrorRating')
       );
       onError?.(error);
     },

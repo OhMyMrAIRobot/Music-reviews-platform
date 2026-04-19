@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { ReviewAPI } from '../../../api/review/review-api';
 import { leaderboardKeys } from '../../../query-keys/leaderboard-keys';
 import { platformStatsKeys } from '../../../query-keys/platform-stats-keys';
@@ -18,6 +19,7 @@ export const useRemoveReviewMutation = ({
   onSuccess,
   onError,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { authStore, notificationStore } = useStore();
   const queryClient = useQueryClient();
   const handleApiError = useApiErrorHandler();
@@ -39,7 +41,9 @@ export const useRemoveReviewMutation = ({
       ReviewAPI.delete(id),
     onSuccess: (_, data) => {
       notificationStore.addSuccessNotification(
-        `Вы успешно удалили ${data.isReview ? 'рецензию' : 'оценку'}!`
+        data.isReview
+          ? t('mutations.userReview.removeSuccessReview')
+          : t('mutations.userReview.removeSuccessRating')
       );
       invalidateRelatedQueries(data.id);
       onSuccess?.();
@@ -47,7 +51,9 @@ export const useRemoveReviewMutation = ({
     onError: (error: unknown, data) => {
       handleApiError(
         error,
-        `Не удалось удалить ${data.isReview ? 'рецензию' : 'оценку'}.`
+        data.isReview
+          ? t('mutations.userReview.removeErrorReview')
+          : t('mutations.userReview.removeErrorRating')
       );
       onError?.(error);
     },

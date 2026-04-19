@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { AuthAPI } from '../../../api/auth-api';
 import { authKeys } from '../../../query-keys/auth-keys';
 import authStore from '../../../stores/auth-store';
@@ -21,6 +22,7 @@ export const useLogoutMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore } = useStore();
   const queryClient = useQueryClient();
   const handleApiError = useApiErrorHandler();
@@ -32,7 +34,7 @@ export const useLogoutMutation = ({
 
       notificationStore.addNotification({
         id: generateUUID(),
-        text: 'Вы успешно вышли из аккаунта!',
+        text: t('mutations.auth.logoutSuccess'),
         isError: false,
       });
 
@@ -40,7 +42,7 @@ export const useLogoutMutation = ({
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, 'Произошла ошибка при выходе!');
+      handleApiError(error, t('mutations.auth.logoutError'));
       onError?.(error);
     },
     onSettled,

@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { AuthorCommentAPI } from '../../../api/author/author-comment-api';
 import { authorCommentsKeys } from '../../../query-keys/author-comments-keys';
 import { leaderboardKeys } from '../../../query-keys/leaderboard-keys';
@@ -27,6 +28,7 @@ export const useCreateAuthorCommentMutation = ({
   onSettled,
   onError,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore, authStore } = useStore();
   const queryClient = useQueryClient();
   const handleApiError = useApiErrorHandler();
@@ -48,13 +50,13 @@ export const useCreateAuthorCommentMutation = ({
       AuthorCommentAPI.create(data),
     onSuccess: () => {
       notificationStore.addSuccessNotification(
-        'Вы успешно добавили авторский комментарий!'
+        t('mutations.authorComment.createSuccess')
       );
       invalidateRelatedQueries();
       onSuccess?.();
     },
     onError(error: unknown) {
-      handleApiError(error, 'Не удалось добавить авторский комментарий.');
+      handleApiError(error, t('mutations.authorComment.createError'));
       onError?.(error);
     },
     onSettled,

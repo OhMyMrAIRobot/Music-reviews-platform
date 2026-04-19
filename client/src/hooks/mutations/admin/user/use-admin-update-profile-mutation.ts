@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { ProfileAPI } from '../../../../api/user/profile-api';
 import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys';
 import { authorLikesKeys } from '../../../../query-keys/author-likes-keys';
@@ -32,6 +33,7 @@ export const useAdminUpdateProfileMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore } = useStore();
   const handleApiError = useApiErrorHandler();
   const queryClient = useQueryClient();
@@ -63,7 +65,9 @@ export const useAdminUpdateProfileMutation = ({
     mutationFn: (data: { id: string; updateData: UpdateProfileData }) =>
       ProfileAPI.adminUpdate(data.id, data.updateData),
     onSuccess: (_, { id, updateData }) => {
-      notificationStore.addSuccessNotification('Вы успешно обновили профиль!');
+      notificationStore.addSuccessNotification(
+        t('admin.user.updateProfileSuccess')
+      );
       if (updateData.clearAvatar || updateData.clearCover) {
         invalidateUserRelatedQueries(id);
       } else {
@@ -72,7 +76,7 @@ export const useAdminUpdateProfileMutation = ({
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, 'Ошибка при обновлении профиля');
+      handleApiError(error, t('admin.user.updateProfileError'));
       onError?.(error);
     },
     onSettled,

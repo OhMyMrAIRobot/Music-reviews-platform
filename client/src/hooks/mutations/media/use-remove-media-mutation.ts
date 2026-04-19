@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { ReleaseMediaAPI } from '../../../api/release/release-media-api';
 import { leaderboardKeys } from '../../../query-keys/leaderboard-keys';
 import { platformStatsKeys } from '../../../query-keys/platform-stats-keys';
@@ -25,6 +26,7 @@ export const useRemoveMediaMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore, authStore } = useStore();
   const queryClient = useQueryClient();
   const handleApiError = useApiErrorHandler();
@@ -43,13 +45,13 @@ export const useRemoveMediaMutation = ({
     mutationFn: (id: string) => ReleaseMediaAPI.delete(id),
     onSuccess: () => {
       notificationStore.addSuccessNotification(
-        'Медиарецензия успешно удалена!'
+        t('mutations.mediaReview.removeSuccess')
       );
       invalidateRelatedQueries();
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, 'Не удалось удалить медиарецензию.');
+      handleApiError(error, t('mutations.mediaReview.removeError'));
       onError?.(error);
     },
     onSettled,

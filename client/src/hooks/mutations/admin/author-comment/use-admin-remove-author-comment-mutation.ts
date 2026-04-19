@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { AuthorCommentAPI } from '../../../../api/author/author-comment-api';
 import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys';
 import { authorsKeys } from '../../../../query-keys/authors-keys';
@@ -27,6 +28,7 @@ export const useAdminRemoveAuthorCommentMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore } = useStore();
   const handleApiError = useApiErrorHandler();
   const queryClient = useQueryClient();
@@ -48,13 +50,13 @@ export const useAdminRemoveAuthorCommentMutation = ({
     mutationFn: (id: string) => AuthorCommentAPI.adminDelete(id),
     onSuccess: () => {
       notificationStore.addSuccessNotification(
-        'Вы успешно удалили авторский комментарий!'
+        t('admin.authorComment.removeSuccess')
       );
       invalidateRelatedQueries();
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, 'Не удалось удалить авторский комментарий!');
+      handleApiError(error, t('admin.authorComment.removeError'));
       onError?.(error);
     },
     onSettled,

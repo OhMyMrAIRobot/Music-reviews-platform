@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { AlbumValueAPI } from '../../../api/album-value-api';
 import { albumValuesKeys } from '../../../query-keys/album-values-keys';
 import { leaderboardKeys } from '../../../query-keys/leaderboard-keys';
@@ -24,6 +25,7 @@ export const useRemoveAlbumValueMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore, authStore } = useStore();
   const queryClient = useQueryClient();
   const handleApiError = useApiErrorHandler();
@@ -41,13 +43,13 @@ export const useRemoveAlbumValueMutation = ({
     mutationFn: (id: string) => AlbumValueAPI.deleteAlbumValueVote(id),
     onSuccess: () => {
       notificationStore.addSuccessNotification(
-        'Вы успешно удалили голос за ценность альбома!'
+        t('mutations.albumValue.removeSuccess')
       );
       invalidateRelatedQueries();
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, 'Не удалось удалить голос за ценность альбома.');
+      handleApiError(error, t('mutations.albumValue.removeError'));
       onError?.(error);
     },
     onSettled,

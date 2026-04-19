@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { ProfileAPI } from '../../../api/user/profile-api';
 import { authorCommentsKeys } from '../../../query-keys/author-comments-keys';
 import { authorLikesKeys } from '../../../query-keys/author-likes-keys';
@@ -28,6 +29,7 @@ export const useUpdateProfileMutation = ({
   onSettled,
   onError,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { authStore, notificationStore } = useStore();
   const queryClient = useQueryClient();
   const handleApiError = useApiErrorHandler();
@@ -53,11 +55,13 @@ export const useUpdateProfileMutation = ({
         invalidateRelatedQueries(authStore.user.id);
       }
       authStore.setProfile(data);
-      notificationStore.addSuccessNotification('Профиль успешно обновлен!');
+      notificationStore.addSuccessNotification(
+        t('mutations.profile.updateSuccess')
+      );
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, 'Ошибка при обновлении профиля!');
+      handleApiError(error, t('mutations.profile.updateError'));
       onError?.(error);
     },
     onSettled,

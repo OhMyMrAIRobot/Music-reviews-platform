@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { NominationAPI } from '../api/nomination-api';
 import { nominationsKeys } from '../query-keys/nominations-keys';
 import { NominationEntityKind, NominationUserVote } from '../types/nomination';
@@ -18,6 +19,7 @@ import { useStore } from './use-store';
  * - `isLoading`: Boolean indicating if any of the data is currently loading.
  */
 export const useNominationVotes = () => {
+  const { t } = useTranslation();
   const { authStore } = useStore();
 
   const handleApiError = useApiErrorHandler();
@@ -82,7 +84,7 @@ export const useNominationVotes = () => {
         entityId,
       });
     } catch (error: unknown) {
-      handleApiError(error, 'Не удалось отправить голос!');
+      handleApiError(error, t('mutations.nomination.postVoteError'));
     }
   };
 

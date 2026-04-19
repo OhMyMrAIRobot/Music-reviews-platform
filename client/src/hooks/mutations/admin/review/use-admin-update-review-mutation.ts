@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { ReviewAPI } from '../../../../api/review/review-api';
 import { releasesKeys } from '../../../../query-keys/releases-keys';
 import { reviewsKeys } from '../../../../query-keys/reviews-keys';
@@ -26,6 +27,7 @@ export const useAdminUpdateReviewMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore } = useStore();
   const queryClient = useQueryClient();
   const handleApiError = useApiErrorHandler();
@@ -47,12 +49,12 @@ export const useAdminUpdateReviewMutation = ({
       reviewData: UpdateReviewData;
     }) => ReviewAPI.adminUpdate(reviewId, reviewData),
     onSuccess: (data) => {
-      notificationStore.addSuccessNotification('Рецензия успешно обновлена!');
+      notificationStore.addSuccessNotification(t('admin.review.updateSuccess'));
       invalidateRelatedQueries(data.release.id);
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, 'Не удалось обновить рецензию');
+      handleApiError(error, t('admin.review.updateError'));
       onError?.(error);
     },
     onSettled,

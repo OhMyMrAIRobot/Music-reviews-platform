@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { UserFavReleaseAPI } from '../../../api/release/user-fav-release-api';
 import { leaderboardKeys } from '../../../query-keys/leaderboard-keys';
 import { profilesKeys } from '../../../query-keys/profiles-keys';
@@ -24,6 +25,7 @@ export const useToogleFavRelease = (
   release: Release | undefined,
   isFav: boolean
 ): UseToggleFavResult => {
+  const { t } = useTranslation();
   const { authStore, notificationStore } = useStore();
   const { checkAuth } = useAuth();
   const handleApiError = useApiErrorHandler();
@@ -54,8 +56,8 @@ export const useToogleFavRelease = (
     onSuccess: () => {
       notificationStore.addSuccessNotification(
         isFav
-          ? 'Релиз успешно удален из понравившихся!'
-          : 'Релиз успешно добавлен в понравившиеся!'
+          ? t('mutations.toggleFav.release.removeSuccess')
+          : t('mutations.toggleFav.release.addSuccess')
       );
       invalidateRelatedQueries();
     },
@@ -63,8 +65,8 @@ export const useToogleFavRelease = (
       handleApiError(
         error,
         isFav
-          ? 'Не удалось убрать релиз из понравившихся!'
-          : 'Не удалось добавить релиз в понравившиеся!'
+          ? t('mutations.toggleFav.release.removeError')
+          : t('mutations.toggleFav.release.addError')
       );
     },
   });

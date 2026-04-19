@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { AuthorAPI } from '../../../../api/author/author-api';
 import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys';
 import { authorLikesKeys } from '../../../../query-keys/author-likes-keys';
@@ -32,6 +33,7 @@ export const useAdminCreateAuthorMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore } = useStore();
   const handleApiError = useApiErrorHandler();
   const queryClient = useQueryClient();
@@ -56,12 +58,12 @@ export const useAdminCreateAuthorMutation = ({
   const mutation = useMutation({
     mutationFn: (formData: FormData) => AuthorAPI.createAuthor(formData),
     onSuccess: () => {
-      notificationStore.addSuccessNotification('Автор успешно добавлен!');
+      notificationStore.addSuccessNotification(t('admin.author.createSuccess'));
       invalidateRelatedQueries();
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, 'Не удалось добавить автора!');
+      handleApiError(error, t('admin.author.createError'));
       onError?.(error);
     },
     onSettled,

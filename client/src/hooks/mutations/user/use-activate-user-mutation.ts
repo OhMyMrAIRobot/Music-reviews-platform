@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { AuthAPI } from '../../../api/auth-api';
 import { UseMutationParams } from '../../../types/common';
@@ -22,6 +23,7 @@ export const useActivateUserMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore, authStore } = useStore();
   const navigate = useNavigate();
   const { navigateToMain } = useNavigationPath();
@@ -32,13 +34,15 @@ export const useActivateUserMutation = ({
     onSuccess: (data) => {
       const { user, accessToken } = data;
       authStore.setAuthorization(user, accessToken);
-      notificationStore.addSuccessNotification('Аккаунт успешно активирован!');
+      notificationStore.addSuccessNotification(
+        t('mutations.auth.activateSuccess')
+      );
       navigate(navigateToMain);
 
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, 'Ошибка при активации аккаунта!');
+      handleApiError(error, t('mutations.auth.activateError'));
       onError?.(error);
     },
     onSettled,

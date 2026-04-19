@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { ReleaseMediaAPI } from '../../../../api/release/release-media-api';
 import { platformStatsKeys } from '../../../../query-keys/platform-stats-keys';
 import { releaseMediaKeys } from '../../../../query-keys/release-media-keys';
@@ -25,6 +26,7 @@ export const useAdminUpdateMediaMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore } = useStore();
   const handleApiError = useApiErrorHandler();
   const queryClient = useQueryClient();
@@ -46,12 +48,12 @@ export const useAdminUpdateMediaMutation = ({
       data: AdminUpdateReleaseMediaData;
     }) => ReleaseMediaAPI.adminUpdate(id, data),
     onSuccess: () => {
-      notificationStore.addSuccessNotification('Медиа успешно обновлено!');
+      notificationStore.addSuccessNotification(t('admin.media.updateSuccess'));
       invalidateRelatedQueries();
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, 'Не удалось обновить медиа!');
+      handleApiError(error, t('admin.media.updateError'));
       onError?.(error);
     },
     onSettled,

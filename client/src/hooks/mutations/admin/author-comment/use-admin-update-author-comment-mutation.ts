@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { AuthorCommentAPI } from '../../../../api/author/author-comment-api';
 import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys';
 import { UpdateAuthorCommentData } from '../../../../types/author';
@@ -15,6 +16,7 @@ export const useAdminUpdateAuthorCommentMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore } = useStore();
   const handleApiError = useApiErrorHandler();
   const queryClient = useQueryClient();
@@ -32,13 +34,13 @@ export const useAdminUpdateAuthorCommentMutation = ({
       AuthorCommentAPI.adminUpdate(id, data),
     onSuccess: () => {
       notificationStore.addSuccessNotification(
-        'Авторский комментарий успешно обновлен!'
+        t('admin.authorComment.updateSuccess')
       );
       invalidateRelatedQueries();
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, 'Не удалось обновить авторский комментарий!');
+      handleApiError(error, t('admin.authorComment.updateError'));
       onError?.(error);
     },
     onSettled,

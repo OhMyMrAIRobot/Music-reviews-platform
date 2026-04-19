@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { AuthAPI } from '../../../api/auth-api';
 import { LoginData } from '../../../types/auth';
 import { UseMutationParams } from '../../../types/common';
@@ -21,6 +22,7 @@ export const useLoginMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { authStore, notificationStore } = useStore();
   const handleApiError = useApiErrorHandler();
 
@@ -30,11 +32,13 @@ export const useLoginMutation = ({
     onSuccess: (data) => {
       const { user, accessToken } = data;
       authStore.setAuthorization(user, accessToken);
-      notificationStore.addSuccessNotification('Вы успешно вошли!');
+      notificationStore.addSuccessNotification(
+        t('mutations.auth.loginSuccess')
+      );
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, 'Ошибка при выполнении входа!');
+      handleApiError(error, t('mutations.auth.loginError'));
       onError?.(error);
     },
     onSettled,

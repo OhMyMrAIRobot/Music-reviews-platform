@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { FeedbackReplyAPI } from '../../../../api/feedback/feedback-reply-api';
 import { feedbackKeys } from '../../../../query-keys/feedback-keys';
 import { UseMutationParams } from '../../../../types/common';
@@ -20,6 +21,7 @@ export const useAdminCreateFeedbackReplyMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore } = useStore();
   const queryClient = useQueryClient();
   const handleApiError = useApiErrorHandler();
@@ -28,12 +30,14 @@ export const useAdminCreateFeedbackReplyMutation = ({
     mutationFn: (replyData: CreateFeedbackReplyData) =>
       FeedbackReplyAPI.create(replyData),
     onSuccess: () => {
-      notificationStore.addSuccessNotification('Ответ успешно отправлен!');
+      notificationStore.addSuccessNotification(
+        t('admin.feedback.replySuccess')
+      );
       queryClient.invalidateQueries({ queryKey: feedbackKeys.all });
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, 'Не удалось отправить ответ');
+      handleApiError(error, t('admin.feedback.replyError'));
       onError?.(error);
     },
     onSettled,
