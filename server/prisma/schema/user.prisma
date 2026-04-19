@@ -10,7 +10,7 @@ model User {
   role   Role   @relation(fields: [roleId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
   profile             UserProfile?
-  refreshToken        RefreshToken?
+  refreshToken        RefreshToken[]
   resetPasswordToken  ResetPasswordToken?
   review              Review[]
   userFavRelease      UserFavRelease[]
@@ -31,10 +31,12 @@ model User {
 }
 
 model RefreshToken {
-  id        String @id @default(cuid())
-  tokenHash String @map("token_hash")
+  id String @id @default(cuid())
 
-  userId String @unique @map("user_id")
+  jti       String   @unique @map("jti")
+  expiresAt DateTime @map("expires_at")
+
+  userId String @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("Refresh_tokens")
