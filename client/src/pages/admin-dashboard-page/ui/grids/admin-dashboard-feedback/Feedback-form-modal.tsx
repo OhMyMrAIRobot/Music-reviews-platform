@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FeedbackReplyAPI } from '../../../../../api/feedback/feedback-reply-api';
 import FormButton from '../../../../../components/form-elements/Form-button';
 import FormLabel from '../../../../../components/form-elements/Form-label';
@@ -19,6 +20,7 @@ import {
   FeedbackReply,
   FeedbackStatusesEnum,
 } from '../../../../../types/feedback';
+import { translateFeedbackAdminStatus } from '../../../../../utils/admin/translate-feedback-status';
 import { constraints } from '../../../../../utils/constraints';
 import { getFeedbackStatusColor } from '../../../../../utils/get-feedback-status-color';
 
@@ -29,6 +31,7 @@ interface IProps {
 }
 
 const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
+  const { t } = useTranslation();
   const { notificationStore } = useStore();
   const { statuses, isLoading: isMetaLoading } = useFeedbackMeta();
 
@@ -77,7 +80,7 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
   const updateReadStatus = () => {
     if (feedback.feedbackStatus.status !== FeedbackStatusesEnum.NEW) {
       notificationStore.addErrorNotification(
-        'Вы не можете отметить данное сообщение как прочитанное!'
+        t('adminDashboard.feedback.cannotMarkRead')
       );
       return;
     }
@@ -120,6 +123,12 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
     }
   }, [feedback, replyData]);
 
+  const modalTitle = useMemo(() => {
+    if (!showReply) return t('adminDashboard.feedback.modalViewingMessage');
+    if (!reply) return t('adminDashboard.feedback.modalComposingReply');
+    return t('adminDashboard.feedback.modalViewingReply');
+  }, [showReply, reply, t]);
+
   return (
     <ModalOverlay
       isOpen={isOpen}
@@ -135,9 +144,7 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
           className={`relative rounded-xl w-full lg:w-240 border border-white/10 bg-zinc-950 transition-transform duration-300 pb-6 max-h-full overflow-y-scroll`}
         >
           <h1 className="border-b border-white/10 text-3xl font-bold py-4 text-center">
-            {`${!reply && showReply ? 'Написание' : 'Просмотр'} ${
-              showReply ? 'ответа' : 'сообщения'
-            }`}
+            {modalTitle}
           </h1>
           {!(showReply && !reply) && (
             <div className="border-b border-white/10 px-6 py-4 flex gap-2 w-full flex-col font-medium h-38">
@@ -145,44 +152,65 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
                 <h6 className="line-clamp-1">{`Email: ${feedback.email}`}</h6>
               )}
               {!showReply && (
-                <h6 className="break-words">{`Заголовок: ${feedback.title}`}</h6>
+                <h6 className="break-words">
+                  {t('adminDashboard.feedback.titleWithValue', {
+                    value: feedback.title,
+                  })}
+                </h6>
               )}
               {showReply ? (
                 reply && (
-                  <h6>{`Ответил: ${reply.user?.nickname ?? 'Неизвестно'}`}</h6>
+                  <h6>
+                    {t('adminDashboard.feedback.repliedBy', {
+                      name:
+                        reply.user?.nickname ??
+                        t('adminDashboard.common.unknown'),
+                    })}
+                  </h6>
                 )
               ) : (
                 <h6>
-                  {`Статус: `}
+                  {t('adminDashboard.feedback.statusPrefix')}{' '}
                   <span
                     className={`${getFeedbackStatusColor(
                       feedback.feedbackStatus.status
                     )}`}
                   >
-                    {feedback.feedbackStatus.status}
+                    {translateFeedbackAdminStatus(
+                      t,
+                      feedback.feedbackStatus.status
+                    )}
                   </span>
                 </h6>
               )}
 
               {showReply ? (
                 reply && (
-                  <h6 className="break-words">{`Дата ответа: ${reply.createdAt}`}</h6>
+                  <h6 className="break-words">
+                    {t('adminDashboard.feedback.replyDate', {
+                      value: reply.createdAt,
+                    })}
+                  </h6>
                 )
               ) : (
-                <h6 className="break-words">{`Дата отправки: ${feedback.createdAt}`}</h6>
+                <h6 className="break-words">
+                  {t('adminDashboard.feedback.sentDate', {
+                    value: feedback.createdAt,
+                  })}
+                </h6>
               )}
             </div>
           )}
           {showReply && !reply ? (
             <div className="flex flex-col gap-3 px-6 py-4 h-70 max-h-70">
               <FormLabel
-                name={'Текст ответа'}
+                name={t('adminDashboard.common.replyText')}
                 htmlFor={'feedback-reply-textbox'}
                 isRequired={true}
               />
               <FormTextbox
                 id={'feedback-reply-textbox'}
-                placeholder={'Текст ответа...'}
+                placeholder={t('adminDashboard.common.replyPlaceholder')}
                 value={replyText}
                 setValue={setReplyText}
                 className="h-full"
@@ -192,7 +220,9 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
             <div className="px-6 py-4 flex gap-10 w-full h-70 max-h-70 overflow-y-scroll font-light">
               <h6 className="break-words w-full">
                 <span className="font-bold">
-                  {`Текст ${showReply ? 'ответа' : 'сообщения'}: `}
+                  {showReply
+                    ? t('adminDashboard.feedback.bodyReplyPrefix')
+                    : t('adminDashboard.feedback.bodyMessagePrefix')}
                 </span>
                 {showReply && reply ? reply.message : feedback.message}
               </h6>
@@ -207,7 +237,7 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
                   <>
                     <div className="w-full sm:w-35">
                       <FormButton
-                        title={'Отправить'}
+                        title={t('adminDashboard.common.send')}
                         isInvert={true}
                         onClick={postReply}
                         disabled={!replyText.trim() || isReplyCreating}
@@ -216,7 +246,7 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
                     </div>
                     <div className="w-full sm:w-25">
                       <FormButton
-                        title={'Назад'}
+                        title={t('adminDashboard.common.back')}
                         isInvert={false}
                         onClick={() => {
                           setShowReply(false);
@@ -230,7 +260,7 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
                   FeedbackStatusesEnum.NEW ? (
                   <div className="w-full sm:w-35">
                     <FormButton
-                      title={'Прочитано'}
+                      title={t('adminDashboard.common.markRead')}
                       isInvert={true}
                       onClick={updateReadStatus}
                       disabled={
@@ -245,8 +275,10 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
                     <FormButton
                       title={
                         reply
-                          ? `Посмотреть ${showReply ? 'сообщение' : 'ответ'}`
-                          : 'Написать ответ'
+                          ? showReply
+                            ? t('adminDashboard.feedback.viewMessage')
+                            : t('adminDashboard.feedback.viewReply')
+                          : t('adminDashboard.feedback.writeReply')
                       }
                       isInvert={true}
                       onClick={() => setShowReply(!showReply)}
@@ -259,7 +291,7 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
 
             <div className="w-full sm:w-25 sm:ml-auto">
               <FormButton
-                title={'Закрыть'}
+                title={t('adminDashboard.common.close')}
                 isInvert={false}
                 onClick={onClose}
                 disabled={isReplyCreating || isStatusUpdating}

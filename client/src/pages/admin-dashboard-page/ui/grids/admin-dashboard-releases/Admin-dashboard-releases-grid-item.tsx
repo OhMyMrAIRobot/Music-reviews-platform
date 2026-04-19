@@ -1,4 +1,5 @@
 import { FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg.tsx';
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal.tsx';
@@ -33,6 +34,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
   position,
   toggleOrder,
 }) => {
+  const { t } = useTranslation();
   const { navigateToReleaseDetails } = useNavigationPath();
 
   const [confModalOpen, setConfModalOpen] = useState<boolean>(false);
@@ -56,7 +58,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
         <>
           {confModalOpen && (
             <ConfirmationModal
-              title={'Вы действительно хотите удалить релиз?'}
+              title={t('adminDashboard.releases.deleteConfirm')}
               isOpen={confModalOpen}
               onConfirm={() => handleDelete()}
               onCancel={() => setConfModalOpen(false)}
@@ -115,21 +117,27 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
               />
 
               <span className="overflow-hidden xl:line-clamp-2 text-ellipsis text-wrap">
-                <span className="xl:hidden">Название: </span>
+                <span className="xl:hidden">
+                  {t('adminDashboard.releases.nameMobile')}
+                </span>
                 <span className="max-xl:underline underline-offset-4">
                   {release.title}
                 </span>
               </span>
             </Link>
           ) : (
-            <span className="px-4">Название релиза</span>
+            <span className="px-4">
+              {t('adminDashboard.releases.releaseTitle')}
+            </span>
           )}
         </div>
 
         <div className="xl:col-span-1 flex items-center text-ellipsis line-clamp-1 ">
           {release ? (
             <>
-              <span className="xl:hidden">Тип релиза: </span>
+              <span className="xl:hidden">
+                {t('adminDashboard.releases.typeMobile')}
+              </span>
               <div
                 className={`flex max-xl:ml-1 gap-x-1 items-center ${getReleaseTypeColor(
                   release.releaseType.type
@@ -143,14 +151,16 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
               </div>
             </>
           ) : (
-            <span>Тип релиза</span>
+            <span>{t('adminDashboard.releases.releaseType')}</span>
           )}
         </div>
 
         <div className="xl:col-span-2 text-ellipsis text-wrap ">
           {release ? (
             <>
-              <span className="xl:hidden">Дата создания: </span>
+              <span className="xl:hidden">
+                {t('adminDashboard.releases.createdAtMobile')}
+              </span>
               <span>{release.publishDate}</span>
             </>
           ) : (
@@ -158,7 +168,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
               onClick={() => toggleOrder}
               className="cursor-pointer hover:text-white flex items-center gap-x-1.5"
             >
-              <span>Дата создания</span>
+              <span>{t('adminDashboard.releases.publishDate')}</span>
               <ArrowBottomSvg
                 className={`size-3 ${
                   order === SortOrdersEnum.ASC ? 'rotate-180' : ''
@@ -171,9 +181,13 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
         <div className="xl:col-span-2 line-clamp-2 text-wrap text-ellipsis  mr-2">
           {release ? (
             <>
-              <span className="xl:hidden">Артист: </span>
+              <span className="xl:hidden">
+                {t('adminDashboard.releases.artistMobile')}
+              </span>
               {release.authors.artists.length === 0 ? (
-                <span className="opacity-50 ">Отсутствует</span>
+                <span className="opacity-50 ">
+                  {t('adminDashboard.common.missing')}
+                </span>
               ) : (
                 release.authors.artists.map((ra, idx) => (
                   <span key={ra.id}>
@@ -190,16 +204,20 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
               )}
             </>
           ) : (
-            <span>Артист</span>
+            <span>{t('adminDashboard.releases.artist')}</span>
           )}
         </div>
 
         <div className="xl:col-span-2 line-clamp-2 text-wrap text-ellipsis  mr-2">
           {release ? (
             <>
-              <span className="xl:hidden">Продюссер: </span>
+              <span className="xl:hidden">
+                {t('adminDashboard.releases.producerMobile')}
+              </span>
               {release.authors.producers.length === 0 ? (
-                <span className="opacity-50 ">Отсутствует</span>
+                <span className="opacity-50 ">
+                  {t('adminDashboard.common.missing')}
+                </span>
               ) : (
                 release.authors.producers.map((rp, idx) => (
                   <span key={rp.id}>
@@ -216,16 +234,20 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
               )}
             </>
           ) : (
-            <span>Продюссер</span>
+            <span>{t('adminDashboard.releases.producer')}</span>
           )}
         </div>
 
         <div className="xl:col-span-1 line-clamp-2 text-wrap text-ellipsis  mr-2">
           {release ? (
             <>
-              <span className="xl:hidden">Дизайнер: </span>
+              <span className="xl:hidden">
+                {t('adminDashboard.releases.designerMobile')}
+              </span>
               {release.authors.designers.length === 0 ? (
-                <span className="opacity-50 ">Отсутствует</span>
+                <span className="opacity-50 ">
+                  {t('adminDashboard.common.missing')}
+                </span>
               ) : (
                 release.authors.designers.map((rd, idx) => (
                   <span key={rd.id}>
@@ -242,7 +264,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
               )}
             </>
           ) : (
-            <span>Дизайнер</span>
+            <span>{t('adminDashboard.releases.designer')}</span>
           )}
         </div>
 
@@ -253,7 +275,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
               <AdminDeleteButton onClick={() => setConfModalOpen(true)} />
             </div>
           ) : (
-            'Действие'
+            t('adminDashboard.common.action')
           )}
         </div>
       </div>

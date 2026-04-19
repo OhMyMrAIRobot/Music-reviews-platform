@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AuthorAPI } from '../../../../../api/author/author-api.ts';
 import AuthorTypeSvg from '../../../../../components/author/author-types/Author-type-svg.tsx';
 import AdminHeader from '../../../../../components/layout/admin-header/Admin-header.tsx';
@@ -12,12 +13,14 @@ import {
   AuthorTypesFilterOptions,
 } from '../../../../../types/author/index.ts';
 import AdminFilterButton from '../../buttons/Admin-filter-button.tsx';
+import { translateAuthorTypesFilterLabel } from '../../../../../utils/author/author-types-filter-i18n';
 import AdminDashboardAuthorsGridItem from './Admin-dashboard-authors-grid-item.tsx';
 import AuthorFormModal from './Author-form-modal.tsx';
 
 const limit = 10;
 
 const AdminDashboardAuthorsGrid = () => {
+  const { t } = useTranslation();
   const [searchText, setSearchText] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [activeType, setActiveType] = useState<string>(
@@ -55,7 +58,10 @@ const AdminDashboardAuthorsGrid = () => {
 
   return (
     <div className="flex flex-col h-screen" id="admin-authors">
-      <AdminHeader title={'Авторы'} setText={setSearchText} />
+      <AdminHeader
+        title={t('adminDashboard.headers.authors')}
+        setText={setSearchText}
+      />
 
       {!isTypesLoading && (
         <AuthorFormModal
@@ -82,7 +88,7 @@ const AdminDashboardAuthorsGrid = () => {
                         type={{ id: '0', type: option }}
                         className={'size-5 mr-1'}
                       />
-                      {option}
+                      {translateAuthorTypesFilterLabel(t, option)}
                     </span>
                   }
                   isActive={activeType === option}
@@ -91,7 +97,7 @@ const AdminDashboardAuthorsGrid = () => {
               ))}
           <div className="max-sm:hidden ml-auto">
             <AdminFilterButton
-              title={'Добавить автора'}
+              title={t('adminDashboard.authors.add')}
               isActive={false}
               onClick={() => setAddModalOpen(true)}
             />
@@ -100,7 +106,7 @@ const AdminDashboardAuthorsGrid = () => {
 
         <div className="sm:hidden mt-2 text-white/80 border-b border-white/10">
           <AdminFilterButton
-            title={'Добавить автора'}
+            title={t('adminDashboard.authors.add')}
             isActive={false}
             onClick={() => setAddModalOpen(true)}
           />
@@ -113,7 +119,7 @@ const AdminDashboardAuthorsGrid = () => {
 
         {!isPending && count === 0 && (
           <span className="font-medium mx-auto mt-5 text-lg">
-            Авторы не найдены!
+            {t('adminDashboard.authors.notFound')}
           </span>
         )}
 

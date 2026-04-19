@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AuthorCommentAPI } from '../../../../api/author/author-comment-api';
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader';
 import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys';
@@ -12,6 +13,7 @@ interface IProps {
 }
 
 const ReleaseDetailsAuthorComments: FC<IProps> = ({ releaseId }) => {
+  const { t } = useTranslation();
   const query: AuthorCommentsQuery = {
     releaseId,
     sortOrder: SortOrdersEnum.DESC,
@@ -29,7 +31,9 @@ const ReleaseDetailsAuthorComments: FC<IProps> = ({ releaseId }) => {
     (isFetching || (authorComments && authorComments.length > 0)) && (
       <section className="w-full grid grid-cols-1 mt-5 lg:mt-10">
         <div className="font-bold flex items-center gap-x-5 h-full">
-          <p className="text-xl xl:text-2xl ">Комментарии авторов</p>
+          <p className="text-xl xl:text-2xl ">
+            {t('releaseDetails.authorCommentsHeading')}
+          </p>
 
           {isFetching ? (
             <SkeletonLoader className={'rounded-full size-10 lg:size-12'} />

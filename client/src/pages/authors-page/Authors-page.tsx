@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { FC, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AuthorAPI } from '../../api/author/author-api';
 import AuthorsGrid from '../../components/author/authors-grid/Authors-grid';
 import ComboBox from '../../components/buttons/Combo-box';
@@ -7,6 +8,7 @@ import SkeletonLoader from '../../components/utils/Skeleton-loader';
 import { useAuthorMeta } from '../../hooks/meta';
 import { authorsKeys } from '../../query-keys/authors-keys';
 import { AuthorsQuery, AuthorTypesFilterOptions } from '../../types/author';
+import { translateAuthorTypesFilterLabel } from '../../utils/author/author-types-filter-i18n';
 
 interface IProps {
   onlyRegistered: boolean;
@@ -15,6 +17,7 @@ interface IProps {
 const limit = 10;
 
 const AuthorsPage: FC<IProps> = ({ onlyRegistered }) => {
+  const { t } = useTranslation();
   const [selectedAuthorType, setSelectedAuthorType] = useState<string>(
     AuthorTypesFilterOptions.ALL
   );
@@ -54,7 +57,9 @@ const AuthorsPage: FC<IProps> = ({ onlyRegistered }) => {
   return (
     <>
       <h1 id="authors" className="text-2xl lg:text-3xl font-semibold">
-        {onlyRegistered ? 'Зарегистрированные авторы' : 'Авторы'}
+        {onlyRegistered
+          ? t('pages.authors.registeredOnly')
+          : t('pages.authors.allAuthors')}
       </h1>
 
       <div className="rounded-lg border border-white/10 bg-zinc-900 p-3 shadow-sm mt-5">
@@ -64,8 +69,9 @@ const AuthorsPage: FC<IProps> = ({ onlyRegistered }) => {
               options={Object.values(AuthorTypesFilterOptions)}
               onChange={setSelectedAuthorType}
               className="border border-white/10"
-              placeholder="Выберите тип автора"
+              placeholder={t('pages.authors.typePlaceholder')}
               value={selectedAuthorType}
+              formatOption={(o) => translateAuthorTypesFilterLabel(t, o)}
             />
           ) : (
             <SkeletonLoader className="size-full rounded-md" />

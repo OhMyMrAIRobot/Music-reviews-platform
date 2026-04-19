@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { observer } from 'mobx-react-lite';
 import { FC, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AuthorCommentAPI } from '../../../../api/author/author-comment-api';
 import FormButton from '../../../../components/form-elements/Form-button';
 import ConfirmationModal from '../../../../components/modals/Confirmation-modal';
@@ -21,6 +22,7 @@ interface IProps {
 }
 
 const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
+  const { t } = useTranslation();
   const { authStore } = useStore();
   const { checkAuth } = useAuth();
 
@@ -140,7 +142,7 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
     <>
       {confModalOpen && userAuthorComment && (
         <ConfirmationModal
-          title={'Вы действительно хотите удалить авторский комментарий?'}
+          title={t('releaseDetails.authorComment.deleteConfirm')}
           isOpen={confModalOpen}
           onConfirm={handleDelete}
           onCancel={() => setConfModalOpen(false)}
@@ -149,9 +151,9 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
       )}
       <div className="mt-10 mx-auto w-full">
         <h3 className="text-xl lg:text-2xl font-bold ">
-          {`${
-            userAuthorComment ? 'Редактировать' : 'Оставить'
-          } авторский комментарий`}
+          {userAuthorComment
+            ? t('releaseDetails.authorComment.formHeadingEdit')
+            : t('releaseDetails.authorComment.formHeadingLeave')}
         </h3>
         <div className="border bg-zinc-900 rounded-xl px-2.5 py-4 border-white/10 w-full max-w-200 mx-auto mt-5">
           <ReleaseDetailsReviewFormText
@@ -166,7 +168,7 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
             {userAuthorComment && (
               <div className="w-40">
                 <FormButton
-                  title={'Удалить'}
+                  title={t('releaseDetails.authorComment.delete')}
                   isInvert={false}
                   onClick={() => setConfModalOpen(true)}
                   disabled={!userAuthorComment || isPending}
@@ -177,7 +179,11 @@ const SendAuthorCommentForm: FC<IProps> = observer(({ releaseId }) => {
 
             <div className="w-40 ml-auto">
               <FormButton
-                title={userAuthorComment ? 'Изменить' : 'Отправить'}
+                title={
+                  userAuthorComment
+                    ? t('releaseDetails.authorComment.update')
+                    : t('releaseDetails.authorComment.submit')
+                }
                 isInvert={true}
                 onClick={handleSubmit}
                 disabled={isPending || !isFormValid || !hasChanges}

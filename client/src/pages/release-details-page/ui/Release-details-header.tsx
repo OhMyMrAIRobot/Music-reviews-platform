@@ -1,6 +1,7 @@
 import { Play } from 'lucide-react';
 import { observer } from 'mobx-react-lite';
 import { FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ToggleFavButton from '../../../components/buttons/Toggle-fav-button';
 import LikesCount from '../../../components/utils/Likes-count';
 import { useToogleFavRelease } from '../../../hooks/mutations';
@@ -17,6 +18,7 @@ interface IProps {
 }
 
 const ReleaseDetailsHeader: FC<IProps> = observer(({ release }) => {
+  const { t } = useTranslation();
   const { authStore } = useStore();
 
   const isFav = release.userFavRelease?.some(
@@ -92,7 +94,7 @@ const ReleaseDetailsHeader: FC<IProps> = observer(({ release }) => {
                 disabled={release.youtubeId === null || isPlayerOpen}
               >
                 <Play size={12} color="white" fill="white" />
-                <span>Слушать</span>
+                <span>{t('releaseDetails.listen')}</span>
               </button>
             </div>
             <ReleaseDetailsNominations nominations={release.nominationTypes} />

@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ReleaseAPI } from '../../../../api/release/release-api';
 import CarouselContainer from '../../../../components/carousel/Carousel-container';
 import useNavigationPath from '../../../../hooks/use-navigation-path';
@@ -20,6 +21,7 @@ const query: ReleasesQuery = {
 };
 
 const LastReleases = () => {
+  const { t } = useTranslation();
   const { navigateToReleases } = useNavigationPath();
 
   const { data, isPending } = useQuery({
@@ -36,8 +38,8 @@ const LastReleases = () => {
 
   return (
     <CarouselContainer
-      title={'Добавленные релизы'}
-      buttonTitle={'Все релизы'}
+      title={t('pages.main.lastReleases.title')}
+      buttonTitle={t('pages.main.lastReleases.all')}
       href={navigateToReleases}
       showButton={true}
       handlePrev={() => carouselRef.current?.scrollPrev()}

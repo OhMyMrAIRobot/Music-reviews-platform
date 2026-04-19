@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import ReleaseDetailsReviewFormSlider from './Release-details-review-form-slider';
 
 interface IProps {
@@ -26,11 +27,12 @@ const ReleaseDetailsReviewFormMarks: FC<IProps> = ({
   atmosphere,
   setAtmosphere,
 }) => {
+  const { t } = useTranslation();
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
       <div className="grid col-span-full px-5 pt-3 pb-5 w-full grid-cols-1 lg:grid-cols-2 2xl:grid-cols-4 gap-2 lg:gap-y-3 lg:gap-x-5 border border-[rgba(86,118,234)] bg-gradient-to-br from-[rgba(86,118,234)]/20 to-[rgba(86,118,234)]/5 rounded-xl">
         <ReleaseDetailsReviewFormSlider
-          title={'Рифмы / Образы'}
+          title={t('review.marks.rhymes')}
           value={rhymes}
           onChange={setRhymes}
           beforeColor={
@@ -39,7 +41,7 @@ const ReleaseDetailsReviewFormMarks: FC<IProps> = ({
           afterColor={''}
         />
         <ReleaseDetailsReviewFormSlider
-          title={'Структра / Ритмика'}
+          title={t('review.marks.structure')}
           value={structure}
           onChange={setStructure}
           beforeColor={
@@ -48,7 +50,7 @@ const ReleaseDetailsReviewFormMarks: FC<IProps> = ({
           afterColor={''}
         />
         <ReleaseDetailsReviewFormSlider
-          title={'Реализация стиля'}
+          title={t('review.marks.style')}
           value={realization}
           onChange={setRealization}
           beforeColor={
@@ -57,7 +59,7 @@ const ReleaseDetailsReviewFormMarks: FC<IProps> = ({
           afterColor={''}
         />
         <ReleaseDetailsReviewFormSlider
-          title={'Индивидуальность / Харизма'}
+          title={t('review.marks.individuality')}
           value={individuality}
           onChange={setIndividuality}
           beforeColor={
@@ -68,7 +70,7 @@ const ReleaseDetailsReviewFormMarks: FC<IProps> = ({
       </div>
       <div className="col-span-full px-5 pt-3 pb-5 w-full rounded-xl border border-[rgba(160,80,222)] bg-gradient-to-br from-[rgba(160,80,222)]/20 to-[rgba(160,80,222)]/5">
         <ReleaseDetailsReviewFormSlider
-          title={'Атмосфера / Вайб'}
+          title={t('review.marks.atmosphere')}
           value={atmosphere}
           onChange={setAtmosphere}
           beforeColor={

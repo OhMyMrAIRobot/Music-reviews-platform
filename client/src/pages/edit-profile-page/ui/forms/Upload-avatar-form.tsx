@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import FormButton from '../../../../components/form-elements/Form-button';
 import { useUpdateProfileMutation } from '../../../../hooks/mutations';
 import { useAuth } from '../../../../hooks/use-auth';
@@ -10,6 +11,7 @@ import SelectImageLabel from '../labels/Select-image-label';
 import SelectedImageLabel from '../labels/Selected-image-label';
 
 const UploadAvatarForm = observer(() => {
+  const { t } = useTranslation();
   const { authStore, notificationStore } = useStore();
   const { checkAuth } = useAuth();
 
@@ -68,7 +70,9 @@ const UploadAvatarForm = observer(() => {
     if (!checkAuth() || isPending) return;
 
     if (!file) {
-      notificationStore.addErrorNotification('Выберите изображение!');
+      notificationStore.addErrorNotification(
+        t('pages.editProfile.pickImageError')
+      );
       return;
     }
     const formData = buildProfileFormData({ avatar: file });
@@ -86,7 +90,7 @@ const UploadAvatarForm = observer(() => {
   };
 
   return (
-    <EditProfilePageSection title="Аватар">
+    <EditProfilePageSection title={t('pages.editProfile.avatar')}>
       <div className="w-full sm:w-[250px]">
         <div className="w-full">
           <SelectImageLabel htmlfor="avatar" />
@@ -123,7 +127,11 @@ const UploadAvatarForm = observer(() => {
         <div className="grid grid-cols-1 sm:flex justify-between gap-2 w-full">
           <div className="w-full sm:w-38">
             <FormButton
-              title={isUploading ? 'Сохранение...' : 'Сохранить'}
+              title={
+                isUploading
+                  ? t('pages.editProfile.saving')
+                  : t('pages.editProfile.save')
+              }
               isInvert={true}
               onClick={handleSubmit}
               disabled={!file || isPending}
@@ -133,7 +141,11 @@ const UploadAvatarForm = observer(() => {
 
           <div className="w-full sm:w-42">
             <FormButton
-              title={isDeleting ? 'Удаление...' : 'Удалить аватар'}
+              title={
+                isDeleting
+                  ? t('pages.editProfile.deleting')
+                  : t('pages.editProfile.removeAvatar')
+              }
               isInvert={false}
               onClick={handleDelete}
               disabled={authStore.profile?.avatar === '' || isPending}

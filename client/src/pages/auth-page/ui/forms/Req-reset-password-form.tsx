@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import FormButton from '../../../../components/form-elements/Form-button';
 import FormInput from '../../../../components/form-elements/Form-input';
 import FormLabel from '../../../../components/form-elements/Form-label';
@@ -8,6 +9,7 @@ import { useRequestResetPasswordMutation } from '../../../../hooks/mutations/use
 import { constraints } from '../../../../utils/constraints';
 
 const ReqResetPasswordForm = () => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState<string>('');
 
   const { mutateAsync: sendRequest, isPending: isLoading } =
@@ -39,18 +41,14 @@ const ReqResetPasswordForm = () => {
   return (
     <div className="grid w-full sm:w-[330px] gap-4">
       <div className="grid gap-1">
-        <FormTitle title={'Забыли пароль?'} />
-        <FormSubTitle
-          title={
-            'Введите ваш адрес электронной почты для восстановления пароля'
-          }
-        />
+        <FormTitle title={t('authForms.requestReset.title')} />
+        <FormSubTitle title={t('authForms.requestReset.subtitle')} />
       </div>
       <div className="grid gap-2">
-        <FormLabel name={'Email'} htmlFor={'email'} />
+        <FormLabel name={t('authForms.login.emailLabel')} htmlFor={'email'} />
         <FormInput
           id={'email'}
-          placeholder={'mail@example.com'}
+          placeholder={t('authForms.requestReset.emailPlaceholder')}
           type={'email'}
           value={email}
           setValue={setEmail}
@@ -58,7 +56,11 @@ const ReqResetPasswordForm = () => {
       </div>
 
       <FormButton
-        title={isLoading ? 'Отправка...' : 'Отправить письмо с инструкциями'}
+        title={
+          isLoading
+            ? t('authForms.requestReset.loading')
+            : t('authForms.requestReset.submit')
+        }
         onClick={onSubmit}
         isInvert={true}
         disabled={isLoading || !isFormValid}

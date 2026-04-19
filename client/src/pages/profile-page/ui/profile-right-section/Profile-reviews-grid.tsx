@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import Pagination from '../../../../components/pagination/Pagination.tsx';
 import ReviewCard from '../../../../components/review/review-card/Review-card.tsx';
 import { Review } from '../../../../types/review/index.ts';
@@ -15,6 +16,7 @@ interface IProps {
 
 const ProfileReviewsGrid: FC<IProps> = observer(
   ({ items, total, currentPage, setCurrentPage, perPage, isLoading }) => {
+    const { t } = useTranslation();
     return (
       <section>
         <div className="gap-5 grid grid-cols-1 select-none">
@@ -36,7 +38,7 @@ const ProfileReviewsGrid: FC<IProps> = observer(
 
         {!isLoading && items.length === 0 && (
           <p className="text-center text-2xl font-semibold mt-10">
-            Рецензии не найдены!
+            {t('pages.profile.reviewsNotFound')}
           </p>
         )}
 

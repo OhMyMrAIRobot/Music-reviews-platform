@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AuthorConfirmationAPI } from '../../../../../api/author/author-confirmation-api';
 import AuthorConfirmationStatusIcon from '../../../../../components/author/author-confirmation/Author-confirmation-status-icon';
 import AdminHeader from '../../../../../components/layout/admin-header/Admin-header';
@@ -11,12 +12,14 @@ import { AuthorConfirmationStatusesFilterOptions } from '../../../../../types/au
 import { AuthorConfirmationsQuery } from '../../../../../types/author/queries/author-confirmations-query';
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum';
 import { SortOrder } from '../../../../../types/common/types/sort-order';
+import { translateAuthorConfirmationStatusesFilterLabel } from '../../../../../utils/admin/translate-author-confirmation-status-i18n';
 import AdminFilterButton from '../../buttons/Admin-filter-button';
 import AdminDashboardAuthorConfirmationGridItem from './Admin-dashboard-author-confirmation-grid-item';
 
 const limit = 10;
 
 const AdminDashboardAuthorConfirmationGrid = () => {
+  const { t } = useTranslation();
   const [searchText, setSearchText] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [status, setStatus] = useState<AuthorConfirmationStatusesFilterOptions>(
@@ -56,7 +59,10 @@ const AdminDashboardAuthorConfirmationGrid = () => {
 
   return (
     <div className="flex flex-col h-screen" id="admin-author-confirmations">
-      <AdminHeader title={'Верификация авторов'} setText={setSearchText} />
+      <AdminHeader
+        title={t('adminDashboard.headers.authorVerification')}
+        setText={setSearchText}
+      />
 
       <div
         id="admin-author-confirmations-grid"
@@ -80,7 +86,10 @@ const AdminDashboardAuthorConfirmationGrid = () => {
                           status={option}
                           className={'size-5 mr-1'}
                         />
-                        {option}
+                        {translateAuthorConfirmationStatusesFilterLabel(
+                          t,
+                          option
+                        )}
                       </span>
                     }
                     isActive={status === option}
@@ -105,7 +114,7 @@ const AdminDashboardAuthorConfirmationGrid = () => {
 
         {!isConfirmationsLoading && confirmations.length === 0 && (
           <span className="font-medium mx-auto mt-5 text-lg">
-            Заявки на верификацию не найдены!
+            {t('adminDashboard.authorConfirmation.notFound')}
           </span>
         )}
 

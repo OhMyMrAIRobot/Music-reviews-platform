@@ -1,4 +1,5 @@
 import { FC, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import FormButton from '../../../../../components/form-elements/Form-button';
 import FormInput from '../../../../../components/form-elements/Form-input';
 import FormLabel from '../../../../../components/form-elements/Form-label';
@@ -15,6 +16,7 @@ interface IProps {
 }
 
 const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
+  const { t } = useTranslation();
   const [title, setTitle] = useState<string>(comment.title);
   const [text, setText] = useState<string>(comment.text);
 
@@ -76,18 +78,20 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
       >
         <div className="size-full flex flex-col gap-6">
           <h1 className="border-b border-white/10 text-3xl font-bold py-4 text-center">
-            Редактирование авторского комментария
+            {t('adminDashboard.authorComments.editModalTitle')}
           </h1>
 
           <div className="grid gap-2">
             <FormLabel
-              name={'Заголовок'}
+              name={t('adminDashboard.authorComments.headline')}
               htmlFor={'comment-title-input'}
               isRequired={false}
             />
             <FormInput
               id={'comment-title-input'}
-              placeholder={'Заголовок...'}
+              placeholder={t(
+                'adminDashboard.authorComments.headlinePlaceholder'
+              )}
               type={'text'}
               value={title}
               setValue={setTitle}
@@ -96,13 +100,15 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
 
           <div className="flex-1 flex flex-col gap-2">
             <FormLabel
-              name={'Комментарий'}
+              name={t('adminDashboard.authorComments.commentLabel')}
               htmlFor={'comment-text-input'}
               isRequired={false}
             />
             <FormTextbox
               id={'comment-text-input'}
-              placeholder={'Комментарий...'}
+              placeholder={t(
+                'adminDashboard.authorComments.commentPlaceholder'
+              )}
               value={text}
               setValue={setText}
               className="h-full min-h-30 lg:h-60"
@@ -112,7 +118,7 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
           <div className="grid sm:flex gap-3 sm:justify-start">
             <div className="w-full sm:w-30">
               <FormButton
-                title={'Сохранить'}
+                title={t('adminDashboard.common.save')}
                 isInvert={true}
                 onClick={updateComment}
                 disabled={!hasChanges || isPending || !isFormValid}
@@ -122,7 +128,7 @@ const AuthorCommentFormModal: FC<IProps> = ({ isOpen, onClose, comment }) => {
 
             <div className="w-full sm:w-25">
               <FormButton
-                title={'Назад'}
+                title={t('adminDashboard.common.back')}
                 isInvert={false}
                 onClick={onClose}
                 disabled={isPending}

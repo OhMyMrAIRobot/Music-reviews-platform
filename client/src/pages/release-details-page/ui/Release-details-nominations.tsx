@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import NominationIconSvg from '../../../components/nomination/Nomination-icon-svg';
 import Tooltip from '../../../components/tooltip/Tooltip';
 import TooltipSpan from '../../../components/tooltip/Tooltip-span';
@@ -8,11 +9,12 @@ interface IProps {
 }
 
 const ReleaseDetailsNominations: FC<IProps> = ({ nominations }) => {
+  const { t } = useTranslation();
   return (
     nominations.length > 0 && (
       <div className="flex lg:flex-col w-fit lg:items-end max-lg:bg-zinc-900 max-lg:py-1.5 max-lg:px-4 items-center gap-x-3 max-lg:rounded-2xl max-lg:border max-lg:border-white/10">
         <span className="text-xs lg:text-sm lg:bg-zinc-800 lg:mb-2.5 lg:py-1 lg:px-3 rounded-md font-semibold">
-          Номинации
+          {t('releaseDetails.nominationsHeading')}
         </span>
         <div className="flex lg:justify-end gap-1.5">
           {nominations.map((nomination, idx) => (

@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ReleaseAPI } from '../../../api/release/release-api';
 import ReleasesColumn from '../../../components/release/releases-column/Releases-column';
 import { releasesKeys } from '../../../query-keys/releases-keys';
@@ -15,6 +16,7 @@ interface IProps {
 }
 
 const AuthorDetailsReleases: FC<IProps> = ({ id }) => {
+  const { t } = useTranslation();
   const query: ReleasesQuery = {
     authorId: id,
     sortField: ReleasesSortFieldsEnum.PUBLISHED,
@@ -39,16 +41,18 @@ const AuthorDetailsReleases: FC<IProps> = ({ id }) => {
 
   return (
     <section className="flex flex-col gap-y-2">
-      <h2 className="text-lg lg:text-2xl font-semibold">Релизы автора</h2>
+      <h2 className="text-lg lg:text-2xl font-semibold">
+        {t('releaseDetails.author.releasesTitle')}
+      </h2>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <ReleasesColumn
-          title={'Треки'}
+          title={t('releaseDetails.author.singles')}
           releases={tracks}
           isLoading={isPending}
         />
 
         <ReleasesColumn
-          title={'Альбомы'}
+          title={t('releaseDetails.author.albums')}
           releases={albums}
           isLoading={isPending}
         />

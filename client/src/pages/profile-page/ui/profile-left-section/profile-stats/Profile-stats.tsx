@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import AuthorCommentColorSvg from '../../../../../components/author/author-comment/svg/Author-comment-color-svg';
 import AuthorLikeColorSvg from '../../../../../components/author/author-like/svg/Author-like-color-svg';
@@ -16,6 +17,7 @@ interface IProps {
 }
 
 const ProfileStats: FC<IProps> = ({ profile }) => {
+  const { t } = useTranslation();
   const level = getUserLevel(profile.points);
 
   const { navigateToLeaderboard } = useNavigationPath();
@@ -58,23 +60,27 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
             >
               {profile.points}
             </div>
-            <p className="text-[13px] font-medium">баллов сообщества</p>
+            <p className="text-[13px] font-medium">
+              {t('pages.profile.communityPoints')}
+            </p>
           </div>
 
           {profile.rank ? (
             <div className="flex items-center space-x-2 select-none">
               <div className="min-w-max shadow-lg shadow-red-600/50 px-1.5 h-[21px] leading-[19px] font-bold border border-red-500  rounded-full bg-red-600 text-[13px]">
-                ТОП {profile.rank}
+                {t('pages.profile.topRank', { rank: profile.rank })}
               </div>
 
               <p className="text-[13px] text-white/90 hover:text-white transition-all duration-200 underline underline-offset-4 hover:border-white cursor-pointer font-medium">
-                <Link to={navigateToLeaderboard}>в ТОП-90</Link>
+                <Link to={navigateToLeaderboard}>
+                  {t('pages.profile.inTop90')}
+                </Link>
               </p>
             </div>
           ) : (
             <div className="text-[13px] underline underline-offset-4 text-white/90 hover:text-white duration-200 transition-all cursor-pointer">
               <Link to={navigateToLeaderboard}>
-                Таблица ТОП-90 по баллам сообщества
+                {t('pages.profile.top90Title')}
               </Link>
             </div>
           )}
@@ -84,12 +90,12 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
       {profile.user.isAuthor && (
         <div>
           <ProfileStatsRow
-            title={'Написано авторских комментариев'}
+            title={t('pages.profile.authorCommentsWritten')}
             value={profile.stats.authorCommentsCount}
             icon={<AuthorCommentColorSvg className={'size-5'} />}
           />
           <ProfileStatsRow
-            title={'Поставлено авторских лайков'}
+            title={t('pages.profile.authorLikesGiven')}
             value={profile.stats.givenAuthorLikes}
             icon={<AuthorLikeColorSvg className={'size-5'} />}
           />
@@ -103,12 +109,12 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
 
       <div>
         <ProfileStatsRow
-          title={'Рецензий'}
+          title={t('pages.profile.reviews')}
           value={profile.stats.textCount}
           icon={<TextReviewSvg className={'size-5'} />}
         />
         <ProfileStatsRow
-          title={'Оценок без рецензий'}
+          title={t('pages.profile.marksNoReview')}
           value={profile.stats.withoutTextCount}
           icon={<NoTextReviewSvg className={'size-5'} />}
         />
@@ -121,17 +127,17 @@ const ProfileStats: FC<IProps> = ({ profile }) => {
 
       <div>
         <ProfileStatsRow
-          title={'Получено авторских лайков'}
+          title={t('pages.profile.authorLikesReceived')}
           value={profile.stats.receivedAuthorLikes}
           icon={<AuthorLikeColorSvg className={'size-5'} />}
         />
         <ProfileStatsRow
-          title={'Получено лайков'}
+          title={t('pages.profile.likesReceived')}
           value={profile.stats.receivedLikes}
           icon={<PixelHeartSvg className={'w-5 h-4.5'} />}
         />
         <ProfileStatsRow
-          title={'Поставлено лайков'}
+          title={t('pages.profile.likesGiven')}
           value={profile.stats.givenLikes}
           icon={<PixelHeartFillSvg className={'w-5 h-4.5'} />}
         />

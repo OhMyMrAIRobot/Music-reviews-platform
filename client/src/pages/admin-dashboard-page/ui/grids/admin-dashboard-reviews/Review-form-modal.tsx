@@ -1,4 +1,5 @@
 import { FC, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import FormButton from '../../../../../components/form-elements/Form-button';
 import FormInput from '../../../../../components/form-elements/Form-input';
 import FormLabel from '../../../../../components/form-elements/Form-label';
@@ -16,6 +17,7 @@ interface IProps {
 }
 
 const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
+  const { t } = useTranslation();
   const { checkAuth } = useAuth();
 
   const [title, setTitle] = useState<string>(review.title ?? '');
@@ -93,18 +95,18 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
       >
         <div className="size-full flex flex-col space-y-6">
           <h1 className="border-b border-white/10 text-3xl font-bold py-4 text-center">
-            Редактирование рецензии
+            {t('adminDashboard.reviewForm.editTitle')}
           </h1>
 
           <div className="flex flex-col gap-2">
             <FormLabel
-              name={'Заголовок'}
+              name={t('adminDashboard.reviewForm.headline')}
               htmlFor={'review-title-input'}
               isRequired={false}
             />
             <FormInput
               id={'review-title-input'}
-              placeholder={'Заголовок рецензии...'}
+              placeholder={t('adminDashboard.reviewForm.headlinePlaceholder')}
               type={'text'}
               value={title}
               setValue={setTitle}
@@ -113,13 +115,13 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
 
           <div className="flex flex-col flex-1 gap-2">
             <FormLabel
-              name={'Текст рецензии'}
+              name={t('adminDashboard.reviewForm.textLabel')}
               htmlFor={'review-text-input'}
               isRequired={false}
             />
             <FormTextbox
               id={'review-text-input'}
-              placeholder={'Текст рецензии...'}
+              placeholder={t('adminDashboard.reviewForm.textPlaceholder')}
               value={text}
               setValue={setText}
               className="h-full min-h-30 lg:h-60"
@@ -129,7 +131,7 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
           <div className="w-full grid grid-rows-2 sm:flex gap-3 sm:justify-start">
             <div className="w-full sm:w-30">
               <FormButton
-                title={'Сохранить'}
+                title={t('adminDashboard.common.save')}
                 isInvert={true}
                 onClick={handleSubmit}
                 disabled={!hasChanges || !isFormValid || isPending}
@@ -139,7 +141,7 @@ const ReviewFormModal: FC<IProps> = ({ review, isOpen, onClose }) => {
 
             <div className="w-full sm:w-25">
               <FormButton
-                title={'Назад'}
+                title={t('adminDashboard.common.back')}
                 isInvert={false}
                 onClick={onClose}
                 disabled={isPending}

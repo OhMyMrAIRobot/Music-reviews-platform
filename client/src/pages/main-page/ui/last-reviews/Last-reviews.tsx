@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ReviewAPI } from '../../../../api/review/review-api';
 import CarouselContainer from '../../../../components/carousel/Carousel-container';
 import LastReviewsCarousel from '../../../../components/carousel/Last-reviews-carousel';
@@ -18,6 +19,7 @@ const query: ReviewsQuery = {
 };
 
 const LastReviews = () => {
+  const { t } = useTranslation();
   const { navigateToReviews } = useNavigationPath();
 
   const { data, isPending } = useQuery({
@@ -34,8 +36,8 @@ const LastReviews = () => {
 
   return (
     <CarouselContainer
-      title={'Новые рецензии'}
-      buttonTitle={'Все рецензии'}
+      title={t('pages.main.lastReviews.title')}
+      buttonTitle={t('pages.main.lastReviews.all')}
       showButton={true}
       href={navigateToReviews}
       handlePrev={() => carouselRef.current?.scrollPrev()}

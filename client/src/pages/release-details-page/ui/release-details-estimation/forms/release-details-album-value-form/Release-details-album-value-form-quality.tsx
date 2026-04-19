@@ -1,5 +1,7 @@
 import { observer } from 'mobx-react-lite';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { getAlbumValueFormStrings } from '../../../../../../utils/album-value';
 import ReleaseDetailsAlbumValueFormSlider from './Release-details-album-value-form-slider';
 import ReleaseDetailsAlbumValueSection from './Release-details-album-value-section';
 
@@ -25,34 +27,35 @@ const ReleaseDetailsAlbumValueFormQuality: FC<IProps> = observer(
     individuality,
     setIndividuality,
   }) => {
+    const { i18n, t } = useTranslation();
+    const s = useMemo(
+      () => getAlbumValueFormStrings(i18n.language),
+      [i18n.language]
+    );
+
     return (
       <ReleaseDetailsAlbumValueSection
         pos={4}
-        title={'Качество'}
-        minMaxText={'(в процентах)'}
-        description={
-          <p>
-            Процент реализации релиза по четырем базовым критериям
-            («рифмы/образы», «структура/ритмика», «реализация стиля»,
-            «индивидуальность/харизма»), где 1 балл за базовый критерий = 2,5%
-          </p>
-        }
+        title={t('albumValue.quality')}
+        minMaxText={s.quality.sectionMinMax}
+        description={<p>{s.quality.description}</p>}
         value={`${(rhymes + structure + realization + individuality) * 2.5}%`}
         maxValue={'100%'}
       >
         <div className="bg-zinc-800 rounded-lg xl:ml-10 px-5 py-3 border border-zinc-700">
           <div className="font-bold text-center mb-5">
-            Базовые критерии 90-бальной системы оценивания релизов
-            <span className="opacity-60"> (от 4 до 40)</span>
+            {s.quality.blockTitle}
+            <span className="opacity-60"> {s.quality.blockSubtitle}</span>
           </div>
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-6 gap-y-2 xl:gap-y-4">
             <ReleaseDetailsAlbumValueFormSlider
               value={rhymes}
               setValue={setRhymes}
-              title="Рифмы / Образы"
+              title={t('review.marks.rhymes')}
               min={1}
               max={10}
               step={1}
+              rangeTemplate={s.sliderRange}
               valueTitle={''}
               valueDescription={''}
             />
@@ -60,10 +63,11 @@ const ReleaseDetailsAlbumValueFormQuality: FC<IProps> = observer(
             <ReleaseDetailsAlbumValueFormSlider
               value={structure}
               setValue={setStructure}
-              title="Структура / Ритмика"
+              title={t('review.marks.structure')}
               min={1}
               max={10}
               step={1}
+              rangeTemplate={s.sliderRange}
               valueTitle={''}
               valueDescription={''}
             />
@@ -71,10 +75,11 @@ const ReleaseDetailsAlbumValueFormQuality: FC<IProps> = observer(
             <ReleaseDetailsAlbumValueFormSlider
               value={realization}
               setValue={setRealization}
-              title="Реализация стиля"
+              title={t('review.marks.style')}
               min={1}
               max={10}
               step={1}
+              rangeTemplate={s.sliderRange}
               valueTitle={''}
               valueDescription={''}
             />
@@ -82,10 +87,11 @@ const ReleaseDetailsAlbumValueFormQuality: FC<IProps> = observer(
             <ReleaseDetailsAlbumValueFormSlider
               value={individuality}
               setValue={setIndividuality}
-              title="Индивидуальность / Харизма"
+              title={t('review.marks.individuality')}
               min={1}
               max={10}
               step={1}
+              rangeTemplate={s.sliderRange}
               valueTitle={''}
               valueDescription={''}
             />

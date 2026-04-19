@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ReviewAPI } from '../../api/review/review-api';
 import ComboBox from '../../components/buttons/Combo-box';
 import Pagination from '../../components/pagination/Pagination';
@@ -11,10 +12,12 @@ import {
   ReviewsQuery,
   ReviewsSortFieldsEnum,
 } from '../../types/review';
+import { translateReviewSortField } from '../../utils/review/review-sort-i18n';
 
 const limit = 12;
 
 const ReviewsPage = () => {
+  const { t } = useTranslation();
   const [selectedOrder, setSelectedOrder] = useState<string>(
     ReviewSortFields.NEW
   );
@@ -53,12 +56,12 @@ const ReviewsPage = () => {
   return (
     <>
       <h1 id="reviews" className="text-2xl lg:text-3xl font-semibold">
-        Рецензии пользователей
+        {t('pages.reviews.title')}
       </h1>
 
       <div className="rounded-lg border border-white/10 bg-zinc-900 p-3 shadow-sm mt-5 grid md:flex gap-x-4 items-center">
         <span className="text-sm md:text-base text-white/70 font-bold max-md:pb-1">
-          Сортировать по:
+          {t('pages.reviews.sortBy')}
         </span>
         <div className="w-full sm:w-55">
           <ComboBox
@@ -69,6 +72,7 @@ const ReviewsPage = () => {
             }}
             className="border border-white/10"
             value={selectedOrder}
+            formatOption={(o) => translateReviewSortField(t, o)}
           />
         </div>
       </div>
@@ -84,7 +88,7 @@ const ReviewsPage = () => {
               ))}
           {items.length === 0 && !isPending && (
             <p className="text-center text-2xl font-semibold mt-10 w-full absolute">
-              Рецензии не найдены!
+              {t('pages.reviews.notFound')}
             </p>
           )}
         </div>

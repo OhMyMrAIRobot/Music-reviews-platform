@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import AuthorCommentColorSvg from '../../../../../components/author/author-comment/svg/Author-comment-color-svg';
 import AuthorLikeColorSvg from '../../../../../components/author/author-like/svg/Author-like-color-svg';
@@ -15,6 +16,7 @@ interface IProps {
 }
 
 const MostReviewedSwiperCard: FC<IProps> = ({ release, index }) => {
+  const { t } = useTranslation();
   const { navigateToReleaseDetails } = useNavigationPath();
 
   return (
@@ -23,7 +25,7 @@ const MostReviewedSwiperCard: FC<IProps> = ({ release, index }) => {
         {/* COVER */}
         <div className="flex flex-col items-center gap-2 relative w-full">
           <span className="font-semibold absolute left-3 top-3 lg:left-4 lg:top-4 bg-black/10 text-white backdrop-blur-md text-[12px] lg:text-[13px] h-7 rounded-full px-3 flex items-center">
-            Топ-{index + 1} за сутки
+            {t('pages.main.mostReviewedCard.topForDay', { rank: index + 1 })}
           </span>
 
           <ReleaseTypeIcon
@@ -75,7 +77,7 @@ const MostReviewedSwiperCard: FC<IProps> = ({ release, index }) => {
 
             <div className="flex items-center justify-between w-full">
               <span className="leading-5 font-semibold text-xs lg:text-sm">
-                Автор прокомментировал релиз
+                {t('pages.main.mostReviewedCard.authorCommented')}
               </span>
               <AuthorCommentColorSvg className="size-5 lg:size-7" />
             </div>
@@ -90,7 +92,7 @@ const MostReviewedSwiperCard: FC<IProps> = ({ release, index }) => {
 
             <div className="flex items-center justify-between w-full">
               <span className="leading-5 font-semibold text-xs lg:text-sm">
-                Автор поставил лайки на рецензии
+                {t('pages.main.mostReviewedCard.authorLikedReviews')}
               </span>
               <AuthorLikeColorSvg className="size-5 lg:size-7" />
             </div>
@@ -102,7 +104,7 @@ const MostReviewedSwiperCard: FC<IProps> = ({ release, index }) => {
             to={navigateToReleaseDetails(release.id)}
             className="h-full text-white flex items-center justify-center border border-white bg-black hover:text-black hover:bg-white transition-colors duration-200 rounded-full w-[65%] text-xs 2xl:text-base font-semibold"
           >
-            Написать рецензию...
+            {t('pages.main.mostReviewedCard.writeReview')}
           </Link>
 
           <Link

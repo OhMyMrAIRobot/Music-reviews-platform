@@ -1,4 +1,5 @@
 import { FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg';
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal';
@@ -29,6 +30,7 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = ({
   order,
   toggleOrder,
 }) => {
+  const { t } = useTranslation();
   const { navigateToReleaseDetails, navigatoToProfile } = useNavigationPath();
 
   const { mutateAsync, isPending } = useAdminRemoveAuthorCommentMutation({
@@ -48,7 +50,7 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = ({
         <>
           {confModalOpen && (
             <ConfirmationModal
-              title={'Вы действительно хотите удалить авторский комментарий?'}
+              title={t('adminDashboard.authorComments.deleteConfirm')}
               isOpen={confModalOpen}
               onConfirm={() => mutateAsync(comment.id)}
               onCancel={() => setConfModalOpen(false)}
@@ -91,13 +93,17 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = ({
                 alt={comment.user.nickname}
                 className="max-xl:hidden size-9 object-cover aspect-square rounded-full select-none"
               />
-              <span className="xl:hidden">Автор</span>
+              <span className="xl:hidden">
+                {t('adminDashboard.authorComments.authorMobile')}
+              </span>
               <span className="line-clamp-2 max-xl:underline underline-offset-4 overflow-hidden text-ellipsis text-wrap">
                 {comment.user.nickname}
               </span>
             </Link>
           ) : (
-            <span className="px-2">Автор</span>
+            <span className="px-2">
+              {t('adminDashboard.authorComments.author')}
+            </span>
           )}
         </div>
 
@@ -118,20 +124,26 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = ({
                 alt={comment.release.title}
                 className="max-xl:hidden size-9 object-cover aspect-square rounded-full select-none"
               />
-              <span className="xl:hidden">Релиз: </span>
+              <span className="xl:hidden">
+                {t('adminDashboard.authorComments.releaseMobile')}
+              </span>
               <span className="line-clamp-2 max-xl:underline underline-offset-4 overflow-hidden text-ellipsis text-wrap">
                 {comment.release.title}
               </span>
             </Link>
           ) : (
-            <span className="px-2">Релиз</span>
+            <span className="px-2">
+              {t('adminDashboard.authorComments.release')}
+            </span>
           )}
         </div>
 
         <div className="xl:col-span-2 text-ellipsis text-wrap xl:">
           {comment ? (
             <>
-              <span className="xl:hidden">Дата публикации: </span>
+              <span className="xl:hidden">
+                {t('adminDashboard.authorComments.publishedAtMobile')}
+              </span>
               <span>{comment.createdAt}</span>
             </>
           ) : (
@@ -139,7 +151,7 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = ({
               onClick={toggleOrder}
               className="cursor-pointer hover:text-white flex items-center gap-x-1.5"
             >
-              <span>Дата публикации</span>
+              <span>{t('adminDashboard.authorComments.publishedAt')}</span>
               <ArrowBottomSvg
                 className={`size-3 ${
                   order === SortOrdersEnum.ASC ? 'rotate-180' : ''
@@ -152,22 +164,26 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = ({
         <div className="xl:col-span-2 line-clamp-2 overflow-hidden text-ellipsis text-wrap mr-2">
           {comment ? (
             <>
-              <span className="xl:hidden">Заголовок: </span>
+              <span className="xl:hidden">
+                {t('adminDashboard.authorComments.titleMobile')}
+              </span>
               <span>{comment.title}</span>
             </>
           ) : (
-            <span>Заголовок</span>
+            <span>{t('adminDashboard.authorComments.headline')}</span>
           )}
         </div>
 
         <div className="xl:col-span-2 line-clamp-2 overflow-hidden text-ellipsis text-wrap">
           {comment ? (
             <>
-              <span className="xl:hidden">Комментарий: </span>
+              <span className="xl:hidden">
+                {t('adminDashboard.authorComments.commentMobile')}
+              </span>
               <span>{comment.text}</span>
             </>
           ) : (
-            <span>Комментарий</span>
+            <span>{t('adminDashboard.authorComments.commentLabel')}</span>
           )}
         </div>
 
@@ -182,7 +198,7 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = ({
               <AdminDeleteButton onClick={() => setConfModalOpen(true)} />
             </div>
           ) : (
-            'Действие'
+            t('adminDashboard.common.action')
           )}
         </div>
       </div>

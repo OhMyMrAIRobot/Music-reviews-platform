@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ReviewAPI } from '../../../../api/review/review-api.ts';
 import Pagination from '../../../../components/pagination/Pagination.tsx';
 import { reviewsKeys } from '../../../../query-keys/reviews-keys.ts';
@@ -20,6 +21,7 @@ interface IProps {
 const limit = 5;
 
 const ReleaseDetailsReviews: FC<IProps> = ({ releaseId }) => {
+  const { t } = useTranslation();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [selectedSort, setSelectedSort] = useState<string>(
     ReleaseReviewSortFields.NEW
@@ -97,7 +99,7 @@ const ReleaseDetailsReviews: FC<IProps> = ({ releaseId }) => {
         </div>
       ) : (
         <div className="text-center border font-medium border-zinc-950 bg-gradient-to-br from-white/10 rounded-xl text-xs lg:sm w-full lg:max-w-[800px] sm:max-w-[600px] py-2 mx-auto">
-          <span>Нет рецензий!</span>
+          <span>{t('releaseDetails.reviews.none')}</span>
         </div>
       )}
     </section>

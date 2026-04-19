@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import FormButton from '../../../../components/form-elements/Form-button';
 import FormCheckbox from '../../../../components/form-elements/Form-checkbox';
 import FormInput from '../../../../components/form-elements/Form-input';
@@ -22,6 +23,7 @@ type RegistrationFormState = {
 };
 
 const RegistrationForm = () => {
+  const { t } = useTranslation();
   const { navigateToLogin } = useNavigationPath();
   const [formData, setFormData] = useState<RegistrationFormState>({
     email: '',
@@ -94,7 +96,7 @@ const RegistrationForm = () => {
    */
   const renderCheckbox = (
     id: keyof typeof formData,
-    linkText: string,
+    linkKey: 'userAgreementLink' | 'privacyLink',
     linkHref: string
   ) => (
     <div className="flex items-center space-x-2 select-none">
@@ -105,10 +107,10 @@ const RegistrationForm = () => {
       />
 
       <span className="text-sm font-medium">
-        Принимаю условия
+        {t('authForms.register.acceptLine1')}
         <br />
         <a href={linkHref} className="underline underline-offset-2">
-          {linkText}
+          {t(`authForms.register.${linkKey}`)}
         </a>
         <span className="text-red-500 ml-1">*</span>
       </span>
@@ -147,34 +149,47 @@ const RegistrationForm = () => {
 
   return (
     <div className="grid w-full sm:w-[350px] gap-2 py-10">
-      <FormTitle title={'Создать аккаунт'} className="text-center mb-4" />
+      <FormTitle
+        title={t('authForms.register.title')}
+        className="text-center mb-4"
+      />
       <div className="grid gap-3">
         {renderInput(
           'email',
-          'Email',
+          t('authForms.register.emailLabel'),
           'email',
-          'Ваш email',
-          'Будет также логином для авторизации'
+          t('authForms.register.emailPlaceholder'),
+          t('authForms.register.emailHint')
         )}
-        {renderInput('nickname', 'Отображаемое имя', 'text', '', 'Ваш никнейм')}
-        {renderInput('password', 'Пароль', 'password')}
-        {renderInput('passwordConfirm', 'Подтвердите пароль', 'password')}
+        {renderInput(
+          'nickname',
+          t('authForms.register.nicknameLabel'),
+          'text',
+          '',
+          t('authForms.register.nicknamePlaceholder')
+        )}
+        {renderInput(
+          'password',
+          t('authForms.register.passwordLabel'),
+          'password'
+        )}
+        {renderInput(
+          'passwordConfirm',
+          t('authForms.register.passwordConfirmLabel'),
+          'password'
+        )}
 
         <div className="my-3 grid gap-3">
-          {renderCheckbox(
-            'agreementChecked',
-            'Пользовательского соглашения',
-            '/'
-          )}
-          {renderCheckbox(
-            'policyChecked',
-            'Политики обработки персональных данных',
-            '/'
-          )}
+          {renderCheckbox('agreementChecked', 'userAgreementLink', '/')}
+          {renderCheckbox('policyChecked', 'privacyLink', '/')}
         </div>
 
         <FormButton
-          title={isLoading ? 'Регистрация...' : 'Создать аккаунт'}
+          title={
+            isLoading
+              ? t('authForms.register.loading')
+              : t('authForms.register.submit')
+          }
           isInvert={true}
           onClick={handleSubmit}
           disabled={isLoading || !isFormValid}
@@ -182,7 +197,7 @@ const RegistrationForm = () => {
         />
 
         <div className="flex justify-center items-center font-medium text-sm gap-1 mt-2 select-none">
-          <h6>Уже есть аккаунт?</h6>
+          <h6>{t('authForms.register.hasAccount')}</h6>
           <PreventableLink to={navigateToLogin} prevent={isLoading}>
             <button
               disabled={isLoading}
@@ -190,7 +205,7 @@ const RegistrationForm = () => {
                 isLoading ? 'opacity-50 pointer-events-none' : ''
               }`}
             >
-              Войти
+              {t('authForms.register.signIn')}
             </button>
           </PreventableLink>
         </div>

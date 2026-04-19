@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AuthorTypesEnum } from '../../../../types/author';
 import { Release } from '../../../../types/release';
 import ReleaseDetailsAuthorsItem from './Release-details-authors-item';
@@ -8,13 +9,14 @@ interface IProps {
 }
 
 const ReleaseDetailsAuthors: FC<IProps> = ({ release }) => {
+  const { t } = useTranslation();
   return (
     <div className="select-none mt-5 flex flex-wrap justify-center lg:justify-start gap-x-2 lg:gap-x-5 items-center lg:-ml-3">
       {!release.authors.artists.length &&
         !release.authors.producers.length &&
         !release.authors.designers.length && (
           <span className="text-sm opacity-50 font-medium ml-3">
-            Автор не указан!
+            {t('release.authorNotSpecified')}
           </span>
         )}
 

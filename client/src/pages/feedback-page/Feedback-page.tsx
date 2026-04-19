@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import FormButton from '../../components/form-elements/Form-button';
 import FormInput from '../../components/form-elements/Form-input';
 import FormLabel from '../../components/form-elements/Form-label';
@@ -10,6 +11,7 @@ import { CreateFeedbackData } from '../../types/feedback';
 import { constraints } from '../../utils/constraints';
 
 const FeedbackPage = () => {
+  const { t } = useTranslation();
   const [feedbackData, setFeedbackData] = useState<CreateFeedbackData>({
     email: '',
     title: '',
@@ -66,19 +68,15 @@ const FeedbackPage = () => {
   return (
     <div className="grid w-full md:w-[400px] gap-5 mx-auto">
       <div className="grid gap-3 text-center">
-        <FormTitle title={'Связаться с нами'} />
-        <FormSubTitle
-          title={
-            'Отправьте сообщение об ошибке, нарушениях или предложениях по улучшению'
-          }
-        />
+        <FormTitle title={t('pages.feedback.title')} />
+        <FormSubTitle title={t('pages.feedback.subtitle')} />
       </div>
 
       <div className="grid gap-2">
         <FormLabel name={'Email'} htmlFor={'email'} />
         <FormInput
           id={'email'}
-          placeholder={'mail@example.com'}
+          placeholder={t('authForms.requestReset.emailPlaceholder')}
           type={'email'}
           value={feedbackData.email}
           setValue={(value) => handleChange('email', value)}
@@ -86,10 +84,13 @@ const FeedbackPage = () => {
       </div>
 
       <div className="grid gap-2">
-        <FormLabel name={'Заголовок'} htmlFor={'title'} />
+        <FormLabel name={t('pages.feedback.subjectLabel')} htmlFor={'title'} />
         <FormInput
           id={'title'}
-          placeholder={`Краткий заголовок (от ${constraints.feedback.minTitleLength} до ${constraints.feedback.maxTitleLength} символов)`}
+          placeholder={t('pages.feedback.subjectPlaceholder', {
+            min: constraints.feedback.minTitleLength,
+            max: constraints.feedback.maxTitleLength,
+          })}
           type={'text'}
           value={feedbackData.title}
           setValue={(value) => handleChange('title', value)}
@@ -97,10 +98,16 @@ const FeedbackPage = () => {
       </div>
 
       <div className="grid gap-2">
-        <FormLabel name={'Описание'} htmlFor={'message'} />
+        <FormLabel
+          name={t('pages.feedback.messageLabel')}
+          htmlFor={'message'}
+        />
         <FormTextbox
           id={'message'}
-          placeholder={`Текст (от ${constraints.feedback.minMessageLength} до ${constraints.feedback.maxMessageLength} символов)`}
+          placeholder={t('pages.feedback.messagePlaceholder', {
+            min: constraints.feedback.minMessageLength,
+            max: constraints.feedback.maxMessageLength,
+          })}
           value={feedbackData.message}
           setValue={(value) => handleChange('message', value)}
           className="h-50"
@@ -108,7 +115,9 @@ const FeedbackPage = () => {
       </div>
 
       <FormButton
-        title={isSending ? 'Отправка...' : 'Отправить'}
+        title={
+          isSending ? t('pages.feedback.sending') : t('pages.feedback.submit')
+        }
         isInvert={true}
         onClick={send}
         disabled={isSending || !isFormValid}

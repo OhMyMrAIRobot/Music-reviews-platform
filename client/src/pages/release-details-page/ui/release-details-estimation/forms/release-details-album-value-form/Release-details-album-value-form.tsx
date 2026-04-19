@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { observer } from 'mobx-react-lite';
 import { FC, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AlbumValueAPI } from '../../../../../../api/album-value-api';
 import AlbumValue from '../../../../../../components/album-value/Album-value';
 import TickSvg from '../../../../../../components/svg/Tick-svg';
@@ -28,6 +29,7 @@ interface IProps {
 }
 
 const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ release }) => {
+  const { t } = useTranslation();
   /** HOOKS */
   const { authStore } = useStore();
   const { checkAuth } = useAuth();
@@ -223,8 +225,7 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ release }) => {
     <div className="bg-zinc-900 rounded-xl border-white/10">
       {userVote && (
         <div className="bg-gradient-to-br from-white/20 border border-white/5 rounded-lg text-sm lg:text-base text-center px-3 py-3 lg:py-5 mb-4 font-medium">
-          Вы уже оценивали ценность данного альбома. Вы можете изменить ее,
-          заполнив форму ниже!
+          {t('releaseDetails.albumValueForm.alreadyVoted')}
         </div>
       )}
 
@@ -321,7 +322,7 @@ const ReleaseDetailsAlbumValueForm: FC<IProps> = observer(({ release }) => {
         <div className="grid sm:flex items-center space-y-3 space-x-10 sm:justify-between mt-3">
           <div className="w-full sm:w-45">
             <ReleaseDetailsEstimationDeleteButton
-              title={'Удалить'}
+              title={t('releaseDetails.albumValueForm.delete')}
               disabled={!userVote || isPending}
               isLoading={isDeleting}
               onClick={handleDelete}

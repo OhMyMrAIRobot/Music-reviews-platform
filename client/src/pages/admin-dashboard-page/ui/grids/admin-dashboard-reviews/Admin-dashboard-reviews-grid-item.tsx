@@ -1,4 +1,5 @@
 import { FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg.tsx';
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal.tsx';
@@ -29,6 +30,7 @@ const AdminDashboardReviewsGridItem: FC<IProps> = ({
   order,
   toggleOrder,
 }) => {
+  const { t } = useTranslation();
   const { navigateToReleaseDetails, navigatoToProfile } = useNavigationPath();
 
   const [confModalOpen, setConfModalOpen] = useState<boolean>(false);
@@ -48,7 +50,7 @@ const AdminDashboardReviewsGridItem: FC<IProps> = ({
         <>
           {confModalOpen && (
             <ConfirmationModal
-              title={'Вы действительно хотите удалить рецензию?'}
+              title={t('adminDashboard.reviews.deleteConfirm')}
               isOpen={confModalOpen}
               onConfirm={() => mutateAsync({ id: review.id })}
               onCancel={() => setConfModalOpen(false)}
@@ -76,7 +78,9 @@ const AdminDashboardReviewsGridItem: FC<IProps> = ({
         <div className="xl:col-span-2 h-full flex items-center mr-2">
           {review ? (
             <>
-              <span className="xl:hidden max-xl:pr-1">Пользователь: </span>
+              <span className="xl:hidden max-xl:pr-1">
+                {t('adminDashboard.reviews.userMobile')}
+              </span>
               <Link
                 to={navigatoToProfile(review.user.id)}
                 className="flex text-left gap-x-1.5 items-center cursor-pointer hover:bg-white/5 rounded-lg xl:px-1.5 py-0.5 w-full"
@@ -98,14 +102,18 @@ const AdminDashboardReviewsGridItem: FC<IProps> = ({
               </Link>
             </>
           ) : (
-            <span className="px-2">Пользователь</span>
+            <span className="px-2">
+              {t('adminDashboard.authorConfirmation.user')}
+            </span>
           )}
         </div>
 
         <div className="xl:col-span-2 h-full flex items-center mr-2">
           {review ? (
             <>
-              <span className="xl:hidden max-xl:pr-1">Релиз: </span>
+              <span className="xl:hidden max-xl:pr-1">
+                {t('adminDashboard.reviews.releaseMobile')}
+              </span>
               <Link
                 to={navigateToReleaseDetails(review.release.id)}
                 className="flex text-left gap-x-1.5 items-center cursor-pointer hover:bg-white/5 rounded-lg px-1.5 py-0.5 w-full"
@@ -127,14 +135,18 @@ const AdminDashboardReviewsGridItem: FC<IProps> = ({
               </Link>
             </>
           ) : (
-            <span className="px-2">Название релиза</span>
+            <span className="px-2">
+              {t('adminDashboard.reviews.releaseTitle')}
+            </span>
           )}
         </div>
 
         <div className="xl:col-span-2 text-ellipsis text-wrap ">
           {review ? (
             <>
-              <span className="xl:hidden">Дата публикации: </span>
+              <span className="xl:hidden">
+                {t('adminDashboard.reviews.publishedAtMobile')}
+              </span>
               <span>{review.createdAt}</span>
             </>
           ) : (
@@ -142,7 +154,7 @@ const AdminDashboardReviewsGridItem: FC<IProps> = ({
               onClick={toggleOrder}
               className="cursor-pointer hover:text-white flex items-center gap-x-1.5"
             >
-              <span>Дата публикации</span>
+              <span>{t('adminDashboard.reviews.publishedAt')}</span>
               <ArrowBottomSvg
                 className={`size-3 ${
                   order === SortOrdersEnum.ASC ? 'rotate-180' : ''
@@ -155,22 +167,26 @@ const AdminDashboardReviewsGridItem: FC<IProps> = ({
         <div className="xl:col-span-2 xl:line-clamp-2 overflow-hidden text-ellipsis text-wrap mr-2">
           {review ? (
             <>
-              <span className="xl:hidden">Заголовок: </span>
+              <span className="xl:hidden">
+                {t('adminDashboard.reviews.titleMobile')}
+              </span>
               <span>{review.title}</span>
             </>
           ) : (
-            <span>Заголовок</span>
+            <span>{t('adminDashboard.reviews.reviewTitle')}</span>
           )}
         </div>
 
         <div className="xl:col-span-2 line-clamp-2 overflow-hidden text-ellipsis text-wrap">
           {review ? (
             <>
-              <span className="xl:hidden">Текст: </span>
+              <span className="xl:hidden">
+                {t('adminDashboard.reviews.textMobile')}
+              </span>
               <span>{review.text}</span>
             </>
           ) : (
-            <span>Текст рецензии</span>
+            <span>{t('adminDashboard.reviews.reviewBody')}</span>
           )}
         </div>
 
@@ -185,7 +201,7 @@ const AdminDashboardReviewsGridItem: FC<IProps> = ({
               <AdminDeleteButton onClick={() => setConfModalOpen(true)} />
             </div>
           ) : (
-            'Действие'
+            t('adminDashboard.common.action')
           )}
         </div>
       </div>

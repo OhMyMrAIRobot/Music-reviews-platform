@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ReleaseAPI } from '../../../../../api/release/release-api.ts';
 import AdminHeader from '../../../../../components/layout/admin-header/Admin-header.tsx';
 import Pagination from '../../../../../components/pagination/Pagination.tsx';
@@ -20,6 +21,7 @@ import ReleaseFormModal from './Release-form-modal.tsx';
 const limit = 10;
 
 const AdminDashboardReleasesGrid = () => {
+  const { t } = useTranslation();
   const [addModalOpen, setAddModalOpen] = useState<boolean>(false);
   const [searchText, setSearchText] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -59,7 +61,10 @@ const AdminDashboardReleasesGrid = () => {
 
   return (
     <div className="flex flex-col h-screen" id="admin-authors">
-      <AdminHeader title={'Релизы'} setText={setSearchText} />
+      <AdminHeader
+        title={t('adminDashboard.headers.releases')}
+        setText={setSearchText}
+      />
 
       {!isTypesLoading && (
         <ReleaseFormModal
@@ -93,7 +98,7 @@ const AdminDashboardReleasesGrid = () => {
 
           <div className="ml-auto max-sm:hidden">
             <AdminFilterButton
-              title={'Добавить релиз'}
+              title={t('adminDashboard.releases.add')}
               isActive={false}
               onClick={() => setAddModalOpen(true)}
             />
@@ -102,7 +107,7 @@ const AdminDashboardReleasesGrid = () => {
 
         <div className="sm:hidden mt-2 text-white/80 border-b border-white/10">
           <AdminFilterButton
-            title={'Добавить релиз'}
+            title={t('adminDashboard.releases.add')}
             isActive={false}
             onClick={() => setAddModalOpen(true)}
           />
@@ -123,7 +128,7 @@ const AdminDashboardReleasesGrid = () => {
 
         {!isReleasesLoading && count === 0 && (
           <span className="font-medium mx-auto mt-5 text-lg">
-            Релизы не найдены!
+            {t('adminDashboard.releases.notFound')}
           </span>
         )}
 

@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { LeaderboardAPI } from '../../../../../api/leaderboard-api';
 import useNavigationPath from '../../../../../hooks/use-navigation-path';
@@ -13,6 +14,7 @@ const query: LeaderboardQuery = {
 };
 
 const PlatformStatsLeaderboard = () => {
+  const { t } = useTranslation();
   const { navigateToLeaderboard } = useNavigationPath();
 
   const { data: items = [], isPending } = useQuery({
@@ -25,14 +27,14 @@ const PlatformStatsLeaderboard = () => {
     <div>
       <div className="flex items-center gap-5 w-full">
         <h2 className="text-base xl:text-xl font-semibold flex items-center gap-2.5">
-          <span>ТОП-10 по баллам сообщества</span>
+          <span>{t('pages.main.statsLeaderboard.top10')}</span>
         </h2>
 
         <Link
           to={navigateToLeaderboard}
           className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium h-10 px-4 py-2 rounded-full bg-white/10 hover:bg-white/8 transition-colors duration-200"
         >
-          Весь топ
+          {t('pages.main.statsLeaderboard.fullTop')}
         </Link>
       </div>
 

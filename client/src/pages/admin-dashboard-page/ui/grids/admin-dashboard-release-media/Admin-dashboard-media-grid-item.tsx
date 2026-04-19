@@ -1,4 +1,5 @@
 import { FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg';
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal';
@@ -32,6 +33,7 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
   order,
   toggleOrder,
 }) => {
+  const { t } = useTranslation();
   const { navigateToReleaseDetails } = useNavigationPath();
 
   const [confModalOpen, setConfModalOpen] = useState<boolean>(false);
@@ -51,7 +53,7 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
         <>
           {confModalOpen && (
             <ConfirmationModal
-              title={'Вы действительно хотите удалить медиаматериал?'}
+              title={t('adminDashboard.media.deleteConfirm')}
               isOpen={confModalOpen}
               onConfirm={() => mutateAsync(media.id)}
               onCancel={() => setConfModalOpen(false)}
@@ -93,44 +95,52 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
                 alt={media.release.title}
                 className="max-xl:hidden size-9 object-cover aspect-square rounded-full select-none"
               />
-              <span className="xl:hidden">Релиз: </span>
+              <span className="xl:hidden">
+                {t('adminDashboard.media.releaseMobile')}
+              </span>
               <span className=" line-clamp-2 overflow-hidden text-ellipsis text-wrap">
                 {media.release.title}
               </span>
             </Link>
           ) : (
-            <span className="px-2">Релиз</span>
+            <span className="px-2">{t('adminDashboard.media.release')}</span>
           )}
         </div>
 
         <div className="xl:col-span-2 line-clamp-2 overflow-hidden text-ellipsis text-wrap mr-2">
           {media ? (
             <>
-              <span className="xl:hidden">Заголовок: </span>
+              <span className="xl:hidden">
+                {t('adminDashboard.media.titleMobile')}
+              </span>
               <span>{media.title}</span>
             </>
           ) : (
-            <span>Заголовок</span>
+            <span>{t('adminDashboard.media.titleLabel')}</span>
           )}
         </div>
 
         <div className="xl:col-span-2 flex items-center text-ellipsis line-clamp-1 ">
           {media ? (
             <>
-              <span className="xl:hidden pr-0.5">Тип медиа: </span>
+              <span className="xl:hidden pr-0.5">
+                {t('adminDashboard.media.mediaTypeMobile')}
+              </span>
               <div className={`flex gap-x-1 items-center`}>
                 <span>{media.type.type}</span>
               </div>
             </>
           ) : (
-            <span>Тип медиа</span>
+            <span>{t('adminDashboard.media.mediaType')}</span>
           )}
         </div>
 
         <div className="xl:col-span-2 text-ellipsis text-wrap ">
           {media ? (
             <>
-              <span className="xl:hidden">Дата публикации: </span>
+              <span className="xl:hidden">
+                {t('adminDashboard.media.publishedAtMobile')}
+              </span>
               <span>{media.createdAt}</span>
             </>
           ) : (
@@ -138,7 +148,7 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
               onClick={toggleOrder}
               className="cursor-pointer hover:text-white text-left flex items-center gap-x-1.5"
             >
-              <span>Дата публикации</span>
+              <span>{t('adminDashboard.media.publishedAt')}</span>
               <ArrowBottomSvg
                 className={`size-3 ${
                   order === SortOrdersEnum.ASC ? 'rotate-180' : ''
@@ -151,7 +161,9 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
         <div className="xl:col-span-1 flex items-center text-ellipsis line-clamp-1 ">
           {media ? (
             <>
-              <span className="xl:hidden pr-1">Статус: </span>
+              <span className="xl:hidden pr-1">
+                {t('adminDashboard.media.statusMobile')}
+              </span>
               <div
                 className={`flex gap-x-1 items-center ${getReleaseMediaStatusColor(
                   media.status.status
@@ -165,7 +177,7 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
               </div>
             </>
           ) : (
-            <span>Статус медиа</span>
+            <span>{t('adminDashboard.media.mediaStatusCol')}</span>
           )}
         </div>
 
@@ -183,7 +195,7 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
               />
             </div>
           ) : (
-            'Действие'
+            t('adminDashboard.common.action')
           )}
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { EmblaOptionsType } from 'embla-carousel';
+import { useTranslation } from 'react-i18next';
 import useEmblaCarousel from 'embla-carousel-react';
 import { FC } from 'react';
 import { ProfilePreference } from '../../../../../types/profile';
@@ -17,6 +18,7 @@ const ProfilePreferencesGridRow: FC<IProps> = ({
   isAuthor,
   isLoading,
 }) => {
+  const { t } = useTranslation();
   const options: EmblaOptionsType = { dragFree: true, align: 'start' };
   const [emblaRef] = useEmblaCarousel(options);
 
@@ -55,7 +57,7 @@ const ProfilePreferencesGridRow: FC<IProps> = ({
       </div>
       {!isLoading && items.length === 0 && (
         <div className="col-span-full text-center text-xs text-muted-foreground bg-gradient-to-br from-zinc-900 border border-zinc-950 py-2 rounded-xl">
-          Нет предпочтений
+          {t('pages.profile.noPreferences')}
         </div>
       )}
     </div>

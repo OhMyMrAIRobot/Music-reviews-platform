@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { UserAPI } from '../../../../../api/user/user-api.ts';
 import AdminHeader from '../../../../../components/layout/admin-header/Admin-header.tsx';
 import Pagination from '../../../../../components/pagination/Pagination.tsx';
@@ -14,10 +15,12 @@ import {
 } from '../../../../../types/user/index.ts';
 import AdminFilterButton from '../../buttons/Admin-filter-button.tsx';
 import AdminDashboardUsersGridItem from './Admin-dashboard-users-grid-item.tsx';
+import { translateRolesFilterOption } from '../../../../../utils/user/user-role-i18n.ts';
 
 const limit = 10;
 
 const AdminDashboardUsersGrid = () => {
+  const { t } = useTranslation();
   const [searchText, setSearchText] = useState<string>('');
   const [activeOption, setActiveOption] = useState<RolesFilterOptions>(
     RolesFilterOptions.ALL
@@ -51,7 +54,10 @@ const AdminDashboardUsersGrid = () => {
 
   return (
     <div className="flex flex-col h-screen" id="admin-users">
-      <AdminHeader title={'Пользователи'} setText={setSearchText} />
+      <AdminHeader
+        title={t('adminDashboard.headers.users')}
+        setText={setSearchText}
+      />
 
       <div id="admin-users-grid" className="flex flex-col overflow-hidden p-5">
         <div className="flex flex-wrap xl:mb-5 gap-y-2 text-white/80 border-b border-white/10">
@@ -64,7 +70,7 @@ const AdminDashboardUsersGrid = () => {
                     role={{ id: '0', role: option }}
                     className={'size-5 mr-1'}
                   />
-                  {option}
+                  {translateRolesFilterOption(t, option)}
                 </span>
               }
               isActive={activeOption === option}
@@ -108,7 +114,7 @@ const AdminDashboardUsersGrid = () => {
 
         {!isLoading && count === 0 && (
           <span className="font-medium mx-auto mt-5 text-xl">
-            Пользователи не найдены!
+            {t('adminDashboard.users.notFound')}
           </span>
         )}
 

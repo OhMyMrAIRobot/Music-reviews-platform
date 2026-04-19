@@ -1,4 +1,5 @@
 import { FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import FeedbackStatusIcon from '../../../../../components/feedback/Feedback-status-icon';
 import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg';
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal';
@@ -7,6 +8,7 @@ import { useAdminRemoveFeedbackMutation } from '../../../../../hooks/mutations';
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum';
 import { SortOrder } from '../../../../../types/common/types/sort-order';
 import { Feedback } from '../../../../../types/feedback';
+import { translateFeedbackAdminStatus } from '../../../../../utils/admin/translate-feedback-status';
 import { getFeedbackStatusColor } from '../../../../../utils/get-feedback-status-color';
 import AdminDeleteButton from '../../buttons/Admin-delete-button';
 import AdminOpenButton from '../../buttons/Admin-open-button';
@@ -30,6 +32,7 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
   order,
   toggleOrder,
 }) => {
+  const { t } = useTranslation();
   const [confModalOpen, setConfModalOpen] = useState<boolean>(false);
   const [detailsModalOpen, setDetailsModalOpen] = useState<boolean>(false);
 
@@ -47,7 +50,7 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
         <>
           {confModalOpen && (
             <ConfirmationModal
-              title={'Вы действительно хотите удалить сообщение?'}
+              title={t('adminDashboard.feedback.deleteConfirm')}
               isOpen={confModalOpen}
               onConfirm={() => mutateAsync(feedback.id)}
               onCancel={() => setConfModalOpen(false)}
@@ -81,7 +84,9 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
         <div className="xl:col-span-2 text-ellipsis text-wrap ">
           {feedback ? (
             <>
-              <span className="xl:hidden">Дата отправки: </span>
+              <span className="xl:hidden">
+                {t('adminDashboard.feedback.sentAtMobile')}
+              </span>
               <span>{feedback.createdAt}</span>
             </>
           ) : (
@@ -89,7 +94,7 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
               onClick={toggleOrder}
               className="cursor-pointer hover:text-white flex items-center gap-x-1.5"
             >
-              <span>Дата отправки</span>
+              <span>{t('adminDashboard.feedback.sentAt')}</span>
               <ArrowBottomSvg
                 className={`size-3 ${
                   order === SortOrdersEnum.ASC ? 'rotate-180' : ''
@@ -102,7 +107,9 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
         <div className="xl:col-span-2 flex gap-x-1 items-center text-ellipsis line-clamp-1 ">
           {feedback ? (
             <>
-              <span className="xl:hidden">Статус: </span>
+              <span className="xl:hidden">
+                {t('adminDashboard.feedback.statusMobile')}
+              </span>
               <div
                 className={`flex gap-x-1 items-center ${getFeedbackStatusColor(
                   feedback.feedbackStatus.status
@@ -112,33 +119,42 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
                   status={feedback.feedbackStatus.status}
                   className="size-5"
                 />
-                <span>{feedback.feedbackStatus.status}</span>
+                <span>
+                  {translateFeedbackAdminStatus(
+                    t,
+                    feedback.feedbackStatus.status
+                  )}
+                </span>
               </div>
             </>
           ) : (
-            <span>Статус</span>
+            <span>{t('adminDashboard.common.status')}</span>
           )}
         </div>
 
         <div className="xl:col-span-2  line-clamp-2 overflow-hidden text-ellipsis text-wrap mr-2">
           {feedback ? (
             <>
-              <span className="xl:hidden">Заголовок: </span>
+              <span className="xl:hidden">
+                {t('adminDashboard.feedback.titleMobile')}
+              </span>
               <span>{feedback.title}</span>
             </>
           ) : (
-            <span>Заголовок</span>
+            <span>{t('adminDashboard.common.title')}</span>
           )}
         </div>
 
         <div className="xl:col-span-2  line-clamp-2 overflow-hidden text-ellipsis text-wrap">
           {feedback ? (
             <>
-              <span className="xl:hidden">Текст: </span>
+              <span className="xl:hidden">
+                {t('adminDashboard.feedback.textMobile')}
+              </span>
               <span>{feedback.message}</span>
             </>
           ) : (
-            <span>Текст</span>
+            <span>{t('adminDashboard.common.text')}</span>
           )}
         </div>
 
@@ -149,7 +165,7 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
               <AdminDeleteButton onClick={() => setConfModalOpen(true)} />
             </div>
           ) : (
-            'Действие'
+            t('adminDashboard.common.action')
           )}
         </div>
       </div>

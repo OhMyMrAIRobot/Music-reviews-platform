@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AlbumValueAPI } from '../../api/album-value-api';
 import AlbumValueCard from '../../components/album-value/Album-value-card';
 import ComboBox from '../../components/buttons/Combo-box';
@@ -14,10 +15,13 @@ import {
 } from '../../types/album-value';
 import { SortOrdersEnum } from '../../types/common/enums/sort-orders-enum';
 import { ALBUM_VALUES } from '../../utils/album-value-config';
+import { translateAlbumValueSortOption } from '../../utils/album-value/album-value-sort-i18n';
+import { translateAlbumValueTierName } from '../../utils/album-value/album-value-tier-i18n';
 
 const limit = 12;
 
 const AlbumValuesPage = () => {
+  const { t } = useTranslation();
   const [sortOrder, setSortOrder] = useState<string>('');
   const [selectedTiers, setSelectedTiers] = useState<AlbumValueTiersEnum[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -61,7 +65,7 @@ const AlbumValuesPage = () => {
   return (
     <>
       <h1 id="album-values" className="text-2xl lg:text-3xl font-semibold">
-        Ценность альбомов
+        {t('pages.albumValues.title')}
       </h1>
 
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-5 xl:gap-8 mt-5 lg:mt-10">
@@ -71,13 +75,14 @@ const AlbumValuesPage = () => {
               options={Object.values(AlbumValueSortOptions)}
               onChange={setSortOrder}
               value={sortOrder ? sortOrder : undefined}
-              placeholder="Сортировать по"
+              placeholder={t('pages.albumValues.sortPlaceholder')}
+              formatOption={(o) => translateAlbumValueSortOption(t, o)}
             />
           </div>
 
           <div className="mt-2">
             <h3 className="font-bold text-white/40 mb-3 max-md:text-sm">
-              Фильтры
+              {t('pages.albumValues.filters')}
             </h3>
             <div className="space-y-2">
               {ALBUM_VALUES.map((v) => (
@@ -88,7 +93,7 @@ const AlbumValuesPage = () => {
                     setChecked={(value: boolean) => toggleTier(v.tier, value)}
                   />
                   <FormLabel
-                    name={v.config.name}
+                    name={translateAlbumValueTierName(t, v.tier)}
                     htmlFor={`${v.tier}`}
                     isRequired={false}
                   />

@@ -1,5 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { FC, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AuthorAPI } from '../../../api/author/author-api';
 import FormButton from '../../../components/form-elements/Form-button';
 import FormCheckbox from '../../../components/form-elements/Form-checkbox';
@@ -19,6 +20,7 @@ interface IProps {
 }
 
 const SendAuthorConfirmationForm: FC<IProps> = ({ show }) => {
+  const { t } = useTranslation();
   const { checkAuth } = useAuth();
   const queryClient = useQueryClient();
 
@@ -100,13 +102,13 @@ const SendAuthorConfirmationForm: FC<IProps> = ({ show }) => {
     >
       <div className="grid gap-2">
         <FormLabel
-          name={'Укажите имена авторов'}
+          name={t('pages.authorConfirmation.form.authorNamesLabel')}
           htmlFor={'authors-select'}
           isRequired={true}
         />
         <FormMultiSelect
           id={'authors-select'}
-          placeholder={'Введите имя автора'}
+          placeholder={t('pages.authorConfirmation.form.authorNamePlaceholder')}
           value={authors}
           onChange={setAuthors}
           loadOptions={loadAuthors}
@@ -115,9 +117,7 @@ const SendAuthorConfirmationForm: FC<IProps> = ({ show }) => {
 
       <div className="grid gap-2">
         <FormLabel
-          name={
-            'Укажите адрес вашей соц.сети или электронной почты, откуда нам придет подтверждение'
-          }
+          name={t('pages.authorConfirmation.form.contactHint')}
           htmlFor={'input-fonfirmation'}
           isRequired={true}
         />
@@ -137,16 +137,14 @@ const SendAuthorConfirmationForm: FC<IProps> = ({ show }) => {
           setChecked={setChecked}
         />
         <FormLabel
-          name={
-            'Я отправил подтверждение в соц.сети сайта со своих верифицированных соц.сетей'
-          }
+          name={t('pages.authorConfirmation.form.confirmCheckbox')}
           htmlFor={'confirmation-checkbox'}
           isRequired={true}
         />
       </div>
 
       <FormButton
-        title={'Отправить'}
+        title={t('pages.authorConfirmation.form.submit')}
         onClick={handlePostConfirmation}
         isInvert={true}
         disabled={!isFormValid || isCreating}

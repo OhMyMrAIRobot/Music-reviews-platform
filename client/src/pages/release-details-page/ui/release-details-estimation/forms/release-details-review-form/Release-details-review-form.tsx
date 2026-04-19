@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { observer } from 'mobx-react-lite';
 import { FC, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ReviewAPI } from '../../../../../../api/review/review-api';
 import TickSvg from '../../../../../../components/svg/Tick-svg';
 import Loader from '../../../../../../components/utils/Loader';
@@ -32,6 +33,7 @@ interface IProps {
 
 const ReleaseDetailsReviewForm: FC<IProps> = observer(
   ({ isReview, releaseId }) => {
+    const { t } = useTranslation();
     const { authStore } = useStore();
     const { checkAuth } = useAuth();
 
@@ -223,9 +225,11 @@ const ReleaseDetailsReviewForm: FC<IProps> = observer(
       <div className="border bg-zinc-900 rounded-xl p-2 border-white/10 grid gap-y-4 lg:gap-y-5">
         {userReview && (
           <div className="bg-gradient-to-br from-white/20 border border-white/5 rounded-lg text-sm lg:text-base text-center px-3 py-3 lg:py-5 font-medium">
-            Вы уже оставляли
-            {userReview.title && userReview.text ? ' рецензию ' : ' оценку '}к
-            данной работе. Вы можете изменить ее, заполнив форму ниже!
+            {t('releaseDetails.reviewForm.alreadyLeft')}
+            {userReview.title && userReview.text
+              ? t('releaseDetails.reviewForm.reviewWord')
+              : t('releaseDetails.reviewForm.markWord')}
+            {t('releaseDetails.reviewForm.forThisWork')}
           </div>
         )}
 
@@ -233,9 +237,11 @@ const ReleaseDetailsReviewForm: FC<IProps> = observer(
           {userReview && (
             <div className="ml-auto sm:max-w-50 max-sm:w-full justify-end">
               <ReleaseDetailsEstimationDeleteButton
-                title={`Удалить ${
-                  userReview.title && userReview.text ? ' рецензию' : ' оценку'
-                }`}
+                title={
+                  userReview.title && userReview.text
+                    ? t('releaseDetails.reviewForm.deleteReview')
+                    : t('releaseDetails.reviewForm.deleteMark')
+                }
                 disabled={!userReview || isSubmitting}
                 isLoading={isDeleting}
                 onClick={deleteReview}

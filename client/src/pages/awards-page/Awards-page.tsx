@@ -1,19 +1,19 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { NominationAPI } from '../../api/nomination-api';
 import ComboBox from '../../components/buttons/Combo-box';
 import SkeletonLoader from '../../components/utils/Skeleton-loader';
 import useNavigationPath from '../../hooks/use-navigation-path';
 import { nominationsKeys } from '../../query-keys/nominations-keys';
-import {
-  MonthEnumType,
-  MonthsEnum,
-} from '../../types/common/enums/months-enum';
+import { MonthEnumType } from '../../types/common/enums/months-enum';
+import { translateMonth } from '../../utils/date/month-i18n';
 import { NominationWinnersQuery } from '../../types/nomination';
 import NominationCarouselContainer from './ui/carousel/Nomination-carousel-container';
 
 const AwardsPage = () => {
+  const { t } = useTranslation();
   const { navigateToVotes } = useNavigationPath();
 
   const [year, setYear] = useState<string>(new Date().getFullYear().toString());
@@ -48,7 +48,7 @@ const AwardsPage = () => {
   return (
     <>
       <h1 className="text-2xl lg:text-3xl font-semibold">
-        Победители номинаций
+        {t('pages.awards.title')}
       </h1>
 
       <div className="flex justify-between items-center gap-2 lg:gap-5 h-15 mt-5">
@@ -56,11 +56,18 @@ const AwardsPage = () => {
           to={navigateToVotes}
           className="w-40 bg-white h-full rounded-lg text-black flex items-center justify-center font-medium text-sm px-3 py-2 hover:bg-white/80 transition-colors duration-200 text-center"
         >
-          Голосование за {MonthsEnum[new Date().getMonth() as MonthEnumType]}
+          {t('pages.awards.voteFor', {
+            month: translateMonth(
+              t,
+              (new Date().getMonth() + 1) as MonthEnumType
+            ),
+          })}
         </Link>
 
         <div className="w-full rounded-lg border border-white/10 bg-zinc-900 p-3 shadow-sm flex gap-4 items-center">
-          <span className="hidden sm:block text-white/70 font-bold ">Год:</span>
+          <span className="hidden sm:block text-white/70 font-bold ">
+            {t('pages.awards.year')}
+          </span>
           <div className="w-full sm:w-55">
             {!minYear || !maxYear ? (
               <SkeletonLoader className={'w-full h-10 rounded-md'} />

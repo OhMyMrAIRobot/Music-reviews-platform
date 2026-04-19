@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ReleaseAPI } from '../../../../api/release/release-api';
 import { releasesKeys } from '../../../../query-keys/releases-keys';
 import { SortOrdersEnum } from '../../../../types/common/enums/sort-orders-enum';
@@ -19,6 +20,7 @@ const query: ReleasesQuery = {
 };
 
 const MostReviewedReleases = () => {
+  const { t } = useTranslation();
   const [index, setIndex] = useState<number>(0);
   const [show, setShow] = useState<boolean>(false);
 
@@ -34,7 +36,7 @@ const MostReviewedReleases = () => {
     <section className="2xl:container flex flex-col items-center">
       <div className="flex justify-center items-center mb-2.5 lg:mb-5">
         <h3 className="text-xs lg:text-sm font-semibold text-center bg-gradient-to-br from-zinc-700 border border-zinc-800 rounded-full px-5 py-1.5 select-none">
-          ТОП-15 по количеству оценок и рецензий за сутки
+          {t('pages.main.mostReviewed.title')}
         </h3>
       </div>
       <MostReviewedSwiper

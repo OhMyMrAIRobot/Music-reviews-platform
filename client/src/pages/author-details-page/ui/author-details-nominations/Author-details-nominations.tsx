@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { FC, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { NominationAPI } from '../../../../api/nomination-api';
 import CarouselContainer from '../../../../components/carousel/Carousel-container';
 import { nominationsKeys } from '../../../../query-keys/nominations-keys';
@@ -11,6 +12,7 @@ interface IProps {
 }
 
 const AuthorDetailsNominations: FC<IProps> = ({ id }) => {
+  const { t } = useTranslation();
   const carouselRef = useRef<CarouselRef>(null);
 
   const [canScrollPrev, setCanScrollPrev] = useState(false);
@@ -27,7 +29,7 @@ const AuthorDetailsNominations: FC<IProps> = ({ id }) => {
   return (
     (isPending || items.length > 0) && (
       <CarouselContainer
-        title={'Победитель номинаций'}
+        title={t('releaseDetails.nominations.winnerTitle')}
         buttonTitle={'#'}
         showButton={false}
         href={'#'}

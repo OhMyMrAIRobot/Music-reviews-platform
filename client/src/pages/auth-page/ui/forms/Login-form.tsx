@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import FormButton from '../../../../components/form-elements/Form-button';
 import FormInput from '../../../../components/form-elements/Form-input';
 import FormLabel from '../../../../components/form-elements/Form-label';
@@ -10,6 +11,7 @@ import useNavigationPath from '../../../../hooks/use-navigation-path';
 import { constraints } from '../../../../utils/constraints';
 
 const LoginForm = () => {
+  const { t } = useTranslation();
   const { navigateToRegistration, navigateToRequestReset } =
     useNavigationPath();
 
@@ -44,17 +46,20 @@ const LoginForm = () => {
   return (
     <div className="grid w-full sm:w-[350px] gap-6">
       <div className="grid gap-2 text-center">
-        <FormTitle title={'Вход'} />
-        <FormSubTitle title={'Введите свои данные для входа в аккаунт'} />
+        <FormTitle title={t('authForms.login.title')} />
+        <FormSubTitle title={t('authForms.login.subtitle')} />
       </div>
 
       <div className="grid gap-3">
         <div className="grid gap-2">
-          <FormLabel name={'Email'} htmlFor={'AuthEmail'} />
+          <FormLabel
+            name={t('authForms.login.emailLabel')}
+            htmlFor={'AuthEmail'}
+          />
 
           <FormInput
             id={'AuthEmail'}
-            placeholder={'Ваш email'}
+            placeholder={t('authForms.login.emailPlaceholder')}
             type={'email'}
             value={email}
             setValue={setEmail}
@@ -63,7 +68,10 @@ const LoginForm = () => {
 
         <div className="grid gap-2">
           <div className="flex justify-between items-center select-none">
-            <FormLabel name={'Пароль'} htmlFor={'AuthPassword'} />
+            <FormLabel
+              name={t('authForms.login.passwordLabel')}
+              htmlFor={'AuthPassword'}
+            />
 
             <PreventableLink
               to={navigateToRequestReset}
@@ -72,13 +80,13 @@ const LoginForm = () => {
                 isLoading ? 'opacity-50' : ''
               }`}
             >
-              Забыли пароль?
+              {t('authForms.login.forgotPassword')}
             </PreventableLink>
           </div>
 
           <FormInput
             id={'AuthPassword'}
-            placeholder={'Ваш пароль'}
+            placeholder={t('authForms.login.passwordPlaceholder')}
             type={'password'}
             value={password}
             setValue={setPassword}
@@ -87,7 +95,11 @@ const LoginForm = () => {
 
         <div className="grid gap-2">
           <FormButton
-            title={isLoading ? 'Загрузка...' : 'Войти'}
+            title={
+              isLoading
+                ? t('authForms.login.loading')
+                : t('authForms.login.submit')
+            }
             onClick={handleSubmit}
             isInvert={true}
             disabled={isLoading || !isFormValid}
@@ -96,7 +108,7 @@ const LoginForm = () => {
 
           <PreventableLink to={navigateToRegistration} prevent={isLoading}>
             <FormButton
-              title={'Зарегистрироваться'}
+              title={t('authForms.login.signUpButton')}
               isInvert={false}
               disabled={isLoading}
             />

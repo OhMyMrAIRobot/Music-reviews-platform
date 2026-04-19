@@ -1,4 +1,5 @@
 import { FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import AuthorTypeSvg from '../../../../../components/author/author-types/Author-type-svg.tsx';
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal.tsx';
@@ -6,6 +7,7 @@ import SkeletonLoader from '../../../../../components/utils/Skeleton-loader.tsx'
 import { useAdminRemoveAuthorMutation } from '../../../../../hooks/mutations/index.ts';
 import useNavigationPath from '../../../../../hooks/use-navigation-path.ts';
 import { Author } from '../../../../../types/author/';
+import { translateAuthorTypesFilterLabel } from '../../../../../utils/author/author-types-filter-i18n';
 import { getAuthorTypeColor } from '../../../../../utils/get-author-type-color.ts';
 import AdminDeleteButton from '../../buttons/Admin-delete-button.tsx';
 import AdminEditButton from '../../buttons/Admin-edit-button.tsx';
@@ -25,6 +27,7 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
   isLoading,
   position,
 }) => {
+  const { t } = useTranslation();
   const { navigateToAuthorDetails } = useNavigationPath();
 
   const [confModalOpen, setConfModalOpen] = useState<boolean>(false);
@@ -44,7 +47,7 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
         <>
           {confModalOpen && (
             <ConfirmationModal
-              title={'Вы действительно хотите удалить автора?'}
+              title={t('adminDashboard.authors.deleteConfirm')}
               isOpen={confModalOpen}
               onConfirm={() => mutateAsync(author.id)}
               onCancel={() => setConfModalOpen(false)}
@@ -100,19 +103,23 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
                 className="size-9 object-cover aspect-square rounded-full select-none max-xl:hidden"
               />
               <span className="overflow-hidden text-ellipsis text-wrap">
-                <span className="xl:hidden">Имя: </span>
+                <span className="xl:hidden">
+                  {t('adminDashboard.authors.nameMobile')}
+                </span>
                 <span>{author.name}</span>
               </span>
             </>
           ) : (
-            'Имя автора'
+            t('adminDashboard.authors.authorName')
           )}
         </div>
 
         <div className="xl:col-span-4 flex flex-wrap">
           {author ? (
             <>
-              <span className="xl:hidden max-xl:pr-1">Тип автора:</span>
+              <span className="xl:hidden max-xl:pr-1">
+                {t('adminDashboard.authors.typeMobile')}
+              </span>
               {author.authorTypes.map((type, idx) => (
                 <span key={type.id} className="flex">
                   <span
@@ -121,7 +128,7 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
                     )}`}
                   >
                     <AuthorTypeSvg type={type} className={'size-5 mr-0.5'} />
-                    {type.type}
+                    {translateAuthorTypesFilterLabel(t, type.type)}
                   </span>
                   {idx < author.authorTypes.length - 1 && (
                     <span className="mr-1 select-none">,</span>
@@ -130,7 +137,7 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
               ))}
             </>
           ) : (
-            'Тип автора'
+            t('adminDashboard.authors.authorType')
           )}
         </div>
 
@@ -144,7 +151,9 @@ const AdminDashboardAuthorsGridItem: FC<IProps> = ({
               <AdminDeleteButton onClick={() => setConfModalOpen(true)} />
             </div>
           ) : (
-            <span className="text-center">Действие</span>
+            <span className="text-center">
+              {t('adminDashboard.common.action')}
+            </span>
           )}
         </div>
       </div>

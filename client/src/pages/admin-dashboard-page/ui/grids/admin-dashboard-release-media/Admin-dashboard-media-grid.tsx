@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ReleaseMediaAPI } from '../../../../../api/release/release-media-api';
 import AdminHeader from '../../../../../components/layout/admin-header/Admin-header';
 import Pagination from '../../../../../components/pagination/Pagination';
@@ -21,6 +22,7 @@ import MediaFormModal from './Media-form-modal';
 const limit = 10;
 
 const AdminDashboardMediaGrid = () => {
+  const { t } = useTranslation();
   const { statuses, types, isLoading: isMetaLoading } = useReleaseMediaMeta();
 
   const [addModalOpen, setAddModalOpen] = useState<boolean>(false);
@@ -69,7 +71,10 @@ const AdminDashboardMediaGrid = () => {
 
   return (
     <div className="flex flex-col h-screen" id="admin-media">
-      <AdminHeader title={'Медиаматериалы'} setText={setSearchText} />
+      <AdminHeader
+        title={t('adminDashboard.headers.media')}
+        setText={setSearchText}
+      />
 
       {!isMetaLoading && (
         <MediaFormModal
@@ -106,7 +111,7 @@ const AdminDashboardMediaGrid = () => {
 
           <div className="max-sm:hidden ml-auto">
             <AdminFilterButton
-              title={'Добавить медиа'}
+              title={t('adminDashboard.media.add')}
               isActive={false}
               onClick={() => setAddModalOpen(true)}
             />
@@ -137,7 +142,7 @@ const AdminDashboardMediaGrid = () => {
 
         <div className="sm:hidden mt-2 text-white/80 border-b border-white/10">
           <AdminFilterButton
-            title={'Добавить медиа'}
+            title={t('adminDashboard.media.add')}
             isActive={false}
             onClick={() => setAddModalOpen(true)}
           />
@@ -178,7 +183,7 @@ const AdminDashboardMediaGrid = () => {
 
         {!isMediaLoading && count === 0 && (
           <span className="font-medium mx-auto mt-5 text-lg">
-            Медиаматериалы не найдены!
+            {t('adminDashboard.media.notFound')}
           </span>
         )}
 

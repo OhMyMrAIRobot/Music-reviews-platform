@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { FC, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ReleaseAPI } from '../../../api/release/release-api';
 import CarouselContainer from '../../../components/carousel/Carousel-container';
 import { releasesKeys } from '../../../query-keys/releases-keys';
@@ -16,6 +17,7 @@ const limit = 15;
 const offset = 0;
 
 const AuthorDetailsReleasesCarousel: FC<IProps> = ({ id }) => {
+  const { t } = useTranslation();
   const query: ReleasesQuery = {
     authorId: id,
     sortField: ReleasesSortFieldsEnum.ALL_RATING,
@@ -39,7 +41,7 @@ const AuthorDetailsReleasesCarousel: FC<IProps> = ({ id }) => {
   return (
     (isPending || (topReleases && topReleases.length > 0)) && (
       <CarouselContainer
-        title={'Лучшие работы'}
+        title={t('releaseDetails.author.bestWorks')}
         buttonTitle={''}
         showButton={false}
         handlePrev={() => carouselRef.current?.scrollPrev()}
