@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import HeartSvg from '../svg/Heart-svg';
 
 interface IProps {
@@ -14,8 +15,14 @@ const ToggleFavButton: FC<IProps> = ({
   className,
   toggling,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <button
+      type="button"
+      aria-label={
+        isLiked ? t('buttons.toggleFav.remove') : t('buttons.toggleFav.add')
+      }
       disabled={toggling}
       onClick={onClick}
       className={`inline-flex items-center justify-center border border-white/20 ${

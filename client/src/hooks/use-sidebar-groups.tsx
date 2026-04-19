@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import AlbumValueSvg from '../components/album-value/svg/Album-value-svg';
 import AuthorCommentSvg from '../components/author/author-comment/svg/Author-comment-svg';
 import AuthorLikeSvg from '../components/author/author-like/svg/Author-like-svg';
@@ -32,6 +33,7 @@ import { useStore } from './use-store';
  * - `sidebarFourthGroup`: Array of utility items (e.g., Feedback, Activation if not active).
  */
 export const useSidebarGroups = () => {
+  const { t } = useTranslation();
   const { authStore } = useStore();
 
   const {
@@ -56,120 +58,137 @@ export const useSidebarGroups = () => {
 
   const sidebarFirstGroup: ISidebarItemProps[] = [
     {
+      id: 'nav-home',
       href: navigateToMain,
       icon: <HomeSvg className="size-5" />,
-      label: 'Главная',
+      label: t('layout.sidebar.nav.home'),
       active: isActive(ROUTES.MAIN),
     },
     {
+      id: 'nav-faq',
       href: navigateToMain,
       icon: <QuestionSvg className="size-5 fill-white" />,
-      label: 'Часто задаваемые вопросы',
+      label: t('layout.sidebar.nav.faq'),
       active: isActive('123'),
     },
     {
+      id: 'nav-about',
       href: navigateToMain,
       icon: <AboutSvg className="size-6 fill-white" />,
-      label: 'О нас',
+      label: t('layout.sidebar.nav.about'),
       active: isActive('456'),
     },
   ];
 
   if (authStore.isAuth) {
     sidebarFirstGroup.push({
+      id: 'nav-become-author',
       href: navigateToAuthorConfirmation,
       icon: <ActivationSvg className="size-5.5" />,
-      label: 'Стать автором',
+      label: t('layout.sidebar.nav.becomeAuthor'),
       active: isActive(`/${ROUTES.AUTHOR_CONFIRMATION}`),
     });
   }
 
   const sidebarSecondGroup: ISidebarItemProps[] = [
     {
+      id: 'nav-leaderboard',
       href: navigateToLeaderboard,
       icon: <LeaderboardSvg className="size-5 fill-white" />,
-      label: 'ТОП-90 пользователей',
+      label: t('layout.sidebar.nav.leaderboardTop90'),
       active: isActive(`/${ROUTES.LEADERBOARD}`),
     },
     {
+      id: 'nav-album-values',
       href: navigateToAlbumValues,
       icon: <AlbumValueSvg className="size-5" />,
-      label: 'Ценность альбомов',
+      label: t('layout.sidebar.nav.albumValues'),
       active: isActive(`/${ROUTES.ALBUM_VALUES}`),
     },
     {
+      id: 'nav-ratings',
       href: navigateToRatings,
       icon: <RatingsSvg className="size-5" />,
-      label: 'Рейтинг',
+      label: t('layout.sidebar.nav.ratings'),
       active: isActive(`/${ROUTES.RATINGS}`),
     },
     {
+      id: 'nav-awards',
       href: navigateToAwards,
       icon: <AwardSvg className="size-5" />,
-      label: 'Премия',
+      label: t('layout.sidebar.nav.awards'),
       active: isActive(`/${ROUTES.AWARDS}`),
     },
   ];
 
   const sidebarThirdGroup: ISidebarItemProps[] = [
     {
+      id: 'nav-author-likes',
       href: navigateToAuthorLikes,
       icon: <AuthorLikeSvg className="size-5" />,
-      label: 'Авторские лайки',
+      label: t('layout.sidebar.nav.authorLikes'),
       active: isActive(`/${ROUTES.AUTHOR_LIKES}`),
     },
     {
+      id: 'nav-author-comments',
       href: navigateToAuthorComments,
       icon: <AuthorCommentSvg className="size-5" />,
-      label: 'Авторские комментарии',
+      label: t('layout.sidebar.nav.authorComments'),
       active: isActive(`/${ROUTES.AUTHOR_COMMENTS}`),
     },
     {
+      id: 'nav-registered-authors',
       href: navigateToRegisteredAuthors,
       icon: <RegisteredAuthorSvg className="size-5" />,
-      label: 'Зарегистрированные авторы',
+      label: t('layout.sidebar.nav.registeredAuthors'),
       active: isActive(`/${ROUTES.REGISTERED_AUTHORS}`),
     },
     {
+      id: 'nav-authors',
       href: navigateToAuthors,
       icon: <AuthorSvg className="size-5 fill-white" />,
-      label: 'Авторы',
+      label: t('layout.sidebar.nav.authors'),
       active: isActive(`/${ROUTES.AUTHORS}`),
     },
     {
+      id: 'nav-releases',
       href: navigateToReleases,
       icon: <ReleaseSvg className="size-5" />,
-      label: 'Релизы',
+      label: t('layout.sidebar.nav.releases'),
       active: isActive(`/${ROUTES.RELEASES}`),
     },
     {
+      id: 'nav-reviews',
       href: navigateToReviews,
       icon: <TextReviewSvg className="size-5 fill-white" />,
-      label: 'Рецензии',
+      label: t('layout.sidebar.nav.reviews'),
       active: isActive(`/${ROUTES.REVIEWS}`),
     },
     {
+      id: 'nav-media-reviews',
       href: navigateToMediaReviews,
       icon: <MediaPlayerSvg className="size-5" />,
-      label: 'Медиарецензии',
+      label: t('layout.sidebar.nav.mediaReviews'),
       active: isActive(`/${ROUTES.MEDIA_REVIEWS}`),
     },
   ];
 
   const sidebarFourthGroup: ISidebarItemProps[] = [
     {
+      id: 'nav-feedback',
       href: navigateToFeedback,
       icon: <PencilSvg className="size-3" />,
-      label: 'Обратная связь',
+      label: t('layout.sidebar.nav.feedback'),
       active: isActive(`/${ROUTES.FEEDBACK}`),
     },
   ];
 
   if (authStore.isAuth && !authStore.user?.isActive) {
     sidebarFourthGroup.push({
+      id: 'nav-activation',
       href: navigateToActivation,
       icon: <ActivationSvg className="size-5.5" />,
-      label: 'Активация',
+      label: t('layout.sidebar.nav.activation'),
       active: isActive(`/${ROUTES.AUTH.PREFIX}/${ROUTES.AUTH.ACTIVATE}`),
     });
   }

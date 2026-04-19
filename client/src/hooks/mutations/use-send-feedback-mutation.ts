@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { FeedbackAPI } from '../../api/feedback/feedback-api';
 import { feedbackKeys } from '../../query-keys/feedback-keys';
 import { UseMutationParams } from '../../types/common';
@@ -18,6 +19,7 @@ export const useSendFeedbackMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore } = useStore();
   const handleApiError = useApiErrorHandler();
   const queryClient = useQueryClient();
@@ -25,12 +27,14 @@ export const useSendFeedbackMutation = ({
   const mutation = useMutation({
     mutationFn: (payload: CreateFeedbackData) => FeedbackAPI.create(payload),
     onSuccess: () => {
-      notificationStore.addSuccessNotification('Отзыв успешно отправлен!');
+      notificationStore.addSuccessNotification(
+        t('mutations.feedback.sendSuccess')
+      );
       queryClient.invalidateQueries({ queryKey: feedbackKeys.all });
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error);
+      handleApiError(error, t('mutations.feedback.sendError'));
       onError?.(error);
     },
     onSettled,

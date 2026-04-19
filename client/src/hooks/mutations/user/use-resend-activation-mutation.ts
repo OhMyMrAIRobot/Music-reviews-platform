@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { AuthAPI } from '../../../api/auth-api';
 import { UseMutationParams } from '../../../types/common';
 import { useApiErrorHandler } from '../../use-api-error-handler';
@@ -17,6 +18,7 @@ export const useResendActivationMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore } = useStore();
   const handleApiError = useApiErrorHandler();
 
@@ -29,7 +31,7 @@ export const useResendActivationMutation = ({
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, 'Ошибка при отправке письма активации!');
+      handleApiError(error, t('mutations.auth.resendActivationError'));
       onError?.(error);
     },
     onSettled,

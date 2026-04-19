@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
 import FormButton from '../../../../components/form-elements/Form-button';
 import FormInput from '../../../../components/form-elements/Form-input';
@@ -18,6 +19,7 @@ type ResetPasswordFormState = {
 };
 
 const ResetPasswordForm = () => {
+  const { t } = useTranslation();
   const { token } = useParams();
   const { notificationStore } = useStore();
 
@@ -49,7 +51,7 @@ const ResetPasswordForm = () => {
     if (!isFormValid || isLoading) return;
 
     if (formData.password !== formData.passwordConfirm) {
-      notificationStore.addErrorNotification('Пароли не совпадают!');
+      notificationStore.addErrorNotification(t('authForms.passwordsMismatch'));
       return;
     }
 
@@ -107,15 +109,27 @@ const ResetPasswordForm = () => {
   return (
     <div className="grid gap-4 w-full sm:w-[330px]">
       <div className="grid gap-1">
-        <FormTitle title={'Сброс пароля'} />
-        <FormSubTitle title={'Введите новый пароль для аккаунта'} />
+        <FormTitle title={t('authForms.resetPassword.title')} />
+        <FormSubTitle title={t('authForms.resetPassword.subtitle')} />
       </div>
 
-      {renderInput('password', 'Новый пароль', 'password')}
-      {renderInput('passwordConfirm', 'Подтвердите пароль', 'password')}
+      {renderInput(
+        'password',
+        t('authForms.resetPassword.passwordLabel'),
+        'password'
+      )}
+      {renderInput(
+        'passwordConfirm',
+        t('authForms.resetPassword.passwordConfirmLabel'),
+        'password'
+      )}
 
       <FormButton
-        title={isLoading ? 'Сброс пароля...' : 'Сбросить пароль'}
+        title={
+          isLoading
+            ? t('authForms.resetPassword.loading')
+            : t('authForms.resetPassword.submit')
+        }
         onClick={onSubmit}
         isInvert={true}
         disabled={isLoading || !isFormValid}

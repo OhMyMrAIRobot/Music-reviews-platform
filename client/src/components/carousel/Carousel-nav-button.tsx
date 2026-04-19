@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import NextSvg from '../svg/Next-svg';
 import PrevSvg from '../svg/Prev-svg';
 
@@ -15,6 +16,8 @@ const CarouselNavButton: FC<IProps> = ({
   handlePrev,
   disabled = false,
 }) => {
+  const { t } = useTranslation();
+
   const handleClick = () => {
     if (!disabled) {
       return isNext ? handleNext() : handlePrev();
@@ -23,6 +26,8 @@ const CarouselNavButton: FC<IProps> = ({
 
   return (
     <button
+      type="button"
+      aria-label={isNext ? t('carousel.nav.next') : t('carousel.nav.previous')}
       onClick={handleClick}
       className={`${
         disabled ? 'opacity-50 pointer-events-none' : ''

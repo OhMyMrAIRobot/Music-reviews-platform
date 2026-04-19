@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { AuthAPI } from '../../../api/auth-api';
 import {
   AuthEmailSentStatusResponse,
@@ -25,6 +26,7 @@ export const useRequestResetPasswordMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore } = useStore();
   const handleApiError = useApiErrorHandler();
 
@@ -36,10 +38,7 @@ export const useRequestResetPasswordMutation = ({
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(
-        error,
-        'Ошибка при отправке письма для восстановления пароля!'
-      );
+      handleApiError(error, t('mutations.auth.requestResetError'));
       onError?.(error);
     },
     onSettled,
@@ -49,13 +48,13 @@ export const useRequestResetPasswordMutation = ({
     if (data.emailSent) {
       notificationStore.addNotification({
         id: generateUUID(),
-        text: 'Письмо с инструкциями по восстановлению пароля отправлено на вашу почту!',
+        text: t('mutations.auth.requestResetEmailSent'),
         isError: false,
       });
     } else {
       notificationStore.addNotification({
         id: generateUUID(),
-        text: 'Ошибка при отправке письма для восстановления пароля. Повторите попытку позже!',
+        text: t('mutations.auth.requestResetFailed'),
         isError: true,
       });
     }

@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { useLogoutMutation } from '../../../../hooks/mutations';
 import useNavigationPath from '../../../../hooks/use-navigation-path';
@@ -13,6 +14,7 @@ import ProfileSvg from '../svg/Profile-svg';
 import PopupProfileButton from './Popup-profile-button';
 
 const ProfileButton = observer(() => {
+  const { t } = useTranslation();
   const { authStore } = useStore();
 
   const { navigatoToProfile, navigateToEditProfile, navigateToAdminReleases } =
@@ -55,6 +57,7 @@ const ProfileButton = observer(() => {
         <SkeletonLoader className="size-10 rounded-full" />
       ) : (
         <button
+          type="button"
           onClick={() => setIsOpen(!isOpen)}
           className="rounded-full size-10 overflow-hidden cursor-pointer aspect-square"
         >
@@ -85,7 +88,7 @@ const ProfileButton = observer(() => {
           onClick={() => setIsOpen(false)}
         >
           <PopupProfileButton
-            text="Моя страница"
+            text={t('layout.profile.myPage')}
             icon={<ProfileSvg className={'size-5.5'} />}
           />
         </Link>
@@ -95,7 +98,7 @@ const ProfileButton = observer(() => {
           onClick={() => setIsOpen(false)}
         >
           <PopupProfileButton
-            text="Настройки профиля"
+            text={t('layout.profile.settings')}
             icon={<SettingsSvg className={'size-7'} />}
           />
         </Link>
@@ -107,7 +110,7 @@ const ProfileButton = observer(() => {
             onClick={() => setIsOpen(false)}
           >
             <PopupProfileButton
-              text="Админ. панель"
+              text={t('layout.profile.adminPanel')}
               icon={<ShieldSvg className="size-6.5" />}
             />
           </Link>
@@ -116,7 +119,7 @@ const ProfileButton = observer(() => {
         <div className="border-t border-white/10 pb-1" />
 
         <PopupProfileButton
-          text="Выйти из профиля"
+          text={t('layout.profile.logout')}
           icon={<LogoutSvg className="size-4.5" />}
           onClick={logout}
         />

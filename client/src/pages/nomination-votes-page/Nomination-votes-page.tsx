@@ -1,13 +1,13 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNominationVotes } from '../../hooks/use-nomination-votes';
-import {
-  MonthEnumType,
-  MonthsEnum,
-} from '../../types/common/enums/months-enum';
+import { MonthEnumType } from '../../types/common/enums/months-enum';
+import { translateMonth } from '../../utils/date/month-i18n';
 import { NominationTypesEnum } from '../../types/nomination';
 import NominationVotesSection from './ui/Nomination-votes-section';
 
 const NominationVotesPage = () => {
+  const { t } = useTranslation();
   const { nominationTypes, candidates, userVotes, postVote, isLoading } =
     useNominationVotes();
 
@@ -48,7 +48,12 @@ const NominationVotesPage = () => {
   return (
     <>
       <h1 className="text-lg md:text-xl lg:text-3xl font-semibold">
-        Голосование за {MonthsEnum[new Date().getUTCMonth() as MonthEnumType]}
+        {t('pages.nominationVotes.voteFor', {
+          month: translateMonth(
+            t,
+            (new Date().getUTCMonth() + 1) as MonthEnumType
+          ),
+        })}
       </h1>
 
       <div className="mt-10 grid lg:grid-cols-2 gap-5">

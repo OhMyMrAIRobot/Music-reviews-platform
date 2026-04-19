@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { AuthorConfirmationAPI } from '../../../../api/author/author-confirmation-api';
 import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys';
 import { authorLikesKeys } from '../../../../query-keys/author-likes-keys';
@@ -31,6 +32,7 @@ export const useAdminRemoveAuthorConfirmationMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore } = useStore();
   const handleApiError = useApiErrorHandler();
   const queryClient = useQueryClient();
@@ -55,13 +57,13 @@ export const useAdminRemoveAuthorConfirmationMutation = ({
     mutationFn: (id: string) => AuthorConfirmationAPI.delete(id),
     onSuccess: () => {
       notificationStore.addSuccessNotification(
-        'Вы успешно удалили заявку на верификацию!'
+        t('admin.authorConfirmation.removeSuccess')
       );
       invalidateRelatedQueries();
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, 'Не удалось удалить заявку на верификацию!');
+      handleApiError(error, t('admin.authorConfirmation.removeError'));
       onError?.(error);
     },
     onSettled,

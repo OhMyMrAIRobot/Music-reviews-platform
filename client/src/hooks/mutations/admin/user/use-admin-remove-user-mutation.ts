@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { UserAPI } from '../../../../api/user/user-api';
 import { albumValuesKeys } from '../../../../query-keys/album-values-keys';
 import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys';
@@ -33,6 +34,7 @@ export const useAdminRemoveUserMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore } = useStore();
   const handleApiError = useApiErrorHandler();
   const queryClient = useQueryClient();
@@ -57,14 +59,12 @@ export const useAdminRemoveUserMutation = ({
   const mutation = useMutation({
     mutationFn: (id: string) => UserAPI.adminDelete(id),
     onSuccess: (_, id) => {
-      notificationStore.addSuccessNotification(
-        'Вы успешно удалили пользователя!'
-      );
+      notificationStore.addSuccessNotification(t('admin.user.removeSuccess'));
       invalidateRelatedQueries(id);
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, 'Не удалось удалить пользователя.');
+      handleApiError(error, t('admin.user.removeError'));
       onError?.(error);
     },
     onSettled,

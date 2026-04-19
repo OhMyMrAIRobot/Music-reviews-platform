@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { UserFavMediaAPI } from '../../../api/release/user-fav-media-api';
 import { leaderboardKeys } from '../../../query-keys/leaderboard-keys';
 import { profilesKeys } from '../../../query-keys/profiles-keys';
@@ -25,6 +26,7 @@ export const useToggleFavMedia = (
   isFav: boolean
 ): UseToggleFavResult => {
   /** HOOKS */
+  const { t } = useTranslation();
   const { authStore, notificationStore } = useStore();
   const { checkAuth } = useAuth();
   const handleApiError = useApiErrorHandler();
@@ -55,8 +57,8 @@ export const useToggleFavMedia = (
     onSuccess: (_, media) => {
       notificationStore.addSuccessNotification(
         isFav
-          ? 'Медиа успешно удалено из понравившихся!'
-          : 'Медиа успешно добавлено в понравившиеся!'
+          ? t('mutations.toggleFav.media.removeSuccess')
+          : t('mutations.toggleFav.media.addSuccess')
       );
       invalidateRelatedQueries(media);
     },
@@ -64,8 +66,8 @@ export const useToggleFavMedia = (
       handleApiError(
         error,
         isFav
-          ? 'Не удалось убрать медиа из понравившихся!'
-          : 'Не удалось добавить медиа в понравившиеся!'
+          ? t('mutations.toggleFav.media.removeError')
+          : t('mutations.toggleFav.media.addError')
       );
     },
   });

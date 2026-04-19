@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { FC, useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import ComboBox from '../../../../../../components/buttons/Combo-box.tsx';
 import FormButton from '../../../../../../components/form-elements/Form-button.tsx';
@@ -27,6 +28,8 @@ import {
   UserStatusesEnum,
 } from '../../../../../../types/user/index.ts';
 import { getRoleColor } from '../../../../../../utils/get-role-color.ts';
+import { translateUserRole } from '../../../../../../utils/user/user-role-i18n.ts';
+import { translateUserStatus } from '../../../../../../utils/user/user-status-i18n.ts';
 import EditUserModalButton from './Edit-user-modal-button.tsx';
 
 interface IProps {
@@ -37,6 +40,7 @@ interface IProps {
 
 const AdminDashboardEditUserModal: FC<IProps> = observer(
   ({ isOpen, onClose, user }) => {
+    const { t } = useTranslation();
     /** HOOKS */
     const { authStore } = useStore();
     const { navigatoToProfile } = useNavigationPath();
@@ -215,7 +219,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
                 <div className="lg:absolute right-3 top-3 grid lg:flex gap-3">
                   <Link to={navigatoToProfile(user.id)} className="md:w-45">
                     <EditUserModalButton
-                      title={'Профиль'}
+                      title={t('adminDashboard.common.profile')}
                       svg={<MoveToSvg className={'size-4'} />}
                       disabled={false}
                     />
@@ -224,7 +228,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
                   <div className="md:w-45">
                     <EditUserModalButton
                       disabled={user.profile?.avatar === '' || isProfilePending}
-                      title={'Удалить аватар'}
+                      title={t('adminDashboard.common.removeAvatar')}
                       onClick={() =>
                         updateProfileData({
                           id: user.id,
@@ -241,7 +245,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
                       disabled={
                         user.profile?.coverImage === '' || isProfilePending
                       }
-                      title={'Удалить обложку'}
+                      title={t('adminDashboard.common.removeCover')}
                       onClick={() => {
                         updateProfileData({
                           id: user.id,
@@ -262,7 +266,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
                       user.role.role
                     )} font-medium text-sm`}
                   >
-                    {user.role.role}
+                    {translateUserRole(t, user.role.role)}
                   </span>
                 </div>
 
@@ -272,14 +276,16 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
                   <div className="w-full md:w-1/2 gap-y-3 h-full flex flex-col justify-between">
                     <div className={`grid gap-2 w-full`}>
                       <FormLabel
-                        name={'Никнейм'}
+                        name={t('adminDashboard.common.nickname')}
                         htmlFor={`admin-edit-user-nickname`}
                         isRequired={true}
                       />
 
                       <FormInput
                         id={`admin-edit-user-nickname`}
-                        placeholder={'Никнейм...'}
+                        placeholder={t(
+                          'adminDashboard.common.nicknamePlaceholder'
+                        )}
                         type={'text'}
                         value={nickname}
                         setValue={setNickname}
@@ -288,14 +294,16 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 
                     <div className={`grid gap-2 w-full`}>
                       <FormLabel
-                        name={'Email'}
+                        name={t('adminDashboard.common.email')}
                         htmlFor={`admin-edit-user-email`}
                         isRequired={true}
                       />
 
                       <FormInput
                         id={`admin-edit-user-email`}
-                        placeholder={'Email@exaple.com'}
+                        placeholder={t(
+                          'adminDashboard.common.emailPlaceholder'
+                        )}
                         type={'text'}
                         value={email}
                         setValue={setEmail}
@@ -305,12 +313,14 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 
                   <div className={`w-full md:w-1/2`}>
                     <FormLabel
-                      name={'Описание'}
+                      name={t('adminDashboard.common.description')}
                       htmlFor={'admin-edit-user-bio'}
                     />
                     <FormTextbox
                       id={'admin-edit-user-bio'}
-                      placeholder="Описание..."
+                      placeholder={t(
+                        'adminDashboard.common.descriptionPlaceholder'
+                      )}
                       value={bio}
                       setValue={setBio}
                     />
@@ -321,24 +331,34 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 
                 <div className="w-full grid md:flex items-start gap-x-5 gap-y-3">
                   <div className="grid gap-2 w-full md:w-1/2">
-                    <FormLabel name={'Роль'} htmlFor={''} isRequired={true} />
+                    <FormLabel
+                      name={t('adminDashboard.common.role')}
+                      htmlFor={''}
+                      isRequired={true}
+                    />
 
                     <ComboBox
                       options={Object.values(availableRoles)}
                       value={role}
                       onChange={setRole}
                       className="border border-white/15"
+                      formatOption={(o) => translateUserRole(t, o)}
                     />
                   </div>
 
                   <div className="grid gap-2 w-full md:w-1/2">
-                    <FormLabel name={'Статус'} htmlFor={''} isRequired={true} />
+                    <FormLabel
+                      name={t('adminDashboard.common.status')}
+                      htmlFor={''}
+                      isRequired={true}
+                    />
 
                     <ComboBox
                       options={Object.values(UserStatusesEnum)}
                       value={status}
                       onChange={setStatus}
                       className="border border-white/15"
+                      formatOption={(o) => translateUserStatus(t, o)}
                     />
                   </div>
                 </div>
@@ -376,7 +396,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
                 <div className="grid w-full sm:flex gap-3 sm:justify-end sm:flex-row-reverse">
                   <div className="w-full sm:w-30">
                     <FormButton
-                      title={'Сохранить'}
+                      title={t('adminDashboard.common.save')}
                       isInvert={true}
                       onClick={handleSubmit}
                       disabled={
@@ -410,7 +430,7 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
 
                   <div className="w-full sm:w-25 sm:ml-auto">
                     <FormButton
-                      title={'Назад'}
+                      title={t('adminDashboard.common.back')}
                       isInvert={false}
                       onClick={onClose}
                       disabled={isUserPending}

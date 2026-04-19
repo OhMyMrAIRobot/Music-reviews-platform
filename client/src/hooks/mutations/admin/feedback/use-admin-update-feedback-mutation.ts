@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { FeedbackAPI } from '../../../../api/feedback/feedback-api';
 import { feedbackKeys } from '../../../../query-keys/feedback-keys';
 import { UseMutationParams } from '../../../../types/common';
@@ -19,6 +20,7 @@ export const useAdminUpdateFeedbackMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore } = useStore();
   const queryClient = useQueryClient();
   const handleApiError = useApiErrorHandler();
@@ -33,13 +35,13 @@ export const useAdminUpdateFeedbackMutation = ({
     }) => FeedbackAPI.update(feedbackId, { feedbackStatusId: statusId }),
     onSuccess: () => {
       notificationStore.addSuccessNotification(
-        'Вы успешно отметили сообщение как прочитанное!'
+        t('admin.feedback.updateSuccess')
       );
       queryClient.invalidateQueries({ queryKey: feedbackKeys.all });
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, 'Не удалось обновить статус сообщения');
+      handleApiError(error, t('admin.feedback.updateError'));
       onError?.(error);
     },
     onSettled,

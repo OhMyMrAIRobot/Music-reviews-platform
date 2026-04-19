@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { AuthAPI } from '../../../api/auth-api';
 import { RegisterData } from '../../../types/auth';
 import { UseMutationParams } from '../../../types/common';
@@ -23,6 +24,7 @@ export const useRegistrationMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { authStore, notificationStore } = useStore();
   const handleApiError = useApiErrorHandler();
 
@@ -32,7 +34,7 @@ export const useRegistrationMutation = ({
       const { user, accessToken, emailSent } = data;
       authStore.setAuthorization(user, accessToken);
       notificationStore.addSuccessNotification(
-        'Вы успешно зарегистрировались!'
+        t('mutations.auth.registerSuccess')
       );
       if (emailSent) {
         notificationStore.addEmailSentNotification(emailSent);
@@ -40,7 +42,7 @@ export const useRegistrationMutation = ({
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, 'Ошибка при регистрации!');
+      handleApiError(error, t('mutations.auth.registerError'));
       onError?.(error);
     },
     onSettled,

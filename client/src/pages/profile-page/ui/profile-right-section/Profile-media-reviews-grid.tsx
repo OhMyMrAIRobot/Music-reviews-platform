@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ReleaseMediaAPI } from '../../../../api/release/release-media-api';
 import Pagination from '../../../../components/pagination/Pagination';
 import ReleaseMediaReview from '../../../../components/release/release-media/Release-media-review';
@@ -18,6 +19,7 @@ interface IProps {
 const limit = 5;
 
 const ProfileMediaReviewsGrid: FC<IProps> = ({ userId }) => {
+  const { t } = useTranslation();
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const { statuses, types, isLoading: isMetaLoading } = useReleaseMediaMeta();
@@ -67,7 +69,7 @@ const ProfileMediaReviewsGrid: FC<IProps> = ({ userId }) => {
 
       {!isMediaLoading && !isMediaLoading && items.length === 0 && (
         <p className="text-center text-2xl font-semibold mt-10">
-          Медиарецензии не найдены!
+          {t('pages.profile.mediaReviewsNotFound')}
         </p>
       )}
 

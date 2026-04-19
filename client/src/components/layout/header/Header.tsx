@@ -1,4 +1,5 @@
 import { observer } from 'mobx-react-lite';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import useNavigationPath from '../../../hooks/use-navigation-path';
 import { useSidebarOverlay } from '../../../hooks/use-sidebar-overlay';
@@ -9,11 +10,13 @@ import PencilSvg from '../../svg/Pencil-svg';
 import BurgerMenuButton from './buttons/Burger-menu-button';
 import HeaderButton from './buttons/Header-button';
 import HeaderSvgButton from './buttons/Header-svg-button';
+import LanguageSwitch from './buttons/Language-switch';
 import LoginIconButton from './buttons/Login-icon-button';
 import ProfileButton from './buttons/Profile-button';
 import SearchBar from './Search-bar';
 
 const Header = observer(() => {
+  const { t } = useTranslation();
   const { authStore } = useStore();
 
   const { openSidebarOverlay } = useSidebarOverlay();
@@ -41,25 +44,33 @@ const Header = observer(() => {
         <div className="ml-auto hidden lg:flex items-center gap-8">
           {authStore.user?.isActive === false && (
             <Link to={navigateToActivation}>
-              <HeaderSvgButton title={'Активация аккаунта'}>
+              <HeaderSvgButton title={t('layout.header.accountActivation')}>
                 <ActivationSvg className={'size-5'} />
               </HeaderSvgButton>
             </Link>
           )}
 
           <Link to={navigateToFeedback}>
-            <HeaderSvgButton title={'Обратная связь'}>
+            <HeaderSvgButton title={t('layout.header.feedback')}>
               <PencilSvg className="size-3" />
             </HeaderSvgButton>
           </Link>
 
+          <LanguageSwitch />
+
           {!authStore.isAuth && (
             <div className="flex gap-3">
               <Link to={navigateToLogin}>
-                <HeaderButton isInvert={false} title={'Войти'} />
+                <HeaderButton
+                  isInvert={false}
+                  title={t('layout.header.login')}
+                />
               </Link>
               <Link to={navigateToRegistration}>
-                <HeaderButton isInvert={true} title={'Регистрация'} />
+                <HeaderButton
+                  isInvert={true}
+                  title={t('layout.header.register')}
+                />
               </Link>
             </div>
           )}
@@ -67,7 +78,8 @@ const Header = observer(() => {
           {authStore.isAuth && <ProfileButton />}
         </div>
 
-        <div className="flex lg:hidden w-full justify-end items-center space-x-1.5">
+        <div className="flex lg:hidden w-full justify-end items-center gap-1.5">
+          <LanguageSwitch />
           {authStore.isAuth ? (
             <ProfileButton />
           ) : (

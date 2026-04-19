@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import useNavigationPath from '../../../hooks/use-navigation-path';
 import { AuthorLike } from '../../../types/review';
@@ -11,6 +12,7 @@ interface IProps {
 }
 
 const AuthorLikeCard: FC<IProps> = ({ isLoading, authorLike }) => {
+  const { t } = useTranslation();
   const { navigateToReleaseDetails, navigatoToProfile } = useNavigationPath();
 
   return isLoading || !authorLike ? (
@@ -55,7 +57,7 @@ const AuthorLikeCard: FC<IProps> = ({ isLoading, authorLike }) => {
         </div>
 
         <img
-          alt={'author-like'}
+          alt={t('author.authorLikeBadgeAlt')}
           src={`${
             import.meta.env.VITE_SERVER_URL
           }/public/assets/author-like.png`}

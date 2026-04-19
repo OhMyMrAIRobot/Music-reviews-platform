@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { ReleaseMediaAPI } from '../../../../api/release/release-media-api';
 import { leaderboardKeys } from '../../../../query-keys/leaderboard-keys';
 import { platformStatsKeys } from '../../../../query-keys/platform-stats-keys';
@@ -26,6 +27,7 @@ export const useAdminRemoveMediaMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore } = useStore();
   const queryClient = useQueryClient();
   const handleApiError = useApiErrorHandler();
@@ -44,14 +46,12 @@ export const useAdminRemoveMediaMutation = ({
   const mutation = useMutation({
     mutationFn: (id: string) => ReleaseMediaAPI.adminDelete(id),
     onSuccess: () => {
-      notificationStore.addSuccessNotification(
-        'Вы успешно удалили медиаматериал!'
-      );
+      notificationStore.addSuccessNotification(t('admin.media.removeSuccess'));
       invalidateRelatedQueries();
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, 'Не удалось удалить медиа');
+      handleApiError(error, t('admin.media.removeError'));
       onError?.(error);
     },
     onSettled,

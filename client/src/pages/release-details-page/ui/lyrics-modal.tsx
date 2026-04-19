@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { LyricsApi } from '../../../api/lyrics-api';
 import ModalOverlay from '../../../components/modals/Modal-overlay';
 import SkeletonLoader from '../../../components/utils/Skeleton-loader';
@@ -48,6 +49,7 @@ const renderLyrics = (text: string) => {
 };
 
 const LyricsModal = ({ isOpen, onCancel, releaseId }: IProps) => {
+  const { t } = useTranslation();
   const { data: lyrics, isPending } = useQuery({
     queryKey: releasesKeys.lyrics(releaseId),
     queryFn: () => LyricsApi.fetchLyrics(releaseId),
@@ -84,7 +86,7 @@ const LyricsModal = ({ isOpen, onCancel, releaseId }: IProps) => {
             : !isPending && (
                 <div className="space-y-2 w-60 md:w-130 h-40">
                   <p className="text-sm text-white/70">
-                    Текст песни в настоящий момент недоступен. Попробуй позже
+                    {t('releaseDetails.lyrics.unavailable')}
                   </p>
                 </div>
               )}

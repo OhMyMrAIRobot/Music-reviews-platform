@@ -1,5 +1,7 @@
 import { observer } from 'mobx-react-lite';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { getAlbumValueFormStrings } from '../../../../../../utils/album-value';
 import { makeStepLabeler } from '../../../../../../utils/make-step-labeler';
 import ReleaseDetailsAlbumValueFormSlider from './Release-details-album-value-form-slider';
 import ReleaseDetailsAlbumValueSection from './Release-details-album-value-section';
@@ -13,34 +15,6 @@ interface IProps {
   setIntegritySemantic: (val: number) => void;
 }
 
-const getFormatReleaseValueText = makeStepLabeler(
-  [
-    'EP (мини-альбом) из 4–6 треков, либо заявленный автором EP (мини-альбом) на бо́льшее количество песен. Делюкс-версия (если не заявлена автором как расширение концепции альбома). Микстейп. Сборник/Компиляция. Переиздание. Акустическая версия. Концертная запись',
-    'LP (студийный альбом) от 7 песен, либо заявленный автором концептуальный альбом на меньшее количество песен (от 3-х). Делюкс-версия (если заявлена автором как цельное расширение концепции альбома)',
-  ],
-  0,
-  1
-);
-
-const getIntegrityGenreValueText = makeStepLabeler(
-  [
-    'Сборник различных жанровых идей без общей задумки',
-    'Релиз из двух-трёх жанровых идей',
-    'Все композиции с релиза объединены одной жанровой идеей. Либо цельный звуковой эксперимент, где очередность песен имеет цельную структуру и развитие',
-  ],
-  0.5,
-  1
-);
-
-const getIntegritySemanticValueText = makeStepLabeler(
-  [
-    'Релиз не имеет общей смысловой целостности',
-    'Все композиции с релиза объединены в целостное смысловое повествование',
-  ],
-  0.5,
-  1
-);
-
 const ReleaseDetailsAlbumValueFormIntegrity: FC<IProps> = observer(
   ({
     formatRelease,
@@ -50,20 +24,34 @@ const ReleaseDetailsAlbumValueFormIntegrity: FC<IProps> = observer(
     integritySemantic,
     setIntegritySemantic,
   }) => {
+    const { i18n, t } = useTranslation();
+    const s = useMemo(
+      () => getAlbumValueFormStrings(i18n.language),
+      [i18n.language]
+    );
+
+    const getFormatReleaseValueText = useMemo(
+      () => makeStepLabeler(s.integrity.formatReleaseTexts, 0, 1),
+      [s.integrity.formatReleaseTexts]
+    );
+    const getIntegrityGenreValueText = useMemo(
+      () => makeStepLabeler(s.integrity.genreTexts, 0.5, 1),
+      [s.integrity.genreTexts]
+    );
+    const getIntegritySemanticValueText = useMemo(
+      () => makeStepLabeler(s.integrity.semanticTexts, 0.5, 1),
+      [s.integrity.semanticTexts]
+    );
+
     return (
       <ReleaseDetailsAlbumValueSection
         pos={2}
-        title={'Целостность'}
-        minMaxText={'(от 1 до 5)'}
+        title={t('albumValue.integrity')}
+        minMaxText={s.integrity.sectionMinMax}
         description={
           <>
-            <p>
-              Формат релиза, и соблюдение его жанровой и смысловой целостности
-            </p>
-            <p>
-              Рассчитывается как совокупность подкритериев «Формат релиза»,
-              «Жанровую целостность» и «Смысловую целостность»
-            </p>
+            <p>{s.integrity.descriptionP1}</p>
+            <p>{s.integrity.descriptionP2}</p>
           </>
         }
         value={`${formatRelease + integrityGenre + integritySemantic}`}
@@ -73,10 +61,11 @@ const ReleaseDetailsAlbumValueFormIntegrity: FC<IProps> = observer(
           <ReleaseDetailsAlbumValueFormSlider
             value={formatRelease}
             setValue={setFormatRelease}
-            title="Формат релиза"
+            title={t('albumValue.releaseFormat')}
             min={0}
             max={1}
             step={1}
+            rangeTemplate={s.sliderRange}
             valueTitle={''}
             valueDescription={getFormatReleaseValueText(formatRelease)}
           />
@@ -84,10 +73,11 @@ const ReleaseDetailsAlbumValueFormIntegrity: FC<IProps> = observer(
           <ReleaseDetailsAlbumValueFormSlider
             value={integrityGenre}
             setValue={setIntegrityGenre}
-            title="Жанровая целостность"
+            title={t('albumValue.genreIntegrity')}
             min={0.5}
             max={2.5}
             step={1}
+            rangeTemplate={s.sliderRange}
             valueTitle={''}
             valueDescription={getIntegrityGenreValueText(integrityGenre)}
           />
@@ -95,10 +85,11 @@ const ReleaseDetailsAlbumValueFormIntegrity: FC<IProps> = observer(
           <ReleaseDetailsAlbumValueFormSlider
             value={integritySemantic}
             setValue={setIntegritySemantic}
-            title="Смысловая целостность"
+            title={t('albumValue.semanticIntegrity')}
             min={0.5}
             max={1.5}
             step={1}
+            rangeTemplate={s.sliderRange}
             valueTitle={''}
             valueDescription={getIntegritySemanticValueText(integritySemantic)}
           />

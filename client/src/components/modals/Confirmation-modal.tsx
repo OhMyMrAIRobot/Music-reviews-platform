@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import { createPortal } from 'react-dom';
+import { useTranslation } from 'react-i18next';
 import FormButton from '../form-elements/Form-button';
 import CloseSvg from '../svg/Close-svg';
 import ModalOverlay from './Modal-overlay';
@@ -19,12 +20,16 @@ const ConfirmationModal: FC<IProps> = ({
   onCancel,
   isLoading = false,
 }) => {
+  const { t } = useTranslation();
+
   return createPortal(
     <ModalOverlay isOpen={isOpen} onCancel={onCancel} isLoading={isLoading}>
       <div
         className={`relative rounded-lg px-6 pb-6 pt-8 w-[90%] lg:w-100 border border-white/10 bg-zinc-950 grid gap-6 transition-transform duration-300`}
       >
         <button
+          type="button"
+          aria-label={t('modals.close')}
           onClick={onCancel}
           disabled={isLoading}
           className={`absolute p-1 top-3 right-3 bg-zinc-900 rounded-full cursor-pointer text-white/60  transition-colors duration-200 ${
@@ -38,14 +43,14 @@ const ConfirmationModal: FC<IProps> = ({
 
         <div className="grid gap-2">
           <FormButton
-            title={'Подтвердить'}
+            title={t('modals.confirm')}
             isInvert={true}
             onClick={onConfirm}
             disabled={false}
             isLoading={isLoading}
           />
           <FormButton
-            title={'Отменить'}
+            title={t('modals.cancel')}
             isInvert={false}
             onClick={onCancel}
             disabled={isLoading}

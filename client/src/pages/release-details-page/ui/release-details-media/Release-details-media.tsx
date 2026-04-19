@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { FC, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ReleaseMediaAPI } from '../../../../api/release/release-media-api';
 import CarouselNavButton from '../../../../components/carousel/Carousel-nav-button';
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader';
@@ -20,6 +21,7 @@ interface IProps {
 }
 
 const ReleaseDetailsMedia: FC<IProps> = ({ releaseId }) => {
+  const { t } = useTranslation();
   const { authStore } = useStore();
 
   const carouselRef = useRef<CarouselRef>(null);
@@ -91,7 +93,7 @@ const ReleaseDetailsMedia: FC<IProps> = ({ releaseId }) => {
       <div className="flex">
         <div className="font-bold shrink-0 flex items-center justify-between space-x-2 lg:space-x-5 col-span-2">
           <div className="text-xl xl:text-2xl font-semibold">
-            Медиаматериалы
+            {t('releaseDetails.media.materialsHeading')}
           </div>
 
           {!isLoading ? (

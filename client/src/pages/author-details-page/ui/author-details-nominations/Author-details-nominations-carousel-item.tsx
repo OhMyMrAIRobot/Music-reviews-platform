@@ -1,11 +1,10 @@
 import { FC, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader';
 import useNavigationPath from '../../../../hooks/use-navigation-path';
-import {
-  MonthEnumType,
-  MonthsEnum,
-} from '../../../../types/common/enums/months-enum';
+import { MonthEnumType } from '../../../../types/common/enums/months-enum';
+import { translateMonth } from '../../../../utils/date/month-i18n';
 import {
   AuthorNominationWin,
   NominationTypesEnum,
@@ -20,6 +19,7 @@ const AuthorDetailsNominationsCarouselItem: FC<IProps> = ({
   item,
   isLoading,
 }) => {
+  const { t } = useTranslation();
   const { navigateToReleaseDetails } = useNavigationPath();
   const cardRef = useRef<HTMLDivElement>(null);
   const glareRef = useRef<HTMLDivElement>(null);
@@ -130,7 +130,7 @@ const AuthorDetailsNominationsCarouselItem: FC<IProps> = ({
                 {item.nominationType}
               </div>
               <div className="text-[10px] lg:text-sm opacity-40 font-semibold">
-                {MonthsEnum[item.month as MonthEnumType]} {item.year}
+                {translateMonth(t, item.month as MonthEnumType)} {item.year}
               </div>
             </div>
 

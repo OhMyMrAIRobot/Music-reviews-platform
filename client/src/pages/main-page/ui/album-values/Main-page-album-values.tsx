@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AlbumValueAPI } from '../../../../api/album-value-api';
 import CarouselContainer from '../../../../components/carousel/Carousel-container';
 import useNavigationPath from '../../../../hooks/use-navigation-path';
@@ -14,6 +15,7 @@ const query: AlbumValuesQuery = {
 };
 
 const MainPageAlbumValues = () => {
+  const { t } = useTranslation();
   const { navigateToAlbumValues } = useNavigationPath();
 
   const { data, isPending } = useQuery({
@@ -30,8 +32,8 @@ const MainPageAlbumValues = () => {
 
   return (
     <CarouselContainer
-      title={'Ценность альбомов'}
-      buttonTitle={'Каталог ценности альбомов'}
+      title={t('pages.main.albumValues.title')}
+      buttonTitle={t('pages.main.albumValues.catalog')}
       showButton={true}
       href={navigateToAlbumValues}
       handlePrev={() => carouselRef.current?.scrollPrev()}

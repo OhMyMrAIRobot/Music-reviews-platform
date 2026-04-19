@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useStore } from './use-store';
 
 /**
@@ -15,6 +17,7 @@ type ApiError = {
  * @returns A function that handles API errors by showing notifications.
  */
 export const useApiErrorHandler = () => {
+  const { t } = useTranslation();
   const { notificationStore } = useStore();
 
   /**
@@ -23,14 +26,18 @@ export const useApiErrorHandler = () => {
    * Supports both single string messages and arrays of messages.
    *
    * @param error - The error object, typically from an API call (e.g., Axios error).
-   * @param defaultMessage - The default message to display if no specific error messages are found. Defaults to 'Произошла ошибка!'.
+   * @param defaultMessage - The default message to display if no specific error messages are found.
    */
-  return (error: unknown, defaultMessage: string = 'Произошла ошибка!') => {
-    const axiosError = error as ApiError;
-    const messages = axiosError?.response?.data?.message || [defaultMessage];
-    const messageArray = Array.isArray(messages) ? messages : [messages];
-    messageArray.forEach((msg: string) => {
-      notificationStore.addErrorNotification(msg);
-    });
-  };
+  return useCallback(
+    (error: unknown, defaultMessage?: string) => {
+      const fallback = defaultMessage ?? t('hooks.apiError.defaultMessage');
+      const axiosError = error as ApiError;
+      const messages = axiosError?.response?.data?.message || [fallback];
+      const messageArray = Array.isArray(messages) ? messages : [messages];
+      messageArray.forEach((msg: string) => {
+        notificationStore.addErrorNotification(msg);
+      });
+    },
+    [notificationStore, t]
+  );
 };

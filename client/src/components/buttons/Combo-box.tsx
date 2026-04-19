@@ -1,4 +1,6 @@
 import { FC, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { assertComboBoxOptionsNonEmpty } from '../../utils/buttons/combo-box';
 import { getRoleColor } from '../../utils/get-role-color';
 import ArrowBottomSvg from '../layout/header/svg/Arrow-bottom-svg';
 import TickSvg from '../svg/Tick-svg';
@@ -11,6 +13,7 @@ interface ComboBoxProps {
   className?: string;
   placeholder?: string;
   isLoading?: boolean;
+  formatOption?: (option: string) => string;
 }
 
 const ComboBox: FC<ComboBoxProps> = ({
@@ -20,10 +23,10 @@ const ComboBox: FC<ComboBoxProps> = ({
   className = '',
   placeholder = '',
   isLoading = false,
+  formatOption = (option) => option,
 }) => {
-  if (options.length === 0) {
-    throw new Error('ComboBox: options must be a non-empty array.');
-  }
+  const { t } = useTranslation();
+  assertComboBoxOptionsNonEmpty(t, options);
 
   const [isOpen, setIsOpen] = useState(false);
   const comboRef = useRef<HTMLDivElement | null>(null);
@@ -60,7 +63,7 @@ const ComboBox: FC<ComboBoxProps> = ({
               selected === placeholder ? 'opacity-50' : ''
             }`}
           >
-            {selected}
+            {formatOption(selected)}
           </span>
         </div>
 
@@ -85,7 +88,7 @@ const ComboBox: FC<ComboBoxProps> = ({
               setIsOpen(false);
             }}
           >
-            {option}
+            {formatOption(option)}
 
             {selected === option ? (
               <span className="w-full">

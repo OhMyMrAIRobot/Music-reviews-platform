@@ -1,4 +1,5 @@
 import { FC, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import AuthorConfirmationStatusIcon from '../../../../../components/author/author-confirmation/Author-confirmation-status-icon';
 import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg';
@@ -18,6 +19,7 @@ import {
 } from '../../../../../types/author';
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum';
 import { SortOrder } from '../../../../../types/common/types/sort-order';
+import { translateAuthorConfirmationStatus } from '../../../../../utils/admin/translate-author-confirmation-status-i18n';
 import { getReleaseMediaStatusColor } from '../../../../../utils/get-release-media-status-color';
 import AdminDeleteButton from '../../buttons/Admin-delete-button';
 import AdminSvgButton from '../../buttons/Admin-svg-button';
@@ -39,6 +41,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
   order,
   toggleOrder,
 }) => {
+  const { t } = useTranslation();
   const { statuses } = useAuthorConfirmationMeta();
   const { navigatoToProfile, navigateToAuthorDetails } = useNavigationPath();
 
@@ -104,7 +107,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
         <>
           {deleteConfModalOpen && (
             <ConfirmationModal
-              title={'Вы действительно хотите удалить заявку на верификацию?'}
+              title={t('adminDashboard.authorConfirmation.deleteConfirm')}
               isOpen={deleteConfModalOpen}
               onConfirm={() => handleDelete(item.id)}
               onCancel={() => setDeleteConfModalOpen(false)}
@@ -113,11 +116,17 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
           )}
           {(rejectModalOpen || approveModalOpen) && (
             <ConfirmationModal
-              title={`Вы действительно хотите изменить статус заявки на '${
-                approveModalOpen
-                  ? AuthorConfirmationStatusesEnum.APPROVED
-                  : AuthorConfirmationStatusesEnum.REJECTED
-              }'?`}
+              title={t(
+                'adminDashboard.authorConfirmation.changeStatusConfirm',
+                {
+                  status: translateAuthorConfirmationStatus(
+                    t,
+                    approveModalOpen
+                      ? AuthorConfirmationStatusesEnum.APPROVED
+                      : AuthorConfirmationStatusesEnum.REJECTED
+                  ),
+                }
+              )}
               isOpen={rejectModalOpen || approveModalOpen}
               onConfirm={async () => {
                 await handleUpdate(
@@ -162,13 +171,17 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
                 alt={item.user.nickname}
                 className="max-xl:hidden size-9 object-cover aspect-square rounded-full select-none"
               />
-              <span className="xl:hidden">Пользователь: </span>
+              <span className="xl:hidden">
+                {t('adminDashboard.authorConfirmation.userMobile')}
+              </span>
               <span className="line-clamp-2 max-xl:underline underline-offset-4 overflow-hidden text-ellipsis text-wrap">
                 {item.user.nickname}
               </span>
             </Link>
           ) : (
-            <span className="px-2">Пользователь</span>
+            <span className="px-2">
+              {t('adminDashboard.authorConfirmation.user')}
+            </span>
           )}
         </div>
 
@@ -191,20 +204,26 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
                 alt={item.author.name}
                 className="max-xl:hidden size-9 object-cover aspect-square rounded-full select-none"
               />
-              <span className="xl:hidden">Автор: </span>
+              <span className="xl:hidden">
+                {t('adminDashboard.authorConfirmation.authorMobile')}
+              </span>
               <span className=" max-xl:underline underline-offset-4 line-clamp-2 overflow-hidden text-ellipsis text-wrap">
                 {item.author.name}
               </span>
             </Link>
           ) : (
-            <span className="px-2">Автор</span>
+            <span className="px-2">
+              {t('adminDashboard.authorConfirmation.author')}
+            </span>
           )}
         </div>
 
         <div className="xl:col-span-1 flex items-center gap-x-1 text-ellipsis line-clamp-1 ">
           {item ? (
             <>
-              <span className="xl:hidden">Статус: </span>
+              <span className="xl:hidden">
+                {t('adminDashboard.authorConfirmation.statusMobile')}
+              </span>
               <div
                 className={`flex gap-x-1 items-center ${getReleaseMediaStatusColor(
                   item.status.status
@@ -214,18 +233,22 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
                   status={item.status.status}
                   className={'size-5'}
                 />
-                <span>{item.status.status}</span>
+                <span>
+                  {translateAuthorConfirmationStatus(t, item.status.status)}
+                </span>
               </div>
             </>
           ) : (
-            <span>Статус</span>
+            <span>{t('adminDashboard.common.status')}</span>
           )}
         </div>
 
         <div className="xl:col-span-2 text-ellipsis text-wrap  xl:ml-4">
           {item ? (
             <>
-              <span className="xl:hidden">Дата подачи заявки: </span>
+              <span className="xl:hidden">
+                {t('adminDashboard.authorConfirmation.submittedAtMobile')}
+              </span>
               <span>{item.createdAt}</span>
             </>
           ) : (
@@ -233,7 +256,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
               onClick={toggleOrder}
               className="cursor-pointer hover:text-white flex items-center gap-x-1.5"
             >
-              <span>Дата подачи заявки</span>
+              <span>{t('adminDashboard.authorConfirmation.submittedAt')}</span>
               <ArrowBottomSvg
                 className={`size-3 ${
                   order === SortOrdersEnum.ASC ? 'rotate-180' : ''
@@ -246,11 +269,15 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
         <div className="xl:col-span-2  line-clamp-2 break-words overflow-hidden text-ellipsis text-wrap mr-2">
           {item ? (
             <>
-              <span className="xl:hidden">Подтверждение: </span>
+              <span className="xl:hidden">
+                {t('adminDashboard.authorConfirmation.confirmationMobile')}
+              </span>
               <span>{item.confirmation}</span>
             </>
           ) : (
-            <span className="text-center">Подтверждение</span>
+            <span className="text-center">
+              {t('adminDashboard.authorConfirmation.confirmation')}
+            </span>
           )}
         </div>
 
@@ -286,7 +313,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
               <AdminDeleteButton onClick={() => setDeleteConfModalOpen(true)} />
             </div>
           ) : (
-            'Действие'
+            t('adminDashboard.common.action')
           )}
         </div>
       </div>

@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { UserFavReviewAPI } from '../../../api/review/user-fav-review-api';
 import { authorLikesKeys } from '../../../query-keys/author-likes-keys';
 import { leaderboardKeys } from '../../../query-keys/leaderboard-keys';
@@ -26,6 +27,7 @@ export const useToggleFavReview = (
   isFav: boolean
 ): UseToggleFavResult => {
   /** HOOKS */
+  const { t } = useTranslation();
   const { authStore, notificationStore } = useStore();
   const { checkAuth } = useAuth();
   const handleApiError = useApiErrorHandler();
@@ -58,8 +60,8 @@ export const useToggleFavReview = (
     onSuccess: (_, review) => {
       notificationStore.addSuccessNotification(
         isFav
-          ? 'Рецензия успешно удалена из понравившихся!'
-          : 'Рецензия успешно добавлена в понравившиеся!'
+          ? t('mutations.toggleFav.review.removeSuccess')
+          : t('mutations.toggleFav.review.addSuccess')
       );
       invalidateRelatedQueries(review);
     },
@@ -67,8 +69,8 @@ export const useToggleFavReview = (
       handleApiError(
         error,
         isFav
-          ? 'Не удалось убрать рецензию из понравившихся!'
-          : 'Не удалось добавить рецензию в понравившиеся!'
+          ? t('mutations.toggleFav.review.removeError')
+          : t('mutations.toggleFav.review.addError')
       );
     },
   });

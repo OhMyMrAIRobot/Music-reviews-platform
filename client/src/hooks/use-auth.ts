@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useStore } from './use-store';
 
 /**
@@ -10,6 +11,7 @@ import { useStore } from './use-store';
  * - `checkAuth`: Function to verify user authentication and account activation status.
  */
 export const useAuth = () => {
+  const { t } = useTranslation();
   const { authStore, notificationStore } = useStore();
 
   /**
@@ -21,21 +23,19 @@ export const useAuth = () => {
    */
   const checkAuth = useCallback(() => {
     if (!authStore.isAuth) {
-      notificationStore.addErrorNotification(
-        'Для выполнения этого действия требуется авторизация!'
-      );
+      notificationStore.addErrorNotification(t('hooks.auth.requiresLogin'));
       return false;
     }
 
     if (!authStore.user?.isActive) {
       notificationStore.addErrorNotification(
-        'Для выполнения этого действия требуется активировать аккаунт!'
+        t('hooks.auth.requiresActivation')
       );
       return false;
     }
 
     return true;
-  }, [authStore.isAuth, authStore.user?.isActive, notificationStore]);
+  }, [authStore.isAuth, authStore.user?.isActive, notificationStore, t]);
 
   return { checkAuth };
 };

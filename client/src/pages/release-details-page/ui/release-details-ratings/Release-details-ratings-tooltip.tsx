@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ReleaseRatingDetails,
   ReleaseRatingTotal,
@@ -23,21 +24,25 @@ interface IProps {
   ratingDetails?: ReleaseRatingDetails;
 }
 
-const getTitle = (type: string) => {
-  switch (type) {
-    case ReleaseRatingTypesEnum.MEDIA:
-      return 'Средняя оценка Медиа';
-    case ReleaseRatingTypesEnum.WITH_TEXT:
-      return 'Средняя оценка рецензий пользователей';
-    case ReleaseRatingTypesEnum.WITHOUT_TEXT:
-      return 'Средняя оценка без рецензий пользователей';
-  }
-};
-
 const ReleaseDetailsRatingsTooltip: FC<IProps> = ({
   rating,
   ratingDetails,
 }) => {
+  const { t } = useTranslation();
+
+  const getTitle = (type: string) => {
+    switch (type) {
+      case ReleaseRatingTypesEnum.MEDIA:
+        return t('releaseDetails.ratings.media');
+      case ReleaseRatingTypesEnum.WITH_TEXT:
+        return t('releaseDetails.ratings.withReviews');
+      case ReleaseRatingTypesEnum.WITHOUT_TEXT:
+        return t('releaseDetails.ratings.withoutReviews');
+      default:
+        return '';
+    }
+  };
+
   return (
     ratingDetails && (
       <div className="w-70 flex flex-col bg-primary border border-gray-600 rounded-lg p-2 gap-y-1">
@@ -45,27 +50,27 @@ const ReleaseDetailsRatingsTooltip: FC<IProps> = ({
           {getTitle(rating.type)}
         </p>
         <DetailRow
-          title={'Рифмы / Образы'}
+          title={t('review.marks.rhymes')}
           total={`${ratingDetails.details.rhymes}`}
           color={'text-[rgba(35,101,199)]'}
         />
         <DetailRow
-          title={'Структура / Ритмика'}
+          title={t('review.marks.structure')}
           total={`${ratingDetails.details.structure}`}
           color={'text-[rgba(35,101,199)]'}
         />
         <DetailRow
-          title={'Реализация стиля'}
+          title={t('review.marks.style')}
           total={`${ratingDetails.details.realization}`}
           color={'text-[rgba(35,101,199)]'}
         />
         <DetailRow
-          title={'Индивидуальность / Харизма'}
+          title={t('review.marks.individuality')}
           total={`${ratingDetails.details.individuality}`}
           color={'text-[rgba(35,101,199)]'}
         />
         <DetailRow
-          title={'Атмосфера / Вайб'}
+          title={t('review.marks.atmosphere')}
           total={`${ratingDetails.details.atmosphere}`}
           color={'text-[rgba(160,80,222)]'}
         />

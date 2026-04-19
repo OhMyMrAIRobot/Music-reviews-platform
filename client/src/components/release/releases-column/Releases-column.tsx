@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Release } from '../../../types/release';
 import ReleasesColumnItem from './Releases-column-item';
 
@@ -9,11 +10,16 @@ interface IProps {
 }
 
 const ReleasesColumn: FC<IProps> = ({ title, releases, isLoading }) => {
+  const { t } = useTranslation();
+
   return (
     <div>
       <span className="inline-flex items-center px-2 py-1 rounded-lg bg-zinc-900 font-semibold text-sm ">
-        {isLoading && 'Загрузка...'}
-        {!isLoading && (releases.length === 0 ? `${title} не найдены!` : title)}
+        {isLoading && t('release.column.loading')}
+        {!isLoading &&
+          (releases.length === 0
+            ? t('release.column.notFound', { title })
+            : title)}
       </span>
       <div className="flex flex-col gap-y-1.5 lg:gap-y-3 mt-4">
         {isLoading

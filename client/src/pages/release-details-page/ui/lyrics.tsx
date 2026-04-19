@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import SongLyricsSvg from '../../../components/svg/Song-lyrics-svg';
 import LyricsModal from './lyrics-modal';
 
@@ -7,6 +8,7 @@ interface IProps {
 }
 
 export const ReleaseDetailsLyrics = ({ releaseId }: IProps) => {
+  const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -21,7 +23,7 @@ export const ReleaseDetailsLyrics = ({ releaseId }: IProps) => {
         onClick={() => setIsModalOpen(true)}
       >
         <SongLyricsSvg className="size-4" />
-        <span>Текст песни</span>
+        <span>{t('releaseDetails.lyrics.title')}</span>
       </button>
     </>
   );

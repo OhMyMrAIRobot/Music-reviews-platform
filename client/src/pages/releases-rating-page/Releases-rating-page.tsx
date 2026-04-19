@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ReleaseAPI } from '../../api/release/release-api';
 import ReleasesColumn from '../../components/release/releases-column/Releases-column';
 import { releasesKeys } from '../../query-keys/releases-keys';
@@ -12,6 +13,7 @@ import {
 import ReleasesRatingPageHeader from './ui/Releases-rating-page-header';
 
 const ReleasesRatingPage = () => {
+  const { t } = useTranslation();
   const [month, setMonth] = useState<number>(new Date().getMonth() + 1);
   const [year, setYear] = useState<number | null>(new Date().getFullYear());
 
@@ -53,12 +55,12 @@ const ReleasesRatingPage = () => {
       />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-5 space-y-5">
         <ReleasesColumn
-          title={'Треки'}
+          title={t('pages.releasesRating.singles')}
           releases={tracks}
           isLoading={isPending}
         />
         <ReleasesColumn
-          title={'Альбомы'}
+          title={t('pages.releasesRating.albums')}
           releases={albums}
           isLoading={isPending}
         />

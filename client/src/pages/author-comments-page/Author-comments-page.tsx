@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AuthorCommentAPI } from '../../api/author/author-comment-api';
 import AuthorCommentCard from '../../components/author/author-comment/Author-comment-card';
 import AuthorCommentColorSvg from '../../components/author/author-comment/svg/Author-comment-color-svg';
@@ -9,10 +10,12 @@ import { authorCommentsKeys } from '../../query-keys/author-comments-keys';
 import { AuthorCommentsQuery } from '../../types/author';
 import { SortOrdersEnum } from '../../types/common/enums/sort-orders-enum';
 import { ReviewSortFields } from '../../types/review';
+import { translateReviewSortField } from '../../utils/review/review-sort-i18n';
 
 const limit = 12;
 
 const AuthorCommentsPage = () => {
+  const { t } = useTranslation();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [selectedOrder, setSelectedOrder] = useState<string>(
     ReviewSortFields.NEW
@@ -43,13 +46,13 @@ const AuthorCommentsPage = () => {
       <div className="flex items-center gap-x-2.5">
         <AuthorCommentColorSvg className="size-8" />
         <h1 id="author-comments" className="text-2xl lg:text-3xl font-semibold">
-          Авторские комментарии
+          {t('pages.authorComments.title')}
         </h1>
       </div>
 
       <div className="rounded-lg border border-white/10 bg-zinc-900 p-3 shadow-sm mt-5 grid md:flex gap-x-4 items-center">
         <span className="text-sm md:text-base text-white/70 font-bold max-md:pb-1">
-          Сортировать по:
+          {t('pages.authorComments.sortBy')}
         </span>
         <div className="w-full sm:w-55">
           <ComboBox
@@ -57,6 +60,7 @@ const AuthorCommentsPage = () => {
             onChange={setSelectedOrder}
             className="border border-white/10"
             value={selectedOrder}
+            formatOption={(o) => translateReviewSortField(t, o)}
           />
         </div>
       </div>
@@ -80,7 +84,7 @@ const AuthorCommentsPage = () => {
 
           {comments.length === 0 && !isPending && (
             <p className="text-center text-2xl font-semibold mt-10 w-full absolute">
-              Авторские комментарии не найдены!
+              {t('pages.authorComments.notFound')}
             </p>
           )}
         </div>

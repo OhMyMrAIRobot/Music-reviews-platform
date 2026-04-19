@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { FeedbackAPI } from '../../../../api/feedback/feedback-api';
 import { feedbackKeys } from '../../../../query-keys/feedback-keys';
 import { UseMutationParams } from '../../../../types/common';
@@ -17,6 +18,7 @@ export const useAdminRemoveFeedbackMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore } = useStore();
   const queryClient = useQueryClient();
   const handleApiError = useApiErrorHandler();
@@ -24,12 +26,14 @@ export const useAdminRemoveFeedbackMutation = ({
   const mutation = useMutation({
     mutationFn: (id: string) => FeedbackAPI.delete(id),
     onSuccess: () => {
-      notificationStore.addSuccessNotification('Сообщение успешно удалено!');
+      notificationStore.addSuccessNotification(
+        t('admin.feedback.removeSuccess')
+      );
       queryClient.invalidateQueries({ queryKey: feedbackKeys.all });
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, 'Не удалось удалить сообщение!');
+      handleApiError(error, t('admin.feedback.removeError'));
       onError?.(error);
     },
     onSettled,

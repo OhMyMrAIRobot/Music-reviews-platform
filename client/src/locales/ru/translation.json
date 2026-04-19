@@ -1,0 +1,987 @@
+{
+  "app": {
+    "title": "Приложение"
+  },
+  "hooks": {
+    "apiError": {
+      "defaultMessage": "Произошла ошибка!"
+    },
+    "auth": {
+      "requiresLogin": "Для выполнения этого действия требуется авторизация!",
+      "requiresActivation": "Для выполнения этого действия требуется активировать аккаунт!"
+    }
+  },
+  "date": {
+    "months": {
+      "1": "Январь",
+      "2": "Февраль",
+      "3": "Март",
+      "4": "Апрель",
+      "5": "Май",
+      "6": "Июнь",
+      "7": "Июль",
+      "8": "Август",
+      "9": "Сентябрь",
+      "10": "Октябрь",
+      "11": "Ноябрь",
+      "12": "Декабрь"
+    }
+  },
+  "authForms": {
+    "login": {
+      "title": "Вход",
+      "subtitle": "Введите свои данные для входа в аккаунт",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Ваш email",
+      "passwordLabel": "Пароль",
+      "passwordPlaceholder": "Ваш пароль",
+      "forgotPassword": "Забыли пароль?",
+      "submit": "Войти",
+      "loading": "Загрузка…",
+      "signUpButton": "Зарегистрироваться"
+    },
+    "register": {
+      "title": "Создать аккаунт",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Ваш email",
+      "emailHint": "Будет также логином для авторизации",
+      "nicknameLabel": "Отображаемое имя",
+      "nicknamePlaceholder": "Ваш никнейм",
+      "passwordLabel": "Пароль",
+      "passwordConfirmLabel": "Подтвердите пароль",
+      "acceptLine1": "Принимаю условия",
+      "userAgreementLink": "Пользовательского соглашения",
+      "privacyLink": "Политики обработки персональных данных",
+      "submit": "Создать аккаунт",
+      "loading": "Регистрация...",
+      "hasAccount": "Уже есть аккаунт?",
+      "signIn": "Войти"
+    },
+    "requestReset": {
+      "title": "Забыли пароль?",
+      "subtitle": "Введите ваш адрес электронной почты для восстановления пароля",
+      "emailPlaceholder": "mail@example.com",
+      "submit": "Отправить письмо с инструкциями",
+      "loading": "Отправка..."
+    },
+    "resetPassword": {
+      "title": "Сброс пароля",
+      "subtitle": "Введите новый пароль для аккаунта",
+      "passwordLabel": "Новый пароль",
+      "passwordConfirmLabel": "Подтвердите пароль",
+      "submit": "Сбросить пароль",
+      "loading": "Сброс пароля..."
+    },
+    "activation": {
+      "title": "Активация аккаунта",
+      "subtitle": "Войдите в Ваш аккаунт для повторного запроса активации!",
+      "alreadyActive": "Ваш аккаунт уже активирован!",
+      "submit": "Отправить письмо активации",
+      "loading": "Отправка..."
+    },
+    "passwordsMismatch": "Пароли не совпадают!"
+  },
+  "pages": {
+    "albumValues": {
+      "title": "Ценность альбомов",
+      "sortPlaceholder": "Сортировать по",
+      "filters": "Фильтры"
+    },
+    "authorComments": {
+      "title": "Авторские комментарии",
+      "sortBy": "Сортировать по:",
+      "notFound": "Авторские комментарии не найдены!"
+    },
+    "authorConfirmation": {
+      "title": "Подтверждение автора",
+      "submitTicket": "Отправить заявку",
+      "myTickets": "Мои заявки",
+      "ticketsNotFound": "Заявки не найдены!",
+      "form": {
+        "authorNamesLabel": "Укажите имена авторов",
+        "authorNamePlaceholder": "Введите имя автора",
+        "contactHint": "Укажите адрес вашей соц.сети или электронной почты, откуда нам придет подтверждение",
+        "confirmCheckbox": "Я отправил подтверждение в соц.сети сайта со своих верифицированных соц.сетей",
+        "submit": "Отправить"
+      },
+      "ticket": {
+        "user": "Пользователь",
+        "author": "Автор",
+        "status": "Статус",
+        "confirmation": "Подтверждение"
+      }
+    },
+    "authorLikes": {
+      "title": "Понравилось авторам",
+      "notFound": "Авторские лайки не найдены!"
+    },
+    "authors": {
+      "allAuthors": "Авторы",
+      "registeredOnly": "Зарегистрированные авторы",
+      "typePlaceholder": "Выберите тип автора"
+    },
+    "awards": {
+      "title": "Победители номинаций",
+      "voteFor": "Голосование за {{month}}",
+      "year": "Год:"
+    },
+    "editProfile": {
+      "pageTitle": "Настройки профиля",
+      "avatar": "Аватар",
+      "cover": "Обложка профиля",
+      "save": "Сохранить",
+      "saving": "Сохранение...",
+      "delete": "Удалить",
+      "deleting": "Удаление...",
+      "removeAvatar": "Удалить аватар",
+      "removeCover": "Удалить обложку",
+      "selectImage": "Выбрать изображение",
+      "selectedImage": "Выбранное изображение: {{name}}",
+      "noImageSelected": "Изображение не выбрано!",
+      "pickImageError": "Выберите изображение!",
+      "account": {
+        "title": "Данные аккаунта",
+        "description": "Здесь Вы изменить данные своего аккаунта.",
+        "nickname": "Никнейм",
+        "nicknamePlaceholder": "Никнейм",
+        "newPassword": "Новый пароль",
+        "newPasswordPlaceholder": "Пароль",
+        "confirmPassword": "Подтвердите новый пароль",
+        "confirmPasswordPlaceholder": "Подтвердите новый пароль",
+        "currentPassword": "Текущий пароль",
+        "currentPasswordPlaceholder": "Текущий пароль"
+      },
+      "profile": {
+        "title": "Данные профиля",
+        "description": "Здесь Вы можете обновить данные своего профиля.",
+        "bioLabel": "Описание профиля",
+        "bioPlaceholder": "Описание профиля",
+        "socialsLabel": "Социальные сети"
+      }
+    },
+    "feedback": {
+      "title": "Связаться с нами",
+      "subtitle": "Отправьте сообщение об ошибке, нарушениях или предложениях по улучшению",
+      "subjectLabel": "Заголовок",
+      "subjectPlaceholder": "Краткий заголовок (от {{min}} до {{max}} символов)",
+      "messageLabel": "Описание",
+      "messagePlaceholder": "Текст (от {{min}} до {{max}} символов)",
+      "submit": "Отправить",
+      "sending": "Отправка..."
+    },
+    "leaderboard": {
+      "title": "Рейтинг топ-90",
+      "subtitle": "90 пользователей получивших наибольшее количество баллов сообщества за совокупность авторских лайков, рецензий, оценок без рецензий, полученных и поставленных лайков",
+      "user": "Пользователь",
+      "authors": "Авторы",
+      "empty": "Таблица лидеров пуста!",
+      "receivedAuthorLikesTooltip": "Получено авторских лайков",
+      "reviewsWritten": "Написано рецензий",
+      "marksWithoutReview": "Поставлено оценок без рецензий",
+      "likesOnOwnReviews": "Получено лайков на свои рецензии от пользователей",
+      "likesOnOthersReviews": "Поставлено лайков на рецензии пользователей"
+    },
+    "main": {
+      "mostReviewedCard": {
+        "topForDay": "Топ-{{rank}} за сутки",
+        "authorCommented": "Автор прокомментировал релиз",
+        "authorLikedReviews": "Автор поставил лайки на рецензии",
+        "writeReview": "Написать рецензию..."
+      },
+      "mediaReviews": {
+        "title": "Рецензии Медиа",
+        "all": "Все рецензии Медиа"
+      },
+      "statsLeaderboard": {
+        "top10": "ТОП-10 по баллам сообщества",
+        "fullTop": "Весь топ"
+      },
+      "statistics": {
+        "title": "Статистика",
+        "allTime": "Все время",
+        "users": "Всего пользователей",
+        "authors": "Зарегистрированных авторов",
+        "authorLikes": "Авторских лайков",
+        "authorComments": "Авторских комментариев",
+        "singles": "Всего треков",
+        "albums": "Всего альбомов",
+        "reviews": "Рецензий",
+        "marksNoReview": "Оценок без рецензий",
+        "mediaReviews": "Медиарецензий"
+      },
+      "mostReviewed": {
+        "title": "ТОП-15 по количеству оценок и рецензий за сутки"
+      },
+      "lastReviews": {
+        "title": "Новые рецензии",
+        "all": "Все рецензии"
+      },
+      "lastReleases": {
+        "title": "Добавленные релизы",
+        "all": "Все релизы"
+      },
+      "authorLikes": {
+        "title": "Понравилось авторам",
+        "all": "Все авторские лайки"
+      },
+      "authorComments": {
+        "title": "Авторские комментарии",
+        "all": "Все авторские комментарии"
+      },
+      "albumValues": {
+        "title": "Ценность альбомов",
+        "catalog": "Каталог ценности альбомов"
+      }
+    },
+    "mediaReviews": {
+      "title": "Медиарецензии",
+      "sortBy": "Сортировать по:",
+      "notFound": "Медиарецензии не найдены!"
+    },
+    "nominationVotes": {
+      "voteFor": "Голосование за {{month}}",
+      "voteSuccess": "Вы успешно проголосовали!",
+      "votedForAuthor": "Вы проголосовали за данного автора!",
+      "votedForRelease": "Вы проголосовали за данный релиз!",
+      "voteButton": "Проголосовать"
+    },
+    "profile": {
+      "sections": {
+        "authorCards": "Карточки автора",
+        "preferences": "Предпочтения",
+        "reviews": "Рецензии и оценки",
+        "mediaReviews": "Медиарецензии",
+        "likes": "Понравилось"
+      },
+      "noPreferences": "Нет предпочтений",
+      "reviewsNotFound": "Рецензии не найдены!",
+      "mediaReviewsNotFound": "Медиарецензии не найдены!",
+      "registeredAt": "Дата регистрации: {{date}}",
+      "communityPoints": "баллов сообщества",
+      "topRank": "ТОП {{rank}}",
+      "inTop90": "в ТОП-90",
+      "top90Title": "Таблица ТОП-90 по баллам сообщества",
+      "authorCommentsWritten": "Написано авторских комментариев",
+      "authorLikesGiven": "Поставлено авторских лайков",
+      "reviews": "Рецензий",
+      "marksNoReview": "Оценок без рецензий",
+      "authorLikesReceived": "Получено авторских лайков",
+      "likesReceived": "Получено лайков",
+      "likesGiven": "Поставлено лайков",
+      "preferences": {
+        "artists": "Артисты",
+        "albums": "Альбомы",
+        "singles": "Треки",
+        "producers": "Продюсеры"
+      }
+    },
+    "releases": {
+      "title": "Добавленные релизы",
+      "releaseType": "Тип релиза:",
+      "sortBy": "Сортировать по:",
+      "sort": {
+        "PUBLISHED_NEW": "Дата релиза (новые)",
+        "PUBLISHED_OLD": "Дата релиза (старые)",
+        "WITHOUT_TEXT_COUNT": "Количество оценок без рецензий",
+        "TEXT_COUNT": "Количество рецензий",
+        "MEDIA_RATING": "Рейтинг медиа (90 - 0)",
+        "WITH_TEXT_RATING": "Рейтинг пользователей (90 - 0)",
+        "NO_TEXT_RATING": "Рейтинг без рецензий (90 - 0)",
+        "ALL_RATING": "Общий рейтинг (90 - 0)"
+      }
+    },
+    "releasesRating": {
+      "title": "Рейтинг релизов",
+      "filter": "Фильтр",
+      "allTime": "Все время",
+      "unknownMonth": "Неизвестно",
+      "singles": "Треки",
+      "albums": "Альбомы"
+    },
+    "reviews": {
+      "title": "Рецензии пользователей",
+      "sortBy": "Сортировать по:",
+      "notFound": "Рецензии не найдены!"
+    }
+  },
+  "releaseDetails": {
+    "sections": {
+      "review": "Рецензия",
+      "mark": "Оценка без рецензии",
+      "mediaReview": "Медиарецензия",
+      "albumValue": "Ценность альбома"
+    },
+    "estimation": {
+      "loginPrompt": "Для отправки рецензии вам необходимо",
+      "loginLink": "войти в свой аккаунт!",
+      "title": "Оценить работу",
+      "warning": {
+        "title": "Ознакомьтесь с критериями.",
+        "willRemove": "Будут удалены рецензии:",
+        "profanity": "с матом",
+        "insults": "с оскорблениями",
+        "spam": "с рекламой и ссылками",
+        "lowEffort": "малосодержательные",
+        "criteriaButton": "Критерии оценки"
+      }
+    },
+    "reviews": {
+      "none": "Нет рецензий!",
+      "header": "Рецензий пользователей",
+      "sortBy": "Сортировать по:"
+    },
+    "ratings": {
+      "media": "Средняя оценка Медиа",
+      "withReviews": "Средняя оценка рецензий пользователей",
+      "withoutReviews": "Средняя оценка без рецензий пользователей",
+      "rhymes": "Рифмы / Образы",
+      "structure": "Структура / Ритмика",
+      "style": "Реализация стиля",
+      "individuality": "Индивидуальность / Харизма",
+      "atmosphere": "Атмосфера / Вайб"
+    },
+    "media": {
+      "title": "Медиаматериалы",
+      "materialsHeading": "Медиаматериалы"
+    },
+    "lyrics": {
+      "title": "Текст песни",
+      "unavailable": "Текст песни в настоящий момент недоступен. Попробуй позже"
+    },
+    "listen": "Слушать",
+    "nominationsHeading": "Номинации",
+    "authorCommentsHeading": "Комментарии авторов",
+    "authorComment": {
+      "deleteConfirm": "Вы действительно хотите удалить авторский комментарий?",
+      "modalTitle": "{{action}} авторский комментарий",
+      "formHeadingEdit": "Редактировать авторский комментарий",
+      "formHeadingLeave": "Оставить авторский комментарий",
+      "edit": "Редактировать",
+      "leave": "Оставить",
+      "delete": "Удалить",
+      "submit": "Отправить",
+      "update": "Изменить"
+    },
+    "reviewForm": {
+      "alreadyLeft": "Вы уже оставляли",
+      "reviewWord": " рецензию ",
+      "markWord": " оценку ",
+      "forThisWork": "к данной работе. Вы можете изменить ее, заполнив форму ниже!",
+      "deleteReview": "Удалить рецензию",
+      "deleteMark": "Удалить оценку",
+      "titlePlaceholder": "Заголовок (от {{min}} до {{max}} символов)",
+      "textPlaceholder": "Текст (от {{min}} до {{max}} символов)",
+      "clearDraft": "Очистить черновик"
+    },
+    "mediaReviewForm": {
+      "alreadyLeft": "Вы уже оставляли медиарецензию к данной работе. Вы можете изменить ее, заполнив форму ниже!",
+      "titleLabel": "Заголовок",
+      "titlePlaceholder": "Заголовок...",
+      "linkLabel": "Ссылка на медиарецензию",
+      "submit": "Отправить",
+      "update": "Обновить",
+      "delete": "Удалить"
+    },
+    "albumValueForm": {
+      "alreadyVoted": "Вы уже оценивали ценность данного альбома. Вы можете изменить ее, заполнив форму ниже!",
+      "delete": "Удалить"
+    },
+    "nominations": {
+      "winnerTitle": "Победитель номинаций"
+    },
+    "author": {
+      "statsAvg": "Средняя оценка",
+      "statsNominations": "Номинации",
+      "reviewsCarousel": "Последние рецензии",
+      "releasesTitle": "Релизы автора",
+      "singles": "Треки",
+      "albums": "Альбомы",
+      "bestWorks": "Лучшие работы"
+    }
+  },
+  "albumValue": {
+    "rarity": "Редкость",
+    "integrity": "Целостность",
+    "depth": "Глубина",
+    "quality": "Качество",
+    "influence": "Влияние",
+    "genreRarity": "Редкость жанра",
+    "performanceFormatRarity": "Редкость формата исполнения",
+    "releaseFormat": "Формат релиза",
+    "genreIntegrity": "Жанровая целостность",
+    "semanticIntegrity": "Смысловая целостность",
+    "basePoints": "Баллы в базе",
+    "authorPopularity": "Известность автора",
+    "releaseAnticipation": "Ожидание релиза",
+    "tiers": {
+      "silver": "Серебряный альбом",
+      "gold": "Золотой альбом",
+      "emerald": "Изумрудный альбом",
+      "sapphire": "Сапфировый альбом",
+      "ruby": "Рубиновый альбом"
+    },
+    "sort": {
+      "asc": "По возрастанию",
+      "desc": "По убыванию"
+    }
+  },
+  "author": {
+    "authorsNotFound": "Авторы не найдены!",
+    "givenAuthorLikesTooltip": "Поставлено авторских лайков",
+    "writtenAuthorCommentsTooltip": "Написано авторских комментариев",
+    "nominationsWinsTooltip": "Победы в номинациях",
+    "nominationsTotalTooltip": "Всего номинаций",
+    "nominationsWinIconAlt": "Победа в номинации",
+    "authorLikeBadgeAlt": "Авторский лайк",
+    "registeredOnSite": "{{type}} зарегистрирован на сайте",
+    "types": {
+      "artist": "Артист",
+      "producer": "Продюссер",
+      "designer": "Дизайнер"
+    },
+    "ratings": {
+      "kind": {
+        "albums": "альбомов",
+        "tracks": "треков"
+      },
+      "media": "Средняя оценка {{kind}} от Медиа",
+      "withText": "Средняя оценка {{kind}} с рецензией от пользователей",
+      "withoutText": "Средняя оценка {{kind}} без рецензий от пользователей"
+    }
+  },
+  "buttons": {
+    "toggleFav": {
+      "add": "Добавить в избранное",
+      "remove": "Убрать из избранного"
+    },
+    "comboBox": {
+      "emptyOptionsError": "ComboBox: список вариантов не может быть пустым."
+    }
+  },
+  "carousel": {
+    "nav": {
+      "previous": "Предыдущий слайд",
+      "next": "Следующий слайд"
+    }
+  },
+  "modals": {
+    "confirm": "Подтвердить",
+    "cancel": "Отменить",
+    "close": "Закрыть"
+  },
+  "release": {
+    "notFound": "Релизы не найдены!",
+    "authorNotSpecified": "Автор не указан!",
+    "authorActions": {
+      "commentedTooltip": "Автор прокомментировал релиз",
+      "likedReviewsTooltip": "Автор поставил лайки на рецензии"
+    },
+    "ratings": {
+      "media": "Средняя оценка Медиа",
+      "withText": "Средняя оценка рецензий пользователей",
+      "withoutText": "Средняя оценка без рецензий пользователей"
+    },
+    "column": {
+      "loading": "Загрузка…",
+      "notFound": "{{title}} не найдены!"
+    },
+    "type": {
+      "album": "Альбом",
+      "single": "Трек"
+    },
+    "mediaStatus": {
+      "pending": "Ожидание",
+      "approved": "Принято",
+      "rejected": "Отклонено"
+    },
+    "mediaType": {
+      "musicVideo": "Клип",
+      "mediaReview": "Медиарецензия",
+      "mediaMaterial": "Медиаматериал",
+      "snippet": "Сниппет"
+    }
+  },
+  "userLevel": {
+    "silver": "Серебряный уровень",
+    "gold": "Золотой уровень",
+    "emerald": "Изумрудный уровень",
+    "sapphire": "Сапфировый уровень",
+    "ruby": "Рубиновый уровень"
+  },
+  "review": {
+    "author": {
+      "topRank": "ТОП-{{rank}}"
+    },
+    "userLevelTooltip": "{{level}} пользователя",
+    "userLevelBadgeAlt": "Уровень пользователя",
+    "goToRelease": "Перейти к релизу",
+    "likes": {
+      "heartAlt": "Лайк"
+    },
+    "marks": {
+      "rhymes": "Рифмы / Образы",
+      "structure": "Структура / Ритмика",
+      "style": "Реализация стиля",
+      "individuality": "Индивидуальность / Харизма",
+      "atmosphere": "Атмосфера / Вайб"
+    },
+    "sort": {
+      "new": "Новые",
+      "old": "Старые",
+      "popular": "Популярные"
+    }
+  },
+  "layout": {
+    "header": {
+      "language": "Язык интерфейса",
+      "accountActivation": "Активация аккаунта",
+      "feedback": "Обратная связь",
+      "login": "Войти",
+      "register": "Регистрация",
+      "openMenu": "Открыть меню"
+    },
+    "searchPlaceholder": "Поиск…",
+    "searchSubmit": "Искать",
+    "search": {
+      "authors": "Авторы",
+      "releases": "Релизы"
+    },
+    "admin": {
+      "searchPlaceholder": "Поиск…",
+      "sidebar": {
+        "releases": "Релизы",
+        "users": "Пользователи",
+        "authors": "Авторы",
+        "reviews": "Рецензии",
+        "media": "Медиа",
+        "authorComments": "Комментарии авторов",
+        "authorVerification": "Верификация авторов",
+        "messages": "Сообщения"
+      },
+      "logoutPanel": "Выйти из панели"
+    },
+    "footer": {
+      "copyright": "«Some application title» © {{year}}",
+      "feedback": "Обратная связь",
+      "privacy": "Политика обработки персональных данных",
+      "terms": "Пользовательское соглашение",
+      "support": "Техническая поддержка",
+      "partnership": "Предложения о сотрудничестве"
+    },
+    "profile": {
+      "myPage": "Моя страница",
+      "settings": "Настройки профиля",
+      "adminPanel": "Админ. панель",
+      "logout": "Выйти из профиля"
+    },
+    "sidebar": {
+      "closeMenu": "Закрыть меню",
+      "nav": {
+        "home": "Главная",
+        "faq": "Часто задаваемые вопросы",
+        "about": "О нас",
+        "becomeAuthor": "Стать автором",
+        "leaderboardTop90": "ТОП-90 пользователей",
+        "albumValues": "Ценность альбомов",
+        "ratings": "Рейтинг",
+        "awards": "Премия",
+        "authorLikes": "Авторские лайки",
+        "authorComments": "Авторские комментарии",
+        "registeredAuthors": "Зарегистрированные авторы",
+        "authors": "Авторы",
+        "releases": "Релизы",
+        "reviews": "Рецензии",
+        "mediaReviews": "Медиарецензии",
+        "feedback": "Обратная связь",
+        "activation": "Активация"
+      }
+    }
+  },
+  "user": {
+    "role": {
+      "user": "Пользователь",
+      "media": "Медиа",
+      "admin": "Администратор",
+      "rootAdmin": "Гл. Администратор"
+    }
+  },
+  "utils": {
+    "likesTooltip": "Количество добавлений в предпочтения"
+  },
+  "admin": {
+    "author": {
+      "createSuccess": "Автор успешно добавлен!",
+      "createError": "Не удалось добавить автора!",
+      "updateSuccess": "Автор успешно обновлен!",
+      "updateError": "Не удалось обновить автора!",
+      "removeSuccess": "Вы успешно удалили автора!",
+      "removeError": "Не удалось удалить автора!"
+    },
+    "authorComment": {
+      "updateSuccess": "Авторский комментарий успешно обновлен!",
+      "updateError": "Не удалось обновить авторский комментарий!",
+      "removeSuccess": "Вы успешно удалили авторский комментарий!",
+      "removeError": "Не удалось удалить авторский комментарий!"
+    },
+    "media": {
+      "createSuccess": "Медиа успешно добавлено!",
+      "createError": "Не удалось добавить медиа!",
+      "updateSuccess": "Медиа успешно обновлено!",
+      "updateError": "Не удалось обновить медиа!",
+      "removeSuccess": "Вы успешно удалили медиаматериал!",
+      "removeError": "Не удалось удалить медиа"
+    },
+    "release": {
+      "createSuccess": "Релиз успешно добавлен!",
+      "createError": "Не удалось добавить релиз",
+      "updateSuccess": "Релиз успешно обновлен",
+      "updateError": "Не удалось обновить релиз",
+      "removeSuccess": "Вы успешно удалили релиз!",
+      "removeError": "Не удалось удалить релиз"
+    },
+    "user": {
+      "updateSuccess": "Информация о пользователе успешно обновлена",
+      "updateError": "Ошибка при обновлении информации о пользователе",
+      "removeSuccess": "Вы успешно удалили пользователя!",
+      "removeError": "Не удалось удалить пользователя.",
+      "updateProfileSuccess": "Вы успешно обновили профиль!",
+      "updateProfileError": "Ошибка при обновлении профиля"
+    },
+    "feedback": {
+      "updateSuccess": "Вы успешно отметили сообщение как прочитанное!",
+      "updateError": "Не удалось обновить статус сообщения",
+      "removeSuccess": "Сообщение успешно удалено!",
+      "removeError": "Не удалось удалить сообщение!",
+      "replySuccess": "Ответ успешно отправлен!",
+      "replyError": "Не удалось отправить ответ"
+    },
+    "review": {
+      "updateSuccess": "Рецензия успешно обновлена!",
+      "updateError": "Не удалось обновить рецензию",
+      "removeSuccess": "Вы успешно удалили рецензию!",
+      "removeError": "Не удалось удалить рецензию"
+    },
+    "authorConfirmation": {
+      "removeSuccess": "Вы успешно удалили заявку на верификацию!",
+      "removeError": "Не удалось удалить заявку на верификацию!",
+      "updateSuccess": "Вы успешно обновили статус заявки на верификацию!",
+      "updateError": "Не удалось обновить статус заявки на верификацию!"
+    }
+  },
+  "mutations": {
+    "albumValue": {
+      "createSuccess": "Вы успешно оставили голос за ценность альбома!",
+      "createError": "Не удалось добавить голос за ценность альбома.",
+      "updateSuccess": "Вы успешно изменили голос за ценность альбома!",
+      "updateError": "Не удалось изменить голос за ценность альбома.",
+      "removeSuccess": "Вы успешно удалили голос за ценность альбома!",
+      "removeError": "Не удалось удалить голос за ценность альбома."
+    },
+    "authorComment": {
+      "createSuccess": "Вы успешно добавили авторский комментарий!",
+      "createError": "Не удалось добавить авторский комментарий.",
+      "updateSuccess": "Вы успешно изменили авторский комментарий!",
+      "updateError": "Не удалось изменить авторский комментарий.",
+      "removeSuccess": "Вы успешно удалили авторский комментарий!",
+      "removeError": "Не удалось удалить авторский комментарий."
+    },
+    "authorConfirmationRequest": {
+      "submitSuccess": "Вы успешно оставили заявку на подтверждение!",
+      "submitError": "Не удалось отправить заявку"
+    },
+    "feedback": {
+      "sendSuccess": "Отзыв успешно отправлен!",
+      "sendError": "Не удалось отправить отзыв."
+    },
+    "nomination": {
+      "postVoteError": "Не удалось отправить голос!"
+    },
+    "mediaReview": {
+      "createSuccess": "Медиарецензия успешно добавлена! Ожидайте подтверждения!",
+      "createError": "Не удалось добавить медиарецензию.",
+      "updateSuccess": "Медиарецензия успешно обновлена! Ожидайте подтверждения!",
+      "updateError": "Не удалось обновить медиарецензию.",
+      "removeSuccess": "Медиарецензия успешно удалена!",
+      "removeError": "Не удалось удалить медиарецензию."
+    },
+    "profile": {
+      "updateSuccess": "Профиль успешно обновлен!",
+      "updateError": "Ошибка при обновлении профиля!"
+    },
+    "account": {
+      "updateSuccess": "Вы успешно обновили данные об аккаунте!",
+      "updateError": "Ошибка при обновлении данных аккаунта!"
+    },
+    "userReview": {
+      "createSuccessReview": "Вы успешно добавили рецензию!",
+      "createSuccessRating": "Вы успешно добавили оценку!",
+      "createErrorReview": "Не удалось добавить рецензию.",
+      "createErrorRating": "Не удалось добавить оценку.",
+      "updateSuccessReview": "Вы успешно обновили рецензию!",
+      "updateSuccessRating": "Вы успешно обновили оценку!",
+      "updateErrorReview": "Не удалось обновить рецензию.",
+      "updateErrorRating": "Не удалось обновить оценку.",
+      "removeSuccessReview": "Вы успешно удалили рецензию!",
+      "removeSuccessRating": "Вы успешно удалили оценку!",
+      "removeErrorReview": "Не удалось удалить рецензию.",
+      "removeErrorRating": "Не удалось удалить оценку."
+    },
+    "toggleFav": {
+      "media": {
+        "addSuccess": "Медиа успешно добавлено в понравившиеся!",
+        "removeSuccess": "Медиа успешно удалено из понравившихся!",
+        "addError": "Не удалось добавить медиа в понравившиеся!",
+        "removeError": "Не удалось убрать медиа из понравившихся!"
+      },
+      "author": {
+        "addSuccess": "Автор успешно добавлен в избранное!",
+        "removeSuccess": "Автор успешно удален из избранного!",
+        "addError": "Не удалось добавить автора в избранное!",
+        "removeError": "Не удалось убрать автора из избранного!"
+      },
+      "release": {
+        "addSuccess": "Релиз успешно добавлен в понравившиеся!",
+        "removeSuccess": "Релиз успешно удален из понравившихся!",
+        "addError": "Не удалось добавить релиз в понравившиеся!",
+        "removeError": "Не удалось убрать релиз из понравившихся!"
+      },
+      "review": {
+        "addSuccess": "Рецензия успешно добавлена в понравившиеся!",
+        "removeSuccess": "Рецензия успешно удалена из понравившихся!",
+        "addError": "Не удалось добавить рецензию в понравившиеся!",
+        "removeError": "Не удалось убрать рецензию из понравившихся!"
+      }
+    },
+    "auth": {
+      "loginSuccess": "Вы успешно вошли!",
+      "loginError": "Ошибка при выполнении входа!",
+      "registerSuccess": "Вы успешно зарегистрировались!",
+      "registerError": "Ошибка при регистрации!",
+      "resetPasswordSuccess": "Ваш пароль был успешно сброшен!",
+      "resetPasswordError": "Ошибка при сбросе пароля!",
+      "requestResetError": "Ошибка при отправке письма для восстановления пароля!",
+      "requestResetEmailSent": "Письмо с инструкциями по восстановлению пароля отправлено на вашу почту!",
+      "requestResetFailed": "Ошибка при отправке письма для восстановления пароля. Повторите попытку позже!",
+      "resendActivationError": "Ошибка при отправке письма активации!",
+      "activateSuccess": "Аккаунт успешно активирован!",
+      "activateError": "Ошибка при активации аккаунта!",
+      "logoutSuccess": "Вы успешно вышли из аккаунта!",
+      "logoutError": "Произошла ошибка при выходе!"
+    }
+  },
+  "adminDashboard": {
+    "common": {
+      "save": "Сохранить",
+      "back": "Назад",
+      "add": "Добавить",
+      "action": "Действие",
+      "close": "Закрыть",
+      "send": "Отправить",
+      "markRead": "Прочитано",
+      "sortBy": "Сортировать по: ",
+      "all": "Все",
+      "unknown": "Неизвестно",
+      "missing": "Отсутствует",
+      "removeAvatar": "Удалить аватар",
+      "removeCover": "Удалить обложку",
+      "profile": "Профиль",
+      "nickname": "Никнейм",
+      "nicknamePlaceholder": "Никнейм…",
+      "email": "Email",
+      "emailPlaceholder": "Email@exaple.com",
+      "description": "Описание",
+      "descriptionPlaceholder": "Описание…",
+      "role": "Роль",
+      "accountStatus": "Статус аккаунта",
+      "status": "Статус",
+      "title": "Заголовок",
+      "titlePlaceholder": "Заголовок…",
+      "text": "Текст",
+      "comment": "Комментарий",
+      "commentPlaceholder": "Комментарий…",
+      "replyText": "Текст ответа",
+      "replyPlaceholder": "Текст ответа…",
+      "youtubePlaceholder": "https://youtube.com"
+    },
+    "headers": {
+      "users": "Пользователи",
+      "reviews": "Рецензии",
+      "releases": "Релизы",
+      "media": "Медиаматериалы",
+      "feedback": "Сообщения",
+      "authors": "Авторы",
+      "authorComments": "Комментарии авторов",
+      "authorVerification": "Верификация авторов"
+    },
+    "feedbackStatus": {
+      "new": "Новое",
+      "read": "Прочитано",
+      "answered": "Отвечено"
+    },
+    "authorConfirmationStatus": {
+      "pending": "Ожидание",
+      "approved": "Принято",
+      "rejected": "Отклонено"
+    },
+    "userStatus": {
+      "active": "Активирован",
+      "inactive": "Не активирован"
+    },
+    "users": {
+      "notFound": "Пользователи не найдены!",
+      "deleteConfirm": "Вы действительно хотите удалить пользователя?",
+      "nicknameMobile": "Никнейм: ",
+      "createdAt": "Дата создания",
+      "createdAtMobile": "Дата создания: ",
+      "roleMobile": "Роль: ",
+      "accountStatusMobile": "Статус: "
+    },
+    "reviews": {
+      "notFound": "Рецензии не найдены!",
+      "deleteConfirm": "Вы действительно хотите удалить рецензию?",
+      "userMobile": "Пользователь: ",
+      "releaseMobile": "Релиз: ",
+      "releaseTitle": "Название релиза",
+      "publishedAt": "Дата публикации",
+      "publishedAtMobile": "Дата публикации: ",
+      "titleMobile": "Заголовок: ",
+      "reviewTitle": "Заголовок",
+      "textMobile": "Текст: ",
+      "reviewBody": "Текст рецензии"
+    },
+    "releases": {
+      "notFound": "Релизы не найдены!",
+      "deleteConfirm": "Вы действительно хотите удалить релиз?",
+      "add": "Добавить релиз",
+      "editTitle": "Редактирование релиза",
+      "createTitle": "Добавление релиза",
+      "coverHeading": "Обложка релиза",
+      "nameMobile": "Название: ",
+      "releaseTitle": "Название релиза",
+      "typeMobile": "Тип релиза: ",
+      "releaseType": "Тип релиза",
+      "createdAt": "Дата создания",
+      "createdAtMobile": "Дата создания: ",
+      "artistMobile": "Артист: ",
+      "artist": "Артист",
+      "producerMobile": "Продюсер: ",
+      "producer": "Продюсер",
+      "designerMobile": "Дизайнер: ",
+      "designer": "Дизайнер",
+      "releaseTitleLabel": "Название релиза",
+      "releaseTitlePlaceholder": "Название релиза…",
+      "releaseTypeLabel": "Тип релиза",
+      "releaseTypePlaceholder": "Тип релиза",
+      "publishDate": "Дата публикации",
+      "youtubeLabel": "Ссылка / идентификатор музыкальной композиции",
+      "artists": "Артисты",
+      "artistsPlaceholder": "Артисты",
+      "producers": "Продюсеры",
+      "producersPlaceholder": "Продюсеры",
+      "designers": "Дизайнеры",
+      "designersPlaceholder": "Дизайнеры"
+    },
+    "media": {
+      "notFound": "Медиаматериалы не найдены!",
+      "deleteConfirm": "Вы действительно хотите удалить медиаматериал?",
+      "add": "Добавить медиа",
+      "editTitle": "Редактирование медиа",
+      "createTitle": "Добавление медиа",
+      "releaseMobile": "Релиз: ",
+      "release": "Релиз",
+      "titleMobile": "Заголовок: ",
+      "mediaTypeMobile": "Тип медиа: ",
+      "mediaType": "Тип медиа",
+      "publishedAt": "Дата публикации",
+      "publishedAtMobile": "Дата публикации: ",
+      "statusMobile": "Статус: ",
+      "mediaStatusCol": "Статус медиа",
+      "titleLabel": "Заголовок",
+      "urlLabel": "Ссылка на медиа",
+      "urlPlaceholder": "https://www.youtube.com/...",
+      "typePlaceholder": "Тип медиа",
+      "statusLabel": "Статус медиа",
+      "statusPlaceholder": "Статус медиа",
+      "releaseName": "Название релиза",
+      "releaseNamePlaceholder": "Введите название релиза…"
+    },
+    "feedback": {
+      "notFound": "Сообщения не найдены!",
+      "deleteConfirm": "Вы действительно хотите удалить сообщение?",
+      "sentAt": "Дата отправки",
+      "sentAtMobile": "Дата отправки: ",
+      "statusMobile": "Статус: ",
+      "titleMobile": "Заголовок: ",
+      "textMobile": "Текст: ",
+      "cannotMarkRead": "Вы не можете отметить данное сообщение как прочитанное!",
+      "modalComposingReply": "Написание ответа",
+      "modalViewingMessage": "Просмотр сообщения",
+      "modalViewingReply": "Просмотр ответа",
+      "repliedBy": "Ответил: {{name}}",
+      "titleWithValue": "Заголовок: {{value}}",
+      "statusPrefix": "Статус:",
+      "replyDate": "Дата ответа: {{value}}",
+      "sentDate": "Дата отправки: {{value}}",
+      "bodyReplyPrefix": "Текст ответа:",
+      "bodyMessagePrefix": "Текст сообщения:",
+      "viewMessage": "Посмотреть сообщение",
+      "viewReply": "Посмотреть ответ",
+      "writeReply": "Написать ответ"
+    },
+    "authors": {
+      "notFound": "Авторы не найдены!",
+      "deleteConfirm": "Вы действительно хотите удалить автора?",
+      "add": "Добавить автора",
+      "nameMobile": "Имя: ",
+      "authorName": "Имя автора",
+      "typeMobile": "Тип автора:",
+      "authorType": "Тип автора",
+      "editTitle": "Редактирование автора",
+      "createTitle": "Добавление автора",
+      "sectionAvatar": "Аватар",
+      "sectionCover": "Обложка",
+      "authorNameLabel": "Имя автора",
+      "authorNamePlaceholder": "Имя автора…",
+      "authorTypeLabel": "Тип автора",
+      "authorTypePlaceholder": "Выберите тип автора"
+    },
+    "reviewForm": {
+      "editTitle": "Редактирование рецензии",
+      "headline": "Заголовок",
+      "headlinePlaceholder": "Заголовок рецензии…",
+      "textLabel": "Текст рецензии",
+      "textPlaceholder": "Текст рецензии…"
+    },
+    "authorComments": {
+      "notFound": "Авторские Комментарии не найдены!",
+      "editModalTitle": "Редактирование авторского комментария",
+      "deleteConfirm": "Вы действительно хотите удалить авторский комментарий?",
+      "authorMobile": "Автор",
+      "author": "Автор",
+      "releaseMobile": "Релиз: ",
+      "release": "Релиз",
+      "publishedAt": "Дата публикации",
+      "publishedAtMobile": "Дата публикации: ",
+      "titleMobile": "Заголовок: ",
+      "commentMobile": "Комментарий: ",
+      "headline": "Заголовок",
+      "headlinePlaceholder": "Заголовок…",
+      "commentLabel": "Комментарий",
+      "commentPlaceholder": "Комментарий…"
+    },
+    "authorConfirmation": {
+      "notFound": "Заявки на верификацию не найдены!",
+      "deleteConfirm": "Вы действительно хотите удалить заявку на верификацию?",
+      "changeStatusConfirm": "Вы действительно хотите изменить статус заявки на «{{status}}»?",
+      "userMobile": "Пользователь: ",
+      "user": "Пользователь",
+      "authorMobile": "Автор: ",
+      "author": "Автор",
+      "statusMobile": "Статус: ",
+      "submittedAt": "Дата подачи заявки",
+      "submittedAtMobile": "Дата подачи заявки: ",
+      "confirmation": "Подтверждение",
+      "confirmationMobile": "Подтверждение: "
+    }
+  }
+}

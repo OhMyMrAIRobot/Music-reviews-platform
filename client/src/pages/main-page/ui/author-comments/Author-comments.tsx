@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AuthorCommentAPI } from '../../../../api/author/author-comment-api';
 import AuthorCommentColorSvg from '../../../../components/author/author-comment/svg/Author-comment-color-svg';
 import CarouselContainer from '../../../../components/carousel/Carousel-container';
@@ -17,6 +18,7 @@ const query: AuthorCommentsQuery = {
 };
 
 const AuthorComments = () => {
+  const { t } = useTranslation();
   const { navigateToAuthorComments } = useNavigationPath();
 
   const { data, isPending } = useQuery({
@@ -38,10 +40,10 @@ const AuthorComments = () => {
           <div className="size-8">
             <AuthorCommentColorSvg className="size-8" />
           </div>
-          Авторские комментарии
+          {t('pages.main.authorComments.title')}
         </div>
       }
-      buttonTitle={'Все авторские комментарии'}
+      buttonTitle={t('pages.main.authorComments.all')}
       showButton={true}
       href={navigateToAuthorComments}
       handlePrev={() => carouselRef.current?.scrollPrev()}

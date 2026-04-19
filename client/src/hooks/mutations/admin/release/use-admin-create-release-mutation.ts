@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { ReleaseAPI } from '../../../../api/release/release-api';
 import { authorsKeys } from '../../../../query-keys/authors-keys';
 import { platformStatsKeys } from '../../../../query-keys/platform-stats-keys';
@@ -28,6 +29,7 @@ export const useAdminCreateReleaseMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore } = useStore();
   const handleApiError = useApiErrorHandler();
   const queryClient = useQueryClient();
@@ -44,12 +46,14 @@ export const useAdminCreateReleaseMutation = ({
   const mutation = useMutation({
     mutationFn: (formData: FormData) => ReleaseAPI.create(formData),
     onSuccess: () => {
-      notificationStore.addSuccessNotification('Релиз успешно добавлен!');
+      notificationStore.addSuccessNotification(
+        t('admin.release.createSuccess')
+      );
       invalidateRelatedQueriesCreate();
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, 'Не удалось добавить релиз');
+      handleApiError(error, t('admin.release.createError'));
       onError?.(error);
     },
     onSettled,

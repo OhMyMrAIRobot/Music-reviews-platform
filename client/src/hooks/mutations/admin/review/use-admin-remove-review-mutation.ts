@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { ReviewAPI } from '../../../../api/review/review-api';
 import { authorsKeys } from '../../../../query-keys/authors-keys';
 import { leaderboardKeys } from '../../../../query-keys/leaderboard-keys';
@@ -30,6 +31,7 @@ export const useAdminRemoveReviewMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore } = useStore();
   const handleApiError = useApiErrorHandler();
   const queryClient = useQueryClient();
@@ -51,12 +53,12 @@ export const useAdminRemoveReviewMutation = ({
   const mutation = useMutation({
     mutationFn: ({ id }: { id: string }) => ReviewAPI.adminDelete(id),
     onSuccess: () => {
-      notificationStore.addSuccessNotification('Вы успешно удалили рецензию!');
+      notificationStore.addSuccessNotification(t('admin.review.removeSuccess'));
       invalidateRelatedQueries();
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, 'Не удалось удалить рецензию');
+      handleApiError(error, t('admin.review.removeError'));
       onError?.(error);
     },
     onSettled,

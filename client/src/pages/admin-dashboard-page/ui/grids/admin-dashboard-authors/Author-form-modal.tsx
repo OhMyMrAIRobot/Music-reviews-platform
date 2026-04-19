@@ -1,4 +1,5 @@
 import { FC, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import FormButton from '../../../../../components/form-elements/Form-button.tsx';
 import FormCheckbox from '../../../../../components/form-elements/Form-checkbox.tsx';
 import FormInput from '../../../../../components/form-elements/Form-input.tsx';
@@ -27,6 +28,7 @@ interface IProps {
 }
 
 const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
+  const { t } = useTranslation();
   const { types, isLoading: isTypesLoading } = useAuthorMeta();
 
   /** STATES */
@@ -207,8 +209,12 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
   };
 
   /** CONSTANTS */
-  const title = author ? 'Редактирование автора' : 'Добавление автора';
-  const buttonText = author ? 'Сохранить' : 'Добавить';
+  const title = author
+    ? t('adminDashboard.authors.editTitle')
+    : t('adminDashboard.authors.createTitle');
+  const buttonText = author
+    ? t('adminDashboard.common.save')
+    : t('adminDashboard.common.add');
 
   if (!isOpen) return null;
 
@@ -232,7 +238,7 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
           <div className="border-b border-white/10 p-6 grid lg:flex gap-10 w-full">
             <div className="grid gap-2 w-full lg:max-w-[30%] overflow-hidden">
               <h3 className="text-2xl font-semibold leading-none tracking-tight">
-                Аватар
+                {t('adminDashboard.authors.sectionAvatar')}
               </h3>
 
               <div className="w-full sm:w-[250px]">
@@ -279,7 +285,7 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
                     setChecked={setDeleteAvatar}
                   />
                   <FormLabel
-                    name={'Удалить аватар'}
+                    name={t('adminDashboard.common.removeAvatar')}
                     htmlFor={'avatar-checkbox'}
                     isRequired={false}
                   />
@@ -289,7 +295,7 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 
             <div className="grid gap-2 lg:max-w-[70%] w-full overflow-hidden">
               <h3 className="text-2xl font-semibold leading-none tracking-tight">
-                Обложка
+                {t('adminDashboard.authors.sectionCover')}
               </h3>
 
               <div className="w-full sm:w-[250px]">
@@ -334,7 +340,7 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
                     setChecked={setDeleteCover}
                   />
                   <FormLabel
-                    name={'Удалить обложку'}
+                    name={t('adminDashboard.common.removeCover')}
                     htmlFor={'cover-checkbox'}
                     isRequired={false}
                   />
@@ -346,13 +352,13 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
           <div className="w-full grid lg:flex p-6 border-b border-white/10 gap-6">
             <div className="grid gap-2 w-full lg:w-1/2">
               <FormLabel
-                name={'Имя автора'}
+                name={t('adminDashboard.authors.authorNameLabel')}
                 htmlFor={'author-name'}
                 isRequired={true}
               />
               <FormInput
                 id={'author-name'}
-                placeholder={'Имя автора...'}
+                placeholder={t('adminDashboard.authors.authorNamePlaceholder')}
                 type={'text'}
                 value={name}
                 setValue={setName}
@@ -361,13 +367,13 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 
             <div className="grid gap-2 w-full lg:w-1/2">
               <FormLabel
-                name={'Тип автора'}
+                name={t('adminDashboard.authors.authorTypeLabel')}
                 htmlFor={'author-types'}
                 isRequired={true}
               />
               <FormMultiSelect
                 id={'author-types'}
-                placeholder={'Выберите тип автора'}
+                placeholder={t('adminDashboard.authors.authorTypePlaceholder')}
                 value={selectedTypes}
                 onChange={setSelectedTypes}
                 loadOptions={loadOptions}
@@ -390,7 +396,7 @@ const AuthorFormModal: FC<IProps> = ({ isOpen, onClose, author }) => {
 
             <div className="w-full sm:w-25">
               <FormButton
-                title={'Назад'}
+                title={t('adminDashboard.common.back')}
                 isInvert={false}
                 onClick={onClose}
                 disabled={isPending}

@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ReleaseMediaAPI } from '../../api/release/release-media-api';
 import ComboBox from '../../components/buttons/Combo-box';
 import Pagination from '../../components/pagination/Pagination';
@@ -14,10 +15,12 @@ import {
   ReleaseMediaTypesEnum,
 } from '../../types/release';
 import { ReviewSortFields } from '../../types/review';
+import { translateReviewSortField } from '../../utils/review/review-sort-i18n';
 
 const limit = 12;
 
 const MediaReviewsPage = () => {
+  const { t } = useTranslation();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [selectedOrder, setSelectedOrder] = useState<string>(
     ReviewSortFields.NEW
@@ -70,12 +73,12 @@ const MediaReviewsPage = () => {
   return (
     <>
       <h1 id="media-reviews" className="text-2xl lg:text-3xl font-semibold">
-        Медиарецензии
+        {t('pages.mediaReviews.title')}
       </h1>
 
       <div className="rounded-lg border border-white/10 bg-zinc-900 p-3 shadow-sm mt-5 flex gap-4 items-center">
         <span className="hidden sm:block text-white/70 font-bold ">
-          Сортировать по:
+          {t('pages.mediaReviews.sortBy')}
         </span>
         <div className="w-full sm:w-55">
           <ComboBox
@@ -86,6 +89,7 @@ const MediaReviewsPage = () => {
             }}
             className="border border-white/10"
             value={selectedOrder}
+            formatOption={(o) => translateReviewSortField(t, o)}
           />
         </div>
       </div>
@@ -109,7 +113,7 @@ const MediaReviewsPage = () => {
 
           {items.length === 0 && !isMediaLoading && !isMetaLoading && (
             <p className="text-center text-2xl font-semibold mt-10 w-full absolute">
-              Медиарецензии не найдены!
+              {t('pages.mediaReviews.notFound')}
             </p>
           )}
         </div>

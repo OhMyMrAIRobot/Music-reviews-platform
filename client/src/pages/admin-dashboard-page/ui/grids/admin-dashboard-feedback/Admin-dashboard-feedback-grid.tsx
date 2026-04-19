@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FeedbackAPI } from '../../../../../api/feedback/feedback-api';
 import FeedbackStatusIcon from '../../../../../components/feedback/Feedback-status-icon';
 import AdminHeader from '../../../../../components/layout/admin-header/Admin-header';
@@ -19,6 +20,7 @@ import AdminDashboardFeedbackGridItem from './Admin-dashboard-feedback-grid-item
 const limit = 10;
 
 const AdminDashboardFeedbackGrid = () => {
+  const { t } = useTranslation();
   const { statuses, isLoading: isMetaLoading } = useFeedbackMeta();
 
   const [searchText, setSearchText] = useState<string>('');
@@ -59,7 +61,10 @@ const AdminDashboardFeedbackGrid = () => {
 
   return (
     <div className="flex flex-col h-screen" id="admin-feedback">
-      <AdminHeader title={'Сообщения'} setText={setSearchText} />
+      <AdminHeader
+        title={t('adminDashboard.headers.feedback')}
+        setText={setSearchText}
+      />
 
       <div
         id="admin-feedback-grid"
@@ -123,7 +128,7 @@ const AdminDashboardFeedbackGrid = () => {
 
         {!isLoading && count === 0 && (
           <span className="font-medium mx-auto mt-5 text-lg">
-            Сообщения не найдены!
+            {t('adminDashboard.feedback.notFound')}
           </span>
         )}
 

@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ReleaseMediaAPI } from '../../../../api/release/release-media-api';
 import CarouselContainer from '../../../../components/carousel/Carousel-container';
 import { useReleaseMediaMeta } from '../../../../hooks/meta';
@@ -19,6 +20,7 @@ const offset = 0;
 const order = SortOrdersEnum.DESC;
 
 const ReleaseMediaReviews = () => {
+  const { t } = useTranslation();
   const { navigateToMediaReviews } = useNavigationPath();
   const { statuses, types, isLoading: isMetaLoading } = useReleaseMediaMeta();
 
@@ -52,8 +54,8 @@ const ReleaseMediaReviews = () => {
 
   return (
     <CarouselContainer
-      title={'Рецензии Медиа'}
-      buttonTitle={'Все рецензии Медиа'}
+      title={t('pages.main.mediaReviews.title')}
+      buttonTitle={t('pages.main.mediaReviews.all')}
       showButton={true}
       href={navigateToMediaReviews}
       handlePrev={() => carouselRef.current?.scrollPrev()}

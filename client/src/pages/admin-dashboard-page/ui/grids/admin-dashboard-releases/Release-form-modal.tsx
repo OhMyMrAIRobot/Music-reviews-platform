@@ -1,5 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { FC, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AuthorAPI } from '../../../../../api/author/author-api.ts';
 import ComboBox from '../../../../../components/buttons/Combo-box.tsx';
 import FormButton from '../../../../../components/form-elements/Form-button.tsx';
@@ -33,6 +34,7 @@ interface IProps {
 }
 
 const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
+  const { t } = useTranslation();
   const { types, isLoading: isTypesLoading } = useReleaseMeta();
   const queryClient = useQueryClient();
 
@@ -248,8 +250,12 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
   );
 
   /** CONSTANTS */
-  const formTitle = release ? 'Редактирование релиза' : 'Добавление релиза';
-  const buttonText = release ? 'Сохранить' : 'Добавить';
+  const formTitle = release
+    ? t('adminDashboard.releases.editTitle')
+    : t('adminDashboard.releases.createTitle');
+  const buttonText = release
+    ? t('adminDashboard.common.save')
+    : t('adminDashboard.common.add');
 
   if (!isOpen) return null;
 
@@ -273,7 +279,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
           <div className="border-b border-white/10 p-6 flex gap-10 w-full">
             <div className="grid gap-2 lg:max-w-[30%] overflow-hidden w-full">
               <h3 className="text-2xl font-semibold leading-none tracking-tight">
-                Обложка релиза
+                {t('adminDashboard.releases.coverHeading')}
               </h3>
 
               <div className="w-full lg:w-[250px]">
@@ -318,7 +324,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
                     setChecked={setDeleteCover}
                   />
                   <FormLabel
-                    name={'Удалить обложку'}
+                    name={t('adminDashboard.common.removeCover')}
                     htmlFor={'cover-checkbox'}
                     isRequired={false}
                   />
@@ -331,13 +337,15 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
             <div className="grid grid-rows-4 gap-y-3">
               <div className="grid gap-2 w-full">
                 <FormLabel
-                  name={'Название релиза'}
+                  name={t('adminDashboard.releases.releaseTitleLabel')}
                   htmlFor={'release-title'}
                   isRequired={true}
                 />
                 <FormInput
                   id={'release-title'}
-                  placeholder={'Название релиза...'}
+                  placeholder={t(
+                    'adminDashboard.releases.releaseTitlePlaceholder'
+                  )}
                   type={'text'}
                   value={title}
                   setValue={setTitle}
@@ -346,7 +354,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 
               <div className="grid gap-2 w-full">
                 <FormLabel
-                  name={'Тип релиза'}
+                  name={t('adminDashboard.releases.releaseTypeLabel')}
                   htmlFor={'release-type'}
                   isRequired={true}
                 />
@@ -355,14 +363,16 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
                   options={types.map((entry) => entry.type)}
                   value={type || undefined}
                   onChange={setType}
-                  placeholder="Тип релиза"
+                  placeholder={t(
+                    'adminDashboard.releases.releaseTypePlaceholder'
+                  )}
                   className="border border-white/15"
                 />
               </div>
 
               <div className="grid gap-2 w-full">
                 <FormLabel
-                  name={'Дата публикации'}
+                  name={t('adminDashboard.releases.publishDate')}
                   htmlFor={'release-date'}
                   isRequired={true}
                 />
@@ -377,13 +387,13 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 
               <div className="grid gap-2 w-full">
                 <FormLabel
-                  name={'Ссылка / идентификатор музыкальной композиции'}
+                  name={t('adminDashboard.releases.youtubeLabel')}
                   htmlFor={'yt-id-input'}
                   isRequired={false}
                 />
                 <FormInput
                   id={'yt-id-input'}
-                  placeholder={'https://youtube.com'}
+                  placeholder={t('adminDashboard.common.youtubePlaceholder')}
                   type={'string'}
                   value={ytId ?? ''}
                   setValue={setYtId}
@@ -394,13 +404,13 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
             <div className="grid grid-rows-4 gap-3">
               <div className="grid gap-2 w-full">
                 <FormLabel
-                  name={'Артисты'}
+                  name={t('adminDashboard.releases.artists')}
                   htmlFor={'release-artists'}
                   isRequired={false}
                 />
                 <FormMultiSelect
                   id={'release-artists'}
-                  placeholder={'Артисты'}
+                  placeholder={t('adminDashboard.releases.artistsPlaceholder')}
                   value={selectedArtists}
                   onChange={setSelectedArtists}
                   loadOptions={loadAuthors}
@@ -409,13 +419,15 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 
               <div className="grid gap-2 w-full">
                 <FormLabel
-                  name={'Продюсеры'}
+                  name={t('adminDashboard.releases.producers')}
                   htmlFor={'release-producers'}
                   isRequired={false}
                 />
                 <FormMultiSelect
                   id={'release-producers'}
-                  placeholder={'Продюсеры'}
+                  placeholder={t(
+                    'adminDashboard.releases.producersPlaceholder'
+                  )}
                   value={selectedProducers}
                   onChange={setSelectedProducers}
                   loadOptions={loadAuthors}
@@ -424,13 +436,15 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 
               <div className="grid gap-2 w-full">
                 <FormLabel
-                  name={'Дизайнеры'}
+                  name={t('adminDashboard.releases.designers')}
                   htmlFor={'release-designers'}
                   isRequired={false}
                 />
                 <FormMultiSelect
                   id={'release-designers'}
-                  placeholder={'Дизайнеры'}
+                  placeholder={t(
+                    'adminDashboard.releases.designersPlaceholder'
+                  )}
                   value={selectedDesigners}
                   onChange={setSelectedDesigners}
                   loadOptions={loadAuthors}
@@ -454,7 +468,7 @@ const ReleaseFormModal: FC<IProps> = ({ isOpen, onClose, release }) => {
 
             <div className="w-full sm:w-25">
               <FormButton
-                title={'Назад'}
+                title={t('adminDashboard.common.back')}
                 isInvert={false}
                 onClick={onClose}
                 disabled={isPending}

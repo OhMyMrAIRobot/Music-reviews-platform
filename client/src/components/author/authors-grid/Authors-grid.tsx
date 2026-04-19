@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Author } from '../../../types/author';
 import Pagination from '../../pagination/Pagination';
 import AuthorCard from './Author-card';
@@ -20,6 +21,8 @@ const AuthorsGrid: FC<IProps> = ({
   total,
   perPage,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <>
       <section className="mt-5 overflow-hidden">
@@ -41,7 +44,7 @@ const AuthorsGrid: FC<IProps> = ({
 
           {items.length === 0 && !isLoading && (
             <p className="text-center text-2xl font-semibold mt-10 absolute w-full">
-              Авторы не найдены!
+              {t('author.authorsNotFound')}
             </p>
           )}
         </div>

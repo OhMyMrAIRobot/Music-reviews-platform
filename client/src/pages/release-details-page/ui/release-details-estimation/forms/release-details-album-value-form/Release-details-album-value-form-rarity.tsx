@@ -1,5 +1,7 @@
 import { observer } from 'mobx-react-lite';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { getAlbumValueFormStrings } from '../../../../../../utils/album-value';
 import { makeStepLabeler } from '../../../../../../utils/make-step-labeler';
 import ReleaseDetailsAlbumValueFormSlider from './Release-details-album-value-form-slider';
 import ReleaseDetailsAlbumValueSection from './Release-details-album-value-section';
@@ -11,42 +13,6 @@ interface IProps {
   setRarityPerformance: (val: number) => void;
 }
 
-const getRarityGenreValueTitle = makeStepLabeler(
-  ['Распространённый жанр', 'Редкий жанр', 'Уникальный жанр'],
-  0.5,
-  1
-);
-
-const getRarityGenreValueText = makeStepLabeler(
-  [
-    'Активно представлен в русскоязычной индустрии, часто воспроизводим разными артистами и хорошо узнаваем',
-    'Присутствует ограниченно, нишевый, на узкий круг слушателей. Возможен как большой перегруз элементами, так и кричащий нарочитый минимализм',
-    'Почти или полностью отсутствует в русскоязычном поле, требует особого контекста. Арт-объект, шумовая импровизация, антиформа',
-  ],
-  0.5,
-  1
-);
-
-const getRarityPerfomanceValueTitle = makeStepLabeler(
-  [
-    'Распространённый формат исполнения',
-    'Редкий формат исполнения',
-    'Уникальный формат исполнения',
-  ],
-  0.5,
-  1
-);
-
-const getRarityPerfomanceValueText = makeStepLabeler(
-  [
-    'Классический флоу или формат пения. Распространенная и/или академическая форма реализации, применимая в популярной музыке',
-    'Нетипичный флоу или рисунок вокала, уникальный тембр артиста. Редкий подход в саунд-дизайне, акапеллы',
-    'Импровизация, разрушение формы, фрагментированность, перформативные элементы. Созданный автором уникальный стиль',
-  ],
-  0.5,
-  1
-);
-
 const ReleaseDetailsAlbumValueFormRarity: FC<IProps> = observer(
   ({
     rarityGenre,
@@ -54,21 +20,38 @@ const ReleaseDetailsAlbumValueFormRarity: FC<IProps> = observer(
     setRarityGenre,
     setRarityPerformance,
   }) => {
+    const { i18n, t } = useTranslation();
+    const s = useMemo(
+      () => getAlbumValueFormStrings(i18n.language),
+      [i18n.language]
+    );
+
+    const getRarityGenreValueTitle = useMemo(
+      () => makeStepLabeler(s.rarity.genreTitles, 0.5, 1),
+      [s.rarity.genreTitles]
+    );
+    const getRarityGenreValueText = useMemo(
+      () => makeStepLabeler(s.rarity.genreTexts, 0.5, 1),
+      [s.rarity.genreTexts]
+    );
+    const getRarityPerfomanceValueTitle = useMemo(
+      () => makeStepLabeler(s.rarity.performanceTitles, 0.5, 1),
+      [s.rarity.performanceTitles]
+    );
+    const getRarityPerfomanceValueText = useMemo(
+      () => makeStepLabeler(s.rarity.performanceTexts, 0.5, 1),
+      [s.rarity.performanceTexts]
+    );
+
     return (
       <ReleaseDetailsAlbumValueSection
         pos={1}
-        title={'Редкость'}
-        minMaxText={'(от 1 до 5)'}
+        title={t('albumValue.rarity')}
+        minMaxText={s.rarity.sectionMinMax}
         description={
           <>
-            <p>
-              Распространенность музыкального жанра и формата его исполнения в
-              индустрии
-            </p>
-            <p>
-              Рассчитывается как совокупность подкритериев «Редкость жанра» и
-              «Редкость формата исполнения»
-            </p>
+            <p>{s.rarity.descriptionP1}</p>
+            <p>{s.rarity.descriptionP2}</p>
           </>
         }
         value={`${rarityGenre + rarityPerformance}`}
@@ -78,20 +61,22 @@ const ReleaseDetailsAlbumValueFormRarity: FC<IProps> = observer(
           <ReleaseDetailsAlbumValueFormSlider
             value={rarityGenre}
             setValue={setRarityGenre}
-            title="Редкость жанра"
+            title={s.rarity.sliderGenreTitle}
             min={0.5}
             max={2.5}
             step={1}
+            rangeTemplate={s.sliderRange}
             valueTitle={getRarityGenreValueTitle(rarityGenre)}
             valueDescription={getRarityGenreValueText(rarityGenre)}
           />
           <ReleaseDetailsAlbumValueFormSlider
             value={rarityPerformance}
             setValue={setRarityPerformance}
-            title="Редкость формата испонения"
+            title={s.rarity.sliderPerformanceTitle}
             min={0.5}
             max={2.5}
             step={1}
+            rangeTemplate={s.sliderRange}
             valueTitle={getRarityPerfomanceValueTitle(rarityPerformance)}
             valueDescription={getRarityPerfomanceValueText(rarityPerformance)}
           />

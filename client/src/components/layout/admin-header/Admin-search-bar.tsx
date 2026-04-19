@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import SearchSvg from '../header/svg/Search-svg';
 
 interface IProps {
@@ -14,6 +15,8 @@ const AdminSearchBar: FC<IProps> = ({
   onSubmit,
   className,
 }) => {
+  const { t } = useTranslation();
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleSearchClick();
@@ -21,9 +24,7 @@ const AdminSearchBar: FC<IProps> = ({
   };
 
   const handleSearchClick = () => {
-    // if (searchText.trim().length > 0) {
     onSubmit();
-    // }
   };
 
   return (
@@ -31,6 +32,8 @@ const AdminSearchBar: FC<IProps> = ({
       className={`${className} flex h-10 w-full md:w-75 rounded-md border border-white/10 select-none bg-[#242527]/75 focus-within:border-white/70`}
     >
       <button
+        type="button"
+        aria-label={t('layout.searchSubmit')}
         onClick={handleSearchClick}
         className="w-10 h-full px-3 text-sm rounded-md cursor-pointer font-medium text-gray-500 transition-colors hover:bg-white/15 hover:text-white duration-200"
       >
@@ -42,7 +45,7 @@ const AdminSearchBar: FC<IProps> = ({
         type="text"
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
-        placeholder="Поиск..."
+        placeholder={t('layout.admin.searchPlaceholder')}
         className="w-full outline-none text-sm font-medium text-white placeholder:text-gray-500 pl-1"
       />
     </div>

@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { ReviewAPI } from '../../../api/review/review-api';
 import { leaderboardKeys } from '../../../query-keys/leaderboard-keys';
 import { platformStatsKeys } from '../../../query-keys/platform-stats-keys';
@@ -27,6 +28,7 @@ export const useUpdateReviewMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { authStore, notificationStore } = useStore();
   const queryClient = useQueryClient();
   const handleApiError = useApiErrorHandler();
@@ -48,7 +50,9 @@ export const useUpdateReviewMutation = ({
       ReviewAPI.update(id, data),
     onSuccess: (data) => {
       notificationStore.addSuccessNotification(
-        `Вы успешно обновили ${data.text ? 'рецензию' : 'оценку'}!`
+        data.text
+          ? t('mutations.userReview.updateSuccessReview')
+          : t('mutations.userReview.updateSuccessRating')
       );
       invalidateRelatedQueries(data.release.id);
       onSuccess?.();
@@ -56,7 +60,9 @@ export const useUpdateReviewMutation = ({
     onError: (error: unknown, data) => {
       handleApiError(
         error,
-        `Не удалось обновить ${data.data.text ? 'рецензию' : 'оценку'}.`
+        data.data.text
+          ? t('mutations.userReview.updateErrorReview')
+          : t('mutations.userReview.updateErrorRating')
       );
       onError?.(error);
     },

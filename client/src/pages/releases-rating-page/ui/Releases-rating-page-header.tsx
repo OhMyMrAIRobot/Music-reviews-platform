@@ -1,10 +1,9 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import ComboBox from '../../../components/buttons/Combo-box';
 import SkeletonLoader from '../../../components/utils/Skeleton-loader';
-import {
-  MonthEnumType,
-  MonthsEnum,
-} from '../../../types/common/enums/months-enum';
+import { MonthEnumType } from '../../../types/common/enums/months-enum';
+import { getTranslatedMonthNames } from '../../../utils/date/month-i18n';
 
 interface IProps {
   selectedMonth: number;
@@ -25,17 +24,16 @@ const ReleasesRatingPageHeader: FC<IProps> = ({
   maxYear,
   isLoading,
 }) => {
+  const { t } = useTranslation();
+  const monthNames = useMemo(() => getTranslatedMonthNames(t), [t]);
+
   const handleMonthChange = (value: string) => {
-    const entry = Object.entries(MonthsEnum).find(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      ([_, name]) => name === value
-    );
-    const month = entry ? parseInt(entry[0], 10) : selectedMonth;
-    setSelectedMonth(month);
+    const idx = monthNames.indexOf(value);
+    if (idx >= 0) setSelectedMonth((idx + 1) as MonthEnumType);
   };
 
   const yearOptions = [
-    'Все время',
+    t('pages.releasesRating.allTime'),
     ...Array.from({ length: minYear ? maxYear - minYear + 1 : 0 }, (_, i) =>
       (maxYear - i).toString()
     ),
@@ -51,11 +49,13 @@ const ReleasesRatingPageHeader: FC<IProps> = ({
 
   return (
     <>
-      <h1 className="text-2xl lg:text-3xl font-semibold">Рейтинг релизов</h1>
+      <h1 className="text-2xl lg:text-3xl font-semibold">
+        {t('pages.releasesRating.title')}
+      </h1>
 
       <div className="rounded-lg border border-white/10 p-3 bg-zinc-900 mt-4 lg:mt-8 md:flex md:items-center">
         <p className="font-bold text-gray-400 text-sm md:text-base md:mr-5 max-md:mb-2">
-          Фильтр
+          {t('pages.releasesRating.filter')}
         </p>
         <div className="flex flex-col gap-y-2 md:flex-row md:gap-x-5">
           <div className="w-50 h-10">
@@ -80,11 +80,12 @@ const ReleasesRatingPageHeader: FC<IProps> = ({
                 <SkeletonLoader className="size-full rounded-md" />
               ) : (
                 <ComboBox
-                  options={Object.values(MonthsEnum)}
+                  options={monthNames}
                   onChange={handleMonthChange}
                   className="border border-white/10"
                   value={
-                    MonthsEnum[selectedMonth as MonthEnumType] ?? 'Неизвестно'
+                    monthNames[selectedMonth - 1] ??
+                    t('pages.releasesRating.unknownMonth')
                   }
                 />
               )}

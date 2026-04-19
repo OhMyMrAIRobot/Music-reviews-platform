@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { UserFavReviewAPI } from '../../../../api/review/user-fav-review-api';
 import AuthorLikeColorSvg from '../../../../components/author/author-like/svg/Author-like-color-svg';
 import CarouselContainer from '../../../../components/carousel/Carousel-container';
@@ -15,6 +16,7 @@ const query: AuthorLikesQuery = {
 };
 
 const AuthorLikes = () => {
+  const { t } = useTranslation();
   const { navigateToAuthorLikes } = useNavigationPath();
 
   const { data, isPending } = useQuery({
@@ -36,10 +38,10 @@ const AuthorLikes = () => {
           <div className="size-8">
             <AuthorLikeColorSvg className="size-8" />
           </div>
-          Понравилось авторам
+          {t('pages.main.authorLikes.title')}
         </div>
       }
-      buttonTitle={'Все авторские лайки'}
+      buttonTitle={t('pages.main.authorLikes.all')}
       showButton={true}
       href={navigateToAuthorLikes}
       handlePrev={() => carouselRef.current?.scrollPrev()}

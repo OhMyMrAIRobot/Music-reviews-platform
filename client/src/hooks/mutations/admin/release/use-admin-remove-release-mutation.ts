@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { ReleaseAPI } from '../../../../api/release/release-api';
 import { albumValuesKeys } from '../../../../query-keys/album-values-keys';
 import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys';
@@ -33,6 +34,7 @@ export const useAdminRemoveReleaseMutation = ({
   onError,
   onSettled,
 }: UseMutationParams) => {
+  const { t } = useTranslation();
   const { notificationStore } = useStore();
   const queryClient = useQueryClient();
   const handleApiError = useApiErrorHandler();
@@ -56,12 +58,14 @@ export const useAdminRemoveReleaseMutation = ({
   const mutation = useMutation({
     mutationFn: (id: string) => ReleaseAPI.delete(id),
     onSuccess: () => {
-      notificationStore.addSuccessNotification('Вы успешно удалили релиз!');
+      notificationStore.addSuccessNotification(
+        t('admin.release.removeSuccess')
+      );
       invalidateRelatedQueries();
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, 'Не удалось удалить релиз');
+      handleApiError(error, t('admin.release.removeError'));
       onError?.(error);
     },
     onSettled,

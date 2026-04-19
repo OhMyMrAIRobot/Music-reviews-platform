@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ReleaseRatingTypesEnum,
   ReleaseTypesEnum,
@@ -13,19 +14,21 @@ interface IProps {
 }
 
 const AuthorRatingsItem: FC<IProps> = ({ rating, ratingType, releaseType }) => {
-  const releaseTypeText =
-    releaseType === ReleaseTypesEnum.ALBUM ? 'альбомов' : 'треков';
+  const { t } = useTranslation();
+
+  const kindKey = releaseType === ReleaseTypesEnum.ALBUM ? 'albums' : 'tracks';
+  const kind = t(`author.ratings.kind.${kindKey}`);
 
   let tooltipText = '';
   switch (ratingType) {
     case ReleaseRatingTypesEnum.MEDIA:
-      tooltipText = `Средняя оценка ${releaseTypeText} от Медиа`;
+      tooltipText = t('author.ratings.media', { kind });
       break;
     case ReleaseRatingTypesEnum.WITH_TEXT:
-      tooltipText = `Средняя оценка ${releaseTypeText} с рецензией от пользователей`;
+      tooltipText = t('author.ratings.withText', { kind });
       break;
     case ReleaseRatingTypesEnum.WITHOUT_TEXT:
-      tooltipText = `Средняя оценка ${releaseTypeText} без рецензий от пользователей`;
+      tooltipText = t('author.ratings.withoutText', { kind });
       break;
   }
 

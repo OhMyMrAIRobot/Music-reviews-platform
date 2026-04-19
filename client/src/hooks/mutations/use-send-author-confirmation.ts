@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { AuthorConfirmationAPI } from '../../api/author/author-confirmation-api';
 import { authorConfirmationsKeys } from '../../query-keys/authors-confirmations-keys';
 import { CreateAuthorConfirmationData } from '../../types/author';
@@ -22,6 +23,7 @@ export const useSendAuthorConfirmation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore } = useStore();
   const queryClient = useQueryClient();
   const handleApiError = useApiErrorHandler();
@@ -37,13 +39,13 @@ export const useSendAuthorConfirmation = ({
       AuthorConfirmationAPI.create(payload),
     onSuccess: async () => {
       notificationStore.addSuccessNotification(
-        'Вы успешно оставили заявку на подтверждение!'
+        t('mutations.authorConfirmationRequest.submitSuccess')
       );
       invalidateRelatedQueries();
       onSuccess?.();
     },
     onError: (err: unknown) => {
-      handleApiError(err, 'Не удалось отправить заявку');
+      handleApiError(err, t('mutations.authorConfirmationRequest.submitError'));
       onError?.(err);
     },
     onSettled,

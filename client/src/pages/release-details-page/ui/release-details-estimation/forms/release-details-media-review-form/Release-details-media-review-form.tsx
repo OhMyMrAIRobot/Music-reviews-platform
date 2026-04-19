@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { observer } from 'mobx-react-lite';
 import { FC, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ReleaseMediaAPI } from '../../../../../../api/release/release-media-api';
 import FormButton from '../../../../../../components/form-elements/Form-button';
 import FormInput from '../../../../../../components/form-elements/Form-input';
@@ -21,6 +22,7 @@ interface IProps {
 }
 
 const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
+  const { t } = useTranslation();
   const { authStore } = useStore();
   const { checkAuth } = useAuth();
 
@@ -139,21 +141,20 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
     <div className="border bg-zinc-900 rounded-xl p-4 border-white/10">
       {userReleaseMedia && (
         <div className="bg-gradient-to-br from-white/20 border border-white/5 rounded-lg text-sm lg:text-base text-center px-3 py-3 lg:py-5 mb-4 font-medium">
-          Вы уже оставляли медиарецензию к данной работе. Вы можете изменить ее,
-          заполнив форму ниже!
+          {t('releaseDetails.mediaReviewForm.alreadyLeft')}
         </div>
       )}
 
       <div className="grid md:grid-cols-2 gap-y-3 gap-5">
         <div className="grid gap-2">
           <FormLabel
-            name={'Заголовок'}
+            name={t('releaseDetails.mediaReviewForm.titleLabel')}
             htmlFor={'media-title-input'}
             isRequired={true}
           />
           <FormInput
             id={'media-title-input'}
-            placeholder={'Заголовок...'}
+            placeholder={t('releaseDetails.mediaReviewForm.titlePlaceholder')}
             type={'text'}
             value={title}
             setValue={setTitle}
@@ -162,13 +163,13 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
 
         <div className="grid gap-2">
           <FormLabel
-            name={'Ссылка на медиарецензию'}
+            name={t('releaseDetails.mediaReviewForm.linkLabel')}
             htmlFor={'media-url-input'}
             isRequired={true}
           />
           <FormInput
             id={'media-url-input'}
-            placeholder={'https://www.youtube.com/...'}
+            placeholder={t('adminDashboard.media.urlPlaceholder')}
             type={'text'}
             value={url}
             setValue={setUrl}
@@ -179,7 +180,11 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
       <div className="grid sm:flex items-center gap-y-3 sm:justify-between mt-6">
         <div className="w-full sm:w-40">
           <FormButton
-            title={userReleaseMedia ? 'Обновить' : 'Отправить'}
+            title={
+              userReleaseMedia
+                ? t('releaseDetails.mediaReviewForm.update')
+                : t('releaseDetails.mediaReviewForm.submit')
+            }
             isInvert={true}
             onClick={handleSubmit}
             disabled={!isValid || !hasChanges || isSubmitting}
@@ -190,7 +195,7 @@ const ReleaseDetailsMediaReviewForm: FC<IProps> = observer(({ releaseId }) => {
         {userReleaseMedia && (
           <div className="w-full sm:w-40">
             <FormButton
-              title={'Удалить'}
+              title={t('releaseDetails.mediaReviewForm.delete')}
               isInvert={false}
               onClick={handleDelete}
               disabled={!userReleaseMedia || isSubmitting}

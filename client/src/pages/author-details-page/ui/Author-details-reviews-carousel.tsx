@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { FC, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ReviewAPI } from '../../../api/review/review-api';
 import CarouselContainer from '../../../components/carousel/Carousel-container';
 import LastReviewsCarousel from '../../../components/carousel/Last-reviews-carousel';
@@ -15,6 +16,7 @@ interface IProps {
 const limit = 25;
 
 const AuthorDetailsReviewsCarousel: FC<IProps> = ({ id }) => {
+  const { t } = useTranslation();
   const query: ReviewsQuery = {
     authorId: id,
     limit,
@@ -40,7 +42,7 @@ const AuthorDetailsReviewsCarousel: FC<IProps> = ({ id }) => {
   return (
     (isPending || (lastReviews && lastReviews.length > 0)) && (
       <CarouselContainer
-        title={'Последние рецензии'}
+        title={t('releaseDetails.author.reviewsCarousel')}
         buttonTitle={''}
         showButton={false}
         href={'#'}

@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { UserFavAuthorAPI } from '../../../api/author/user-fav-author-api';
 import { authorsKeys } from '../../../query-keys/authors-keys';
 import { leaderboardKeys } from '../../../query-keys/leaderboard-keys';
@@ -24,6 +25,7 @@ export const useToggleFavAuthor = (
   author: Author | undefined,
   isFav: boolean
 ): UseToggleFavResult => {
+  const { t } = useTranslation();
   const { authStore, notificationStore } = useStore();
   const { checkAuth } = useAuth();
   const handleApiError = useApiErrorHandler();
@@ -47,8 +49,8 @@ export const useToggleFavAuthor = (
     onSuccess: () => {
       notificationStore.addSuccessNotification(
         isFav
-          ? 'Автор успешно удален из избранного!'
-          : 'Автор успешно добавлен в избранное!'
+          ? t('mutations.toggleFav.author.removeSuccess')
+          : t('mutations.toggleFav.author.addSuccess')
       );
 
       invalidateRelatedQueries();
@@ -57,8 +59,8 @@ export const useToggleFavAuthor = (
       handleApiError(
         error,
         isFav
-          ? 'Не удалось убрать автора из избранного!'
-          : 'Не удалось добавить автора в избранное!'
+          ? t('mutations.toggleFav.author.removeError')
+          : t('mutations.toggleFav.author.addError')
       );
     },
   });

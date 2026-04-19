@@ -1,4 +1,5 @@
 import { FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import ArrowBottomSvg from '../../../../../components/layout/header/svg/Arrow-bottom-svg.tsx';
 import ConfirmationModal from '../../../../../components/modals/Confirmation-modal.tsx';
@@ -16,6 +17,8 @@ import { getRoleColor } from '../../../../../utils/get-role-color.ts';
 import AdminDeleteButton from '../../buttons/Admin-delete-button.tsx';
 import AdminEditButton from '../../buttons/Admin-edit-button.tsx';
 import AdminDashboardEditUserModal from './admin-dashboard-edit-user-modal/Admin-dashboard-edit-user-modal.tsx';
+import { translateUserRole } from '../../../../../utils/user/user-role-i18n.ts';
+import { translateUserStatus } from '../../../../../utils/user/user-status-i18n.ts';
 
 interface IProps {
   className?: string;
@@ -34,6 +37,7 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
   order,
   toggleOrder,
 }) => {
+  const { t } = useTranslation();
   const { navigatoToProfile } = useNavigationPath();
 
   const [confModalOpen, setConfModalOpen] = useState<boolean>(false);
@@ -50,7 +54,7 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
       {user && (
         <>
           <ConfirmationModal
-            title={'Вы действительно хотите удалить пользователя?'}
+            title={t('adminDashboard.users.deleteConfirm')}
             isOpen={confModalOpen}
             onConfirm={() => mutateAsync(user.id)}
             onCancel={() => setConfModalOpen(false)}
@@ -103,26 +107,32 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
                 className="max-xl:hidden size-9 aspect-square rounded-full select-none object-cover"
               />
               <span className=" line-clamp-2 overflow-hidden text-ellipsis text-wrap">
-                <span className="xl:hidden">Никнейм: </span>
+                <span className="xl:hidden">
+                  {t('adminDashboard.users.nicknameMobile')}
+                </span>
                 <span className="max-lg:underline underline-offset-4">
                   {user.nickname}
                 </span>
               </span>
             </Link>
           ) : (
-            <span className="px-2">Никнейм</span>
+            <span className="px-2">{t('adminDashboard.common.nickname')}</span>
           )}
         </div>
 
         <div className="xl:col-span-2 text-ellipsis line-clamp-1">
-          <span className="xl:hidden">Email: </span>
-          {user?.email ?? 'Email'}
+          <span className="xl:hidden">
+            {t('adminDashboard.common.email')}:{' '}
+          </span>
+          {user?.email ?? t('adminDashboard.common.email')}
         </div>
 
         <div className="xl:col-span-2 text-ellipsis line-clamp-1 flex items-center h-full">
           {user ? (
             <>
-              <span className="xl:hidden">Дата создания: </span>
+              <span className="xl:hidden">
+                {t('adminDashboard.users.createdAtMobile')}
+              </span>
               <span className="max-xl:ml-0.5">{user.createdAt}</span>
             </>
           ) : (
@@ -130,7 +140,7 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
               onClick={toggleOrder}
               className="cursor-pointer hover:text-white flex items-center gap-x-1.5"
             >
-              <span>Дата создания</span>
+              <span>{t('adminDashboard.users.createdAt')}</span>
               <ArrowBottomSvg
                 className={`size-3 ${
                   order === SortOrdersEnum.ASC ? 'rotate-180' : ''
@@ -143,25 +153,29 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
         <div className="xl:col-span-2 text-ellipsis line-clamp-1 flex items-center">
           {user?.role ? (
             <>
-              <span className="xl:hidden">Роль: </span>
+              <span className="xl:hidden">
+                {t('adminDashboard.users.roleMobile')}
+              </span>
               <div
                 className={`flex max-xl:ml-0.5 gap-x-1 items-center ${getRoleColor(
                   user.role.role
                 )}`}
               >
                 <UserRoleSvg role={user.role} className={'size-5'} />
-                <span>{user.role.role}</span>
+                <span>{translateUserRole(t, user.role.role)}</span>
               </div>
             </>
           ) : (
-            <span>Роль</span>
+            <span>{t('adminDashboard.common.role')}</span>
           )}
         </div>
 
         <div className="xl:col-span-2 text-ellipsis line-clamp-1 flex items-center h-full">
           {user ? (
             <>
-              <span className="xl:hidden">Статус: </span>
+              <span className="xl:hidden">
+                {t('adminDashboard.users.accountStatusMobile')}
+              </span>
               <span
                 className={`max-xl:ml-0.5 px-2 py-0.5 rounded-full select-none text-[13px] ${
                   user.isActive
@@ -170,12 +184,12 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
                 }`}
               >
                 {user.isActive
-                  ? UserStatusesEnum.ACTIVE
-                  : UserStatusesEnum.NON_ACTIVE}
+                  ? translateUserStatus(t, UserStatusesEnum.ACTIVE)
+                  : translateUserStatus(t, UserStatusesEnum.NON_ACTIVE)}
               </span>
             </>
           ) : (
-            'Статус аккаунта'
+            t('adminDashboard.common.accountStatus')
           )}
         </div>
 
@@ -186,7 +200,7 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
               <AdminDeleteButton onClick={() => setConfModalOpen(true)} />
             </div>
           ) : (
-            'Действие'
+            t('adminDashboard.common.action')
           )}
         </div>
       </div>

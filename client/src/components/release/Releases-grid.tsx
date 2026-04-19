@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Release } from '../../types/release';
 import Pagination from '../pagination/Pagination';
 import ReleaseCard from './Release-card';
@@ -20,6 +21,8 @@ const ReleasesGrid: FC<IProps> = ({
   total,
   perPage,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <>
       <section className="mt-5 overflow-hidden">
@@ -43,7 +46,7 @@ const ReleasesGrid: FC<IProps> = ({
               ))}
           {items.length === 0 && !isLoading && (
             <p className="text-center text-2xl font-semibold mt-10 absolute w-full">
-              Релизы не найдены!
+              {t('release.notFound')}
             </p>
           )}
         </div>

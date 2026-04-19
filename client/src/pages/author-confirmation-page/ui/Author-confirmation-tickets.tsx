@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AuthorConfirmationAPI } from '../../../api/author/author-confirmation-api';
 import { useStore } from '../../../hooks/use-store';
 import { authorConfirmationsKeys } from '../../../query-keys/authors-confirmations-keys';
@@ -10,6 +11,7 @@ interface IProps {
 }
 
 const AuthorConfirmationTickets: FC<IProps> = ({ show }) => {
+  const { t } = useTranslation();
   const { authStore } = useStore();
 
   const { data, isPending } = useQuery({
@@ -47,7 +49,7 @@ const AuthorConfirmationTickets: FC<IProps> = ({ show }) => {
 
       {!isPending && items.length === 0 && (
         <span className="text-center text-xl font-medium">
-          Заявки не найдены!
+          {t('pages.authorConfirmation.ticketsNotFound')}
         </span>
       )}
     </div>

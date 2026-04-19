@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import AuthorCommentColorSvg from '../author/author-comment/svg/Author-comment-color-svg';
 import AuthorLikeColorSvg from '../author/author-like/svg/Author-like-color-svg';
 import Tooltip from '../tooltip/Tooltip';
@@ -15,11 +16,15 @@ const ReleaseAuthorActions: FC<IProps> = ({
   hasAuthorLikes,
   className = '',
 }) => {
+  const { t } = useTranslation();
+
   return (
     <div className={`flex gap-2 ${className}`}>
       {hasAuthorComments && (
         <TooltipSpan
-          tooltip={<Tooltip>Автор прокомментировал релиз</Tooltip>}
+          tooltip={
+            <Tooltip>{t('release.authorActions.commentedTooltip')}</Tooltip>
+          }
           spanClassName="text-white cursor-pointer relative"
           centered={true}
         >
@@ -29,7 +34,9 @@ const ReleaseAuthorActions: FC<IProps> = ({
 
       {hasAuthorLikes && (
         <TooltipSpan
-          tooltip={<Tooltip>Автор поставил лайки на рецензии</Tooltip>}
+          tooltip={
+            <Tooltip>{t('release.authorActions.likedReviewsTooltip')}</Tooltip>
+          }
           spanClassName="text-white cursor-pointer relative"
           centered={true}
         >

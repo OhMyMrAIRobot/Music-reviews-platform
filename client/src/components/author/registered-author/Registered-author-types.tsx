@@ -1,5 +1,7 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AuthorType, AuthorTypesEnum } from '../../../types/author';
+import { translateAuthorType } from '../../../utils/author/author-type-label';
 import Tooltip from '../../tooltip/Tooltip';
 import TooltipSpan from '../../tooltip/Tooltip-span';
 import RegisteredArtistSvg from './svg/Registered-artist-svg';
@@ -18,13 +20,21 @@ const iconComponents = {
 } as const;
 
 const RegisteredAuthorTypes: FC<IProps> = ({ className, types }) => {
+  const { t } = useTranslation();
+
   return types.map(({ id, type }) => {
     const IconComponent = iconComponents[type as AuthorTypesEnum];
 
     return (
       <TooltipSpan
         key={id}
-        tooltip={<Tooltip>{`${type} зарегистрирован на сайте`}</Tooltip>}
+        tooltip={
+          <Tooltip>
+            {t('author.registeredOnSite', {
+              type: translateAuthorType(t, type),
+            })}
+          </Tooltip>
+        }
         spanClassName="text-white relative cursor-pointer"
         centered={true}
       >

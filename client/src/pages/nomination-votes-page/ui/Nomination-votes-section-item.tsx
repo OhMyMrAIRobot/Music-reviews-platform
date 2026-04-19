@@ -1,4 +1,5 @@
 import { FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import FormButton from '../../../components/form-elements/Form-button';
 import TickRoundedSvg from '../../../components/svg/Tick-rounded-svg';
@@ -38,6 +39,7 @@ const NominationVotesSectionItem: FC<IProps> = ({
   userVotes = [],
   postVote,
 }) => {
+  const { t } = useTranslation();
   const { notificationStore } = useStore();
   const { checkAuth } = useAuth();
   const { navigateToReleaseDetails, navigateToAuthorDetails } =
@@ -64,7 +66,9 @@ const NominationVotesSectionItem: FC<IProps> = ({
         candidate.entityKind as NominationEntityKind,
         candidate.id
       );
-      notificationStore.addSuccessNotification('Вы успешно проголосовали!');
+      notificationStore.addSuccessNotification(
+        t('pages.nominationVotes.voteSuccess')
+      );
       setVoted?.(true);
     } finally {
       setIsPosting(false);
@@ -127,10 +131,9 @@ const NominationVotesSectionItem: FC<IProps> = ({
             <TooltipSpan
               tooltip={
                 <Tooltip>
-                  Вы проголосовали за{' '}
                   {candidate?.entityKind === 'author'
-                    ? 'данного автора!'
-                    : 'данный релиз!'}
+                    ? t('pages.nominationVotes.votedForAuthor')
+                    : t('pages.nominationVotes.votedForRelease')}
                 </Tooltip>
               }
               spanClassName="relative"
@@ -141,7 +144,7 @@ const NominationVotesSectionItem: FC<IProps> = ({
           )}
 
           <FormButton
-            title="Проголосовать"
+            title={t('pages.nominationVotes.voteButton')}
             isInvert={true}
             onClick={handleClick}
             disabled={isPosting || voted === true}

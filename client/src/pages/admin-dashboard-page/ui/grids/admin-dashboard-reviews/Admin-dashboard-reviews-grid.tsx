@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ReviewAPI } from '../../../../../api/review/review-api.ts';
 import AdminHeader from '../../../../../components/layout/admin-header/Admin-header.tsx';
 import Pagination from '../../../../../components/pagination/Pagination.tsx';
@@ -15,6 +16,7 @@ import AdminDashboardReviewsGridItem from './Admin-dashboard-reviews-grid-item.t
 const limit = 10;
 
 const AdminDashboardReviewsGrid = () => {
+  const { t } = useTranslation();
   const [searchText, setSearchText] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC);
@@ -43,7 +45,10 @@ const AdminDashboardReviewsGrid = () => {
 
   return (
     <div className="flex flex-col h-screen" id="admin-reviews">
-      <AdminHeader title={'Рецензии'} setText={setSearchText} />
+      <AdminHeader
+        title={t('adminDashboard.headers.reviews')}
+        setText={setSearchText}
+      />
 
       <div
         id="admin-reviews-grid"
@@ -84,7 +89,7 @@ const AdminDashboardReviewsGrid = () => {
 
         {!isLoading && count === 0 && (
           <span className="font-medium mx-auto mt-5 text-lg">
-            Рецензии не найдены!
+            {t('adminDashboard.reviews.notFound')}
           </span>
         )}
 

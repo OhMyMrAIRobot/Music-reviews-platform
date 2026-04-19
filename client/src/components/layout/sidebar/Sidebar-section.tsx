@@ -9,7 +9,7 @@ const SidebarSection: FC<IProps> = ({ items }) => {
   return (
     <nav className="flex flex-col items-start gap-1 px-2 py-3">
       {items.map((item) => (
-        <SidebarItem key={item.label} {...item} />
+        <SidebarItem key={item.id} {...item} />
       ))}
     </nav>
   );

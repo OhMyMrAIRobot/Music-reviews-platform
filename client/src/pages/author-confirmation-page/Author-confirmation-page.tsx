@@ -1,29 +1,31 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import AuthLayout from '../auth-page/ui/Auth-layout';
 import AuthorConfirmationButton from './ui/Author-confirmation-button';
 import AuthorConfirmationTickets from './ui/Author-confirmation-tickets';
 import SendAuthorConfirmationForm from './ui/Send-author-confirmation-form';
 
 const AuthorConfirmationPage = () => {
+  const { t } = useTranslation();
   const [formShow, setFormShow] = useState<boolean>(true);
 
   return (
     <AuthLayout>
       <div className="grid w-full lg:w-90 gap-4 p-2">
         <h1 className="text-2xl text-center lg:text-3xl font-bold">
-          Подтверждение автора
+          {t('pages.authorConfirmation.title')}
         </h1>
 
         <div className="h-10 grid grid-cols-2 items-center rounded-md bg-zinc-800/90 p-1 text-zinc-300 mb-4 gap-1">
           <AuthorConfirmationButton
             onClick={() => setFormShow(true)}
             isActive={formShow}
-            title={'Отправить заявку'}
+            title={t('pages.authorConfirmation.submitTicket')}
           />
           <AuthorConfirmationButton
             onClick={() => setFormShow(false)}
             isActive={!formShow}
-            title={'Мои заявки'}
+            title={t('pages.authorConfirmation.myTickets')}
           />
         </div>
 

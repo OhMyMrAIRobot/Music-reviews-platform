@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { ReleaseMediaAPI } from '../../../api/release/release-media-api';
 import { leaderboardKeys } from '../../../query-keys/leaderboard-keys';
 import { platformStatsKeys } from '../../../query-keys/platform-stats-keys';
@@ -26,6 +27,7 @@ export const useUpdateMediaMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore, authStore } = useStore();
   const queryClient = useQueryClient();
   const handleApiError = useApiErrorHandler();
@@ -45,13 +47,13 @@ export const useUpdateMediaMutation = ({
       ReleaseMediaAPI.update(data.id, data.updateData),
     onSuccess: () => {
       notificationStore.addSuccessNotification(
-        'Медиарецензия успешно обновлена! Ожидайте подтверждения!'
+        t('mutations.mediaReview.updateSuccess')
       );
       invalidateRelatedQueries();
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, 'Не удалось обновить медиарецензию.');
+      handleApiError(error, t('mutations.mediaReview.updateError'));
       onError?.(error);
     },
     onSettled,

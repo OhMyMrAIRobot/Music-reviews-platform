@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { UserAPI } from '../../../../api/user/user-api';
 import { authorCommentsKeys } from '../../../../query-keys/author-comments-keys';
 import { authorLikesKeys } from '../../../../query-keys/author-likes-keys';
@@ -30,6 +31,7 @@ export const useAdminUpdateUserMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore } = useStore();
   const handleApiError = useApiErrorHandler();
   const queryClient = useQueryClient();
@@ -51,14 +53,12 @@ export const useAdminUpdateUserMutation = ({
     mutationFn: (data: { id: string; updateData: AdminUpdateUserData }) =>
       UserAPI.adminUpdate(data.id, data.updateData),
     onSuccess: (data) => {
-      notificationStore.addSuccessNotification(
-        'Информация о пользователе успешно обновлена'
-      );
+      notificationStore.addSuccessNotification(t('admin.user.updateSuccess'));
       invalidateUserRelatedQueries(data.id);
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, 'Ошибка при обновлении информации о пользователе');
+      handleApiError(error, t('admin.user.updateError'));
       onError?.(error);
     },
     onSettled,

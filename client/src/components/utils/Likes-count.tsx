@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import BookmarkSvg from '../svg/Bookmark-svg';
 import Tooltip from '../tooltip/Tooltip';
 import TooltipSpan from '../tooltip/Tooltip-span';
@@ -9,9 +10,11 @@ interface IProps {
 }
 
 const LikesCount: FC<IProps> = ({ count, className = '' }) => {
+  const { t } = useTranslation();
+
   return (
     <TooltipSpan
-      tooltip={<Tooltip>{'Количество добавлений в предпочтения'}</Tooltip>}
+      tooltip={<Tooltip>{t('utils.likesTooltip')}</Tooltip>}
       spanClassName="text-white relative"
       centered={true}
     >

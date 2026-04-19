@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import FormButton from '../../../../components/form-elements/Form-button';
 import FormInput from '../../../../components/form-elements/Form-input';
 import FormLabel from '../../../../components/form-elements/Form-label';
@@ -14,6 +15,7 @@ import buildProfileFormData from '../../../../utils/build-profile-form-data';
 import EditProfilePageSection from '../Edit-profile-page-section';
 
 const UpdateProfileInfoForm = observer(() => {
+  const { t } = useTranslation();
   /** HOOKS */
   const { authStore } = useStore();
   const { checkAuth } = useAuth();
@@ -72,19 +74,19 @@ const UpdateProfileInfoForm = observer(() => {
 
   return (
     <EditProfilePageSection
-      title="Данные профиля"
-      description="Здесь Вы можете обновить данные своего профиля."
+      title={t('pages.editProfile.profile.title')}
+      description={t('pages.editProfile.profile.description')}
     >
       <div className="flex flex-col gap-4">
         <div className="grid gap-3">
           <FormLabel
-            name={'Описание профиля'}
+            name={t('pages.editProfile.profile.bioLabel')}
             htmlFor={'bio'}
             isRequired={false}
           />
           <FormTextbox
             id={'bio'}
-            placeholder={'Описание профиля'}
+            placeholder={t('pages.editProfile.profile.bioPlaceholder')}
             value={bio}
             setValue={setBio}
             className="h-30"
@@ -93,7 +95,11 @@ const UpdateProfileInfoForm = observer(() => {
       </div>
 
       <div className="grid gap-3">
-        <FormLabel name={'Социальные сети'} htmlFor={''} isRequired={false} />
+        <FormLabel
+          name={t('pages.editProfile.profile.socialsLabel')}
+          htmlFor={''}
+          isRequired={false}
+        />
         {isLoading
           ? Array.from({ length: 4 }).map((_, idx) => (
               <SkeletonLoader
@@ -117,7 +123,11 @@ const UpdateProfileInfoForm = observer(() => {
       <div className="pt-3 lg:pt-6 border-t border-white/5 w-full">
         <div className="w-full sm:w-38">
           <FormButton
-            title={isPending ? 'Сохранение...' : 'Сохранить'}
+            title={
+              isPending
+                ? t('pages.editProfile.saving')
+                : t('pages.editProfile.save')
+            }
             isInvert={true}
             onClick={handleSubmit}
             disabled={

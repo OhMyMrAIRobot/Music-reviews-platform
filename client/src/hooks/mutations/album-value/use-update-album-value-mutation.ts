@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { AlbumValueAPI } from '../../../api/album-value-api';
 import { albumValuesKeys } from '../../../query-keys/album-values-keys';
 import { leaderboardKeys } from '../../../query-keys/leaderboard-keys';
@@ -25,6 +26,7 @@ export const useUpdateAlbumValueMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore, authStore } = useStore();
   const queryClient = useQueryClient();
   const handleApiError = useApiErrorHandler();
@@ -49,13 +51,13 @@ export const useUpdateAlbumValueMutation = ({
     }) => AlbumValueAPI.updateAlbumValueVote(id, data),
     onSuccess: () => {
       notificationStore.addSuccessNotification(
-        'Вы успешно изменили голос за ценность альбома!'
+        t('mutations.albumValue.updateSuccess')
       );
       invalidateRelatedQueries();
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, 'Не удалось изменить голос за ценность альбома.');
+      handleApiError(error, t('mutations.albumValue.updateError'));
       onError?.(error);
     },
     onSettled,

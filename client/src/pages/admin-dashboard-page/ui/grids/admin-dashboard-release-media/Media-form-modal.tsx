@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { FC, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ReleaseAPI } from '../../../../../api/release/release-api';
 import ComboBox from '../../../../../components/buttons/Combo-box';
 import FormButton from '../../../../../components/form-elements/Form-button';
@@ -24,6 +25,7 @@ interface IProps {
 }
 
 const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
+  const { t } = useTranslation();
   const { statuses, types, isLoading: isMetaLoading } = useReleaseMediaMeta();
   const queryClient = useQueryClient();
 
@@ -193,8 +195,12 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
   };
 
   /** CONSTANTS */
-  const formTitle = media ? 'Редактирование медиа' : 'Добавление медиа';
-  const buttonText = media ? 'Сохранить' : 'Добавить';
+  const formTitle = media
+    ? t('adminDashboard.media.editTitle')
+    : t('adminDashboard.media.createTitle');
+  const buttonText = media
+    ? t('adminDashboard.common.save')
+    : t('adminDashboard.common.add');
 
   if (!isOpen) return null;
 
@@ -219,13 +225,13 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
             <div className="w-full grid lg:grid-cols-2 p-6 border-b border-white/10 gap-3 lg:gap-6">
               <div className="grid gap-2 w-full">
                 <FormLabel
-                  name={'Заголовок'}
+                  name={t('adminDashboard.common.title')}
                   htmlFor={'media-title-input'}
                   isRequired={true}
                 />
                 <FormInput
                   id={'media-title-input'}
-                  placeholder={'Заголовок...'}
+                  placeholder={t('adminDashboard.common.titlePlaceholder')}
                   type={'text'}
                   value={title}
                   setValue={setTitle}
@@ -234,13 +240,13 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 
               <div className="grid gap-2 w-full">
                 <FormLabel
-                  name={'Ссылка на медиа'}
+                  name={t('adminDashboard.media.urlLabel')}
                   htmlFor={'media-url-input'}
                   isRequired={true}
                 />
                 <FormInput
                   id={'media-url-input'}
-                  placeholder={'https://www.youtube.com/...'}
+                  placeholder={t('adminDashboard.media.urlPlaceholder')}
                   type={'text'}
                   value={url}
                   setValue={setUrl}
@@ -249,7 +255,7 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 
               <div className="grid gap-2 w-full">
                 <FormLabel
-                  name={'Тип медиа'}
+                  name={t('adminDashboard.media.mediaType')}
                   htmlFor={'media-type'}
                   isRequired={true}
                 />
@@ -258,14 +264,14 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
                   options={types.map((entry) => entry.type)}
                   value={type || undefined}
                   onChange={setType}
-                  placeholder="Тип медиа"
+                  placeholder={t('adminDashboard.media.typePlaceholder')}
                   className="border border-white/15"
                 />
               </div>
 
               <div className="grid gap-2 w-full">
                 <FormLabel
-                  name={'Cтатус медиа'}
+                  name={t('adminDashboard.media.mediaStatusCol')}
                   htmlFor={'media-status'}
                   isRequired={true}
                 />
@@ -274,21 +280,21 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
                   options={statuses.map((entry) => entry.status)}
                   value={status || undefined}
                   onChange={setStatus}
-                  placeholder="Статус медиа"
+                  placeholder={t('adminDashboard.media.statusPlaceholder')}
                   className="border border-white/15"
                 />
               </div>
 
               <div className="grid gap-2 w-full">
                 <FormLabel
-                  name={'Название релиза'}
+                  name={t('adminDashboard.media.releaseName')}
                   htmlFor={'media-release-input'}
                   isRequired={true}
                 />
 
                 <FormSingleSelect
                   id={'media-release-input'}
-                  placeholder={'Введите название релиза...'}
+                  placeholder={t('adminDashboard.media.releaseNamePlaceholder')}
                   value={release}
                   onChange={setRelease}
                   loadOptions={loadReleases}
@@ -310,7 +316,7 @@ const MediaFormModal: FC<IProps> = ({ isOpen, onClose, media }) => {
 
               <div className="w-full sm:w-25">
                 <FormButton
-                  title={'Назад'}
+                  title={t('adminDashboard.common.back')}
                   isInvert={false}
                   onClick={onClose}
                   disabled={false}

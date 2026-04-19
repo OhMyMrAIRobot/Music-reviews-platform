@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AuthorCommentAPI } from '../../../../../api/author/author-comment-api';
 import AdminHeader from '../../../../../components/layout/admin-header/Admin-header';
 import Pagination from '../../../../../components/pagination/Pagination';
@@ -12,6 +13,7 @@ import AdminDashboardAuthorCommentsGridItem from './Admin-dashboard-author-comme
 const limit = 10;
 
 const AdminDashboardAuthorCommentsGrid = () => {
+  const { t } = useTranslation();
   const [searchText, setSearchText] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [order, setOrder] = useState<SortOrder>(SortOrdersEnum.DESC);
@@ -38,7 +40,10 @@ const AdminDashboardAuthorCommentsGrid = () => {
 
   return (
     <div className="flex flex-col h-screen" id="admin-author-comments">
-      <AdminHeader title={'Комментарии авторов'} setText={setSearchText} />
+      <AdminHeader
+        title={t('adminDashboard.headers.authorComments')}
+        setText={setSearchText}
+      />
 
       <div
         id="admin-author-comments-grid"
@@ -79,7 +84,7 @@ const AdminDashboardAuthorCommentsGrid = () => {
 
         {!isLoading && count === 0 && (
           <span className="font-medium mx-auto mt-5 text-lg">
-            Авторские Комментарии не найдены!
+            {t('adminDashboard.authorComments.notFound')}
           </span>
         )}
 

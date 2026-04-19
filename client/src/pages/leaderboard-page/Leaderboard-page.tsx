@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { LeaderboardAPI } from '../../api/leaderboard-api';
 import { leaderboardKeys } from '../../query-keys/leaderboard-keys';
 import { LeaderboardQuery } from '../../types/leaderboard';
@@ -12,6 +13,7 @@ const query: LeaderboardQuery = {
 };
 
 const LeaderboardPage = () => {
+  const { t } = useTranslation();
   const { data, isPending } = useQuery({
     queryKey: leaderboardKeys.list(query),
     queryFn: () => LeaderboardAPI.fetchLeaderboard(query),
@@ -44,7 +46,7 @@ const LeaderboardPage = () => {
 
         {items.length === 0 && !isPending && (
           <p className="text-center text-2xl font-semibold mt-10 w-full">
-            Таблица лидеров пуста!
+            {t('pages.leaderboard.empty')}
           </p>
         )}
       </div>

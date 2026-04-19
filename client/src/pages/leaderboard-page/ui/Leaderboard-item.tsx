@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import AuthorLikeColorSvg from '../../../components/author/author-like/svg/Author-like-color-svg';
 import NoTextReviewSvg from '../../../components/review/svg/No-text-review-svg';
@@ -20,6 +21,7 @@ interface IProps {
 }
 
 const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
+  const { t } = useTranslation();
   const { navigatoToProfile } = useNavigationPath();
 
   const level = getUserLevel(item?.user.points ?? 0);
@@ -103,7 +105,11 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
         </div>
 
         <TooltipSpan
-          tooltip={<Tooltip>Получено авторских лайков</Tooltip>}
+          tooltip={
+            <Tooltip>
+              {t('pages.leaderboard.receivedAuthorLikesTooltip')}
+            </Tooltip>
+          }
           spanClassName={
             'bg-zinc-950 border border-white/10 max-xl:order-5 flex xl:flex-col text-[10px] sm:text-sm justify-center items-center px-1 xl:px-4 rounded-lg relative mr-1 xl:mr-2 min-w-[80px] ml-1'
           }
@@ -126,13 +132,13 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
                   <div className="size-6">
                     <TextReviewSvg className="size-4" />
                   </div>
-                  Написано рецензий
+                  {t('pages.leaderboard.reviewsWritten')}
                 </div>
                 <div className="flex gap-x-1.5">
                   <div className="size-6">
                     <NoTextReviewSvg className="size-4" />
                   </div>
-                  Поставлено оценок без рецензий
+                  {t('pages.leaderboard.marksWithoutReview')}
                 </div>
               </div>
             </Tooltip>
@@ -160,13 +166,13 @@ const LeaderboardItem: FC<IProps> = ({ item, isLoading }) => {
                   <div className="w-5 h-4.5">
                     <PixelHeartFillSvg className={'w-5 h-4.5'} />
                   </div>
-                  Получено лайков на свои рецензии от пользователей
+                  {t('pages.leaderboard.likesOnOwnReviews')}
                 </div>
                 <div className="flex gap-x-2">
                   <div className="w-5 h-4.5">
                     <PixelHeartSvg className={'w-5 h-4.5'} />
                   </div>
-                  Поставлено лайков на рецензии пользователей
+                  {t('pages.leaderboard.likesOnOthersReviews')}
                 </div>
               </div>
             </Tooltip>

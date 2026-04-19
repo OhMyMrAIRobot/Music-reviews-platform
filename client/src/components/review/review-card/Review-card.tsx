@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { useToggleFavReview } from '../../../hooks/mutations/toggle-fav/use-toggle-fav-review.ts';
 import useNavigationPath from '../../../hooks/use-navigation-path.ts';
@@ -16,6 +17,7 @@ interface IProps {
 }
 
 const ReviewCard: FC<IProps> = observer(({ review, isLoading }) => {
+  const { t } = useTranslation();
   const { authStore } = useStore();
   /**
    * Current toggling state for like/unlike action
@@ -68,7 +70,7 @@ const ReviewCard: FC<IProps> = observer(({ review, isLoading }) => {
                 show ? 'opacity-100 visible' : 'opacity-0 invisible'
               }`}
             >
-              Перейти к релизу
+              {t('review.goToRelease')}
             </div>
           </Link>
         </div>

@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import FormButton from '../../../../components/form-elements/Form-button';
 import FormInput from '../../../../components/form-elements/Form-input';
 import FormLabel from '../../../../components/form-elements/Form-label';
@@ -10,6 +11,7 @@ import { constraints } from '../../../../utils/constraints';
 import EditProfilePageSection from '../Edit-profile-page-section';
 
 const UpdateUserInfoForm = observer(() => {
+  const { t } = useTranslation();
   const { authStore } = useStore();
   const { checkAuth } = useAuth();
 
@@ -89,8 +91,8 @@ const UpdateUserInfoForm = observer(() => {
 
   return (
     <EditProfilePageSection
-      title="Данные аккаунта"
-      description="Здесь Вы изменить данные своего аккаунта."
+      title={t('pages.editProfile.account.title')}
+      description={t('pages.editProfile.account.description')}
     >
       <div className="grid gap-3 lg:gap-5">
         <div className="grid gap-2">
@@ -98,7 +100,7 @@ const UpdateUserInfoForm = observer(() => {
 
           <FormInput
             id={'EditEmail'}
-            placeholder={'Example@mail.com'}
+            placeholder={t('authForms.register.emailPlaceholder')}
             type={'email'}
             value={email}
             setValue={setEmail}
@@ -107,14 +109,14 @@ const UpdateUserInfoForm = observer(() => {
 
         <div className="grid gap-2">
           <FormLabel
-            name={'Никнейм'}
+            name={t('pages.editProfile.account.nickname')}
             htmlFor={'EditNickname'}
             isRequired={false}
           />
 
           <FormInput
             id={'EditNickname'}
-            placeholder={'Никнейм'}
+            placeholder={t('pages.editProfile.account.nicknamePlaceholder')}
             type={'text'}
             value={nickname}
             setValue={setNickname}
@@ -123,14 +125,14 @@ const UpdateUserInfoForm = observer(() => {
 
         <div className="grid gap-2">
           <FormLabel
-            name={'Новый пароль'}
+            name={t('pages.editProfile.account.newPassword')}
             htmlFor={'EditPassword'}
             isRequired={false}
           />
 
           <FormInput
             id={'EditPassword'}
-            placeholder={'Пароль'}
+            placeholder={t('pages.editProfile.account.newPasswordPlaceholder')}
             type={'password'}
             value={newPassword}
             setValue={setNewPassword}
@@ -139,14 +141,16 @@ const UpdateUserInfoForm = observer(() => {
 
         <div className="grid gap-2">
           <FormLabel
-            name={'Подтвердите новый пароль'}
+            name={t('pages.editProfile.account.confirmPassword')}
             htmlFor={'EditPasswordConfirm'}
             isRequired={false}
           />
 
           <FormInput
             id={'EditPasswordConfirm'}
-            placeholder={'Подтвердите новый пароль'}
+            placeholder={t(
+              'pages.editProfile.account.confirmPasswordPlaceholder'
+            )}
             type={'password'}
             value={newPasswordConfirm}
             setValue={setNewPasswordConfirm}
@@ -157,14 +161,16 @@ const UpdateUserInfoForm = observer(() => {
 
         <div className="grid gap-2">
           <FormLabel
-            name={'Текущий пароль'}
+            name={t('pages.editProfile.account.currentPassword')}
             htmlFor={'EditCurrentPassword'}
             isRequired={true}
           />
 
           <FormInput
             id={'EditCurrentPassword'}
-            placeholder={'Текущий пароль'}
+            placeholder={t(
+              'pages.editProfile.account.currentPasswordPlaceholder'
+            )}
             type={'password'}
             value={password}
             setValue={setPassword}
@@ -174,7 +180,11 @@ const UpdateUserInfoForm = observer(() => {
         <div className="pt-3 lg:pt-6 border-t border-white/5 w-full">
           <div className="w-full sm:w-38">
             <FormButton
-              title={isPending ? 'Сохранение...' : 'Сохранить'}
+              title={
+                isPending
+                  ? t('pages.editProfile.saving')
+                  : t('pages.editProfile.save')
+              }
               isInvert={true}
               onClick={handleSubmit}
               disabled={!isFormValid || !hasChanges || isPending}

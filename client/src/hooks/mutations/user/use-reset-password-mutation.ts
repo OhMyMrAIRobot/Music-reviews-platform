@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { AuthAPI } from '../../../api/auth-api';
 import { ResetPasswordData } from '../../../types/auth';
@@ -23,6 +24,7 @@ export const useResetPasswordMutation = ({
   onError,
   onSettled,
 }: UseMutationParams = {}) => {
+  const { t } = useTranslation();
   const { notificationStore, authStore } = useStore();
   const handleApiError = useApiErrorHandler();
   const navigate = useNavigate();
@@ -35,13 +37,13 @@ export const useResetPasswordMutation = ({
       const { user, accessToken } = data;
       authStore.setAuthorization(user, accessToken);
       notificationStore.addSuccessNotification(
-        'Ваш пароль был успешно сброшен!'
+        t('mutations.auth.resetPasswordSuccess')
       );
       navigate(navigateToMain);
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      handleApiError(error, 'Ошибка при сбросе пароля!');
+      handleApiError(error, t('mutations.auth.resetPasswordError'));
       onError?.(error);
     },
     onSettled,

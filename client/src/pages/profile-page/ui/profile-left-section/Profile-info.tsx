@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import RegisteredAuthorTypes from '../../../../components/author/registered-author/Registered-author-types';
 import UserRoleSpan from '../../../../components/user/User-role-span';
 import { Profile } from '../../../../types/profile';
@@ -9,6 +10,7 @@ interface IProps {
 }
 
 const ProfileInfo: FC<IProps> = ({ profile }) => {
+  const { t } = useTranslation();
   return (
     <div className="xl:border xl:border-white/10 p-5 -mt-20 xl:mt-0 xl:bg-zinc-900 flex flex-col items-center rounded-2xl">
       <div className="relative select-none">
@@ -37,7 +39,7 @@ const ProfileInfo: FC<IProps> = ({ profile }) => {
       </h1>
 
       <div className="text-sm text-zinc-400 font-medium">
-        Дата регистрации: {profile.createdAt}
+        {t('pages.profile.registeredAt', { date: profile.createdAt })}
       </div>
 
       {profile.bio && (

@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { UserFavReviewAPI } from '../../api/review/user-fav-review-api';
 import AuthorLikeCard from '../../components/author/author-like/Author-like-card';
 import AuthorLikeColorSvg from '../../components/author/author-like/svg/Author-like-color-svg';
@@ -10,6 +11,7 @@ import { AuthorLikesQuery } from '../../types/review';
 const limit = 9;
 
 const AuthorLikesPage = () => {
+  const { t } = useTranslation();
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const query: AuthorLikesQuery = {
@@ -31,7 +33,7 @@ const AuthorLikesPage = () => {
       <div className="flex items-center gap-x-2.5">
         <AuthorLikeColorSvg className="size-8" />
         <h1 id="author-likes" className="text-2xl lg:text-3xl font-semibold">
-          Понравилось авторам
+          {t('pages.authorLikes.title')}
         </h1>
       </div>
 
@@ -55,7 +57,7 @@ const AuthorLikesPage = () => {
 
           {items.length === 0 && !isPending && (
             <p className="text-center text-2xl font-semibold mt-10 w-full absolute">
-              Авторские лайки не найдены!
+              {t('pages.authorLikes.notFound')}
             </p>
           )}
         </div>

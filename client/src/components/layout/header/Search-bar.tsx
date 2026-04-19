@@ -1,8 +1,10 @@
 import { FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import useNavigationPath from '../../../hooks/use-navigation-path';
 import { SearchBarOptionsEnum } from '../../../types/common';
 import { SearchTypesEnum } from '../../../types/common/enums/search-types-enum';
+import { translateSearchBarOption } from '../../../utils/layout/search-bar-options-i18n';
 import ComboBox from '../../buttons/Combo-box';
 import SearchSvg from './svg/Search-svg';
 
@@ -13,6 +15,7 @@ interface IProps {
 }
 
 const SearchBar: FC<IProps> = ({ className, comboboxClassname, onSubmit }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const { navigateToSearch } = useNavigationPath();
@@ -55,6 +58,8 @@ const SearchBar: FC<IProps> = ({ className, comboboxClassname, onSubmit }) => {
       className={`${className} h-10 rounded-md border border-white/10 select-none bg-[#242527]/75 focus-within:border-white/70`}
     >
       <button
+        type="button"
+        aria-label={t('layout.searchSubmit')}
         onClick={handleNavigate}
         className="w-10 h-full px-3 text-sm rounded-md cursor-pointer font-medium text-gray-500 transition-colors hover:bg-white/15 hover:text-white duration-200"
       >
@@ -66,7 +71,7 @@ const SearchBar: FC<IProps> = ({ className, comboboxClassname, onSubmit }) => {
         type="text"
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
-        placeholder="Поиск..."
+        placeholder={t('layout.searchPlaceholder')}
         className="w-full outline-none text-sm font-medium text-white placeholder:text-gray-500 pl-1"
       />
 
@@ -74,6 +79,7 @@ const SearchBar: FC<IProps> = ({ className, comboboxClassname, onSubmit }) => {
         options={Object.values(SearchBarOptionsEnum)}
         value={selectedType}
         onChange={setSelectedType}
+        formatOption={(option) => translateSearchBarOption(t, option)}
         className={`rounded-md border-l border-white/10 relative inline-block ${comboboxClassname}`}
       />
     </div>

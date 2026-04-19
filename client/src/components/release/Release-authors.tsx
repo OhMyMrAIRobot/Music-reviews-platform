@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import useNavigationPath from '../../hooks/use-navigation-path';
 import { ReleaseAuthor } from '../../types/release';
@@ -9,6 +10,7 @@ interface IProps {
 }
 
 const ReleaseAuthors: FC<IProps> = ({ authors, className }) => {
+  const { t } = useTranslation();
   const { navigateToAuthorDetails } = useNavigationPath();
 
   return (
@@ -29,7 +31,7 @@ const ReleaseAuthors: FC<IProps> = ({ authors, className }) => {
         </Link>
       ))}
       {authors.length === 0 && (
-        <span className="opacity-50">Автор не указан!</span>
+        <span className="opacity-50">{t('release.authorNotSpecified')}</span>
       )}
     </div>
   );
