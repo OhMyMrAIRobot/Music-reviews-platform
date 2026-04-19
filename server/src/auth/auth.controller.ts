@@ -159,7 +159,7 @@ export class AuthController {
   @Post('send-reset-password')
   async sendResetPasswordCode(@Body() dto: SendResetPasswordRequestDto) {
     const user = await this.usersService.findByEmail(dto.email);
-    const resetToken = this.tokensService.generateResetToken(
+    const resetToken = await this.tokensService.generateResetToken(
       user.id,
       user.email,
     );

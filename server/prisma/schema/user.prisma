@@ -11,6 +11,7 @@ model User {
 
   profile             UserProfile?
   refreshToken        RefreshToken?
+  resetPasswordToken  ResetPasswordToken?
   review              Review[]
   userFavRelease      UserFavRelease[]
   userFavReviews      UserFavReview[]
@@ -105,4 +106,15 @@ model TopUsersLeaderboard {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("Top_users_leaderboard")
+}
+
+model ResetPasswordToken {
+  id        String   @id @default(cuid())
+  jti       String   @unique @map("jti")
+  expiresAt DateTime @map("expires_at")
+
+  userId String @unique @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("Reset_password_tokens")
 }

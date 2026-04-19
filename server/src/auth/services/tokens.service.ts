@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { RefreshToken } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { randomUUID } from 'crypto';
 import { PrismaService } from 'prisma/prisma.service';
 import { EntityNotFoundException } from 'src/shared/exceptions/entity-not-found.exception';
 import { InvalidTokenException } from 'src/shared/exceptions/invalid-token.exception';
@@ -72,16 +73,50 @@ export class TokensService {
    * @param email - user email to embed in the token
    * @returns signed JWT string valid for 15 minutes
    */
-  generateResetToken(id: string, email: string): string {
+  async generateResetToken(id: string, email: string): Promise<string> {
+    const jti = randomUUID();
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
     const payload: IJwtActionPayload = {
       id,
       email,
       type: JwtActionEnum.RESET_PASSWORD,
+      jti,
     };
-    return this.jwtService.sign(payload, {
+    const token = this.jwtService.sign(payload, {
       secret: process.env.JWT_ACTION_SECRET,
       expiresIn: '15min',
     });
+    await this.prisma.resetPasswordToken.upsert({
+      where: { userId: id },
+      create: {
+        userId: id,
+        jti,
+        expiresAt,
+      },
+      update: {
+        jti,
+        expiresAt,
+      },
+    });
+    return token;
+  }
+
+  async validateResetPasswordToken(
+    userId: string,
+    jti: string | undefined,
+  ): Promise<void> {
+    if (!jti) {
+      throw new InvalidTokenException();
+    }
+    const record = await this.prisma.resetPasswordToken.findUnique({
+      where: { userId },
+    });
+    if (!record || record.jti !== jti) {
+      throw new InvalidTokenException();
+    }
+    if (record.expiresAt.getTime() <= Date.now()) {
+      throw new InvalidTokenException();
+    }
   }
 
   /**

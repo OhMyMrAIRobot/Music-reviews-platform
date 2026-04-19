@@ -223,19 +223,25 @@ export class AuthService {
     token: string,
     dto: ResetPasswordRequestDto,
   ) {
-    const { id } = this.tokensService.decodeActionToken(
+    const { id, jti } = this.tokensService.decodeActionToken(
       token,
       JwtActionEnum.RESET_PASSWORD,
     );
+
+    await this.tokensService.validateResetPasswordToken(id, jti);
 
     await this.usersService.findOne(id);
 
     dto.password = await this.usersService.createPasswordHash(dto.password);
 
-    const updatedUser = await this.prisma.user.update({
-      where: { id },
-      data: dto,
-      include: { role: true, registeredAuthor: true },
+    const updatedUser = await this.prisma.$transaction(async (tx) => {
+      const user = await tx.user.update({
+        where: { id },
+        data: dto,
+        include: { role: true, registeredAuthor: true },
+      });
+      await tx.resetPasswordToken.delete({ where: { userId: id } });
+      return user;
     });
 
     return this.login(res, plainToInstance(UserDto, updatedUser));
