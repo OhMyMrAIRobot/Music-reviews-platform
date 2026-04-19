@@ -2,6 +2,7 @@ import { FC, ReactNode } from 'react';
 import { Link } from 'react-router';
 
 export interface ISidebarItemProps {
+  id: string;
   href: string;
   icon: ReactNode;
   label: string;

@@ -11,7 +11,7 @@ const LanguageSwitch: FC = () => {
     <div
       className="flex h-10 shrink-0 rounded-md border border-white/15 overflow-hidden select-none"
       role="group"
-      aria-label={t('header.language')}
+      aria-label={t('layout.header.language')}
     >
       {LOCALES.map((lng, index) => {
         const isActive = resolved === lng;

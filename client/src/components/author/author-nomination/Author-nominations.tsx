@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import AwardSvg from '../../svg/Award-svg';
 import Tooltip from '../../tooltip/Tooltip';
 import TooltipSpan from '../../tooltip/Tooltip-span';
@@ -9,19 +10,21 @@ interface IProps {
 }
 
 const AuthorNominations: FC<IProps> = ({ winsCount, totalCount }) => {
+  const { t } = useTranslation();
+
   return (
     <div className="flex items-center justify-center space-x-1.5 lg:space-x-3">
       {winsCount > 0 && (
         <>
           <TooltipSpan
-            tooltip={<Tooltip>Победы в номинациях</Tooltip>}
+            tooltip={<Tooltip>{t('author.nominationsWinsTooltip')}</Tooltip>}
             spanClassName="text-white relative flex items-center space-x-1 text-xs lg:text-sm"
             centered={true}
           >
             <img
               loading="lazy"
               decoding="async"
-              alt={'rice'}
+              alt={t('author.nominationsWinIconAlt')}
               src={`${import.meta.env.VITE_SERVER_URL}/public/assets/rice.png`}
               className="w-4"
             />
@@ -37,7 +40,7 @@ const AuthorNominations: FC<IProps> = ({ winsCount, totalCount }) => {
       )}
       {totalCount > 0 && (
         <TooltipSpan
-          tooltip={<Tooltip>Всего номинаций</Tooltip>}
+          tooltip={<Tooltip>{t('author.nominationsTotalTooltip')}</Tooltip>}
           spanClassName="text-white relative flex items-center space-x-1 text-xs lg:text-sm"
           centered={true}
         >

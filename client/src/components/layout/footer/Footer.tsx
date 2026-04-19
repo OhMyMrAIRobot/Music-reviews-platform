@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import useNavigationPath from '../../../hooks/use-navigation-path';
 import TelegramSvg from '../../svg/Telegram-svg';
 import TwitchSvg from '../../svg/Twitch-svg';
@@ -28,6 +29,7 @@ const footerSocials: IFooterSocialItemProps[] = [
 ];
 
 const Footer = () => {
+  const { t } = useTranslation();
   const { navigateToFeedback } = useNavigationPath();
 
   return (
@@ -36,24 +38,26 @@ const Footer = () => {
         <FooterSocialContainer items={footerSocials} />
 
         <div className="text-xs lg:text-right lg:text-sm">
-          <h6 className="opacity-50">«Some application title» © 2025</h6>
+          <h6 className="opacity-50">
+            {t('layout.footer.copyright', { year: new Date().getFullYear() })}
+          </h6>
 
           <div className="flex flex-col gap-y-0.5 opacity-80 items-start lg:items-end mt-2">
-            <FooterLink text="Обратная связь" href={navigateToFeedback} />
             <FooterLink
-              text="Политика обработки персональных данных"
-              href={'#'}
+              text={t('layout.footer.feedback')}
+              href={navigateToFeedback}
             />
-            <FooterLink text="Пользовательское соглашение" href={'#'} />
+            <FooterLink text={t('layout.footer.privacy')} href={'#'} />
+            <FooterLink text={t('layout.footer.terms')} href={'#'} />
           </div>
 
           <div className="flex flex-col gap-y-0.5 opacity-80 mt-2">
             <FooterContactLink
-              label="Техническая поддержка"
+              label={t('layout.footer.support')}
               email="support@email.example.com"
             />
             <FooterContactLink
-              label="Предложения о сотрудничестве"
+              label={t('layout.footer.partnership')}
               email="contact@email.example.com"
             />
           </div>

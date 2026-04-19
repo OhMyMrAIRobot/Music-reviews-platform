@@ -18,7 +18,6 @@ interface IProps {
   ) => Promise<IMultiSelectValue[]>;
 }
 
-// TODO: переделать на дженерик
 const FormMultiSelect: FC<IProps> = ({
   id,
   placeholder,

@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ReleaseRatingTotal,
   ReleaseRatingTypesEnum,
@@ -13,6 +14,8 @@ interface IProps {
 }
 
 const ReleaseRatings: FC<IProps> = ({ ratings, className, showHint }) => {
+  const { t } = useTranslation();
+
   const ratingOrder = [
     ReleaseRatingTypesEnum.MEDIA,
     ReleaseRatingTypesEnum.WITH_TEXT,
@@ -29,13 +32,13 @@ const ReleaseRatings: FC<IProps> = ({ ratings, className, showHint }) => {
     let tooltip = '';
     if (rating?.type === ReleaseRatingTypesEnum.MEDIA) {
       baseClassName += 'bg-[rgba(255,255,255,.1)]';
-      tooltip = 'Средняя оценка Медиа';
+      tooltip = t('release.ratings.media');
     } else if (rating?.type === ReleaseRatingTypesEnum.WITH_TEXT) {
       baseClassName += 'bg-[rgba(35,101,199)]';
-      tooltip = 'Средняя оценка рецензий пользователей';
+      tooltip = t('release.ratings.withText');
     } else if (rating?.type === ReleaseRatingTypesEnum.WITHOUT_TEXT) {
       baseClassName += 'border-2 border-[rgba(35,101,199)]';
-      tooltip = 'Средняя оценка без рецензий пользователей';
+      tooltip = t('release.ratings.withoutText');
     }
 
     return showHint ? (

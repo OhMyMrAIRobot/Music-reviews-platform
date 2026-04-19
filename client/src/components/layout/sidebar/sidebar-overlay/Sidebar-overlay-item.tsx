@@ -17,6 +17,7 @@ const SidebarOverlayItem: FC<IProps> = ({ item }) => {
   return (
     <Link to={item.href}>
       <button
+        type="button"
         onClick={handleClick}
         className={'flex items-center space-x-2 text-[12px] text-left'}
       >

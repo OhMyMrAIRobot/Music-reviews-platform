@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import useNavigationPath from '../../../hooks/use-navigation-path';
 import { AuthorFavReview } from '../../../types/review';
@@ -21,11 +22,13 @@ const ReviewLikes: FC<IProps> = ({
   toggleFavReview,
   authorLikes,
 }) => {
+  const { t } = useTranslation();
   const { navigatoToProfile } = useNavigationPath();
 
   return (
     <div className="flex items-center">
       <button
+        type="button"
         disabled={toggling}
         onClick={toggleFavReview}
         className={`flex items-center justify-center gap-1 px-4 h-8 lg:h-10 border rounded-full cursor-pointer group select-none ${
@@ -40,7 +43,7 @@ const ReviewLikes: FC<IProps> = ({
           <img
             loading="lazy"
             decoding="async"
-            alt={'heart'}
+            alt={t('review.likes.heartAlt')}
             src={`${import.meta.env.VITE_SERVER_URL}/public/assets/heart.png`}
             className={`w-6 lg:w-7 transition-opacity duration-300 ${
               isLiked
@@ -64,7 +67,7 @@ const ReviewLikes: FC<IProps> = ({
         >
           <Link to={navigatoToProfile(like.userId)} className="relative">
             <img
-              alt={'author-like'}
+              alt={t('author.authorLikeBadgeAlt')}
               src={`${
                 import.meta.env.VITE_SERVER_URL
               }/public/assets/author-like.png`}

@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import ReleaseDetailsAlbumValueRow from '../../pages/release-details-page/ui/release-details-album-value/Release-details-album-value-row';
 import ReleaseDetailsAlbumValueSection from '../../pages/release-details-page/ui/release-details-album-value/Release-details-album-value-section';
 import {
@@ -39,6 +40,7 @@ interface IProps {
 
 const AlbumValue: FC<IProps> = observer(
   ({ rarity, influence, integrity, depth, quality, totalValue }) => {
+    const { t } = useTranslation();
     const level = getAlbumValueTier(totalValue);
 
     if (!level) return null;
@@ -67,7 +69,7 @@ const AlbumValue: FC<IProps> = observer(
             />
             <div>
               <span className="block lg:text-lg font-bold mb-0 lg:mb-2 lg:-mt-1">
-                {config.name}
+                {t(`albumValue.tiers.${level}`)}
               </span>
               <span className="block font-bold text-xl lg:text-[32px] leading-[28px]">
                 {totalValue.toFixed(2)}
@@ -78,19 +80,19 @@ const AlbumValue: FC<IProps> = observer(
           <div className="w-full text-left text-sm grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-x-2 gap-y-2 shrink-1 justify-center">
             <ReleaseDetailsAlbumValueSection>
               <ReleaseDetailsAlbumValueRow
-                title={'Редкость'}
+                title={t('albumValue.rarity')}
                 value={rarity.total.toString()}
                 maxValue={'5'}
                 isSectionTitle={true}
               />
               <ReleaseDetailsAlbumValueRow
-                title={'Редкость жанра'}
+                title={t('albumValue.genreRarity')}
                 value={rarity.rarityGenre.toString()}
                 maxValue={'2.5'}
                 isSectionTitle={false}
               />
               <ReleaseDetailsAlbumValueRow
-                title={'Редкость формата исполнения'}
+                title={t('albumValue.performanceFormatRarity')}
                 value={rarity.rarityPerformance.toString()}
                 maxValue={'2.5'}
                 isSectionTitle={false}
@@ -99,25 +101,25 @@ const AlbumValue: FC<IProps> = observer(
 
             <ReleaseDetailsAlbumValueSection>
               <ReleaseDetailsAlbumValueRow
-                title={'Целостность'}
+                title={t('albumValue.integrity')}
                 value={integrity.total.toString()}
                 maxValue={'5'}
                 isSectionTitle={true}
               />
               <ReleaseDetailsAlbumValueRow
-                title={'Формат релиза'}
+                title={t('albumValue.releaseFormat')}
                 value={integrity.formatRelease.toString()}
                 maxValue={'1'}
                 isSectionTitle={false}
               />
               <ReleaseDetailsAlbumValueRow
-                title={'Жанровая целостность'}
+                title={t('albumValue.genreIntegrity')}
                 value={integrity.integrityGenre.toString()}
                 maxValue={'2.5'}
                 isSectionTitle={false}
               />
               <ReleaseDetailsAlbumValueRow
-                title={'Смысловая целостность'}
+                title={t('albumValue.semanticIntegrity')}
                 value={integrity.integritySemantic.toString()}
                 maxValue={'1.5'}
                 isSectionTitle={false}
@@ -127,7 +129,7 @@ const AlbumValue: FC<IProps> = observer(
             <div className="flex flex-col gap-2 items-stretch justify-stretch">
               <ReleaseDetailsAlbumValueSection>
                 <ReleaseDetailsAlbumValueRow
-                  title={'Глубина'}
+                  title={t('albumValue.depth')}
                   value={depth.toString()}
                   maxValue={'5'}
                   isSectionTitle={true}
@@ -136,12 +138,12 @@ const AlbumValue: FC<IProps> = observer(
 
               <ReleaseDetailsAlbumValueSection>
                 <ReleaseDetailsAlbumValueRow
-                  title={'Качество'}
+                  title={t('albumValue.quality')}
                   value={`${quality.factor * 100} %`}
                   isSectionTitle={true}
                 />
                 <ReleaseDetailsAlbumValueRow
-                  title={'Баллы в базе'}
+                  title={t('albumValue.basePoints')}
                   value={quality.total.toString()}
                   maxValue={'40'}
                   isSectionTitle={false}
@@ -151,19 +153,19 @@ const AlbumValue: FC<IProps> = observer(
 
             <ReleaseDetailsAlbumValueSection>
               <ReleaseDetailsAlbumValueRow
-                title={'Влияние'}
+                title={t('albumValue.influence')}
                 value={influence.total.toString()}
                 maxValue={'9'}
                 isSectionTitle={true}
               />
               <ReleaseDetailsAlbumValueRow
-                title={'Известность автора'}
+                title={t('albumValue.authorPopularity')}
                 value={influence.authorPopularity.toString()}
                 maxValue={'4.5'}
                 isSectionTitle={false}
               />
               <ReleaseDetailsAlbumValueRow
-                title={'Ожидание релиза'}
+                title={t('albumValue.releaseAnticipation')}
                 value={influence.releaseAnticip.toString()}
                 maxValue={'4.5'}
                 isSectionTitle={false}

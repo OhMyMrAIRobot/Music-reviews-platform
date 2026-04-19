@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useActivePath } from '../../../hooks/use-active-path';
 import useNavigationPath from '../../../hooks/use-navigation-path';
 import { ROUTES } from '../../../routes/routes-enum';
@@ -15,6 +16,8 @@ import ReleaseSvg from '../sidebar/svg/Release-svg';
 import AdminSidebarItem, { IAdminSidebarItemProps } from './Admin-sidebar-item';
 
 const AdminSidebar = () => {
+  const { t } = useTranslation();
+
   const {
     navigateToMain,
     navigateToAdminUsers,
@@ -31,37 +34,37 @@ const AdminSidebar = () => {
 
   const adminSidebarItems: IAdminSidebarItemProps[] = [
     {
-      title: 'Релизы',
+      title: t('layout.admin.sidebar.releases'),
       isActive: isActive(`/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.RELEASES}`),
       href: navigateToAdminReleases,
       svgIcon: <ReleaseSvg className={'size-4 lg:size-5'} />,
     },
     {
-      title: 'Пользователи',
+      title: t('layout.admin.sidebar.users'),
       isActive: isActive(`/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.USERS}`),
       href: navigateToAdminUsers,
       svgIcon: <ProfileSvg className={'size-4 lg:size-5'} />,
     },
     {
-      title: 'Авторы',
+      title: t('layout.admin.sidebar.authors'),
       isActive: isActive(`/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.AUTHORS}`),
       href: navigateToAdminAuthors,
       svgIcon: <AuthorSvg className={'size-4 lg:size-5'} />,
     },
     {
-      title: 'Рецензии',
+      title: t('layout.admin.sidebar.reviews'),
       isActive: isActive(`/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.REVIEWS}`),
       href: navigateToAdminReviews,
       svgIcon: <TextReviewSvg className={'size-4 lg:size-5'} />,
     },
     {
-      title: 'Медиа',
+      title: t('layout.admin.sidebar.media'),
       isActive: isActive(`/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.MEDIA}`),
       href: navigateToAdminMedia,
       svgIcon: <MediaPlayerSvg className={'size-4 lg:size-5'} />,
     },
     {
-      title: 'Комментарии авторов',
+      title: t('layout.admin.sidebar.authorComments'),
       isActive: isActive(
         `/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.AUTHOR_COMMENTS}`
       ),
@@ -69,7 +72,7 @@ const AdminSidebar = () => {
       svgIcon: <AuthorCommentSvg className={'size-4 lg:size-5'} />,
     },
     {
-      title: 'Верификация авторов',
+      title: t('layout.admin.sidebar.authorVerification'),
       isActive: isActive(
         `/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.AUTHOR_CONFIRMATION}`
       ),
@@ -77,7 +80,7 @@ const AdminSidebar = () => {
       svgIcon: <RegisteredAuthorSvg className={'size-4 lg:size-5'} />,
     },
     {
-      title: 'Сообщения',
+      title: t('layout.admin.sidebar.messages'),
       isActive: isActive(`/${ROUTES.ADMIN.PREFIX}/${ROUTES.ADMIN.FEEDBACK}`),
       href: navigateToAdminFeedback,
       svgIcon: <PencilSvg className={'size-2.5 lg:size-3.5'} />,
@@ -92,12 +95,12 @@ const AdminSidebar = () => {
       </span>
 
       {adminSidebarItems.map((item) => (
-        <AdminSidebarItem key={item.title} {...item} />
+        <AdminSidebarItem key={item.href} {...item} />
       ))}
 
       <div className="mt-auto">
         <AdminSidebarItem
-          title={'Выйти из панели'}
+          title={t('layout.admin.logoutPanel')}
           isActive={false}
           href={navigateToMain}
           svgIcon={<LogoutSvg className={'size-3 lg:size-4'} />}

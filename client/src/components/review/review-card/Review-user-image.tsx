@@ -1,6 +1,8 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ReviewUser } from '../../../types/review';
 import { getLevelConfig, getUserLevel } from '../../../utils/user-level';
+import { translateUserLevelName } from '../../../utils/user/user-level-i18n';
 import Tooltip from '../../tooltip/Tooltip';
 import TooltipSpan from '../../tooltip/Tooltip-span';
 
@@ -9,6 +11,7 @@ interface IProps {
 }
 
 const ReviewUserImage: FC<IProps> = ({ user }) => {
+  const { t } = useTranslation();
   const level = getUserLevel(user.points);
 
   return (
@@ -25,13 +28,17 @@ const ReviewUserImage: FC<IProps> = ({ user }) => {
       {level && (
         <TooltipSpan
           tooltip={
-            <Tooltip>{`${getLevelConfig(level).name} пользователя`}</Tooltip>
+            <Tooltip>
+              {t('review.userLevelTooltip', {
+                level: translateUserLevelName(t, level),
+              })}
+            </Tooltip>
           }
           spanClassName="text-white cursor-pointer absolute -bottom-1.5 -right-2.5"
           centered={true}
         >
           <img
-            alt={'level'}
+            alt={t('review.userLevelBadgeAlt')}
             src={`${import.meta.env.VITE_SERVER_URL}/public/assets/${
               getLevelConfig(level).image
             }`}

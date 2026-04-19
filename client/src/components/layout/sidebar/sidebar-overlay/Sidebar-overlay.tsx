@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { useTranslation } from 'react-i18next';
 import { useSidebarGroups } from '../../../../hooks/use-sidebar-groups';
 import { useSidebarOverlay } from '../../../../hooks/use-sidebar-overlay';
 import CloseSvg from '../../../svg/Close-svg';
@@ -8,6 +9,7 @@ import SidebarDelimiter from '../Sidebar-delimiter';
 import SidebarOverlaySection from './Sidebar-overlay-section';
 
 const SidebarOverlay = () => {
+  const { t } = useTranslation();
   const { isSidebarOverlayOpen, closeSidebarOverlay } = useSidebarOverlay();
 
   const {
@@ -45,7 +47,11 @@ const SidebarOverlay = () => {
           onSubmit={closeSidebarOverlay}
         />
 
-        <button onClick={closeSidebarOverlay}>
+        <button
+          type="button"
+          aria-label={t('layout.sidebar.closeMenu')}
+          onClick={closeSidebarOverlay}
+        >
           <CloseSvg className={'size-8'} />
         </button>
       </div>
