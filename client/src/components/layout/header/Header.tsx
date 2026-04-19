@@ -9,6 +9,7 @@ import PencilSvg from '../../svg/Pencil-svg';
 import BurgerMenuButton from './buttons/Burger-menu-button';
 import HeaderButton from './buttons/Header-button';
 import HeaderSvgButton from './buttons/Header-svg-button';
+import LanguageSwitch from './buttons/Language-switch';
 import LoginIconButton from './buttons/Login-icon-button';
 import ProfileButton from './buttons/Profile-button';
 import SearchBar from './Search-bar';
@@ -53,6 +54,8 @@ const Header = observer(() => {
             </HeaderSvgButton>
           </Link>
 
+          <LanguageSwitch />
+
           {!authStore.isAuth && (
             <div className="flex gap-3">
               <Link to={navigateToLogin}>
@@ -67,7 +70,8 @@ const Header = observer(() => {
           {authStore.isAuth && <ProfileButton />}
         </div>
 
-        <div className="flex lg:hidden w-full justify-end items-center space-x-1.5">
+        <div className="flex lg:hidden w-full justify-end items-center gap-1.5">
+          <LanguageSwitch />
           {authStore.isAuth ? (
             <ProfileButton />
           ) : (
