@@ -9,8 +9,6 @@ export function translateUserRole(t: TFunction, role: string): string {
       return t('user.role.media');
     case RolesEnum.ADMIN:
       return t('user.role.admin');
-    case RolesEnum.ROOT_ADMIN:
-      return t('user.role.rootAdmin');
     default:
       return role;
   }
