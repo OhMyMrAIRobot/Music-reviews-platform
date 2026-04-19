@@ -1,9 +1,10 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsIn, IsInt, IsOptional, Max, Min } from 'class-validator';
+import { IsIn, IsInt, IsOptional, Max, Min } from 'class-validator';
 import { ReleaseSortFieldsEnum } from 'src/releases/types/release-sort-fields.enum';
 import { IsEntityId } from 'src/shared/decorators/is-entity-id.decorator';
 import { IsSearchQuery } from 'src/shared/decorators/is-search-query.decorator';
 import { IsSortOrder } from 'src/shared/decorators/is-sort-order.decorator';
+import { TransformQueryBoolean } from 'src/shared/decorators/transform-query-boolean.decorator';
 import { SortOrder } from 'src/shared/types/sort-order.type';
 
 /**
@@ -59,8 +60,7 @@ export class ReleasesQueryDto {
    * When true return most reviewed releases in the last 24h (optional).
    */
   @IsOptional()
-  @Type(() => Boolean)
-  @IsBoolean({ message: 'Поле last24h должно быть булевым значением' })
+  @TransformQueryBoolean()
   last24h?: boolean;
 
   /**
