@@ -2,6 +2,7 @@ import { Type } from 'class-transformer';
 import { IsBoolean, IsInt, IsOptional, Length } from 'class-validator';
 import { IsEntityId } from 'src/shared/decorators/is-entity-id.decorator';
 import { IsSearchQuery } from 'src/shared/decorators/is-search-query.decorator';
+import { TransformQueryBoolean } from 'src/shared/decorators/transform-query-boolean.decorator';
 
 /**
  * Query parameters for listing authors.
@@ -31,7 +32,7 @@ export class AuthorsQueryDto {
    * If true, return only authors who are registered in the system.
    */
   @IsOptional()
-  @Type(() => Boolean)
+  @TransformQueryBoolean()
   @IsBoolean()
   onlyRegistered?: boolean;
 
