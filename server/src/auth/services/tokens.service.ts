@@ -51,16 +51,50 @@ export class TokensService {
    * @param email - user email to embed in the token
    * @returns signed JWT string valid for 1 hour
    */
-  generateActivationToken(id: string, email: string): string {
+  async generateActivationToken(id: string, email: string): Promise<string> {
+    const jti = randomUUID();
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
     const payload: IJwtActionPayload = {
       id,
       email,
       type: JwtActionEnum.ACTIVATION,
+      jti,
     };
-    return this.jwtService.sign(payload, {
+    const token = this.jwtService.sign(payload, {
       secret: process.env.JWT_ACTION_SECRET,
       expiresIn: '1h',
     });
+    await this.prisma.verificationToken.upsert({
+      where: { userId: id },
+      create: {
+        userId: id,
+        jti,
+        expiresAt,
+      },
+      update: {
+        jti,
+        expiresAt,
+      },
+    });
+    return token;
+  }
+
+  async validateVerificationToken(
+    userId: string,
+    jti: string | undefined,
+  ): Promise<void> {
+    if (!jti) {
+      throw new InvalidTokenException();
+    }
+    const record = await this.prisma.verificationToken.findUnique({
+      where: { userId },
+    });
+    if (!record || record.jti !== jti) {
+      throw new InvalidTokenException();
+    }
+    if (record.expiresAt.getTime() <= Date.now()) {
+      throw new InvalidTokenException();
+    }
   }
 
   /**

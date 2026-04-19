@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   Injectable,
   InternalServerErrorException,
   UnauthorizedException,
@@ -196,12 +197,27 @@ export class AuthService {
    * @throws InvalidTokenException when token is invalid or expired
    */
   async activateAccount(res: Response, token: string) {
-    const { id } = this.tokensService.decodeActionToken(
+    const { id, jti } = this.tokensService.decodeActionToken(
       token,
       JwtActionEnum.ACTIVATION,
     );
 
-    const user = await this.usersService.activateUser(id);
+    await this.tokensService.validateVerificationToken(id, jti);
+
+    const existing = await this.usersService.findOne(id);
+    if (existing.isActive) {
+      throw new ConflictException('Активация не требуется!');
+    }
+
+    const user = await this.prisma.$transaction(async (tx) => {
+      const updated = await tx.user.update({
+        where: { id },
+        data: { isActive: true },
+        include: { role: true, registeredAuthor: true },
+      });
+      await tx.verificationToken.deleteMany({ where: { userId: id } });
+      return plainToInstance(UserDto, updated);
+    });
 
     return this.login(res, user);
   }

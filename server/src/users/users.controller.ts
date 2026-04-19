@@ -52,7 +52,7 @@ export class UsersController {
 
     let emailSent = false;
     if (!user.isActive) {
-      const activationToken = this.tokensService.generateActivationToken(
+      const activationToken = await this.tokensService.generateActivationToken(
         user.id,
         user.email,
       );
