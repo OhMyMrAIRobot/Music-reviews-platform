@@ -21,4 +21,7 @@ export interface IJwtAuthPayload {
 
   /** Whether the user's account is active */
   isActive: boolean;
+
+  /** JWT unique identifier */
+  jti?: string;
 }

@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { RefreshToken } from '@prisma/client';
-import * as bcrypt from 'bcrypt';
+import { randomUUID } from 'crypto';
 import { PrismaService } from 'prisma/prisma.service';
-import { EntityNotFoundException } from 'src/shared/exceptions/entity-not-found.exception';
 import { InvalidTokenException } from 'src/shared/exceptions/invalid-token.exception';
 import { IJwtActionPayload } from '../types/jwt-action-payload.interface';
 import { JwtActionEnum } from '../types/jwt-action.enum';
 import { IJwtAuthPayload } from '../types/jwt-auth-payload.interface';
+
+export const REFRESH_TOKEN_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 
 @Injectable()
 export class TokensService {
@@ -26,18 +26,20 @@ export class TokensService {
    * @param payload - JWT payload containing user authentication data
    * @returns object with `accessToken` and `refreshToken` strings
    */
-  generateAuthTokens(payload: IJwtAuthPayload) {
+  generateAuthTokens(payload: Omit<IJwtAuthPayload, 'jti'>) {
+    const jti = randomUUID();
     const accessToken = this.jwtService.sign(payload, {
       secret: process.env.JWT_ACCESS_SECRET,
-      expiresIn: '30day', // 15min
+      expiresIn: '30day',
     });
 
-    const refreshToken = this.jwtService.sign(payload, {
+    const refreshPayload: IJwtAuthPayload = { ...payload, jti };
+    const refreshToken = this.jwtService.sign(refreshPayload, {
       secret: process.env.JWT_REFRESH_SECRET,
       expiresIn: '30day',
     });
 
-    return { accessToken, refreshToken };
+    return { accessToken, refreshToken, jti };
   }
 
   /**
@@ -50,16 +52,50 @@ export class TokensService {
    * @param email - user email to embed in the token
    * @returns signed JWT string valid for 1 hour
    */
-  generateActivationToken(id: string, email: string): string {
+  async generateActivationToken(id: string, email: string): Promise<string> {
+    const jti = randomUUID();
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
     const payload: IJwtActionPayload = {
       id,
       email,
       type: JwtActionEnum.ACTIVATION,
+      jti,
     };
-    return this.jwtService.sign(payload, {
+    const token = this.jwtService.sign(payload, {
       secret: process.env.JWT_ACTION_SECRET,
       expiresIn: '1h',
     });
+    await this.prisma.verificationToken.upsert({
+      where: { userId: id },
+      create: {
+        userId: id,
+        jti,
+        expiresAt,
+      },
+      update: {
+        jti,
+        expiresAt,
+      },
+    });
+    return token;
+  }
+
+  async validateVerificationToken(
+    userId: string,
+    jti: string | undefined,
+  ): Promise<void> {
+    if (!jti) {
+      throw new InvalidTokenException();
+    }
+    const record = await this.prisma.verificationToken.findUnique({
+      where: { userId },
+    });
+    if (!record || record.jti !== jti) {
+      throw new InvalidTokenException();
+    }
+    if (record.expiresAt.getTime() <= Date.now()) {
+      throw new InvalidTokenException();
+    }
   }
 
   /**
@@ -72,16 +108,50 @@ export class TokensService {
    * @param email - user email to embed in the token
    * @returns signed JWT string valid for 15 minutes
    */
-  generateResetToken(id: string, email: string): string {
+  async generateResetToken(id: string, email: string): Promise<string> {
+    const jti = randomUUID();
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
     const payload: IJwtActionPayload = {
       id,
       email,
       type: JwtActionEnum.RESET_PASSWORD,
+      jti,
     };
-    return this.jwtService.sign(payload, {
+    const token = this.jwtService.sign(payload, {
       secret: process.env.JWT_ACTION_SECRET,
       expiresIn: '15min',
     });
+    await this.prisma.resetPasswordToken.upsert({
+      where: { userId: id },
+      create: {
+        userId: id,
+        jti,
+        expiresAt,
+      },
+      update: {
+        jti,
+        expiresAt,
+      },
+    });
+    return token;
+  }
+
+  async validateResetPasswordToken(
+    userId: string,
+    jti: string | undefined,
+  ): Promise<void> {
+    if (!jti) {
+      throw new InvalidTokenException();
+    }
+    const record = await this.prisma.resetPasswordToken.findUnique({
+      where: { userId },
+    });
+    if (!record || record.jti !== jti) {
+      throw new InvalidTokenException();
+    }
+    if (record.expiresAt.getTime() <= Date.now()) {
+      throw new InvalidTokenException();
+    }
   }
 
   /**
@@ -131,80 +201,14 @@ export class TokensService {
     }
   }
 
-  /**
-   * Persist a refresh token for a user (hashed).
-   *
-   * Hashes the provided refresh token using bcrypt and stores it in the
-   * database using an upsert operation. Returns the original raw token.
-   *
-   * @param userId - id of the user owning the refresh token
-   * @param refreshToken - raw JWT refresh token to hash and store
-   * @returns the original refreshToken string
-   */
-  async saveRefreshToken(
-    userId: string,
-    refreshToken: string,
-  ): Promise<string> {
-    const tokenHash = await bcrypt.hash(refreshToken, 10);
-
-    await this.prisma.refreshToken.upsert({
-      where: { userId },
-      update: {
-        tokenHash,
-      },
-      create: {
+  async saveRefreshToken(userId: string, jti: string): Promise<void> {
+    const expiresAt = new Date(Date.now() + REFRESH_TOKEN_TTL_MS);
+    await this.prisma.refreshToken.create({
+      data: {
         userId,
-        tokenHash,
+        jti,
+        expiresAt,
       },
     });
-
-    return refreshToken;
-  }
-
-  /**
-   * Retrieve stored refresh token record for a user.
-   *
-   * Returns the Prisma RefreshToken entity containing the hashed token.
-   *
-   * @param userId - id of the user whose refresh token to retrieve
-   * @returns RefreshToken record from database
-   * @throws EntityNotFoundException when no refresh token exists
-   */
-  async getStoredRefreshToken(userId: string): Promise<RefreshToken> {
-    const token = await this.prisma.refreshToken.findUnique({
-      where: { userId },
-    });
-
-    if (!token) {
-      throw new EntityNotFoundException('Refresh token', 'userId', `${userId}`);
-    }
-
-    return token;
-  }
-
-  /**
-   * Delete the stored refresh token for a user.
-   *
-   * Looks up and removes the refresh token record from the database.
-   * Returns the deleted record on success.
-   *
-   * @param userId - id of the user whose refresh token to delete
-   * @returns deleted RefreshToken record
-   * @throws EntityNotFoundException when no refresh token exists
-   */
-  async deleteRefreshToken(userId: string): Promise<RefreshToken> {
-    const token = await this.prisma.refreshToken.findUnique({
-      where: { userId },
-    });
-
-    if (!token) {
-      throw new EntityNotFoundException('Refresh token', 'userId', `${userId}`);
-    }
-
-    const result = await this.prisma.refreshToken.delete({
-      where: { userId },
-    });
-
-    return result;
   }
 }

@@ -15,4 +15,7 @@ export interface IJwtActionPayload {
 
   /** Action type carried by the token */
   type: JwtActionEnum;
+
+  /** JWT unique identifier */
+  jti?: string;
 }

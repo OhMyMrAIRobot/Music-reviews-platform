@@ -161,7 +161,7 @@ export class AuthorsService {
   /**
    * List authors with optional filtering and pagination.
    *
-   * Supported filters: `typeId`, `search`, `isRegistered`, `userId`.
+   * Supported filters: `typeId`, `search`, `onlyRegistered`, `userId`.
    * This method validates referenced `typeId` and `userId` entities before
    * running the composed raw SQL query which returns aggregated data.
    *
@@ -377,7 +377,7 @@ export class AuthorsService {
   private async executeRawQuery(params: {
     id?: string;
     typeId?: string;
-    isRegistered?: boolean;
+    onlyRegistered?: boolean;
     search?: string;
     userId?: string;
     limit?: number;
@@ -386,7 +386,7 @@ export class AuthorsService {
     const {
       id = null,
       typeId = null,
-      isRegistered = null,
+      onlyRegistered = null,
       search = null,
       userId = null,
       limit = null,
@@ -398,7 +398,7 @@ export class AuthorsService {
           SELECT
               ${id}::text AS id_,
               ${typeId}::text AS type_id_,
-              ${isRegistered}::boolean AS is_registered,
+              ${onlyRegistered}::boolean AS is_registered,
               ${search}::text AS search,
               ${userId}::text AS user_id,
               ${limit}::int AS limit_,

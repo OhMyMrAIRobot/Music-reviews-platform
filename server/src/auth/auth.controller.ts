@@ -39,7 +39,7 @@ export class AuthController {
   @Post('register')
   async register(@Res() res: Response, @Body() dto: RegisterRequestDto) {
     const result = await this.authService.register(res, dto);
-    const activationToken = this.tokensService.generateActivationToken(
+    const activationToken = await this.tokensService.generateActivationToken(
       result.user.id,
       result.user.email,
     );
@@ -130,7 +130,7 @@ export class AuthController {
   @Post('resend-activation')
   async resendActivationCode(@Request() req: IAuthenticatedRequest) {
     const { user } = req;
-    const activationToken = this.tokensService.generateActivationToken(
+    const activationToken = await this.tokensService.generateActivationToken(
       user.id,
       user.email,
     );
@@ -159,7 +159,7 @@ export class AuthController {
   @Post('send-reset-password')
   async sendResetPasswordCode(@Body() dto: SendResetPasswordRequestDto) {
     const user = await this.usersService.findByEmail(dto.email);
-    const resetToken = this.tokensService.generateResetToken(
+    const resetToken = await this.tokensService.generateResetToken(
       user.id,
       user.email,
     );

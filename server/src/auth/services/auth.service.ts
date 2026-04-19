@@ -1,9 +1,9 @@
 import {
+  ConflictException,
   Injectable,
   InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
 import { plainToInstance } from 'class-transformer';
 import { Response } from 'express';
 import { UserRoleEnum } from 'src/roles/types/user-role.enum';
@@ -17,7 +17,7 @@ import { RegisterRequestDto } from '../dto/request/register.request.dto';
 import { ResetPasswordRequestDto } from '../dto/request/reset-password.request.dto';
 import { JwtActionEnum } from '../types/jwt-action.enum';
 import { IJwtAuthPayload } from '../types/jwt-auth-payload.interface';
-import { TokensService } from './tokens.service';
+import { REFRESH_TOKEN_TTL_MS, TokensService } from './tokens.service';
 
 @Injectable()
 export class AuthService {
@@ -54,8 +54,8 @@ export class AuthService {
   /**
    * Complete user login by generating tokens and setting cookies.
    *
-   * Creates access and refresh tokens, persists the refresh token in the
-   * database (hashed), and sets the refresh token as an httpOnly cookie.
+   * Creates access and refresh tokens, persists the refresh session (jti) in the
+   * database, and sets the refresh token as an httpOnly cookie.
    *
    * @param res - Express Response object to set cookies
    * @param user - validated UserDto for the authenticated user
@@ -66,7 +66,7 @@ export class AuthService {
 
     const validRole = this.rolesService.getValidRole(role.role);
 
-    const payload: IJwtAuthPayload = {
+    const payload: Omit<IJwtAuthPayload, 'jti'> = {
       id: user.id,
       email: user.email,
       nickname: user.nickname,
@@ -76,12 +76,9 @@ export class AuthService {
 
     const tokens = this.tokensService.generateAuthTokens(payload);
 
-    const refreshToken = await this.tokensService.saveRefreshToken(
-      user.id,
-      tokens.refreshToken,
-    );
+    await this.tokensService.saveRefreshToken(user.id, tokens.jti);
 
-    res.cookie('refreshToken', refreshToken, {
+    res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
       secure: false,
       sameSite: 'strict',
@@ -101,9 +98,16 @@ export class AuthService {
    * @param refreshToken - refresh token from the user's cookie
    */
   async logout(res: Response, refreshToken: string) {
-    const decodedToken = this.tokensService.decodeRefreshToken(refreshToken);
-
-    await this.tokensService.deleteRefreshToken(decodedToken.id);
+    try {
+      const decodedToken = this.tokensService.decodeRefreshToken(refreshToken);
+      if (decodedToken.jti) {
+        await this.prisma.refreshToken.deleteMany({
+          where: { userId: decodedToken.id, jti: decodedToken.jti },
+        });
+      }
+    } catch {
+      // invalid or expired token — still clear cookie
+    }
 
     res.clearCookie('refreshToken');
   }
@@ -111,8 +115,8 @@ export class AuthService {
   /**
    * Refresh user session using a valid refresh token.
    *
-   * Validates the provided refresh token against the stored hash, then
-   * generates a new token pair and updates the session.
+   * Validates the refresh JWT and stored session (jti), then rotates
+   * the session and generates a new token pair.
    *
    * @param res - Express Response object to set new cookies
    * @param refreshToken - refresh token from the user's cookie
@@ -120,18 +124,71 @@ export class AuthService {
    * @throws UnauthorizedException when refresh token is invalid or doesn't match
    */
   async refresh(res: Response, refreshToken: string) {
-    const decodedToken = this.tokensService.decodeRefreshToken(refreshToken);
+    let decodedToken: IJwtAuthPayload;
+    try {
+      decodedToken = this.tokensService.decodeRefreshToken(refreshToken);
+    } catch {
+      throw new UnauthorizedException();
+    }
 
-    const savedToken = await this.tokensService.getStoredRefreshToken(
-      decodedToken.id,
-    );
+    if (!decodedToken.jti) {
+      throw new UnauthorizedException();
+    }
 
-    if (!(await bcrypt.compare(refreshToken, savedToken.tokenHash))) {
+    const stored = await this.prisma.refreshToken.findUnique({
+      where: { jti: decodedToken.jti },
+    });
+
+    if (!stored || stored.userId !== decodedToken.id) {
+      throw new UnauthorizedException();
+    }
+
+    if (stored.expiresAt.getTime() <= Date.now()) {
       throw new UnauthorizedException();
     }
 
     const user = await this.usersService.findOne(decodedToken.id);
-    return this.login(res, plainToInstance(UserDto, user));
+    const userDto = plainToInstance(UserDto, user);
+
+    const role = await this.rolesService.findById(userDto.role.id);
+    const validRole = this.rolesService.getValidRole(role.role);
+
+    const payload: Omit<IJwtAuthPayload, 'jti'> = {
+      id: userDto.id,
+      email: userDto.email,
+      nickname: userDto.nickname,
+      role: validRole,
+      isActive: userDto.isActive,
+    };
+
+    const tokens = this.tokensService.generateAuthTokens(payload);
+
+    await this.prisma.$transaction(async (tx) => {
+      const deleted = await tx.refreshToken.deleteMany({
+        where: { jti: decodedToken.jti, userId: userDto.id },
+      });
+
+      if (deleted.count === 0) {
+        throw new UnauthorizedException();
+      }
+
+      await tx.refreshToken.create({
+        data: {
+          userId: userDto.id,
+          jti: tokens.jti,
+          expiresAt: new Date(Date.now() + REFRESH_TOKEN_TTL_MS),
+        },
+      });
+    });
+
+    res.cookie('refreshToken', tokens.refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'strict',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
+
+    return { user: userDto, accessToken: tokens.accessToken };
   }
 
   /**
@@ -196,12 +253,27 @@ export class AuthService {
    * @throws InvalidTokenException when token is invalid or expired
    */
   async activateAccount(res: Response, token: string) {
-    const { id } = this.tokensService.decodeActionToken(
+    const { id, jti } = this.tokensService.decodeActionToken(
       token,
       JwtActionEnum.ACTIVATION,
     );
 
-    const user = await this.usersService.activateUser(id);
+    await this.tokensService.validateVerificationToken(id, jti);
+
+    const existing = await this.usersService.findOne(id);
+    if (existing.isActive) {
+      throw new ConflictException('Активация не требуется!');
+    }
+
+    const user = await this.prisma.$transaction(async (tx) => {
+      const updated = await tx.user.update({
+        where: { id },
+        data: { isActive: true },
+        include: { role: true, registeredAuthor: true },
+      });
+      await tx.verificationToken.deleteMany({ where: { userId: id } });
+      return plainToInstance(UserDto, updated);
+    });
 
     return this.login(res, user);
   }
@@ -223,19 +295,25 @@ export class AuthService {
     token: string,
     dto: ResetPasswordRequestDto,
   ) {
-    const { id } = this.tokensService.decodeActionToken(
+    const { id, jti } = this.tokensService.decodeActionToken(
       token,
       JwtActionEnum.RESET_PASSWORD,
     );
+
+    await this.tokensService.validateResetPasswordToken(id, jti);
 
     await this.usersService.findOne(id);
 
     dto.password = await this.usersService.createPasswordHash(dto.password);
 
-    const updatedUser = await this.prisma.user.update({
-      where: { id },
-      data: dto,
-      include: { role: true, registeredAuthor: true },
+    const updatedUser = await this.prisma.$transaction(async (tx) => {
+      const user = await tx.user.update({
+        where: { id },
+        data: dto,
+        include: { role: true, registeredAuthor: true },
+      });
+      await tx.resetPasswordToken.delete({ where: { userId: id } });
+      return user;
     });
 
     return this.login(res, plainToInstance(UserDto, updatedUser));

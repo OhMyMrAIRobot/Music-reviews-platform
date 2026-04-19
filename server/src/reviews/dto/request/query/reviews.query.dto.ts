@@ -1,9 +1,10 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsIn, IsInt, IsOptional } from 'class-validator';
+import { IsIn, IsInt, IsOptional } from 'class-validator';
 import { ReviewSortFieldsEnum } from 'src/reviews/types/review-sort-fields.enum';
 import { IsEntityId } from 'src/shared/decorators/is-entity-id.decorator';
 import { IsSearchQuery } from 'src/shared/decorators/is-search-query.decorator';
 import { IsSortOrder } from 'src/shared/decorators/is-sort-order.decorator';
+import { TransformQueryBoolean } from 'src/shared/decorators/transform-query-boolean.decorator';
 import { SortOrder } from 'src/shared/types/sort-order.type';
 
 /**
@@ -42,10 +43,7 @@ export class ReviewsQueryDto {
 
   /** When true, only include reviews that have likes from authors. */
   @IsOptional()
-  @Type(() => Boolean)
-  @IsOptional()
-  @Type(() => Boolean)
-  @IsBoolean({ message: 'Поле hasAuthorLikes должно быть булевым значением' })
+  @TransformQueryBoolean()
   hasAuthorLikes?: boolean;
 
   /** Field to sort by. Allowed values: defined in `ReviewSortFieldsEnum`. */
@@ -61,8 +59,7 @@ export class ReviewsQueryDto {
   sortOrder?: SortOrder;
 
   @IsOptional()
-  @Type(() => Boolean)
-  @IsBoolean({ message: 'Поле withTextOnly должно быть булевым значением' })
+  @TransformQueryBoolean()
   withTextOnly?: boolean;
 
   /** Pagination limit (integer). */

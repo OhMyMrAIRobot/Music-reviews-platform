@@ -14,6 +14,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { IsEntityId } from 'src/shared/decorators/is-entity-id.decorator';
+import { TransformQueryBoolean } from 'src/shared/decorators/transform-query-boolean.decorator';
 
 /**
  * DTO for updating a user profile.
@@ -37,11 +38,7 @@ export class UpdateProfileRequestDto {
    */
   @IsOptional()
   @IsBoolean({ message: 'Поле clearAvatar должно быть булевым значением!' })
-  @Transform(({ value }) => {
-    if (value === 'true' || value === true) return true;
-    if (value === 'false' || value === false) return false;
-    return undefined;
-  })
+  @TransformQueryBoolean()
   clearAvatar?: boolean;
 
   /**
@@ -49,11 +46,7 @@ export class UpdateProfileRequestDto {
    */
   @IsOptional()
   @IsBoolean({ message: 'Поле clearCover должно быть булевым значением!' })
-  @Transform(({ value }) => {
-    if (value === 'true' || value === true) return true;
-    if (value === 'false' || value === false) return false;
-    return undefined;
-  })
+  @TransformQueryBoolean()
   clearCover?: boolean;
 
   /**
