@@ -1,6 +1,7 @@
 {
   "app": {
-    "title": "App"
+    "title": "App",
+    "offlineBanner": "You are offline. Some features may be unavailable."
   },
   "hooks": {
     "apiError": {
