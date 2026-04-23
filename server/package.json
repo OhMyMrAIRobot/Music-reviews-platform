@@ -13,11 +13,11 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "jest",
+    "test": "jest --watchman=false",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:e2e": "jest --config ./test/jest-e2e.json --watchman=false",
     "seed": "ts-node prisma/seed.ts",
     "setup": "npx prisma db push && npx prisma db execute --file './prisma/sql/views.sql' --schema './prisma/schema/schema.prisma' && npx prisma db execute --file './prisma/sql/functions.sql' --schema './prisma/schema/schema.prisma' && npx prisma db execute --file './prisma/sql/triggers.sql' --schema './prisma/schema/schema.prisma' && npm run seed"
   },
@@ -83,6 +83,9 @@
       "ts"
     ],
     "rootDir": "src",
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/$1"
+    },
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
