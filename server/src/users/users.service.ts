@@ -330,7 +330,7 @@ export class UsersService {
       }
     }
 
-    const updatedUser = this.prisma.user.update({
+    const updatedUser = await this.prisma.user.update({
       where: { id },
       data: dto,
       include: {
