@@ -12,7 +12,7 @@ const AdminRoute = observer(() => {
 
   const role = authStore.user?.role.role;
 
-  return role === RolesEnum.ADMIN || role === RolesEnum.ROOT_ADMIN ? (
+  return role === RolesEnum.ADMIN ? (
     <>
       <AdminDashboardPage />
     </>

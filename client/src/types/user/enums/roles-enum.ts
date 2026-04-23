@@ -7,7 +7,6 @@ export enum RolesEnum {
   USER = 'Пользователь',
   MEDIA = 'Медиа',
   ADMIN = 'Администратор',
-  ROOT_ADMIN = 'Гл. Администратор',
 }
 
 /**

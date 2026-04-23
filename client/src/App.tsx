@@ -6,6 +6,7 @@ import { AuthAPI } from './api/auth-api';
 import { ProfileAPI } from './api/user/profile-api';
 import Layout from './components/layout/Layout';
 import NotificationsContainer from './components/notifications/Notifications-container';
+import OfflineBanner from './components/offline-banner/Offline-banner';
 import Loader from './components/utils/Loader';
 import { useStore } from './hooks/use-store';
 import AuthPage from './pages/auth-page/Auth-page';
@@ -68,36 +69,35 @@ export const App = observer(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
 
-  return isFetching ? (
-    <div className="min-w-screen min-h-screen flex items-center justify-center">
-      <Loader className={'mx-auto size-20 border-white'} />
-    </div>
-  ) : (
+  return (
     <>
-      <Routes>
-        <Route element={<Layout />}>
-          {/* GLOBAL ROUTES */}
-          {GlobalRouteList()}
+      {isFetching ? (
+        <div className="min-w-screen min-h-screen flex items-center justify-center">
+          <Loader className={'mx-auto size-20 border-white'} />
+        </div>
+      ) : (
+        <Routes>
+          <Route element={<Layout />}>
+            {GlobalRouteList()}
 
-          {/* ROUTES WITH AUTH LAYOUT */}
-          <Route element={<AuthPage />} path={ROUTES.AUTH.PREFIX}>
-            <Route element={<NonAuthRoute />}>{NonAuthRouteList()}</Route>
-            <Route
-              path={ROUTES.AUTH.ACTIVATE_WITH_TOKEN}
-              element={<ActivationForm />}
-            />
-            <Route path={ROUTES.AUTH.ACTIVATE} element={<ActivationForm />} />
+            <Route element={<AuthPage />} path={ROUTES.AUTH.PREFIX}>
+              <Route element={<NonAuthRoute />}>{NonAuthRouteList()}</Route>
+              <Route
+                path={ROUTES.AUTH.ACTIVATE_WITH_TOKEN}
+                element={<ActivationForm />}
+              />
+              <Route path={ROUTES.AUTH.ACTIVATE} element={<ActivationForm />} />
+            </Route>
+
+            <Route element={<AuthRoute />}>{AuthRouteList()}</Route>
           </Route>
 
-          {/* AUTHORIZED ROUTES */}
-          <Route element={<AuthRoute />}>{AuthRouteList()}</Route>
-        </Route>
-
-        {/* ADMIN ROUTES */}
-        <Route element={<AdminRoute />} path={ROUTES.ADMIN.PREFIX}>
-          {AdminRouteList()}
-        </Route>
-      </Routes>
+          <Route element={<AdminRoute />} path={ROUTES.ADMIN.PREFIX}>
+            {AdminRouteList()}
+          </Route>
+        </Routes>
+      )}
+      <OfflineBanner />
       <NotificationsContainer />
     </>
   );

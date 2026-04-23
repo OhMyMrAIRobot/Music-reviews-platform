@@ -23,7 +23,6 @@ import { UpdateProfileData } from '../../../../../../types/profile/index.ts';
 import {
   AdminAvailableRolesEnum,
   RolesEnum,
-  RootAdminAvalaibleRolesEnum,
   UserDetails,
   UserStatusesEnum,
 } from '../../../../../../types/user/index.ts';
@@ -99,8 +98,6 @@ const AdminDashboardEditUserModal: FC<IProps> = observer(
         );
         if (authStore.user?.role.role === RolesEnum.ADMIN)
           setAvailableRoles(AdminAvailableRolesEnum);
-        if (authStore.user?.role.role === RolesEnum.ROOT_ADMIN)
-          setAvailableRoles(RootAdminAvalaibleRolesEnum);
       }
 
       // initialize socials values for inputs

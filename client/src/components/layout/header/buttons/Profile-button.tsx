@@ -103,8 +103,7 @@ const ProfileButton = observer(() => {
           />
         </Link>
 
-        {(authStore.user?.role.role === RolesEnum.ADMIN ||
-          authStore.user?.role.role === RolesEnum.ROOT_ADMIN) && (
+        {authStore.user?.role.role === RolesEnum.ADMIN && (
           <Link
             to={authStore.user?.id ? navigateToAdminReleases : '#'}
             onClick={() => setIsOpen(false)}
