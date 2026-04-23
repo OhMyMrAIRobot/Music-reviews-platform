@@ -16,7 +16,7 @@ export async function seedUsersE2e(prisma: PrismaClient) {
     );
   }
 
-  const suffix = Date.now().toString(36);
+  const suffix = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 11)}`;
   const regNick = `e2er${suffix}`.slice(0, 20);
   const admNick = `e2ea${suffix}`.slice(0, 20);
 
