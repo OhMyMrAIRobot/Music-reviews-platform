@@ -91,7 +91,7 @@ export class UsersController {
    */
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   async findAll(@Query() query: UsersQueryDto) {
     return this.usersService.findAll(query);
   }
@@ -105,7 +105,7 @@ export class UsersController {
    */
   @Get(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   async findUserDetails(@Param('id') id: string) {
     return this.usersService.findUserDetails(id);
   }
@@ -118,7 +118,7 @@ export class UsersController {
    */
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   async adminUpdateUser(
     @Param('id') id: string,
     @Body() dto: AdminUpdateUserRequestDto,
@@ -135,7 +135,7 @@ export class UsersController {
    */
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   async removeById(
     @Param('id') id: string,
     @Request() req: IAuthenticatedRequest,

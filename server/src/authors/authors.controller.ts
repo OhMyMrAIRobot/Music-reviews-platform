@@ -55,7 +55,7 @@ export class AuthorsController {
    */
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   @UseInterceptors(
     FileFieldsInterceptor([
       { name: 'avatarImg', maxCount: 1 },
@@ -86,7 +86,7 @@ export class AuthorsController {
    */
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   @UseInterceptors(
     FileFieldsInterceptor([
       { name: 'avatarImg', maxCount: 1 },
@@ -118,7 +118,7 @@ export class AuthorsController {
    */
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   remove(@Param('id') id: string) {
     return this.authorsService.remove(id);
   }

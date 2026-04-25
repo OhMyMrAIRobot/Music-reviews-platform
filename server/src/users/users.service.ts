@@ -320,17 +320,17 @@ export class UsersService {
 
       if (
         updatedRole.role === UserRoleEnum.ADMIN &&
-        authRole.role !== UserRoleEnum.ROOT_ADMIN
+        authRole.role !== UserRoleEnum.ADMIN
       ) {
         throw new InsufficientPermissionsException();
       }
 
-      if (updatedRole.role === UserRoleEnum.ROOT_ADMIN) {
+      if (updatedRole.role === UserRoleEnum.ADMIN) {
         throw new InsufficientPermissionsException();
       }
     }
 
-    const updatedUser = this.prisma.user.update({
+    const updatedUser = await this.prisma.user.update({
       where: { id },
       data: dto,
       include: {
@@ -455,7 +455,7 @@ export class UsersService {
 
     const targetUser = await this.findOne(targetId);
 
-    if (targetUser.role.role === UserRoleEnum.ROOT_ADMIN) {
+    if (targetUser.role.role === UserRoleEnum.ADMIN) {
       throw new InsufficientPermissionsException();
     }
 

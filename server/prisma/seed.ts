@@ -55,10 +55,6 @@ async function main() {
   await prisma.role.createMany({
     data: [
       {
-        id: '4',
-        role: UserRoleEnum.ROOT_ADMIN,
-      },
-      {
         id: '3',
         role: UserRoleEnum.ADMIN,
       },

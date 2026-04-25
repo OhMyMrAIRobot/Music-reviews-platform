@@ -39,7 +39,7 @@ export class FeedbackRepliesController {
    */
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   async create(
     @Body() dto: CreateFeedbackReplyRequestDto,
     @Request() req: IAuthenticatedRequest,
@@ -59,7 +59,7 @@ export class FeedbackRepliesController {
    */
   @Get('feedback/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   async findByFeedbackId(@Param('id') id: string) {
     const response = await this.feedbackResponsesService.findByFeedbackId(id);
 

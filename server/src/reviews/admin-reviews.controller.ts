@@ -24,7 +24,7 @@ export class AdminReviewsController {
    */
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   async updateById(
     @Param('id') id: string,
     @Body() dto: UpdateReviewRequestDto,
@@ -39,7 +39,7 @@ export class AdminReviewsController {
    */
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   async adminDelete(@Param('id') id: string) {
     return this.reviewsService.remove(id);
   }

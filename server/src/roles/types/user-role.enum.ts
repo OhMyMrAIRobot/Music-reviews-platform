@@ -14,7 +14,4 @@ export enum UserRoleEnum {
 
   /** Administrator with elevated management permissions. */
   ADMIN = 'Администратор',
-
-  /** Root administrator with the highest level of permissions. */
-  ROOT_ADMIN = 'Гл. Администратор',
 }

@@ -93,7 +93,7 @@ export class ProfilesController {
    *
    * Administrative profile update endpoint.
    *
-   * Requires the caller to have `ADMIN` or `ROOT_ADMIN` role and
+   * Requires the caller to have `ADMIN` role and
    * delegates to the service's admin update flow which enforces
    * permission checks and performs the update.
    *
@@ -102,7 +102,7 @@ export class ProfilesController {
    * @param dto Partial profile update DTO
    */
   @Patch('user/:userId')
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   updateByUserId(
     @Request() req: IAuthenticatedRequest,

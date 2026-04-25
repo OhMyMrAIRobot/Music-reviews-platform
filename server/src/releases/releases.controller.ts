@@ -50,12 +50,12 @@ export class ReleasesController {
   /**
    * POST /releases
    *
-   * Creates a new release. Requires ADMIN or ROOT_ADMIN role.
+   * Creates a new release. Requires ADMIN role.
    * Accepts optional `coverImg` multipart file.
    */
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   @UseInterceptors(FileFieldsInterceptor([{ name: 'coverImg', maxCount: 1 }]))
   create(
     @Body() dto: CreateReleaseRequestDto,
@@ -70,12 +70,12 @@ export class ReleasesController {
   /**
    * PATCH /releases/:id
    *
-   * Updates an existing release. Requires ADMIN or ROOT_ADMIN role.
+   * Updates an existing release. Requires ADMIN role.
    * Accepts partial update DTO and optional `coverImg` file.
    */
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   @UseInterceptors(FileFieldsInterceptor([{ name: 'coverImg', maxCount: 1 }]))
   update(
     @Param('id') id: string,
@@ -91,11 +91,11 @@ export class ReleasesController {
   /**
    * DELETE /releases/:id
    *
-   * Deletes a release by id. Requires ADMIN or ROOT_ADMIN role.
+   * Deletes a release by id. Requires ADMIN role.
    */
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   remove(@Param('id') id: string) {
     return this.releasesService.remove(id);
   }
