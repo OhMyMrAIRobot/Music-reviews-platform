@@ -19,12 +19,11 @@ export class AdminAuthorCommentsController {
   /**
    * PATCH /admin/author-comments/:id
    *
-   * Admin-only endpoint to update any author's comment. Requires ADMIN or
-   * ROOT_ADMIN role.
+   * Admin-only endpoint to update any author's comment. Requires ADMIN role
    */
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   update(@Param('id') id: string, @Body() dto: UpdateAuthorCommentRequestDto) {
     return this.authorCommentsService.update(id, dto);
   }
@@ -32,12 +31,11 @@ export class AdminAuthorCommentsController {
   /**
    * DELETE /admin/author-comments/:id
    *
-   * Admin-only endpoint to delete any author's comment. Requires ADMIN or
-   * ROOT_ADMIN role.
+   * Admin-only endpoint to delete any author's comment. Requires ADMIN role
    */
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   delete(@Param('id') id: string) {
     return this.authorCommentsService.delete(id);
   }

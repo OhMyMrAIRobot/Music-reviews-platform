@@ -17,7 +17,6 @@ import { UsersService } from './users.service';
 
 const roleUser = { id: 'r1', role: UserRoleEnum.USER };
 const roleAdmin = { id: 'r2', role: UserRoleEnum.ADMIN };
-const roleRoot = { id: 'r3', role: UserRoleEnum.ROOT_ADMIN };
 
 function baseUser(overrides: Record<string, unknown> = {}) {
   return {
@@ -272,24 +271,6 @@ describe('UsersService', () => {
       ).rejects.toThrow(BadRequestException);
     });
 
-    it('throws when target is ROOT_ADMIN', async () => {
-      prisma.user.findUnique.mockResolvedValue(
-        baseUser({ id: 'target', role: roleRoot }),
-      );
-      await expect(
-        service.checkPermissions(
-          {
-            id: 'admin',
-            email: 'a@a.com',
-            nickname: 'n',
-            role: UserRoleEnum.ADMIN,
-            isActive: true,
-          },
-          'target',
-        ),
-      ).rejects.toThrow(InsufficientPermissionsException);
-    });
-
     it('throws when admin edits admin', async () => {
       prisma.user.findUnique.mockResolvedValue(
         baseUser({ id: 'target', role: roleAdmin }),
@@ -357,7 +338,7 @@ describe('UsersService', () => {
         id: 'admin-id',
         email: 'admin@test.com',
         nickname: 'adm',
-        role: UserRoleEnum.ROOT_ADMIN,
+        role: UserRoleEnum.ADMIN,
         isActive: true,
       },
     } as import('src/auth/types/authenticated-request.interface').IAuthenticatedRequest;
@@ -392,7 +373,7 @@ describe('UsersService', () => {
     });
 
     it('returns updated user details on success', async () => {
-      rolesService.findByName.mockResolvedValue(roleRoot);
+      rolesService.findByName.mockResolvedValue(roleAdmin);
       jest.spyOn(service, 'checkPermissions').mockResolvedValue(undefined);
       prisma.user.findFirst.mockResolvedValue(null);
       const updated = {

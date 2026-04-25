@@ -41,7 +41,7 @@ export class FeedbackController {
    */
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   findAll(@Query() query: FeedbackQueryDto) {
     return this.feedbacksService.findAll(query);
   }
@@ -53,7 +53,7 @@ export class FeedbackController {
    */
   @Get(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   findById(@Param('id') id: string) {
     return this.feedbacksService.findOne(id);
   }
@@ -66,7 +66,7 @@ export class FeedbackController {
    */
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   update(@Param('id') id: string, @Body() dto: UpdateFeedbackRequestDto) {
     return this.feedbacksService.update(id, dto);
   }
@@ -74,11 +74,11 @@ export class FeedbackController {
   /**
    * DELETE /feedback/:id
    *
-   * Permanently remove a feedback entry. Restricted to `ROOT_ADMIN`.
+   * Permanently remove a feedback entry. Admin-only`.
    */
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   remove(@Param('id') id: string) {
     return this.feedbacksService.remove(id);
   }

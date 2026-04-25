@@ -31,7 +31,6 @@ const runE2e = !!process.env.DATABASE_URL;
   let prisma: PrismaClient;
   let regularEmail: string;
   let adminEmail: string;
-  let rootEmail: string;
   let readStatusId: string;
   let answeredStatusId: string;
   let userIds: string[];
@@ -59,10 +58,9 @@ const runE2e = !!process.env.DATABASE_URL;
     const fixture = await seedFeedbackE2e(prisma);
     regularEmail = fixture.regular.email;
     adminEmail = fixture.admin.email;
-    rootEmail = fixture.root.email;
     readStatusId = fixture.readStatusId;
     answeredStatusId = fixture.answeredStatusId;
-    userIds = [fixture.regular.id, fixture.admin.id, fixture.root.id];
+    userIds = [fixture.regular.id, fixture.admin.id];
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -156,16 +154,16 @@ const runE2e = !!process.env.DATABASE_URL;
       .expect(409);
   });
 
-  it('DELETE /feedback/:id returns 403 for admin', async () => {
-    const token = await login(adminEmail, password);
+  it('DELETE /feedback/:id returns 403 for regular user', async () => {
+    const token = await login(regularEmail, password);
     return request(app.getHttpServer())
       .delete(`/feedback/${feedbackId}`)
       .set('Authorization', `Bearer ${token}`)
       .expect(403);
   });
 
-  it('DELETE /feedback/:id returns 200 for root admin', async () => {
-    const token = await login(rootEmail, password);
+  it('DELETE /feedback/:id returns 200 for admin', async () => {
+    const token = await login(adminEmail, password);
     await request(app.getHttpServer())
       .delete(`/feedback/${feedbackId}`)
       .set('Authorization', `Bearer ${token}`)

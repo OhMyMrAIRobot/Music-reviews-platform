@@ -27,7 +27,7 @@ export class AdminReleaseMediaController {
    */
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   adminCreate(@Body() dto: AdminCreateReleaseMediaRequestDto) {
     return this.releaseMediaService.create({
       ...dto,
@@ -43,7 +43,7 @@ export class AdminReleaseMediaController {
    */
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   adminUpdate(
     @Param('id') id: string,
     @Body() dto: AdminUpdateReleaseMediaRequestDto,
@@ -59,7 +59,7 @@ export class AdminReleaseMediaController {
    */
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   adminRemove(@Param('id') id: string) {
     return this.releaseMediaService.remove(id);
   }

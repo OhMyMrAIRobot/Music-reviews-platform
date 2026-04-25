@@ -86,7 +86,7 @@ export class AuthorConfirmationsController {
    */
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   async findAll(@Query() query: AuthorConfirmationsQueryDto) {
     return this.authorConfirmationsService.findAll(query);
   }
@@ -100,7 +100,7 @@ export class AuthorConfirmationsController {
    */
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   async update(
     @Param('id') id: string,
     @Body() dto: UpdateAuthorConfirmationRequestDto,
@@ -116,7 +116,7 @@ export class AuthorConfirmationsController {
    */
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.ROOT_ADMIN)
+  @Roles(UserRoleEnum.ADMIN)
   async delete(@Param('id') id: string) {
     return this.authorConfirmationsService.delete(id);
   }
