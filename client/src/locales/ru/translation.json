@@ -329,7 +329,12 @@
     "reviews": {
       "none": "Нет рецензий!",
       "header": "Рецензий пользователей",
-      "sortBy": "Сортировать по:"
+      "sortBy": "Сортировать по:",
+      "translateToEn": "Перевести на английский",
+      "translateToRu": "Перевести на русский",
+      "showOriginal": "Показать оригинал",
+      "showTranslation": "Показать перевод",
+      "translateError": "Не удалось перевести рецензию"
     },
     "ratings": {
       "media": "Средняя оценка Медиа",
@@ -448,6 +453,20 @@
       "media": "Средняя оценка {{kind}} от Медиа",
       "withText": "Средняя оценка {{kind}} с рецензией от пользователей",
       "withoutText": "Средняя оценка {{kind}} без рецензий от пользователей"
+    }
+  },
+  "enums": {
+    "authorConfirmationStatus": {
+      "PENDING": "Ожидание",
+      "APPROVED": "Принято",
+      "REJECTED": "Отклонено"
+    },
+    "nominationType": {
+      "ARTIST_OF_MONTH": "Артист месяца",
+      "PRODUCER_OF_MONTH": "Продюсер месяца",
+      "ALBUM_OF_MONTH": "Альбом месяца",
+      "HIT_OF_MONTH": "Хит месяца",
+      "COVER_OF_MONTH": "Обложка месяца"
     }
   },
   "buttons": {
@@ -818,11 +837,6 @@
       "new": "Новое",
       "read": "Прочитано",
       "answered": "Отвечено"
-    },
-    "authorConfirmationStatus": {
-      "pending": "Ожидание",
-      "approved": "Принято",
-      "rejected": "Отклонено"
     },
     "userStatus": {
       "active": "Активирован",

@@ -22,6 +22,7 @@ import {
 } from '../../../../../types/feedback';
 import { translateFeedbackAdminStatus } from '../../../../../utils/admin/translate-feedback-status';
 import { constraints } from '../../../../../utils/constraints';
+import { formatDateTime } from '../../../../../utils/date';
 import { getFeedbackStatusColor } from '../../../../../utils/get-feedback-status-color';
 
 interface IProps {
@@ -188,14 +189,14 @@ const FeedbackFormModal: FC<IProps> = ({ isOpen, onClose, feedback }) => {
                 reply && (
                   <h6 className="break-words">
                     {t('adminDashboard.feedback.replyDate', {
-                      value: reply.createdAt,
+                      value: formatDateTime(reply.createdAt),
                     })}
                   </h6>
                 )
               ) : (
                 <h6 className="break-words">
                   {t('adminDashboard.feedback.sentDate', {
-                    value: feedback.createdAt,
+                    value: formatDateTime(feedback.createdAt),
                   })}
                 </h6>
               )}

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import NominationIconSvg from '../../../components/nomination/Nomination-icon-svg';
 import Tooltip from '../../../components/tooltip/Tooltip';
 import TooltipSpan from '../../../components/tooltip/Tooltip-span';
+import { translateNominationType } from '../../../utils/i18n/nomination-type-i18n';
 
 interface IProps {
   nominations: string[];
@@ -19,7 +20,7 @@ const ReleaseDetailsNominations: FC<IProps> = ({ nominations }) => {
         <div className="flex lg:justify-end gap-1.5">
           {nominations.map((nomination, idx) => (
             <TooltipSpan
-              tooltip={<Tooltip>{nomination}</Tooltip>}
+              tooltip={<Tooltip>{translateNominationType(t, nomination)}</Tooltip>}
               spanClassName="text-white relative"
               centered={idx !== nominations.length - 1}
               key={nomination}

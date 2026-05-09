@@ -9,6 +9,7 @@ import {
   AuthorNominationWin,
   NominationTypesEnum,
 } from '../../../../types/nomination';
+import { translateNominationType } from '../../../../utils/i18n/nomination-type-i18n';
 
 interface IProps {
   item?: AuthorNominationWin;
@@ -127,7 +128,7 @@ const AuthorDetailsNominationsCarouselItem: FC<IProps> = ({
           <div className="uppercase text-[13px] lg:text-lg border-t border-[rgba(255,255,255,0.1)] mt-3 shrink-0 flex items-center justify-between gap-5 pt-3 lg:pt-5 text-left">
             <div>
               <div className="text-[10px] lg:text-sm leading-[100%] lg:mb-1 font-semibold">
-                {item.nominationType}
+                {translateNominationType(t, item.nominationType)}
               </div>
               <div className="text-[10px] lg:text-sm opacity-40 font-semibold">
                 {translateMonth(t, item.month as MonthEnumType)} {item.year}

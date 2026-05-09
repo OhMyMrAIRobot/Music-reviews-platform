@@ -19,6 +19,7 @@ import AdminEditButton from '../../buttons/Admin-edit-button.tsx';
 import AdminDashboardEditUserModal from './admin-dashboard-edit-user-modal/Admin-dashboard-edit-user-modal.tsx';
 import { translateUserRole } from '../../../../../utils/user/user-role-i18n.ts';
 import { translateUserStatus } from '../../../../../utils/user/user-status-i18n.ts';
+import { formatDateTime } from '../../../../../utils/date';
 
 interface IProps {
   className?: string;
@@ -133,7 +134,7 @@ const AdminDashboardUsersGridItem: FC<IProps> = ({
               <span className="xl:hidden">
                 {t('adminDashboard.users.createdAtMobile')}
               </span>
-              <span className="max-xl:ml-0.5">{user.createdAt}</span>
+              <span className="max-xl:ml-0.5">{formatDateTime(user.createdAt)}</span>
             </>
           ) : (
             <button

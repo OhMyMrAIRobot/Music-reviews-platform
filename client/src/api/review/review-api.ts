@@ -6,6 +6,8 @@ import {
   ReviewsResponse,
   UpdateReviewData,
 } from '../../types/review';
+import { TranslatedReview } from '../../types/review/entities/translated-review';
+import { ReviewLanguagesEnum } from '../../types/review/enums/review-languages-enum';
 import { api } from '../api-instance';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
@@ -129,5 +131,16 @@ export const ReviewAPI = {
    */
   async adminDelete(reviewId: string) {
     return api.delete(`admin/reviews/${reviewId}`);
+  },
+
+  async translateReview(
+    reviewId: string,
+    from: ReviewLanguagesEnum,
+    to: ReviewLanguagesEnum
+  ): Promise<TranslatedReview> {
+    const { data } = await api.get<TranslatedReview>(
+      `/review-translations/${reviewId}?language=${to}&from=${from}`
+    );
+    return data;
   },
 };

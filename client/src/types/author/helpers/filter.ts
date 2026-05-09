@@ -3,7 +3,7 @@
  * Use these values when rendering filter labels or comparing selected filter values.
  */
 export enum AuthorTypesFilterOptions {
-  ALL = 'Все',
+  ALL = 'ALL',
   ARTIST = 'Артист',
   PRODUCER = 'Продюссер',
   DESIGNER = 'Дизайнер',
@@ -14,7 +14,7 @@ export enum AuthorTypesFilterOptions {
  * Use these values when rendering filter labels or comparing selected filter values.
  */
 export enum AuthorConfirmationStatusesFilterOptions {
-  ALL = 'Все',
+  ALL = 'ALL',
   PENDING = 'Ожидание',
   APPROVED = 'Принято',
   REJECTED = 'Отклонено',

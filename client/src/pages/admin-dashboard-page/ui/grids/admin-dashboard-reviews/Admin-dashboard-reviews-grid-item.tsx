@@ -9,6 +9,7 @@ import useNavigationPath from '../../../../../hooks/use-navigation-path.ts';
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum.ts';
 import { SortOrder } from '../../../../../types/common/types/sort-order.ts';
 import { Review } from '../../../../../types/review/index.ts';
+import { formatDateTime } from '../../../../../utils/date';
 import AdminDeleteButton from '../../buttons/Admin-delete-button.tsx';
 import AdminOpenButton from '../../buttons/Admin-open-button.tsx';
 import ReviewFormModal from './Review-form-modal.tsx';
@@ -147,7 +148,7 @@ const AdminDashboardReviewsGridItem: FC<IProps> = ({
               <span className="xl:hidden">
                 {t('adminDashboard.reviews.publishedAtMobile')}
               </span>
-              <span>{review.createdAt}</span>
+              <span>{formatDateTime(review.createdAt)}</span>
             </>
           ) : (
             <button

@@ -10,6 +10,7 @@ import useNavigationPath from '../../../../../hooks/use-navigation-path';
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum';
 import { SortOrder } from '../../../../../types/common/types/sort-order';
 import { ReleaseMedia } from '../../../../../types/release';
+import { formatDateTime } from '../../../../../utils/date';
 import { getReleaseMediaStatusColor } from '../../../../../utils/get-release-media-status-color';
 import AdminDeleteButton from '../../buttons/Admin-delete-button';
 import AdminEditButton from '../../buttons/Admin-edit-button';
@@ -141,7 +142,7 @@ const AdminDashboardMediaGridItem: FC<IProps> = ({
               <span className="xl:hidden">
                 {t('adminDashboard.media.publishedAtMobile')}
               </span>
-              <span>{media.createdAt}</span>
+              <span>{formatDateTime(media.createdAt)}</span>
             </>
           ) : (
             <button

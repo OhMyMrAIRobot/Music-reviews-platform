@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader';
 import useNavigationPath from '../../../../hooks/use-navigation-path';
@@ -6,6 +7,7 @@ import {
   NominationTypesEnum,
   NominationWinner,
 } from '../../../../types/nomination';
+import { translateNominationType } from '../../../../utils/i18n/nomination-type-i18n';
 
 interface IProps {
   item?: NominationWinner;
@@ -13,6 +15,7 @@ interface IProps {
 }
 
 const NominationWinnerCard: FC<IProps> = ({ item, isLoading }) => {
+  const { t } = useTranslation();
   const { navigateToReleaseDetails, navigateToAuthorDetails } =
     useNavigationPath();
 
@@ -49,7 +52,7 @@ const NominationWinnerCard: FC<IProps> = ({ item, isLoading }) => {
       <div className="bg-white/5 overflow-hidden p-2 max-lg:pb-3 lg:p-3 rounded-[26px] h-full relative flex flex-col border border-[rgba(255,255,255,0.06)] text-center transition-all duration-200 ease-in lg:hover:scale-[1.02] group">
         <div className="relative mb-3 transition-all duration-200 ease-in lg:group-hover:scale-[1.1] lg:group-hover:translate-y-[-7px]">
           <img
-            alt={item.type}
+            alt={translateNominationType(t, item.type)}
             loading="lazy"
             decoding="async"
             src={imgPath}
@@ -75,7 +78,7 @@ const NominationWinnerCard: FC<IProps> = ({ item, isLoading }) => {
         </div>
 
         <div className="uppercase text-[13px] lg:text-lg font-medium border-t border-[rgba(255,255,255,0.1)] mt-3 shrink-0 flex items-center flex-col justify-center pt-3">
-          {item.type}
+          {translateNominationType(t, item.type)}
         </div>
       </div>
     </Link>

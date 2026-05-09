@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import RegisteredAuthorTypes from '../../../../components/author/registered-author/Registered-author-types';
 import UserRoleSpan from '../../../../components/user/User-role-span';
 import { Profile } from '../../../../types/profile';
+import { formatPublishDate } from '../../../../utils/date';
 import ProfileSocialItem from './profile-social-item/Profile-social-item';
 
 interface IProps {
@@ -39,7 +40,9 @@ const ProfileInfo: FC<IProps> = ({ profile }) => {
       </h1>
 
       <div className="text-sm text-zinc-400 font-medium">
-        {t('pages.profile.registeredAt', { date: profile.createdAt })}
+        {t('pages.profile.registeredAt', {
+          date: formatPublishDate(profile.createdAt),
+        })}
       </div>
 
       {profile.bio && (

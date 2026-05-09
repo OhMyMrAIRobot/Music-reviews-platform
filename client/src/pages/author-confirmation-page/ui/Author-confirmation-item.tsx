@@ -2,6 +2,8 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import SkeletonLoader from '../../../components/utils/Skeleton-loader';
 import { AuthorConfirmation } from '../../../types/author';
+import { translateAuthorConfirmationStatus } from '../../../utils/admin/translate-author-confirmation-status-i18n';
+import { formatDateTime } from '../../../utils/date';
 import { getAuthorConfirmationStatusColor } from '../../../utils/get-author-confirmation-status-color';
 
 interface IProps {
@@ -28,13 +30,15 @@ const AuthorConfirmationItem: FC<IProps> = ({ isLoading, item }) => {
             item.status.status
           )}`}
         >
-          {item.status.status}
+          {translateAuthorConfirmationStatus(t, item.status.status)}
         </span>
       </span>
       <span>
         {t('pages.authorConfirmation.ticket.confirmation')}: {item.confirmation}
       </span>
-      <span className="text-sm opacity-50">{item.createdAt}</span>
+      <span className="text-sm opacity-50">
+        {formatDateTime(item.createdAt)}
+      </span>
     </div>
   );
 };

@@ -11,6 +11,7 @@ import { AuthorTypesEnum } from '../../../../../types/author/index.ts';
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum.ts';
 import { SortOrder } from '../../../../../types/common/types/sort-order.ts';
 import { Release } from '../../../../../types/release/index.ts';
+import { formatPublishDate } from '../../../../../utils/date';
 import { getAuthorTypeColor } from '../../../../../utils/get-author-type-color.ts';
 import { getReleaseTypeColor } from '../../../../../utils/get-release-type-color.ts';
 import AdminDeleteButton from '../../buttons/Admin-delete-button.tsx';
@@ -161,7 +162,7 @@ const AdminDashboardReleasesGridItem: FC<IProps> = ({
               <span className="xl:hidden">
                 {t('adminDashboard.releases.createdAtMobile')}
               </span>
-              <span>{release.publishDate}</span>
+              <span>{formatPublishDate(release.publishDate)}</span>
             </>
           ) : (
             <button

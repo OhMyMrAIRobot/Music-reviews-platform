@@ -329,7 +329,12 @@
     "reviews": {
       "none": "No reviews yet",
       "header": "User reviews",
-      "sortBy": "Sort by:"
+      "sortBy": "Sort by:",
+      "translateToEn": "Translate to English",
+      "translateToRu": "Translate to Russian",
+      "showOriginal": "Show original",
+      "showTranslation": "Show translation",
+      "translateError": "Could not translate the review"
     },
     "ratings": {
       "media": "Average media rating",
@@ -448,6 +453,20 @@
       "media": "Average rating for {{kind}} from media",
       "withText": "Average rating for {{kind}} with text reviews from users",
       "withoutText": "Average rating for {{kind}} without text reviews from users"
+    }
+  },
+  "enums": {
+    "authorConfirmationStatus": {
+      "PENDING": "Pending",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected"
+    },
+    "nominationType": {
+      "ARTIST_OF_MONTH": "Artist of the month",
+      "PRODUCER_OF_MONTH": "Producer of the month",
+      "ALBUM_OF_MONTH": "Album of the month",
+      "HIT_OF_MONTH": "Hit of the month",
+      "COVER_OF_MONTH": "Cover of the month"
     }
   },
   "buttons": {
@@ -818,11 +837,6 @@
       "new": "New",
       "read": "Read",
       "answered": "Answered"
-    },
-    "authorConfirmationStatus": {
-      "pending": "Pending",
-      "approved": "Approved",
-      "rejected": "Rejected"
     },
     "userStatus": {
       "active": "Activated",

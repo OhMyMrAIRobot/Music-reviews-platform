@@ -2,6 +2,7 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AuthorTypesEnum } from '../../../../types/author';
 import { Release } from '../../../../types/release';
+import { formatPublishDate } from '../../../../utils/date';
 import ReleaseDetailsAuthorsItem from './Release-details-authors-item';
 
 interface IProps {
@@ -57,7 +58,7 @@ const ReleaseDetailsAuthors: FC<IProps> = ({ release }) => {
 
       <div className="bg-white/10 w-[1px] h-5 max-lg:mx-2" />
       <div className="text-white font-medium max-lg:text-sm">
-        {release.publishDate}
+        {formatPublishDate(release.publishDate)}
       </div>
     </div>
   );

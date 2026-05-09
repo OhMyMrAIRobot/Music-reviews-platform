@@ -4,6 +4,7 @@ import { useNominationVotes } from '../../hooks/use-nomination-votes';
 import { MonthEnumType } from '../../types/common/enums/months-enum';
 import { translateMonth } from '../../utils/date/month-i18n';
 import { NominationTypesEnum } from '../../types/nomination';
+import { translateNominationType } from '../../utils/i18n/nomination-type-i18n';
 import NominationVotesSection from './ui/Nomination-votes-section';
 
 const NominationVotesPage = () => {
@@ -59,7 +60,7 @@ const NominationVotesPage = () => {
       <div className="mt-10 grid lg:grid-cols-2 gap-5">
         <NominationVotesSection
           isLoading={isLoading}
-          title={NominationTypesEnum.HIT_OF_MONTH}
+          title={translateNominationType(t, NominationTypesEnum.HIT_OF_MONTH)}
           candidates={candidates?.singleCandidates}
           nominationType={hitType}
           postVote={postVote}
@@ -68,7 +69,7 @@ const NominationVotesPage = () => {
 
         <NominationVotesSection
           isLoading={isLoading}
-          title={NominationTypesEnum.ALBUM_OF_MONTH}
+          title={translateNominationType(t, NominationTypesEnum.ALBUM_OF_MONTH)}
           candidates={candidates?.albumCandidates}
           nominationType={albumType}
           postVote={postVote}
@@ -77,7 +78,7 @@ const NominationVotesPage = () => {
 
         <NominationVotesSection
           isLoading={isLoading}
-          title={NominationTypesEnum.COVER_OF_MONTH}
+          title={translateNominationType(t, NominationTypesEnum.COVER_OF_MONTH)}
           candidates={candidates?.coverCandidates}
           nominationType={coverType}
           postVote={postVote}
@@ -86,7 +87,7 @@ const NominationVotesPage = () => {
 
         <NominationVotesSection
           isLoading={isLoading}
-          title={NominationTypesEnum.ARTIST_OF_MONTH}
+          title={translateNominationType(t, NominationTypesEnum.ARTIST_OF_MONTH)}
           candidates={candidates?.artistCandidates}
           nominationType={artistType}
           postVote={postVote}
@@ -95,7 +96,10 @@ const NominationVotesPage = () => {
 
         <NominationVotesSection
           isLoading={isLoading}
-          title={NominationTypesEnum.PRODUCER_OF_MONTH}
+          title={translateNominationType(
+            t,
+            NominationTypesEnum.PRODUCER_OF_MONTH
+          )}
           candidates={candidates?.producerCandidates}
           nominationType={producerType}
           postVote={postVote}
