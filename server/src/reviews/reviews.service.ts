@@ -178,6 +178,10 @@ export class ReviewsService {
       dto.atmosphere ?? review.atmosphere,
     );
 
+    const shouldClearTranslations =
+      (dto.title !== undefined && (dto.title ?? null) !== review.title) ||
+      (dto.text !== undefined && (dto.text ?? null) !== review.text);
+
     const updated = await this.prisma.review.update({
       where: { id: review.id },
       data: {
@@ -185,6 +189,9 @@ export class ReviewsService {
         total,
         title: dto.title ?? null,
         text: dto.text ?? null,
+        ...(shouldClearTranslations
+          ? { reviewTranslation: { deleteMany: {} } }
+          : {}),
       },
     });
 

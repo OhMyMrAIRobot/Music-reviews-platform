@@ -12,7 +12,17 @@ import { UpdateReviewRequestDto } from './dto/request/update-review.request.dto'
 import { ReviewDto } from './dto/response/review.dto';
 import { ReviewsService } from './reviews.service';
 
-function mockReviewRow(id: string, userId: string, releaseId: string) {
+type ReviewUpdateCallArg = {
+  where: { id: string };
+  data: Record<string, unknown>;
+};
+
+function mockReviewRow(
+  id: string,
+  userId: string,
+  releaseId: string,
+  opts?: { title?: string | null; text?: string | null },
+) {
   return {
     id,
     userId,
@@ -23,8 +33,8 @@ function mockReviewRow(id: string, userId: string, releaseId: string) {
     individuality: 5,
     atmosphere: 5,
     total: 36,
-    title: null as string | null,
-    text: null as string | null,
+    title: opts?.title ?? null,
+    text: opts?.text ?? null,
     createdAt: new Date(),
     updatedAt: new Date(),
   };
@@ -63,7 +73,9 @@ describe('ReviewsService', () => {
     review: {
       findUnique: jest.Mock;
       create: jest.Mock;
-      update: jest.Mock;
+      update: jest.MockedFunction<
+        (args: ReviewUpdateCallArg) => Promise<{ id: string }>
+      >;
       delete: jest.Mock;
     };
     $queryRaw: jest.Mock;
@@ -77,7 +89,9 @@ describe('ReviewsService', () => {
       review: {
         findUnique: jest.fn(),
         create: jest.fn(),
-        update: jest.fn(),
+        update: jest.fn() as jest.MockedFunction<
+          (args: ReviewUpdateCallArg) => Promise<{ id: string }>
+        >,
         delete: jest.fn(),
       },
       $queryRaw: jest.fn(),
@@ -224,6 +238,9 @@ describe('ReviewsService', () => {
       });
       const result = await service.update('rev1', dto, 'u1');
       expect(result).toEqual(out);
+      expect(prisma.review.update.mock.calls[0][0].data).not.toHaveProperty(
+        'reviewTranslation',
+      );
     });
 
     it('admin update without userId uses findOne only', async () => {
@@ -240,6 +257,55 @@ describe('ReviewsService', () => {
       });
       const result = await service.update('rev1', dto);
       expect(result).toEqual(out);
+      expect(prisma.review.update.mock.calls[0][0].data).not.toHaveProperty(
+        'reviewTranslation',
+      );
+    });
+
+    it('clears review translations when title or text change', async () => {
+      const row = mockReviewRow('rev1', 'u1', 'rel1', {
+        title: 'Old title longer',
+        text: 'x'.repeat(310),
+      });
+      prisma.review.findUnique.mockResolvedValue(row);
+      usersService.findOne.mockResolvedValue({ id: 'u1' });
+      prisma.review.update.mockResolvedValue({ id: 'rev1' });
+      const out = mockReviewDto('rev1');
+      prisma.$queryRaw.mockResolvedValue([
+        { result: { items: [out], meta: { count: 1 } } },
+      ]);
+      const dto = Object.assign(new UpdateReviewRequestDto(), {
+        title: 'New title longer',
+        text: 'y'.repeat(310),
+      });
+      await service.update('rev1', dto, 'u1');
+      expect(prisma.review.update).toHaveBeenCalledTimes(1);
+      const arg = prisma.review.update.mock.calls[0][0];
+      expect(arg.where).toEqual({ id: 'rev1' });
+      expect(arg.data).toMatchObject({
+        reviewTranslation: { deleteMany: {} },
+      });
+    });
+
+    it('does not clear translations when title and text match stored values', async () => {
+      const title = 'Same title ten';
+      const text = 'z'.repeat(310);
+      const row = mockReviewRow('rev1', 'u1', 'rel1', { title, text });
+      prisma.review.findUnique.mockResolvedValue(row);
+      usersService.findOne.mockResolvedValue({ id: 'u1' });
+      prisma.review.update.mockResolvedValue({ id: 'rev1' });
+      const out = mockReviewDto('rev1');
+      prisma.$queryRaw.mockResolvedValue([
+        { result: { items: [out], meta: { count: 1 } } },
+      ]);
+      const dto = Object.assign(new UpdateReviewRequestDto(), {
+        title,
+        text,
+      });
+      await service.update('rev1', dto, 'u1');
+      expect(prisma.review.update.mock.calls[0][0].data).not.toHaveProperty(
+        'reviewTranslation',
+      );
     });
   });
 
