@@ -329,7 +329,12 @@
     "reviews": {
       "none": "No reviews yet",
       "header": "User reviews",
-      "sortBy": "Sort by:"
+      "sortBy": "Sort by:",
+      "translateToEn": "Translate to English",
+      "translateToRu": "Translate to Russian",
+      "showOriginal": "Show original",
+      "showTranslation": "Show translation",
+      "translateError": "Could not translate the review"
     },
     "ratings": {
       "media": "Average media rating",
