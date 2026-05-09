@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import { AuthorComment } from '../../../types/author';
+import { formatDateTime } from '../../../utils/date';
 import SkeletonLoader from '../../utils/Skeleton-loader';
 import AuthorCommentHeader from './Author-comment-header';
 
@@ -26,7 +27,9 @@ const AuthorCommentCard: FC<IProps> = ({ comment, isLoading }) => {
         <p className="text-[15px] lg:text-base line-clamp-4 break-words overflow-hidden text-ellipsis text-wrap">
           {comment.text}
         </p>
-        <div className="text-xs opacity-60 mt-1">{comment.createdAt}</div>
+        <div className="text-xs opacity-60 mt-1">
+          {formatDateTime(comment.createdAt)}
+        </div>
       </div>
     </div>
   );

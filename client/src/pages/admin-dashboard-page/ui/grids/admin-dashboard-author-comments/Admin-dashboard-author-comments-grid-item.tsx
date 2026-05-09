@@ -12,6 +12,7 @@ import { SortOrder } from '../../../../../types/common/types/sort-order';
 import AdminDeleteButton from '../../buttons/Admin-delete-button';
 import AdminOpenButton from '../../buttons/Admin-open-button';
 import AuthorCommentFormModal from './Author-comment-form-modal';
+import { formatDateTime } from '../../../../../utils/date';
 
 interface IProps {
   className?: string;
@@ -144,7 +145,7 @@ const AdminDashboardAuthorCommentsGridItem: FC<IProps> = ({
               <span className="xl:hidden">
                 {t('adminDashboard.authorComments.publishedAtMobile')}
               </span>
-              <span>{comment.createdAt}</span>
+              <span>{formatDateTime(comment.createdAt)}</span>
             </>
           ) : (
             <button

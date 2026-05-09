@@ -2,6 +2,7 @@ import { FC } from 'react';
 import AuthorCommentHeader from '../../../../components/author/author-comment/Author-comment-header';
 import SkeletonLoader from '../../../../components/utils/Skeleton-loader';
 import { AuthorComment } from '../../../../types/author';
+import { formatDateTime } from '../../../../utils/date';
 
 interface IProps {
   isLoading: boolean;
@@ -28,7 +29,9 @@ const ReleaseDetailsAuthorCommentItem: FC<IProps> = ({
         <p className="text-[15px] lg:text-lg lg:leading-[32px] font-light track tracking-[-0.2px] break-words">
           {comment.text}
         </p>
-        <div className="text-xs opacity-60 mt-2">{comment.createdAt}</div>
+        <div className="text-xs opacity-60 mt-2">
+          {formatDateTime(comment.createdAt)}
+        </div>
       </div>
     </div>
   );

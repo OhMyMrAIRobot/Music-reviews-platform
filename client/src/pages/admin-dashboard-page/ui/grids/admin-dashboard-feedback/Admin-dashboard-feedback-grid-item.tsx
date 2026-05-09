@@ -10,6 +10,7 @@ import { SortOrder } from '../../../../../types/common/types/sort-order';
 import { Feedback } from '../../../../../types/feedback';
 import { translateFeedbackAdminStatus } from '../../../../../utils/admin/translate-feedback-status';
 import { getFeedbackStatusColor } from '../../../../../utils/get-feedback-status-color';
+import { formatDateTime } from '../../../../../utils/date';
 import AdminDeleteButton from '../../buttons/Admin-delete-button';
 import AdminOpenButton from '../../buttons/Admin-open-button';
 import FeedbackFormModal from './Feedback-form-modal';
@@ -87,7 +88,7 @@ const AdminDashboardFeedbackGridItem: FC<IProps> = ({
               <span className="xl:hidden">
                 {t('adminDashboard.feedback.sentAtMobile')}
               </span>
-              <span>{feedback.createdAt}</span>
+              <span>{formatDateTime(feedback.createdAt)}</span>
             </>
           ) : (
             <button

@@ -20,6 +20,7 @@ import {
 import { SortOrdersEnum } from '../../../../../types/common/enums/sort-orders-enum';
 import { SortOrder } from '../../../../../types/common/types/sort-order';
 import { translateAuthorConfirmationStatus } from '../../../../../utils/admin/translate-author-confirmation-status-i18n';
+import { formatDateTime } from '../../../../../utils/date';
 import { getReleaseMediaStatusColor } from '../../../../../utils/get-release-media-status-color';
 import AdminDeleteButton from '../../buttons/Admin-delete-button';
 import AdminSvgButton from '../../buttons/Admin-svg-button';
@@ -249,7 +250,7 @@ const AdminDashboardAuthorConfirmationGridItem: FC<IProps> = ({
               <span className="xl:hidden">
                 {t('adminDashboard.authorConfirmation.submittedAtMobile')}
               </span>
-              <span>{item.createdAt}</span>
+              <span>{formatDateTime(item.createdAt)}</span>
             </>
           ) : (
             <button
