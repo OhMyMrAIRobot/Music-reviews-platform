@@ -6,6 +6,7 @@ import { AlbumValuesModule } from 'src/album-values/album-values.module';
 import { NominationTypesModule } from 'src/nomination-types/nomination-types.module';
 import { NominationsModule } from 'src/nominations/nominations.module';
 import { ReleaseLyricsModule } from 'src/release-lyrics/release-lyrics.module';
+import { ReviewTranslationsModule } from 'src/review-translations/review-translations.module';
 import { AuthModule } from '../auth/auth.module';
 import { AuthorCommentsModule } from '../author-comments/author-comments.module';
 import { AuthorConfirmationStatusesModule } from '../author-confirmation-statuses/author-confirmation-statuses.module';
@@ -72,6 +73,7 @@ import { AppService } from './app.service';
     AlbumValueVotesModule,
     AlbumValuesModule,
     ReleaseLyricsModule,
+    ReviewTranslationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -15,6 +15,7 @@ model Review {
 
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   release Release @relation(fields: [releaseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  reviewTranslation ReviewTranslation[]
 
   userFavReviews UserFavReview[]
   releaseMedia   ReleaseMedia?
@@ -59,4 +60,17 @@ model ReleaseRatingType {
   releaseRating ReleaseRating[]
 
   @@map("Release_rating_types")
+}
+
+model ReviewTranslation {
+  id String @id @default(cuid())
+  reviewId String @map("review_id")
+  language String @map("language")
+  title String @map("title")
+  text String @map("text")
+
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([reviewId, language])
+  @@map("Review_translations")
 }
