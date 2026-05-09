@@ -5,8 +5,6 @@ import { ROUTES } from '../../../routes/routes-enum';
 import AuthorCommentSvg from '../../author/author-comment/svg/Author-comment-svg';
 import RegisteredAuthorSvg from '../../author/registered-author/svg/Registered-author-svg';
 import TextReviewSvg from '../../review/svg/Text-review-svg';
-import LogoFullSvg from '../../svg/Logo-full-svg';
-import LogoSmallSvg from '../../svg/Logo-small-svg';
 import MediaPlayerSvg from '../../svg/Media-player-svg';
 import PencilSvg from '../../svg/Pencil-svg';
 import LogoutSvg from '../header/svg/Logout-svg';
@@ -89,11 +87,6 @@ const AdminSidebar = () => {
 
   return (
     <div className="fixed flex flex-col px-2 gap-1.5 inset-0 w-12 lg:w-55 border-r border-white/15 bg-zinc-950 pt-3 pb-5">
-      <span className="w-full pb-2 lg:pb-4 flex justify-center">
-        <LogoFullSvg className={'w-4/5 hidden lg:block'} />
-        <LogoSmallSvg className={'w-4/5 lg:hidden'} />
-      </span>
-
       {adminSidebarItems.map((item) => (
         <AdminSidebarItem key={item.href} {...item} />
       ))}

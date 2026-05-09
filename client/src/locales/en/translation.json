@@ -450,6 +450,20 @@
       "withoutText": "Average rating for {{kind}} without text reviews from users"
     }
   },
+  "enums": {
+    "authorConfirmationStatus": {
+      "PENDING": "Pending",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected"
+    },
+    "nominationType": {
+      "ARTIST_OF_MONTH": "Artist of the month",
+      "PRODUCER_OF_MONTH": "Producer of the month",
+      "ALBUM_OF_MONTH": "Album of the month",
+      "HIT_OF_MONTH": "Hit of the month",
+      "COVER_OF_MONTH": "Cover of the month"
+    }
+  },
   "buttons": {
     "toggleFav": {
       "add": "Add to favorites",
@@ -818,11 +832,6 @@
       "new": "New",
       "read": "Read",
       "answered": "Answered"
-    },
-    "authorConfirmationStatus": {
-      "pending": "Pending",
-      "approved": "Approved",
-      "rejected": "Rejected"
     },
     "userStatus": {
       "active": "Activated",

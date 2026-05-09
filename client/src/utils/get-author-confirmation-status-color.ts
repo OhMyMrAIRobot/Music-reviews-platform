@@ -1,12 +1,14 @@
 import { AuthorConfirmationStatusesEnum } from '../types/author';
+import { resolveBackendEnumKey } from './i18n/resolve-backend-enum-key';
 
 export const getAuthorConfirmationStatusColor = (status: string): string => {
-  switch (status) {
-    case AuthorConfirmationStatusesEnum.APPROVED:
+  const key = resolveBackendEnumKey(AuthorConfirmationStatusesEnum, status);
+  switch (key) {
+    case 'APPROVED':
       return 'text-green-600';
-    case AuthorConfirmationStatusesEnum.PENDING:
+    case 'PENDING':
       return 'text-yellow-600';
-    case AuthorConfirmationStatusesEnum.REJECTED:
+    case 'REJECTED':
       return 'text-red-600';
     default:
       return '';
